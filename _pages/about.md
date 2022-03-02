@@ -13,7 +13,7 @@ redirect_from:
 <details>
   <summary>Click to Show His Personal Statement</summary>
   
-
+## 个人简介
   * 🤖Jiahe Qiu
   * 🤨AKA QSDQSB
   * 🔬24' Maths at Ox
@@ -39,6 +39,12 @@ redirect_from:
   * 🇨🇳Geographically Hangzhounese, spiritually Shanghainese
 </details>
 
+======
+
 每日laughable事及阴阳怪气摘记
 =====
-> 「QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。」
+> QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。   ——某人
+
+> 我要少跟你说话，不然整个人都阴阳怪气奇怪起来。    ——另一个某人
+
+
