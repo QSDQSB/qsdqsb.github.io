@@ -29,7 +29,7 @@ comments:
   facebook:
     appid                :
     num_posts            : # 5 (default)
-    colorscheme          : # "light" (default), "dark"
+    colorscheme          : "dark"
 staticman:
   allowedFields          : ['name', 'email', 'url', 'message']
   branch                 : "gh-pages" # "master", "gh-pages"
@@ -82,8 +82,8 @@ analytics:
 author:
   name             : "QSD"
   avatar           : "profile.png"
-  bio              : "To see the world as it is and to love it."
-  location         : "Oxford/Shanghai/Hangzhou"
+  bio              : "不是，个人简介到底有什么存在的意义啊。"
+  location         : "Oxford, GB"
   employer         :
   pubmed           : 
   googlescholar    : 
@@ -94,7 +94,7 @@ author:
   codepen          :
   dribbble         :
   flickr           :
-  facebook         :
+  facebook         : "https://www.facebook.com/jiahe.qiu.146/"
   foursquare       :
   github           : "QSDQSB"
   google_plus      :
@@ -102,12 +102,12 @@ author:
   instagram        : "qsdqsbbb"
   impactstory      : #"https://profiles.impactstory.org/u/xxxx-xxxx-xxxx-xxxx"
   lastfm           :
-  linkedin         :
+  linkedin         : "https://www.linkedin.com/in/jiahe-qiu-5873a51a3/"
   orcid            : 
   pinterest        :
   soundcloud       :
   stackoverflow    : # http://stackoverflow.com/users/123456/username
-  steam            :
+  steam            : "QSDQSB"
   tumblr           :
   twitter          :
   vine             :
