@@ -1,6 +1,6 @@
 ---
 title: "Day One of This Site"
-date: 2022-03-02
+date: 2022-03-01
 permalink: /posts/2022/03/day-one/
 tags:
   - 📘Diary
