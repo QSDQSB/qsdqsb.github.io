@@ -1,6 +1,6 @@
 ---
 permalink: /
-title: "QSD's Houses of Wonders"
+title: "Hi! Meet QSD😵‍💫!"
 excerpt: "About QSD"
 author_profile: true
 redirect_from: 
@@ -8,9 +8,8 @@ redirect_from:
   - /about.html
 ---
 
-Hi! Meet QSD😵‍💫!
-=====
-## | 🐟OX摸鱼王 | ⌚️时间管理废物 | 🏆第五届熬夜锦标赛全球总亚军 | 🍿B站居然有三十一个粉丝 | 🚦选择恐惧症晚期 | 🤤热衷无所事事+懒癌患者 |
+| 🐟OX摸鱼王 | ⌚️时间管理废物 | 🏆第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 | 🚦选择恐惧症晚期 | 🤤热衷无所事事+懒癌患者 |
+------
 <details>
   <summary>Click to Show His Personal Statement</summary>
   
@@ -36,7 +35,7 @@ Hi! Meet QSD😵‍💫!
   * 🤬Why our college is forbidden to have a cat
   * 🐭Still watches *Tom&Jerry*
   * 🐟enjoy 摸鱼 every day
-  * 🏃[努力减肥中](https://www.qsdqsb.icu/about)
+  * 🏃努力减肥中
   * 🇨🇳Geographically Hangzhounese, spiritually Shanghainese
 </details>
 
