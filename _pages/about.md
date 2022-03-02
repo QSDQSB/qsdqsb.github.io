@@ -11,8 +11,6 @@ redirect_from:
 | 🐟OX摸鱼王 | ⌚️时间管理废物 | 🏆第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 | 🚦选择恐惧症晚期 | 🤤热衷无所事事+懒癌患者 |
 ------
 
-## 个人简介
-
 - 🤖Jiahe Qiu
 - 🤨AKA QSDQSB
 - 🔬24' Maths at Ox
@@ -31,14 +29,10 @@ redirect_from:
 - 📺[Yes Prime Minister](https://www.imdb.com/title/tt0086831/)! [Silicon Valley](https://www.imdb.com/title/tt2575988/)! [R&M](https://www.imdb.com/title/tt2861424/)! [Better Call Saul](https://www.imdb.com/title/tt3032476/)!
 - 👾Emoji crusher(as you can see from this page)
 - 🐱**骨灰级猫猫粉**
-- 🤬Why our college is forbidden to have a cat
-- 🐭Still watches *Tom&Jerry*
-- 🐟enjoy 摸鱼 every day
+- 🐟enjoy *摸鱼* every day
 - 🏃努力减肥中
 - 🇨🇳Geographically Hangzhounese, spiritually Shanghainese
 
-
-----------
 
 ----------
 
