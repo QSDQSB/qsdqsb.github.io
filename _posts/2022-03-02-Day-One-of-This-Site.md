@@ -1,11 +1,12 @@
 ---
 title:  "Day One of This Site"
-date:   2022-03-02 00:00:01 +0000
+date:   2022-03-02
 permalink: /posts/2022/03/day-one/
 tags:
-	- 📒Diary
-	- 😢Emo
+  - diary
+  - emo
 ---
+
 > As they say, where of what is past is prologue.
 
 
