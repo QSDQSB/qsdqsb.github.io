@@ -6,15 +6,17 @@ author_profile: true
 redirect_from: 
   - /about/
   - /about.html
+header:
+  overlay_image: QSD_Night_5v2.jpg
+  overlay_filter: 0.5
 ---
 
 | 🐟OX摸鱼王 | ⌚️时间管理废物 | 🏆第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 | 🚦选择恐惧症晚期 | 🤤热衷无所事事+懒癌患者 |
 ------
 
-- 🤖Jiahe Qiu
-- 🤨AKA QSDQSB
+- 🤖QSDQSB
 - 🔬24' Maths at Ox
-- 🦃From The Queen's College, whose logo consists of three turkeys
+- 🦃From [The Queen's College](https://www.queens.ox.ac.uk), whose logo consists of three turkeys
 - ☕️Americano addict
 - 📷Photography rookie
 - 🎸Amateur music composer
