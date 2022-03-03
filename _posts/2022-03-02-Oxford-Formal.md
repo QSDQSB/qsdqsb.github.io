@@ -2,6 +2,7 @@
 title: "Oxford Formal评测"
 date: 2022-03-02
 permalink: /posts/oxformals
+excerpt: "他奶奶滴，为什么不吃！"
 tags:
   - 🐮Ox
   - 🍜Life
