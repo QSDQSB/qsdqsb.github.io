@@ -36,6 +36,11 @@ header:
 
 ----------
 
+```
+‼️Note that *every* picture in this website is shot or made by QSD himself.
+```
+
+----------
 
 
 # 每日laughable事及阴阳怪气摘记

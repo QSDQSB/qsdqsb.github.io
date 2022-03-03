@@ -5,6 +5,8 @@ permalink: /posts/2022/03/day-one/
 tags:
   - 📘Diary
   - 😢Emo
+header:
+  overlay_image: Xiaolan1-3v1.jpg
 ---
 
 
