@@ -1,7 +1,6 @@
 ---
 permalink: /
 title: "Hi! Meet QSD😵‍💫!"
-excerpt: "About QSD"
 author_profile: true
 redirect_from: 
   - /about/
