@@ -12,7 +12,7 @@ header:
 ----------
 
 ```
-‼️Note that *every* picture in this website is shot or made by QSD himself.
+‼️Note that *every* picture in this website is shot by QSD himself, or his beloved friends.
 ```
 
 ----------
