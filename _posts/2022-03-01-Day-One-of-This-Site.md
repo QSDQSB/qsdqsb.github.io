@@ -25,33 +25,7 @@ Scars are carved on our body, engraved in our heart, leaving every soul broken. 
 
 I only wish to catch a glimpse of my own life, joyful or not, before the memory fades away, along with the past.
 
-
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-
-<style type="text/css">
-    h1{
-        position: relative;
-        color: yellow;
-    }
-    h1:before{
-        content: attr(text);
-        position: absolute;
-        z-index: 10;
-        color:pink;
-        -webkit-mask:linear-gradient(to left, red, transparent );
-    }
-</style>
-</style>
-</head>
-
-<body>
-    <h1 text="To see the world as it is and to love it.">To see the world as it is and to love it.</h1>
-</body>
-
-</html>
+## "To see the world as it is and to love it."
 
 
 
