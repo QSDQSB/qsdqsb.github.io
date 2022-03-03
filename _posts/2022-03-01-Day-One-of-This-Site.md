@@ -2,6 +2,7 @@
 title: "Day One of This Site"
 date: 2022-03-01
 permalink: /posts/2022/03/day-one/
+excerpt: "Where it all begins, and where it all ends."
 tags:
   - 📘Diary
   - 😢Emo
@@ -9,6 +10,7 @@ header:
   overlay_image: Xiaolan1-3v1.jpg
 ---
 
+# #DAY01
 
 As they say, where of what is past is prologue.
 
