@@ -11,9 +11,7 @@ header:
 
 ----------
 
-```
-‼️Note that *every* picture in this website is shot by QSD himself, or his beloved friends.
-```
+`‼️Note that *every* picture in this website is shot by QSD himself, or his beloved friends.`
 
 ----------
 
@@ -54,7 +52,12 @@ header:
 >
 > 我在"阴阳怪气"被发明之前还没找到过这么合适的词来形容你。  ——又另一个某人  
 
-为保护受害人隐私，以下所有具体姓名均用「某人」代替，请各位受害人自觉对号入座。
+----
+
+- 为保护受害人隐私，以下所有具体姓名均用「某人」代替。
+- 请自觉对号入座。
+
+----
 
 ### 2022.3.2
 
@@ -62,9 +65,12 @@ header:
 1. 某人企图纠正某希腊教授π的写法，因为某希腊教授的π写得像n。
 2. 某人之愚蠢程度再创新高，在5秒内以两种不同原因连续开错两扇门：第一扇推反，第二扇忘了按开关。
 
+----
 
 ### 2022.3.1
 
+
+----
 
 ### 2022.2.28
 
