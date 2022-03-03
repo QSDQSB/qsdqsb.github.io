@@ -1,14 +1,14 @@
 ---
 title: "Twilight"
-excerpt: "We live in a twilight world.<br/><img src='/images/20220226/Twilight1.jpg'>"
+excerpt: "We live in a twilight world.<br/><img src='/images/20220226/Twilight2.jpg'>"
 collection: portfolio
 date: 2022-02-26
 header:
-  overlay_image: "/images/20220226/Twilight1.jpg"
+  overlay_image: "/images/20220226/Twilight2.jpg"
 ---
 
 > We live in a twilight world
 >
 > And there are no friends at dusk.
 
-<img src='/images/20220226/Twilight1.jpg'>
+<img src='/images/20220226/Twilight2.jpg'>
