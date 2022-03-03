@@ -11,7 +11,9 @@ header:
 
 ----------
 
-`‼️Note that *every* picture in this website is shot by QSD himself, or his beloved friends.`
+`‼️Note that *every* picture in this website` 
+
+`is shot by QSD himself, or his beloved friends.`
 
 ----------
 
@@ -44,7 +46,7 @@ header:
 
 
 
-# 每日laughable事及阴阳怪气摘记
+# 每日laughable事件集合+阴阳怪气摘记
 
 > QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         ——某人
 >
@@ -55,7 +57,7 @@ header:
 ----
 
 - 为保护受害人隐私，以下所有具体姓名均用「某人」代替。
-- 请自觉对号入座。
+- **请自觉对号入座。**
 
 ----
 
