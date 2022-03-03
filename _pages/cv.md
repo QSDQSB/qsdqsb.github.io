@@ -9,7 +9,7 @@ redirect_from:
 
 {% include base_path %}
 
-[Download My CV](https://qsdqsb.github.io/files/QSD-CV.pdf)
+[Download My CV](https://qsdqsb.github.io/files/QSD-CV-FOOLYOU.pdf)
 
 Education
 ======
