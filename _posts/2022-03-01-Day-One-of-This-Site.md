@@ -17,7 +17,7 @@ As they say, where of what is past is prologue.
 
 There are moments we do not want to forget, and moments we entreat ourselves to forget. 
 
-But the past hast not just passed. It changes us. It defines us. It lives with us permanently, like an indelible mark. 
+But the past has not just passed. It changes us. It defines us. It lives with us permanently, like an indelible mark. 
 
 There was joy, there was hope, there was sorrow, there was despair. 
 
