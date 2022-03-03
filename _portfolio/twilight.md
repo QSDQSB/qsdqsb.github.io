@@ -13,4 +13,5 @@ header:
 >
 > And there are no friends at dusk.
 
-<img src='/images/20220226/Twilight2.jpg'>
+![full](/images/20220226/Twilight2.jpg)
+{: .full}

@@ -11,9 +11,8 @@ header:
 
 ----------
 
-`‼️Note that *every* picture in this website` 
-
-`is shot by QSD himself, or his beloved friends.`
+‼️Note that *every* picture in this website is shot by QSD himself, or his beloved friends.
+{: .notice--info}
 
 ----------
 
@@ -48,11 +47,14 @@ header:
 
 # 每日laughable事件集合+阴阳怪气摘记
 
-> QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         ——某人
->
-> 我要少跟你说话，不然整个人都阴阳怪气奇怪起来。          ——另一个某人
->
-> 我在"阴阳怪气"被发明之前还没找到过这么合适的词来形容你。  ——又另一个某人  
+QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         ——某人
+{: .notice--warning}
+
+我要少跟你说话，不然整个人都阴阳怪气奇怪起来。          ——另一个某人
+{: .notice--danger}
+
+我在"阴阳怪气"被发明之前还没找到过这么合适的词来形容你。  ——又另一个某人  
+{: .notice--success}
 
 ----
 
