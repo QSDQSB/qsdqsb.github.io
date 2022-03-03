@@ -4,7 +4,7 @@ excerpt: "We live in a twilight world.<br/><img src='/images/20220226/Twilight2.
 collection: portfolio
 date: 2022-02-26
 header:
-  overlay_image: "/images/20220226/Twilight2.jpg"
+  overlay_image: "/images/20220226/Twilight2-5v2.jpg"
 ---
 
 > We live in a twilight world
