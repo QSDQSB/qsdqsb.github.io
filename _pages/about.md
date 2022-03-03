@@ -9,6 +9,14 @@ header:
   overlay_image: QSD_Night_4v1.jpg
 ---
 
+----------
+
+```
+‼️Note that *every* picture in this website is shot or made by QSD himself.
+```
+
+----------
+
 | 🐟OX摸鱼王 | ⌚️时间管理废物 | 🏆第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 | 🚦选择恐惧症晚期 | 🤤热衷无所事事+懒癌患者 |
 ------
 
@@ -36,11 +44,6 @@ header:
 
 ----------
 
-```
-‼️Note that *every* picture in this website is shot or made by QSD himself.
-```
-
-----------
 
 
 # 每日laughable事及阴阳怪气摘记
