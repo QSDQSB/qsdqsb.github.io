@@ -1,7 +1,7 @@
 ---
 title: "Commitment"
 collection: publications
-permalink: /publication/2022-01-01-commitments
+permalink: /publications/2022-01-01-commitments
 excerpt: 'QSD's dedicated commitments to make himself a better person.'
 date: 2022-01-01
 ---
