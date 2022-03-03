@@ -6,15 +6,14 @@ redirect_from:
   - /about/
   - /about.html
 header:
-  overlay_image: QSD_Night_5v2.jpg
-  overlay_filter: 0.5
+  overlay_image: QSD_Night_4v1.jpg
 ---
 
 | 🐟OX摸鱼王 | ⌚️时间管理废物 | 🏆第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 | 🚦选择恐惧症晚期 | 🤤热衷无所事事+懒癌患者 |
 ------
 
 - 🤖QSDQSB
-- 🔬24' Maths at Ox
+- 🔬24' Maths&Stats at Ox
 - 🦃From [The Queen's College](https://www.queens.ox.ac.uk), whose logo consists of three turkeys
 - ☕️Americano addict
 - 📷Photography rookie
