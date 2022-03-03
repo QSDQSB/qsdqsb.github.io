@@ -10,14 +10,12 @@ redirect_from:
 {% include base_path %}
 
 [Download My CV](https://qsdqsb.github.io/files/QSD-CV.pdf)
+
 Education
 ======
-* 呃
-* 这写点啥好呢
 
-Work experience
-======
-* 么得
+* 呃
+* 野鸡大学学历写出来不太好见人吧
   
 Skills
 ======
