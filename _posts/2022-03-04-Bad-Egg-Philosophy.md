@@ -9,9 +9,11 @@ tags:
   - 🍜Life
   - 💡Idea
 header:
-  overlay_image: OxfordNight1-3v1.jpg
-  overlay_filter: 0.25
+  overlay_image: Xiaolan1-3v1.jpg
+  overlay_filter: 0.15
 ---
+
+## Bad Egg Philosophy
 
 > “这个鸡蛋臭了，真难吃。”
 
