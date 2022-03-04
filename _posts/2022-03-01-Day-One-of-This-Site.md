@@ -29,10 +29,12 @@ We have buried the past, but still need to let go. How do we truly get away with
 I only wish to catch a glimpse of my own life, joyful or not, before the memory fades away, buried along with my past.
 
 ## "To see the world as it is and to love it."
+{: .text-center}
 
 
 
-*With all the best,*
-***QSD***
+*With all the best,* ***QSD***
+{: .text-right}
 
 *March 2, 2022*
+{: .text-right}
