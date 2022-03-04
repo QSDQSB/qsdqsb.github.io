@@ -130,6 +130,7 @@ a {
 
 tt, code, kbd, samp, pre {
   font-family: $monospace;
+  font-size: $type-size-8;
 }
 
 pre {
@@ -239,9 +240,10 @@ figure {
 
 figcaption {
   margin-bottom: 0.5em;
-  color: mix(#fff, $text-color, 25%);
+  color: mix(#fff, $text-color, 20%);
   font-family: $caption-font-family;
-  font-size: $type-size-8;
+  font-style: italic;
+  font-size: 0.8em;
 
   a {
     color: inherit;
