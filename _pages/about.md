@@ -7,8 +7,7 @@ redirect_from:
   - /about.html
 header:
   overlay_image: QSD_Night_4v1.jpg
-toc: true
-toc_sticky: true
+classes: wide
 ---
 
 ----------
