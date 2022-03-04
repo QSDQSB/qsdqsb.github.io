@@ -11,14 +11,14 @@ tags:
   - 🔖Notes
 header:
   overlay_image: OxfordSJC1-3v1.jpg
-  overlay_filter: 0.75
+  overlay_filter: 0.25
 ---
 
 # Interview Preparation
 
 ## What is your greatest weakness?
 
-#### 💡General Tips
+#### General Tips
 - Turn a negative into a positive
 - Be honest
 - Don’t go overboard
