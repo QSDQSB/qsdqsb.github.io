@@ -11,6 +11,7 @@ tags:
 header:
   overlay_image: Xiaolan1-3v1.jpg
   overlay_filter: 0.15
+  caption: "St Aldates, Oxford, Nov 7, 2021"
 ---
 
 ## Bad Egg Philosophy
