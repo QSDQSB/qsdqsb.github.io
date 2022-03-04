@@ -31,26 +31,32 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
   margin-top: 0;
   font-size: $type-size-3;
+  color: #92c237;
 }
 
 h2 {
   font-size: $type-size-4;
+  color: #f0a763;
 }
 
 h3 {
   font-size: $type-size-5;
+  color: #F38AB5;
 }
 
 h4 {
   font-size: $type-size-6;
+  color: #4495ff;
 }
 
 h5 {
   font-size: $type-size-6;
+  color: #ad9fff;
 }
 
 h6 {
   font-size: $type-size-6;
+  color: #ca8bee;
 }
 
 small, .small {
