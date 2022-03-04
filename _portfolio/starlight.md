@@ -6,6 +6,6 @@ collection: portfolio
 author_profile: false
 date: 2021-02-18
 header:
-  overlay_image: TeddyMoon.jpg
+  overlay_image: TeddyMoon-3v1.jpg
 ---
 
