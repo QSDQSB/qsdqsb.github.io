@@ -9,9 +9,9 @@ header:
   overlay_image: Twilight2-5v2.jpg
 ---
 
-> We live in a twilight world
+> We live in a twilight world,
 >
-> And there are no friends at dusk.
+> and there are no friends at dusk.
 
 ![full](/images/20220226/Twilight2.jpg)
 {: .full}

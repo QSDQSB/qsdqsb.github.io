@@ -32,12 +32,12 @@ header:
 - 🧱Lego [76042](https://www.lego.com/en-gb/product/the-shield-helicarrier-76042)+[71043](https://www.lego.com/en-gb/product/hogwarts-castle-71043)+[21327](https://www.lego.com/en-gb/product/typewriter-21327)
 - ⚠️The previous red brick has nothing to do with Keble College.
 - 🧙‍♂️Ravenclaw 🦅!
-- 🕶S.H.I.E.L.D. agent
-- 📺[Yes Prime Minister](https://www.imdb.com/title/tt0086831/)! [Silicon Valley](https://www.imdb.com/title/tt2575988/)! [R&M](https://www.imdb.com/title/tt2861424/)! [Better Call Saul](https://www.imdb.com/title/tt3032476/)!
+- 🕶**S.H.I.E.L.D. agent**
+- 📺[Yes Prime Minister](https://www.imdb.com/title/tt0086831/)! [Silicon Valley](https://www.imdb.com/title/tt2575988/)! [R&M](https://www.imdb.com/title/tt2861424/)! [Better Call Saul](https://www.imdb.com/title/tt3032476/)![Disenchantment](https://www.imdb.com/title/tt5363918/)!
 - 👾Emoji crusher(as you can see from this page)
 - 🐱**骨灰级猫猫粉**
 - 🐟enjoy *摸鱼* every day
-- 🏃努力减肥中
+- 🏃努力减肥中(但愿)
 - 🇨🇳Geographically Hangzhounese, spiritually Shanghainese
 
 
@@ -48,13 +48,13 @@ header:
 # 每日laughable事件集合+阴阳怪气摘记
 
 QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         ——某人
-{: .notice--warning}
+{: .notice--info}
 
 我要少跟你说话，不然整个人都阴阳怪气奇怪起来。          ——另一个某人
-{: .notice--danger}
+{: .notice--primary}
 
 我在"阴阳怪气"被发明之前还没找到过这么合适的词来形容你。  ——又另一个某人  
-{: .notice--success}
+{: .notice--warning}
 
 ----
 
