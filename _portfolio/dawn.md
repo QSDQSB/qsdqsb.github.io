@@ -11,7 +11,7 @@ header:
 ---
 
 # Crhist Church Meadow, Oxford
-![full](/image/OxfordMagdalenDawn1.jpg)
+![full](/images/OxfordMagdalenDawn1.jpg)
 {: .full}
 
 
