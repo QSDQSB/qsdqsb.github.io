@@ -5,5 +5,5 @@ collection: portfolio
 author_profile: false
 date: 2021-02-18
 header:
-  overlay_image: RadCamStars-3v1.jpg
+  overlay_image: OxfordChurchStar1-3v1.jpg
 ---
