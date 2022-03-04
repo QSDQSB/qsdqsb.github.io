@@ -38,8 +38,8 @@ $type-size-2                : 1.953em;  // ~31.248px
 $type-size-3                : 1.563em;  // ~25.008px
 $type-size-4                : 1.40em;   // ~20px
 $type-size-5                : 1.25em;      // ~16px
-$type-size-6                : 1.15em;   // ~12px
-$type-size-7                : 1.10em; // ~11px
+$type-size-6                : 1.10em;   // ~12px
+$type-size-7                : 1.00em; // ~11px
 $type-size-8                : 0.95em;  // ~10px
 
 
@@ -87,12 +87,13 @@ $vimeo-color                : #1ab7ea;
 $vine-color                 : #00bf8f;
 $youtube-color              : #bb0000;
 $xing-color                 : #006567;
+$steam-color                : #1a3262;
 
 
 /* links */
 $link-color                 : $info-color;
 $link-color-hover           : mix(#fff, $link-color, 50%);
-$link-color-visited         : mix(#fff, $link-color, 25%);
+$link-color-visited         : mix(#fff, $link-color, 30%);
 $masthead-link-color        : $primary-color;
 $masthead-link-color-hover  : mix(#000, $primary-color, 35%);
 
