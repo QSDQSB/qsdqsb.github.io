@@ -169,7 +169,7 @@
   border-radius: $border-radius;
   background: #000;
   z-index: -1;
-  box-shadow: 0 0 10px rgba(#fff, 0.25);
+  box-shadow: 0 0 10px rgba(rgb(30, 23, 23), 0.25);
   cursor: default;
 
   @include breakpoint($large) {
