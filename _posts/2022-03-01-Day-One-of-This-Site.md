@@ -14,8 +14,7 @@ header:
 
 -----
 
-As they say, where of what is past is prologue.
-
+As they say, whereof what is past is prologue.
 
 There are moments we do not want to forget, and moments we entreat ourselves to forget. 
 
@@ -23,11 +22,11 @@ But the past has not just passed. It changes us. It defines us. It lives with us
 
 There was joy, there was hope, there was sorrow, there was despair. 
 
-Scars are carved on our body, engraved in our heart, leaving every soul broken. Heart was kindered and then banished once and once again, like Sisyphus' punishment.
+Scars are carved on our bodies, engraved in our souls. Hearts were kindled and banished once and once again, like Sisyphus' punishment.
 
-The past is a tomb. We have buried it, but still need to let go. So how do we truly finish our business with it? We write down an epitaph. An epilogue, a farewell to an old friend. - That is the point of this site.
+We have buried the past, but still need to let go. How do we truly get away with it? We write down an epitaph. An epilogue, a farewell to an old friend. And that is the point of this site.
 
-I only wish to catch a glimpse of my own life, joyful or not, before the memory fades away, along with my past.
+I only wish to catch a glimpse of my own life, joyful or not, before the memory fades away, buried along with my past.
 
 ## "To see the world as it is and to love it."
 
@@ -35,3 +34,5 @@ I only wish to catch a glimpse of my own life, joyful or not, before the memory 
 
 *With all the best,*
 ***QSD***
+
+*March 2, 2022*
