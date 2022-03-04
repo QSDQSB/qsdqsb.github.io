@@ -31,10 +31,8 @@ I only wish to catch a glimpse of my own life, joyful or not, before the memory 
 ## "To see the world as it is and to love it."
 {: .text-center}
 
-
-
-*With all the best,* ***QSD***
+### *With all the best, QSD*
 {: .text-right}
 
-*March 2, 2022*
+*Mar 1, 2022*
 {: .text-right}
