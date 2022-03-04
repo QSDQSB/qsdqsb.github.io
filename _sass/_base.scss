@@ -60,7 +60,7 @@ h6 {
 }
 
 small, .small {
-  font-size: $type-size-7;
+  font-size: $type-size-8;
 }
 
 p {
@@ -143,7 +143,6 @@ figcaption > code,
 td > code {
   padding-top: 0.1rem;
   padding-bottom: 0.1rem;
-  font-size: $type-size-6;
   background: $code-background-color;
   border: 1px solid $lighter-gray;
   border-radius: $border-radius;
@@ -190,7 +189,7 @@ figure {
   -webkit-box-align: start;
           align-items: flex-start;
   flex-wrap: wrap;
-  margin: 2em 0;
+  margin: 1em 0;
 
   img,
   iframe,
@@ -242,7 +241,7 @@ figcaption {
   margin-bottom: 0.5em;
   color: mix(#fff, $text-color, 25%);
   font-family: $caption-font-family;
-  font-size: $type-size-6;
+  font-size: $type-size-8;
 
   a {
     color: inherit;
