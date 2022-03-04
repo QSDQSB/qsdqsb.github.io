@@ -2,11 +2,13 @@
 title: "Twilight"
 excerpt: "We live in a twilight world."
 collection: portfolio
+permalink: /portfolio/twilight
 author_profile: false
 date: 2022-02-26
 excerpt: "The Sunset of Romanticism"
 header:
   overlay_image: Twilight2-5v2.jpg
+  caption: "South Park, Oxford, 25/11/2021"
 ---
 
 > We live in a twilight world,
