@@ -370,8 +370,8 @@ body:hover .visually-hidden button {
   min-height: 20px;
   padding: 19px;
   margin-bottom: 20px;
-  background-color: #f5f5f5;
-  border: 1px solid #e3e3e3;
+  background-color: #050505;
+  border: 1px solid #232323;
   border-radius: $border-radius;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
 }
@@ -437,12 +437,12 @@ body:hover .visually-hidden button {
    ========================================================================== */
 
 .footnote {
-  color: mix(#000, $gray, 25%);
+  color: mix(#fff, $gray, 25%);
   text-decoration: none;
 }
 
 .footnotes {
-  color: mix(#000, $gray, 25%);
+  color: mix(#fff, $gray, 25%);
 
   ol, li, p {
     margin-bottom: 0;
