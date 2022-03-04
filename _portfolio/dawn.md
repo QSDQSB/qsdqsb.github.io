@@ -1,6 +1,6 @@
 ---
 title: "Dawn"
-excerpt: ""
+excerpt: "However long the night, the dawn will break."
 collection: portfolio
 permalink: /portfolio/dawn
 author_profile: false
