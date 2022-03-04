@@ -10,7 +10,7 @@ header:
   overlay_image: Xiaolan1-3v1.jpg
 ---
 
-# #DAY ONE OF THIS SITE
+# DAY ONE OF THIS SITE
 
 -----
 
