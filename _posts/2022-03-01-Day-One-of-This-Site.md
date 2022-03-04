@@ -1,5 +1,5 @@
 ---
-title: "Day One of This Site"
+title: "Day One"
 date: 2022-03-01
 permalink: /posts/2022/03/day-one/
 excerpt: "Where it all begins, and where it all ends."
@@ -12,6 +12,8 @@ header:
 
 # #DAY01
 
+-----
+
 As they say, where of what is past is prologue.
 
 
@@ -21,16 +23,15 @@ But the past has not just passed. It changes us. It defines us. It lives with us
 
 There was joy, there was hope, there was sorrow, there was despair. 
 
-Scars are carved on our body, engraved in our heart, leaving every soul broken. Heart was kindered, and then banished, like a sick joke.
+Scars are carved on our body, engraved in our heart, leaving every soul broken. Heart was kindered and then banished once and once again, like Sisyphus' punishment.
 
-I only wish to catch a glimpse of my own life, joyful or not, before the memory fades away, along with the past.
+The past is a tomb. We have buried it, but still need to let go. So how do we truly finish our business with it? We write down an epitaph. An epilogue, a farewell to an old friend. - That is the point of this site.
+
+I only wish to catch a glimpse of my own life, joyful or not, before the memory fades away, along with my past.
 
 ## "To see the world as it is and to love it."
 
 
-
-
----
 
 *With all the best,*
 ***QSD***
