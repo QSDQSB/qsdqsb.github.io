@@ -6,6 +6,6 @@ collection: portfolio
 author_profile: false
 date: 2021-02-18
 header:
-  overlay_image: OxfordChurchStar1-4v1.jpg
+  overlay_image: TeddyMoon.jpg
 ---
 
