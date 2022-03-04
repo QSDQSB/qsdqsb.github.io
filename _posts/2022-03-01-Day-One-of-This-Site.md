@@ -2,7 +2,7 @@
 title: "Day One"
 date: 2022-03-01
 permalink: /posts/2022/03/day-one/
-excerpt: "Where it all begins, and where it all ends."
+excerpt: "Everything faded into mist."
 tags:
   - 📘Diary
   - 😢Emo
