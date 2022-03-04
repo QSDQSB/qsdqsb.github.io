@@ -6,6 +6,7 @@
 # `jekyll serve`. If you change this file, please restart the server process.
 
 # Site Settings
+minimal_mistakes_skin: "neon"
 locale                   : "en-US"
 title                    : "QSD's Houses of Wonders"
 title_separator          : "-"
@@ -49,6 +50,7 @@ staticman:
 atom_feed:
   path                   : # blank (default) uses feed.xml
 
+search: true
 # SEO Related
 google_site_verification :
 bing_site_verification   :
