@@ -10,10 +10,10 @@ header:
   overlay_filter: 0.1
   caption: "Xujiahui, Shanghai, 18/7/2021"
 gallery:
-  - url: /images/Food-heytea-ice-cream.jpg
+  - url: Food-heytea-ice-cream.jpg
     image_path: Food-heytea-ice-cream.jpg
     title: "Ice Cream at HeyTea"
-  - url: /images/MotchaIceCream-3v1.jpg
+  - url: MotchaIceCream-3v1.jpg
     image_path: MotchaIceCream-3v1.jpg
     title: "Motcha"
 ---
