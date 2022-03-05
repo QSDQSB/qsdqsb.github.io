@@ -7,8 +7,7 @@ redirect_from:
   - /about.html
 header:
   overlay_image: QSD_Night_4v1.jpg
-class: wide
-toc: false
+
 ---
 
 ----------
@@ -70,7 +69,7 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
 #### Maths Dinner
 
 1. 迫于某人压力，某人本学年第一次Formal穿皮鞋。
-2. 
+2. 某人旁边坐着的4个PhD专攻四个不同的数学领域，异口同声劝某人PhD不要选择他们自己的领域。
 
 ### 2022.3.1
 
@@ -81,4 +80,4 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
 ### 2022.2.28
 
 
-
+{% include toc icon="cog" title="My Table of Contents" %}
