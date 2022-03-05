@@ -1,13 +1,20 @@
 ---
-title: "Oxford Formal评测"
+title: "How Many Javas?"
 date: 2022-03-02
-permalink: /posts/coffee-counter
+permalink: /posts/2022/03/coffee-counter
 excerpt: "A faithful counter of QSD's coffee consumption since Feb 2, 2021."
 tags:
   - 🐮Ox
   - 🍜Life
   - 😻Happy Moments
+header:
+  overlay_image: Coffee1-3v1.jpg
+  overlay_filter: 0.3
+  caption: "West Lake, Hangzhou, Aug 14, 2021"
 ---
+
+`unit`: per cup
+
 
 ### Feb 2021
 ☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️
