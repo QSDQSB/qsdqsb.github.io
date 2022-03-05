@@ -13,16 +13,14 @@ gallery:
   - url: Food-heytea-ice-cream.jpg
     image_path: Food-heytea-ice-cream.jpg
     title: "Ice Cream at HeyTea"
-  - url: MotchaIceCream-3v1.jpg
-    image_path: MotchaIceCream-3v1.jpg
+  - url: Food-MotchaIcecream.jpg
+    image_path: Food-MotchaIcecream.jpg
     title: "Motcha"
 ---
 
-{% include gallery caption="" %}
 
 ## Sweetness
 
-![](/images/Food-heytea-ice-cream.jpg)
-{: .center}
+{% include gallery caption="" %}
 
 ## Spicyness
