@@ -2,13 +2,13 @@
 permalink: /
 title: "Hi! Meet QSD😵‍💫!"
 author_profile: true
-excerpt: "A nihilist, a procrastinator, a structuralist, an idiot. "
+excerpt: "A procrastinator, a nihilist, a structuralist, an idiot. "
 redirect_from: 
   - /about/
   - /about.html
 header:
   overlay_image: QSD_Night_4v1.jpg
-  overlay_filter: 0.2
+  overlay_filter: 0.25
 ---
 
 ----------
