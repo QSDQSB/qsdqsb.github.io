@@ -11,7 +11,7 @@ header:
   overlay_filter: 0.25
 ---
 
-> ###### Read *[Day one of this site](https://qsdqsb.github.io/posts/2022/03/day-one/)* to see the purpose of this site.
+> #### Read *[Day one of this site](https://qsdqsb.github.io/posts/2022/03/day-one/)* to see the purpose of this site.
 
 ----------
 
