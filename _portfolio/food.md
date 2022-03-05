@@ -13,7 +13,6 @@ header:
 
 ## Sweetness
 
-{% include figure image_path="/images/Food-heytea-ice-cream.jpg" %}
 
 
 ## Spicyness
