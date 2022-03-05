@@ -1,5 +1,5 @@
 ---
-title: "How Many Javas?"
+title: "How Many Javas"
 date: 2022-03-02
 permalink: /posts/2022/03/coffee-counter
 excerpt: "A faithful counter of QSD's coffee consumption since Feb 2, 2021."
@@ -9,11 +9,11 @@ tags:
   - 😻Happy Moments
 header:
   overlay_image: Coffee1-3v1.jpg
-  overlay_filter: 0.3
+  overlay_filter: 0.1
   caption: "West Lake, Hangzhou, 14/8/2021"
 ---
 
-`unit`: per cup
+`unit` per cup
 
 
 ### Feb 2021
@@ -53,3 +53,5 @@ header:
 
 ### Feb 2022
 ☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️
+
+#### TO BE CONTINUED
