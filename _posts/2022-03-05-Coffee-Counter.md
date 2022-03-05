@@ -15,10 +15,6 @@ header:
 
 `unit` per cup
 
-
-{% include video id="BV1su411Q7oY" provider="bilibili" danmaku="1" %}
-
-
 ### Feb 2021
 ☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️☕️
 
