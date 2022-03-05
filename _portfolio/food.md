@@ -9,7 +9,19 @@ header:
   overlay_image: Food-kaoyu1-3v1.jpg
   overlay_filter: 0.1
   caption: "Xujiahui, Shanghai, 18/7/2021"
+gallery:
+  - url: /images/Food-heytea-ice-cream.jpg
+    image_path: /images/Food-heytea-ice-cream.jpg
+    alt: "Ice cream at HeyTea"
+    title: "Ice Cream at HeyTea"
+  - url: /images/MotchaIceCream-3v1.jpg
+    image_path: /images/MotchaIceCream-3v1.jpg
+    alt: "Motcha Ice Cream"
+    title: "Motcha"
+
 ---
+
+{% include gallery caption="This is a sample gallery with **Markdown support**." %}
 
 ## Sweetness
 
