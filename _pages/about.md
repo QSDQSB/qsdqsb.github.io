@@ -8,6 +8,7 @@ redirect_from:
 header:
   overlay_image: QSD_Night_4v1.jpg
 class: wide
+toc: false
 ---
 
 ----------
