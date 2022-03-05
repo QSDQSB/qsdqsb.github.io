@@ -10,7 +10,7 @@ tags:
   - 🗒TODO
 header:
   overlay_image: OxfordSunset1-3v1.jpg
-  caption: "New College, Oxford, Nov 17, 2021"
+  caption: "New College, Oxford, 17/11/2021"
 ---
 
 #TODO
