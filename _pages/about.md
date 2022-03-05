@@ -11,7 +11,7 @@ header:
   overlay_filter: 0.25
 ---
 
-> #### Read *[Day one of this site](https://qsdqsb.github.io/posts/2022/03/day-one/)* to see the purpose of this site.
+> #### Read [Day one of this site](https://qsdqsb.github.io/posts/2022/03/day-one/) to see the purpose of this site.
 
 ----------
 
@@ -22,7 +22,7 @@ header:
 - 🔬24' Maths&Stats at Ox
 - 🦃From [The Queen's College](https://www.queens.ox.ac.uk), whose logo consists of three turkeys
 - [☕️](https://qsdqsb.github.io/posts/2022/03/coffee-counter)Americano addict
-- ⬆️You might trigger something if you try to click the coffee emoji.
+  - ⬆️Might trigger something if you try to click the coffee emoji
 - 📷Photography rookie
 - 🎸Amateur music composer
   - 🎹This guy really used to know piano, but not anymore
@@ -31,11 +31,11 @@ header:
 - 🎮Civilization VI! But suck at it :(
 - 🧱Lego [76042](https://www.lego.com/en-gb/product/the-shield-helicarrier-76042)+[71043](https://www.lego.com/en-gb/product/hogwarts-castle-71043)+[21327](https://www.lego.com/en-gb/product/typewriter-21327)
 - ⚠️The previous red brick has nothing to do with Keble College.
-- 🧙‍♂️Ravenclaw 🦅!
-- 🕶**S.H.I.E.L.D. agent**
-- 📺[Yes Prime Minister](https://www.imdb.com/title/tt0086831/)! [Silicon Valley](https://www.imdb.com/title/tt2575988/)! [R&M](https://www.imdb.com/title/tt2861424/)! [Better Call Saul](https://www.imdb.com/title/tt3032476/)! [Disenchantment](https://www.imdb.com/title/tt5363918/)!
+- 🧙‍♂️𝕽𝖆𝖛𝖊𝖓𝖈𝖑𝖆𝖜🦅
+- 🕶S.H.I.E.L.D. agent
+- 📺[YPM](https://www.imdb.com/title/tt0086831/)! [Silicon Valley](https://www.imdb.com/title/tt2575988/)! [R&M](https://www.imdb.com/title/tt2861424/)! [Better Call Saul](https://www.imdb.com/title/tt3032476/)! [Disenchantment](https://www.imdb.com/title/tt5363918/)!
 - 👾Emoji crusher(as you can see from this page)
-- 🐱**骨灰级猫猫粉**
+- 🐱骨灰级猫猫粉
 - 🐟enjoy *摸鱼* every day
 - 🏃努力减肥中(但愿)
 - 🇨🇳Geographically Hangzhounese, spiritually Shanghainese
@@ -45,6 +45,8 @@ header:
 
 ‼️Note that every picture in this website is shot by QSD himself, or his beloved friends.
 {: .notice--info}
+
+-----
 
 # 每日laughable事件集合+阴阳怪气摘记
 
@@ -69,7 +71,8 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
 #### Maths Dinner
 
 1. 迫于某人压力，某人本学年第一次Formal穿皮鞋。
-2. 某人旁边坐着的4个PhD专攻四个不同的数学领域，异口同声劝某人PhD不要选择他们自己的领域。
+2. 某人旁边坐着4个PhD专攻四个不同领域，异口同声劝某人读PhD，并不要选择他们所在的领域。
+
 
 ### 2022.3.1
 
