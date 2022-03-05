@@ -21,7 +21,8 @@ header:
 - 🤖QSDQSB
 - 🔬24' Maths&Stats at Ox
 - 🦃From [The Queen's College](https://www.queens.ox.ac.uk), whose logo consists of three turkeys
-- ☕️Americano addict
+- [☕️](https://qsdqsb.github.io/posts/2022/03/coffee-counter)Americano addict
+- ⬆️You might trigger something if you try to click the coffee emoji.
 - 📷Photography rookie
 - 🎸Amateur music composer
   - 🎹This guy really used to know piano, but not anymore
