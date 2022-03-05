@@ -10,7 +10,7 @@ tags:
 header:
   overlay_image: Coffee1-3v1.jpg
   overlay_filter: 0.3
-  caption: "West Lake, Hangzhou, Aug 14, 2021"
+  caption: "West Lake, Hangzhou, 14/8/2021"
 ---
 
 `unit`: per cup
