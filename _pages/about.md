@@ -13,12 +13,14 @@ header:
 
 ----------
 
-‼️Note that *every* picture in this website is shot by QSD himself, or his beloved friends.
+‼️Note that every picture in this website is shot by QSD himself, or his beloved friends.
 {: .notice--info}
+
+##### Read *[Day one of this site](https://qsdqsb.github.io/posts/2022/03/day-one/)* to see the purpose of this site.
 
 ----------
 
-| 🐟OX摸鱼王 | ⌚️时间管理废物 | 🏆第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 | 🚦选择恐惧症晚期 | 🤤热衷无所事事+懒癌患者 |
+| 🐟带英摸鱼王 | ⌚️时间管理废物 | 🏆第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 | 🚦选恐晚期 | 🤤热衷无所事事+懒癌患者 |
 ------
 
 - 🤖QSDQSB
