@@ -22,7 +22,7 @@ header:
 - 🔬24' Maths&Stats at Ox
 - 🦃From [The Queen's College](https://www.queens.ox.ac.uk), whose logo consists of three turkeys
 - [☕️](https://qsdqsb.github.io/posts/2022/03/coffee-counter)Americano addict
-  - ⬆️Might trigger something if you try to click the coffee emoji
+  - ⬆️Might trigger something if you click the coffee emoji
 - 📷Photography rookie
 - 🎸Amateur music composer
   - 🎹This guy really used to know piano, but not anymore
@@ -61,26 +61,28 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
 
 ----
 
-- 为保护受害人隐私，以下所有具体姓名均用「某人」代替
+- 为保护受害人/当事人隐私，以下所有具体姓名均用「某人」代替
 - **请自觉对号入座**
-- Normally, `😅` stands for *「草，这人是傻逼吧，这人怎么这么好笑」*
-- 😅某些人起标题，本来简简单单「日记」两个字行了，非得要一堆的冗余废话，大无语。
+- Without further specification, `😅` normally stands for *「草，这人是傻逼吧，这人怎么这么好笑」*
+- 😅某些人起标题，本来简简单单「日记」两个字行了，非得要一堆的冗余废话，无语啊无语。
 
 ----
 
 ### 2022.3.6
 1. 😅某人读R语言代码，把`:`看成`,`，然后瞎质疑半天。
-2. 👍某人全新理论：*「阴阳怪气不是为了满足一己私欲，而是为了满足某些人享受被阴阳怪气的特殊需求」*。
+2. 👍某人全新论断：*「阴阳怪气不是为了满足一己私欲，而是为了满足某些人享受被阴阳怪气的特殊需求」*。
 
 ### 2022.3.5
 1. 🍋我超，Pembroke怎么这么好看啊！
 2. 👎Puregym饮料机不能Apple Pay也太蠢了吧。
-3. 😅某人血染钟塔初级板子和尚，第二夜勇保小恶魔，同夜被刀，之后全程带偏好人。
-4. 😤为什么找不到选恐患者的对应名词啊😤真不把decidophobia当病吗。
+3. 👍某人全新论断：*「能恶心别人的桌游才是好桌游，所以麻将不是好桌游」*。
+4. 😅某人血染钟塔初级板子和尚，第二夜勇保小恶魔，同夜被刀，之后全程带偏好人。 
+5. 😤为什么找不到选恐患者的对应名词啊😤敢情decidophobia不是病吗。
+6. 🥶为什么外面晚上这么冷啊！！！！
 
 
 ### 2022.3.4
-1. 👎Minimal Mistake的documentation写的也太差了吧。
+1. 👎Minimal Mistake的[documentation](https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/)写的也太差了吧。
 2. 😅都第二年大学过半了，某人周五还能忘记订饭，如果这都不算蠢。
 3. 😅某人以`晚上冻死了`为理由逃避gym。
 
@@ -89,16 +91,16 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
 
 #### Maths Dinner
 
-1. 迫于某人压力，某人本学年第一次Formal穿皮鞋。
-2. 某人旁边坐着4个PhD专攻四个不同领域，异口同声劝某人读PhD，并不要选择他们所在的领域。
-3. 某（头发不太多的）Doctor：「我一直都在SCR吃的中饭，从来没有去楼下和那群凡人*（Mortal)*进过食」。
-4. 某人和某人聊天，被夹在两人中间的某希腊人愉快微笑积极加入话题；某人和某人开始聊足球，某希腊人沉默不语，尴尬低头，左手托腮，开始独自进食，尽管碗里没什么吃的。
-
+1. 😵迫于某人压力，某人本学年第一次Formal穿皮鞋。
+2. 😵某人旁边坐着4个PhD专攻四个不同领域，异口同声劝某人读PhD，并不要选择他们所在的领域。
+3. 😵某（头发不太多的）Doctor：「我一直都在SCR吃的中饭，从来没有去楼下和那群凡人*(Mortal)*进过食」。
+4. 😵某人和某人聊天，被夹在两人中间的某希腊人愉快微笑积极加入话题；某人和某人开始聊足球，某希腊人沉默不语，尴尬低头，左手托腮，开始独自进食，尽管碗里没什么吃的。
+å
 
 ### 2022.3.1
 
-
-1. 某人企图纠正某希腊教授π的写法，因为某希腊教授的π写得像n。
+1. 🥸某人企图纠正某希腊教授π的写法，因为某希腊教授的π写得像n。
 2. 😅某人之愚蠢程度再创新高，在5秒内以两种不同原因连续开错两扇门：第一扇推反，第二扇忘了按开关。
+3. 🤩鹅作剧也太好玩了。
 
 ### 2022.2.28
