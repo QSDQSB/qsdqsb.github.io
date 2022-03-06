@@ -11,11 +11,15 @@ header:
   overlay_filter: 0.2
 ---
 
-> ##### Read [Day one of this site](https://qsdqsb.github.io/posts/2022/03/day-one/) to see the purpose of this site.
+> *Read [Day one of this site](https://qsdqsb.github.io/posts/2022/03/day-one/) to see the purpose of this site.*
 
 ----------
 
-## | 🐟摸鱼王 | ⌚️时间管理废物 | 🏆第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 | 🚦选恐晚期 | 🤤热衷无所事事+懒癌患者 |
+## | 🐟摸鱼王 | ⌚️时间管理废物 | 
+{: .text-center}
+## | 🌃第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 | 
+{: .text-center}
+## | 🚦选恐晚期 | 🤤热衷无所事事+懒癌患者 |
 {: .text-center}
 
 
@@ -104,4 +108,4 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
 
 ### 2022.2.28
 
-test latex: $\forall x \in \mathbb{R}, \exists \epsilon >0 s.t. $
+> test latex: $$\forall x \in \mathbb{R}, \exists \,\epsilon >0 \,\,s.t. $$
