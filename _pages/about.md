@@ -8,15 +8,16 @@ redirect_from:
   - /about.html
 header:
   overlay_image: QSD_Night_4v1.jpg
-  overlay_filter: 0.25
+  overlay_filter: 0.2
 ---
 
-> #### Read [Day one of this site](https://qsdqsb.github.io/posts/2022/03/day-one/) to see the purpose of this site.
+> ##### Read [Day one of this site](https://qsdqsb.github.io/posts/2022/03/day-one/) to see the purpose of this site.
 
 ----------
 
-| 🐟带英摸鱼王 | ⌚️时间管理废物 | 🏆第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 | 🚦选恐晚期 | 🤤热衷无所事事+懒癌患者 |
-------
+## | 🐟摸鱼王 | ⌚️时间管理废物 | 🏆第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 | 🚦选恐晚期 | 🤤热衷无所事事+懒癌患者 |
+{: .text-center}
+
 
 - 🤖QSDQSB
 - 🔬24' Maths&Stats at Ox
@@ -102,3 +103,5 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
 3. 🤩鹅作剧也太好玩了。
 
 ### 2022.2.28
+
+test latex: $\forall x \in \mathbb{R}, \exists \epsilon >0 s.t. $
