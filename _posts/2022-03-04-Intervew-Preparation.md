@@ -36,7 +36,6 @@ header:
 - I have a very strong attention to detail. Sometimes, this can turn into a tendency to perfectionism. In the past, I found this leading me to triple-check every item on a spreadsheet, closely **proofread** emails to ensure I’d communicated what I was trying to get across in a clear, concise way, or **fiddle with** the layout of a presentation to ensure that it was perfect. I’ve since learned to successfully budget my time and gauge which tasks require and actually benefit from this level of precision.
 - I used to like to work on one project to its completion before starting on another, but I've learned to work on many projects at the same time, and I think doing so allows me to be more creative and effective in each one.
 
-![image-right, height=200px, width=200px](/images/undraw_to_the_moon_re_q21i.svg){: .align-right}
 
 ### 😫Last-minute
 
@@ -125,3 +124,7 @@ MAIN POINT: **Diversify My Investments, do not put all eggs in one basket.**
     > Stewardship / Integrate
     > 
     - Adjust the portfolio for me, as I am a student and do not have as much time to look into the market as an expert would have.
+
+---
+
+![image-right, height=200px, width=200px](/images/undraw_to_the_moon_re_q21i.svg){: .align-right}
