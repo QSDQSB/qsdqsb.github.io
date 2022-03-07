@@ -115,6 +115,7 @@ blockquote {
 
 /* links */
 
+/*
 a {
   &:focus {
     @extend %tab-focus;
@@ -125,6 +126,40 @@ a {
     outline: 0;
   }
 }
+*/
+
+a::before {  
+  transform: scaleX(0);
+  transform-origin: bottom right;
+}
+​
+a:hover::before {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+​
+a::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  inset: 0 0 0 0;
+  background: rgb(108, 206, 255);
+  z-index: -1;
+  transition: transform .3s ease;
+}
+​
+a {
+  position: relative;
+  font-size: 5rem;
+}
+
+@media (orientation: landscape) {
+  body {
+    grid-auto-flow: column;
+  }
+}
+
 
 /* code */
 
