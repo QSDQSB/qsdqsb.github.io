@@ -128,17 +128,17 @@ a {
 }
 */
 
-a::before {  
+h2,h3::before {  
   transform: scaleX(0);
   transform-origin: bottom right;
 }
 ​
-a:hover::before {
+h2,h3:hover::before {
   transform: scaleX(1);
   transform-origin: bottom left;
 }
 ​
-a::before {
+h2,h3::before {
   content: " ";
   display: block;
   position: absolute;
@@ -149,7 +149,7 @@ a::before {
   transition: transform .3s ease;
 }
 ​
-a {
+h2,h3 {
   position: relative;
   font-size: 5rem;
 }
