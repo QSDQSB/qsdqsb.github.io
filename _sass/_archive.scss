@@ -116,6 +116,7 @@
 .grid__item {
   border-radius: 10px;
   background-color: $code-background-color;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
   margin-bottom: 0.5em;
 
   .page__meta {
@@ -148,10 +149,14 @@
     @include gallery(2.5 of 10);
 
     .archive__item-teaser {
+      margin-left: 0.5em;
+      margin-right: 0.5em;
       max-height: 120px;
     }
 
     .archive__item-excerpt {
+      margin-left: 0.5em;
+      margin-right: 0.5em;
       display: block;
       font-size: $type-size-8;
     }
