@@ -42,6 +42,7 @@ h2 {
 h3 {
   font-size: $type-size-4;
   color: #F38AB5;
+  position: relative;
 }
 
 h4 {
@@ -115,7 +116,7 @@ blockquote {
 
 /* links */
 
-/*
+
 a {
   &:focus {
     @extend %tab-focus;
@@ -126,19 +127,19 @@ a {
     outline: 0;
   }
 }
-*/
 
-h2,h3::before {  
+
+h3::before {  
   transform: scaleX(0);
   transform-origin: bottom right;
 }
 ​
-h2,h3:hover::before {
+h3:hover::before {
   transform: scaleX(1);
   transform-origin: bottom left;
 }
 ​
-h2,h3::before {
+h3::before {
   content: " ";
   display: block;
   position: absolute;
@@ -147,11 +148,6 @@ h2,h3::before {
   background: rgb(108, 206, 255);
   z-index: -1;
   transition: transform .3s ease;
-}
-​
-h2,h3 {
-  position: relative;
-  font-size: 5rem;
 }
 
 @media (orientation: landscape) {
