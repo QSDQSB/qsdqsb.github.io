@@ -4,8 +4,6 @@
 
 .archive {
   margin-bottom: 2em;
-  border-radius: 20px;
-  background-color: $code-background-color;
 
   @include breakpoint($medium) {
     @include span(12 of 12);
@@ -23,7 +21,7 @@
       text-decoration: underline;
 
       img {
-        box-shadow: 0 0 10px rgba(#000, 0.25);
+        box-shadow: 0 0 10px rgba(#aaa, 0.25);
       }
     }
   }
