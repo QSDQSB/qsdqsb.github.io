@@ -91,7 +91,22 @@
       border: 1px solid $border-color;
     }
   }
+
+  animation: pulse 2s infinite;
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(168, 63, 57, 0.2);
+    }
+    70% {
+        box-shadow: 0 0 0 50px rgba(168, 63, 57, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 150px rgba(168, 63, 57, 0);
+    }
+  }
 }
+
+
 
 .author__content {
   display: table-cell;
@@ -127,12 +142,13 @@
   animation: 
   typing 1s steps(20, end) forwards;
   width: 0;
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }
 }
 
-@keyframes typing {
-  from { width: 0 }
-  to { width: 100% }
-}
+
 
 .author__bio {
   margin: 0;
