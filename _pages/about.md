@@ -17,6 +17,7 @@ header:
 
 > `Start from Jan 2022`➡️➡️➡️<a href="https://qsdqsb.github.io/files/Commitments/Commitment_2022_1.pdf" target="_blank">QSD减肥进行时💨💨！！</a>
 
+---
 
 ## | 🌃第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 |<br>| 🐟摸鱼王 | ⌚️时间管理废物 | 🚦选恐晚期 |<br>| 🤤热衷无所事事+懒癌患者 |
 {: .text-center}
@@ -109,3 +110,7 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
 
 > test latex: 
 > $$\forall x \in \mathbb{R}, \exists \,\epsilon >0 \,\,s.t. $$
+
+----
+
+![](/images/QSDLOGO.svg){: .align-center}
