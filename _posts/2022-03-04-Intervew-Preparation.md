@@ -121,9 +121,9 @@ MAIN POINT: **Diversify My Investments, do not put all eggs in one basket.**
 
 - I will consult several financial institutions to for some professional suggestions (GS Private Wealth Management, if possible)`⬅️我超这也太不要脸了`, such that I can make the right call.
     
-    > ####### Stewardship / Integrate
+    > ###### Stewardship / Integrate
     > Adjust the portfolio for me, as I am a student and do not have as much time to look into the market as an expert would have.
 
 ---
 
-![](/images/undraw_to_the_moon_re_q21i.svg)
+![](/images/undraw_to_the_moon_re_q21i.svg){: .align-center}
