@@ -1,7 +1,7 @@
 ---
-title: "9 Reasons for a Person Being a Loser"
+title: "9 Reasons Why You Are a Loser"
 date: 2022-03-06
-permalink: /posts/2022/03/nine-reasons-to-fail
+permalink: /posts/2022/03/nine-reasons-to-be-a-loser
 excerpt: "好耶！全中！我是废物！"
 tags:
   - 🍜Life
