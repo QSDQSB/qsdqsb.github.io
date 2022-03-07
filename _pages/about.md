@@ -13,6 +13,7 @@ header:
 
 #### 置顶公告板
 
+------
 > *关于本网站的目的，请参见这篇文章： <a href="https://qsdqsb.github.io/posts/2022/03/day-one/" target="_blank">Day one of this site</a>。*
 
 > `Start from Jan 2022`➡️➡️➡️<a href="https://qsdqsb.github.io/files/Commitments/Commitment_2022_1.pdf" target="_blank">QSD减肥进行时💨💨！！</a>
@@ -108,9 +109,10 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
 
 ### 2022.2.28
 
-> test latex: 
-> $$\forall x \in \mathbb{R}, \exists \,\epsilon >0 \,\,s.t. $$
+> test $\latex$: 
+
+$$\forall x \in \mathbb{R}, \exists \,\epsilon >0 \,\,s.t. $$
 
 ----
 
-![](/images/QSDLOGO.svg){: .align-center}
+![](/images/QSDLOGO-2000.svg){: .align-center}
