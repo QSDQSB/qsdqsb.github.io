@@ -16,7 +16,7 @@ header:
 ------
 > *关于本网站的目的，请参见这篇文章： <a href="https://qsdqsb.github.io/posts/2022/03/day-one/" target="_blank">Day one of this site</a>。*
 
-> `Start from Jan 2022`➡️➡️➡️<a href="https://qsdqsb.github.io/files/Commitments/Commitment_2022_1.pdf" target="_blank">QSD减肥进行时💨💨！！</a>
+> ➡️➡️➡️<a href="https://qsdqsb.github.io/files/Commitments/Commitment_2022_1.pdf" target="_blank">QSD减肥进行时💨💨！！</a>
 
 ---
 
