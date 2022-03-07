@@ -55,8 +55,8 @@ $lighter-gray               : mix(#fff, $gray, 90%);
 
 $body-color                 : #111;
 $background-color           : #0c0c0c;
-$code-background-color      : #191970;
-$code-background-color-dark : #191970;
+$code-background-color      : #181818;
+$code-background-color-dark : #181818;
 $text-color                 : $lighter-gray;
 $border-color               : $darker-gray;
 $code-color                 : #f92472;
@@ -149,7 +149,7 @@ $susy: (
    ========================================================================== */
 
 $border-radius              : 4px;
-$box-shadow                 : 0 1px 1px rgba(0, 0, 0, 0.75);
+$box-shadow                 : 0 1px 1px rgba(200, 200, 200, 0.5);
 $navicon-width              : 24px;
 $navicon-height             : 4px;
 $global-transition          : all 0.3s ease-in-out;
