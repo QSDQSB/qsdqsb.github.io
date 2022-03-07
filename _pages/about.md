@@ -13,11 +13,10 @@ header:
 
 #### 置顶公告板
 
-*关于本网站的目的，请参见这篇文章： <a href="https://qsdqsb.github.io/posts/2022/03/day-one/" target="_blank">Day one of this site</a>。*
-{: .notice--info}
+> *关于本网站的目的，请参见这篇文章： <a href="https://qsdqsb.github.io/posts/2022/03/day-one/" target="_blank">Day one of this site</a>。*
 
-`Start from Jan 2022`➡️➡️➡️<a href="https://qsdqsb.github.io/files/Commitments/Commitment_2022_1.pdf" target="_blank">QSD减肥进行时💨💨！！</a>
-{: .notice--danger}
+> `Start from Jan 2022`➡️➡️➡️<a href="https://qsdqsb.github.io/files/Commitments/Commitment_2022_1.pdf" target="_blank">QSD减肥进行时💨💨！！</a>
+
 
 ## | 🌃第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 |<br>| 🐟摸鱼王 | ⌚️时间管理废物 | 🚦选恐晚期 |<br>| 🤤热衷无所事事+懒癌患者 |
 {: .text-center}
