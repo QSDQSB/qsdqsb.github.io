@@ -90,6 +90,12 @@
    ========================================================================== */
 
 .list__item {
+  border-radius: 15px;
+  background-color: $code-background-color;
+  margin-bottom: 0.5em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  
   @include breakpoint($medium) {
     padding-right: $right-sidebar-width-narrow;
   }
@@ -114,8 +120,10 @@
 
 .grid__item {
   border-radius: 15px;
-  background-color:cornflowerblue;
-  margin-bottom: 2em;
+  background-color: $code-background-color;
+  margin-bottom: 0.5em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
 
   .page__meta {
     margin: 0 0 4px;
