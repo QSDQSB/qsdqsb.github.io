@@ -17,7 +17,7 @@ header:
 {: .notice--info}
 
 ➡️➡️➡️<a href="https://qsdqsb.github.io/files/Commitments/Commitment_2022_1.pdf" target="_blank">QSD减肥进行时💨💨！！</a>
-{: .notice--warning}
+{: .notice--danger}
 
 ----------
 

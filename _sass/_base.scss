@@ -144,6 +144,8 @@ figcaption > code,
 td > code {
   padding-top: 0.1rem;
   padding-bottom: 0.1rem;
+  color: $code-color;
+  font-size: $type-code-size;
   background: $code-background-color;
   border: 1px solid $lighter-gray;
   border-radius: $border-radius;
