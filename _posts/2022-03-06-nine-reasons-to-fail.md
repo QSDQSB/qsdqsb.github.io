@@ -1,5 +1,5 @@
 ---
-title: "9 Reasons of a person being a loser"
+title: "9 Reasons for a Person Being a Loser"
 date: 2022-03-06
 permalink: /posts/2022/03/nine-reasons-to-fail
 excerpt: "好耶！全中！我是废物！"
