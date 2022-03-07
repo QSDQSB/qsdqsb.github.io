@@ -36,7 +36,7 @@ header:
 - I have a very strong attention to detail. Sometimes, this can turn into a tendency to perfectionism. In the past, I found this leading me to triple-check every item on a spreadsheet, closely **proofread** emails to ensure I’d communicated what I was trying to get across in a clear, concise way, or **fiddle with** the layout of a presentation to ensure that it was perfect. I’ve since learned to successfully budget my time and gauge which tasks require and actually benefit from this level of precision.
 - I used to like to work on one project to its completion before starting on another, but I've learned to work on many projects at the same time, and I think doing so allows me to be more creative and effective in each one.
 
-![image-right](/images/undraw_to_the_moon_re_q21i.svg){: .align-right}
+![image-right, height=200px, width=200px](/images/undraw_to_the_moon_re_q21i.svg){: .align-right}
 
 ### 😫Last-minute
 
@@ -53,7 +53,7 @@ header:
 ---
 ### Q: How many tennis balls can fit a room✅
 
-> Pro Tip ***It is the approach that matters in such type of a problem as the interviewer is interested to know your problem solving ability and how you structure your thoughts and synthesise numbers to get an approx. answer.***
+> `Pro Tip` ***It is the approach that matters in such type of a problem as the interviewer is interested to know your problem solving ability and how you structure your thoughts and synthesise numbers to get an approx. answer.***
 
 
 #### Step 1: Clarify the Question
