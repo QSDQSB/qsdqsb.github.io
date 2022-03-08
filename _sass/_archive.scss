@@ -158,18 +158,19 @@
 }
 
 .container .card .sci {
+  position: absolute;
 	display: flex;
 }
 
 .container .card .sci {
 	margin: 0 10px;
-	transform: translateX(10px);
+	transform: translateY(10px);
 	transition: 1s;
 	opacity: 0;
 }
 
 .container .card:hover .sci {
-	transform: translateX(0px);
+	transform: translateY(0px);
 	opacity: 1;
 }
 
