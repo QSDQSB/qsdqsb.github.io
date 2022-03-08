@@ -131,6 +131,7 @@
     margin-right: 0.5em;
     margin-top: 0.5em;
     font-size: $type-size-6;
+    transition: 0.5s;
   }
 
   .archive__item-excerpt {
@@ -162,6 +163,7 @@
       margin-right: 0.5em;
       display: block;
       font-size: $type-size-8;
+      transition: 0.5s;
     }
   }
 }
