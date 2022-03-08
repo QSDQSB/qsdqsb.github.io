@@ -115,8 +115,6 @@
 	position: relative;
 	z-index: 1;
 	display: flex;
-	justify-content: center;
-	align-items: center;
 	flex-wrap: wrap;
 	margin: 40px 0;
 }
@@ -130,17 +128,12 @@
 	box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 	border-radius: 15px;
 	display: flex;
-	justify-content: center;
-	align-items: center;
 	backdrop-filter: blur(10px);
 }
 
 .container .card .content {
 	position: relative;
 	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
 	transition: 0.5s;
 }
 
@@ -149,7 +142,6 @@
 }
 
 .container .card .content .contentBx h3 {
-	text-align: center;
 	margin: 20px 0 10px;
 }
 
