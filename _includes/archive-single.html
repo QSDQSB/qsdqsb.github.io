@@ -65,6 +65,7 @@
     </div>
 
       {% if post.excerpt %}
-      <p class="sci" itemprop="description">{{ post.excerpt | markdownify }}</p>
+      <h6 class="sci" itemprop="description">{{ post.excerpt | markdownify }}</h6>
       {% endif %}
+
   </div>
