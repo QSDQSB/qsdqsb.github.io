@@ -125,12 +125,14 @@
 	box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 	border-radius: 15px;
 	backdrop-filter: blur(10px);
+  padding: 1em;
+  text-indent: 2px;
 }
 
 .container .card .content {
 	position: relative;
 	transition: 0.5s;
-  padding: 5px;
+  padding: 1em;
 }
 
 .container .card:hover .content {
@@ -145,7 +147,6 @@
 	text-transform: initial;
 }
 .container .card .content h6 {
-  text-indent: 1px;
   color: #f0f0f0cc;
 }
 
