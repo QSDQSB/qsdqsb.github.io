@@ -74,7 +74,7 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
 
 ----
 ### 2022.3.7
-1. 某人：`I am ill, my head is spinning.`  某人：`Literally or metaphorically?`
+1. 某人: "I am ill, my head is spinning." - 另一个某人: "Literally or metaphorically?"
 
 ### 2022.3.6
 1. 😅某人读R语言代码，把`:`看成`,`，然后瞎质疑半天。
