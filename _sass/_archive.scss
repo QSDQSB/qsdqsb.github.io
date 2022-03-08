@@ -148,7 +148,10 @@
 .container .card .content .contentBx h3 span {
 	text-transform: initial;
 }
-
+.container .card h6 {
+  text-indent: 1px;
+  color: #f0f0f0cc;
+}
 .container .card .sci {
   position: absolute;
 	display: flex;
