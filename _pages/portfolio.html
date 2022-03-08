@@ -10,7 +10,16 @@ header:
 ---
 {% include base_path %}
 
+<section>
+  <div class="container">
+    {% for post in site.portfolio reversed%}
+    {% include archive-single.html %}
+    {% endfor %}
+  </div>
+</section>
 
+<!--
 {% for post in site.portfolio reversed%}
-  {% include archive-single.html %}
+{% include archive-single.html %}
 {% endfor %}
+-->
