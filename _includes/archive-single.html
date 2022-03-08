@@ -64,9 +64,7 @@
       </div>
     </div>
 
-    <h5 class="sci">
       {% if post.excerpt %}
-      <p class="archive__item-excerpt" itemprop="description">{{ post.excerpt | markdownify }}</p>
+      <p class="sci" itemprop="description">{{ post.excerpt | markdownify }}</p>
       {% endif %}
-    </h5>
   </div>
