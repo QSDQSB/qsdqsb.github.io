@@ -157,19 +157,14 @@
 	text-transform: initial;
 }
 
-.container .card .sci {
-	position: absolute;
-	display: flex;
-}
-
-.container .card .sci li {
+.container .card li {
 	margin: 0 10px;
 	transform: translateY(30px);
 	transition: 0.5s;
 	opacity: 0;
 }
 
-.container .card:hover .sci li {
+.container .card:hover li {
 	transform: translateY(0px);
 	opacity: 1;
 }
