@@ -2,7 +2,7 @@
 permalink: /
 title: "Hi! Meet QSD😵‍💫!"
 author_profile: true
-excerpt: "A procrastinator, a nihilist, a structuralist, an idiot. "
+excerpt: "A procrastinator, a nihilist, a deconstructionist, an idiot. "
 redirect_from: 
   - /about/
   - /about.html
