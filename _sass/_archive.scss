@@ -111,7 +111,7 @@
 /* zidingyi */
 
 
-section::before {
+.container::before {
 	content: '';
 	position: absolute;
 	top: 0;
@@ -122,7 +122,7 @@ section::before {
 	clip-path: circle(30% at right 70%);
 }
 
-section::after {
+.container::after {
 	content: '';
 	position: absolute;
 	top: 0;
@@ -174,16 +174,11 @@ section::after {
 .container .card .content .contentBx h3 {
 
 	letter-spacing: 2px;
-	font-weight: 500;
-	font-size: 18px;
 	text-align: center;
 	margin: 20px 0 10px;
-	line-height: 1.1em;
 }
 
 .container .card .content .contentBx h3 span {
-	font-size: 12px;
-	font-weight: 300;
 	text-transform: initial;
 }
 
