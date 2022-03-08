@@ -122,7 +122,6 @@
 .container .card {
 	position: relative;
 	width: 100%;
-	min-height: 200px;
 	background: rgba(255, 255, 255, 0.05);
 	margin: 20px;
 	box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
@@ -135,6 +134,7 @@
 	position: relative;
 	display: flex;
 	transition: 0.5s;
+  padding: 5px;
 }
 
 .container .card:hover .content {
