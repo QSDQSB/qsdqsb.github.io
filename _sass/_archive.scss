@@ -164,13 +164,13 @@
 
 .container .card .sci {
 	margin: 0 10px;
-	transform: translateY(10px);
+	transform: translateX(10px);
 	transition: 1s;
 	opacity: 0;
 }
 
 .container .card:hover .sci {
-	transform: translateY(0px);
+	transform: translateX(0px);
 	opacity: 1;
 }
 
