@@ -114,8 +114,6 @@
 .container {
 	position: relative;
 	z-index: 1;
-	display: flex;
-	flex-wrap: wrap;
 	margin: 40px 0;
 }
 
@@ -126,13 +124,11 @@
 	margin: 20px;
 	box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 	border-radius: 15px;
-	display: flex;
 	backdrop-filter: blur(10px);
 }
 
 .container .card .content {
 	position: relative;
-	display: flex;
 	transition: 0.5s;
   padding: 5px;
 }
@@ -151,10 +147,6 @@
 .container .card .content h6 {
   text-indent: 1px;
   color: #f0f0f0cc;
-}
-.container .card .sci {
-  position: absolute;
-	display: flex;
 }
 
 .container .card .sci {
