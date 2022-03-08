@@ -64,7 +64,7 @@
       </div>
     </div>
 
-    <h6 class="sci">
+    <p class="sci">
 
       {% if post.excerpt and site.read_more != 'enabled' %}
       <p class="archive__item-excerpt" itemprop="description">{{ post.excerpt | markdownify }}</p>
@@ -80,5 +80,5 @@
         <p>Download <a href=" {{ post.paperurl }} "><u>here</u></a></p>
       {% endif %}
 
-    </h6>
+    </p>
   </div>
