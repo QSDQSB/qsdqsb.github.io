@@ -217,18 +217,10 @@
       margin-right: 0.5em;
       display: block;
       font-size: $type-size-8;
-      transition: 0.5s;
     }
   }
 }
 
-.grid__item:hover .archive__item-title {
-	transform: translateY(-10px);
-}
-
-.grid__item:hover .archive__item-excerpt {
-	transform: translateY(-10px);
-}
 /*
    Features
    ========================================================================== */
