@@ -46,7 +46,7 @@
               {% endif %}
             </h3>
             
-            <!--
+            
               {% if post.read_time %}
               <p class="page__meta"><i class="fa fa-clock-o" aria-hidden="true"></i> {% include read-time.html %}</p>
             {% endif %}
@@ -58,12 +58,12 @@
                 {% elsif post.date %}
                  <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].date_label | default: "Published:" }}</strong> <time datetime="{{ post.date | default: "1900-01-01" | date_to_xmlschema }}">{{ post.date | default: "1900-01-01" | date: "%B %d, %Y" }}</time></p>
                 {% endif %}
-            -->
+            
           </article>
         </div>
       </div>
     </div>
-    
+
     <h6 class="sci">
 
       {% if post.excerpt and site.read_more != 'enabled' %}
