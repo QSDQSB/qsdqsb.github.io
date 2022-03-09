@@ -129,7 +129,7 @@
   width:auto
 }
 
-.container .card {
+.card {
 
 	background: rgba(255, 255, 255, 0.05);
 	border-radius: 1em;
@@ -140,7 +140,7 @@
   width: 100%;
   height: 12em;
 
-  --bg-filter-opacity: 0.4;
+  --bg-filter-opacity: 0.6;
 
   background-size: cover;
   background-position: center;
@@ -149,43 +149,44 @@
 	position: relative;
   overflow: hidden;
   text-decoration: none;
-
-  transition: all, var(--transition-time);
+  transition: var(--transition-time);
 }
 
-.container .card:hover {
+.card:hover {
   text-decoration: none;
-  background-image: linear-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.2)), var(--bg-img);
+  background-image: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.3)), var(--bg-img);
 }
 
-.container .card:hover .content {
+.card .content {
+  transform: translateY(0px);
+}
+.card:hover .content {
 	transform: translateY(-10px);
 }
 
-.container .card h3 {
+.card h3 {
   font-size: $type-size-2;
   color: $text-color;
   font-family: $global-font-family;
   text-decoration: none;
-  transition: all, var(--transition-time);
+  transition: var(--transition-time);
 
 }
 
-.container .card p, a {
+.card p, a {
   font-size: $type-size-8;
   color: $text-color;
   text-decoration: none;
 }
 
-.container .card .content h6 {
+.card .content h6 {
   color: #f0f0f0cc;
 }
-
-.container .card .content .tags {
+ .card .content .tags {
   display: flex;
 }
 
-.container .card .tags .tag {
+.card .tags .tag {
     font-size: $type-code-size;
     font-family: $tag-font-family;
     background: rgba(20, 2, 2, 0.5);
@@ -193,23 +194,19 @@
     padding: 0 0.5em;
     margin-right: 0.5em;
     line-height: 1.5em;
-    transition: all, var(--transition-time);
+    transition: var(--transition-time);
 }
 
-
-.container .card:hover .tags .tag {
+.card:hover .tags .tag {
   background: var(--color);
   color: white;
 }
-
-.container .card .date {
+.card .date {
   font-family: $tag-font-family;
   position: absolute;
   bottom: 0;
   right: 0;
-  padding: 0 0.5em;
   border-radius: 0.3rem;
-
   line-height: 1.5em;
   opacity: .95;
   text-decoration: none;
@@ -218,15 +215,14 @@
 }
 
 
-.container .card .sci {
+.card .sci {
   text-decoration: none;
 	transform: translateY(10px);
 	transition: var(--transition-time);
 	opacity: 0;
 }
 
-
-.container .card:hover .sci {
+.card:hover .sci {
   text-decoration: none;
 	transform: translateY(0px);
 	opacity: 1;
