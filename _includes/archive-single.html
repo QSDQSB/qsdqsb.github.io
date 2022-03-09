@@ -21,8 +21,6 @@
   {% assign teaser = teaser | prepend: "/images/" | prepend: base_path %}
 {% endif %}
 
-{% capture overlay_img %}{{post.header.overlay_image}}{% endcapture %}
-{% assign ovl_img = overlay_img | prepend: "/images/" %}
 {% assign ovl_address = ")" | prepend: teaser | prepend: "--bg-img: url(" %}
 
 
@@ -45,8 +43,7 @@
               <a href="{{ base_path }}{{ post.url }}" rel="permalink">{{ title }}</a>
             {% endif %}
           </h3>
-          
-          <p>{{ovl_address}}</p>
+
 
           {% if post.read_time %}
             <p class="page__meta"><i class="fa fa-clock-o" aria-hidden="true"></i> {% include read-time.html %}</p>
