@@ -107,7 +107,6 @@
 .container {
 	position: relative;
 	z-index: 1;
-	margin: 40px 0;
   display: grid;
   grid-gap: 2rem;
   grid-template-columns: 1fr 1fr;
@@ -136,7 +135,8 @@
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 	position: relative;
   overflow: hidden;
-  transition: var(--transition-time);
+  transition: all, var(--transition-time);
+
   text-decoration: none;
 }
 
@@ -156,7 +156,6 @@
   font-size: $type-size-3;
   color: $text-color;
   font-family: $global-font-family;
-  transition: var(--transition-time);
 }
 
 .card p {
@@ -165,17 +164,18 @@
 }
 
  .card .tags {
-  display: flex;
+  display: grid;
+  grid-template-rows: min-content;
 }
 
 .card .tags .tag {
     font-size: $type-code-size;
     font-family: $tag-font-family;
     background: rgba(20, 2, 2, 0.5);
-    border-radius: 0.3rem;
+    border-radius: 0.2rem;
     padding: 0 0.5em;
     margin-right: 0.5em;
-    line-height: 1.5em;
+    line-height: 1em;
 }
 
 .card:hover .tags .tag {
