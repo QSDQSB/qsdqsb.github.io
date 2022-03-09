@@ -21,9 +21,7 @@
   {% assign teaser = {{ teaser | prepend: "/images/" | prepend: base_path }} %}
 {% endif %}
 
-<a target="_blank" href="{{ base_path }}{{ post.url }}" rel="permalink">{{ title }}</a>
-
-  <div class="card" style="--bg-img: url=( {{ teaser }} )" >
+  <div class="card" style="background-image: url('https://qsdqsb.github.io/images/LondonNight1-3v1.jpg')" >
     <div class="content">
       <div class="contentBx">
         <div class="{{ include.type | default: "list" }}__item">
@@ -67,5 +65,3 @@
 
 
   </div>
-
-  </a>
