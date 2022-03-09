@@ -33,19 +33,13 @@
 <a class="card" href={{ post_link }} style="{{ ovl_address }}" >
     <div class="content">
       <div>
-          {% if include.type == "grid" and teaser %}
-            <div class="archive__item-teaser">
-              <img src= {{ teaser }} alt="">
-            </div>
-          {% endif %}
       
           <h3>{{ title }}</h3>
           
-          <p>{{ post.url }}</p>
-
           {% if post.read_time %}
             <p> {% include read-time.html %}</p>
-          {% endif %}      
+          {% endif %}
+
       </div>
       <div class="tags">
         <div class="tag">test</div> <div class="tag">Test2</div>
