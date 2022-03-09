@@ -21,7 +21,7 @@
   {% assign teaser = {{ teaser | prepend: "/images/" | prepend: base_path }} %}
 {% endif %}
 
-  {% assign teaser_style = {{ ")"  | prepend: teaser | prepend: "--bg-img: url(" }} %}
+  {% assign teaser_style = {{ "(" | prepend: teaser | prepend: "--bg-img: url(" }} %}
 
 
 
@@ -45,7 +45,8 @@
           </h3>
           
           <p>{{teaser_style}}</p>
-          
+          <p>post.overlay_image</p>
+
           {% if post.read_time %}
             <p class="page__meta"><i class="fa fa-clock-o" aria-hidden="true"></i> {% include read-time.html %}</p>
           {% endif %}
