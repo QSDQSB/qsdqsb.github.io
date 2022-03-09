@@ -448,10 +448,10 @@
 .container .card:hover span::before
 {
   top: -50px;
-  left: 50px;
-  width: 200px;
+  left: -50px;
+  width: 250px;
   height: 250px;
-  opacity: 1;
+  opacity: 0.8;
 }
 
 .container .card span::after
@@ -485,12 +485,12 @@
 {
   0%, 100%
   {
-    transform: translateY(10px);
+    transform: translateY(25px);
   }
   
   50%
   {
-    transform: translate(-10px);
+    transform: translate(-25px);
   }
 }
 
