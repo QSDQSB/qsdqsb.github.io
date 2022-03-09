@@ -11,8 +11,7 @@ header:
   caption: "South Park, Oxford, 25/11/2021"
 ---
 
-> We live in a twilight world,
->
+> We live in a twilight world,  
 > and there are no friends at dusk.
 
 ### South Park, Oxford, 25/11/2021
