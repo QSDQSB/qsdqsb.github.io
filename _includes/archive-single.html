@@ -36,7 +36,7 @@
             </div>
           {% endif %}
       
-          <h3 class="archive__item-title" itemprop="headline">
+          <h3>
             {% if post.link %}
               <a href="{{ post.link }}">{{ title }}</a> 
             {% else %}
@@ -46,7 +46,7 @@
 
 
           {% if post.read_time %}
-            <p><i class="fa fa-clock-o" aria-hidden="true"></i> {% include read-time.html %}</p>
+            <p> {% include read-time.html %}</p>
           {% endif %}
           {% if post.date %}
             <p><time datetime="{{ post.date | default: "1900-01-01" | date_to_xmlschema }}">{{ post.date | default: "1900-01-01" | date: "%B %d, %Y" }}</time></p>
