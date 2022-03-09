@@ -464,10 +464,10 @@
   border-radius: 8px;
   background: inherit;
   backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(10px);
   opacity: 0;
   transition: 0.5s;
-  animation: animate 2s ease-in-out infinite;
+  animation: animate 4s ease-in-out infinite;
   box-shadow: 0 5px 15px rgba(0,0,0,0.08);
   animation-delay: -1s;
   border: 1px solid rgba(255, 255, 255, 0.33);
@@ -479,7 +479,7 @@
   right: 25px;
   width: 50px;
   height: 50px;
-  opacity: 0.75;
+  opacity: 1;
 }
 
 @keyframes animate
