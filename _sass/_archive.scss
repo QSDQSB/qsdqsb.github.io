@@ -180,6 +180,8 @@
 .card:hover .tags .tag {
   background: var(--color);
   color: white;
+  width: min-content;
+  height: min-content;
 }
 .card .date {
   font-family: $tag-font-family;
