@@ -36,15 +36,13 @@
       
           <h3>{{ title }}</h3>
           
-         
+          {% if post.read_time %}
+            <p> {% include read-time.html %}</p>
+          {% endif %}
 
       </div>
       <div class="tags">
-        {% if post.read_time %}
-        <div class="tag"> 
-          <p>{% include read-time.html %}</p>
-        </div>
-      {% endif %}
+
       </div>
       <div class="sci">
         {% if post.excerpt %}
@@ -55,7 +53,7 @@
     </div>
     <div class="date">
       {% if post.date %}
-      {{ post.date | date: "%m/%d/%Y" }}
-        {% endif %}
+      <d>{{ post.date | date: "%d/%m/%Y" }}</d>
+      {% endif %}
     </div>
   </a>
