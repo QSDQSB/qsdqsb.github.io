@@ -1,7 +1,7 @@
 ---
-title: "Art Gallery"
+title: "Art"
 excerpt: "The earth has music for those who listen."
-permalink: /portfolio/art-gallery
+permalink: /portfolio/art
 collection: portfolio
 author_profile: false
 date: 2021-10-18
