@@ -52,7 +52,10 @@
       </div>
 
     </div>
+
+    <div class="date">
       {% if post.date %}
-      <p class="date">{{ post.date | date: "%d/%m/%Y" }}</p>
-      {% endif %}
+          <p><time datetime="{{ post.date | default: "1900-01-01" | date_to_xmlschema }}">{{ post.date | default: "1900-01-01" | date: "%B %d" }}</time></p>
+        {% endif %}
+    </div>
   </a>
