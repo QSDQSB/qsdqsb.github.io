@@ -155,7 +155,7 @@
 
 .container .card:hover {
   text-decoration: none;
-  background-image: linear-gradient(rgba(0,0,0,var(--bg-filter-opacity)),rgba(0,0,0,var(--bg-filter-opacity*0.5))), var(--bg-img);
+  background-image: linear-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.2)), var(--bg-img);
 }
 
 .container .card:hover .content {
