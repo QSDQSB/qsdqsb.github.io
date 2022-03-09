@@ -48,15 +48,17 @@
           {% if post.read_time %}
             <p> {% include read-time.html %}</p>
           {% endif %}
-          {% if post.date %}
-            <p><time datetime="{{ post.date | default: "1900-01-01" | date_to_xmlschema }}">{{ post.date | default: "1900-01-01" | date: "%B %d, %Y" }}</time></p>
-          {% endif %}
+          
 
           
         </article>
       </div>
 
-      <div class="date">{{post.date}}</div>
+      <div class="date">
+        {% if post.date %}
+            <p><time datetime="{{ post.date | default: "1900-01-01" | date_to_xmlschema }}">{{ post.date | default: "1900-01-01" | date: "%B %d, %Y" }}</time></p>
+          {% endif %}
+      </div>
       <div class="tags">
         <div class="tag">
           #TEST
