@@ -167,20 +167,17 @@
   text-decoration: none;
 }
 
-.container .card h3 span {
-	text-transform: initial;
-}
 .container .card .content h6 {
   color: #f0f0f0cc;
 }
 
 .container .card .content .tags {
-  font-family: $tag-font-family;
   display: flex;
 }
 
 .container .card .tags .tag {
     font-size: $type-code-size;
+    font-family: $tag-font-family;
     background: rgba(20, 2, 2, 0.5);
     border-radius: 0.3rem;
     padding: 0 0.5em;
@@ -195,7 +192,7 @@
   color: white;
 }
 
-.container .card .content .date {
+.container .card .date {
   font-family: $tag-font-family;
   position: absolute;
   bottom: 0;
@@ -203,10 +200,12 @@
   padding: 1em;
   line-height: 1em;
   opacity: .8;
+  text-decoration: none;
 }
 
 
 .container .card .sci {
+  text-decoration: none;
 	transform: translateY(10px);
 	transition: var(--transition-time);
 	opacity: 0;
