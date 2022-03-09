@@ -126,7 +126,7 @@
   padding: 2rem;
   margin: 0 auto;
   flex-wrap: wrap;
-  width:auto
+  width:auto;
 }
 
 .card {
@@ -153,8 +153,7 @@
 }
 
 .card:hover {
-  text-decoration: none;
-  background-image: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.3)), var(--bg-img);
+  background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)), var(--bg-img);
 }
 
 .card .content {
@@ -173,10 +172,9 @@
 
 }
 
-.card p, a {
+.card p {
   font-size: $type-size-8;
   color: $text-color;
-  text-decoration: none;
 }
 
 .card .content h6 {
@@ -204,26 +202,21 @@
 .card .date {
   font-family: $tag-font-family;
   position: absolute;
-  bottom: 0;
+  bottom: -1em;
   right: 0;
-  border-radius: 0.3rem;
   line-height: 1.5em;
   opacity: .95;
   text-decoration: none;
-  background: rgba(200, 200, 200, 0.1);
-  border-radius: 0.3rem;
 }
 
 
 .card .sci {
-  text-decoration: none;
 	transform: translateY(10px);
 	transition: var(--transition-time);
 	opacity: 0;
 }
 
 .card:hover .sci {
-  text-decoration: none;
 	transform: translateY(0px);
 	opacity: 1;
 }
