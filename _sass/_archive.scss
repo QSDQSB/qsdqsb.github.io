@@ -148,6 +148,8 @@
 	position: relative;
   overflow: hidden;
   text-decoration: none;
+
+  transition: all, var(--transition-time);
 }
 
 .container .card:hover .content {
@@ -197,10 +199,12 @@
   position: absolute;
   bottom: 0;
   right: 0;
-  padding: 1em;
+  padding: 0.2em;
   line-height: 1em;
-  opacity: .8;
+  opacity: .95;
   text-decoration: none;
+  background: rgba(200, 200, 200, 0.2);
+  border-radius: 0.3rem;
 }
 
 
