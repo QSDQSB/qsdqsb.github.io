@@ -15,5 +15,11 @@ header:
 >
 > and there are no friends at dusk.
 
+### South Park, Oxford, 25/11/2021
 ![full](/images/20220226/Twilight2.jpg)
 {: .full}
+
+### West Lake, Hangzhou, 31/8/2021
+![full](/images/WestLakeSunset1.jpg)
+{: .full}
+
