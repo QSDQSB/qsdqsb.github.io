@@ -36,13 +36,15 @@
       
           <h3>{{ title }}</h3>
           
-          {% if post.read_time %}
-            <p> {% include read-time.html %}</p>
-          {% endif %}
+         
 
       </div>
       <div class="tags">
-
+        {% if post.read_time %}
+        <div class="tag"> 
+          <p>{% include read-time.html %}</p>
+        </div>
+      {% endif %}
       </div>
       <div class="sci">
         {% if post.excerpt %}
@@ -53,7 +55,7 @@
     </div>
     <div class="date">
       {% if post.date %}
-          <p><time datetime="{{ post.date | default: "1900-01-01" | date_to_xmlschema }}">{{ post.date | default: "1900-01-01" | date: "%B %d, %Y" }}</time></p>
+      {{ post.date | date: "%m/%d/%Y" }}
         {% endif %}
     </div>
   </a>
