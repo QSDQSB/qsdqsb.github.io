@@ -15,21 +15,20 @@
 {% else %}
   {% assign title = post.title %}
 {% endif %}
+{% if teaser contains "://" %}
+  {% assign teaser = "{{ teaser }}" %}
+{% else %}
+  {% assign teaser = "{{ teaser | prepend: "/images/" | prepend: base_path }}" %}
+{% endif %}
 
-  <div class="card" href="{{ post.link }}" style="--bg-img: url=({{ teaser | prepend: "/images/" | prepend: base_path }})">
+  <div class="card" href="{{ post.link }}" style="--bg-img: url=("+ {{ teaser }} +")" >
     <div class="content" href="{{ post.link }}">
       <div class="contentBx">
         <div class="{{ include.type | default: "list" }}__item">
           <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
             {% if include.type == "grid" and teaser %}
               <div class="archive__item-teaser">
-                <img src= 
-                  {% if teaser contains "://" %}
-                   {% "{{ teaser }}" %}
-                 {% else %}
-                 {% "{{ teaser | prepend: "/images/" | prepend: base_path }}" %}
-              {% endif %}
-               alt="">
+                <img src= {{teaser}} alt="">
               </div>
             {% endif %}
         
