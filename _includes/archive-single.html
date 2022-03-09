@@ -27,9 +27,7 @@
 
   <div class="card" style= "{{ ovl_address }}" >
     <div class="content">
-
-      <div class="contentBx">
-        <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+      <div>
           {% if include.type == "grid" and teaser %}
             <div class="archive__item-teaser">
               <img src= {{ teaser }} alt="">
@@ -47,11 +45,7 @@
 
           {% if post.read_time %}
             <p> {% include read-time.html %}</p>
-          {% endif %}
-          
-
-          
-        </article>
+          {% endif %}      
       </div>
 
       <div class="date">
