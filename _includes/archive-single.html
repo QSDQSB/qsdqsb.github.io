@@ -21,7 +21,11 @@
   {% assign teaser = {{ teaser | prepend: "/images/" | prepend: base_path }} %}
 {% endif %}
 
-  <div class="card" style="--bg-img: url(" + "/images/LondonNight1-3v1.jpg)">
+  {% assign teaser_style = {{ ")"  | prepend: teaser | prepend: "--bg-img: url(" }} %}
+
+
+
+  <div class="card" style= {{ teaser_style }} >
     <div class="content">
 
       <div class="contentBx">
