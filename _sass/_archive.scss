@@ -139,7 +139,7 @@
 	position: relative;
 	z-index: 1;
   display: grid;
-  grid-gap: 1rem;
+  grid-gap: 2rem;
   grid-template-columns: 1fr 1fr;
   padding: 1rem;
   margin: 0 auto;
@@ -162,7 +162,7 @@
 
   background-size: cover;
   background-position: center;
-  background-image: linear-gradient(rgba(60,60,60,var(--bg-filter-opacity)),rgba(100,100,100,var(--bg-filter-opacity))), var(--bg-img);
+  background-image: linear-gradient(rgba(12,12,12,var(--bg-filter-opacity)),rgba(0,0,0,var(--bg-filter-opacity))), var(--bg-img);
 	position: relative;
   overflow: hidden;
   transition: all, var(--transition-time) cubic-bezier(.33,.11,.02,.99);
@@ -172,12 +172,12 @@
   backdrop-filter: blur(10px);
 
   &:hover {
-    box-shadow: 0 4px  4px  rgba(0, 0, 0, .1),
-                0 1px  6px  rgba(0, 0, 0, .05),
-                0 8px  8px  rgba(0, 0, 0, .1), 
-                0 16px 16px rgba(0, 0, 0, .1), 
-                8px 32px 32px rgba(0, 0, 0, .15), 
-                8px 64px 64px rgba(0, 0, 0, .15); 
+    box-shadow: 0 4px  4px  rgba(0, 0, 0, .25),
+                0 1px  6px  rgba(0, 0, 0, .15),
+                0 8px  8px  rgba(0, 0, 0, .25), 
+                0 16px 16px rgba(0, 0, 0, .25), 
+                8px 32px 32px rgba(0, 0, 0, .35), 
+                8px 64px 64px rgba(0, 0, 0, .35); 
  
      transform: scale(1.05)
                 translateY(-0.5rem);
