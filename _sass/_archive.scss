@@ -122,7 +122,6 @@
 	margin: 40px 0;
   display: grid;
   grid-gap: 2rem;
-  grid-template-columns: auto;
   padding: 2rem;
   margin: 0 auto;
   justify-content: space-between;
@@ -201,9 +200,8 @@
 .container .card .content .date {
   font-family: $tag-font-family;
   position: absolute;
-  top: 0;
+  bottom: 0;
   right: 0;
-  font-size: 0.75em;
   padding: 1em;
   line-height: 1em;
   opacity: .8;
