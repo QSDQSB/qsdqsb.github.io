@@ -20,9 +20,11 @@
 {% else %}
   {% assign teaser = {{ teaser | prepend: "/images/" | prepend: base_path }} %}
 {% endif %}
+{% capture overlay_img %}{{post.header.overalay_image}}{% endcapture %}
 
-{% assign teaser_style = {{ ")" | prepend: teaser | prepend: "--bg-img: url(" }} %}
+{% assign teaser_sty = {{ ")" | prepend: teaser | prepend: "--bg-img: url(" }} %}
 
+{% assign ovl_img = {{ overlay_img | prepend: "/images/"}}%}
 
 
   <div class="card" style= {{ teaser_style }} >
@@ -44,7 +46,9 @@
             {% endif %}
           </h3>
           
-          <p> "{{post.title}}" </p>
+          <p>{{teaser}}</p>
+          <p>{{overlay_img}}</p>
+          <p>{{ovl_img}}</p>
           <p>{{teaser_style}}</p>
 
           {% if post.read_time %}
