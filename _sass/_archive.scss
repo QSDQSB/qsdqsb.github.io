@@ -139,7 +139,8 @@
   text-indent: 2px;
   align-items: flex-end;
   display: flex;
-
+  width: fill;
+  max-height: 12em;
   --bg-filter-opacity: 0.5;
   background-size: cover;
   background-position: center;
