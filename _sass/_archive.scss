@@ -149,23 +149,20 @@
   text-decoration: none;
 }
 
-.container .card .content {
-  margin: 0;
-	transition: 0.5s;
-}
-
 .container .card:hover .content {
-	transform: translateY(-20px);
+	transform: translateY(-10px);
 }
 
 .container .card h3 {
   font-size: $type-size-3;
+  color: $text-color;
   font-family: $global-font-family;
   text-decoration: none;
 }
 
-.container .card p {
+.container .card p, a {
   font-size: $type-size-8;
+  color: $text-color;
   text-decoration: none;
 }
 
