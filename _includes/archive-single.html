@@ -56,8 +56,12 @@
         </article>
       </div>
 
-      <date>{{post.date}}</date>
-
+      <div class="date">{{post.date}}</div>
+      <div class="tags">
+        <div class="tag">
+          #TEST
+        </div>
+      </div>
       <div class="sci">
         {% if post.excerpt %}
         <p itemprop="description">{{ post.excerpt | markdownify }}</p>

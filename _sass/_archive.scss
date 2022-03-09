@@ -181,7 +181,7 @@
   color: #f0f0f0cc;
 }
 
-.container .card .tags {
+.container .card .content .tags {
   font-family: $tag-font-family;
   display: flex;
 }
@@ -202,7 +202,7 @@
   color: white;
 }
 
-.container .card .date {
+.container .card .content .date {
   position: absolute;
   top: 0;
   right: 0;
