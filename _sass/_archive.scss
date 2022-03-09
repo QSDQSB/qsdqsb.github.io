@@ -447,10 +447,10 @@
 
 .container .card:hover span::before
 {
-  top: -50px;
-  left: -50px;
-  width: 250px;
-  height: 150px;
+  aspect-ratio: 1 / 1;
+  top: -25px;
+  left: -25px;
+  width: max-content;
   opacity: 0.8;
 }
 
@@ -470,6 +470,7 @@
   animation: animate 2s ease-in-out infinite;
   box-shadow: 0 5px 15px rgba(0,0,0,0.08);
   animation-delay: -1s;
+  border: 1px solid rgba(255, 255, 255, 0.33);
 }
 
 .container .card:hover span:after
@@ -478,7 +479,7 @@
   right: 50px;
   width: 100px;
   height: 100px;
-  opacity: 0.75;
+  opacity: 1;
 }
 
 @keyframes animate
