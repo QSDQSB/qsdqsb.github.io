@@ -140,10 +140,9 @@
   background-size: cover;
   background-position: center;
   background-image: linear-gradient(rgba(0,0,0,var(--bg-filter-opacity)),rgba(0,0,0,var(--bg-filter-opacity))), var(--bg-img);
-  box-shadow: 0 0 5em -1em rgba(0, 0, 0, 0.5);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 	position: relative;
   overflow: hidden;
-  border: 10px solid #333;
   text-decoration: none;
 }
 
@@ -164,6 +163,11 @@
 .container .card h3 {
   margin: 0;
   font-size: $type-size-4;
+  font-family: $global-font-family;
+}
+
+.container .card p {
+  font-size: 0.8em;
 }
 
 .container .card h3 span {
@@ -173,12 +177,20 @@
   color: #f0f0f0cc;
 }
 
+.container .card .tags {
+  display: flex;
+}
+
+.container .card .tags .tag {
+
+}
 .container .card .sci {
 	margin: 0 10px;
 	transform: translateY(10px);
 	transition: 1s;
 	opacity: 0;
 }
+
 
 .container .card:hover .sci {
 	transform: translateY(0px);
