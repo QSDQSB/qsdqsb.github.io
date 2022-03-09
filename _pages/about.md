@@ -73,8 +73,12 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
   - An example: 😅某些人起标题，本来简简单单「日记」两个字行了，非得要一堆的冗余废话，无语啊无语。
 
 ----
+### 2022.3.8
+1. 🍔原来不是英国麦当劳不卖苹果派，而是牛津麦当劳没有派。
+2. 🐔原来英国麦当劳真的没有麦辣鸡翅，草啊草。
+
 ### 2022.3.7
-1. 某人: "I am ill, my head is spinning." - 另一个某人: "Literally or metaphorically?"
+1. 某人: "I am ill, my head is spinning." - 另一个某人: "Literally or metaphorically? Cuz I don't have any medicine for the former one."
 
 ### 2022.3.6
 1. 😅某人读R语言代码，把`:`看成`,`，然后瞎质疑半天。
