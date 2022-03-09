@@ -24,13 +24,9 @@
 {% assign ovl_address = ")" | prepend: teaser | prepend: "--bg-img: url(" %}
 
 
-{% if post.link %}
-  {% assign post_link = post.link %}
-{% else %}
-  {% assign post_link = base_path + post.url %}
-{% endif %}
 
-<a class="card" href={{ post_link }} style="{{ ovl_address }}" >
+
+<a class="card" href="#" style="{{ ovl_address }}" >
     <div class="content">
       <div>
           {% if include.type == "grid" and teaser %}
@@ -41,8 +37,8 @@
       
           <h3>{{ title }}</h3>
           
-          <p>post.link</p>
-          <p>post.url</p>
+          <p>{{ post.link }}</p>
+          <p>{{ post.url }}</p>
 
           {% if post.read_time %}
             <p> {% include read-time.html %}</p>
