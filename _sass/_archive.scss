@@ -118,6 +118,9 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 4rem;
+  padding: 4rem;
+  margin: 0 auto;
+  width: max-content;
 }
 
 .container .card {
