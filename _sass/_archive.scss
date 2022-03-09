@@ -127,6 +127,7 @@
   margin: 0 auto;
   flex-wrap: wrap;
   width:auto;
+  text-decoration: none;
 }
 
 .card {
@@ -148,13 +149,11 @@
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 	position: relative;
   overflow: hidden;
-  text-decoration: none;
   transition: var(--transition-time);
 }
 
 .card:hover {
   background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)), var(--bg-img);
-  text-decoration: none;
 }
 
 .card .content {
@@ -163,20 +162,14 @@
 }
 .card:hover .content {
 	transform: translateY(-10px);
-  text-decoration: none;
 }
 
 .card h3 {
   font-size: $type-size-2;
   color: $text-color;
   font-family: $global-font-family;
-  text-decoration: none;
   transition: var(--transition-time);
 
-}
-
-.card:hover h3 {
-  text-decoration: none;
 }
 
 .card p {
@@ -184,14 +177,7 @@
   color: $text-color;
 }
 
-.card:hover p {
-  text-decoration: none;
-}
-
-.card .content h6 {
-  color: #f0f0f0cc;
-}
- .card .content .tags {
+ .card .tags {
   display: flex;
 }
 
@@ -208,7 +194,6 @@
 .card:hover .tags .tag {
   background: var(--color);
   color: white;
-  text-decoration: none;
 }
 .card .date {
   font-family: $tag-font-family;
@@ -217,23 +202,20 @@
   right: 0.1em;
   line-height: 1.5em;
   opacity: 0.5;
-  text-decoration: none;
 }
 
 .card:hover .date {
   opacity: 1;
-  text-decoration: none;
-
 }
 .card .sci {
 	transform: translateY(10px);
 	opacity: 0;
+  transition: 1s;
 }
 
 .card:hover .sci {
 	transform: translateY(0px);
 	opacity: 1;
-  text-decoration: none;
 }
 
 
