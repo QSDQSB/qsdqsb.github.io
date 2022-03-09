@@ -161,7 +161,6 @@
   transform: translateY(0px);
   transition: 0.5s;
 }
-
 .card:hover .content {
 	transform: translateY(-10px);
   text-decoration: none;
@@ -173,6 +172,11 @@
   font-family: $global-font-family;
   text-decoration: none;
   transition: var(--transition-time);
+
+}
+
+.card:hover h3 {
+  text-decoration: none;
 }
 
 .card p {
@@ -209,21 +213,16 @@
 .card .date {
   font-family: $tag-font-family;
   position: absolute;
-  bottom: 0.2em;
-  font-size: 0.75em;
-  padding: 0.5em 0.5em;
-  line-weight: 0.4em;
-  border-radius: 0.3rem;
-  right: 0.2em;
+  bottom: -0.5em;
+  right: 0.1em;
+  line-height: 1.5em;
   opacity: 0.5;
   text-decoration: none;
-  background-color: #fff5;
 }
 
 .card:hover .date {
   opacity: 1;
   text-decoration: none;
-  background-color: #fffa;
 
 }
 .card .sci {
