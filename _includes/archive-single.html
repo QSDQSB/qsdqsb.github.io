@@ -30,7 +30,7 @@
   {% assign post_link = base_path + post.url %}
 {% endif %}
 
-<a class="card" href={{ post_link }} style= "{{ ovl_address }}" >
+<a class="card" href="{{ post_link }}" style= "{{ ovl_address }}" >
     <div class="content">
       <div>
           {% if include.type == "grid" and teaser %}
