@@ -16,9 +16,9 @@
   {% assign title = post.title %}
 {% endif %}
 {% if teaser contains "://" %}
-  {% assign teaser = "{{ teaser }}" %}
+  {% assign teaser = {{ teaser }} %}
 {% else %}
-  {% assign teaser = "{{ teaser | prepend: "/images/" | prepend: base_path }}" %}
+  {% assign teaser = {{ teaser | prepend: "/images/" | prepend: base_path }} %}
 {% endif %}
 
 <a target="_blank" href="{{ post.link }}">
