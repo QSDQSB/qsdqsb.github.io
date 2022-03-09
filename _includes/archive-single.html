@@ -54,7 +54,7 @@
     </div>
     <div class="date">
       {% if post.date %}
-      <d>{{ post.date | date: "%d/%m/%Y" }}</d>
+      {{ post.date | date: "%d/%m/%Y" }}
       {% endif %}
     </div>
   </a>
