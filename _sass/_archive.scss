@@ -158,6 +158,7 @@
 
 .card .content {
   transform: translateY(0px);
+  transition: 0.5s;
 }
 .card:hover .content {
 	transform: translateY(-10px);
