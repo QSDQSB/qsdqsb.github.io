@@ -31,7 +31,6 @@
 {% endif %}
 
 <a class="card" href={{ post_link }} style="{{ ovl_address }}" >
-  <span></span>
     <div class="content">
       <div>
       
@@ -59,4 +58,5 @@
           <p><time datetime="{{ post.date | default: "1900-01-01" | date_to_xmlschema }}">{{ post.date | default: "1900-01-01" | date: "%B %d" }}</time></p>
         {% endif %}
     </div>
+    <span></span>
   </a>
