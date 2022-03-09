@@ -192,6 +192,11 @@
   opacity: 0.5;
 }
 
+.card .readtime {
+  font-family: $tag-font-family;
+  font-size: $type-code-size;
+  padding: 0;
+}
 .card:hover .date {
   opacity: 1;
 }
