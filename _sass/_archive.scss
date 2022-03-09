@@ -154,12 +154,14 @@
 
 .card:hover {
   background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)), var(--bg-img);
+  text-decoration: none;
 }
 
 .card .content {
   transform: translateY(0px);
   transition: 0.5s;
 }
+
 .card:hover .content {
 	transform: translateY(-10px);
   text-decoration: none;
@@ -171,12 +173,15 @@
   font-family: $global-font-family;
   text-decoration: none;
   transition: var(--transition-time);
-
 }
 
 .card p {
   font-size: $type-size-8;
   color: $text-color;
+}
+
+.card:hover p {
+  text-decoration: none;
 }
 
 .card .content h6 {
@@ -194,33 +199,42 @@
     padding: 0 0.5em;
     margin-right: 0.5em;
     line-height: 1.5em;
-    transition: var(--transition-time);
 }
 
 .card:hover .tags .tag {
   background: var(--color);
   color: white;
+  text-decoration: none;
 }
 .card .date {
   font-family: $tag-font-family;
   position: absolute;
-  bottom: -0.5em;
-  right: 0.1em;
-  line-height: 1.5em;
-  opacity: .95;
+  bottom: 0.2em;
+  font-size: 0.75em;
+  padding: 0.5em 0.5em;
+  line-weight: 0.4em;
+  border-radius: 0.3rem;
+  right: 0.2em;
+  opacity: 0.5;
   text-decoration: none;
+  background-color: #fff5;
 }
 
+.card:hover .date {
+  opacity: 1;
+  text-decoration: none;
+  background-color: #fffa;
 
+}
 .card .sci {
 	transform: translateY(10px);
-	transition: var(--transition-time);
 	opacity: 0;
 }
 
 .card:hover .sci {
 	transform: translateY(0px);
 	opacity: 1;
+  text-decoration: none;
 }
 
 
