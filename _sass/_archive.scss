@@ -20,10 +20,7 @@
   }
 
   a {
-    text-decoration: underline;
-
     &:hover {
-      text-decoration: underline;
 
       img {
         box-shadow: 0 0 10px rgba(#aaa, 0.25);
@@ -127,7 +124,6 @@
   margin: 0 auto;
   flex-wrap: wrap;
   width:auto;
-  text-decoration: none;
 }
 
 .card {
@@ -165,11 +161,10 @@
 }
 
 .card h3 {
-  font-size: $type-size-2;
+  font-size: $type-size-3;
   color: $text-color;
   font-family: $global-font-family;
   transition: var(--transition-time);
-
 }
 
 .card p {
