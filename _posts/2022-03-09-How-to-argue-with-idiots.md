@@ -1,5 +1,5 @@
 ---
-title: "浅谈和傻逼争论的几种技巧"
+title: "Fantastic Beasts and How to Argue with Them"
 date: 2022-03-09
 permalink: /posts/2022/03/argue-with-idiots
 excerpt: "别和猪讲道理，猪不高兴，你也不高兴。"
@@ -11,7 +11,7 @@ header:
   caption: "Bella Italia, Oxford, 25/11/2021"
 ---
 
-# Fantastic Beasts and How to Argue with Them
+# 浅谈和傻逼争论的几种技巧
 
 > 傻逼是一种很神奇的生物，傻逼的言行和举止，都只会站在自己的立场，以自己为中心，自己做的都是对的，ta不会在乎别人的想法，因此和正常人产生隔阂，难以进行沟通。今天我们从一个正常人的角度上来浅谈一下如何和傻逼争论。
 
