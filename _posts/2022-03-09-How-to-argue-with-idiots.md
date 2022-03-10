@@ -1,6 +1,6 @@
 ---
 title: "浅谈和傻逼争论的几种技巧"
-date: 2022-03-10
+date: 2022-03-09
 permalink: /posts/2022/03/argue-with-idiots
 excerpt: "别和猪讲道理，猪不高兴，你也不高兴。"
 tags:

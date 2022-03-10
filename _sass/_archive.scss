@@ -475,8 +475,8 @@
 
 .container .card:hover span:after
 {
-  top: -25px;
-  right: 25px;
+  top: -20px;
+  right: 20px;
   width: 50px;
   height: 50px;
   opacity: 1;
@@ -486,12 +486,12 @@
 {
   0%, 100%
   {
-    transform: translateY(100px);
+    transform: translateY(50px);
   }
   
   50%
   {
-    transform: translate(-100px);
+    transform: translate(-50px);
   }
 }
 
