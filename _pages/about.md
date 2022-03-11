@@ -13,18 +13,21 @@ header:
   overlay_filter: 0.2
 ---
 
-#### 置顶公告板
+# 欢迎来到QSD妙妙屋！
 
-------
-> *关于本网站的目的，请参见这篇文章： <a href="https://qsdqsb.github.io/posts/2022/03/day-one/" target="_blank">Day one of this site</a>。*
+置顶公告板
+{: .notice--info}
 
-> ➡️➡️➡️<a href="https://qsdqsb.github.io/files/Commitments/Commitment_2022_1.pdf" target="_blank">QSD减肥进行时💨💨！！</a>
+> *关于本网站的目的，请参见这篇文章： <a href="posts/2022/03/day-one/" target="_blank">Day one of this site</a>。*
+
+> ➡️➡️➡️<a href="files/Commitments/Commitment_2022_1.pdf" target="_blank">QSD减肥进行时💨💨！！</a>
 
 ---
 
-## | 🌃第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 |<br>| 🐟摸鱼王 | ⌚️时间管理废物 | 🚦选恐晚期 |<br>| 🤤热衷无所事事+懒癌患者 |
+| 🌃第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 | 🐟摸鱼王 | ⌚️时间管理废物 | 🚦选恐晚期 | 🤤热衷无所事事 |
 {: .text-center}
 
+## A bizzard Self-Intro...?
 
 - 🤖QSDQSB
 - 🔬24' Maths&Stats at Ox
@@ -54,9 +57,8 @@ header:
 ‼️Note that every picture in this website is shot by QSD himself, or his beloved friends.
 {: .notice--info}
 
------
 
-# 每日laughable事件集合+阴阳怪气摘记
+# 每日laughable事件集+阴阳怪气摘记
 
 QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         ——某人
 {: .notice--info}
@@ -75,6 +77,9 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
   - An example: 😅某些人起标题，本来简简单单「日记」两个字行了，非得要一堆的冗余废话，无语啊无语。
 
 ----
+### 2022.3.11
+1. 😅怎么会有人一周吃三次本院formal啊
+
 ### 2022.3.10
 1. 🥺**想念全家** 
   - ☕️九块九两瓶贝纳颂 
