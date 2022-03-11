@@ -3,6 +3,7 @@ title: "Fantastic Beasts and How to Argue with Them"
 date: 2022-03-09
 permalink: /posts/2022/03/argue-with-idiots
 excerpt: "别和猪讲道理，猪不高兴，你也不高兴。"
+classes: wide
 tags:
   - 💡Idea
 header:
