@@ -3,6 +3,7 @@ title: "Day One"
 date: 2022-03-01
 permalink: /posts/2022/03/day-one/
 excerpt: "Everything faded into mist."
+toc: false
 tags:
   - 📘Diary
   - 😢Emo
