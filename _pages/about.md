@@ -3,6 +3,8 @@ permalink: /
 title: "Hi! Meet QSD😵‍💫!"
 author_profile: true
 excerpt: "A procrastinator, a nihilist, a deconstructionist, an idiot. "
+toc: true
+toc_sticky: true
 redirect_from: 
   - /about/
   - /about.html
@@ -74,7 +76,13 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
 
 ----
 ### 2022.3.10
-1. 🥺**想念全家** 九块九两瓶贝纳颂☕️ 疯狂星期三🤪 满二十五元送二十五倍积分🤑 关东煮六个七元🍢 辣汤里上下漂泊的肥肥的豆腐🍲 呜呜呜
+1. 🥺**想念全家** 
+  - ☕️九块九两瓶贝纳颂 
+  - 🤪疯狂星期三 
+  - 🤑满二十五元送二十五倍积分 
+  - 🍢关东煮六个七元 
+  - 🍲辣汤里上下漂泊的肥肥豆腐
+  - 呜呜呜
 
 ### 2022.3.9
 1. 🥸`posterior probability`: `后验概率` ❌ ; `屁股蛋儿概率` ✅ 。

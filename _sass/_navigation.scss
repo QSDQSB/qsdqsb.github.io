@@ -34,11 +34,12 @@
     font-size: $type-size-6;
 
     @include breakpoint($large) {
-      @include span(10 of 12 last);
+      float: right;
+      width: calc(100% - #{$right-sidebar-width-narrow});
     }
 
     @include breakpoint($x-large) {
-      @include prefix(0.5 of 12);
+      width: calc(100% - #{$right-sidebar-width});
     }
   }
 
@@ -371,18 +372,18 @@
 
 .toc {
   font-family: $sans-serif-narrow;
-  color: $gray;
+  color: lightblue;
   text-transform: uppercase;
   letter-spacing: 1px;
-  background-color: #000;
+  background-color: $background-color;
   border: 1px solid $border-color;
   border-radius: $border-radius;
   box-shadow: $box-shadow;
-
+  text-decoration: none;
   .nav__title {
-    color: #000;
+    color: gainsboro;
     font-size: $type-size-6;
-    background: $primary-color;
+    background: #1e1e1e;
     border-top-left-radius: $border-radius;
     border-top-right-radius: $border-radius;
   }
@@ -394,19 +395,20 @@
   width: 100%;
   list-style: none;
   font-size: 0.8rem;
+  font-family: $sans-serif-narrow;
+  text-decoration: none;
 
   a {
     display: block;
     padding: 0.5rem 1rem;
-    color: $gray;
-    font-size: $type-size-7;
+    color: lightblue;
+    font-size: $type-size-6;
     font-weight: bold;
-    line-height: 1.5;
+    line-height: 1;
     border-bottom: 1px solid $border-color;
-
     &:hover {
-      color: #fff;
-      background: $lighter-gray;
+      color: black;
+      background: #4e91cb;
     }
   }
 

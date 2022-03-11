@@ -3,7 +3,9 @@ title: "Interview Preparation"
 date: 2022-03-04
 permalink: /posts/2022/03/interview-preparation/
 excerpt: "我超，👴爱死苟盛了。"
+
 toc: true
+toc_sticky: true
 toc_icon: "cog"
 
 tags:
