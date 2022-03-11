@@ -74,7 +74,6 @@
     display: block;
     float: left;
     margin-left: -1px;
-
     a {
       margin-bottom: 0.25em;
       padding: 0.5em 1em;
@@ -94,11 +93,12 @@
 
       &.current {
         color: #fff;
-        background: $primary-color;
+        background: $code-background-color;
       }
 
       &.disabled {
         color: mix(#fff, $gray, 75%);
+        background: $gray;
         pointer-events: none;
         cursor: not-allowed;
       }
@@ -123,38 +123,36 @@
 
   /* next/previous buttons */
   &--pager {
+    transition: all 0.5s cubic-bezier(0.215, 0.610, 0.355, 1);
     display: block;
-    padding: 1em 2em;
+    padding: 1em 1em;
     float: left;
     width: 50%;
-    font-family: $sans-serif;
+    font-family: $tag-font-family;
     font-size: $type-size-5;
-    font-weight: bold;
     text-align: center;
     text-decoration: none;
-    color: mix(#fff, $gray, 50%);
-    border: 1px solid $light-gray;
+    color: $primary-color;
+    border: 1px solid $border-color;
     border-radius: $border-radius;
-
+    background-color: $background-color;
     &:hover {
-      color: $link-color-hover;
-    }
-
-    &:first-child {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-
-    &:last-child {
-      margin-left: -1px;
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
+      scale: 1.05;
+      background-color: $linkedin-color;
     }
 
     &.disabled {
-      color: mix(#fff, $gray, 75%);
+      color: darkgray;
+      background-color: $background-color;
       pointer-events: none;
       cursor: not-allowed;
+      scale: 1;
+    }
+    &.disabled:hover {
+      color: $gray;
+      background-color: $background-color;
+
+      scale: 1;
     }
   }
 }
@@ -197,7 +195,7 @@
     padding: 0 0.5rem;
     border: 0;
     outline: none;
-    background-color: $primary-color;
+    background-color: $code-background-color;
     color: #fff;
     cursor: pointer;
   }
@@ -233,7 +231,7 @@
         left: 0;
         bottom: 0;
         height: 4px;
-        background: mix(#fff, $primary-color, 50%);
+        background: mix(#000, $primary-color, 50%);
         width: 100%;
         -webkit-transition: $global-transition;
         transition: $global-transition;
@@ -350,7 +348,7 @@
   margin: 0;
   padding: 0.5rem 1rem;
   font-family: $sans-serif-narrow;
-  font-size: $type-size-5;
+  font-size: $type-size-4;
   font-weight: bold;
 }
 
@@ -371,18 +369,16 @@
    ========================================================================== */
 
 .toc {
-  font-family: $sans-serif-narrow;
-  color: lightblue;
+  font-family: $tag-font-family;
+  color: $light-gray;
   text-transform: uppercase;
-  letter-spacing: 1px;
   background-color: $background-color;
   border: 1px solid $border-color;
   border-radius: $border-radius;
   box-shadow: $box-shadow;
-  text-decoration: none;
   .nav__title {
-    color: gainsboro;
-    font-size: $type-size-6;
+    color: darkgrey;
+    font-size: $type-size-7;
     background: #1e1e1e;
     border-top-left-radius: $border-radius;
     border-top-right-radius: $border-radius;
@@ -395,32 +391,43 @@
   width: 100%;
   list-style: none;
   font-size: 0.8rem;
-  font-family: $sans-serif-narrow;
-  text-decoration: none;
-
+  font-family: $tag-font-family;
   a {
+    color: $light-gray;
+    text-decoration: none !important;
     display: block;
     padding: 0.5rem 1rem;
-    color: lightblue;
     font-size: $type-size-6;
-    font-weight: bold;
-    line-height: 1;
-    border-bottom: 1px solid $border-color;
+    line-height: 1.25;
+    border-bottom: 1px solid darken($border-color, 0.5) !important;
+    transition: all 0.8s cubic-bezier(0.39, 0.575, 0.565, 1);
     &:hover {
       color: black;
-      background: #4e91cb;
-    }
-  }
-
-  > li:last-child {
-    a {
-      border-bottom: none;
+      background: #9cdcfe;
+      text-decoration: none;
+      transform: scale(1.05);
     }
   }
 
   li ul > li a {
-    padding-left: 2rem;
+    padding-left: 1.5rem;
     font-weight: normal;
+  }
+
+  li ul li ul > li a {
+    padding-left: 2rem;
+  }
+
+  li ul li ul li ul > li a {
+    padding-left: 2.5rem;
+  }
+
+  li ul li ul li ul li ul > li a {
+    padding-left: 3rem;
+  }
+
+  li ul li ul li ul li ul li ul > li a {
+    padding-left: 3.5rem
   }
 
   /* hide sub sub links on small screens*/
