@@ -131,7 +131,7 @@ body:hover .visually-hidden button {
 
   @include breakpoint($small) {
     float: left;
-    margin-right: 4px;
+    margin-right: 1em;
   }
 }
 
@@ -144,7 +144,7 @@ body:hover .visually-hidden button {
 
   @include breakpoint($small) {
     float: right;
-    margin-left: 4px;
+    margin-left: 1em;
   }
 }
 

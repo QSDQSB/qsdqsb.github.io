@@ -3,7 +3,6 @@ title: "Twilight"
 excerpt: "We live in a twilight world."
 collection: portfolio
 permalink: /portfolio/twilight
-author_profile: false
 date: 2022-02-26
 excerpt: "The Sunset of Romanticism"
 header:

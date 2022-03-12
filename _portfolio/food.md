@@ -3,7 +3,6 @@ title: "Fooooood"
 excerpt: "Eat, drink, and die."
 collection: portfolio
 permalink: /portfolio/food
-author_profile: false
 date: 2021-02-14
 header:
   overlay_image: Food-kaoyu1-3v1.jpg
