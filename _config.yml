@@ -226,9 +226,10 @@ defaults:
     values:
       layout: single
       author_profile: true
-      share: true
-      comment: true
-search                   : false
+      share: false
+      comment: false
+
+search: false
 
 # Sass/SCSS
 sass:
