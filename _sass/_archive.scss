@@ -1,7 +1,7 @@
 /* ==========================================================================
    ARCHIVE
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css?family=Heebo:400,700|Open+Sans:400,700');
+@import url('https://fonts.googleapis.com/css?family=Heebo:100,200,400,700|Open+Sans:400,700');
 
 :root {
   --transition-time: 0.5s;
@@ -56,12 +56,13 @@
 }
 
 .archive__subtitle {
-  margin: 1.414em 0 0;
+  font-style: normal !important;
+  margin: 1.5em 0 0;
   padding-bottom: 0.5em;
-  font-family: $tag-font-family;
-  font-size: $type-size-4;
-  color: $primary-color;
+  font-family: 'Heebo', sans-serif;
+  font-weight: 200;
   border-bottom: 1px solid $border-color;
+  color: #fff;
 
   + .list__item .archive__item-title {
     margin-top: 0.5em;

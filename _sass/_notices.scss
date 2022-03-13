@@ -12,9 +12,10 @@
 
 @mixin notice($notice-color) {
   text-align: center;
-  margin: 1em 3em !important;  /* override*/
-  padding: 1em 0;
-  font-family: $global-font-family;
+  margin: 1em 4em !important;  /* override*/
+  padding: 1em 1em;
+  font-family: 'Heebo', sans-serif;
+  font-weight: 200;
   font-size: $type-size-7 !important;
   text-indent: initial; /* override*/
   background-color: $notice-color;
@@ -95,3 +96,4 @@
 .notice--purple {
   @include notice(rgb(165, 65, 165));
 }
+
