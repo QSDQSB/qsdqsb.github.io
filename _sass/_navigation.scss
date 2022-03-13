@@ -61,7 +61,6 @@
   @include full();
   @include clearfix();
   margin-top: 1em;
-  padding-top: 1em;
 
   ul {
     margin: 0;
@@ -71,7 +70,8 @@
   }
 
   li {
-    display: block;
+    display: inline-block;
+    padding: 0 1em;
     float: left;
     margin-left: -1px;
     a {
@@ -124,7 +124,7 @@
   /* next/previous buttons */
   &--pager {
     transition: all 0.5s cubic-bezier(0.215, 0.610, 0.355, 1);
-    display: block;
+    display: inline-block;
     padding: 1em 1em;
     float: left;
     width: 50%;
@@ -132,13 +132,13 @@
     font-size: $type-size-5;
     text-align: center;
     text-decoration: none;
-    color: $primary-color;
+    color: lightgray;
     border: 1px solid $border-color;
     border-radius: $border-radius;
     background-color: $background-color;
     &:hover {
-      scale: 1.05;
       background-color: $linkedin-color;
+      font-size: $type-size-4;
     }
 
     &.disabled {
@@ -146,13 +146,10 @@
       background-color: $background-color;
       pointer-events: none;
       cursor: not-allowed;
-      scale: 1;
     }
     &.disabled:hover {
-      color: $gray;
+      color: darkgray;
       background-color: $background-color;
-
-      scale: 1;
     }
   }
 }
@@ -161,12 +158,13 @@
 .page__meta + .pagination,
 .page__share + .pagination,
 .page__comments + .pagination {
-  margin-top: 2em;
-  padding-top: 2em;
-  border-top: 1px solid $border-color;
+  margin-top: 1em;
 }
 
-
+.page__content + .pagination,
+.page__comments + .pagination {
+  border-top: 1px solid $border-color;
+}
 /*
    Priority plus navigation
    ========================================================================== */
@@ -180,11 +178,10 @@
     padding: 0.5rem 0;
     color: $primary-color;
     text-decoration: none;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     &:hover {
       color: white;
-      scale: 1.05;
+      scale: 1.25;
     }
   }
 
@@ -369,26 +366,24 @@
    ========================================================================== */
 
 .toc {
+  transition: all 1s cubic-bezier(0.39, 0.575, 0.565, 1);
+
   font-family: $tag-font-family;
   color: $light-gray;
   text-transform: uppercase;
-  background-color: $background-color;
   border: 1px solid $border-color;
   border-radius: $border-radius;
-  box-shadow: $box-shadow;
   .nav__title {
-    color: darkgrey;
+    color: lightgrey;
     font-size: $type-size-7;
-    background: #1e1e1e;
     border-top-left-radius: $border-radius;
     border-top-right-radius: $border-radius;
   }
+
 }
 
 .toc__menu {
-  margin: 0;
-  padding: 0;
-  width: 100%;
+  transition: all 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
   list-style: none;
   font-size: 0.8rem;
   font-family: $tag-font-family;
@@ -400,12 +395,10 @@
     font-size: $type-size-6;
     line-height: 1.25;
     border-bottom: 1px solid darken($border-color, 0.5) !important;
-    transition: all 0.8s cubic-bezier(0.39, 0.575, 0.565, 1);
     &:hover {
       color: black;
-      background: #9cdcfe;
+      background: $link-color;
       text-decoration: none;
-      transform: scale(1.05);
     }
   }
 

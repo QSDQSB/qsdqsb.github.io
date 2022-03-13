@@ -2,14 +2,15 @@
    SINGLE PAGE/POST
    ========================================================================== */
 
+
 #main {
   @include clearfix;
   margin-top: 2em;
-  margin-left: 2em;
+  margin-left: 0;
   margin-right: 2em;
   max-width: 100%;
-  padding-left: 2em;
-  padding-right: 2em;
+  padding-left: 1em;
+  padding-right: 1em;
   animation: intro 0.3s both;
   animation-delay: 0.35s;
 }
@@ -38,6 +39,7 @@ body {
   }
 
   @include breakpoint($x-large) {
+    float: right;
     width: calc(100% - #{$right-sidebar-width});
     padding-right: $right-sidebar-width;
   }
@@ -61,6 +63,7 @@ body {
       clear: both;
     }
   }
+  transition: all $global-transition-time cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .page__title {
@@ -78,7 +81,9 @@ body {
 }
 
 .page__content {
-
+  h1 {
+    padding-bottom: 1em;
+  }
   h2 {
     padding-bottom: 0.5em;
     border-bottom: 1px solid $border-color;
@@ -101,15 +106,6 @@ body {
     }
   }
 
-  a {
-    &:hover {
-      text-decoration: underline;
-
-      img {
-        box-shadow: 0 0 10px rgba(#000, 0.25);
-      }
-    }
-  }
 
   dt {
     margin-top: 1em;
@@ -132,6 +128,7 @@ body {
     margin-top: -1.5em;
     padding-left: 1.25rem;
   }
+
 }
 
 .page__hero {
@@ -223,7 +220,6 @@ body {
    ========================================================================== */
 
 .page__share {
-  margin-top: 2em;
   padding-top: 1em;
   border-top: 1px solid $border-color;
 
@@ -243,7 +239,7 @@ body {
 
 .page__share-title {
   margin-bottom: 10px;
-  font-size: $type-size-6;
+  font-size: $type-size-7;
   text-transform: uppercase;
 }
 
@@ -254,9 +250,9 @@ body {
 
 .page__meta {
   margin-top: 2em;
-  color: mix(#fff, $gray, 25%);
-  font-family: $sans-serif;
-  font-size: $type-size-6;
+  margin-bottom: 1em;
+  color: white;
+  font-size: $type-size-7;
 
   p {
     margin: 0;
@@ -264,12 +260,13 @@ body {
 
   a {
     color: inherit;
+    padding: 2px 4px;
   }
 }
 
 .page__meta-title {
-  margin-bottom: 10px;
-  font-size: $type-size-6;
+  margin-bottom: 1em;
+  font-size: $type-size-7;
   text-transform: uppercase;
 }
 
@@ -280,7 +277,7 @@ body {
 
 .page__taxonomy {
   .sep {
-    display: none;
+    display: inline;
   }
 
   strong {
@@ -290,16 +287,15 @@ body {
 
 .page__taxonomy-item {
   display: inline-block;
-  margin-right: 5px;
-  margin-bottom: 8px;
-  padding: 5px 10px;
+  padding: 0.5em 1.5em;
   text-decoration: none;
-  border: 1px solid $light-gray;
-  border-radius: $border-radius;
+  border: 1px solid;
+  border-radius: $border-radius / 2;
 
   &:hover {
-    text-decoration: none;
-    color: $link-color-hover;
+    color: white;
+    border-color: chocolate;
+    background: chocolate;
   }
 }
 

@@ -15,19 +15,19 @@ header:
 
 # 欢迎来到QSD妙妙屋！
 
-置顶公告板
-{: .notice--info}
+**公告板**
 
-> *关于本网站的目的，请参见这篇文章： <a href="posts/2022/03/day-one/" target="_blank">Day one of this site</a>。*
+*关于本网站的目的，请参见这篇文章： <a href="posts/2022/03/day-one/" target="_blank">Day one of this site</a>。*
+{: .notice--success}
 
-> ➡️➡️➡️<a href="files/Commitments/Commitment_2022_1.pdf" target="_blank">QSD减肥进行时💨💨！！</a>
+➡️➡️➡️ <a href="files/Commitments/Commitment_2022_1.pdf" target="_blank"> QSD减肥进行时💨💨！！</a>
+{: .notice--pinky}
 
----
+
+## A Bizzard Self-Intro...?
 
 | 🌃第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 | 🐟摸鱼王 | ⌚️时间管理废物 | 🚦选恐晚期 | 🤤热衷无所事事 |
 {: .text-center}
-
-## A bizzard Self-Intro...?
 
 - 🤖QSDQSB
 - 🔬24' Maths&Stats at Ox
@@ -46,16 +46,16 @@ header:
 - 🕶S.H.I.E.L.D. agent
 - 📺[YPM](https://www.imdb.com/title/tt0086831/)! [Silicon Valley](https://www.imdb.com/title/tt2575988/)! [R&M](https://www.imdb.com/title/tt2861424/)! [Better Call Saul](https://www.imdb.com/title/tt3032476/)! [Disenchantment](https://www.imdb.com/title/tt5363918/)!
 - 👾Emoji crusher(as you can see from this page)
+- 🎨<span class="macaron">马卡龙色系yyds</span>
 - 🐱骨灰级猫猫粉
 - 🐟enjoy *摸鱼* every day
 - 🏃努力减肥中(但愿)
 - 🇨🇳Geographically Hangzhounese, spiritually Shanghainese
 
-
 ----------
 
 ‼️Note that every picture in this website is shot by QSD himself, or his beloved friends.
-{: .notice--info}
+{: .notice--pinky}
 
 
 # 每日laughable事件集+阴阳怪气摘记
@@ -64,7 +64,7 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
 {: .notice--info}
 
 我要少跟你说话，不然整个人都阴阳怪气奇怪起来。          ——另一个某人
-{: .notice--primary}
+{: .notice--success}
 
 我在"阴阳怪气"被发明之前还没找到过这么合适的词来形容你。  ——又另一个某人  
 {: .notice--warning}
@@ -77,6 +77,12 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
   - An example: 😅某些人起标题，本来简简单单「日记」两个字行了，非得要一堆的冗余废话，无语啊无语。
 
 ----
+
+### 2022.3.12
+1. 🖼Christ Church Picture Gallery 2020年有几幅画被偷了 [High Value Paintings Stolen from Christ Church Picture Gallery](https://cherwell.org/2020/03/16/high-value-paintings-stolen-from-christ-church-picture-gallery/),今天去看的时候原画的位置挂着个空画框，旁边写着「我们把画框摆在这，in the hope that贼会良心发现，有朝一日把画送回来」。
+  - 好笑的是在查新闻的时候还发现那一周还有贼（不知道是不是同一批）从Chch酒窖里顺走了价值一两千镑的酒。
+  - ⬆️原文写的是`disappearing`，因此🍷不一定是被偷的，不排除自己跑路的可能性。
+
 ### 2022.3.11
 1. 😅怎么会有人一周吃三次本院formal啊
 

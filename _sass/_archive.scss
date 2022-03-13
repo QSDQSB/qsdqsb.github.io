@@ -4,7 +4,6 @@
 @import url('https://fonts.googleapis.com/css?family=Heebo:400,700|Open+Sans:400,700');
 
 :root {
-  --color: #3c3163;
   --transition-time: 0.5s;
 }
 .archive {
@@ -18,14 +17,6 @@
     @include prefix(0.5 of 12);
   }
 
-  a {
-    &:hover {
-
-      img {
-        box-shadow: 0 0 10px rgba(#aaa, 0.25);
-      }
-    }
-  }
 }
 
 .bg {
@@ -153,10 +144,10 @@
 }
 
 .card {
+  overflow: hidden;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 	background: rgba(255, 255, 255, 0.05);
 	border-radius: 1em;
-	backdrop-filter: blur(10px);
   padding: 2em;
   align-items: flex-start;
   display: flex;
@@ -173,9 +164,8 @@
 
   text-decoration: none;
 
-  backdrop-filter: blur(10px);
-
   &:hover {
+    text-decoration: none;
     border-color: $border-color;
     box-shadow: 0 4px  4px  rgba(0, 0, 0, .25),
                 0 1px  6px  rgba(0, 0, 0, .15),
@@ -201,7 +191,6 @@
 .card .content {
   transform: translateY(0px);
   transition: 0.5s;
-  overflow: hidden;
 }
 .card:hover .content {
 	transform: translateY(-10px);

@@ -5,6 +5,7 @@ permalink: /posts/2022/03/argue-with-idiots
 excerpt: "别和猪讲道理，猪不高兴，你也不高兴。"
 tags:
   - 💡Idea
+share: true
 header:
   overlay_image: Argue-with-idiot-3v1.jpg
   overlay_filter: 0.1
@@ -22,7 +23,7 @@ header:
 ## 2、狗咬狗
 在某些社交场合，我们本人难堪于主动跑路。在这种情况下可以转嫁责任，**把傻逼吓跑**：
 
-> 表现的比傻逼更傻逼，这样傻逼就会觉得你是傻逼。  
+- 表现得比傻逼更傻逼，这样傻逼就会觉得你是傻逼。  
 
 我们因此成功把这个问题转移到ta身上，不需要思考怎么解决这个问题了。
 
@@ -37,19 +38,21 @@ header:
 ## 4、阿Q精神
 在一些*极端情况下的极端情况下*，面对大摇大摆不知好歹的傻逼，我们只能忍气吞声而无法回击。此时只能采取下下策：`阿Q精神`！
 
-> 想到「这人这么傻逼，在现实中一定也活得不太滋润」，不由笑出了声——气，消了。
+- 想到「这人这么傻逼，在现实中一定也活得不太滋润」，不由笑出了声——气，消了。
 
-> 想到自己以后的npy说不定也是一个和这个人有点像的大傻逼，权当此时的煎熬是在锻炼我们的耐心。
+- 想到自己以后的npy说不定也是一个和这个人有点像的大傻逼，权当此时的煎熬是在锻炼我们的耐心。
 
-> 既然想到了以后的npy，那也可以想想自己现在还没有npy——于是气不打一处来，而此时正好有个得意洋洋的大傻逼摆在我们眼前——怒火中烧，抄起拳头，上！！！！**乱拳打晕大傻逼！！！！**
+- 既然想到了以后的npy，那也可以想想自己现在还没有npy——于是气不打一处来，而此时正好有个得意洋洋的大傻逼摆在我们眼前——怒火中烧，抄起拳头，上！！！！**乱拳打晕大傻逼！！！！**
 
 
 -----
 
 *——部分来自QSD在2021年7月某日的备忘录，在那一天他不幸被迫和一个傻逼接触。*
-
-------
+{: .text-right}
 
 本文中一共出现了21次`傻逼`。
+{: .text-right}
 
-<img src="https://cdn.mathpix.com/snip/images/yq1XedeSwuRvh9rj9RwWYOU2AMSNJC1FKu2R9j1zR8Y.original.fullsize.png" alignment="right" width=50px alt="快看傻逼！">
+---
+
+<img src="https://cdn.mathpix.com/snip/images/yq1XedeSwuRvh9rj9RwWYOU2AMSNJC1FKu2R9j1zR8Y.original.fullsize.png" class="align-center" style="width=100px" alt="快看傻逼！">
