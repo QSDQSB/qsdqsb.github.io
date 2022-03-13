@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 {% include base_path %}
 
 {% if page.author and site.data.authors[page.author] %}
@@ -5,7 +7,6 @@
 {% endif %}
 
 <div itemscope itemtype="http://schema.org/Person">
-
 
       <div class="author__avatar">
         {% if author.avatar contains "://" %}
@@ -17,13 +18,12 @@
 
       <div class="author__content">
         <h3 class="author__name">{{ author.name }}</h3>
-        {% if author.bio %}<p class="author__bio">{{ author.bio }}</p>{% endif %}
+        {% if author.bio %}<p class="author__bio">“{{ author.bio }}”</p>{% endif %}
       </div>
   <div class="author__urls-wrapper">
-    <button class="btn btn--inverse">Follow</button>
     <ul class="author__urls social-icons">
       {% if author.location %}
-        <li><i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> {{ author.location }}</li>
+        <li><i class="fa fa-fw fa-location-arrow" aria-hidden="true"></i> {{ author.location }}</li>
       {% endif %}
       {% if author.employer %}
         <li><i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> {{ author.employer }}</li>
@@ -49,14 +49,14 @@
       {% if author.google_plus %}
         <li><a href="https://plus.google.com/+{{ author.google_plus }}"><i class="fab fa-fw fa-google-plus" aria-hidden="true"></i> Google+</a></li>
       {% endif %}
-      {% if author.linkedin %}
-        <li><a href="https://www.linkedin.com/in/{{ author.linkedin }}"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> LinkedIn</a></li>
-      {% endif %}
       {% if author.instagram %}
         <li><a href="https://instagram.com/{{ author.instagram }}"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
       {% endif %}
       {% if author.tumblr %}
         <li><a href="https://{{ author.tumblr }}.tumblr.com"><i class="fab fa-fw fa-tumblr-square" aria-hidden="true"></i> Tumblr</a></li>
+      {% endif %}
+      {% if author.linkedin %}
+          <li><a href="https://www.linkedin.com/in/{{ author.linkedin }}"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> LinkedIn</a></li>
       {% endif %}
       {% if author.github %}
         <li><a href="https://github.com/{{ author.github }}"><i class="fab fa-fw fa-github" aria-hidden="true"></i> Github</a></li>

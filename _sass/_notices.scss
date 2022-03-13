@@ -11,15 +11,14 @@
  */
 
 @mixin notice($notice-color) {
-  margin: 2em 0 !important;  /* override*/
-  padding: 1em;
+  text-align: center;
+  margin: 1em 3em !important;  /* override*/
+  padding: 1em 0;
   font-family: $global-font-family;
   font-size: $type-size-7 !important;
   text-indent: initial; /* override*/
-  background-color: mix(#000, $notice-color, 60%);
+  background-color: $notice-color;
   border-radius: $border-radius;
-  box-shadow: 0 1px 1px rgba($notice-color, 0.25);
-
   h4 {
     margin-top: 0 !important; /* override*/
     margin-bottom: 0.75em;
@@ -36,23 +35,13 @@
       margin-bottom: 0 !important; /* override*/
     }
   }
-
+  a {
+    color: $link-color-hover;
+  }
   h4 + p {
     /* remove space above paragraphs that appear directly after notice headline*/
     margin-top: 0;
     padding-top: 0;
-  }
-
-  a {
-    color: $notice-color;
-
-    &:hover {
-      color: mix(#444, $notice-color, 40%);
-    }
-  }
-
-  code {
-    background-color: mix(#444, $notice-color, 95%)
   }
 
   ul {
@@ -60,6 +49,8 @@
       margin-bottom: 0; /* override*/
     }
   }
+
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 }
 
 /* Default notice */
@@ -96,4 +87,11 @@
 
 .notice--danger {
   @include notice($danger-color);
+}
+.notice--pinky {
+  @include notice(rgb(204, 51, 77));
+}
+
+.notice--purple {
+  @include notice(rgb(165, 65, 165));
 }
