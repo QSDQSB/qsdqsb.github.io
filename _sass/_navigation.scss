@@ -5,6 +5,7 @@
 /*
    Breadcrumb navigation links
    ========================================================================== */
+@import url('https://fonts.googleapis.com/css?family=Heebo:100,200,400|Open+Sans:400,700');
 
 .breadcrumbs {
   @include container;
@@ -61,7 +62,8 @@
   @include full();
   @include clearfix();
   margin-top: 1em;
-
+  margin-left: auto;
+  margin-right: auto;
   ul {
     margin: 0;
     padding: 0;
@@ -84,7 +86,6 @@
       text-align: center;
       text-decoration: none;
       color: mix(#fff, $gray, 25%);
-      border: 1px solid $light-gray;
       border-radius: 0;
 
       &:hover {
@@ -124,21 +125,16 @@
   /* next/previous buttons */
   &--pager {
     transition: all 0.5s cubic-bezier(0.215, 0.610, 0.355, 1);
-    display: inline-block;
     padding: 1em 1em;
     float: left;
-    width: 50%;
     font-family: $tag-font-family;
     font-size: $type-size-5;
-    text-align: center;
-    text-decoration: none;
+
     color: lightgray;
-    border: 1px solid $border-color;
     border-radius: $border-radius;
-    background-color: $background-color;
     &:hover {
       background-color: $linkedin-color;
-      font-size: $type-size-4;
+      text-decoration: none;
     }
 
     &.disabled {
@@ -430,5 +426,15 @@
     @include breakpoint($medium) {
       display: block;
     }
+  }
+}
+
+
+.pagination--pager {
+  text-align: center;
+  text-decoration: none;
+  padding: 0 2em;
+  &:hover {
+    transform: none;
   }
 }

@@ -6,6 +6,7 @@
    Default
    ========================================================================== */
 
+@import url('https://fonts.googleapis.com/css?family=Heebo:100,200|Open+Sans:100,200');
 .sidebar {
 
   -webkit-transform: translate3d(0, 0 , 0);
@@ -170,18 +171,18 @@
 }
 
 .author__name {
+  font-family: $sans-serif !important;
   display: none;
   margin: 0;
   @include breakpoint($large) {
     display: block;
     margin-top: 8px;
     margin-bottom: 8px;
+    text-align: center;
   }
 }
 .sidebar .author__name {
-  font-family: $sans-serif;
-  font-size: $type-size-5;
-  text-align: center;
+  font-size: $type-size-4;
 }
 
 .author__profile {
@@ -216,9 +217,11 @@
   margin: 0;
   padding: 0 1em;
   text-align: center;
+  font-weight: 400;
   @include breakpoint($large) {
     display: block;
     margin-top: 8px;
+
     margin-bottom: 16px;
   }
 }
@@ -228,7 +231,7 @@
   display: none;
   vertical-align: middle;
   text-align: center;
-  font-family: $sans-serif;
+  font-weight: 200;
   z-index: 10;
   position: relative;
   cursor: pointer;
