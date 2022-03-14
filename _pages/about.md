@@ -79,13 +79,16 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
 
 ----
 
+### 2022.3.14
+1. 🥭星期一早上七点二十六分去Tesco没买到芒果，合理。
+
 ### 2022.3.12
-1. 🖼Christ Church Picture Gallery 2020年有几幅画被偷了 [High Value Paintings Stolen from Christ Church Picture Gallery](https://cherwell.org/2020/03/16/high-value-paintings-stolen-from-christ-church-picture-gallery/),今天去看的时候原画的位置挂着个空画框，旁边写着「我们把画框摆在这，in the hope that贼会良心发现，有朝一日把画送回来」。
+1. 🖼Christ Church Picture Gallery 2020年有几幅画被偷了（[High Value Paintings Stolen from Christ Church Picture Gallery](https://cherwell.org/2020/03/16/high-value-paintings-stolen-from-christ-church-picture-gallery/)）,今天去看的时候原画的位置挂着个空画框，旁边写着「我们把画框摆在这，in the hope that贼会良心发现，有朝一日把画送回来」。
   - 好笑的是在查新闻的时候还发现那一周还有贼（不知道是不是同一批）从Chch酒窖里顺走了价值一两千镑的酒。
   - ⬆️原文写的是`disappearing`，因此🍷不一定是被偷的，不排除自己跑路的可能性。
 
 ### 2022.3.11
-1. 😅怎么会有人一周吃三次本院formal啊
+1. 😅怎么会有人一周吃三次本院formal啊。
 
 ### 2022.3.10
 1. 🥺**想念全家** 
