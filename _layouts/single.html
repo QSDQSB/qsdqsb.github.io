@@ -18,8 +18,6 @@ layout: default
 
 <div id="main" role="main">
   {% include sidebar.html %}
-  
-  <div class="ball"></div>
 
   <div class="page">
     {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}

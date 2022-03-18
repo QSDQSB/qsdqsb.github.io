@@ -77,13 +77,18 @@ QSD不能没有阴阳怪气，就像西方不能失去耶路撒冷。         �
 - Without further specification, `😅` normally stands for *「草，这人是傻逼吧，这人怎么这么好笑」*
   - An example: 😅某些人起标题，本来简简单单「日记」两个字行了，非得要一堆的冗余废话，无语啊无语。
 
-[](meme_brain-is-a-good-thing.png)
+![](meme_brain-is-a-good-thing.png)
 {: .align-center}
 
 ----
+
+### 2022.3.17
+1. 🍎一天被Apple Map坑了两次，`Apple Map`柠檬什么时候熟啊！
+
 ### 2022.3.15
 1. 🥸某人：“她觉得PDE太没挑战了，所以选择了abstract algebra。” 另一个某人：“觉得PDE没挑战，怎么不去学PPE呢，反正就差了个字母。”
-2. 😅某学德语的人还没我一个看了一天🇩🇪网站的人懂得多😅über uns都不知道什么意思😅（虽然某人一开始以为是`和Uber合作`的意思😅）。
+2. 😅某学德语的人还没一个看了一天🇩🇪网站的某人懂得多😅über uns都不知道什么意思😅（虽然某人一开始以为是`和Uber合作`的意思😅）。
+  - 这不明摆着就是`about us`吗😅
 
 ### 2022.3.14
 #### 世界反水坝日万岁！
