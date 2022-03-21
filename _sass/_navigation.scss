@@ -139,13 +139,11 @@
 
     &.disabled {
       color: darkgray;
-      background-color: $background-color;
       pointer-events: none;
       cursor: not-allowed;
     }
     &.disabled:hover {
       color: darkgray;
-      background-color: $background-color;
     }
   }
 }
