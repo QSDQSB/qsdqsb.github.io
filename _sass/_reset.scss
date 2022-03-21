@@ -7,15 +7,30 @@
 html {
   /* apply a natural box layout model to all elements */
   box-sizing: border-box;
+  font-size: 18px;
+  /*background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 20s ease infinite;
+*/
   background-color: $background-color;
-  font-size: 16px;
-
   @include breakpoint($medium) {
-    font-size: 18px;
+    font-size: 20px;
   }
 
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
+}
+
+@keyframes gradient {
+  0% {
+      background-position: 0% 50%;
+  }
+  50% {
+      background-position: 100% 50%;
+  }
+  100% {
+      background-position: 0% 50%;
+  }
 }
 
 /* Remove margin */
