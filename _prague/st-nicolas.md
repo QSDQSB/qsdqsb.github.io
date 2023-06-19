@@ -7,3 +7,6 @@ date: 2023-03-13
 header:
   overlay_image: /prague/st-nicholas-street-view-3v1.jpg
 ---
+
+![](/images/prague/DSCF4837.jpg)
+{: .full}
