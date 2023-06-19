@@ -1,6 +1,6 @@
 ---
-title: "Praha Castle"
-excerpt: 🏰"
+title: "Prague Castle"
+excerpt: In its regal heights, Castle's grandeur crowns the  city."
 permalink: /voyage/prague/castle
 collection: prague
 date: 2023-06-18
