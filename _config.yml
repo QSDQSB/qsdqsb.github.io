@@ -239,16 +239,16 @@ defaults:
       type: voyage
     values:
       layout: single
-      author_profile: true
+      author_profile: false
       share: false
-      comment: true
+      comment: false
   # _prague
   - scope:
       path: ""
       type: prague
     values:
       layout: single
-      author_profile: true
+      author_profile: re
       share: false
       comment: false
 search: false
