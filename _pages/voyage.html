@@ -1,0 +1,17 @@
+---
+layout: archive
+title: "Voyage"
+excerpt: "Through boundless paths we roam."
+permalink: /voyage/
+author_profile: true
+header:
+  overlay_image: pr-tram-3v1.jpg
+  overlay_filter: 0.5
+---
+{% include base_path %}
+
+  <div class="container">
+    {% for post in site.voyage reversed%}
+    {% include archive-single.html %}
+    {% endfor %}
+  </div>

@@ -105,7 +105,7 @@ author:
   instagram        : "qsdqsbbb"
   impactstory      : #"https://profiles.impactstory.org/u/xxxx-xxxx-xxxx-xxxx"
   lastfm           :
-  linkedin         : "jiahe-qiu-5873a51a3"
+  linkedin         : "jiahe-qiu"
   orcid            : 
   pinterest        :
   soundcloud       :
@@ -186,7 +186,9 @@ collections:
   portfolio:
     output: true
     permalink: /:collection/:path/
-
+  voyage:
+    output: true
+    permalink: /:collection/:path/
 
 # Defaults
 defaults:
@@ -228,7 +230,14 @@ defaults:
       author_profile: true
       share: false
       comment: false
-
+  - scope:
+      path: ""
+      type: voyage
+    values:
+      layout: single
+      author_profile: true
+      share: false
+      comment: true
 search: false
 
 # Sass/SCSS
