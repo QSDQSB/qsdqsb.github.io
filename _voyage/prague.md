@@ -1,9 +1,0 @@
----
-title: "Prague"
-excerpt: "Where Vltava's embrace and storied spires enchant all"
-permalink: /voyage/prague
-collection: voyage
-date: 2023-06-14
-header:
-  overlay_image: pr-wide-mount-3v1.jpg
----
