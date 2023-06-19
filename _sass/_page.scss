@@ -177,7 +177,6 @@ body {
   @include clearfix;
   animation: intro 0.3s both;
   animation-delay: 0.25s;
-
   &--overlay {
     position: relative;
     margin-bottom: 2em;
@@ -188,7 +187,6 @@ body {
     background-position: center;
     animation: intro 0.3s both;
     animation-delay: 0.25s;
-
     a {
       color: #fff;
     }

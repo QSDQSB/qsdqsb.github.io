@@ -146,6 +146,7 @@
 
 .card {
   overflow: hidden;
+  aspect-ratio: 4;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 	background: rgba(255, 255, 255, 0.05);
 	border-radius: 1em;
@@ -191,7 +192,7 @@
 
 .card .content {
   transform: translateY(0px);
-  transition: 0.5s;
+  transition: 0.4s;
 }
 .card:hover .content {
 	transform: translateY(-10px);
