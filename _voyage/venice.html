@@ -1,0 +1,16 @@
+---
+title: "Venice"
+excerpt: "Where whispers dance on liquid streets"
+permalink: /voyage/venice/
+collection: voyage
+author_profile: true
+header:
+  overlay_image: /venice/venice-3v1.jpg
+---
+{% include base_path %}
+
+  <div class="container">
+    {% for post in site.venice reversed%}
+    {% include archive-single.html %}
+    {% endfor %}
+  </div>

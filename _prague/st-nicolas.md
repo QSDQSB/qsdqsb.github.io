@@ -21,5 +21,5 @@ XF90mmf2, ISO 640, f2.2, 1/32000s
 {: .center}
 XC35mmf2, ISO 640, f5.6, 1/1500s
 
-## Interior
+## The Interior
 {% include gallery caption="" %}
