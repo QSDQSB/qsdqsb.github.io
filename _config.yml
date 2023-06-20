@@ -9,7 +9,7 @@
 minimal_mistakes_skin: "neon"
 locale                   : "en-US"
 title                    : "QSD's Houses of Wonders"
-title_separator          : " "
+title_separator          : "·"
 name                     : &name "QSD"
 description              : &description "Some happy place for QSD's weird sense of humour."
 url                      : https://qsdqsb.github.io # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
@@ -192,7 +192,9 @@ collections:
   prague:
     output: true
     permalink: /:collection/:path/
-
+  venice:
+    output: true
+    permalink: /:collection/:path/
 # Defaults
 defaults:
   # _posts
@@ -239,7 +241,7 @@ defaults:
       type: voyage
     values:
       layout: single
-      author_profile: false
+      author_profile: true
       share: false
       comment: false
   # _prague
@@ -248,7 +250,16 @@ defaults:
       type: prague
     values:
       layout: single
-      author_profile: re
+      author_profile: true
+      share: false
+      comment: false
+  # _venice
+  - scope:
+      path: ""
+      type: venice
+    values:
+      layout: single
+      author_profile: true
       share: false
       comment: false
 search: false
