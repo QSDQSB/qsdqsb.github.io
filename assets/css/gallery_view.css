@@ -252,15 +252,6 @@
 		white-space: nowrap;
 	}
 
-		input[type="submit"]:hover,
-		input[type="reset"]:hover,
-		input[type="button"]:hover,
-		button:hover,
-		.button:hover {
-			border-color: #7289DA;
-			color: #7289DA;
-		}
-
 /* Form */
 
 	form {
@@ -454,7 +445,7 @@
 		right: 0;
 	}
 
-		#gallery_main .toggle {
+		#gallery_main .toggle, #gallery_main .leave_gallery  {
 			-webkit-tap-highlight-color: transparent;
 			position: absolute;
 			top: 0;
@@ -468,6 +459,11 @@
 			z-index: 1;
 			background-position: 0.5em 0.5em;
 			left: 0;
+		}
+
+		#gallery_main .leave_gallery {
+			background-image: url("images/arrow-bottom3.svg");
+			left: 5em;
 		}
 
 		body.fullscreen #gallery_main {
@@ -494,7 +490,7 @@
 
 		@media screen and (max-width: 980px) {
 
-				#gallery_main .toggle {
+				#gallery_main .toggle, #gallery_main .leave_gallery {
 					display: block;
 				}
 
@@ -522,7 +518,7 @@
 					opacity: 0;
 				}
 
-				#gallery_main .toggle {
+				#gallery_main .toggle, #gallery_main .leave_gallery {
 					display: none;
 				}
 
@@ -686,18 +682,33 @@
 				height: 100%;
 			}
 
-			#viewer .inner .toggle {
+			#viewer .inner .toggle{
 				-webkit-tap-highlight-color: transparent;
 				position: absolute;
 				top: 0;
-				width: 4em;
-				height: 4em;
-				background-image: url("images/close.svg");
+				width: 3em;
+				height: 3em;
+				background-image: url("images/arrow-right3.svg");
 				background-repeat: no-repeat;
 				background-size: 64px 64px;
 				cursor: pointer;
 				z-index: 1;
 				right: 0;
+				background-position: calc(100% - 0.75em) 0.75em;
+			}
+			#viewer .inner .leave_gallery {
+				-webkit-tap-highlight-color: transparent;
+				position: absolute;
+				top: 0;
+				width: 3em;
+				height: 3em;
+				background-image: url("images/arrow-bottom3.svg");
+				background-position: calc(100% - 0.75em) 0.75em;
+				background-repeat: no-repeat;
+				background-size: 64px 64px;
+				cursor: pointer;
+				z-index: 1;
+				right: 3em;
 				background-position: calc(100% - 0.75em) 0.75em;
 			}
 
@@ -706,10 +717,10 @@
 				-webkit-tap-highlight-color: transparent;
 				position: absolute;
 				top: 50%;
-				width: 6em;
-				height: 6em;
+				width: 3em;
+				aspect-ratio: 1 !important;
 				margin-top: -3em;
-				background-image: url("images/arrow.svg");
+				background-image: url("images/arrow-right.svg");
 				background-position: center;
 				background-repeat: no-repeat;
 				background-size: contain;
@@ -729,10 +740,10 @@
 			}
 
 		#viewer .slide {
-			-moz-transition: opacity 0.5s ease-in-out;
-			-webkit-transition: opacity 0.5s ease-in-out;
-			-ms-transition: opacity 0.5s ease-in-out;
-			transition: opacity 0.5s ease-in-out;
+			-moz-transition: opacity 0.5s ease;
+			-webkit-transition: opacity 0.5s ease;
+			-ms-transition: opacity 0.5s ease;
+			transition: opacity 0.5s ease;
 			position: absolute;
 			top: 0;
 			left: 0;
@@ -741,44 +752,56 @@
 			opacity: 1;
 			z-index: 1;
 		}
-			#viewer .image_title {
-				backdrop-filter: blur(15px);
-				-webkit-backdrop-filter: blur(15px);
-1
+			#viewer .slide .caption .image_title {
+				animation: ease-in-out;
+				transition: 0.8s;
+				opacity: 0;
+				border-radius:10px;
+				padding: 2px 2px 5px;
+				background: linear-gradient(
+					120deg,
+					rgba(200, 200, 200, .01),
+					rgba(255, 255, 255, .06), 70%, 
+					rgba(200, 200, 200, .04)
+				  );
+				backdrop-filter: blur(5px);
+				-webkit-backdrop-filter: blur(5px);
+				border: 1px solid rgba(255, 255, 255, .05);
+				box-shadow: rgba(0, 0, 0, 0.5) 0px 14px 28px;
 			}
 			#viewer .slide .caption {
-				opacity: 0.8;
-				padding: 2em 2em 0.75em 2em;
+				padding: 0.2em 0.2em 1em;
 				width: 100%;
 				position: absolute;
 				bottom: 0;
 				left: 0;
-				color: rgba(255, 255, 255, 0.6);
 				z-index: 1;
+				animation: ease-in-out;
+				transition: 0.8s;
 			}
-
-				 #viewer .slide .caption h3 {
-					border-radius:0.8em;
-					background-color: #fff1;
+				 #viewer .slide .caption .image_title h3 {
+					font-family: "Heebo";
+					font-weight: 200;
 					color: #fff;
-					padding: 0.5em;
-					font-family: 'Heebo', sans-serif;
-					font-weight: 400;
-					opacity: 0;
+					margin: 0;
+					padding-left: 1em;
+					padding-top: 6px;
+					padding-bottom: 2px;
 					animation: ease-in-out;
 					transition: 0.8s;
-					box-shadow: rgba(0, 0, 0, 0.5) 0px 14px 28px;
 				}
 				#viewer .slide .caption :hover {
 						opacity: 1;
-						font-size: larger;
+						animation: ease-in-out;
+						transition: 0.8s;
 				}
 
+
 			#viewer .slide .image {
-				-moz-transition: opacity 0.5s ease-in-out;
-				-webkit-transition: opacity 0.5s ease-in-out;
-				-ms-transition: opacity 0.5s ease-in-out;
-				transition: opacity 0.5s ease-in-out;
+				-moz-transition: opacity 0.5s ease;
+				-webkit-transition: opacity 0.5s ease;
+				-ms-transition: opacity 0.5s ease;
+				transition: opacity 0.5s ease;
 				position: absolute;
 				top: 0;
 				left: 0;
@@ -786,6 +809,7 @@
 				height: 100%;
 				background-repeat: no-repeat;
 				background-size: cover;
+				background-position: center;
 				opacity: 0;
 			}
 
@@ -794,10 +818,10 @@
 				-webkit-animation: spinner 1s linear infinite;
 				-ms-animation: spinner 1s linear infinite;
 				animation: spinner 1s linear infinite;
-				-moz-transition: opacity 0.5s ease-in-out;
-				-webkit-transition: opacity 0.5s ease-in-out;
-				-ms-transition: opacity 0.5s ease-in-out;
-				transition: opacity 0.5s ease-in-out;
+				-moz-transition: opacity 0.5s ease;
+				-webkit-transition: opacity 0.5s ease;
+				-ms-transition: opacity 0.5s ease;
+				transition: opacity 0.5s ease;
 				content: '';
 				display: block;
 				position: absolute;
@@ -826,7 +850,10 @@
 		}
 
 			body.fullscreen #viewer .inner .toggle {
-				background-image: url("images/open.svg");
+				background-image: url("images/arrow-left3.svg");
+			}
+			body.fullscreen #viewer .inner .leave_gallery {
+				background-image: url("images/arrow-bottom3.svg");
 			}
 
 		body.is-loading-1 #viewer {
@@ -860,16 +887,26 @@
 					opacity: 0;
 					right: 0;
 				}
+				#viewer .inner .leave_gallery {
+					-moz-transition: opacity 0.9s ease;
+					-webkit-transition: opacity 0.9s ease;
+					-ms-transition: opacity 0.9s ease;
+					transition: opacity 0.9s ease;
+					opacity: 0;
+					right: 0;
+				}
 
 				body.fullscreen #viewer .inner .toggle {
 					opacity: 1;
 				}
-
+				body.fullscreen #viewer .inner .leave_gallery {
+					opacity: 1;
+				}
 		}
 
 		@media screen and (max-width: 736px) {
 
-			#viewer .inner .toggle {
+			#viewer .inner .toggle, #viewer .inner .leave_gallery {
 				background-size: 32px 32px;
 			}
 
@@ -900,7 +937,11 @@
 			}
 
 				#viewer .inner .toggle {
-					background-image: url("images/close-small.svg") !important;
+					background-image: url("images/arrow-right3.svg") !important;
+					background-size: 32px 32px;
+				}
+				#viewer .inner .leave_gallery {
+					background-image: url("images/arrow-bottom3.svg") !important;
 					background-size: 32px 32px;
 				}
 
