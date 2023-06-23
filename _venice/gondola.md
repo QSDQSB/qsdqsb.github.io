@@ -1,4 +1,7 @@
 ---
+layout: gallery
+gallery_name: "gondola"
+gallery_d: "/gallery/venice"
 title: "The Gondola"
 excerpt: ""
 permalink: /voyage/venice/gondola

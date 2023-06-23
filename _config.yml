@@ -87,37 +87,15 @@ author:
   avatar           : "profile.png"
   bio              : "不是，个人简介到底有什么存在的意义啊。"
   location         : "Oxford"
-  employer         : 
-  pubmed           : 
   googlescholar    : 
   email            : "qsdqsb@foxmail.com"
-  researchgate     :  # example: "https://www.researchgate.net/profile/yourprofile"
-  uri              :
-  bitbucket        :
-  codepen          :
-  dribbble         :
   flickr           :
   facebook         : 
-  foursquare       :
   github           : "QSDQSB"
   google_plus      :
-  keybase          :
   instagram        : "qsdqsbbb"
-  impactstory      : #"https://profiles.impactstory.org/u/xxxx-xxxx-xxxx-xxxx"
-  lastfm           :
   linkedin         : "jiahe-qiu"
-  orcid            : 
-  pinterest        :
-  soundcloud       :
-  stackoverflow    : # http://stackoverflow.com/users/123456/username
-  steam            :
-  tumblr           :
-  twitter          :
-  vine             :
-  weibo            :
-  xing             :
-  youtube          :
-  wikipedia        :
+
 
 
 # Reading Files
@@ -262,6 +240,12 @@ defaults:
       author_profile: true
       share: false
       comment: false
+  - scope:
+      path: "gallery"
+    values:
+      image: true
+
+image_position: "left center"
 search: false
 
 # Sass/SCSS
@@ -275,7 +259,7 @@ github: [metadata]
 permalink: /:categories/:title/
 # paginate: 5 # amount of posts to show
 # paginate_path: /page:num/
-timezone: America/Los_Angeles # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+timezone: GB # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 
 # Plugins
