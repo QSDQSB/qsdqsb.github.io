@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include head.html %}
+  {% include head/custom.html %}
+</head>
+<link rel="stylesheet" href="/assets/css/gallery_view.css" />
+<noscript><link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
+
+<div id="gallery_main">
+        <div class="gallery_view">
+          <body class="is-loading-0 is-loading-1 is-loading-2">
+            <header id="header">
+              <h1>{{ page.title }}</h1>
+              <h2>{{ page.subtitle }}</h2>
+              <p>{{ page.description }}</p>
+              <button onclick="window.location.href='/voyage';">back to voyage</button>
+              <p>上面这个button还没做捏 之后跟叉叉放一起</p>
+            </header>
+
+            <section id="thumbnails">
+              {% assign folderpath = "/" | append: page.gallery_name | append: "/" %}
+              {% assign gallery = site.static_files | where: "image", true | where_exp: "file", "file.path contains folderpath" %}
+              {% for image in gallery %}
+                <article>
+                  <a class="thumbnail" href="{{ page.gallery_d }}/{{ page.gallery_name }}/{{ image.name }}" data-position="{{ site.thumbnail_position }}"><img src="{{ page.gallery_d }}/{{ page.gallery_name }}/{{ image.name }}" alt="{{ image.basename }}" /></a>
+                  <div class="image_title">
+                    <h3>{{ image.basename | replace: "_", " " }}</h3>
+                  </div>
+                </article>
+              {% endfor %}
+            </section>
+            {{ content }}
+            {% include scripts.html %}
+          </body>
+        </div>
+</div>
+</html>
