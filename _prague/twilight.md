@@ -4,7 +4,7 @@ excerpt: "Dreams and history interlace in silhouettes."
 permalink: /voyage/prague/twilight
 collection: prague
 subtitle: "Prague"
-description: "在Riegrovy Sady公园的广袤草地上，年轻恋人们依偎在一起，注视着遥远天际的晚霞散落在布拉格城堡之上。狗儿们在草地间欢快嬉戏，伴随着欢快的啤酒瓶碰撞声和充满希望的欢声笑语。"
+description: "在Riegrovy Sady公园的广袤草地上，年轻恋人们依偎在一起，注视着遥远天际的晚霞散落在布拉格城堡之上。狗儿们在草地间欢快嬉戏，伴随着啤酒瓶碰撞声和充满希望的欢声笑语。"
 layout: gallery
 gallery_name: "prague/twilight"
 date: 2023-06-17
