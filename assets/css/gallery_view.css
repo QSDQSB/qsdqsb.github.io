@@ -6,13 +6,15 @@
 */
 
 /* Reset */
+	animation: ease-in-out;
+	transition: 0.8s;
+
 	html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
 		margin: 0;
 		padding: 0;
 		border: 0;
 		font-size: 100%;
 		vertical-align: baseline;
-		color: #fff;
 	}
 
 	article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
@@ -422,15 +424,20 @@
 			margin-left: 1.25em;
 		}
 }
+
+.gallery_view .container {
+	margin-left: 10px;
+	margin-right: 10px;
+}
 /* ================================================= */
 
 /* Main */
 
 	#gallery_main {
-		-moz-transition: opacity 0.9s ease, right 0.9s ease, left 0.9s ease, visibility 0.9s;
-		-webkit-transition: opacity 0.9s ease, right 0.9s ease, left 0.9s ease, visibility 0.9s;
-		-ms-transition: opacity 0.9s ease, right 0.9s ease, left 0.9s ease, visibility 0.9s;
-		transition: opacity 0.9s ease, right 0.9s ease, left 0.9s ease, visibility 0.9s;
+		-moz-transition: opacity 0.8s ease, right 0.8s ease, left 0.8s ease, visibility 0.8s;
+		-webkit-transition: opacity 0.8s ease, right 0.8s ease, left 0.8s ease, visibility 0.8s;
+		-ms-transition: opacity 0.8s ease, right 0.8s ease, left 0.8s ease, visibility 0.8s;
+		transition: opacity 0.8s ease, right 0.8s ease, left 0.8s ease, visibility 0.8s;
 		-webkit-overflow-scrolling: touch;
 		position: fixed;
 		top: 0;
@@ -527,35 +534,26 @@
 /* Header */
 
 	#header {
-		padding: 3em 2.25em 1.75em 2.25em ;
+		padding: 2em 0.8em 1em 0.5em;
 	}
 
 		#header h1 {
-			font-size: 2.25em;
-			font-weight: 700;
+			font-family: "Philosopher";
+			margin: 0em;
+		}
+		
+		#header h4, h5, h6 {
+			font-family: "Heebo";
+			font-weight: 200;
+			margin: 0.2em;
+		}
+
+		#header p {
+			font-weight: 100;
+			display: block;
 		}
 
 /* Footer */
-
-	#footer {
-		padding: 2.25em 2.25em 1em 2.25em ;
-	}
-
-		#footer .copyright {
-			list-style: none;
-			padding: 0;
-		}
-
-			#footer .copyright li {
-				display: inline-block;
-				font-size: 0.8em;
-				margin-left: 0.35em;
-				padding: 0;
-			}
-
-				#footer .copyright li:first-child {
-					margin-left: 0;
-				}
 
 /* Thumbnails */
 
@@ -637,10 +635,11 @@
 /* Viewer */
 
 	#viewer {
-		-moz-transition: opacity 0.9s ease, width 0.9s ease;
-		-webkit-transition: opacity 0.9s ease, width 0.9s ease;
-		-ms-transition: opacity 0.9s ease, width 0.9s ease;
-		transition: opacity 0.9s ease, width 0.9s ease;
+		-moz-transition: opacity 0.8s ease, width 0.8s ease;
+		-webkit-transition: opacity 0.8s ease, width 0.8s ease;
+		-ms-transition: opacity 0.8s ease, width 0.8s ease;
+		transition: opacity 0.8s ease, width 0.8s ease;
+		transition: all 0.8s ease;
 		position: absolute;
 		top: 0;
 		width: calc(100% - 22.5em);
@@ -879,19 +878,19 @@
 			}
 
 				#viewer .inner .toggle {
-					-moz-transition: opacity 0.9s ease;
-					-webkit-transition: opacity 0.9s ease;
-					-ms-transition: opacity 0.9s ease;
-					transition: opacity 0.9s ease;
+					-moz-transition: opacity 0.8s ease;
+					-webkit-transition: opacity 0.8s ease;
+					-ms-transition: opacity 0.8s ease;
+					transition: opacity 0.8s ease;
 					background-image: url("images/open.svg");
 					opacity: 0;
 					right: 0;
 				}
 				#viewer .inner .leave_gallery {
-					-moz-transition: opacity 0.9s ease;
-					-webkit-transition: opacity 0.9s ease;
-					-ms-transition: opacity 0.9s ease;
-					transition: opacity 0.9s ease;
+					-moz-transition: opacity 0.8s ease;
+					-webkit-transition: opacity 0.8s ease;
+					-ms-transition: opacity 0.8s ease;
+					transition: opacity 0.8s ease;
 					opacity: 0;
 					right: 0;
 				}

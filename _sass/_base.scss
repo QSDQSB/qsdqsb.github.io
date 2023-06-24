@@ -227,9 +227,11 @@ td > code {
 
 hr {
   display: block;
-  margin: 1em 0;
+  margin: 30px auto;
   border: 0;
+  width: 50%;
   border-top: 1px solid $border-color;
+  position: relative;
 }
 
 /* lists */
@@ -383,3 +385,7 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
   -webkit-transition: $global-transition;
   transition: $global-transition;
 }
+
+
+
+ 

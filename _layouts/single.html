@@ -17,6 +17,10 @@ layout: default
 {% endif %}
 
 <div id="main" role="main">
+  {% if page.author_profile %}
+    {% include sidebar.html %}
+    <h1>SIDEBAR</h1>
+  {% endif %}
   {% if page.toc %}
     <div class="page">
   {% else %}
