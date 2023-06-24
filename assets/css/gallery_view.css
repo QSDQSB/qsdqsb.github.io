@@ -539,13 +539,14 @@
 
 		#header h1 {
 			font-family: "Philosopher";
-			margin: 0em;
+			margin: 0;
 		}
 		
 		#header h4, h5, h6 {
-			font-family: "Heebo";
+			font-family: "Philosopher";
 			font-weight: 200;
-			margin: 0.2em;
+			margin: 0;
+			color: #cccd;
 		}
 
 		#header p {
