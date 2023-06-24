@@ -167,6 +167,7 @@ collections:
   voyage:
     output: true
     permalink: /:collection/:path/
+    author_profile: false
   prague:
     output: true
     permalink: /:collection/:path/
@@ -219,7 +220,7 @@ defaults:
       type: voyage
     values:
       layout: single
-      author_profile: true
+      author_profile: false
       share: false
       comment: false
   # _prague
@@ -228,7 +229,7 @@ defaults:
       type: prague
     values:
       layout: single
-      author_profile: true
+      author_profile: false
       share: false
       comment: false
   # _venice
@@ -236,8 +237,8 @@ defaults:
       path: ""
       type: venice
     values:
-      layout: single
-      author_profile: true
+      layout: gallery
+      author_profile: false
       share: false
       comment: false
   - scope:
@@ -315,3 +316,5 @@ compress_html:
   clippings: all
   ignore:
     envs: development
+
+gallery_d: "/gallery"
