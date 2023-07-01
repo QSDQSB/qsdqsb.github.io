@@ -152,7 +152,7 @@ var main = (function($) { var _ = {
 						'<div class="nav-next"></div>' +
 						'<div class="nav-previous"></div>' +
 						'<div class="toggle"></div>' +
-						'<div class="leave_gallery" onclick="history.back()"</div>' +
+						'<div class="leave_gallery"><a href="./" style="display: block; width: 100%; height: 100%;">&nbsp;</a></div>' +
 					'</div>' +
 				'</div>'
 			).appendTo(_.$body);

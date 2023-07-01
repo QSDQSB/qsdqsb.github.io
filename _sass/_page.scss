@@ -5,6 +5,7 @@
 
 #main {
   @include clearfix;
+  display: flex;
   margin-top: 2em;
   margin-left: 0;
   margin-right: 2em;
@@ -18,7 +19,6 @@
 body {
   display: -webkit-box;
   display: -ms-flexbox;
-  display: flex;
   min-height: 100vh;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
@@ -32,23 +32,24 @@ body {
 }
 
 .page {
-
+  flex: 1;
+  flex-direction: column;
+  position: relative;
   @include breakpoint($large) {
     float: right;
-    width: calc(100% - #{$right-sidebar-width-narrow});
     padding-right: $right-sidebar-width-narrow;
   }
 
   @include breakpoint($x-large) {
     float: right;
-    width: calc(100% - #{$right-sidebar-width});
     padding-right: $right-sidebar-width;
   }
 
   .page__inner-wrap {
     float: left;
+    position: inherit;
     margin-top: 0.5em;
-    margin-left: 0;
+    margin-left: 0.2em;
     margin-right: 0;
     width: 100%;
     clear: both;
@@ -90,7 +91,7 @@ body {
     margin-right: 0;
     width: 100%;
     clear: both;
-
+    flex: none;
     .page__content,
     .page__meta,
     .page__share {
@@ -446,15 +447,7 @@ body {
   @include clearfix();
   float: left;
 
-  @include breakpoint($large) {
-    float: right;
-    width: calc(100% - #{$right-sidebar-width-narrow});
-  }
-
-  @include breakpoint($x-large) {
-    width: calc(100% - #{$right-sidebar-width});
-  }
-
+  width: 100%;
   a {
     color: inherit;
     text-decoration: none;
