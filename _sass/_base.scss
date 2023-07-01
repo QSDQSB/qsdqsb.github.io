@@ -15,7 +15,6 @@ body {
   color: $text-color;
   font-family: $global-font-family;
   line-height: 1.5;
-
   &.overflow--hidden {
     /* when primary navigation is visible, the content in the background won't scroll */
     overflow: hidden;
@@ -34,18 +33,17 @@ a {
   }
 }
 
-.glassmorphism-card {
-  margin: 1em 0.5em;
-  padding: 1em;
-  background-color: rgba(255, 255, 255, .1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+#glassmorphism-card-effect {
+
+  background-color: rgba(255, 255, 255, .05);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   border-radius: $border-radius;
 }
 
 #background-gradient{
   color:rgba(255, 255, 255, .1);
-  background: linear-gradient(to right,     rgb(76, 217, 105), rgb(52, 170, 220),     rgb(88, 86, 217), rgb(255, 45, 83),       rgb(255, 45, 83), rgb(88, 86, 217),       rgb(52, 170, 220), rgb(76, 217, 105));
+  background: linear-gradient(to right, 120deg, rgba(76, 217, 105,0.05), rgba(52, 170, 220,0.08),     rgba(88, 86, 217,0.02), rgba(255, 45, 83,0.03),       rgba(255, 45, 83,0.02), rgba(88, 86, 217,0.04),       rgba(52, 170, 220,0.03), rgba(76, 217, 105,0.05));
   background-size: 400%;
   animation:sTransition 10s linear infinite;
 }
@@ -211,9 +209,8 @@ td > code {
   margin: 0 0.2rem;
   color: $code-color;
   font-size: $type-code-size;
-  
   background: $code-background-color;
-  border: 1px solid $lighter-gray;
+  border: 1px solid $light-gray;
   border-radius: $border-radius / 2;
   box-shadow: $box-shadow;
 
