@@ -1,15 +1,14 @@
 ---
-date: 2023-07-01
-permalink: /posts/leetcode/fair-distribution-of-cookies
 tags:
   - DFS
   - Heap
   - Leetcode-Medium
 share: false
+title: "Leetcode July Daily Challenges"
+excerpt: "QSD is actually rewatching Agnets of SHIELD @`July 2`. 'Will I get my Skye back?'"
 ---
 
-## Description
-
+# `20230701` [Maximum Number of Achievable Transfer Requests](https://leetcode.com/problems/maximum-number-of-achievable-transfer-requests/description)
 You are given an integer array `cookies`, where `cookies[i]` denotes the number of cookies in the `ith` bag. You are also given an integer `k` that denotes the number of children to distribute **all** the bags of cookies to. All the cookies in the same bag must go to the same child and cannot be split up.
 
 The **unfairness** of a distribution is defined as the **maximum** **total** cookies obtained by a single child in the distribution.
@@ -71,4 +70,30 @@ ans = max(heap)
 - `sort` is again optional, but basically costs no time.
 - This gives the fastest solution on Leetcode.
 
+# `20230702` [Fair Distribution of Cookies](https://leetcode.com/problems/fair-distribution-of-cookies/)
 
+```python
+class Solution:
+    def maximumRequests(self, n: int, requests: List[List[int]]) -> int:
+        def bitmaskToBool(n):
+            bitsOn = []
+            while n:
+                bitsOn.append(n%2==1)
+                n = n//2
+            return(bitsOn)
+        ans = 0
+        for mask in range(1, (1<<len(requests))):
+            bitsOn = bitmaskToBool(mask)
+            pathLength = sum(bitsOn)
+            if pathLength<=ans: continue
+
+            indeg = [0 for _ in range(n)]
+            for i in range(len(bitsOn)):
+                if not bitsOn[i]: continue
+                req = requests[i]
+                indeg[req[0]]-=1
+                indeg[req[1]]+=1
+            if all([x==0 for x in indeg]):
+                ans = max(ans, pathLength)
+        return(ans)
+```

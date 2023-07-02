@@ -34,6 +34,7 @@ body {
 .page {
   flex: 1;
   flex-direction: column;
+  background-repeat: none;
   position: relative;
   @include breakpoint($large) {
     float: right;
@@ -173,6 +174,7 @@ body {
 }
 
 .page__hero {
+  transition: all $global-transition-time cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   margin-bottom: 2em;
   @include clearfix;
@@ -223,6 +225,7 @@ body {
     }
   }
 }
+
 
 .page__hero-image {
   width: 100%;
