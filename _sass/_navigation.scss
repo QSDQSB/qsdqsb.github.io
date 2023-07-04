@@ -352,7 +352,6 @@
   font-family: $sans-serif-narrow;
   font-size: $type-size-6;
   font-weight: bold;
-  text-transform: uppercase;
   border-bottom: 1px solid $border-color;
 }
 
@@ -366,7 +365,6 @@
 
   font-family: $tag-font-family;
   color: $light-gray;
-  text-transform: uppercase;
   border: 1px solid $border-color;
   border-radius: $border-radius;
   .nav__title {

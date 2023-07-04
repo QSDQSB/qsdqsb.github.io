@@ -9,6 +9,7 @@ excerpt: "QSD is actually rewatching Agnets of SHIELD @`July 2`. 'Will I get my 
 ---
 
 # `20230701` [Maximum Number of Achievable Transfer Requests](https://leetcode.com/problems/maximum-number-of-achievable-transfer-requests/description)
+`Medium` `DFS`
 You are given an integer array `cookies`, where `cookies[i]` denotes the number of cookies in the `ith` bag. You are also given an integer `k` that denotes the number of children to distribute **all** the bags of cookies to. All the cookies in the same bag must go to the same child and cannot be split up.
 
 The **unfairness** of a distribution is defined as the **maximum** **total** cookies obtained by a single child in the distribution.
@@ -68,10 +69,12 @@ for i in cookies:
 ans = max(heap)
 ```
 - `sort` is again optional, but basically costs no time.
-- This gives the fastest solution on Leetcode.
+- This gives the fastest solution on Leetcode.s
 
 # `20230702` [Fair Distribution of Cookies](https://leetcode.com/problems/fair-distribution-of-cookies/)
-
+`Hard` `DFS` `Divide and Conquer`
+- Use `bitMask` to search request cases
+- There's a very nice article about how to optimise by divide and conquer *path lengths*.
 ```python
 class Solution:
     def maximumRequests(self, n: int, requests: List[List[int]]) -> int:
@@ -96,4 +99,43 @@ class Solution:
             if all([x==0 for x in indeg]):
                 ans = max(ans, pathLength)
         return(ans)
+```
+# `20230703` [Buddy Strings](https://leetcode.com/problems/buddy-strings/)
+`easy` `silly`
+纯笨b摆烂天把所有情况想明白就完事了没什么好说的题目.
+```python
+class Solution:
+    def buddyStrings(self, s: str, goal: str) -> bool:
+        if len(s)!=len(goal) or len(s)<=1: return(False)
+        if len(s)==2:
+            return (s[0]==goal[1] and s[1]==goal[0])
+        diff = -1
+        for i in range(len(s)):
+            if s[i]!=goal[i]:
+                if diff==-2: return(False) #two pairs differ
+                if diff==-1: # no pair differs
+                    diff = i
+                else: # diff = i, one pair differs
+                    if not(s[diff]==goal[i] and s[i]==goal[diff]):
+                        return(False)
+                    else:
+                        diff=-2
+        if diff == -1:  # all same
+            return not len(set(s))==len(s)
+        elif diff == -2:
+            return True
+        else:
+            return False 
+```
+# `20230704` [Single Number II](https://leetcode.com/problems/single-number-ii/)
+`Medium` `Array` `Bit Manipulation`
+Use idea of `XOR`. The logic is a bit confusing, better take some numbers and try for yourself 🙂.
+```python
+class Solution:
+    def singleNumber(self, nums: List[int]) -> int:
+        a, b = 0, 0
+        for i in nums:
+            a = (a^i) & ~b
+            b = (b^i) & ~a
+        return a
 ```
