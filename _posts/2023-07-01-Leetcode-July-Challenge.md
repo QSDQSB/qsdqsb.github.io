@@ -198,3 +198,31 @@ class Solution:
                 ans = min(ans, i-left+1)
         return(0 if ans==len(nums)+1 else ans)    
 ```
+
+# `20230707` [Maximize the Confusion of an Exam](https://leetcode.com/problems/maximize-the-confusion-of-an-exam/)
+`Medium` `Pointer` `Greedy`
+
+> A teacher is writing a test with n true/false questions, with 'T' denoting true and 'F' denoting false. He wants to confuse the students by maximizing the number of consecutive questions with the same answer (multiple trues or multiple falses in a row).
+>
+> You are given a string `answerKey`, where `answerKey[i]` is the original answer to the ith question. In addition, you are given an integer `k`, the maximum number of times you may perform the following operation:
+>
+> Change the answer key for any question to 'T' or 'F' (i.e., set `answerKey[i]` to 'T' or 'F').
+Return the maximum number of consecutive 'T's or 'F's in the answer key after performing the operation at most k times.
+
+Simple greedy. No point not exploiting all `k`s if possible. Simply use a pointer `l` to indicate the current left position. If surpassed then adjust left to the closest.
+
+```python
+class Solution:
+    def maxConsecutiveAnswers(self, answerKey: str, k: int) -> int:
+        ans = 0
+        for c in ['T','F']:
+            l = current = count = 0
+            for i in range(len(answerKey)):
+                if answerKey[i]==c: count+=1 # WT replace c
+                while count > k: #don't want the left
+                    if answerKey[l]==c: count-=1
+                    l+=1
+                current = max(current, i-l+1)
+            ans = max(ans,current)
+        return(ans)
+```
