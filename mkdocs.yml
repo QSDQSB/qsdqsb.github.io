@@ -18,9 +18,6 @@ theme:
     - navigation.instant.prefetch
     - tabs
     - header.autohide
-  font:
-    text: "Philosopher"
-    code: "Noto Sans SC"
 markdown_extensions: 
   - attr_list # https://squidfunk.github.io/mkdocs-material/reference/images/
   - pymdownx.tabbed  # https://squidfunk.github.io/mkdocs-material/reference/content-tabs/
