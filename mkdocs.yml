@@ -1,5 +1,6 @@
 site_name: QSD.Maths.Obsidian
 theme:
+  name: material
   palette: 
     # Palette toggle for light mode
     - scheme: default
