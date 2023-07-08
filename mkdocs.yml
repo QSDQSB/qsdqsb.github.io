@@ -1,25 +1,23 @@
 site_name: QSD.Maths.Obsidian
 theme:
   palette: 
-    primary: indigo
     # Palette toggle for light mode
     - scheme: default
       toggle:
         icon: material/brightness-7 
         name: Switch to dark mode
-
     # Palette toggle for dark mode
     - scheme: slate
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
   #  favicon: attachment/portrait.png
-  language: zh # 中文，解决中文搜索问题
   features:
-    - navigation.expand 
+    - navigation.expand
+    - navigation.instant
+    - navigation.instant.prefetch
     - tabs
     - header.autohide
-  logo: images/QSDLOGO-2000.svg
   font:
     text: "Philosopher"
     code: "Noto Sans SC"
@@ -54,6 +52,7 @@ markdown_extensions:
   - pymdownx.tilde
 plugins:
   - search
+    lang: en
   - tags
   - roamlinks 
     #- autolinks 
