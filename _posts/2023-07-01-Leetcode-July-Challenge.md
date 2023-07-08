@@ -226,3 +226,40 @@ class Solution:
             ans = max(ans,current)
         return(ans)
 ```
+
+今天的双周赛好水啊，就跟Leetcode的服务器一样😌。
+{: .notice--info}
+
+# `20230708` [Put Marbles in Bags](https://leetcode.com/problems/put-marbles-in-bags/)
+`Hard` `Greedy` 
+
+> You have k bags. You are given a 0-indexed integer array `weights` where `weights[i]` is the weight of the ith marble. You are also given the integer `k`.
+>
+> Divide the marbles into the `k` bags according to the following rules:
+>
+> - No bag is empty.
+> - If the ith marble and jth marble are in a bag, then all marbles with an index between the ith and jth indices should also be in that same bag.
+> - If a bag consists of all the marbles with an index from i to j inclusively, then the cost of the bag is `weights[i] + weights[j]`.
+The score after distributing the marbles is the sum of the costs of all the k bags.
+> 
+> Return the difference between the maximum and minimum scores among marble distributions.
+
+**Constraints**
+- 1 <= $k$ <= weights.length <= $10^5$
+- 1 <= weights[i] <= $10^9$
+
+It's easy to think about taking a sum of neighbours and try to locate extreme situations among them. Two things to consider: `1` the boundary of arrays `2` the one-element groups. The first is easy to figure out, because in max and min cases the 0th and -1th element has to be included in the cost, so it cancel out.
+
+For the second, take a neighbour sum (e.g. `np.array(weights[1:]) + np.array(weights[:-1])`). You will find out that **the partition is actually bijective to taking $k-1$ elements from neighbour-sum.**
+
+Didn't use `numpy`, as importing is slow, and wanna beat as many people as possible for QSD's bizzard dignity.
+
+<img src="https://cdn.mathpix.com/snip/images/yoE8v7U7edv8jME1K_clSUXu4suNRBbtb60vw8bPhcE.original.fullsize.png"  width="50%">{: .align-center}
+
+```python
+class Solution:
+    def putMarbles(self, weights: List[int], k: int) -> int:
+        if k==1: return(0)
+        neighbourSumWeights = sorted([weights[i] + weights[i+1] for i in range(len(weights)-1)])
+        return(sum(neighbourSumWeights[-(k-1):])-sum(neighbourSumWeights[:(k-1)]))
+```
