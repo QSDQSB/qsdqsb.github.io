@@ -52,7 +52,6 @@ markdown_extensions:
   - pymdownx.tilde
 plugins:
   - search
-    lang: en
   - tags
   - roamlinks 
     #- autolinks 
