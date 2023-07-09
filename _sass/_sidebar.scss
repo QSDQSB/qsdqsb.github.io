@@ -8,7 +8,8 @@
 
 @import url('https://fonts.googleapis.com/css?family=Heebo:100,200|Open+Sans:100,200');
 .sidebar {
-  margin: 0;
+  min-width: 190px;
+  margin: 0 0.5em;
   align-self: flex-start;
   display: inline-block;
   -webkit-transform: translate3d(0, 0 , 0);
@@ -213,7 +214,7 @@
 
 .author__bio {
   display: none;
-  margin: 0;
+  margin: 0 0.5em;
   padding: 0 1em;
   text-align: center;
   font-weight: 400;
