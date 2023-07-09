@@ -47,19 +47,18 @@ body {
   }
 
   .page__inner-wrap {
+    border-radius: $border-radius;
     float: left;
     position: inherit;
-    margin-top: 0.5em;
-    margin-left: 0.2em;
-    margin-right: 0;
+    margin: 0.5em 0em 0.2em;
     width: 100%;
     clear: both;
 
     .page__content,
     .page__meta,
     .page__share {
+      // align in center
       position: relative;
-      float: left;
       margin-left: 0;
       margin-right: 0;
       width: 100%;
@@ -124,11 +123,14 @@ body {
 
 .page__content {
   h1 {
-    padding-bottom: 1em;
+    border-bottom: 2px dashed $border-color;
+    margin-bottom: 0.4em;
+    padding-bottom: 0.1em;
   }
   h2 {
-    padding-bottom: 0.5em;
-    border-bottom: 1px solid $border-color;
+    margin-bottom: 0.2em;
+    padding-bottom: 0.1em;
+    border-bottom: 1px dashed $h2-color;
   }
 
   p, li, dl {
