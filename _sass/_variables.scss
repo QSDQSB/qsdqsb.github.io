@@ -56,8 +56,8 @@ $lighter-gray               : mix(#fff, $gray, 90%);
 
 $body-color                 : #111;
 $background-color           : #151515;
-$code-background-color      : #212121;
-$code-background-color-dark : #212121;
+$code-background-color      : #21212120;
+$code-background-color-dark : #21212120;
 $text-color                 : $lighter-gray;
 $border-color               : $darker-gray;
 $code-color                 : #f92472;
@@ -82,7 +82,7 @@ $instagram-color            : #ff88d1;
 $lastfm-color               : #d51007;
 $linkedin-color             : #007bb6;
 $pinterest-color            : #cb2027;
-$blog-color                  : #fa9b39;
+$blog-color                 : #fa9b39;
 $soundcloud-color           : #ff3300;
 $stackoverflow-color        : #fe7a15;
 $office-clock-color         : #32506d;
@@ -93,6 +93,11 @@ $youtube-color              : #bb0000;
 $xing-color                 : #006567;
 $steam-color                : #1a3262;
 
+$h2-color                   : #f0a763;
+$h3-color                   : #F38AB5;
+$h4-color                   : #4495ff;
+$h5-color                   : #ad9fff;
+$h6-color                   : #ca8bee;
 
 /* links */
 $link-color                 : #6fcdff;

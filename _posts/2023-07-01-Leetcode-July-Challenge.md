@@ -104,6 +104,7 @@ class Solution:
                 ans = max(ans, pathLength)
         return(ans)
 ```
+
 # `20230703` [Buddy Strings](https://leetcode.com/problems/buddy-strings/)
 `Easy` `Silly`
 
@@ -155,6 +156,8 @@ class Solution:
 >
 > Return the size of the longest non-empty subarray containing only 1's in the resulting array. Return 0 if there is no such subarray.
 
+---
+
 不是，您每天出这种题目，您图啥呢？Simply 贪心。
 ```python
 class Solution:
@@ -183,6 +186,8 @@ class Solution:
 
 > Given an array of positive integers `nums` and a positive integer `target`, return the minimal length of a subarray whose sum is greater than or equal to target. If there is no such subarray, return 0 instead.
 
+---
+
 普及组第一题都不敢出这么简单的级别泥🤧two pointers O(n)完事泥.
 ```python
 class Solution:
@@ -208,6 +213,8 @@ class Solution:
 >
 > Change the answer key for any question to 'T' or 'F' (i.e., set `answerKey[i]` to 'T' or 'F').
 Return the maximum number of consecutive 'T's or 'F's in the answer key after performing the operation at most k times.
+
+---
 
 Simple greedy. No point not exploiting all `k`s if possible. Simply use a pointer `l` to indicate the current left position. If surpassed then adjust left to the closest.
 
@@ -248,6 +255,8 @@ The score after distributing the marbles is the sum of the costs of all the k ba
 - 1 <= $k$ <= weights.length <= $10^5$
 - 1 <= weights[i] <= $10^9$
 
+---
+
 It's easy to think about taking a sum of neighbours and try to locate extreme situations among them. Two things to consider: `1` the boundary of arrays `2` the one-element groups. The first is easy to figure out, because in max and min cases the 0th and -1th element has to be included in the cost, so it cancel out.
 
 For the second, take a neighbour sum (e.g. `np.array(weights[1:]) + np.array(weights[:-1])`). You will find out that **the partition is actually bijective to taking $k-1$ elements from neighbour-sum.**
@@ -268,7 +277,7 @@ class Solution:
 `Hard` `DP`
 
 Finally an interesting question. Good for Leetcode 😌. 
-{: .notice--warning}
+{: .notice--success}
 
 > The *variance* of a string is defined as the largest difference between the number of occurrences of any 2 characters present in the string. Note the two characters may or may not be the same.
 >
@@ -278,6 +287,8 @@ Finally an interesting question. Good for Leetcode 😌.
 
 **Constraints**
 1 <= s.length <= $10^4$
+
+---
 
 Classical DP question (as the data constraint suggests). The first idea is to 
     1. iterate the two letters among all letters.

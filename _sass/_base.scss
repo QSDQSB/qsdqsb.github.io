@@ -59,41 +59,39 @@ a {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  margin: 1em 0 0.5em;
+  margin: 0.5em 0 0.5em;
   line-height: 1.2;
   font-family: $header-font-family;
   font-weight: bold;
 }
 
 h1 {
-  margin-top: 0;
   font-size: $type-size-2;
-
 }
 
 h2 {
   font-size: $type-size-3;
-  color: #f0a763;
+  color: $h2-color;
 }
 
 h3 {
   font-size: $type-size-4;
-  color: #F38AB5;
+  color: $h3-color;
 }
 
 h4 {
   font-size: $type-size-5;
-  color: #4495ff;
+  color: $h4-color;
 }
 
 h5 {
   font-size: $type-size-6;
-  color: #ad9fff;
+  color: $h5-color;
 }
 
 h6 {
   font-size: $type-size-7;
-  color: #ca8bee;
+  color: $h6-color;
 }
 
 small, .small {
@@ -213,6 +211,9 @@ td > code {
   border: 1px solid $light-gray;
   border-radius: $border-radius / 2;
   box-shadow: $box-shadow;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+
 
   &:before, &:after {
     letter-spacing: -0.2em;
