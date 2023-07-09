@@ -263,3 +263,49 @@ class Solution:
         neighbourSumWeights = sorted([weights[i] + weights[i+1] for i in range(len(weights)-1)])
         return(sum(neighbourSumWeights[-(k-1):])-sum(neighbourSumWeights[:(k-1)]))
 ```
+
+# `20230709` [Substring With Largest Variance](https://leetcode.com/problems/substring-with-largest-variance/)
+`Hard` `DP`
+
+Finally an interesting question. Good for Leetcode 😌. 
+{: .notice--warning}
+
+> The *variance* of a string is defined as the largest difference between the number of occurrences of any 2 characters present in the string. Note the two characters may or may not be the same.
+>
+> Given a string `s` consisting of lowercase English letters only, return the largest variance possible among all substrings of `s`.
+>
+> A *substring* is a contiguous sequence of characters within a string.
+
+**Constraints**
+1 <= s.length <= $10^4$
+
+Classical DP question (as the data constraint suggests). The first idea is to 
+    1. iterate the two letters among all letters.
+    2. count the occurrence among all possible substrings of `s`.  
+
+This is clearly TLE. Then `DP` naturally comes up to skip unncessary sub-problems during Step 2. The *difference of occurrence between two letters* is then linked to [Kadane's Algorithm](https://www.geeksforgeeks.org/largest-sum-contiguous-subarray/) (The classical $O(n)$ solution to **Largest Sum Contiguous Subarray** problem).
+
+> One problem remains is the situation of $abb$, which, as we reset the difference to 0 to find the optimal solution in Kadane, results in answer `0`. The convenient solution is to calculate again for `s[::-1]`. *(Further optimisation for this clearly exists as the overlapping of calculation, but only provides constant optimisation for time complexity)*
+
+`time complexity` $26^2*\text{len}(s)$
+
+```python
+class Solution:
+    def largestVariance(self, s: str) -> int:
+        letters = set(s)
+        if len(letters)==1: return(0)
+        ans = 0
+        for a in letters:
+            for b in letters:
+                if a==b: continue
+                for sSs in [s,s[::-1]]:
+                    curMax = countA = countB = 0
+                    for letter in sSs:
+                        if letter not in [a,b]: continue
+                        countA+= (letter==a)
+                        countB+= (letter==b)
+                        if countA<countB: countA = countB = 0
+                        if countA*countB: curMax = max(curMax, countA-countB)
+                    ans = max(ans, curMax)
+        return(ans)
+```
