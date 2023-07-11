@@ -320,3 +320,75 @@ class Solution:
                     ans = max(ans, curMax)
         return(ans)
 ```
+
+# `20230710` [Minium Depth of Binary Tree](https://leetcode.com/problems/minimum-depth-of-binary-tree/)
+`Easy` `Tree`
+
+> Given a binary tree, find its minimum depth.
+
+> The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
+
+
+水，注意number of nodes可以是0。下一题。
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def minDepth(self, root: Optional[TreeNode]) -> int:
+        if not root: return 0
+        ans = 0
+        queue = [root]
+        ne = root
+        while queue:
+            now = queue.pop(0)
+            if now==ne: ans+=1
+            if now.left==None and now.right==None: return(ans)
+            if now.left: queue.append(now.left)
+            if now.right: queue.append(now.right)
+            if now==ne:
+                if now.left:
+                    ne=now.left
+                else:
+                    ne=now.right
+
+```
+
+# `20230711` [All Nodes Distance K in Binary Tree](https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree)
+Given the root of a binary tree, the value of a target node `target`, and an integer `k`, return an array of the values of all nodes that have a distance `k` from the target node.
+`Medium` `Tree` `BFS`
+
+Classic BFS. Simple variation of yesterday's question. Beat 8% in time, because just finished Mission Impossible and too exhuasted to optimise the algo.
+
+```python
+class Solution:
+    def distanceK(self, root: TreeNode, target: TreeNode, k: int) -> List[int]:
+        queue = [root]
+        fathers = {root: None}
+        distance = [0 for _ in range(1000)]
+        while queue:
+            now = queue.pop(0)
+            if now.left:
+                queue.append(now.left)
+                fathers[now.left] = now
+            if now.right:
+                queue.append(now.right)
+                fathers[now.right] = now
+        ans = []
+        queue = [target]
+        hasVisited = []
+        distance[target.val] = 0
+        while queue:
+            now = queue.pop(0)
+            hasVisited.append(now.val)
+            if distance[now.val]==k: ans.append(now.val)
+            for x in [now.left,now.right,fathers[now]]:
+                if x==None: continue
+                if x.val in hasVisited: continue
+                queue.append(x)
+                distance[x.val] = distance[now.val] + 1
+        return(ans)
+```
