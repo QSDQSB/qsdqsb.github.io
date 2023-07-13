@@ -420,3 +420,34 @@ class Solution:
             if dfs(i): ans.append(i)
         return(ans)
 ```
+
+# `20230713` [Course Schedule](https://leetcode.com/problems/course-schedule)
+`Medium` `Topological Sort` `DFS`
+
+> There are a total of `numCourses` courses you have to take, labeled from 0 to `numCourses-1`. You are given an array `prerequisites` where `prerequisites[i] = [ai, bi]` indicates that you must take course `bi` first if you want to take course `ai`.
+>
+> - For example, the pair $[0, 1]$, indicates that to take course 0 you have to first take course 1.
+> 
+> Return `true` if you can finish all courses. Otherwise, return `false`.
+
+```python
+class Solution:
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        adj = [[] for _ in range(numCourses)]
+        for end, start in prerequisites:
+            # b first before a, so b->a
+            adj[start].append(end)
+        status = [0] * numCourses
+        #status: 0 not yet, -1 processing, 1 done
+        def isCycle(now):
+            # processing(-1): cycle; done(1): nope
+            if status[now]: return status[now]==-1
+            status[now] = -1
+            for v in adj[now]:
+                if isCycle(v): return True
+            status[now] = 1
+            return False
+        for v in range(numCourses):
+            if isCycle(v): return False
+        return True
+```
