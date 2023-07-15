@@ -285,8 +285,7 @@ Finally an interesting question. Good for Leetcode 😌.
 >
 > A *substring* is a contiguous sequence of characters within a string.
 
-**Constraints**
-1 <= s.length <= $10^4$
+**Constraints** $1 \leq s.length \leq 10^4$
 
 ---
 
@@ -328,8 +327,8 @@ class Solution:
 
 > The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
 
-
 水，注意number of nodes可以是0。下一题。
+
 ```python
 # Definition for a binary tree node.
 # class TreeNode:
@@ -358,8 +357,9 @@ class Solution:
 ```
 
 # `20230711` [All Nodes Distance K in Binary Tree](https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree)
-Given the root of a binary tree, the value of a target node `target`, and an integer `k`, return an array of the values of all nodes that have a distance `k` from the target node.
 `Medium` `Tree` `BFS`
+
+> Given the root of a binary tree, the value of a target node `target`, and an integer `k`, return an array of the values of all nodes that have a distance `k` from the target node.
 
 Classic BFS. Simple variation of yesterday's question. Beat 8% in time, because just finished Mission Impossible and too exhuasted to optimise the algo.
 
@@ -450,4 +450,55 @@ class Solution:
         for v in range(numCourses):
             if isCycle(v): return False
         return True
+```
+
+# `20230714` [Longest Arithmetic Subsequence of Given Difference](https://leetcode.com/problems/longest-arithmetic-subsequence-of-given-difference/)
+`Medium` `Greedy`
+
+> Given an integer array `arr` and an integer `difference`, return the length of the longest subsequence in `arr` which is an arithmetic sequence such that the difference between adjacent elements in the subsequence equals `difference`.
+>
+> A subsequence is a sequence that can be derived from arr by deleting some or no elements without changing the order of the remaining elements.
+
+straightforward greedy. Use dict to collect nums.
+```python
+class Solution:
+    def longestSubsequence(self, arr: List[int], difference: int) -> int:
+        prevLoc, ans = {}, 1
+        for i in arr:
+            if i-difference in prevLoc:
+                cur = prevLoc[i-difference] + 1
+                if i in prevLoc:
+                    prevLoc[i] = max(prevLoc[i], cur)
+                else:
+                    prevLoc[i] = cur
+            else:
+                if i not in prevLoc: prevLoc[i] = 1
+            if prevLoc[i]>ans: ans=prevLoc[i]
+        return ans
+```
+
+# `20230715` [Maximum Number of Events That Can Be Attended II](https://leetcode.com/problems/maximum-number-of-events-that-can-be-attended-ii)
+`Hard` `DP`
+
+> You are given an array of events where `events[i]` = `[startDayi, endDayi, valuei]`. The ith event starts at `startDayi` and ends at `endDayi`, and if you attend this event, you will receive a value of `valuei`. You are also given an integer `k` which represents the maximum number of events you can attend.
+>
+> You can only attend one event at a time. If you choose to attend an event, you must attend the entire event. Note that the end day is inclusive: that is, you cannot attend two events where one of them starts and the other ends on the same day.
+>
+> Return the maximum sum of values that you can receive by attending events.
+
+**Constraints** $1\leq k * events.length \leq 10^6$
+
+一眼DP。然后把数据量看成`1≤k≤events.length≤10^6`，然后想了一年啊这怎么可能$O(n)$做啊啊啊啊，然后发现原来就是简单DP。 $dp[i][j]$前i件选j件的max。
+
+```python
+class Solution:
+    def maxValue(self, events: List[List[int]], k: int) -> int:
+        events.sort(key=lambda x: x[1])
+        terminates = [x[1] for x in events]
+        @lru_cache(None)
+        def dp(i, j):
+            if i<0 or j==0: return 0
+            startat = bisect.bisect_left(terminates, events[i][0])-1
+            return max(dp(startat,j-1)+events[i][2], dp(i-1,j))
+        return dp(len(events)-1,k)
 ```
