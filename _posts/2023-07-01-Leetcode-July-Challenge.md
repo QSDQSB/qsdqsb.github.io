@@ -393,7 +393,7 @@ class Solution:
         return(ans)
 ```
 
-# `20230712` [Find Eventual Safe States]
+# `20230712` [Find Eventual Safe States](https://leetcode.com/problems/find-eventual-safe-states/)
 `Medium` `DFS`
 
 > There is a directed graph of n nodes with each node labeled from 0 to n - 1. The graph is represented by a 0-indexed 2D integer array `graph` where `graph[i]` is an integer array of nodes adjacent to node i, meaning there is an edge from node i to each node in `graph[i]`.
@@ -501,4 +501,99 @@ class Solution:
             startat = bisect.bisect_left(terminates, events[i][0])-1
             return max(dp(startat,j-1)+events[i][2], dp(i-1,j))
         return dp(len(events)-1,k)
+```
+
+# `20230716` [Smallest Sufficient Team](https://leetcode.com/problems/smallest-sufficient-team)
+`Hard` `Bitmask` `DFS`
+
+> In a project, you have a list of required skills `req_skills`, and a list of people. The ith person `people[i]` contains a list of skills that the person has.
+>
+> Consider a sufficient team: a set of people such that for every required skill in `req_skills`, there is at least one person in the team who has that skill. We can represent these teams by the index of each person.
+> 
+> Return any sufficient team of the smallest possible size, represented by the index of each person. You may return the answer in any order. It is guaranteed an answer exists.
+
+**Constraints** 
+- $1 \leq req_skills.length \leq 16$
+- $1 \leq people.length \leq 60$
+- All the strings of `people[i]` are unique.
+- Every skill in `people[i]` is a skill in `req_skills`.
+
+A nice heavy-coding problem I would say. Most tricky in this month so far :).
+
+## The Set Cover Problem
+The question's model is [set cover problem](https://en.wikipedia.org/wiki/Set_cover_problem), which is NP complete, hence no exact polynomial-time solutions. Appropriate [greedy algorithms](https://en.wikipedia.org/wiki/Set_cover_problem#Greedy_algorithm) can optimise the time complexity to approximately polynomial.
+
+## The Optimisation
+Indeed, we never no if we have achieved the minimal answer until searched all possible combinations. Therefore, the key is to constrain the *possible combinations* set:
+
+1. create `skillsWho`
+2. use *bitmask* and bit operations to speed up set union and zero check processes.
+3. discard useless people (🐠) that are skills-dominated by others.
+4. constrain the initial search to the skill with fewest people having it
+5. Sort elements of `skillsWho` according to the descending orders of number of skills they have.
+
+Note that 4️⃣ and 5️⃣ do not cut every corner. They speed up the convergence by finding a smaller `ans` earlier. *(essence of this greedy idea: we tend to desire people covering more skills)*
+
+```python
+class Solution:
+    def smallestSufficientTeam(self, req_skills: List[str], people: List[List[str]]) -> List[int]:
+        n = len(people)
+        n_skills = len(req_skills)
+        ans = [x for x in range(n)]
+        for i, p in enumerate(people):
+            people[i] = set(p)
+        # discard useless
+        for i, p1 in enumerate(people):
+            for j, p2 in enumerate(people):
+                if i==j: continue
+                if p1.issubset(p2):
+                    people[i] = set()
+        # bitmask people skills
+        people_masked = []
+        for i in range(n):
+            skillset = [(x in people[i]) for x in req_skills]
+            sk = 0
+            for i in skillset:
+                sk = sk*2 + int(i)
+            people_masked.append(sk)
+        skillsWho = [[] for _ in range(n_skills)] 
+        for p in range(n):
+            for i in people[p]:
+                skillsWho[req_skills.index(i)].append(p)
+        for i in range(n_skills):
+            skillsWho[i].sort(key=lambda x: -len(people[x]))
+        
+        def complete(now) -> int: 
+            #-1 complete; otherwise first '0' loc
+            skills = 0
+            for x in now:
+                skills = skills | people_masked[x]
+            if skills == 2**n_skills-1:
+                return -1
+            else:
+                bitmask = ""
+                while skills>0:
+                    bitmask = str(skills%2) + bitmask
+                    skills = skills // 2
+                bitmask = bitmask.zfill(n_skills)
+                return bitmask.find("0")
+        def dfs(now):
+            nonlocal ans
+            if len(now)>=len(ans): return
+            nex = complete(now)
+            print(now,nex)
+            if nex==-1:
+                ans = now
+                return
+            else:
+                for p in skillsWho[nex]:
+                    if p in now: continue
+                    dfs(sorted(now+[p]))
+        hardest = 0 # start search in the hardest skill
+        for i in range(n_skills):
+            if len(skillsWho[i])<len(skillsWho[hardest]): hardest = i
+
+        for p1 in skillsWho[hardest]:
+            dfs([p1])
+        return(ans)
 ```
