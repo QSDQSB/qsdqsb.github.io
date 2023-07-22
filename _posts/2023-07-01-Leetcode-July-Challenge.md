@@ -14,9 +14,7 @@ header:
 `Hard` `DFS`
 
 > You are given an integer array `cookies`, where `cookies[i]` denotes the number of cookies in the `ith` bag. You are also given an integer `k` that denotes the number of children to distribute **all** the bags of cookies to. All the cookies in the same bag must go to the same child and cannot be split up.
-> 
 > The **unfairness** of a distribution is defined as the maximum total cookies obtained by a single child in the distribution.
-> 
 > Return _the **minimum** unfairness of all distributions_.
 
 ## Basic Idea: DFS
@@ -324,7 +322,7 @@ class Solution:
 `Easy` `Tree`
 
 > Given a binary tree, find its minimum depth.
-
+>
 > The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
 
 水，注意number of nodes可以是0。下一题。
@@ -596,4 +594,186 @@ class Solution:
         for p1 in skillsWho[hardest]:
             dfs([p1])
         return(ans)
+```
+
+# `20230717` [Add Two Numbers II](https://leetcode.com/problems/add-two-numbers-ii/)
+`Medium` `Linked List`
+
+> You are given two non-empty linked lists representing two non-negative integers. The most significant digit comes first and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.
+> 
+> You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+
+<img src="https://assets.leetcode.com/uploads/2021/04/09/sumii-linked-list.jpg" width="40%">{: .align-center}
+
+Simple coding.
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
+        def toLinkedList(n: int) -> ListNode:
+            l = None
+            while n:
+                val = n % 10
+                n, l = n // 10, ListNode(val, l)
+            return l if l else ListNode()
+        def toInt(l: ListNode) -> int:
+            n = 0
+            while l:
+                n=n*10+l.val
+                l = l.next
+            return n
+        return toLinkedList(toInt(l1)+toInt(l2))
+```
+
+# `20230718` [LRU Cache](https://leetcode.com/problems/lru-cache/)
+`Medium` `Data Structure`
+
+> Design a data structure that follows the constraints of a [Least Recently Used (LRU) cache](https://en.wikipedia.org/wiki/Cache_replacement_policies#LRU).
+>
+> Implement the `LRUCache` class:
+> 
+> - `LRUCache(int capacity)` Initialize the LRU cache with positive size `capacity`.
+> - `int get(int key)` Return the value of the `key` if the key exists, otherwise return -1.
+> - `void put(int key, int value)` Update the value of the `key` if the `key` exists. Otherwise, add the > key-value pair to the cache. If the number of keys exceeds the `capacity` from this operation, **evict** the least recently used key.
+>
+> The functions `get` and `put` must each run in `O(1)` average time complexity.
+
+Simple coding. Key to `O(1)` time complexity is
+1. Use `dict` to store keys
+2. To *store* the newest data, we *refresh* by popping it up and reading it back. Therefore we only need to delete the first element in the dictionary (which can be done by `iter` and `next`).
+
+```python
+class LRUCache:
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.elementDict = {}
+    def get(self, key: int) -> int:
+        if key in self.elementDict:
+            val = self.elementDict.pop(key)
+            self.elementDict[key] = val
+            return val
+        return -1        
+    def put(self, key: int, value: int) -> None:
+        if key in self.elementDict:
+            self.elementDict.pop(key)
+        else:
+            if len(self.elementDict) == self.capacity:
+                ancient = next(iter(self.elementDict))
+                del self.elementDict[ancient]
+        self.elementDict[key] = value
+```
+
+# `20230719` [Non-overlapping Intervals](https://leetcode.com/problems/non-overlapping-intervals/)
+`Medium` `Greedy`
+
+> Given an array of intervals `intervals` where `intervals[i] = [starti, endi]`, return the minimum number of intervals you need to remove to make the rest of the intervals non-overlapping.
+
+Greedy. We sort and start from the right, if the current fit in, then we take it, otherwise we drop it.
+
+Fiddling with an example helps to get this idea quickly.
+
+```python
+class Solution:
+    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
+        intervals.sort(key=lambda x: x[0], reverse=True)
+        current, drop = intervals[0], 0
+        for s, e in intervals[1:]:
+            if current[0]>=e:
+                current = [s,e]
+            else:
+                drop+=1
+        return(drop)
+```
+
+# `20230720` [Asteroid Collision](https://leetcode.com/problems/asteroid-collision/)
+`Medium`
+
+> We are given an array `asteroids` of integers representing asteroids in a row.
+>
+> For each asteroid, the absolute value represents its size, and the sign represents its direction (positive meaning right, negative meaning left). Each asteroid moves at the same speed.
+>
+> Find out the state of the asteroids after all collisions. If two asteroids meet, the smaller one will explode. If both are the same size, both will explode. Two asteroids moving in the same direction will never meet.
+
+Simple simulation. We use `cur` to record the current border. On the left of the border is the thing we have dealt with the collision.
+
+Time Complexity should be below $O(n^2)$, because of potentially going to the end and going back.
+
+```python
+class Solution:
+    def asteroidCollision(self, asteroids: List[int]) -> List[int]:
+        cur = 0
+        for i in range(len(asteroids)):
+            while cur and asteroids[cur-1]>0 and asteroids[i]<0 and abs(asteroids[cur-1])<abs(asteroids[i]):
+                cur-=1#crush
+            if asteroids[i]>0 or asteroids[cur-1]<0 or cur==0:
+                asteroids[cur] = asteroids[i]
+                cur+=1
+            elif asteroids[cur-1] == abs(asteroids[i]):
+                cur-=1
+        return asteroids[:cur]
+```
+
+# `20230721` [Number of Longest Increasing Subsequence](https://leetcode.com/problems/number-of-longest-increasing-subsequence/)
+`Medium` `DP`
+> Given an integer array `nums`, return the **number** of longest increasing subsequences.
+>
+> Notice that the sequence has to be strictly increasing.
+
+Classic DP. $f[i]$ records the max length of increasing subsequence ending at $i$. Update `count` when finding previous length to be $f[i]-1$.   
+
+```python
+class Solution:
+    def findNumberOfLIS(self, nums: List[int]) -> int:
+        n = len(nums)
+        f = count = [1]*n 
+        for i in range(1,n):
+            for j in range(i):
+                if nums[i]<=nums[j]: continue
+                if f[i] == f[j]+1:
+                    count[i]+=count[j]
+                elif f[i] < f[j]+1:
+                    f[i], count[i] = f[j]+1, count[j]
+        ans = max(f)
+        return sum(count[i] for i in range(n) if f[i]==ans)
+```
+
+# `20230722` [Knight Probability in Chessboard](https://leetcode.com/problems/knight-probability-in-chessboard/)
+`Medium`
+
+> On an n x n chessboard, a knight starts at the cell `(row, column)` and attempts to make exactly `k` moves. The rows and columns are 0-indexed, so the top-left cell is `(0, 0)`, and the bottom-right cell is `(n-1, n-1)`.
+>
+> A chess knight has eight possible moves it can make, as illustrated below. Each move is two cells in a cardinal direction, then one cell in an orthogonal direction.
+> 
+> <img src="https://assets.leetcode.com/uploads/2018/10/12/knight.png" width="30%">{: .align-center}
+> 
+> Each time the knight is to move, it chooses one of eight possible moves uniformly at random (even if the piece would go off the chessboard) and moves there.
+>
+> The knight continues moving until it has made exactly `k` moves or has moved off the chessboard.
+>
+> Return the probability that the knight remains on the board after it has stopped moving.
+
+Simple coding. Just calculating probabilities step by step.
+```python
+class Solution:
+    def knightProbability(self, n: int, k: int, row: int, column: int) -> float:
+        probabilitys = [[0]*n for _ in range(n)]
+        probabilitys[row][column] = 1
+        jump = [(-2,-1),(-2,1),(-1,-2),(-1,2),(1,-2),(1,2),(2,-1),(2,1)]
+        MoveOffProb = 0
+        for i in range(k):
+            # calculate probability from previous round
+            newProbabilitys = [[0]*n for _ in range(n)]
+            for r, c in itertools.product(range(n),range(n)):
+                for dr, dc in jump:
+                    if 0<=r+dr<n and 0<=c+dc<n:
+                        newProbabilitys[r+dr][c+dc] += probabilitys[r][c]/8
+                    else:
+                        MoveOffProb += probabilitys[r][c]/8
+            probabilitys = newProbabilitys
+        return(1-MoveOffProb)
 ```
