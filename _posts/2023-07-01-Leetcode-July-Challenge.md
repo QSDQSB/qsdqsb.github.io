@@ -10,7 +10,7 @@ header:
   overlay_image: flight-sunrise-3v1.jpg
 ---
 
-# `20230701` [Maximum Number of Achievable Transfer Requests](https://leetcode.com/problems/maximum-number-of-achievable-transfer-requests/description)
+# `01` [Maximum Number of Achievable Transfer Requests](https://leetcode.com/problems/maximum-number-of-achievable-transfer-requests/description)
 `Hard` `DFS`
 
 > You are given an integer array `cookies`, where `cookies[i]` denotes the number of cookies in the `ith` bag. You are also given an integer `k` that denotes the number of children to distribute **all** the bags of cookies to. All the cookies in the same bag must go to the same child and cannot be split up.
@@ -73,7 +73,7 @@ ans = max(heap)
 - `sort` is again optional, but basically costs no time.
 - This gives the fastest solution on Leetcode.s
 
-# `20230702` [Fair Distribution of Cookies](https://leetcode.com/problems/fair-distribution-of-cookies/)
+# `02` [Fair Distribution of Cookies](https://leetcode.com/problems/fair-distribution-of-cookies/)
 `Hard` `DFS` `Divide and Conquer`
 
 - Use `bitMask` to search request cases
@@ -104,7 +104,7 @@ class Solution:
         return(ans)
 ```
 
-# `20230703` [Buddy Strings](https://leetcode.com/problems/buddy-strings/)
+# `03` [Buddy Strings](https://leetcode.com/problems/buddy-strings/)
 `Easy` `Silly`
 
 纯笨b摆烂天把所有情况想明白就完事了没什么好说的题目😅.
@@ -134,7 +134,7 @@ class Solution:
         else:
             return False 
 ```
-# `20230704` [Single Number II](https://leetcode.com/problems/single-number-ii/)
+# `04` [Single Number II](https://leetcode.com/problems/single-number-ii/)
 `Medium` `Array` `Bit Manipulation`
 
 Use idea of `XOR`. The logic is a bit confusing, better take some numbers and try for yourself 🙂.
@@ -148,7 +148,7 @@ class Solution:
         return a
 ```
 
-# `20230705` [Longest Subarray of 1's After Deleting One Element](https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/)
+# `05` [Longest Subarray of 1's After Deleting One Element](https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/)
 `Medium` `Array` `Greedy`
 
 > Given a binary array `nums`, you should delete **one** element from it.
@@ -180,7 +180,7 @@ class Solution:
         return(max(current_max, prev_len+now_len))
 ```
 
-# `20230706` [Minimum Size Subarray Sum](https://leetcode.com/problems/minimum-size-subarray-sum/)
+# `06` [Minimum Size Subarray Sum](https://leetcode.com/problems/minimum-size-subarray-sum/)
 `Medium` `Pointer` `Array`
 
 > Given an array of positive integers `nums` and a positive integer `target`, return the minimal length of a subarray whose sum is greater than or equal to target. If there is no such subarray, return 0 instead.
@@ -203,7 +203,7 @@ class Solution:
         return(0 if ans==len(nums)+1 else ans)    
 ```
 
-# `20230707` [Maximize the Confusion of an Exam](https://leetcode.com/problems/maximize-the-confusion-of-an-exam/)
+# `07` [Maximize the Confusion of an Exam](https://leetcode.com/problems/maximize-the-confusion-of-an-exam/)
 `Medium` `Pointer` `Greedy`
 
 > A teacher is writing a test with n true/false questions, with 'T' denoting true and 'F' denoting false. He wants to confuse the students by maximizing the number of consecutive questions with the same answer (multiple trues or multiple falses in a row).
@@ -236,7 +236,7 @@ class Solution:
 今天的双周赛好水啊，就跟Leetcode的服务器一样😌。
 {: .notice--info}
 
-# `20230708` [Put Marbles in Bags](https://leetcode.com/problems/put-marbles-in-bags/)
+# `08` [Put Marbles in Bags](https://leetcode.com/problems/put-marbles-in-bags/)
 `Hard` `Greedy` 
 
 > You have k bags. You are given a 0-indexed integer array `weights` where `weights[i]` is the weight of the ith marble. You are also given the integer `k`.
@@ -272,7 +272,7 @@ class Solution:
         return(sum(neighbourSumWeights[-(k-1):])-sum(neighbourSumWeights[:(k-1)]))
 ```
 
-# `20230709` [Substring With Largest Variance](https://leetcode.com/problems/substring-with-largest-variance/)
+# `09` [Substring With Largest Variance](https://leetcode.com/problems/substring-with-largest-variance/)
 `Hard` `DP`
 
 Finally an interesting question. Good for Leetcode 😌. 
@@ -319,7 +319,7 @@ class Solution:
         return(ans)
 ```
 
-# `20230710` [Minium Depth of Binary Tree](https://leetcode.com/problems/minimum-depth-of-binary-tree/)
+# `10` [Minium Depth of Binary Tree](https://leetcode.com/problems/minimum-depth-of-binary-tree/)
 `Easy` `Tree`
 
 > Given a binary tree, find its minimum depth.
@@ -355,7 +355,7 @@ class Solution:
 
 ```
 
-# `20230711` [All Nodes Distance K in Binary Tree](https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree)
+# `11` [All Nodes Distance K in Binary Tree](https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree)
 `Medium` `Tree` `BFS`
 
 > Given the root of a binary tree, the value of a target node `target`, and an integer `k`, return an array of the values of all nodes that have a distance `k` from the target node.
@@ -392,7 +392,7 @@ class Solution:
         return(ans)
 ```
 
-# `20230712` [Find Eventual Safe States](https://leetcode.com/problems/find-eventual-safe-states/)
+# `12` [Find Eventual Safe States](https://leetcode.com/problems/find-eventual-safe-states/)
 `Medium` `DFS`
 
 > There is a directed graph of n nodes with each node labeled from 0 to n - 1. The graph is represented by a 0-indexed 2D integer array `graph` where `graph[i]` is an integer array of nodes adjacent to node i, meaning there is an edge from node i to each node in `graph[i]`.
@@ -420,7 +420,7 @@ class Solution:
         return(ans)
 ```
 
-# `20230713` [Course Schedule](https://leetcode.com/problems/course-schedule)
+# `13` [Course Schedule](https://leetcode.com/problems/course-schedule)
 `Medium` `Topological Sort` `DFS`
 
 > There are a total of `numCourses` courses you have to take, labeled from 0 to `numCourses-1`. You are given an array `prerequisites` where `prerequisites[i] = [ai, bi]` indicates that you must take course `bi` first if you want to take course `ai`.
@@ -451,7 +451,7 @@ class Solution:
         return True
 ```
 
-# `20230714` [Longest Arithmetic Subsequence of Given Difference](https://leetcode.com/problems/longest-arithmetic-subsequence-of-given-difference/)
+# `14` [Longest Arithmetic Subsequence of Given Difference](https://leetcode.com/problems/longest-arithmetic-subsequence-of-given-difference/)
 `Medium` `Greedy`
 
 > Given an integer array `arr` and an integer `difference`, return the length of the longest subsequence in `arr` which is an arithmetic sequence such that the difference between adjacent elements in the subsequence equals `difference`.
@@ -476,7 +476,7 @@ class Solution:
         return ans
 ```
 
-# `20230715` [Maximum Number of Events That Can Be Attended II](https://leetcode.com/problems/maximum-number-of-events-that-can-be-attended-ii)
+# `15` [Maximum Number of Events That Can Be Attended II](https://leetcode.com/problems/maximum-number-of-events-that-can-be-attended-ii)
 `Hard` `DP`
 
 > You are given an array of events where `events[i]` = `[startDayi, endDayi, valuei]`. The ith event starts at `startDayi` and ends at `endDayi`, and if you attend this event, you will receive a value of `valuei`. You are also given an integer `k` which represents the maximum number of events you can attend.
@@ -502,7 +502,7 @@ class Solution:
         return dp(len(events)-1,k)
 ```
 
-# `20230716` [Smallest Sufficient Team](https://leetcode.com/problems/smallest-sufficient-team)
+# `16` [Smallest Sufficient Team](https://leetcode.com/problems/smallest-sufficient-team)
 `Hard` `Bitmask` `DFS`
 
 > In a project, you have a list of required skills `req_skills`, and a list of people. The ith person `people[i]` contains a list of skills that the person has.
@@ -597,7 +597,7 @@ class Solution:
         return(ans)
 ```
 
-# `20230717` [Add Two Numbers II](https://leetcode.com/problems/add-two-numbers-ii/)
+# `17` [Add Two Numbers II](https://leetcode.com/problems/add-two-numbers-ii/)
 `Medium` `Linked List`
 
 > You are given two non-empty linked lists representing two non-negative integers. The most significant digit comes first and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.
@@ -631,7 +631,7 @@ class Solution:
         return toLinkedList(toInt(l1)+toInt(l2))
 ```
 
-# `20230718` [LRU Cache](https://leetcode.com/problems/lru-cache/)
+# `18` [LRU Cache](https://leetcode.com/problems/lru-cache/)
 `Medium` `Data Structure`
 
 > Design a data structure that follows the constraints of a [Least Recently Used (LRU) cache](https://en.wikipedia.org/wiki/Cache_replacement_policies#LRU).
@@ -669,7 +669,7 @@ class LRUCache:
         self.elementDict[key] = value
 ```
 
-# `20230719` [Non-overlapping Intervals](https://leetcode.com/problems/non-overlapping-intervals/)
+# `19` [Non-overlapping Intervals](https://leetcode.com/problems/non-overlapping-intervals/)
 `Medium` `Greedy`
 
 > Given an array of intervals `intervals` where `intervals[i] = [starti, endi]`, return the minimum number of intervals you need to remove to make the rest of the intervals non-overlapping.
@@ -691,7 +691,7 @@ class Solution:
         return(drop)
 ```
 
-# `20230720` [Asteroid Collision](https://leetcode.com/problems/asteroid-collision/)
+# `20` [Asteroid Collision](https://leetcode.com/problems/asteroid-collision/)
 `Medium`
 
 > We are given an array `asteroids` of integers representing asteroids in a row.
@@ -719,7 +719,7 @@ class Solution:
         return asteroids[:cur]
 ```
 
-# `20230721` [Number of Longest Increasing Subsequence](https://leetcode.com/problems/number-of-longest-increasing-subsequence/)
+# `21` [Number of Longest Increasing Subsequence](https://leetcode.com/problems/number-of-longest-increasing-subsequence/)
 `Medium` `DP`
 > Given an integer array `nums`, return the **number** of longest increasing subsequences.
 >
@@ -743,7 +743,7 @@ class Solution:
         return sum(count[i] for i in range(n) if f[i]==ans)
 ```
 
-# `20230722` [Knight Probability in Chessboard](https://leetcode.com/problems/knight-probability-in-chessboard/)
+# `22` [Knight Probability in Chessboard](https://leetcode.com/problems/knight-probability-in-chessboard/)
 `Medium`
 
 > On an n x n chessboard, a knight starts at the cell `(row, column)` and attempts to make exactly `k` moves. The rows and columns are 0-indexed, so the top-left cell is `(0, 0)`, and the bottom-right cell is `(n-1, n-1)`.
