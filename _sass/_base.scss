@@ -134,11 +134,12 @@ abbr[data-original-title] {
 /* blockquotes */
 
 blockquote {
-  margin: 1em 1em 1em 0;
-  padding-left: 0.5em;
-  padding-right: 0.5em;
-  border-left: 0.25em solid $twitter-color;
-
+  font-family: $serif;
+  margin: 0.5em;
+  padding-left: 1em;
+  border-left: 0.1em solid $twitter-color;
+  border-radius: 10px;
+  border-bottom: 0.1em solid $twitter-color;
   cite {
 
     &:before {
