@@ -516,7 +516,7 @@ class Solution:
 > Return any sufficient team of the smallest possible size, represented by the index of each person. You may return the answer in any order. It is guaranteed an answer exists.
 
 **Constraints** 
-- $1 \leq req_skills.length \leq 16$
+- $1 \leq req\_ skills.length \leq 16$
 - $1 \leq people.length \leq 60$
 - All the strings of `people[i]` are unique.
 - Every skill in `people[i]` is a skill in `req_skills`.
@@ -783,4 +783,288 @@ class Solution:
         return(1-MoveOffProb)
 ```
 
-# `23` 
+# `23` [All Possible Full Binary Trees](https://leetcode.com/problems/all-possible-full-binary-trees/)
+`Medium` `Recursion` `BinaryTree`
+
+> Given an integer n, return a list of all possible full binary trees with `n` nodes. Each node of each tree in the answer must have `Node.val == 0`.
+>
+> Each element of the answer is the root node of one possible tree. You may return the final list of trees in any order.
+>
+> A **full binary tree** is a binary tree where each node has exactly 0 or 2 children.
+
+Nothing fancy, just list everything. We create a dictionary `trees` to store all full binary trees with number of node i. Then bottom-up.
+```py
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def allPossibleFBT(self, n: int) -> List[Optional[TreeNode]]:
+        if not n%2: return []
+        trees = defaultdict(list)
+        trees[1].append(TreeNode(0))
+        t3 = TreeNode(0)
+        t3.left = TreeNode(0)
+        t3.right = TreeNode(0)
+        trees[3].append(t3)
+        for i in range(5,n+1,2):
+            l,r = 1, i-2
+            while r>=1:
+                for left_child in trees[l]:
+                    for right_child in trees[r]:
+                        tree = TreeNode(0)
+                        tree.left, tree.right = left_child, right_child
+                        trees[i].append(tree)
+                r-=2
+                l+=2
+        return trees[n]
+```
+
+# `24` [Pow(x,n)](https://leetcode.com/problems/powx-n/)
+`Easy` `DivideandConquer`
+
+> Implement pow(x, n), which calculates `x` raised to the power `n` (i.e., $x^n$).
+
+**Constraints**
+- $-100.0 < x < 100.0$
+- $-2^{31} \leq n \leq 2^{31}-1$
+- $n$ is an integer.
+- Either $x$ is not zero or $n > 0$.
+
+Simple coding, could top-down or bottom-up. Here we use `cache()` to cut corners.
+```py
+class Solution:
+    @lru_cache(None)
+    def myPow(self, x: float, n: int) -> float:
+        if not n: return 1
+        elif n==1: return x
+        elif n==-1: return 1/x
+        return self.myPow(x, n//2) * self.myPow(x, n//2) * self.myPow(x, n%2)
+```
+
+# `25` [Peak Index in a Mountain Array](https://leetcode.com/problems/peak-index-in-a-mountain-array/)
+`Medium` `BinarySearch`
+
+> An array `arr` is a mountain if the following properties hold:
+>
+> - `arr.length` >= 3
+> - There exists some i with `0 < i < arr.length - 1` such that:
+>   - `arr[0] < arr[1] < ... < arr[i - 1] < arr[i]` 
+>   - `arr[i] > arr[i + 1] > ... > arr[arr.length - 1]`
+> 
+> Given a mountain array `arr`, return the index `i` such that `arr[0] < arr[1] < ... < arr[i - 1] < arr[i] > arr[i + 1] > ... > arr[arr.length - 1].`
+> 
+> You must solve it in `O(log(arr.length))` time complexity.
+
+Nothing worth mentioning binary search.
+```py
+class Solution:
+    def peakIndexInMountainArray(self, arr: List[int]) -> int:
+        l,r = 0, len(arr)-1
+        while True:
+            mid = (l+r)//2
+            if arr[mid]>arr[mid-1]:
+                if arr[mid]>arr[mid+1]:
+                    return mid
+                else:
+                    l=mid+1
+            else:
+                r = mid
+```
+
+# `26` [Minium Speed to Arrive on Time](https://leetcode.com/problems/minimum-speed-to-arrive-on-time/)
+`Medium` `BinarySearch`
+
+> You are given a floating-point number hour, representing the amount of time you have to reach the office. To commute to the office, you must take n trains in sequential order. You are also given an integer array `dist` of length `n`, where `dist[i]` describes the distance (in kilometers) of the ith train ride.
+>
+> Each train can only depart at an integer hour, so you may need to wait in between each train ride.
+>
+> - For example, if the 1st train ride takes 1.5 hours, you must wait for an additional 0.5 hours before you can depart on the 2nd train ride at the 2 hour mark.
+>
+> Return the minimum positive integer speed (in kilometers per hour) that all the trains must travel at for you to reach the office on time, or -1 if it is impossible to be on time.
+>
+> Tests are generated such that the answer will not exceed $10^7$ and `hour` will have at most two digits after the decimal point.
+
+**Constraints**
+
+- n == dist.length
+- $1 \leq n \leq 10^5$
+- $1 \leq dist[i] \leq 10^5$
+- $1 \leq hour \leq 10^9$
+Just read the question carefully. It's only impossible to fulfill when there are more trains than available hours. 
+
+Then we find that, given a speed, we can quickly verify whether it can fulfill the task. So we binary search the possible speeds.
+
+```py
+class Solution:
+    def minSpeedOnTime(self, dist: List[int], hour: float) -> int:
+        if hour+1 <= len(dist): return -1
+        l, r = 1, max(dist)
+        if hour%1!=0:
+            r = max(r, dist[-1]//(hour-int(hour))+1)
+        while l<r:
+            mid = (l+r)//2
+            need = sum(i//mid + (i%mid!=0) for i in dist[:-1]) + dist[-1]/mid
+            if need<=hour:
+                r=mid
+            else:
+                l = mid+1
+        return int(l)
+```
+
+# `27` [Maximum Running Time of N Computers](https://leetcode.com/problems/maximum-running-time-of-n-computers/)
+`Hard` `BinarySearch` `Greedy`
+
+> You have n computers. You are given the integer `n` and a 0-indexed integer array batteries where the ith battery can run a computer for `batteries[i]` minutes. You are interested in running all n computers simultaneously using the given batteries.
+> 
+> Initially, you can insert at most one battery into each computer. After that and at any integer time moment, you can remove a battery from a computer and insert another battery **any number of times**. The inserted battery can be a totally new battery or a battery from another computer. You may assume that the removing and inserting processes take no time.
+>
+> Note that the batteries cannot be recharged.
+> 
+> Return the maximum number of minutes you can run all the `n` computers simultaneously.
+
+Hard to proceed at first. Then by a greedy idea, we discover it's easy to check whether a `life` is viable (shown in the function `check`). Then we just binary search the `life`.
+```py
+class Solution:
+    def maxRunTime(self, n: int, batteries: List[int]) -> int:
+        l = 1
+        r = sum(batteries) // n
+        def check(life: int) -> bool:
+            return sum([min(x, life) for x in batteries])>=n*life
+        while l<=r:
+            mid = (l+r)//2
+            if check(mid):
+                l=mid+1
+            else:
+                r=mid-1
+        return r
+```
+
+# `28` [Predict the Winner](https://leetcode.com/problems/predict-the-winner/)
+`Medium` `DP` `Recursion`
+
+> You are given an integer array nums. Two players are playing a game with this array: player 1 and player 2.
+> 
+> Player 1 and player 2 take turns, with player 1 starting first. Both players start the game with a score of 0. At each turn, the player takes one of the numbers from either end of the array (i.e., `nums[0]` or `nums[nums.length - 1]`) which reduces the size of the array by 1. The player adds the chosen number to their score. The game ends when there are no more elements in the array.
+>
+> Return <span class="macaron">true</span> if Player 1 can win the game. If the scores of both players are equal, then player 1 is still the winner, and you should also return true. You may assume that both players are playing optimally.
+
+总感觉以前哪里做过。。是HRT还是XTX的面试题吗😶
+
+Simple DP. The idea is:
+- if it's our turn, we must win iff one of the actions lead to a must-win (so `or`).
+- if it's opponent's turn, we must win iff no matter what the opponent takes, we still win (so `and`).
+Then it's clearly DP. Edge situation easy to handle. Again `lru_cache` to cut corners.
+
+```py
+class Solution:
+    def PredictTheWinner(self, nums: List[int]) -> bool:
+        @lru_cache(None)
+        def search(l: int,r: int,score1: int,score2: int, now1: bool) -> bool:
+            nonlocal nums
+            if l>r: return score1>=score2
+            if now1:
+                return search(l+1, r, score1+nums[l], score2, False) or search(l,r-1,score1+nums[r],score2,False)
+            else:
+                return search(l+1, r, score1, score2+nums[l], True) and search(l,r-1,score1,score2+nums[r],True)
+        return search(0,len(nums)-1,0,0,True)
+```
+
+# `29` [Soup Servings](https://leetcode.com/problems/soup-servings/)
+`Medium` `DP`
+
+`ti mu tai chang le, bu xiang ban yun.`
+just simple DP. Nothing to say.
+
+```py
+class Solution:
+    def soupServings(self, n: int) -> float:
+        @lru_cache(None)
+        def dfs(a,b):
+            if a<=0 and b<=0:
+                return 0.5
+            elif a<=0:
+                return 1
+            elif b<=0:
+                return 0
+            return 0.25*(dfs(a-100,b)+dfs(a-75,b-25)+dfs(a-50,b-50)+dfs(a-25,b-75))
+        if n>=4451:
+            return 1
+        else:
+            return dfs(n,n)
+```
+
+# `30` [Strange Printer](https://leetcode.com/problems/strange-printer/)
+`Hard` `DP`
+
+> There is a strange printer with the following two special properties:
+> 
+> - The printer can only print a sequence of the same character each time.
+> - At each turn, the printer can print new characters starting from and ending at any place and will cover the original existing characters.
+>
+> Given a string `s`, return the minimum number of turns the printer needed to print it.
+
+DP is clear. How to proceed DP is hard. We consider **how many steps we take to change a string `s` from the form aaaaaa where `a` is `s`'s end, to `s`. 
+
+**Key idea**: there always exists an optimal strategy, where at each operation we use the printer to change the section of letters to its ending letter. i.e. change `s[start:end+1]` to `s[end] * (end-start+1)`. Just argue by contradiction.
+
+Then with this idea we can divide the problem into subproblems, thus proceeding DP. 
+
+I think the [solution](https://leetcode.com/problems/strange-printer/editorial/) explains the idea very clearly.
+```py
+class Solution:
+    def strangePrinter(self, s: str) -> int:
+        nextDiffIndex, prevDiffIndex = [-1] * len(s), [-1] * len(s)
+        for i in range(len(s)-2, -1, -1):
+            if s[i]!=s[i+1]:
+                nextDiffIndex[i] = i+1
+            else:
+                nextDiffIndex[i] = nextDiffIndex[i+1]
+        for i in range(1, len(s)):
+            if s[i]!=s[i-1]:
+                prevDiffIndex[i] = i-1
+            else:
+                prevDiffIndex[i] = prevDiffIndex[i-1]
+        @lru_cache(None)
+        def dp(start, end) -> int:
+            #dp[l][r] = dp[j][i] + dp[i+1][r] + 1 for optimal i
+            # we assume we already have s[end]
+            if len(set(s[start:end+1])) == 1: return 0
+            next = nextDiffIndex[start] if s[start]==s[end] else start
+            if next == prevDiffIndex[end]: return 1
+            return 1 + min([dp(next, nextend)+dp(nextend+1, end) for nextend in range(next, end)])
+        return 1+dp(0, len(s)-1)        
+```
+
+Finished this problem at a Stabucks in Bilbao, with a broken leg. Apparently the Spanish add sugars to cold brew.
+{: .notice--info}
+
+
+# `31` [Minimum ASCII Delete Sum for Two Strings](https://leetcode.com/problems/minimum-ascii-delete-sum-for-two-strings/)
+`Medium` `DP`
+
+> Given two strings `s1` and `s2`, return the lowest ASCII sum of deleted characters to make two strings equal.
+
+**Constraints** $1 \leq s1.length,\, s2.length \leq 1000$
+
+A classic DP problem. Consider `dp(i,j)` to be the answer of `s1[i:]` and `s2[j:]`.
+```py
+class Solution:
+    def minimumDeleteSum(self, s1: str, s2: str) -> int:
+        @lru_cache(None)
+        def dp(i, j) -> int:
+            # ans since [i:] and [j:]
+            nonlocal s1,s2
+            if i==len(s1) and j==len(s2): return 0
+            if i==len(s1) and j<len(s2):
+                return sum([ord(x) for x in s2[j:]])
+            if i<len(s1) and j==len(s2):
+                return sum([ord(x) for x in s1[i:]])
+            if s1[i]==s2[j]: return dp(i+1,j+1)
+            return min(ord(s1[i])+dp(i+1,j), ord(s2[j])+dp(i,j+1))
+        return dp(0,0)
+```
+
+<span class="macaron">**Jul LeetCoding Challenge COMPLETED**</span>
