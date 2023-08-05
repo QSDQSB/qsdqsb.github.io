@@ -10,6 +10,10 @@ header:
   overlay_image: flight-sunrise-3v1.jpg
 ---
 
+<span class="macaron">嗨嗨嗨！！勋章来咯！！</span>
+
+<img src="https://leetcode.com/static/images/badges/2023/gif/2023-07.gif" class="align-center" width="200">
+
 # `01` [Maximum Number of Achievable Transfer Requests](https://leetcode.com/problems/maximum-number-of-achievable-transfer-requests/description)
 `Hard` `DFS`
 
@@ -603,8 +607,8 @@ class Solution:
 > You are given two non-empty linked lists representing two non-negative integers. The most significant digit comes first and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.
 > 
 > You may assume the two numbers do not contain any leading zero, except the number 0 itself.
-
-<img src="https://assets.leetcode.com/uploads/2021/04/09/sumii-linked-list.jpg" width="40%">{: .align-center}
+>
+> <img src="https://assets.leetcode.com/uploads/2021/04/09/sumii-linked-list.jpg" width="40%">{: .align-center}
 
 Simple coding.
 
@@ -778,3 +782,5 @@ class Solution:
             probabilitys = newProbabilitys
         return(1-MoveOffProb)
 ```
+
+# `23` 
