@@ -1,6 +1,6 @@
 ---
 title: "Dragonstone"
-excerpt: "Blood of my blood"
+excerpt: "Where dragons dance with fire and blood"
 permalink: /voyage/dragonstone
 collection: voyage
 date: 2023-07-29
