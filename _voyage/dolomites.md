@@ -5,7 +5,7 @@ permalink: /voyage/dolomites
 collection: voyage
 date: 2023-08-31
 header:
-  overlay_image: Dolomites_cover_3v1.jpg
+  overlay_image: dolomites_sunrise_3v1.jpg
 ---
 
 #TODO
