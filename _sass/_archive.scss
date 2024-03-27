@@ -401,6 +401,7 @@
   right: 0;
   bottom: 0;
   pointer-events: none;
+  transition: opacity 1s ease-in-out;
 }
 
 .container .card span::before
@@ -413,6 +414,7 @@
   height: 0;
   border-radius: 16px;
   background: rgba(0, 0, 0, .1);
+  transition: opacity 1s ease-in-out;
   opacity: 0;
   animation: animate 1s ease-in-out infinite;
   box-shadow: 0 5px 15px rgba(0,0,0,0.08)
@@ -425,6 +427,8 @@
   left: -25px;
   width: 100%;
   opacity: 0.8;
+  transition: opacity 1s ease-in-out;
+
 }
 
 .container .card span::after
@@ -442,9 +446,10 @@
   box-shadow: 0 5px 15px rgba(200,200,200,0.1);
   animation-delay: -1s;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: opacity 1s ease-in-out;
 }
 
-.container .card:hover span:after
+.container .card:hover span::after
 {
   top: -20px;
   right: 20px;
