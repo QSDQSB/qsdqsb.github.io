@@ -1,6 +1,6 @@
 ---
 title: "New York"
-excerpt: "Where QSD will never go again"
+excerpt: "Where QSD will go again"
 permalink: /voyage/newyork
 collection: voyage
 date: 2024-06-07
