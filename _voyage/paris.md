@@ -1,6 +1,6 @@
 ---
 title: "Paris"
-excerpt: "Where elysian dreams dance with eternal flames."
+excerpt: "Where elysian dreams dance with eternal flames"
 permalink: /voyage/paris
 collection: voyage
 date: 2023-04-10

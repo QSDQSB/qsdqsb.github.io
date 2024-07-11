@@ -1,6 +1,6 @@
 ---
 title: "Kandersteg"
-excerpt: "Where sapphire breathes within Ochinensee's crystal depths"
+excerpt: "Where sapphire breathes within Oeschinensee's crystal depths"
 permalink: /voyage/kandersteg
 collection: voyage
 date: 2024-06-16
