@@ -33,6 +33,7 @@ a {
   }
 }
 
+
 #glassmorphism-card-effect {
 
   background-color: rgba(255, 255, 255, .05);
@@ -260,7 +261,8 @@ figure {
           align-items: flex-start;
   flex-wrap: wrap;
   margin: 1em 0;
-
+  place-self: center;
+  max-width: 100%;
   img,
   iframe,
   .fluid-width-video-wrapper {
@@ -269,6 +271,9 @@ figure {
 
   img {
     width: 100%;
+    max-width: 100%;
+    display: block;
+    place-self: center;
     border-radius: $border-radius;
     -webkit-transition: $global-transition;
     transition: $global-transition;

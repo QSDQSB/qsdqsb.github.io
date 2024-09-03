@@ -157,7 +157,12 @@
                 8px 32px 32px rgba(0, 0, 0, .15); 
    }
 }
-
+.card .hidden_item {
+  opacity: 0;
+  margin: 0 auto;
+  transform: translateY(10px);
+  transition: 2s cubic-bezier(.33,.11,.02,.99);
+}
 .card .content {
   transform: translateY(0px);
   transition: 0.5s cubic-bezier(.33,.11,.02,.99);
@@ -166,6 +171,10 @@
 	transform: translateY(-10px);
 }
 
+.card:hover .hidden_item {
+    opacity: 1;
+    transform: translateY(0px);
+}
 
 .card h3 {
   transition: all, 1s cubic-bezier(.33,.11,.02,.99);
