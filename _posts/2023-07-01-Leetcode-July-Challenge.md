@@ -5,7 +5,7 @@ tags:
   - Leetcode-Medium
 share: false
 title: "Leetcode July Daily Challenges"
-excerpt: "QSD is actually rewatching Agnets of SHIELD @`July 2`. 'Will I get my Skye back?'"
+excerpt: "QSD is actually rewatching Agents of SHIELD @`July 2`. 'Will I get my Skye back?'"
 header:
   overlay_image: flight-sunrise-3v1.jpg
 ---

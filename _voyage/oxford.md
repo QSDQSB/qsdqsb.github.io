@@ -1,6 +1,6 @@
 ---
 title: "Oxford"
-excerpt: "Where history's quill scribes tales in scholarly ink"
+excerpt: "Where history's quill scribes tales"
 permalink: /voyage/oxford
 collection: voyage
 date: 2020-10-10
