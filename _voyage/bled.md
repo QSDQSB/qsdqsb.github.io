@@ -1,6 +1,6 @@
 ---
 title: "Lake Bled"
-excerpt: "Where reflection of the Baroque spire reposes in Triglav's tranquil grandeur"
+excerpt: "Where reflection of the spire reposes in Triglav's grandeur"
 permalink: /voyage/bled
 collection: voyage
 date: 2024-02-03

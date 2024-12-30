@@ -14,7 +14,7 @@ header:
 ### `1. fiskevær`
 然而只是美。只是一味的美。在大海里，可遇不可求的飞鱼守在那儿，像古老而亲切的注视。
 <div style="padding: 5px;justify-content: center; display: flex;">
-  <div class="card" style="width: 50%; aspect-ratio: 0.8; align-items:center; background-image: url('/images/prague_morning_paint.jpg');">
+  <div class="card" style="width: 10px; aspect-ratio: 0.7; align-items:center; background-image: url('/images/prague_morning_paint.jpg');">
     <div class="hidden_item">
     <p style="padding: 1em; font-family: 'Noto Serif SC', serif; letter-spacing: 2px;">临海的渔村<br>鱼和回忆分开售卖<br>鱼十元一条<br>回忆五分钱一篓</p>
     </div>
@@ -58,7 +58,7 @@ Abriele D'Annunzio, an Italian poet and writer, often used <code>Lontananza</cod
 </div>
 
 <div style="padding: 5px;justify-content: center; display: flex;">
-  <div class="card" style="width: 70%; aspect-ratio:4; align-items:center; background-image: url('/images/jfk_afterglow_4v1.jpg');">
+  <div class="card" style="width: 70%; aspect-ratio:auto; align-items:center; background-image: url('/images/jfk_afterglow_4v1.jpg');">
     <div class="hidden_item">
     <p style="padding: 1em; font-family: 'Noto Serif SC', serif; font-size: 1em; letter-spacing: 2px;">我们只是散落在命运周围。</p>
     </div>
@@ -68,19 +68,6 @@ Abriele D'Annunzio, an Italian poet and writer, often used <code>Lontananza</cod
 
 <br>
 
-### `5. Espoir`
-
-<p style="font-family: 'Courier'; text-align: justify;">
-I know this is a fearful world of murky tides, but heed not the phantoms that flicker dimly. Rather, savour each breathe of time. Let's cling fervently to life, and to hope, as you are not alone.
-</p>
-<p style="text-align: center;font-family: 'Courier';">
-So fear not the void, nor the night’s embrace,<br>
-For even scattered, we leave a trace.<br>
-A whisper of hope, in the cosmic night,<br>
-That though dispersed, we burn bright.<br>
-<br>
-<br>
-</p>
 <h4 style="color: white;text-align: right;font-family: 'Barlow';">With best wishes, QSD<br></h4>
 
 <p style="color: white; text-align: right; font-family: 'Barlow';">03.09.2024, from 9534 miles<br></p>
