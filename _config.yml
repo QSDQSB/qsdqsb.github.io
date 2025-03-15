@@ -167,7 +167,6 @@ collections:
   voyage:
     output: true
     permalink: /:collection/:path/
-    author_profile: false
   prague:
     output: true
     permalink: /:collection/:path/
@@ -216,28 +215,8 @@ defaults:
       comment: false
   # _voyage
   - scope:
-      path: ""
-      type: voyage
+      path: "_voyage"
     values:
-      layout: single
-      author_profile: false
-      share: false
-      comment: false
-  # _prague
-  - scope:
-      path: ""
-      type: prague
-    values:
-      layout: single
-      author_profile: false
-      share: false
-      comment: false
-  # _venice
-  - scope:
-      path: ""
-      type: venice
-    values:
-      layout: gallery
       author_profile: false
       share: false
       comment: false

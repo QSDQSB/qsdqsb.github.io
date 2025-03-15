@@ -70,4 +70,4 @@ Abriele D'Annunzio, an Italian poet and writer, often used <code>Lontananza</cod
 
 <h4 style="color: white;text-align: right;font-family: 'Barlow';">With best wishes, QSD<br></h4>
 
-<p style="color: white; text-align: right; font-family: 'Barlow';">03.09.2024, from 9534 miles<br></p>
+<p style="color: white; text-align: right; font-family: 'Barlow';">03.09.2024<br></p>
