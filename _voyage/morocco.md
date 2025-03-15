@@ -1,6 +1,6 @@
 ---
 title: "Morocco"
-excerpt: "Where QSD will never go again"
+excerpt: "Where #TODO"
 permalink: /voyage/morocco
 collection: voyage
 date: 2022-12-27
