@@ -1,6 +1,7 @@
 ---
 title: "London"
 excerpt: "Where yesteryears waltz with the unfolding"
+description: "Where yesteryears waltz with the unfolding"
 permalink: /voyage/london
 layout: gallery
 gallery_name: "london"

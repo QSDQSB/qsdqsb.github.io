@@ -1,6 +1,7 @@
 ---
 title: "Kandersteg"
 excerpt: "Where sapphire breathes within Oeschinensee's crystal depths"
+description: "Where sapphire breathes within Oeschinensee's crystal depths"
 permalink: /voyage/kandersteg
 layout: gallery
 gallery_name: "kandersteg"
