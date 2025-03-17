@@ -123,9 +123,36 @@
   background-position: center;
   background-image: linear-gradient(rgba(12,12,12,var(--bg-filter-opacity)),rgba(0,0,0,var(--bg-filter-opacity))), var(--bg-img);
 	position: relative;
-  transition: all, var(--transition-time) cubic-bezier(.33,.11,.02,.99);
-
+  transition: 1s cubic-bezier(.33,.11,.02,.99);
   text-decoration: none;
+  
+  h3 {
+    transition: 1s cubic-bezier(.33,.11,.02,.99);
+    text-shadow:rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+    text-align: left;
+    margin-bottom: 0;
+    transform: translateY(0px);
+    font-size: $type-size-4;
+    @include breakpoint($large) {
+      font-size: $type-size-3;
+      margin-top: 2em;
+    }
+    @include breakpoint($x-large) {
+      font-size: $type-size-2;
+      margin-top: 0.5em;
+    }
+    color: $text-color;
+    font-family: $global-font-family;
+  }
+
+  p {
+    text-shadow:rgba(0, 0, 0, 0.6) 0px 7px 14px, rgba(0, 0, 0, 0.65) 0px 5px 5px;
+    font-size: $type-size-8;
+    color: $text-color;
+    @include breakpoint($large) {
+      margin-top: 0;
+    }
+  }
 
   &:hover {
     aspect-ratio: 3.3;
@@ -139,13 +166,15 @@
                 8px 64px 64px rgba(0, 0, 0, .35); 
  
      transform: scale(1.03)
-                translateY(-0.5rem);
+                translateY(-10px);
       h3 {
         text-shadow:rgba(0, 0, 0, 0.5) 0px 14px 28px, rgba(0, 0, 0, 0.44) 0px 10px 10px;
-        transform: translateY(-0.25rem);
-        transform: translateX(0.25rem);
-
+        transform: translateY(-10px);
       }
+      .hidden_item {
+        opacity: 1;
+        transform: translateY(0px);
+    }
    }
 
    &:active {
@@ -156,52 +185,18 @@
                 8px 16px 16px rgba(0, 0, 0, .15), 
                 8px 32px 32px rgba(0, 0, 0, .15); 
    }
-}
-.card .hidden_item {
-  opacity: 0;
-  margin: 0 auto;
-  transform: translateY(10px);
-  transition: 2s cubic-bezier(.33,.11,.02,.99);
-}
-.card .content {
-  transform: translateY(0px);
-  transition: 0.5s cubic-bezier(.33,.11,.02,.99);
-}
-.card:hover .content {
-	transform: translateY(-10px);
-}
-
-.card:hover .hidden_item {
-    opacity: 1;
+   .hidden_item {
+    opacity: 0;
+    margin: 0 auto;
+    transform: translateY(10px);
+    transition: 2s cubic-bezier(.33,.11,.02,.99);
+  }
+  .content {
     transform: translateY(0px);
+
+  }
 }
 
-.card h3 {
-  transition: all, 1s cubic-bezier(.33,.11,.02,.99);
-  text-shadow:rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
-  text-align: left;
-  margin-bottom: 0;
-  font-size: $type-size-5;
-  @include breakpoint($large) {
-    font-size: $type-size-4;
-    margin-top: 0.2em;
-  }
-  @include breakpoint($x-large) {
-    font-size: $type-size-2;
-    margin-top: 0.5em;
-  }
-  color: $text-color;
-  font-family: $global-font-family;
-}
-
-.card p {
-  text-shadow:rgba(0, 0, 0, 0.6) 0px 7px 14px, rgba(0, 0, 0, 0.65) 0px 5px 5px;
-  font-size: $type-size-8;
-  color: $text-color;
-  @include breakpoint($large) {
-    margin-top: 0;
-  }
-}
 
  .card .tags {
   display: grid;
@@ -410,7 +405,7 @@
   right: 0;
   bottom: 0;
   pointer-events: none;
-  transition: opacity 1s ease-in-out;
+  transition: 1s ease-in-out;
 }
 
 .container .card span::before
@@ -423,7 +418,7 @@
   height: 0;
   border-radius: 16px;
   background: rgba(0, 0, 0, .1);
-  transition: opacity 1s ease-in-out;
+  transition: 1s ease-in-out;
   opacity: 0;
   animation: animate 1s ease-in-out infinite;
   box-shadow: 0 5px 15px rgba(0,0,0,0.08)
@@ -436,7 +431,7 @@
   left: -25px;
   width: 100%;
   opacity: 0.8;
-  transition: opacity 1s ease-in-out;
+  transition: 1s ease-in-out;
 
 }
 
@@ -455,7 +450,7 @@
   box-shadow: 0 5px 15px rgba(200,200,200,0.1);
   animation-delay: -1s;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: opacity 1s ease-in-out;
+  transition: 1s ease-in-out;
 }
 
 .container .card:hover span::after
@@ -465,6 +460,7 @@
   width: 60px;
   height: 60px;
   opacity: 1;
+  transition: 1s ease-in-out;
 }
 
 @keyframes animate
