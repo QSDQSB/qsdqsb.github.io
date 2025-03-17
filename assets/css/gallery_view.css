@@ -7,8 +7,7 @@
 
 /* Reset */
 	animation: ease-in-out;
-	transition: 0.8s;
-
+	transition:  cubic-bezier(.33,.11,.02,.99) 0.8s;
 	html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
 		margin: 0;
 		padding: 0;
@@ -110,7 +109,6 @@
 		-webkit-transition: color 0.25s ease, border-bottom-color 0.25s ease;
 		-ms-transition: color 0.25s ease, border-bottom-color 0.25s ease;
 		transition: color 0.25s ease, border-bottom-color 0.25s ease;
-		border-bottom: dotted 1px;
 		color: inherit;
 		text-decoration: none;
 	}
@@ -140,9 +138,7 @@
 		position: relative;
 		top: -0.5em;
 	}
-		border-left: solid 4px #ccc;
-		margin: 0 0 1.25em 0;
-		padding: 0.3125em 0 0.3125em 1.25em;
+		margin: 0 0 0.1em 0;
 	}
 
 	pre {
@@ -170,10 +166,6 @@
 /* Button */
 
 /* Form */
-
-	form {
-		margin: 0 0 1.25em 0;
-	}
 
 	label {
 		color: #555;
@@ -341,9 +333,24 @@
 
 
 .gallery_view .container {
-	margin-left: 10px;
-	margin-right: 10px;
+	margin-left: 0;
+	margin-right: 0;
+	padding: 0 0.75em;
+	transition:  cubic-bezier(.33,.11,.02,.99) 0.8s;
+	.card {
+		transition:  cubic-bezier(.33,.11,.02,.99) 0.8s;
+	}
+	.card .content {
+		/* starting the title at 20% from the left, 15% from the top */	
+		padding-left: 2em;
+		padding-top: 1.5em;
+	}
+	.card .content .sci {
+		visibility: hidden;
+	}
+
 }
+
 /* ================================================= */
 
 /* Main */
@@ -670,9 +677,12 @@
 			height: 100%;
 			opacity: 1;
 			z-index: 1;
+			animation: ease-in-out;
+			transition: 0.8s;
 		}
 			#viewer .slide .caption .image_title {
-				animation: ease-in-out;
+				cursor: default;
+				animation:cubic-bezier(0.19, 1, 0.22, 1);
 				transition: 0.8s;
 				opacity: 0;
 				border-radius:10px;
@@ -788,7 +798,7 @@
 		@media screen and (max-width: 1280px) {
 
 			#viewer {
-				width: calc(100% - 19em);
+				width: 100%;
 			}
 
 		}

@@ -22,7 +22,7 @@
                 <article>
                   <a class="thumbnail" href="{{ site.gallery_d }}/{{ page.gallery_name }}/{{ image.name }}" data-position="{{ site.thumbnail_position }}"><img src="{{ site.gallery_d }}/{{ page.gallery_name }}/{{ image.name }}" alt="{{ image.basename }}" /></a>
                   <div class="image_title">
-                    <h3 style='white-space: pre;'>{{ image.basename | replace: "__", "  |  " | replace: "_", " " | replace: ":", "/" }}</h3>
+                    <h3>{{ image.basename | replace: "__", " | " | replace: "_", " " | replace: ":", "/" }}</h3>
                   </div>
                 </article>
               {% endfor %}
