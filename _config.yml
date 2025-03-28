@@ -169,10 +169,10 @@ collections:
     permalink: /:collection/:path/
   prague:
     output: true
-    permalink: /:collection/:path/
   venice:
     output: true
-    permalink: /:collection/:path/
+  japan:
+    output: true
 # Defaults
 defaults:
   # _posts
