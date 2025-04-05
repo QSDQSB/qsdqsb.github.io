@@ -431,14 +431,13 @@
   left: -25px;
   width: 100%;
   opacity: 0.8;
-  transition: 1s ease-in-out;
-
 }
 
 .container .card span::after
 {
   content:'';
   position: absolute;
+  transition: ease-in-out 1s;
   top: 0;
   right: 0;
   border-radius: 8px;
@@ -450,7 +449,6 @@
   box-shadow: 0 5px 15px rgba(200,200,200,0.1);
   animation-delay: -1s;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: 1s ease-in-out;
 }
 
 .container .card:hover span::after
@@ -460,7 +458,6 @@
   width: 60px;
   height: 60px;
   opacity: 1;
-  transition: 1s ease-in-out;
 }
 
 @keyframes animate
