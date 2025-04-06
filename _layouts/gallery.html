@@ -1,9 +1,52 @@
+---
+layout: gallery
+---
 <!DOCTYPE html>
 <html lang="en">
 <head>
   {% include head.html %}
   {% include head/custom.html %}
 </head>
+{% include base_path %}
+
+{% if page.subgalleries %}
+<body>
+<!-- Enumerate sub-galleries with single view -->
+{% include_cached masthead.html %}
+
+{% if page.header.overlay_color or page.header.overlay_image or page.header.image %}
+  {% include page__hero.html %}
+{% endif %}
+
+{% if page.url != "/" and site.breadcrumbs %}
+  {% unless paginator %}
+    {% include breadcrumbs.html %}
+  {% endunless %}
+{% endif %}
+
+<div id="main" role="main">
+  {% include sidebar.html %}
+
+  <div class="archive">
+    {% unless page.header.overlay_color or page.header.overlay_image %}
+      <h1 class="page__title">{{ page.title }}</h1>
+    {% endunless %}
+    {{ content }}
+  </div>
+</div>
+<!-- Enumerate sub-galleries -->
+<div class="container">
+  {% assign voyage_name = page.path | split: '/' | last | split: '.' | first %}
+  {% assign subvoyage_folder = voyage_name | append: "/" %}
+  {% assign subs = site.subvoyage | where_exp: "item", "item.path contains subvoyage_folder" %}
+  {% for post in subs %}
+    {% include archive-single.html %}
+  {% endfor %}
+</div>
+</body>
+{% else %} 
+<!-- Display gallery -->
+
 <link rel="stylesheet" href="/assets/css/gallery_view.css" />
 <noscript><link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
 
@@ -39,3 +82,5 @@
         </div>
 </div>
 </html>
+
+{% endif %}

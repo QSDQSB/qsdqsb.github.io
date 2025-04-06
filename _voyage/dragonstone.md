@@ -1,7 +1,7 @@
 ---
 title: "Dragonstone"
 excerpt: "Where dragons dance with fire and blood"
-description: "Fire and Blood"
+description: "San Juan de Gaztelugatxe"
 permalink: /voyage/dragonstone
 collection: voyage
 layout: gallery

@@ -620,7 +620,10 @@
 				right: 0;
 				background-position: center;
 				filter: drop-shadow(2px 2px 8px #000);
-
+				transition: 1s cubic-bezier(.33,.11,.02,.99);
+				&:hover {
+					background-size: 80px 80px;
+				}
 			}
 			#viewer .inner .leave_gallery {
 				-webkit-tap-highlight-color: transparent;
@@ -629,12 +632,17 @@
 				left: 0;
 				width: 3em;
 				height: 3em;
+				z-index: 1;
 				background-image: url("images/close-circle.svg");
 				background-position: center;
 				background-repeat: no-repeat;
 				background-size: 32px 32px;
 				cursor: pointer;
 				filter: drop-shadow(2px 2px 8px #000);	
+				transition: 1s cubic-bezier(.33,.11,.02,.99);
+				&:hover {
+					background-size: 40px 40px;
+				}
 			}
 			
 			#viewer .inner .nav-next,
@@ -645,12 +653,18 @@
 				width: 3em;
 				aspect-ratio: 1 !important;
 				margin-top: -3em;
+				z-index: 1;
 				background-image: url("images/arrow-right.svg");
 				background-position: center;
 				background-repeat: no-repeat;
 				background-size: contain;
 				cursor: pointer;
 				filter: drop-shadow(2px 2px 8px #000);
+				transition: 1s cubic-bezier(.33,.11,.02,.99);
+				&:hover {
+					width: 3.3em;
+					background-size: contain;
+				}
 			}
 
 			#viewer .inner .nav-previous {
