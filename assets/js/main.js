@@ -3,7 +3,17 @@
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
+function goToParentDirectory() {
+    const segments = window.location.pathname.split('/').filter(seg => seg !== '');
 
+    if (segments.length > 1) {
+      segments.pop();
+      const parentUrl = '/' + segments.join('/') + '/';
+      window.location.href = parentUrl;
+    } else {
+      window.location.href = '/';
+    }
+  }
 var main = (function($) { var _ = {
 
 	/**
@@ -152,7 +162,7 @@ var main = (function($) { var _ = {
 						'<div class="nav-next"></div>' +
 						'<div class="nav-previous"></div>' +
 						'<div class="toggle"></div>' +
-						'<div class="leave_gallery"><a href="./" style="display: block; width: 100%; height: 100%;">&nbsp;</a></div>' +
+						'<div class="leave_gallery"></div>' +
 					'</div>' +
 				'</div>'
 			).appendTo(_.$body);
@@ -163,7 +173,10 @@ var main = (function($) { var _ = {
 
 		// Main wrapper.
 			_.$main = $('#gallery_main');
-
+		// Leave_gallery
+			$('<div class="leave_gallery"></div>')
+				.appendTo(_.$main);
+			_.$leave_gallery = $('.leave_gallery');
 		// Toggle.
 			$('<div class="toggle"></div>')
 				.appendTo(_.$main);
@@ -337,6 +350,9 @@ var main = (function($) { var _ = {
 							}
 
 					});
+			_.$leave_gallery.on('click', function() {
+				goToParentDirectory();
+			});
 		// Toggle.
 			_.$toggle.on('click', function() {
 				_.toggle();

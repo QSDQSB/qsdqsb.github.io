@@ -155,9 +155,6 @@ kramdown:
 
 # Collections
 collections:
-  teaching:
-    output: true
-    permalink: /:collection/:path/
   publications:
     output: true
     permalink: /:collection/:path/
@@ -166,13 +163,10 @@ collections:
     permalink: /:collection/:path/
   voyage:
     output: true
-    permalink: /:collection/:path/
-  prague:
+    # permalink: /voyage/:path/
+  subvoyage:
     output: true
-  venice:
-    output: true
-  japan:
-    output: true
+    permalink: /voyage/:path/
 # Defaults
 defaults:
   # _posts
@@ -221,6 +215,15 @@ defaults:
       author_profile: false
       share: false
       comment: false
+      subgalleries: false
+  - scope:
+      path: ""
+      type: subvoyage
+    values:
+      layout: gallery
+      author_profile: false
+      share: false
+      comment: false 
   - scope:
       path: "gallery"
     values:
