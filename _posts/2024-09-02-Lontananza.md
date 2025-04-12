@@ -1,22 +1,22 @@
 ---
 title: "Lontananza"
 date: 2024-09-02
-permalink: /posts/2024/qwertracy
+permalink: /posts/2024/lontananza
 excerpt: "Memory images, once they are fixed in words, are erased."
 tags:
   - 🍜Life
-  - 🧼jhx2
 header:
   overlay_image: Lontananza_3v1.jpg
   overlay_filter: 0.25
+  caption: "*Le città invisibili*, Italo Calvino."
 ---
 <br>
 ### `1. fiskevær`
 然而只是美。只是一味的美。在大海里，可遇不可求的飞鱼守在那儿，像古老而亲切的注视。
 <div style="padding: 5px;justify-content: center; display: flex;">
-  <div class="card" style="width: 10px; aspect-ratio: 0.7; align-items:center; background-image: url('/images/prague_morning_paint.jpg');">
+  <div class="card" style="width: 30%; aspect-ratio: 0.7; align-items:center; background-image: url('/images/prague_morning_paint.jpg');">
     <div class="hidden_item">
-    <p style="padding: 1em; font-family: 'Noto Serif SC', serif; letter-spacing: 2px;">临海的渔村<br>鱼和回忆分开售卖<br>鱼十元一条<br>回忆五分钱一篓</p>
+    <p style="padding: 1em; font-family: 'Noto Serif SC', serif; letter-spacing: 2px; pointer-events: none;">临海的渔村<br>鱼和回忆分开售卖<br>鱼十元一条<br>回忆五分钱一篓</p>
     </div>
 
   </div>
@@ -68,6 +68,8 @@ Abriele D'Annunzio, an Italian poet and writer, often used <code>Lontananza</cod
 
 <br>
 
-<h4 style="color: white;text-align: right;font-family: 'Barlow';">With best wishes, QSD<br></h4>
+### With best wishes, QSD
+{: .h3_right_thin}
 
-<p style="color: white; text-align: right; font-family: 'Barlow';">03.09.2024<br></p>
+03.09.2024
+{: .p_right_thin}

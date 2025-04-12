@@ -9,7 +9,6 @@ toc_sticky: true
 toc_icon: "cog"
 
 tags:
-  - 💡Idea
   - 🚦Tutorial
   - 🏦卷！
   - 🐮Ox
