@@ -90,6 +90,20 @@ body:hover .visually-hidden button {
   text-align: left;
 }
 
+//  utility classes for post signatures
+.h3_right_thin {
+  color: $text-color;
+  text-align: right;
+  font-family: 'Barlow';
+  font-weight: 300;
+}
+
+.p_right_thin {
+  color: $primary-color;
+  text-align: right;
+  font-family: 'Barlow';
+}
+
 .text-center {
   text-align: center;
 }

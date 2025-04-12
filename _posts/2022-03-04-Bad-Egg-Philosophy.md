@@ -7,7 +7,7 @@ excerpt: "“这个鸡蛋臭了，真难吃。”"
 tags:
   - 😻Happy Moments
   - 🍜Life
-  - 💡Idea
+  - 🧼QSD's Philosophy
 header:
   overlay_image: Xiaolan1-3v1.jpg
   overlay_filter: 0.15

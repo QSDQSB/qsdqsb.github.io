@@ -39,7 +39,9 @@ layout: default
           {% endif %}
         </header>
       {% endunless %}
-        {% include ticker-tape.html %}
+        {% if page.ticker-tape %}
+          {% include ticker-tape.html %}
+        {% endif %}
       <section class="page__content e-content" itemprop="text">
         {% if page.toc %}
           <aside class="sidebar__right {% if page.toc_sticky %}sticky{% endif %}">

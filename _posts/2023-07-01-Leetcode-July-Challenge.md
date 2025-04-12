@@ -12,7 +12,7 @@ header:
 
 <span class="macaron">嗨嗨嗨！！勋章来咯！！</span>
 
-<img src="https://leetcode.com/static/images/badges/2023/gif/2023-07.gif" class="align-center" width="200">
+<img src="https://leetcode.com/static/images/badges/2023/gif/2023-07.gif" class="align-center" style="width: 20%">
 
 # `01` [Maximum Number of Achievable Transfer Requests](https://leetcode.com/problems/maximum-number-of-achievable-transfer-requests/description)
 `Hard` `DFS`

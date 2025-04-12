@@ -4,7 +4,7 @@ date: 2022-03-09
 permalink: /posts/2022/03/argue-with-idiots
 excerpt: "别和猪讲道理，猪不高兴，你也不高兴。"
 tags:
-  - 💡Idea
+  - 🧼QSD's Philosophy
 share: true
 header:
   overlay_image: Argue-with-idiot-3v1.jpg
