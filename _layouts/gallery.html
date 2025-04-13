@@ -71,11 +71,12 @@ layout: gallery
               {% endfor %}
             </section>
             {{ content }}
-            <hr>
+            <p style="font-weight: 200; border-bottom: 0.5px dotted gainsboro;pointer-events: none;" class="p_right_thin">Shot by QSD.  </p>
             <div class="container">
-              {% for post in site[page.collection] reversed%}
-              {% include archive-single.html %}
-              {% endfor %}
+                {% assign random_posts = site[page.collection] | sample: 4 %}
+                {% for post in random_posts %}
+                  {% include archive-single.html %}
+                {% endfor %}
             </div>
             {% include scripts.html %}
           </body>

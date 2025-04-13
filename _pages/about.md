@@ -5,6 +5,7 @@ author_profile: true
 excerpt: "A procrastinator, a nihilist, a deconstructionist, an idiot. "
 toc: true
 toc_sticky: true
+ticker-tape: true
 redirect_from: 
   - /about/
   - /about.html
@@ -32,7 +33,7 @@ header:
 - 🤖QSDQSB
 - 🔬24' Maths&Stats at Ox
 - 🦃From [The Queen's College](https://www.queens.ox.ac.uk), whose logo consists of three turkeys
-- [☕️](https://qsdqsb.github.io/posts/2022/03/coffee-counter)Americano addict
+- [☕️](posts/2022/03/coffee-counter)Americano addict
   - ⬆️Might trigger something if you click the coffee emoji
 - 📷Photography rookie
 - 🎸Amateur music composer
@@ -44,7 +45,7 @@ header:
 - ⚠️The previous red brick has nothing to do with Keble College.
 - 🧙‍♂️𝕽𝖆𝖛𝖊𝖓𝖈𝖑𝖆𝖜🦅
 - 🕶S.H.I.E.L.D. agent
-- 📺[YPM](https://www.imdb.com/title/tt0086831/)! [Silicon Valley](https://www.imdb.com/title/tt2575988/)! [R&M](https://www.imdb.com/title/tt2861424/)! [Better Call Saul](https://www.imdb.com/title/tt3032476/)! [Disenchantment](https://www.imdb.com/title/tt5363918/)!
+- 📺[YPM](https://www.imdb.com/title/tt0086831/)! [Silicon Valley](https://www.imdb.com/title/tt2575988/)! [Better Call Saul](https://www.imdb.com/title/tt3032476/)! [Disenchantment](https://www.imdb.com/title/tt5363918/)!
 - 👾Emoji crusher(as you can see from this page)
 - 🎨<span class="macaron">马卡龙色系yyds</span>
 - 🐱骨灰级猫猫粉
@@ -57,10 +58,23 @@ header:
 ‼️Note that every picture in this website is shot by QSD himself, or his beloved friends.
 {: .notice--pinky}
 
+## What else should we do before publishing this page?
+
 > test `latex`: 
 
-$$\forall x \in \mathbb{R}, \exists \,\epsilon >0 \,\,s.t. $$
+~~$\small\forall x \in \mathbb{R}, \exists \,\epsilon >0 \,\,s.t. $~~
+{: .text-center}
+
+*That was too easy, let's try:*
+##### Argument Principle
+> Suppose that $U$ is an open set and $f: U \rightarrow$ $\mathbb{C}$ is a *meromorphic* function on $U$. If $B(a, r) \subseteq U$ and $N$ is the number of zeros (counted with multiplicity) and $P$ is the number of poles (again counted with multiplicity) of $f$ *inside* $B(a, r)$ and $f$ has neither on $\partial B(a, r)$ then
+$$N-P=\frac{1}{2 \pi i} \int_{\gamma} \frac{f^{\prime}(z)}{f(z)} d z,$$
+ where $\gamma(t)=a+r e^{2 \pi i t}$ is a path with image $\partial B(a, r)$. Moreover this is the *winding number* of the path $\Gamma=f \circ \gamma$ about the origin.
+
+Don't know what this is? It's quite simple, just get a maths degree and you will see.
 
 ----
 
-![](/images/QSDLOGO-2000.svg){: .align-center}
+
+
+<div class="logo_wrapper"><a href="#欢迎来到qsd妙妙屋"><img src="/images/QSDLOGO-2000.svg" alt="QSD Logo" class="logo_style"></a></div>

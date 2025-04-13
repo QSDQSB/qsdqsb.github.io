@@ -68,8 +68,8 @@ Abriele D'Annunzio, an Italian poet and writer, often used <code>Lontananza</cod
 
 <br>
 
-### With best wishes, QSD
+## With best wishes, QSD
 {: .h3_right_thin}
 
-03.09.2024
+02.09.2024
 {: .p_right_thin}

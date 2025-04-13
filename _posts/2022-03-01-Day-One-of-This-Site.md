@@ -36,5 +36,5 @@ I only wish to catch a glimpse of my own life, joyful or not, before the memory 
 ### *With all the best, QSD*
 {: .text-right}
 
-*Mar 1, 2022*
-{: .text-right}
+Mar 1, 2022
+{: .p_right_thin}
