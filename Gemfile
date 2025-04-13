@@ -25,6 +25,9 @@ group :jekyll_plugins do
   gem 'jekyll-sitemap'
   gem 'hawkins'
   gem 'jekyll-include-cache'
+  gem "mini_magick"
 end
 
 gem "webrick", "~> 1.7"
+
+gem "rake", "~> 13.2"
