@@ -21,7 +21,7 @@ task :generate_thumbnails do
     FileUtils.mkdir_p(thumbnail_dir)
 
     # Define thumbnail path
-    thumbnail_path = File.join(thumbnail_dir, File.basename(relative_path))
+    thumbnail_path = File.join(thumbnail_dir, File.basename(file))
 
     # Skip if thumbnail already exists and is newer than the source
     if File.exist?(thumbnail_path) && File.mtime(thumbnail_path) > File.mtime(file)
