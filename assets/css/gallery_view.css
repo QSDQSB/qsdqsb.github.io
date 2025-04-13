@@ -505,14 +505,46 @@
 		}
 
 			#thumbnails article .thumbnail {
-				-webkit-tap-highlight-color: transparent;
 				display: block;
 				position: relative;
-				border: 0;
-				outline: 0;
+				width: 100%;
+				overflow: hidden;
+
+				.thumbnail-placeholder {
+					display: block;
+					min-height: 50px;
+					aspect-ratio: 16/9;
+					overflow: hidden;
+				}
+				
+				.thumbnail-placeholder.loading {
+					background-color: rgba(16, 16, 16, 0.6);
+					animation: loadingPulse 2s infinite;
+				}
+
+				@keyframes loadingPulse {
+					0% { background-color: rgba(16, 16, 16, 0.6); }
+					50% { background-color: rgba(128, 128, 128, 0.8); }
+					100% { background-color: rgba(16, 16, 16, 0.6); }
+				}
+				
+				.thumbnail-placeholder.loaded {
+					background-color: transparent;
+				}
+				
+				.thumbnail-placeholder img {
+					display: block;
+					width: 100%;
+					opacity: 0;
+					transition: opacity 0.3s ease;
+				}
+				
+				.thumbnail-placeholder img.loaded {
+					opacity: 1;
+				}
 			}
 
-				#thumbnails article .thumbnail img {
+				#thumbnails article .thumbnail .thumbnail-placeholder img {
 					display: block;
 					width: 100%;
 				}
@@ -743,10 +775,7 @@
 
 
 			#viewer .slide .image {
-				-moz-transition: opacity 0.5s ease;
-				-webkit-transition: opacity 0.5s ease;
-				-ms-transition: opacity 0.5s ease;
-				transition: opacity 0.5s ease;
+				transition: all 0.5s ease-in-out;
 				position: absolute;
 				top: 0;
 				left: 0;
@@ -759,13 +788,7 @@
 			}
 
 			#viewer .slide:before {
-				-moz-animation: spinner 1s linear infinite;
-				-webkit-animation: spinner 1s linear infinite;
-				-ms-animation: spinner 1s linear infinite;
 				animation: spinner 1s linear infinite;
-				-moz-transition: opacity 0.5s ease;
-				-webkit-transition: opacity 0.5s ease;
-				-ms-transition: opacity 0.5s ease;
 				transition: opacity 0.5s ease;
 				content: '';
 				display: block;
@@ -780,6 +803,15 @@
 				background-size: contain;
 				margin: -1.5em 0 0 -1.5em;
 				opacity: 0;
+			}
+
+			@keyframes spinner {
+				from {
+					transform: translate(-50%, -50%) rotate(0deg);
+				}
+				to {
+					transform: translate(-50%, -50%) rotate(360deg);
+				}
 			}
 
 			#viewer .slide.loading:before {

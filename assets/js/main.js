@@ -532,6 +532,39 @@ var main = (function($) { var _ = {
 
 			}, 0);
 
+		// Thumbnail lazy loading
+			(function() {
+				var placeholders = document.querySelectorAll('.thumbnail-placeholder');
+				var observer = new IntersectionObserver(function(entries) {
+					entries.forEach(function(entry) {
+						if (entry.isIntersecting) {
+							var placeholder = entry.target;
+							var img = new Image();
+							img.src = placeholder.dataset.thumbnail || placeholder.dataset.src;
+							img.alt = placeholder.parentElement.getAttribute('href').split('/').pop();
+							
+							placeholder.classList.add('loading');
+							
+							img.onload = function() {
+								placeholder.appendChild(img);
+								placeholder.classList.remove('loading');
+								placeholder.classList.add('loaded');
+								img.classList.add('loaded');
+							};
+							
+							observer.unobserve(placeholder);
+						}
+					});
+				}, {
+					rootMargin: '50px 0px',
+					threshold: 0.01
+				});
+
+				placeholders.forEach(function(placeholder) {
+					observer.observe(placeholder);
+				});
+			})();
+
 	},
 
 	/**

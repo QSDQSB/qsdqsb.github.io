@@ -63,7 +63,12 @@ layout: gallery
               {% assign gallery = site.static_files | where: "image", true | where_exp: "file", "file.path contains folderpath" %}
               {% for image in gallery %}
                 <article>
-                  <a class="thumbnail" href="{{ site.gallery_d }}/{{ page.gallery_name }}/{{ image.name }}" data-position="{{ site.thumbnail_position }}"><img src="{{ site.gallery_d }}/{{ page.gallery_name }}/{{ image.name }}" alt="{{ image.basename }}" /></a>
+                  <a class="thumbnail" href="{{ site.gallery_d }}/{{ page.gallery_name }}/{{ image.name }}" data-position="{{ site.thumbnail_position }}">
+                    <div class="thumbnail-placeholder" 
+                         data-src="{{ site.gallery_d }}/{{ page.gallery_name }}/{{ image.name }}"
+                         data-thumbnail="/images/thumbnails/gallery/{{ page.gallery_name }}/{{ image.name }}">
+                    </div>
+                  </a>
                   <div class="image_title">
                     <h3>{{ image.basename | replace: "__", " | " | replace: "_", " " | replace: ":", "/" }}</h3>
                   </div>
