@@ -482,20 +482,14 @@
 /* Thumbnails */
 
 	#thumbnails {
-		#thumbnails h1, h2, h3, h4, h5, h6 {
+		h1, h2, h3, h4, h5, h6 {
 			color: #fff;
 			font-family: "Barlow";
 			font-weight: 200;
 		}
-		display: -moz-flex;
-		display: -webkit-flex;
-		display: -ms-flex;
 		display: flex;
-		-moz-flex-wrap: wrap;
-		-webkit-flex-wrap: wrap;
-		-ms-flex-wrap: wrap;
 		flex-wrap: wrap;
-		padding: 0 0.75em;
+		margin: 0 0.75em;
 	}
 
 		#thumbnails article {
@@ -507,13 +501,14 @@
 			#thumbnails article .thumbnail {
 				display: block;
 				position: relative;
-				width: 100%;
+				margin: 0.15em 0.1em;
 				overflow: hidden;
-
+				
 				.thumbnail-placeholder {
 					display: block;
 					min-height: 50px;
 					aspect-ratio: 16/9;
+					
 					overflow: hidden;
 				}
 				
