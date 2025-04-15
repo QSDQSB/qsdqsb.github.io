@@ -13,8 +13,7 @@ header:
 ---
 
 # DAY ONE OF THIS SITE
-
------
+{: .barlow}
 
 As they say, whereof what is past is prologue.
 
