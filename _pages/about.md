@@ -39,7 +39,7 @@ header:
 - 🎸Amateur music composer
   - 🎹This guy really used to know piano, but not anymore
   - 🎻So-called 网易音乐人
-- 📱Wechat QSDQSB
+- 📱Wechat $\times\times\times\times\times\times$; <span class="barlow">Would argue reasonably straightforward to guess based on this site.</span>
 - 🎮Civilization VI! But suck at it :(
 - 🧱Lego [76042](https://www.lego.com/en-gb/product/the-shield-helicarrier-76042)+[71043](https://www.lego.com/en-gb/product/hogwarts-castle-71043)+[21327](https://www.lego.com/en-gb/product/typewriter-21327)
 - ⚠️The previous red brick has nothing to do with Keble College.
@@ -60,16 +60,17 @@ header:
 
 ## What else should we do before publishing this page?
 
-> test `latex`: 
-
-~~$\small\forall x \in \mathbb{R}, \exists \,\epsilon >0 \,\,s.t. $~~
+- test `latex`: 
+$$\small\forall x \in \mathbb{R}, \exists \,\varepsilon >0 \,\,s.t. $$
 {: .text-center}
 
 *That was too easy, let's try:*
+{: .barlow}
 ##### Argument Principle
-> Suppose that $U$ is an open set and $f: U \rightarrow$ $\mathbb{C}$ is a *meromorphic* function on $U$. If $B(a, r) \subseteq U$ and $N$ is the number of zeros (counted with multiplicity) and $P$ is the number of poles (again counted with multiplicity) of $f$ *inside* $B(a, r)$ and $f$ has neither on $\partial B(a, r)$ then
-$$N-P=\frac{1}{2 \pi i} \int_{\gamma} \frac{f^{\prime}(z)}{f(z)} d z,$$
- where $\gamma(t)=a+r e^{2 \pi i t}$ is a path with image $\partial B(a, r)$. Moreover this is the *winding number* of the path $\Gamma=f \circ \gamma$ about the origin.
+{: .barlow}
+
+> Suppose that $U$ is an open set and $f: U \rightarrow$ $\mathbb{C}$ is a *meromorphic* function on $U$. If $B(a, r) \subseteq U$ and $N$ is the number of zeros (counted with multiplicity) and $P$ is the number of poles (again counted with multiplicity) of $f$ *inside* $B(a, r)$ and $f$ has neither on $\partial B(a, r)$ then $$N-P=\frac{1}{2 \pi i} \int_{\gamma} \frac{f^{\prime}(z)}{f(z)} d z,$$ where $\gamma(t)=a+r e^{2 \pi i t}$ is a path with image $\partial B(a, r)$. Moreover this is the *winding number* of the path $\Gamma=f \circ \gamma$ about the origin.
+{: .barlow}
 
 Don't know what this is? It's quite simple, just get a maths degree and you will see.
 

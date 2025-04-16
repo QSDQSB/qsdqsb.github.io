@@ -5,7 +5,7 @@ permalink: /voyage/barcelona
 collection: voyage
 date: 2024-07-01
 header:
-  overlay_image: barcelona_3v1.jpg
+  overlay_image: cover/barcelona_3v1.jpg
 ---
 
 #TODO
