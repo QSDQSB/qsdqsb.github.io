@@ -212,7 +212,7 @@ defaults:
       path: ""
       type: voyage
     values:
-      layout: single
+      layout: gallery
       author_profile: false
       share: false
       comment: false
