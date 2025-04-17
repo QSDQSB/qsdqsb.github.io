@@ -2,7 +2,7 @@
 title: "Defined by Archive"
 date: 2025-04-10
 permalink: /posts/2025/defined-by-archive
-excerpt: "Tangible relics of the past bear a truth that memory alone tarnishes."
+excerpt: "Tangible relics of the past bear a truth where memory alone tarnishes."
 tags:
   - 🧼QSD's Philosophy
 header:
