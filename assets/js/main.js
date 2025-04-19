@@ -74,7 +74,12 @@ var main = (function($) { var _ = {
 	 * @var {jQuery}
 	 */
 	$toggle: null,
-
+	/**
+	 * Image_display.
+	 * @var {jQuery}
+	 */
+	$imageDisplay: null,
+	
 	/**
 	 * Nav (next).
 	 * @var {jQuery}
@@ -162,6 +167,7 @@ var main = (function($) { var _ = {
 						'<div class="nav-next"></div>' +
 						'<div class="nav-previous"></div>' +
 						'<div class="toggle"></div>' +
+						'<div class="toggle-image-display"></div>' +
 						'<div class="leave_gallery"></div>' +
 					'</div>' +
 				'</div>'
@@ -170,7 +176,9 @@ var main = (function($) { var _ = {
 		// Nav.
 			_.$navNext = _.$viewer.find('.nav-next');
 			_.$navPrevious = _.$viewer.find('.nav-previous');
-
+			_.$imageDisplay = _.$viewer.find('.toggle-image-display');
+			// Background size.
+			_.background_size = 'cover';
 		// Main wrapper.
 			_.$main = $('#gallery_main');
 		// Leave_gallery
@@ -372,6 +380,10 @@ var main = (function($) { var _ = {
 				_.previous();
 			});
 
+		// toggle-image-display
+			_.$imageDisplay.on('click', function() {
+				_.change_image_display();
+			});
 		// Keyboard shortcuts.
 
 			// Ignore shortcuts within form elements.
@@ -642,6 +654,8 @@ var main = (function($) { var _ = {
 										// Set background image.
 											newSlide.$slideImage
 												.css('background-image', 'url(' + newSlide.url + ')');
+											newSlide.$slideImage
+												.css('background-size', _.background_size);
 
 										// Mark as loaded.
 											newSlide.loaded = true;
@@ -727,6 +741,23 @@ var main = (function($) { var _ = {
 
 	},
 
+	change_image_display: function() {
+		if (_.background_size === 'cover') {
+			_.background_size = 'contain';
+			var YTranslate = '-100%';
+		}
+		else {
+			_.background_size = 'cover';
+			var YTranslate = '100%';
+		}
+		var $image = _.$viewer.find('.image');
+		var transitionDuration = parseFloat($image.css('transition-duration')) * 1000;
+		$image.css('transform', 'translateY(' + YTranslate + ')');
+		setTimeout(function() {
+			$image.css('background-size', _.background_size);
+			$image.css('transform', 'translateY(0)');
+		}, transitionDuration - 100);
+	},
 	/**
 	 * Switches to slide "above" current.
 	 */
@@ -809,12 +840,13 @@ var main = (function($) { var _ = {
 	 * Toggles main wrapper.
 	 */
 	toggle: function() {
-
-		if (_.$body.hasClass('fullscreen'))
+		if (_.$body.hasClass('fullscreen')) {
 			_.show();
-		else
+			_.$toggle.css('transform', 'rotate(0deg)');
+		} else {
 			_.hide();
-
+			_.$toggle.css('transform', 'rotate(180deg)');
+		}
 	},
 
 }; return _; })(jQuery); main.init();
