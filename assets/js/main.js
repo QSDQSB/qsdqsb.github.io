@@ -683,7 +683,8 @@ var main = (function($) { var _ = {
 
 								// Mark as active.
 									newSlide.$slide.addClass('active');
-
+									newSlide.$slideImage
+									.css('background-size', _.background_size);
 								// Unlock.
 									window.setTimeout(function() {
 										_.locked = false;
