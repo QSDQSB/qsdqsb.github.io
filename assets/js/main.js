@@ -30,6 +30,7 @@ var main = (function($) { var _ = {
 
 		// Layout duration (must match "duration.layout" in _vars.scss).
 			layoutDuration: 750,
+			captionDuration: 2000,
 
 		// Thumbnails per "row" (must match "misc.thumbnails-per-row" in _vars.scss).
 			thumbnailsPerRow: 2,
@@ -44,7 +45,11 @@ var main = (function($) { var _ = {
 	 * @var {jQuery}
 	 */
 	$window: null,
-
+	/**
+	 * Caption.
+	 * @var {jQuery}
+	 */
+	$caption: null,
 	/**
 	 * Body.
 	 * @var {jQuery}
@@ -379,7 +384,6 @@ var main = (function($) { var _ = {
 			_.$navPrevious.on('click', function() {
 				_.previous();
 			});
-
 		// toggle-image-display
 			_.$imageDisplay.on('click', function() {
 				_.change_image_display();
@@ -668,7 +672,11 @@ var main = (function($) { var _ = {
 											window.setTimeout(function() {
 												_.locked = false;
 											}, 100);
-
+											// Temporarily display the caption
+											newSlide.$slideCaption.addClass('hovered');
+											window.setTimeout(function() {
+												newSlide.$slideCaption.removeClass('hovered');
+											}, _.settings.captionDuration);
 									//}, 1000);
 									});
 
@@ -689,8 +697,14 @@ var main = (function($) { var _ = {
 									window.setTimeout(function() {
 										_.locked = false;
 									}, 100);
-
+									newSlide.$slideCaption.addClass('hovered');
+									window.setTimeout(function() {
+										newSlide.$slideCaption
+											.removeClass('hovered');
+									}, _.settings.captionDuration);
 							}, 100);
+								// Temporarily display the caption
+							
 
 						}
 
@@ -703,7 +717,6 @@ var main = (function($) { var _ = {
 				// Otherwise, wait for old slide to disappear first.
 					else
 						window.setTimeout(f, _.settings.slideDuration);
-
 	},
 
 	/**
