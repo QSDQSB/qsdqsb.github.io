@@ -633,12 +633,12 @@
 				z-index: 3;
 				cursor: pointer;
 				filter: drop-shadow(5px 5px 12px #000);
-				border: #fff 1px solid;
+				border: #aaa 1px solid;
 				box-shadow: 9px 6px 11px -1px rgba(0,0,0,0.6);	
 				transition: 1s cubic-bezier(.33,.11,.02,.99);
 				-webkit-backdrop-filter: blur(2px) saturate(150%)  contrast(1.2);
 				backdrop-filter: blur(2px) saturate(150%) contrast(1.2);
-				background-color: rgba(222, 222, 222, 0.2);
+				background-color: rgba(222, 222, 222, 0.4);
 				mask-repeat: no-repeat;
 				mask-position: center;
 				mask-size: contain;
@@ -681,23 +681,29 @@
 				cursor: default;
 				display: inline-block;
 				transition: all 0.5s cubic-bezier(.33,.11,.02,.99);;
-				opacity: 0;
 				border-radius:10px;
 				margin-left: 1em;
 				padding: 0.1em 1em 0.2em;
-				-webkit-backdrop-filter: blur(6px) saturate(115%) brightness(0.9);
-				backdrop-filter: blur(6px) saturate(115%) brightness(0.9);
+				-webkit-backdrop-filter: blur(4px) saturate(115%) brightness(0.9);
+				backdrop-filter: blur(4px) saturate(115%) brightness(0.9);
 				border: 1px solid rgba(255, 255, 255, .1);
-				box-shadow: 9px 6px 11px -1px rgba(0,0,0,0.6);	
+				box-shadow: 8px 6px 10px -1px rgba(0,0,0,0.6);	
 			}
 			#viewer .slide .caption {
 				padding: 0.2em 0.4em 1em;
 				width: 100%;
 				position: absolute;
 				bottom: 0;
+				opacity: 0;
 				left: 0;
 				z-index: 1;
-				transition: 1s cubic-bezier(.33,.11,.02,.99);;
+				transition: 1s cubic-bezier(.33,.11,.02,.99);
+				transform: translateY(0);
+				&.hovered, &:hover {
+					opacity: 1;
+					transition: 1s cubic-bezier(.33,.11,.02,.99);
+					transform: translateY(-0.5em);
+				}
 			}
 				 #viewer .slide .caption .image_title h3 {
 					font-family: "Barlow";
@@ -706,11 +712,6 @@
 					margin: 0;
 					padding: 4px;
 					transition: 1s cubic-bezier(.33,.11,.02,.99);;
-				}
-				#viewer .slide .caption :hover {
-						opacity: 1;
-						animation: ease-in-out;
-						transition: 0.8s;
 				}
 
 			#viewer .slide .image {
