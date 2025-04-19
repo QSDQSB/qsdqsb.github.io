@@ -116,7 +116,13 @@ body {
 
 .page__lead {
   font-family: $global-font-family;
-  font-size: $type-size-4;
+  font-size: $type-size-7;
+  @include breakpoint($large) {
+    font-size: $type-size-5;
+  }    
+  @include breakpoint($x-large) {
+    font-size: $type-size-4;
+  }
 }
 
 .page__content {
@@ -208,7 +214,7 @@ body {
     .page__meta,
     .page__lead,
     .btn {
-      color: #fff;
+      color: $text-color;
       text-shadow: 1px 1px 4px rgba(#000, 0.5);
     }
 
@@ -217,9 +223,11 @@ body {
     }
 
     .page__title {
-      font-size: $type-size-2;
-
-      @include breakpoint($small) {
+      font-size: $type-size-3;
+      @include breakpoint($large) {
+        font-size: $type-size-2;
+      }    
+      @include breakpoint($x-large) {
         font-size: $type-size-1;
       }
     }
