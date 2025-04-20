@@ -1,0 +1,15 @@
+{% for file in site.data.gallery-svgs %}
+  <link rel="preload"
+        as="image"
+        href="{{ '/assets/css/images/' | append: file | relative_url }}"
+        type="image/svg+xml"
+        fetchpriority="high" />
+  <img src="{{ '/assets/css/images/' | append: file | relative_url }}"
+       style="display: none;"
+       loading="eager"
+       fetchpriority="high"
+       decoding="async"
+       width="0"
+       height="0"
+       alt="" />
+{% endfor %}
