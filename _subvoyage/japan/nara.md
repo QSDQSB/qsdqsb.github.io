@@ -1,6 +1,6 @@
 ---
 title: "Nara"
-excerpt: "#TODO"
+excerpt: "有些鹿真是畜生啊"
 gallery_name: "japan/nara"
 date: 2025-03-21
 header:
