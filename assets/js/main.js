@@ -120,7 +120,15 @@ var main = (function($) { var _ = {
 	 * @var {object}
 	 */
 	keys: {
-
+		// Backspace: Leave gallery.
+			8: function() {
+				_.goToParentDirectory();
+			},
+		// Shift: toggle image display.
+			16: function() {
+				_.change_image_display();
+			},
+		
 		// Escape: Toggle main wrapper.
 			27: function() {
 				_.toggle();
