@@ -352,10 +352,9 @@
 	position: absolute;
 	opacity: 0.6;
 	top: 0.6em;
-	background-color: rgba(255, 255, 255, 0.5);
-	-webkit-backdrop-filter: blur(3px) saturate(150%) invert(0.7) contrast(1.2);
-	backdrop-filter: blur(3px) saturate(150%) invert(0.7) contrast(1.2);
-	box-shadow:rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+	background-color: rgba(255, 255, 255, 0.3);
+	-webkit-backdrop-filter: blur(2px) saturate(150%) invert(0.8) contrast(1.2);
+	backdrop-filter: blur(2px) saturate(150%) invert(0.8) contrast(1.2);
 	width: 1.5em;
 	aspect-ratio: 1 !important;
 	z-index: 3;
@@ -595,10 +594,20 @@
 				opacity: 0.05;
 				transition: 1s cubic-bezier(.33,.11,.02,.99);
 			}
+			.leave_gallery {
+				opacity: 0.7;
+				transition: 1s cubic-bezier(.33,.11,.02,.99);
+			}
 			&:hover {
 				.nav-next, .nav-previous, .toggle-image-display, .toggle, .leave_gallery {
 					opacity: 1;
 					scale: 1.1;
+				}
+				.leave_gallery {
+					background-color: rgb(255, 255, 255);
+					-webkit-backdrop-filter: blur(0px);
+					backdrop-filter: blur(0px);
+					filter: drop-shadow(5px 5px 12px #000);
 				}
 			}
 
@@ -609,6 +618,9 @@
 				pointer-events: auto;
 			}
 			.leave_gallery {
+				-webkit-backdrop-filter: blur(1px) saturate(150%) contrast(2) brightness(0.5);
+				backdrop-filter: blur(1px) saturate(150%) contrast(2) brightness(0.5);
+				background-color: rgba(255, 255, 255, .3);
 				mask-image: url('/assets/css/images/x.svg');
 				left: 0.6em;
 			}
@@ -616,13 +628,20 @@
 				transform-origin: center;
 				mask-image: url('/assets/css/images/chevrons-right.svg');
 				right: 0.6em;
-				}
+			}
 			
 			.toggle-image-display {
 				mask-image: url('/assets/css/images/maximize-2.svg');
 				right: 3em;
 			}
-			
+			.toggle, .toggle-image-display {
+				&:hover {
+					background-color: rgb(255, 255, 255);
+					-webkit-backdrop-filter: blur(0px);
+					backdrop-filter: blur(0px);
+					filter: drop-shadow(5px 5px 12px #000);
+				}
+			}
 			.nav-next, .nav-previous {
 				-webkit-tap-highlight-color: transparent;
 				position: absolute;
@@ -634,7 +653,6 @@
 				cursor: pointer;
 				filter: drop-shadow(5px 5px 12px #000);
 				border: #aaa 1px solid;
-				box-shadow: 9px 6px 11px -1px rgba(0,0,0,0.6);	
 				transition: 1s cubic-bezier(.33,.11,.02,.99);
 				-webkit-backdrop-filter: blur(2px) saturate(150%)  contrast(1.2);
 				backdrop-filter: blur(2px) saturate(150%) contrast(1.2);
@@ -684,8 +702,8 @@
 				border-radius:10px;
 				margin-left: 1em;
 				padding: 0.1em 1em 0.2em;
-				-webkit-backdrop-filter: blur(4px) saturate(115%) brightness(0.9);
-				backdrop-filter: blur(4px) saturate(115%) brightness(0.9);
+				-webkit-backdrop-filter: blur(5px) saturate(115%) brightness(80%);
+				backdrop-filter: blur(5px) saturate(115%) brightness(80%);
 				border: 1px solid rgba(255, 255, 255, .1);
 				box-shadow: 8px 6px 10px -1px rgba(0,0,0,0.6);	
 			}
