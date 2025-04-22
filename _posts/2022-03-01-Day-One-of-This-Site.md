@@ -25,9 +25,9 @@ There was joy, there was hope, there was sorrow, there was despair.
 
 Scars are carved on our bodies, engraved in our souls. Hearts were kindled and banished once and once again, like Sisyphus' punishment.
 
-We have buried the past, but still need to let go. How do we truly get away with it? We write down an epitaph. An epilogue, a farewell to an old friend. And that is the point of this site.
+We have buried the past, but still need to let go. How do we truly get away with it? We inscribe an epitaph. An epilogue, a farewell to an old friend. And that is the point of this site.
 
-I only wish to catch a glimpse of my own life, joyful or not, before the memory fades away, buried along with my past.
+I only wish to catch a glimpse of my own life, joyful or not, before it slips beneath the tide of time.
 
 ## "To see the world as it is and to love it."
 {: .text-center}
