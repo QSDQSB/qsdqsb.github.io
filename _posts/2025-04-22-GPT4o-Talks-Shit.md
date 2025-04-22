@@ -13,7 +13,7 @@ header:
 ## RAAAAAAAAINBOW赏析
 {: .barlow}
 
-本文展示一个GPT4o如何彩虹屁🌈💨夸👍夸🤩任何一篇狗屎内容，无论Prompt中立与否。
+本文展示一个*GPT4o如何彩虹屁🌈💨夸👍夸🤩任何一篇狗屎内容，无论Prompt中立与否*的例子。
 
 ### Prompt
 {: .barlow}
