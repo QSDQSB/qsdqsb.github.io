@@ -6,5 +6,3 @@ gallery_name: "singapore"
 header:
   overlay_image: Singapore_night_3v1.jpg
 ---
-
-#TODO
