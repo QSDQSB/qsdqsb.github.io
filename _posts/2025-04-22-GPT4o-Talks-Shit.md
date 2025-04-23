@@ -18,7 +18,7 @@ header:
 Prompt
 {: .barlow .text-center}
 
-*「以下内容是一个作者为他个人博客题写的扉页，用于阐述该博客的目的。请简要赏析主旨，以此推断作者的哲学导向与人生观: { <a href="/posts/day-one/" target="_blank">Day one of this site</a>中的内容 }。*
+*「以下内容是一个作者为他个人博客题写的扉页，用于阐述该博客的目的。请简要赏析主旨，以此推断作者的哲学导向与人生观: { <a href="/posts/day-one" target="_blank">Day one of this site</a>中的内容 }。*
 {: .notice--info}
 
 ```bash
