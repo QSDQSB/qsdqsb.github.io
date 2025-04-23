@@ -16,6 +16,7 @@ This directory is the canonical source for repo-specific rules, instructions, an
 - `responsive-layout-governance.md`: Desktop-first + mobile-required responsive policy and confirmation gate.
 - `quality-gates.md`: Validation outcomes and warn-then-block rollout plan.
 - `agent-style-checklist.md`: Required execution sequence for style/theme changes.
+- `git-commit-style.md`: Emoji-prefixed commit message format and compliance checks.
 - `validation-scenarios.md`: Deterministic test cases for gate behavior.
 
 ## Skills
