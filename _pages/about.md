@@ -19,7 +19,7 @@ header:
 **公告板**
 {: .text-center}
 
-*关于本网站的目的，请参见这篇文章： <a href="/posts/day-one/" target="_blank">Day one of this site</a>。*
+*关于本网站的目的，请参见这篇文章： <a href="posts/day-one/" target="_blank">Day one of this site</a>。*
 {: .notice--info}
 
 ➡️➡️➡️ <a href="files/Commitments/Commitment_2022_1.pdf" target="_blank"> QSD减肥进行时💨💨！！</a>
