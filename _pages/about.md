@@ -19,7 +19,7 @@ header:
 **公告板**
 {: .text-center}
 
-*关于本网站的目的，请参见这篇文章： <a href="posts/day-one/" target="_blank">Day one of this site</a>。*
+*关于本网站的目的，请参见这篇文章： <a href="posts/2022/03/day-one/" target="_blank">Day one of this site</a>。*
 {: .notice--info}
 
 ➡️➡️➡️ <a href="files/Commitments/Commitment_2022_1.pdf" target="_blank"> QSD减肥进行时💨💨！！</a>
@@ -57,10 +57,6 @@ header:
 
 ‼️Note that every picture in this website is shot by QSD himself, or his beloved friends.
 {: .notice--pinky}
-## What's New!
-_"有哪些文件夹刚刚被新建了呢？"_
-
-<!-- {% include new_release.html %} -->
 
 ## What else should we do before publishing this page?
 
