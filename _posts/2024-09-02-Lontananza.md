@@ -22,16 +22,16 @@ header:
   </div>
 </div>
 <br>
+
 ### `2. Azul`
 <div style="font-family: 'Courier'; text-align: justify;">
 蓝调时间的北外滩Kaws真好，可惜美好的东西总是转瞬即逝。
-
-<div style="text-align: center;padding: 1em;">
-<img src="https://images.lifestyleasia.com/wp-content/uploads/sites/6/2024/08/02155249/kaws-holiday-shanghai-2024-1.jpg?tr=w-1600" alt="moon by kaws at the Bond" style="width: 70%; align: center; border-radius: 1em;">
 </div>
+<img src="https://images.lifestyleasia.com/wp-content/uploads/sites/6/2024/08/02155249/kaws-holiday-shanghai-2024-1.jpg?tr=w-1600" alt="moon by kaws at the Bond">
+{: .article-image}
 
+<div style="font-family: 'Courier'; text-align: justify;">
 想起了在Porto的那个晚上，人群随着蔷薇色的晚霞缓缓散去。Dom Luís I大桥上只余下那一对年轻恋人，依偎在那如墨的蓝色苍穹之下，时间在此刻停滞。
-
 </div>
 
 <br>
