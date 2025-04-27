@@ -103,15 +103,18 @@
 }
 
 .card {
+  min-height: 6em;
   aspect-ratio: 3.5;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 	background: rgba(255, 255, 255, 0.05);
 	border-radius: 1em;
   padding: 2em;
-  display: block;
+  align-items: flex-start;
+  display: flex;
   width: 99%;
-  min-height: 8em;
   margin: 1.5em 0.5em;
+  max-width: 100%;
+  box-sizing: border-box;
   --bg-filter-opacity: 0.3;
   background-size: cover;
   background-position: center;
@@ -235,6 +238,10 @@
     transition: inherit;
     opacity: 0;
     margin: 0;
+  }
+
+  @media (max-width: $small) {
+    aspect-ratio: auto;
   }
 }
 
