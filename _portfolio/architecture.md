@@ -11,4 +11,4 @@ header:
 ---
 
 ![](/images/architecture/ZahaHadid1.jpg)
-{: .full}
+{: .article-image}

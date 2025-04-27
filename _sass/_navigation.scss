@@ -361,7 +361,7 @@
    ========================================================================== */
 
 .toc {
-  transition: all 1s cubic-bezier(0.39, 0.575, 0.565, 1);
+  transition: $cubic-bezier-default;
 
   font-family: $tag-font-family;
   color: $light-gray;

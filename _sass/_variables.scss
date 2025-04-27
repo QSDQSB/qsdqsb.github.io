@@ -168,8 +168,16 @@ $nav-toggle-height: 2rem !default;
 $navicon-width: 1.5rem !default;
 $navicon-height: 0.25rem !default;
 $global-transition: all 0.3s ease-in-out !default;
+$cubic-bezier-default: all 1s cubic-bezier(.33,.11,.02,.99);
 $intro-transition: intro 0.3s both !default;
 $global-transition-time: 0.5s;
+
+$box-shadow-fancy:
+   0 10px 10px rgba(0, 0, 0, 0.5),
+   0 1px 6px rgba(0, 0, 0, 0.3),
+   0 8px 8px rgba(0, 0, 0, 0.5),
+   0 16px 16px rgba(0, 0, 0, 0.5),
+   8px 32px 32px rgba(0, 0, 0, 0.5);
 
 .macaron {
    background: linear-gradient(90deg, rgba(249,237,209,1) 0%, rgba(254,170,194,1) 20%, rgba(247,117,169,1) 40%, rgba(184,222,164,1) 60%, rgba(182,237,232,1) 80%, rgba(143,219,216,1) 100%);
