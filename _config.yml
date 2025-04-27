@@ -7,7 +7,7 @@
 
 # Site Settings
 minimal_mistakes_skin: "neon"
-locale                   : "en-US"
+locale                   : "en-UK"
 title                    : "QSD's House of Wonders"
 title_separator          : "·"
 name                     : &name "QSD"

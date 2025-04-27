@@ -1,13 +1,14 @@
 ---
-layout: gallery
+layout: compress
 ---
-<!DOCTYPE html>
-<html lang="en">
+{% include base_path %}
+
+<html lang="{{ site.locale | slice: 0,2 }}" class="no-js">
+
 <head>
   {% include head.html %}
   {% include head/custom.html %}
 </head>
-{% include base_path %}
 
 {% if page.subgalleries %}
 <body>
@@ -26,22 +27,15 @@ layout: gallery
 
 <div id="main" role="main">
   {% include sidebar.html %}
-
-  <div class="archive">
-    {% unless page.header.overlay_color or page.header.overlay_image %}
-      <h1 class="page__title">{{ page.title }}</h1>
-    {% endunless %}
-    {{ content }}
+  <div class="container">
+    {% assign voyage_name = page.path | split: '/' | last | split: '.' | first %}
+    {% assign subvoyage_folder = voyage_name | append: "/" %}
+    {% assign subs = site.subvoyage | where_exp: "item", "item.path contains subvoyage_folder" %}
+    {% for post in subs %}
+      {% include archive-single.html %}
+    {% endfor %}
   </div>
-</div>
-<!-- Enumerate sub-galleries -->
-<div class="container">
-  {% assign voyage_name = page.path | split: '/' | last | split: '.' | first %}
-  {% assign subvoyage_folder = voyage_name | append: "/" %}
-  {% assign subs = site.subvoyage | where_exp: "item", "item.path contains subvoyage_folder" %}
-  {% for post in subs %}
-    {% include archive-single.html %}
-  {% endfor %}
+{% include scripts.html %}
 </div>
 </body>
 {% else %} 
@@ -77,8 +71,8 @@ layout: gallery
             </section>
             {{ content }}
             <p style="font-weight: 200; border-bottom: 0.5px dotted gainsboro;pointer-events: none;" class="p_right_thin">Shot by QSD.  </p>
-            <div class="container">
-              <h5 class="barlow" style="text-align: left;"><i class="fa-solid fa-shuffle"></i>Fancy a Markov Chain...?</h4>
+            <div class="archive">
+              <h4 class="barlow" style="text-align: left;"><i class="fa-solid fa-shuffle"></i>Fancy a Markov Chain...?</h4><br>
                 {% assign random_posts = site[page.collection] | where_exp: "post", "post.url != page.url" | sample: 4 %}
                 {% for post in random_posts %}
                   {% include archive-single.html %}
@@ -89,6 +83,5 @@ layout: gallery
           </body>
         </div>
 </div>
-</html>
 
 {% endif %}
