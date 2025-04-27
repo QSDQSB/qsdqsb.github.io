@@ -11,7 +11,7 @@
 	transition:  1s cubic-bezier(.33,.11,.02,.99);;
 	border-left: 1px dotted #5555;
 
-	html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+	html, body, div, span, applet, object, iframe, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
 		margin: 0;
 		padding: 0;
 		border: 0;
@@ -439,7 +439,8 @@
 	}
 
 		#header h1 {
-			font-family: "Philosopher";
+			font-family: "Didot";
+			font-size: 1.4em;
 			margin: 0;
 		}
 		
@@ -718,6 +719,7 @@
 				backdrop-filter: blur(5px) saturate(115%) brightness(80%);
 				border: 1px solid rgba(255, 255, 255, .1);
 				box-shadow: 8px 6px 10px -1px rgba(0,0,0,0.6);	
+				text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
 			}
 			#viewer .slide .caption {
 				padding: 0.2em 0.4em 1em;
