@@ -104,16 +104,18 @@
 
 .card {
   min-height: 6em;
-  aspect-ratio: 3.5;
+  width: 99%;
+  margin: 1.5em 0.5em;
+  max-width: 100%;
+  @include breakpoint($medium) {
+    aspect-ratio: 3.5;
+  }
   box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 	background: rgba(255, 255, 255, 0.05);
 	border-radius: 1em;
   padding: 2em;
   align-items: flex-start;
   display: flex;
-  width: 99%;
-  margin: 1.5em 0.5em;
-  max-width: 100%;
   box-sizing: border-box;
   --bg-filter-opacity: 0.3;
   background-size: cover;
@@ -153,8 +155,10 @@
   }
 
   &:hover {
-    aspect-ratio: 3.3;
-    text-decoration: none;
+    @include breakpoint($medium) {
+      aspect-ratio: 3.3;
+    }
+      text-decoration: none;
     border-color: $border-color;
     box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
                 0 1px  6px  rgba(0, 0, 0, .20),
@@ -240,9 +244,6 @@
     margin: 0;
   }
 
-  @media (max-width: $small) {
-    aspect-ratio: auto;
-  }
 }
 
 
