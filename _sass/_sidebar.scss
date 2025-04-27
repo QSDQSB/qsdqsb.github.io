@@ -16,6 +16,7 @@
   border-radius: $border-radius*2;
   @include clearfix();
   margin-bottom: 1em;
+
   @include breakpoint($large) {
     @include span(2 of 12);
 
@@ -226,7 +227,6 @@
 }
 
 .author__urls-wrapper {
-  position: relative;
   display: none;
   vertical-align: middle;
   text-align: center;
