@@ -2,9 +2,6 @@
    ARCHIVE
    ========================================================================== */
 
-:root {
-  --transition-time: 0.9s;
-}
 .archive {
   margin-bottom: 2em;
   @include breakpoint($medium) {
@@ -124,27 +121,8 @@
 	position: relative;
   transition: $cubic-bezier-default;
   text-decoration: none;
-  
-  h3 {
-    transition: inherit;
-    text-shadow:rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
-    text-align: left;
-    margin-bottom: 0;
-    transform: translateY(0px);
-    font-size: $type-size-4;
-    @include breakpoint($large) {
-      font-size: $type-size-3;
-      margin-top: 0.5em;
-    }
-    @include breakpoint($x-large) {
-      font-size: $type-size-2;
-      margin-top: 0.5em;
-    }
-    color: $text-color;
-    font-family: $global-font-family;
-  }
 
-  p {
+  * p {
     transition: inherit;
     text-shadow:rgba(0, 0, 0, 0.6) 0px 7px 14px, rgba(0, 0, 0, 0.65) 0px 5px 5px;
     font-size: $type-size-8;
@@ -169,9 +147,12 @@
  
     transform: scale(1.03)
               translateY(-10px);
-    h3 {
+    .content h3 {
       text-shadow:rgba(0, 0, 0, 0.5) 0px 14px 28px, rgba(0, 0, 0, 0.44) 0px 10px 10px;
       transform: translateY(-10px);
+    }
+    .content .sci {
+      opacity: 1;
     }
     .hidden_item {
       opacity: 1;
@@ -182,9 +163,6 @@
       color: white;
     }
     .date {
-      opacity: 1;
-    }
-    .sci {
       opacity: 1;
     }
    }
@@ -206,6 +184,31 @@
   .content {
     transform: translateY(0px);
     transition: inherit;
+
+    h3 {
+      transition: inherit;
+      text-shadow:rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+      text-align: left;
+      margin-bottom: 0;
+      transform: translateY(0px);
+      font-size: $type-size-4;
+      @include breakpoint($large) {
+        font-size: $type-size-3;
+        margin-top: 0.5em;
+      }
+      @include breakpoint($x-large) {
+        font-size: $type-size-2;
+        margin-top: 0.5em;
+      }
+      color: $text-color;
+      font-family: $global-font-family;
+    }
+
+    .sci {
+      transition: inherit;
+      opacity: 0;
+      margin: 0;
+    }
   }
   .tags {
     transition: inherit;
@@ -237,11 +240,6 @@
     font-family: $tag-font-family;
     font-size: $type-code-size;
     padding: 0;
-  }
-  .sci {
-    transition: inherit;
-    opacity: 0;
-    margin: 0;
   }
 
 }
