@@ -41,7 +41,6 @@ layout: compress
 {% else %} 
 <!-- Display gallery -->
 {% include_cached gallery-svg-preloads.html %}
-<link rel="stylesheet" href="/assets/css/gallery_view.css" />
 <noscript><link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
 
 <div id="gallery_main">
@@ -50,7 +49,7 @@ layout: compress
             <header id="header">
               <h1>{{ page.title }}</h1>
               <h4>{{ page.subtitle }}</h4>
-              <p>{{ page.description }}</p>
+                <p>{{ page.description | default: page.excerpt }}</p>
             </header>
             <section id="thumbnails">
               {% assign folderpath = "/" | append: page.gallery_name | append: "/" %}
@@ -72,7 +71,7 @@ layout: compress
             {{ content }}
             <p style="font-weight: 200; border-bottom: 0.5px dotted gainsboro;pointer-events: none;" class="p_right_thin">Shot by QSD.  </p>
             <div class="archive">
-              <h4 class="barlow" style="text-align: left;"><i class="fa-solid fa-shuffle"></i>Fancy a Markov Chain...?</h4><br>
+              <h4 class="barlow" style="text-align: left;"><i class="fa-solid fa-shuffle"></i>Fancy a Markov Chain...?</h4>
                 {% assign random_posts = site[page.collection] | where_exp: "post", "post.url != page.url" | sample: 4 %}
                 {% for post in random_posts %}
                   {% include archive-single.html %}

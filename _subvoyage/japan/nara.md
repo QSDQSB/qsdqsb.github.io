@@ -1,6 +1,6 @@
 ---
 title: "Nara"
-excerpt: "有些鹿真是畜生啊"
+excerpt: "Where some creatures are adorable, and some are just creatures"
 gallery_name: "japan/nara"
 date: 2025-03-21
 header:
