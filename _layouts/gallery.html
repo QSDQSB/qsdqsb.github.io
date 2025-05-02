@@ -79,8 +79,14 @@ layout: compress
                 {% assign related_posts = related_posts | sample: 3 %}
               {% endif %}
               {% if related_posts.size > 0 %}
+                {% assign default_logo = "fa-cable-car" %}
+                {% if parent_name == "prague" %}
+                  {% assign default_logo = "fa-cable-car" %}
+                {% elsif parent_name == "japan" %}
+                  {% assign default_logo = "fa-mountain-city" %}
+                {% endif %}
                 <div class="archive">
-                    <h5 class="barlow"><i class="fas fa-cable-car"></i> Other {{ parent_name | capitalize }}</h5>
+                    <h5 class="barlow"><i class="fa-solid {{ default_logo }}"></i> Other {{ parent_name | capitalize }}</h5>
                   {% for post in related_posts %}
                     {% include archive-single.html %}
                   {% endfor %}
