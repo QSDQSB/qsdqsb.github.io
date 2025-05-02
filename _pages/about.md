@@ -63,12 +63,13 @@ _"有哪些文件夹刚刚被新建了呢？"_
 
 ## What else should we do before publishing this page?
 
-- test `latex`: 
+Test `latex`: 
 $$\small\forall x \in \mathbb{R}, \exists \,\varepsilon >0 \,\,s.t. $$
 {: .text-center}
 
-*That was too easy, let's try:*
+_That was too easy, let's try:_
 {: .barlow}
+
 ##### Argument Principle
 {: .barlow}
 
@@ -79,6 +80,10 @@ Don't know what this is? It's quite simple, just get a maths degree and you will
 
 ----
 
+#### Something Utterly Ludicrous
+{: .barlow}
 
+Consider a language that doesn't support the logic `not`, 13 years after someone pointing out: *[The Mighty Liquid](https://github.com/Shopify/liquid/issues/138)*
+{: .notice--info}
 
 <div class="logo_wrapper"><a href="#欢迎来到qsd妙妙屋"><img src="/images/QSDLOGO-2000.svg" alt="QSD Logo" class="logo_style"></a></div>
