@@ -70,9 +70,28 @@ layout: compress
             </section>
             {{ content }}
             <p style="font-weight: 200; border-bottom: 0.5px dotted gainsboro;pointer-events: none;" class="p_right_thin">Shot by QSD.  </p>
+            
+            {% if page.gallery_name contains "/" %}
+              {% assign parent_name = page.gallery_name | split: '/' | first %}
+              {% assign related_posts = site.subvoyage | where_exp: "post", "post.url != page.url" %}
+              {% assign related_posts = related_posts | where_exp: "post", "post.gallery_name contains parent_name" %}
+              {% if related_posts.size > 3 %}
+                {% assign related_posts = related_posts | sample: 3 %}
+              {% endif %}
+              {% if related_posts.size > 0 %}
+                <div class="archive">
+                    <h5 class="barlow"><i class="fas fa-cable-car"></i> Other {{ parent_name | capitalize }}</h5>
+                  {% for post in related_posts %}
+                    {% include archive-single.html %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endif %}
             <div class="archive">
-              <h4 class="barlow" style="text-align: left;"><i class="fa-solid fa-shuffle"></i>Fancy a Markov Chain...?</h4>
-                {% assign random_posts = site[page.collection] | where_exp: "post", "post.url != page.url" | sample: 4 %}
+              <h5 class="barlow"><i class="fa-solid fa-shuffle"></i> Fancy a Markov Chain...?</h5>
+                {% assign random_posts = site.subvoyage | concat: site.voyage | where_exp: "post", "post.url != page.url" %}
+                {% assign random_posts = random_posts | where_exp: "post", "post.gallery_name != nil" %}
+                {% assign random_posts = random_posts | sample: 4 %}
                 {% for post in random_posts %}
                   {% include archive-single.html %}
                 {% endfor %}
