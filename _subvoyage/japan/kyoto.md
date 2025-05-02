@@ -1,6 +1,6 @@
 ---
 title: "Kyoto"
-excerpt: "Where photography is unadvisable after 8AM"
+excerpt: "Where photography is inadvisable after 8AM"
 gallery_name: "japan/kyoto"
 date: 2025-03-22
 header:

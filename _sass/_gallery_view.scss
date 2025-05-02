@@ -315,7 +315,13 @@
 .gallery_view .archive {
 	width: 100%;
 	transition:  cubic-bezier(.33,.11,.02,.99) 0.8s;
-
+	margin-bottom: 0.5em;
+	h5 {
+		margin: 0;
+		pointer-events: none;
+		font-family: "Barlow";
+		text-align: left;
+	}
 	.card {
 		aspect-ratio: 3.3;
 		&:hover {
@@ -426,8 +432,9 @@
 	}
 
 		#header h1 {
-			font-family: "Didot";
-			font-size: 1.4em;
+			font-family: $didot-family;
+			font-weight: 600;
+			font-size: 1.6em;
 			margin: 0;
 		}
 		
@@ -441,7 +448,7 @@
 		#header p {
 			font-weight: 100;
 			font-size: 90%;
-			font-family: "Didot";
+			font-family: $didot-family;
 			display: block;
 			font-style: italic;
 		}

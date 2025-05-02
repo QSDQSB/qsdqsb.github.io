@@ -1,6 +1,4 @@
 ---
-layout: gallery
-gallery_name: "venice/gondola"
 title: "Gondola"
 subtitle: "Venice"
 date: 2023-06-20
