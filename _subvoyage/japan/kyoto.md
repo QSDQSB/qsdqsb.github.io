@@ -1,6 +1,6 @@
 ---
 title: "Kyoto"
-excerpt: "Where photography is inadvisable after 8AM"
+excerpt: "Where time folds into pine-shadow hush."
 gallery_name: "japan/kyoto"
 date: 2025-03-22
 header:

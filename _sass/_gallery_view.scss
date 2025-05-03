@@ -9,7 +9,6 @@
 	padding: 0.2em 0.4em;
 	animation: ease-in-out;
 	transition:  1s cubic-bezier(.33,.11,.02,.99);
-	border-left: 1px dotted #5555;
 
 	pre, abbr, acronym, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
 		font-size: 100%;
@@ -364,6 +363,7 @@
 /* Main */
 
 	#gallery_main {
+		border-left: 1px dotted #5555;
 		transition: opacity 0.8s ease, right 0.8s ease, left 0.8s ease, visibility 0.8s;
 		-webkit-overflow-scrolling: touch;
 		position: fixed;
@@ -409,7 +409,11 @@
 			#gallery_main {
 				transition: opacity 0.5s ease, visibility 0.5s;
 				width: 100%;
+				
 				text-align: center;
+				p {
+					text-align: center;
+				}
 			}
 
 				body.is-loading-1 #gallery_main {

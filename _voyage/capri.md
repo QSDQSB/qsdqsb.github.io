@@ -1,8 +1,6 @@
 ---
 title: "Capri"
-excerpt: "Where the buses have no aircons."
-description: "Where the buses have no aircons."
-layout: gallery
+excerpt: "Where liquid silk spills over Augustan stone"
 gallery_name: "capri"
 date: 2024-08-04
 header:

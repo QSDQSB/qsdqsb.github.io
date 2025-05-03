@@ -1,6 +1,6 @@
 ---
 title: "Budapest"
-excerpt: "Where 1 HUF equals 0.0021704 GBP"
+excerpt: "Where rhapsody writes smouldering elegies in gilt"
 gallery_name: "budapest"
 date: 2024-03-27
 header:
