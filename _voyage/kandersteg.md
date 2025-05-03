@@ -1,7 +1,6 @@
 ---
 title: "Kandersteg"
-excerpt: "Where sapphire breathes within Oeschinensee's crystal depths"
-description: "Where sapphire breathes within Oeschinensee's crystal depths"
+excerpt: "Where sapphire breathes in crystal depths"
 gallery_name: "kandersteg"
 date: 2024-06-16
 header:

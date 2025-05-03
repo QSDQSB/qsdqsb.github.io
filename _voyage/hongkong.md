@@ -1,6 +1,6 @@
 ---
 title: "Hong Kong"
-excerpt: "Where Neon Lights flicker through unfathomed fog"
+excerpt: "Where neon lights flicker through unfathomed fog"
 date: 2024-11-01
 gallery_name: "hong-kong"
 header:

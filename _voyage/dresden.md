@@ -1,6 +1,6 @@
 ---
 title: "Dresden"
-excerpt: "Where #TODO"
+excerpt: "Where history slumbers beneath domes of bruised magnificence"
 gallery_name: "dresden"
 date: 2024-07-28
 header:
