@@ -1,0 +1,34 @@
+---
+layout: archive
+permalink: /voyage-by-tags/
+title: "_Categorised_ Voyages"
+excerpt: In case of his death, QSD would love to donate a chair to `50°05'11.5"N 14°23'26.6"E`.
+author_profile: true
+header:
+  overlay_image: jfk_afterglow_4v1.jpg
+  overlay_filter: 0.25
+toc: true
+---
+
+{% include base_path %}
+{% include group-by-array collection=site.voyage field="tags" %}
+
+    {% for tag in group_names %}
+      {% assign posts = group_items[forloop.index0] %}
+      <h2 id="{{ tag | slugify }}" class="archive__subtitle">{{ tag }}</h2>
+      {% for post in posts %}
+        {% include archive-single-talk.html %}
+      {% endfor %}
+    {% endfor %}
+
+    <div class="tag-grid sticky_bottom">
+      {% for tag in group_names %}
+        {% assign display_tag = tag | slice: 0, 20 %}
+        {% if tag.size > 20 %}
+          {% assign display_tag = display_tag | append: "..." %}
+        {% endif %}
+        <a href="#{{ tag | slugify }}" class="tag-grid__item">
+          <p>{{ display_tag }}</p>
+        </a>
+      {% endfor %}
+    </div>

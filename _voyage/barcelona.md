@@ -3,6 +3,8 @@ title: "Barcelona"
 excerpt: "Where arched illusions infuse life"
 gallery_name: "barcelona"
 date: 2024-07-01
+tags:
+  - 🛤️Retrace
 header:
   overlay_image: cover/barcelona_3v1.jpg
 ---

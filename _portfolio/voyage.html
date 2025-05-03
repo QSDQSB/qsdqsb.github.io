@@ -11,6 +11,8 @@ header:
 
   <div class="container">
     {% for post in site.voyage reversed%}
-    {% include archive-single.html %}
+      {% assign title = post.title %}
+      <div id="{{ title | slugify }}" style="width: 0; height: 0" aria-hidden="true"></div>
+      {% include archive-single.html %}
     {% endfor %}
   </div>

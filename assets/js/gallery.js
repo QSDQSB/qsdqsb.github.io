@@ -9,7 +9,14 @@ function goToParentDirectory() {
     if (segments.length > 1) {
       segments.pop();
       const parentUrl = '/' + segments.join('/') + '/';
-      window.location.href = parentUrl;
+	  	const title = document.querySelector('#header h1')?.textContent || '';
+		if (title) {
+			const slugify = str => str.toLowerCase().replace(/[^a-z0-9\u00C0-\u017F]+/g, '-').replace(/^-+|-+$/g, '');
+			const slugifiedTitle = slugify(title);
+			window.location.href = parentUrl + '#' + slugifiedTitle;
+		} else {
+			window.location.href = parentUrl;
+		}
     } else {
       window.location.href = '/';
     }

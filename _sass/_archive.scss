@@ -18,10 +18,10 @@
   font-style: normal !important;
   margin: 1.5em 0 0;
   padding-bottom: 0.5em;
-  font-family: sans-serif;
+  font-family: $sans-serif;
   font-weight: 200;
   border-bottom: 1px solid $border-color;
-  color: #fff;
+  color: $text-color;
 
   + .list__item .archive__item-title {
     margin-top: 0.5em;
@@ -146,10 +146,10 @@
                 8px 64px 64px rgba(0, 0, 0, .35); 
  
     transform: scale(1.03)
-              translateY(-10px);
+              translateY(-0.25em);
     .content h3 {
       text-shadow:rgba(0, 0, 0, 0.5) 0px 14px 28px, rgba(0, 0, 0, 0.44) 0px 10px 10px;
-      transform: translateY(-10px);
+      transform: translateY(-0.25em);
     }
     .content .sci {
       opacity: 1;
@@ -182,7 +182,7 @@
     transition: $cubic-bezier-default;
   }
   .content {
-    transform: translateY(0px);
+    transform: translateY(0);
     transition: inherit;
 
     h3 {
@@ -190,7 +190,7 @@
       text-shadow:rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
       text-align: left;
       margin-bottom: 0;
-      transform: translateY(0px);
+      transform: translateY(0);
       font-size: $type-size-4;
       @include breakpoint($large) {
         font-size: $type-size-3;
@@ -425,6 +425,64 @@
   }
 }
 
+// Tag selection view for archive by tags pages
+.tag-grid {
+  max-height: 20rem;
+  display: grid;
+  max-width: 100%;
+  width: 90%;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1em;
+  margin: 1em 0.5em 2em 0.5em;
+  padding: 1em;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: calc($border-radius * 2);
+  box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
+              0 8px  8px  rgba(0, 0, 0, .25),
+              0 16px 16px rgba(0, 0, 0, .25);
+
+  -webkit-backdrop-filter: blur(2px);
+  transition: $cubic-bezier-default;
+  backdrop-filter: blur(2px);
+  &:hover {
+    box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
+    0 1px  6px  rgba(0, 0, 0, .20),
+    0 8px  8px  rgba(0, 0, 0, .25), 
+    0 16px 16px rgba(0, 0, 0, .25), 
+    8px 32px 32px rgba(0, 0, 0, .35), 
+    8px 64px 64px rgba(0, 0, 0, .35);
+  }
+  a:hover {
+    text-decoration: none;
+    p {
+      color: $text-color;
+    }
+  }
+}
+.tag-grid__item {
+  display: block;
+  font-size: $type-code-size;
+  font-family: $tag-font-family;
+  border-radius: $border-radius;
+  padding: 0.2em;
+  text-align: center;
+  background-color: rgba(188, 143, 143, 0.15);
+  transition: all 0.5s cubic-bezier(0.39, 0.11, 0.02, 1);
+  aspect-ratio: 16/9;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+  p {
+    display: block;
+    line-height: 1;
+    color: $text-color;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
+}
+.tag-grid__item:hover {
+  scale: 1.1;
+}
 
 @keyframes animate
 {
