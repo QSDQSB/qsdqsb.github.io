@@ -22,6 +22,8 @@
 	p {
 		font-family: "Barlow";
 		font-weight: 400;
+		text-align: center;
+		font-size: 90%;
 		margin: 0.5em 1em 0.5em 1em;
 		padding: 0;
 	}
@@ -446,7 +448,7 @@
 		#header p {
 			font-weight: 200;
 			margin: 0;
-			font-size: 90%;
+			text-align: right;
 			font-family: $didot-family;
 			display: block;
 			font-style: italic;
