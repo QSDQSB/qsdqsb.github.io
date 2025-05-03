@@ -349,6 +349,10 @@ body {
   strong {
     margin-right: 10px;
   }
+
+  a:hover {
+    text-decoration: none;
+  }
 }
 
 .page__taxonomy-item {
@@ -360,8 +364,55 @@ body {
 
   &:hover {
     color: white;
-    border-color: chocolate;
-    background: chocolate;
+
+    &:nth-child(1) {
+      background-color: $geo-color; // Light pink
+      border-color: $geo-color;
+    }
+    &:nth-child(2) {
+      background-color: #ff9999; // Medium pink
+      border-color: #ff9999;
+    }
+    &:nth-child(3) {
+      background-color: $foursquare-color; // Darker pink
+      border-color: $foursquare-color;
+    }
+    &:nth-child(4) {
+      background-color: $h2-color;
+      border-color: $h2-color;
+    }
+    &:nth-child(5) {
+      background-color: $h5-color;
+      border-color: $h5-color;
+    }
+    &:nth-child(6) {
+      background-color: $h6-color;
+      border-color: $h6-color;
+    }
+    &:nth-child(7) {
+      background-color: $xing-color;
+      border-color: $xing-color;
+    }
+    &:nth-child(8) {
+      background-color: $vine-color;
+      border-color: $vine-color;
+    }
+    &:nth-child(9) {
+      background-color: salmon;
+      border-color: salmon;
+    }
+    &:nth-child(10) {
+      background-color: seagreen;
+      border-color: seagreen;
+    }
+    &:nth-child(11) {
+      background-color: $h3-color;
+      border-color: $h3-color;
+    }
+    &:nth-child(12) {
+      background-color: $dribbble-color;
+      border-color: $dribbble-color;
+    }
   }
 }
 

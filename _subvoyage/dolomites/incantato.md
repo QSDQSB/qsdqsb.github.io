@@ -1,6 +1,6 @@
 ---
 title: "Incantato"
-excerpt: "Meaning, _enchanted_."
+excerpt: "Meaning, ___enchanted___."
 gallery_name: "dolomites/incantato"
 date: 2023-09-01
 header:

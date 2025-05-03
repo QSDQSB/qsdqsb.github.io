@@ -281,6 +281,9 @@ category_archive:
 tag_archive:
   type: liquid
   path: /tags/
+tag_voyage:
+  type: liquid
+  path: /voyage-by-tags/
 # https://github.com/jekyll/jekyll-archives
 # jekyll-archives:
 #   enabled:

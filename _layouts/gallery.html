@@ -14,6 +14,9 @@ layout: compress
 <body>
 <!-- Enumerate sub-galleries with single view -->
 {% include_cached masthead.html %}
+{% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+{% if page.excerpt %}<meta itemprop="description" content="{{ page.excerpt | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+{% if page.date %}<meta itemprop="datePublished" content="{{ page.date | date: "%B %d, %Y" }}">{% endif %}
 
 {% if page.header.overlay_color or page.header.overlay_image or page.header.image %}
   {% include page__hero.html %}
@@ -32,6 +35,8 @@ layout: compress
     {% assign subvoyage_folder = voyage_name | append: "/" %}
     {% assign subs = site.subvoyage | where_exp: "item", "item.path contains subvoyage_folder" %}
     {% for post in subs %}
+      {% assign title = post.title %}
+      <div id="{{ title | slugify }}" style="width: 0; height: 0" aria-hidden="true"></div>
       {% include archive-single.html %}
     {% endfor %}
   </div>
@@ -47,9 +52,16 @@ layout: compress
         <div class="gallery_view">
           <body class="is-loading-0 is-loading-1 is-loading-2">
             <header id="header">
-              <h1>{{ page.title }}</h1>
-              <h4>{{ page.subtitle }}</h4>
-                <p>{{ page.description | default: page.excerpt }}</p>
+              
+              {% if page.title %}
+                <h1>{{ page.title | markdownify | remove: "<p>" | remove: "</p>" }}</h1>
+              {% endif %}
+              {% if page.subtitle %}
+                <h4>{{ page.subtitle | markdownify | remove: "<p>" | remove: "</p>" }}</h4>
+              {% endif %}
+              {% if page.description or page.excerpt %}
+                <p>{{ page.description | default: page.excerpt | markdownify }}</p>
+              {% endif %}
             </header>
             <section id="thumbnails">
               {% assign folderpath = "/" | append: page.gallery_name | append: "/" %}
@@ -101,6 +113,9 @@ layout: compress
                   {% include archive-single.html %}
                 {% endfor %}
             </div>
+            {% if site.tag_voyage.type and page.tags[0] %}
+              {% include tag-list.html %}
+            {% endif %}
             {% include scripts.html %}
             <script src="{{ '/assets/js/gallery.js' | relative_url }}"></script>
           </body>
