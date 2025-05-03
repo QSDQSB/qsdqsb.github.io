@@ -51,6 +51,7 @@ layout: compress
               <h4>{{ page.subtitle }}</h4>
                 <p>{{ page.description | default: page.excerpt }}</p>
             </header>
+            {{ content }}
             <section id="thumbnails">
               {% assign folderpath = "/" | append: page.gallery_name | append: "/" %}
               {% assign gallery = site.static_files | where: "image", true | where_exp: "file", "file.path contains folderpath" %}
@@ -68,9 +69,7 @@ layout: compress
                 </article>
               {% endfor %}
             </section>
-            {{ content }}
-            <p style="font-weight: 400; border-bottom: 0.5px dotted gainsboro;pointer-events: none;" class="barlow">Shot by QSD.  </p>
-            
+            <p style="font-weight: 400; border-bottom: 0.5px dotted gainsboro;pointer-events: none; margin: 0.5em 0.1em; padding-right: 0.25em;" class="barlow">Shot by QSD.  </p>
             {% if page.gallery_name contains "/" %}
               {% assign parent_name = page.gallery_name | split: '/' | first %}
               {% assign related_posts = site.subvoyage | where_exp: "post", "post.url != page.url" %}
