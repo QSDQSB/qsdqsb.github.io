@@ -318,6 +318,7 @@
 		text-align: left;
 	}
 	.card {
+		border: 2px solid rgba(188, 188, 188, 0.3);
 		aspect-ratio: 3.3;
 		&:hover {
 			aspect-ratio: 3;

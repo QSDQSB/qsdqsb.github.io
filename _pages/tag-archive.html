@@ -20,3 +20,14 @@ toc: true
         {% include archive-single.html %}
       {% endfor %}
     {% endfor %}
+    <div class="tag-grid sticky_bottom">
+      {% for tag in group_names %}
+        {% assign display_tag = tag | slice: 0, 15 %}
+        {% if tag.size > 15 %}
+          {% assign display_tag = display_tag | append: "..." %}
+        {% endif %}
+        <a href="#{{ tag | slugify }}" class="tag-grid__item">
+          <p>{{ display_tag }}</p>
+        </a>
+      {% endfor %}
+    </div>
