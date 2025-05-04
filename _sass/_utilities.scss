@@ -319,15 +319,13 @@ body:hover .visually-hidden button {
 
 
 .sticky_bottom {
-  @include breakpoint($large) {
-    @include clearfix();
-    position: -webkit-sticky;
-    position: sticky;
-    bottom: 2em;
+  @include clearfix();
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 1em;
 
-    > * {
-      display: block;
-    }
+  > * {
+    display: block;
   }
 }
 /*

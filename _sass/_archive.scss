@@ -26,6 +26,18 @@
   + .list__item .archive__item-title {
     margin-top: 0.5em;
   }
+  a {
+    text-decoration: none;
+    opacity: 0.6;
+    font-size: smaller;
+    color: $foursquare-color;
+  }
+  &:hover {
+    a {
+      color: $link-color-hover;
+      opacity: 1;
+    }
+  }
 }
 
 .archive__item-title {
@@ -427,7 +439,12 @@
 
 // Tag selection view for archive by tags pages
 .tag-grid {
+  text-align: center;
+  align-items: center;
+  border: 4px solid rgba(144, 144, 144, 0.3);
+  font-family: $barlow-font-family;
   max-height: 10rem;
+  height: 5rem;
   display: grid;
   overflow-x: auto;
   white-space: nowrap;
@@ -436,19 +453,24 @@
     white-space: normal;
   }
   max-width: 100%;
-  width: 80%;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1em;
-  margin: 0.5em;
-  padding: 1em;
-  background-color: rgba(255, 255, 255, 0.02);
+  width: 100%;
+  padding: 0.5rem;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  @include breakpoint($medium) {
+    width: 80%;
+    padding: 1rem;
+    gap: 1rem;
+  }
+  margin: 0.2em 0.2em 0 0;
+  background-color: rgba(48, 48, 48, 0.2);
   border-radius: $border-radius * 2;
   box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
               0 8px  8px  rgba(0, 0, 0, .25),
               0 16px 16px rgba(0, 0, 0, .25);
   transition: $cubic-bezier-default;
-  -webkit-backdrop-filter: blur(3px);
-  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
   &:hover {
     box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
     0 1px  6px  rgba(0, 0, 0, .20),
@@ -456,6 +478,7 @@
     0 16px 16px rgba(0, 0, 0, .25), 
     8px 32px 32px rgba(0, 0, 0, .35), 
     8px 64px 64px rgba(0, 0, 0, .35);
+    height: 7.5rem;
   }
   a:hover {
     text-decoration: none;
@@ -466,16 +489,20 @@
 }
 .tag-grid__item {
   display: block;
+  border: 1px solid rgba(188, 188, 188, 0.3);
+  height: 3rem;
+  min-width: 4.5rem;
+  max-width: 7.5rem;
   font-size: $type-code-size;
   font-family: $tag-font-family;
   border-radius: $border-radius;
   padding: 0.2em;
   text-align: center;
-  background-color: rgba(188, 143, 143, 0.15);
+  background-color: rgba(133, 102, 102, 0.3);
   transition: all 0.5s cubic-bezier(0.39, 0.11, 0.02, 1);
-  aspect-ratio: 2.5;
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  text-shadow: rgba(14, 14, 14, 0.2) 0px 7px 14px, rgba(24, 24, 24, 0.25) 0px 5px 5px;
   overflow: hidden;
   p {
     display: block;

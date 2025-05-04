@@ -96,3 +96,26 @@ $(document).ready(function(){
   });
 
 });
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+      const href = this.getAttribute('href');
+      const targetElement = document.querySelector(href);
+
+      if (targetElement) {
+          e.preventDefault();
+          targetElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+              inline: 'nearest'
+          });
+      } else if (this.origin !== window.location.origin || this.pathname !== window.location.pathname) {
+          // If the anchor is from another page, navigate to the top of the page first
+          e.preventDefault();
+          window.location.href = this.href;
+      }
+  });
+});
+document.documentElement.style.scrollBehavior = 'smooth';
+setTimeout(() => {
+  document.documentElement.style.scrollBehavior = 'auto';
+}, 1000);
