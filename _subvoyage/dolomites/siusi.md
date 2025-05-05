@@ -2,8 +2,12 @@
 title: "Alpe di Siusi"
 excerpt: "That was a little bit drizzle."
 gallery_name: "dolomites/siusi"
-
 date: 2023-08-26
+tags:
+  - 🏔️Alps
+  - 🍝Italy
+  - 🥾Hiking
+  - 🛤️Retrace
 header:
   overlay_image: voyage/dolomites/Siusi-3v1.jpg
 ---
