@@ -68,8 +68,6 @@ header:
 ## What's New!
 _"有哪些文件夹刚刚被新建了呢？"_
 
-{% include new_release.html %}
-
 ## What else should we do before publishing this page?
 
 Test `latex`: 
