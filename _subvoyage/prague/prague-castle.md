@@ -7,5 +7,5 @@ tags:
   - 🏰Baroque
   - 🏞️QSD's Favourite
 header:
-  overlay_image: /prague/castle-3v1.jpg
+  overlay_image: cover/prague/castle-3v1.jpg
 ---

@@ -7,5 +7,5 @@ tags:
   - 🏰Baroque
   - 🌉Bridges
 header:
-  overlay_image: /prague/charles-bridge-3v1.jpg
+  overlay_image: cover/prague/charles-bridge-3v1.jpg
 ---
