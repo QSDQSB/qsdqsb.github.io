@@ -42,12 +42,6 @@ layout: compress
   </div>
 {% include scripts.html %}
 </div>
-{% include presented-by-qsd.html %}
-{% if site.tag_voyage.type and page.tags[0] %}
-<div class="center_wrapper">
-{% include tag-list.html %}
-</div>
-{% endif %}
 </body>
 {% else %} 
 <!-- Display gallery -->
@@ -112,25 +106,10 @@ layout: compress
             {% endif %}
             <div class="archive">
               <h5 class="barlow"><i class="fa-solid fa-shuffle"></i> Fancy a Markov Chain...?</h5>
-                {% assign random_posts = site.voyage | where_exp: "post", "post.path != page.path" %}
+                {% assign random_posts = site.subvoyage | concat: site.voyage | where_exp: "post", "post.url != page.url" %}
+                {% assign random_posts = random_posts | where_exp: "post", "post.gallery_name != nil" %}
                 {% assign random_posts = random_posts | sample: 4 %}
-                {% assign updated_random_posts = "" | split: "" %}
                 {% for post in random_posts %}
-                  {% if post.subgalleries %}
-                  {% assign voyage_name = post.path | split: '/' | last | split: '.' | first %}
-                  {% assign subvoyage_folder = voyage_name | append: "/" %}
-                  {% assign subs = site.subvoyage | where_exp: "item", "item.gallery_name contains subvoyage_folder" %}
-                  {% assign subs = subs | where_exp: "item", "item.path != page.path" %}
-                  {% assign subs = subs | where_exp: "item", "item.path != post.path" %}
-                  {% if subs.size > 0 %}
-                    {% assign sampled_sub = subs | sample: 1 | first %}
-                    {% assign updated_random_posts = updated_random_posts | push: sampled_sub %}
-                  {% endif %}
-                  {% else %}
-                  {% assign updated_random_posts = updated_random_posts | push: post %}
-                  {% endif %}
-                {% endfor %}
-                {% for post in updated_random_posts %}
                   {% include archive-single.html %}
                 {% endfor %}
             </div>
@@ -144,5 +123,3 @@ layout: compress
 </div>
 
 {% endif %}
-
-{% include tarots.html %}
