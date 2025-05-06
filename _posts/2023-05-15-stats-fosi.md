@@ -4,7 +4,6 @@ date: 2023-05-15
 permalink: /posts/stats/fosi
 excerpt: "SB2.1 Foundations of Statistical Inference"
 tags:
-  - 🍟FOSI
   - 🏦卷！
 share: false
 header:

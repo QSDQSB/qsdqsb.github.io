@@ -4,6 +4,10 @@ permalink: /year-archive/
 title: "QSD's Posts"
 excerpt: "An epilogue to the past."
 author_profile: true
+left_tarot_card: 'temperance'
+left_tarot_href: /tags/#qsd-s-philosophy
+right_tarot_card: 'death'
+right_tarot_href: /voyage-by-tags/#qsd-s-favourite
 redirect_from:
   - /wordpress/blog-posts/
 header:
@@ -20,7 +24,4 @@ header:
   {% endif %}
   {% include archive-single.html %}
 {% endfor %}
-
-<a class="floating_tarot_card_container" href="/tags">
-  <div class="floating_tarot_card" alt="Tarot - The World" style="mask-image: url('/assets/css/images/the-fool.svg');"></div>
-</a>
+{% include presented-by-qsd.html %}

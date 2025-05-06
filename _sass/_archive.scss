@@ -565,19 +565,6 @@
     h2, p {
       z-index: 8;
     }
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(13, 13, 13, 0.2), rgba(255, 4, 11, 0.8));
-      opacity: 0;
-      transition: $cubic-bezier-default;
-      pointer-events: none; 
-      z-index: 8;
-    }
-    &:hover::after {
-      opacity: 1;
-    }
   }
 }
 
@@ -585,7 +572,7 @@
 .floating_tarot_card {
   display: block;
   width: 100%;
-  mask-image: url("/assets/css/images/the-world.svg");
+  mask-image: url("/assets/css/images/tarots/the-world.svg");
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: cover;
@@ -594,11 +581,11 @@
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
   -webkit-mask-size: cover;
-  background-color: rgba(245,222,179,0.75);
+  background-color: rgba(253, 215, 165, 0.66);
 }
 
-
 .floating_tarot_card_container {
+  cursor: pointer;
   position: fixed;
   bottom: 1.5em;
   left: 1.5em;
@@ -606,14 +593,21 @@
   padding: 8px;
   opacity: 0;
   border-radius: 10px;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  background: rgba(16, 16, 16, 0.2);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  background: rgba(4, 4, 4, 0.23);
   border: 1px solid rgba(245, 202, 179, 0.2);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.4),
     0 7px 14px rgba(0, 0, 0, 0.2),
     0 14px 28px rgba(12, 12, 12, 0.2);
-
+  &--right {
+    left: auto;
+    right: 1.5em;
+  }
+  &--fix {
+    left: auto;
+    right: auto;
+  }
   z-index: 1100;
   transform-style: preserve-3d;
   display: none;
@@ -628,4 +622,30 @@
     opacity: 1;
   }
 
+}
+
+.wheel_of_fortune {
+  animation: oscillate 6s infinite;
+  animation-timing-function: ease-in-out;
+  transform-style: preserve-3d;
+  animation-play-state: paused;
+  transform: rotateY(12deg);
+  &:hover {
+    animation-play-state: running;
+    transform: none;
+  }
+  .floating_tarot_card {
+    background: $rose-gold-gradient-translucent;
+  }
+}
+@keyframes oscillate {
+  0%, 100% {
+    transform: rotateY(12deg) rotateX(0);
+  }
+  50% {
+    transform: rotateY(-16deg) rotateX(8deg);
+  }
+  75% {
+    transform: rotateY(0) rotateX(4deg);
+  }
 }
