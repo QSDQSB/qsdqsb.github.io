@@ -7,7 +7,9 @@
   <script>
     const postUrls = ["/voyage",
       {% for post in site.voyage %}
+      {% if post.url %}
         "{{ post.url }}"{% unless forloop.last %},{% endunless %}
+      {% endif %}
       {% endfor %}
     ];
   
