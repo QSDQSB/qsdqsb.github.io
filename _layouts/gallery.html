@@ -122,8 +122,10 @@ layout: compress
                   {% assign subs = site.subvoyage | where_exp: "item", "item.gallery_name contains subvoyage_folder" %}
                   {% assign subs = subs | where_exp: "item", "item.path != page.path" %}
                   {% assign subs = subs | where_exp: "item", "item.path != post.path" %}
-                  {% assign sampled_sub = subs | sample: 1 %}
-                  {% assign updated_random_posts = updated_random_posts | push: sampled_sub %}
+                  {% if subs.size > 0 %}
+                    {% assign sampled_sub = subs | sample: 1 | first %}
+                    {% assign updated_random_posts = updated_random_posts | push: sampled_sub %}
+                  {% endif %}
                   {% else %}
                   {% assign updated_random_posts = updated_random_posts | push: post %}
                   {% endif %}
