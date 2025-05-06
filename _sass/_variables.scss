@@ -171,7 +171,7 @@ $global-transition: all 0.3s ease-in-out !default;
 $cubic-bezier-default: all 1s cubic-bezier(.33,.11,.02,.99);
 $intro-transition: intro 0.3s both !default;
 $global-transition-time: 0.5s;
-
+$rose-gold-gradient-translucent: linear-gradient(195deg,#FAC39EBB 0%, #FBD0B7BB 25%, #FBD6C4BB 65%, #DF989FAA 100%);
 $box-shadow-fancy:
    0 10px 10px rgba(0, 0, 0, 0.5),
    0 1px 6px rgba(0, 0, 0, 0.3),

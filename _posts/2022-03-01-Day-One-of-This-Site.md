@@ -2,6 +2,14 @@
 title: "Day One"
 date: 2022-03-01
 permalink: /posts/day-one
+left_tarot_card: 'the-star'
+left_tarot_href: /posts/2025/defined-by-archive
+right_tarot_card: 'king-of-swords'
+right_tarot_href: /posts/2025/gpt4o-talks-shit
+redirect_from: 
+  - /posts/2022-03-01-Day-One-of-This-Site/
+  - /day-one
+  - /day-one-of-this-site
 excerpt: "Everything faded into mist."
 toc: false
 tags:

@@ -5,6 +5,8 @@ permalink: /posts/2024/lontananza
 excerpt: "Memory images, once they are fixed in words, are erased."
 tags:
   - 🍜Life
+left_tarot_card: "queen-of-swords"
+left_tarot_href: /posts/2024/war-declaration-to-boredom
 header:
   overlay_image: Lontananza_3v1.jpg
   overlay_filter: 0.25

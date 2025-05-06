@@ -5,7 +5,6 @@ permalink: /posts/2022/03/nine-reasons-to-be-a-loser
 excerpt: "好耶！全中！我是废物！"
 tags:
   - 🍜Life
-  - 🧼QSD's Philosophy
 header:
   overlay_image: SeizeTheDay-3v1.jpg
   overlay_filter: 0.2

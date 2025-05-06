@@ -317,7 +317,12 @@ body:hover .visually-hidden button {
   }
 }
 
-
+.center_wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 1em;
+}
 .sticky_bottom {
   @include clearfix();
   position: -webkit-sticky;
@@ -326,6 +331,11 @@ body:hover .visually-hidden button {
 
   > * {
     display: block;
+  }
+}
+.didot {
+  h1, h2, h3, h4, h5, h6, p {
+    font-family: $didot-family;
   }
 }
 /*

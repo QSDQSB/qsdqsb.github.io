@@ -1,0 +1,26 @@
+{% include base_path %}
+
+{% assign left_tarot_card = "" %}
+{% assign right_tarot_card = "" %}
+
+{% if page.left_tarot_card %}
+  {% assign left_tarot_href = page.left_tarot_href %}
+  {% assign left_tarot_card = page.left_tarot_card %}
+{% endif %}
+
+{% if page.right_tarot_card %}
+  {% assign right_tarot_href = page.right_tarot_href %}
+  {% assign right_tarot_card = page.right_tarot_card %}
+{% endif %}
+
+{% if left_tarot_card != "" %}
+  <a class="floating_tarot_card_container {% if page.left_tarot_wheel_of_fortune == true %}wheel_of_fortune{% endif %}" href="{{ left_tarot_href }}">
+    <div class="floating_tarot_card" alt="Tarot - {{ left_tarot_card }}" style="mask-image: url('/assets/css/images/tarots/{{ left_tarot_card }}.svg');"></div>
+  </a>
+{% endif %}
+
+{% if right_tarot_card != "" %}
+  <a class="floating_tarot_card_container floating_tarot_card_container--right {% if page.right_tarot_wheel_of_fortune == true %}wheel_of_fortune{% endif %}" href="{{ right_tarot_href }}">
+    <div class="floating_tarot_card" alt="Tarot - {{ right_tarot_card }}" style="mask-image: url('/assets/css/images/tarots/{{ right_tarot_card }}.svg'); {% if page.right_tarot_reversed %}transform: rotate(180deg){% endif %}"></div>
+  </a>
+{% endif %}

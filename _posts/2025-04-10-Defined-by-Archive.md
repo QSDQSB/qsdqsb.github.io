@@ -3,8 +3,14 @@ title: "Defined by Archive"
 date: 2025-04-10
 permalink: /posts/2025/defined-by-archive
 excerpt: "Tangible relics of the past bear a truth where memory alone tarnishes."
+
+right_tarot_card: 'the-hanged-man'
+right_tarot_href: /posts/2022/03/jianfei-diary
+right_tarot_reversed: true
+
 tags:
   - 🧼QSD's Philosophy
+  - 🗒TODO
 header:
   overlay_image: cover/Greenwich-gallery-3v1.jpg
   overlay_filter: 0.25

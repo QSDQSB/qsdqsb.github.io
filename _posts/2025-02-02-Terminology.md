@@ -6,7 +6,10 @@ excerpt: "Intepretation and misintepretation of this world."
 tags:
   - 🧼QSD's Philosophy
   - 😻Happy Moments
+  - 🗒TODO
 header:
   overlay_image: Legotypewriter1-3v1.jpg
   overlay_filter: 0.4
 ---
+
+#TODO
