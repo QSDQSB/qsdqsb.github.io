@@ -9,6 +9,11 @@ ticker-tape: true
 redirect_from: 
   - /about/
   - /about.html
+left_tarot_card: 'the-lovers'
+left_tarot_href: /voyage/porto
+right_tarot_card: 'the-tower'
+right_tarot_href: /posts/day-one
+right_tarot_wheel_of_fortune: true
 header:
   overlay_image: QSD_Night_4v1.jpg
   overlay_filter: 0.2
@@ -16,11 +21,14 @@ header:
 
 # 欢迎来到QSD妙妙屋！
 
-**公告板**
+**NOTICE BOARD**
 {: .text-center}
 
-*关于本网站的目的，请参见这篇文章： <a href="posts/day-one" target="_blank">Day one of this site</a>。*
+🖥️Highly recommended to browse with a laptop.
 {: .notice--info}
+
+🔮There *may or **may not*** be some Tarot cards hidden in the lower corners **[laptop only]**. As a starter, This page's lower left corner leads to recently updated voyage, and lower right to somewhere else. 
+{: .notice--success}
 
 ➡️➡️➡️ <a href="files/Commitments/Commitment_2022_1.pdf" target="_blank"> QSD减肥进行时💨💨！！</a>
 {: .notice--pinky}
@@ -60,6 +68,7 @@ header:
 ## What's New!
 _"有哪些文件夹刚刚被新建了呢？"_
 
+{% include new_release.html %}
 
 ## What else should we do before publishing this page?
 
