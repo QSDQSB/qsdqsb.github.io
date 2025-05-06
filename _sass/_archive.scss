@@ -529,3 +529,103 @@
     scale: 110%;
   }
 }
+
+.card_grid_view {
+  grid-template-columns: repeat(auto-fit, minmax(15em, 1fr));
+  display: grid;
+  gap: 1em;
+  padding: 1em;
+  max-width: 100%;
+  margin: 1em auto;
+  @include breakpoint($large) {
+    grid-template-columns: repeat(auto-fit, minmax(20em, 1fr));
+  }
+
+  a {
+    text-decoration: none;
+    & p {
+      color: $text-color;
+    }
+  }
+
+  .list__item {
+    border-radius: $border-radius * 2;
+    border: 2px solid rgba(188, 188, 188, 0.2);
+    box-shadow:    0 10px 10px rgba(0, 0, 0, 0.5),
+                    0 1px 6px rgba(0, 0, 0, 0.3),
+                    0 8px 8px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(135deg, rgba(13, 13, 13, 0.2), rgba(28, 28, 28, 0.2));
+    padding: 1em;
+    transition: $cubic-bezier-default;
+    &:hover {
+      box-shadow: $box-shadow-fancy;
+      transform: scale(1.05);
+      border: 2px solid rgba(188, 188, 188, 0.6);
+    }
+    h2, p {
+      z-index: 8;
+    }
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(13, 13, 13, 0.2), rgba(255, 4, 11, 0.8));
+      opacity: 0;
+      transition: $cubic-bezier-default;
+      pointer-events: none; 
+      z-index: 8;
+    }
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+}
+
+
+.floating_tarot_card {
+  display: block;
+  width: 100%;
+  mask-image: url("/assets/css/images/the-world.svg");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: cover;
+  aspect-ratio: 300/525 !important;
+  transform-style: preserve-3d;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: cover;
+  background-color: rgba(245,222,179,0.75);
+}
+
+
+.floating_tarot_card_container {
+  position: fixed;
+  bottom: 1.5em;
+  left: 1.5em;
+  width: 7.5em;
+  padding: 8px;
+  opacity: 0;
+  border-radius: 10px;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  background: rgba(16, 16, 16, 0.2);
+  border: 1px solid rgba(245, 202, 179, 0.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4),
+    0 7px 14px rgba(0, 0, 0, 0.2),
+    0 14px 28px rgba(12, 12, 12, 0.2);
+
+  z-index: 1100;
+  transform-style: preserve-3d;
+  display: none;
+  @include breakpoint($small) {
+    display: flex;
+  }
+  justify-content: center;
+  align-items: center;
+  transition: $cubic-bezier-default;
+  &:hover {
+    transform: rotateY(12deg) rotateX(8deg);
+    opacity: 1;
+  }
+
+}

@@ -16,9 +16,11 @@ toc: true
     {% for tag in group_names %}
       {% assign posts = group_items[forloop.index0] %}
       <h2 id="{{ tag | slugify }}" class="archive__subtitle">{{ tag }} <a href="#{{ tag | slugify }}">#</a></h2>
+      <div class="card_grid_view">
       {% for post in posts %}
         {% include archive-single-talk.html %}
       {% endfor %}
+      </div>
     {% endfor %}
 
     <div class="tag-grid sticky_bottom">

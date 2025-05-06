@@ -9,5 +9,5 @@ tags:
   - 🏰Baroque
   - 🏞️QSD's Favourite
 header:
-  overlay_image: /prague/st-nicholas-street-view-3v1.jpg
+  overlay_image: cover/prague/st-nicholas-street-view-3v1.jpg
 ---

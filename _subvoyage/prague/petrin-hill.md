@@ -6,6 +6,6 @@ gallery_name: "prague/petrin-hill"
 tags:
   - 🥾Hiking
 header:
-  overlay_image: /prague/petrin-river-view-3v1.jpg
+  overlay_image: cover/prague/petrin-river-view-3v1.jpg
 ---
 Lense was somehow problematic - thus 1/3 of the frames are not sharp :/
