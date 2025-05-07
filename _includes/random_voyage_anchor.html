@@ -1,0 +1,18 @@
+{% include base_path %}
+
+  <a class="floating_tarot_card_container floating_tarot_card_container--right wheel_of_fortune" href="/voyage/??????" onclick="goToRandomPost(); return false;">
+    <div class="floating_tarot_card" alt="Tarot - Wheel of Fortune" style="mask-image: url('/assets/css/images/tarots/wheel-of-fortune.svg');"></div>
+  </a>
+
+  <script>
+    const postUrls = [
+      {% for post in site.voyage %}
+      "/voyage/#{{ post.title | slugify }}"{% if forloop.last == false %},{% endif %}
+      {% endfor %}
+    ];
+    function goToRandomPost() {
+      const randomIndex = Math.floor(Math.random() * postUrls.length);
+      const url = postUrls[randomIndex];
+      window.location.href = url;
+    }
+  </script>

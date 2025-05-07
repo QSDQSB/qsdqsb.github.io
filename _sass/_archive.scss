@@ -621,7 +621,15 @@
     transform: rotateY(12deg) rotateX(8deg);
     opacity: 1;
   }
-
+  &--reverse {
+    transition: all 1.5s cubic-bezier(.33,.11,.02,.99);
+    transition-delay: 0.1s;
+    transform: rotate(123deg);
+    &:hover {
+      transform: rotate(180deg) rotateY(12deg) rotateX(8deg);
+      opacity: 1;  
+    }
+  }
 }
 
 .wheel_of_fortune {
