@@ -15,7 +15,7 @@
 
 {% if left_tarot_card != "" %}
   <a class="floating_tarot_card_container {% if page.left_tarot_wheel_of_fortune %}wheel_of_fortune{% endif %}" href="{{ left_tarot_href }}">
-    <div class="floating_tarot_card" alt="Tarot - {{ left_tarot_card }}" style="mask-image: url('/assets/css/images/tarots/{{ left_tarot_card }}.svg');"></div>
+    <div class="floating_tarot_card" alt="Tarot - {{ left_tarot_card }}" style="mask-image: url('/assets/css/images/tarots/{{ left_tarot_card }}.svg'); {% if page.left_tarot_reversed %}transform: rotate(180deg){% endif %}"></div>
   </a>
 {% endif %}
 
