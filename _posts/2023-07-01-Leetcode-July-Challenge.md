@@ -5,6 +5,8 @@ tags:
   - Leetcode-Medium
 share: false
 title: "Leetcode July Daily Challenges"
+left_tarot_card: "ace-of-wands"
+left_tarot_href: /posts/beat-work-diary
 excerpt: "QSD is actually rewatching Agents of SHIELD @`July 2`. 'Will I get my Skye back?'"
 header:
   overlay_image: flight-sunrise-3v1.jpg
