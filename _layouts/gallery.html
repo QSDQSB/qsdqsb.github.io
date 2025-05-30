@@ -101,6 +101,8 @@ layout: compress
                   {% assign default_logo = "fa-cable-car" %}
                 {% elsif parent_name == "japan" %}
                   {% assign default_logo = "fa-mountain-city" %}
+                {% elsif parent_name == "rome" %}
+                  {% assign default_logo = "fa-chess-rook" %}
                 {% endif %}
                 <div class="archive">
                     <h5 class="barlow"><i class="fa-solid {{ default_logo }}"></i> Other {{ parent_name | capitalize }}</h5>
