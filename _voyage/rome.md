@@ -2,6 +2,7 @@
 title: Rome
 excerpt: "Where #TODO"
 subgalleries: true
+date: 2025-05-28
 tags:
   - 🍝Italy
 header:
