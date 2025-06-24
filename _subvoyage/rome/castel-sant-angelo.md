@@ -1,6 +1,6 @@
 ---
 title: "Castel Sant'Angelo"
-excerpt: "Where #TODO"
+excerpt: "Where archangel's blade glints above the ramparts"
 gallery_name: "rome/castel-sant-angelo"
 date: 2025-05-29
 tags:
