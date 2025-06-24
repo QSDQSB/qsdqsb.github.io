@@ -1,6 +1,6 @@
 ---
 title: "Vatican Museum Vol. I"
-excerpt: "Where #TODO"
+excerpt: "Where Quadratura breathes humanism into divine revelation"
 gallery_name: "rome/vatican-museum-vol-1"
 date: 2025-05-28
 tags:

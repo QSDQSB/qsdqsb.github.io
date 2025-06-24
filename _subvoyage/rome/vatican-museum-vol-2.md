@@ -1,6 +1,6 @@
 ---
 title: "Vatican Museum Vol. II"
-excerpt: "Where #TODO"
+excerpt: "Where fresco incarnates reason beneath papal creed"
 gallery_name: "rome/vatican-museum-vol-2"
 date: 2025-05-28
 tags:

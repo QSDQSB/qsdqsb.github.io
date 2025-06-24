@@ -1,6 +1,6 @@
 ---
 title: Rome
-excerpt: "Where #TODO"
+excerpt: "Where laurels dissolve into the inscriptions of obelisks"
 subgalleries: true
 date: 2025-05-28
 tags:
