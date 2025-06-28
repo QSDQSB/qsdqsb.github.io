@@ -1,6 +1,6 @@
 ---
 title: "Petřín Hill"
-excerpt: "Where Petrin Tower beholds the thousand spires."
+excerpt: "Where Petrin Tower beholds the thousand spires"
 date: 2023-06-16
 gallery_name: "prague/petrin-hill"
 tags:
