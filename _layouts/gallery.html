@@ -1,6 +1,7 @@
 ---
 layout: compress
 ---
+<!-- Base Layout for Voyages and Subvoyages -->
 {% include base_path %}
 
 <html lang="{{ site.locale | slice: 0,2 }}" class="no-js">
@@ -11,44 +12,45 @@ layout: compress
 </head>
 
 {% if page.subgalleries %}
-<body>
-<!-- Enumerate sub-galleries with single view -->
-{% include_cached masthead.html %}
-{% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
-{% if page.excerpt %}<meta itemprop="description" content="{{ page.excerpt | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
-{% if page.date %}<meta itemprop="datePublished" content="{{ page.date | date: "%B %d, %Y" }}">{% endif %}
+  <body>
+  <!-- Enumerate sub-galleries with single view -->
+  {% include_cached masthead.html %}
+  {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+  {% if page.excerpt %}<meta itemprop="description" content="{{ page.excerpt | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+  {% if page.date %}<meta itemprop="datePublished" content="{{ page.date | date: "%B %d, %Y" }}">{% endif %}
 
-{% if page.header.overlay_color or page.header.overlay_image or page.header.image %}
-  {% include page__hero.html %}
-{% endif %}
+  {% if page.header.overlay_color or page.header.overlay_image or page.header.image %}
+    {% include page__hero.html %}
+  {% endif %}
 
-{% if page.url != "/" and site.breadcrumbs %}
-  {% unless paginator %}
-    {% include breadcrumbs.html %}
-  {% endunless %}
-{% endif %}
+  {% if page.url != "/" and site.breadcrumbs %}
+    {% unless paginator %}
+      {% include breadcrumbs.html %}
+    {% endunless %}
+  {% endif %}
 
-<div id="main" role="main">
-  {% include sidebar.html %}
-  <div class="container">
-    {% assign voyage_name = page.path | split: '/' | last | split: '.' | first %}
-    {% assign subvoyage_folder = voyage_name | append: "/" %}
-    {% assign subs = site.subvoyage | where_exp: "item", "item.path contains subvoyage_folder" %}
-    {% for post in subs %}
-      {% assign title = post.title %}
-      <div id="{{ title | slugify }}" style="width: 0; height: 0" aria-hidden="true"></div>
-      {% include archive-single.html %}
-    {% endfor %}
+  <div id="main" role="main">
+    {% include sidebar.html %}
+    <div class="container">
+      {% assign voyage_name = page.path | split: '/' | last | split: '.' | first %}
+      {% assign subvoyage_folder = voyage_name | append: "/" %}
+      {% assign subs = site.subvoyage | where_exp: "item", "item.path contains subvoyage_folder" %}
+      {% for post in subs %}
+        {% assign title = post.title %}
+        <div id="{{ title | slugify }}" style="width: 0; height: 0" aria-hidden="true"></div>
+        {% include archive-single.html %}
+      {% endfor %}
+    </div>
+  {% include scripts.html %}
   </div>
-{% include scripts.html %}
-</div>
-{% include presented-by-qsd.html %}
-{% if site.tag_voyage.type and page.tags[0] %}
-<div class="center_wrapper">
-{% include tag-list.html %}
-</div>
-{% endif %}
-</body>
+  {% include presented-by-qsd.html %}
+  {% if site.tag_voyage.type and page.tags[0] %}
+  <div class="center_wrapper">
+  {% include tag-list.html %}
+  </div>
+  {% endif %}
+  </body>
+  {% include random_voyage_anchor.html posts = subs %}
 {% else %} 
 <!-- Display gallery -->
 {% include_cached gallery-svg-preloads.html %}

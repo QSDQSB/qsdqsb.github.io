@@ -340,11 +340,11 @@
 .leave_gallery, .toggle, .toggle-image-display {
 	position: absolute;
 	opacity: 0.6;
-	top: 0.6em;
-	background-color: rgba(255, 255, 255, 0.3);
-	-webkit-backdrop-filter: blur(2px) saturate(150%) invert(0.8) contrast(1.2);
-	backdrop-filter: blur(2px) saturate(150%) invert(0.8) contrast(1.2);
-	width: 1.5em;
+	top: 0.8em;
+	background-color: rgba(250, 250, 250, 0.5);
+	-webkit-backdrop-filter: blur(3px) saturate(150%) contrast(1.4);
+	backdrop-filter: blur(3px) saturate(150%) contrast(1.4);
+	width: 2em;
 	aspect-ratio: 1 !important;
 	z-index: 3;
 	cursor: pointer;
@@ -382,12 +382,12 @@
 		}
 
 		#gallery_main .toggle {
-			right: 0.6em;
+			right: 0.8em;
 			mask-image: url("images/chevrons-left.svg");
 		}
 		#gallery_main .leave_gallery {
 			mask-image: url("images/x.svg");
-			left: 0.6em;
+			left: 0.8em;
 		}
 
 		body.fullscreen #gallery_main {
@@ -637,21 +637,21 @@
 			.toggle {
 				transform-origin: center;
 				mask-image: url('/assets/css/images/chevrons-right.svg');
-				right: 0.6em;
+				right: 0.8em;
 			}
 			
 			.toggle-image-display {
 				mask-image: url('/assets/css/images/maximize-2.svg');
-				right: 3em;
+				right: 4em;
 			}
-			.toggle, .toggle-image-display {
-				&:hover {
-					background-color: rgb(255, 255, 255);
-					-webkit-backdrop-filter: blur(0px);
-					backdrop-filter: blur(0px);
-					filter: drop-shadow(5px 5px 12px #000);
-				}
-			}
+			// .toggle, .toggle-image-display {
+			// 	&:hover {
+			// 		background-color: rgb(255, 255, 255);
+			// 		-webkit-backdrop-filter: blur(0px);
+			// 		backdrop-filter: blur(0px);
+			// 		filter: drop-shadow(5px 5px 12px #000);
+			// 	}
+			// }
 			.nav-next, .nav-previous {
 				-webkit-tap-highlight-color: transparent;
 				position: absolute;
@@ -665,7 +665,7 @@
 				transition-delay: 0.5s;
 				-webkit-backdrop-filter: blur(1px) saturate(135%)  contrast(1.2);
 				backdrop-filter: blur(1px) saturate(135%) contrast(1.2);
-				background-color: rgba(253, 253, 253, 0.3);
+				background-color: rgba(253, 253, 253, 0.4);
 				mask-repeat: no-repeat;
 				mask-position: center;
 				mask-size: contain;
@@ -675,7 +675,7 @@
 				&:hover {
 					scale: 1.2;
 					transition-delay: 0s;
-					background-color: rgba(253, 253, 253, 0.4);
+					background-color: rgba(253, 253, 253, 0.6);
 				}
 			}
 
@@ -713,8 +713,8 @@
 				border-radius:10px;
 				margin-left: 1em;
 				padding: 0.1em 1em 0.2em;
-				-webkit-backdrop-filter: blur(5px) saturate(115%) brightness(80%);
 				backdrop-filter: blur(5px) saturate(115%) brightness(80%);
+				-webkit-backdrop-filter: blur(5px) saturate(115%) brightness(80%);
 				border: 1px solid rgba(255, 255, 255, .1);
 				box-shadow: 8px 6px 10px -1px rgba(0,0,0,0.6);	
 				text-shadow: 1px 1px 3px rgba(0,0,0,0.8);

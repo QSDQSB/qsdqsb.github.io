@@ -6,8 +6,8 @@
 
   <script>
     const postUrls = [
-      {% for post in site.voyage %}
-      "/voyage/#{{ post.title | slugify }}"{% if forloop.last == false %},{% endif %}
+      {% for post in include.posts %}  // Parse the `posts` argument from include
+      "{{ page.url }}#{{ post.title | slugify }}"{% if forloop.last == false %},{% endif %}
       {% endfor %}
     ];
     function goToRandomPost() {
