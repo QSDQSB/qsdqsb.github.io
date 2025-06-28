@@ -5,7 +5,6 @@ subgalleries: true
 tags:
   - 🏰Baroque
   - 🏞️QSD's Favourite
-  - 🌉Bridges
 left_tarot_card: knight-of-cups
 left_tarot_href: "#prague-castle"
 right_tarot_card: king-of-cups

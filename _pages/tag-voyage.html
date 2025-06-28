@@ -11,7 +11,8 @@ toc: true
 ---
 
 {% include base_path %}
-{% include group-by-array collection=site.voyage field="tags" %}
+{% assign all_voyages = site.voyage | concat: site.subvoyage %}
+{% include group-by-array collection=all_voyages field="tags" %}
 
     {% for tag in group_names %}
       {% assign posts = group_items[forloop.index0] %}

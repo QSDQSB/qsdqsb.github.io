@@ -227,11 +227,10 @@ td > code {
 
 hr {
   display: block;
-  margin: 30px auto;
-  border: 0;
-  width: 50%;
-  border-top: 1px solid $border-color;
-  position: relative;
+  margin: 0.25em auto;
+  width: 38.2%;
+  border: 2px solid $border-color;
+  border-radius: 0.25em;
 }
 
 /* lists */

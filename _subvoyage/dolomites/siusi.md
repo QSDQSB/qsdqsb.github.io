@@ -1,6 +1,6 @@
 ---
 title: "Alpe di Siusi"
-excerpt: "That was a little bit drizzle."
+excerpt: "Where meadows stretch into soft undulations."
 gallery_name: "dolomites/siusi"
 date: 2023-08-26
 tags:

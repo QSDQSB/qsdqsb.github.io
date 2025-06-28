@@ -184,11 +184,11 @@ var main = (function($) { var _ = {
 			_.$viewer = $(
 				'<div id="viewer">' +
 					'<div class="inner">' +
-						'<div class="nav-next"></div>' +
-						'<div class="nav-previous"></div>' +
-						'<div class="toggle"></div>' +
-						'<div class="toggle-image-display"></div>' +
-						'<div class="leave_gallery"></div>' +
+						'<div class="nav-next" title="Next Image"></div>' +
+						'<div class="nav-previous" title="Previous Image"></div>' +
+						'<div class="toggle" title="Toggle Gallery Bar"></div>' +
+						'<div class="toggle-image-display" title="Toggle Image Display"></div>' +
+						'<div class="leave_gallery" title="Leave Gallery"></div>' +
 					'</div>' +
 				'</div>'
 			).appendTo(_.$body);
@@ -459,11 +459,9 @@ var main = (function($) { var _ = {
 		// Create slides from thumbnails.
 			_.$thumbnails.children()
 				.each(function() {
-
 					var	$this = $(this),
 						$thumbnail = $this.children('.thumbnail'),
 						s;
-
 					// Slide object.
 						s = {
 							$parent: $this,
@@ -473,15 +471,11 @@ var main = (function($) { var _ = {
 							url: $thumbnail.attr('href'),
 							loaded: false
 						};
-
 					// Parent.
 						$this.attr('tabIndex', '-1');
-
 					// Slide.
-
 						// Create elements.
 	 						s.$slide = $('<div class="slide"><div class="caption"></div><div class="image"></div></div>');
-
 	 					// Image.
  							s.$slideImage = s.$slide.children('.image');
 
@@ -492,7 +486,6 @@ var main = (function($) { var _ = {
 
 						// Caption.
 							s.$slideCaption = s.$slide.find('.caption');
-
 							// Move everything *except* the thumbnail itself to the caption.
 								$this.children().not($thumbnail)
 									.appendTo(s.$slideCaption);
@@ -688,9 +681,10 @@ var main = (function($) { var _ = {
 												_.locked = false;
 											}, 100);
 											// Temporarily display the caption
-											newSlide.$slideCaption.addClass('hovered');
+											var $imageTitle = newSlide.$slideCaption.find('.image_title');
+											$imageTitle.addClass('hovered');
 											window.setTimeout(function() {
-												newSlide.$slideCaption.removeClass('hovered');
+												$imageTitle.removeClass('hovered');
 											}, _.settings.captionDuration);
 									//}, 1000);
 									});
@@ -712,19 +706,14 @@ var main = (function($) { var _ = {
 									window.setTimeout(function() {
 										_.locked = false;
 									}, 100);
-									newSlide.$slideCaption.addClass('hovered');
+									var $imageTitle = newSlide.$slideCaption.find('.image_title');
+									$imageTitle.addClass('hovered');
 									window.setTimeout(function() {
-										newSlide.$slideCaption
-											.removeClass('hovered');
+										$imageTitle.removeClass('hovered');
 									}, _.settings.captionDuration);
 							}, 100);
-								// Temporarily display the caption
-							
-
 						}
-
 				};
-
 				// No old slide? Switch immediately.
 					if (!oldSlide)
 						(f)();
