@@ -1,9 +1,4 @@
 {% include base_path %}
-
-  <a class="floating_tarot_card_container floating_tarot_card_container--right wheel_of_fortune" title="Wheel of Fortune: Go to a random voyage on this page!" onclick="goToRandomPost(); return false;">
-    <div class="floating_tarot_card" alt="Tarot - Wheel of Fortune" style="mask-image: url('/assets/css/images/tarots/wheel-of-fortune.svg');"></div>
-  </a>
-
   <script>
     const postUrls = [
       {% for post in include.posts %}  // Parse the `posts` argument from include
@@ -16,3 +11,6 @@
       window.location.href = url;
     }
   </script>
+  <a class="floating_tarot_card_container floating_tarot_card_container--right wheel_of_fortune" href="#??????" title="🔮Wheel of Fortune: Fly to a random voyage on this page!" onclick="goToRandomPost(); return false;">
+    <div class="floating_tarot_card" alt="Tarot - Wheel of Fortune" style="mask-image: url('/assets/css/images/tarots/wheel-of-fortune.svg');"></div>
+  </a>

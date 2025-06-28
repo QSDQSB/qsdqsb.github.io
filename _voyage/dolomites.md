@@ -11,8 +11,8 @@ tags:
   - 🍝Italy
   - 🥾Hiking
   - 🛤️Retrace
-right_tarot_card: king-of-cups
-right_tarot_href: "/voyage/prague/#twilight"
+left_tarot_card: king-of-cups
+left_tarot_href: "/voyage/prague/#twilight"
 header:
   overlay_image: dolomites_sunrise_3v1.jpg
 ---
