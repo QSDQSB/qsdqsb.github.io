@@ -184,11 +184,11 @@ var main = (function($) { var _ = {
 			_.$viewer = $(
 				'<div id="viewer">' +
 					'<div class="inner">' +
-						'<div class="nav-next" title="Next Image"></div>' +
-						'<div class="nav-previous" title="Previous Image"></div>' +
-						'<div class="toggle" title="Toggle Gallery Bar"></div>' +
-						'<div class="toggle-image-display" title="Toggle Image Display"></div>' +
-						'<div class="leave_gallery" title="Leave Gallery"></div>' +
+						'<div class="nav-next" title="Next Image\n→ Right OR ⎵ Space "></div>' +
+						'<div class="nav-previous" title="Previous Image\n← Left"></div>' +
+						'<div class="toggle" title="Toggle Gallery Bar\n⎋ Esc"></div>' +
+						'<div class="toggle-image-display" title="Toggle Image Display\n⇧ Shift"></div>' +
+						'<div class="leave_gallery" title="Leave Gallery\n ⌫ Backspace"></div>' +
 					'</div>' +
 				'</div>'
 			).appendTo(_.$body);
