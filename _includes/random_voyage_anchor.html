@@ -1,18 +1,35 @@
 {% include base_path %}
+
+{% assign post_urls = "" %}
+{% for post in include.posts %}
+  {% assign anchor = post.title | slugify %}
+  {% assign prepender = '"' | append: '#' %}
+  {% if forloop.first %}
+    {% assign post_urls = prepender | append: anchor | append: '"' %}
+  {% else %}
+    {% assign post_urls = post_urls | append: ', ' | append: prepender | append: anchor | append: '"' %}
+  {% endif %}
+{% endfor %}
+{% assign post_urls = post_urls | prepend: '[' | append: ']' %}
+  
 <body>
-  <a class="floating_tarot_card_container floating_tarot_card_container--right wheel_of_fortune" href="#??????" title="🔮Wheel of Fortune: Fly to a random voyage on this page!" onclick="goToRandomPost(); return false;">
+  <a class="floating_tarot_card_container floating_tarot_card_container--right wheel_of_fortune" title="🔮Wheel of Fortune: Fly to a random voyage on this page!" onclick="goToRandomPost(); return false;">
     <div class="floating_tarot_card" alt="Tarot - Wheel of Fortune" style="mask-image: url('/assets/css/images/tarots/wheel-of-fortune.svg');"></div>
   </a>
     <script>
-    const postUrls = [
-      {% for post in include.posts %}  // Parse the `posts` argument from include
-      "{{ page.url }}#{{ post.title | slugify }}"{% if forloop.last == false %},{% endif %}
-      {% endfor %}
-    ];
+    const postUrls = {{ post_urls | safe }};
+    console.log("Number of posts to explore:", postUrls.length );
     function goToRandomPost() {
       const randomIndex = Math.floor(Math.random() * postUrls.length);
       const url = postUrls[randomIndex];
-      window.location.href = url;
+      console.log("Navigating to ", url);
+      $.smoothScroll({
+        scrollTarget: url,
+        offset: -100,
+        speed: 880,
+        easing: 'swing',  
+      });
+      history.pushState(null, '', url);
     }
     window.goToRandomPost = goToRandomPost;
   </script>
