@@ -1,6 +1,6 @@
 ---
-title: "Singapore"
-excerpt: "Where the iron forest conjoins the ballet of futurism"
+title: Singapore
+excerpt: "Where iron forests conjoin the ballet of futurism"
 date: 2024-01-08
 gallery_name: "singapore"
 tags:
