@@ -90,6 +90,9 @@ body:hover .visually-hidden button {
   text-align: left;
 }
 
+.text-color {
+  color: $text-color;
+}
 //  utility classes for post signatures
 .h3_right_thin {
   color: $text-color;
@@ -334,7 +337,8 @@ body:hover .visually-hidden button {
   }
 }
 .didot {
-  h1, h2, h3, h4, h5, h6, p {
+  font-family: $didot-family;
+  h1, h2, h3, h4, h5, h6, p, blockquote {
     font-family: $didot-family;
   }
 }
@@ -450,3 +454,17 @@ a.reversefootnote {
   opacity: 0.75;
 }
 
+.grey-hover {
+  filter: grayscale(95%);
+  transition: filter 2s ease-in-out;
+  &:hover {
+    filter: grayscale(0%);
+  }
+}
+.opacity-hover {
+  opacity: 0.2;
+  transition: opacity 1s ease-in-out;
+  &:hover {
+    opacity: 1;
+  }
+}

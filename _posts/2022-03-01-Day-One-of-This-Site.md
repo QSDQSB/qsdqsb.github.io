@@ -11,37 +11,46 @@ redirect_from:
   - /day-one
   - /day-one-of-this-site
 excerpt: "Everything faded into mist."
-toc: false
 tags:
   - 📘Diary
   - 😢Emo
 header:
   overlay_image: TateRadio-3v1.jpg
-  caption: "Tate Modern Museum, London, 15/12/2021"
+  caption: "Tate Modern, 15/12/2021"
 ---
 
 # DAY ONE OF THIS SITE
-{: .barlow}
+{: .barlow .color_light_grey_light_opacity}
 
 As they say, whereof what is past is prologue.
 
 There are moments we do not want to forget, and moments we entreat ourselves to forget. 
 
-But the past has not just passed. It changes us. It defines us. It lives with us permanently, like an indelible mark. 
+But the past does not just recede. It reshapes us. It defines us. It lives with us like a watermark, etched deeply beneath skin. 
 
-There was joy, there was hope, there was sorrow, there was despair. 
+There was joy, there was hope; there was sorrow, there was abyss. 
 
-Scars are carved on our bodies, engraved in our souls. Hearts were kindled and banished once and once again, like Sisyphus' punishment.
+Scars are carved upon flesh, engraved upon our soul. Hearts kindled and exiled over and over, like the sentence of Sisyphus.
 
-We have buried the past, but still need to let go. How do we truly get away with it? We inscribe an epitaph. An epilogue, a farewell to an old friend. And that is the point of this site.
+Time will soften the edges, luckily. But it does not absolve. To move forward, we must first look back - with clarity, not concealment. Memory demands not erasure, but faithful reckoning.
 
-I only wish to catch a glimpse of my own life, joyful or not, before it slips beneath the tide of time.
+We have buried the past, but yet its grip remains. How do we truly unshackle ourselves? **We inscribe an epitaph**. An epilogue, a farewell to the vanishing self. And that is the purpose of this site.
 
-## "To see the world as it is and to love it."
-{: .text-center}
+I only wish to catch a glimpse of my own life, joyful or not, before it slips into the undertow of time.
+
+--- 
+
+<h3 class="text-center macaron grey-hover" style='font-style: normal;'>"To see the world as it is and to love it."</h3>
+
+---
 
 ### *With all the best, QSD*
-{: .text-right}
+{: .text-right .color_light_grey_light_opacity }
 
 Mar 1, 2022
-{: .p_right_thin}
+{: .p_right_thin .color_light_grey_light_opacity }
+
+<div style="height: 8em;"></div>
+
+<img class="wheel_of_fortune grey-hover" src="/images/QSDLogos/QSD_logo_splash.jpg" style="width:8em; border-radius: 1.5em; aspect-ratio: 1; object-fit: cover; ">
+{: .article-image}
