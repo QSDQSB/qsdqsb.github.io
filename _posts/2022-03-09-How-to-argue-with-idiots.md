@@ -8,7 +8,7 @@ left_tarot_href: /#a-bizzard-self-intro
 left_tarot_reversed: true
 tags:
   - 🧼QSD's Philosophy
-share: true
+share: false
 header:
   overlay_image: Argue-with-idiot-3v1.jpg
   overlay_filter: 0.1

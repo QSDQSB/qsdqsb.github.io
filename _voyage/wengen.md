@@ -8,5 +8,5 @@ tags:
   - 🚞Switzerland
   - 🥾Hiking
 header:
-  overlay_image: cover/wengen_3v1.jpg
+  overlay_image: cover/wengen-3v1.jpg
 ---

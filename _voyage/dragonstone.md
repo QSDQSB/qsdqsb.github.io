@@ -7,5 +7,5 @@ date: 2023-07-29
 tags:
   - 🌊Coastal
 header:
-  overlay_image: dragonstone-3v1.jpg
+  overlay_image: cover/dragonstone-3v1.jpg
 ---

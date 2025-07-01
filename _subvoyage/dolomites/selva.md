@@ -8,5 +8,5 @@ tags:
   - 🍝Italy
   - 🥾Hiking
 header:
-  overlay_image: voyage/dolomites/Selva-3v1.jpg
+  overlay_image: cover/dolomites/Selva-3v1.jpg
 ---

@@ -7,5 +7,5 @@ tags:
   - 🌆Metropolis
   - 🌴Tropical (≈hot as hell)
 header:
-  overlay_image: Singapore_night_3v1.jpg
+  overlay_image: cover/singapore-night-3v1.jpg
 ---

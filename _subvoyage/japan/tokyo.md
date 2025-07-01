@@ -6,5 +6,5 @@ date: 2025-03-21
 tags:
   - 🌆Metropolis
 header:
-  overlay_image: voyage/japan/Tokyo-3v1.jpg
+  overlay_image: cover/japan/Tokyo-3v1.jpg
 ---

@@ -7,5 +7,5 @@ tags:
   - 🌊Coastal
   - 🍝Italy
 header:
-  overlay_image: /venice/venice-3v1.jpg
+  overlay_image: cover/venice-3v1.jpg
 ---

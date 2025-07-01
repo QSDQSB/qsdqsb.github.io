@@ -11,5 +11,5 @@ tags:
   - 🥾Hiking
   - 🛤️Retrace
 header:
-  overlay_image: voyage/dolomites/Sesto-3v1.jpg
+  overlay_image: cover/dolomites/Sesto-3v1.jpg
 ---

@@ -69,13 +69,15 @@ body {
 
 
   .page__inner-wrap {
-    border-radius: $border-radius;
+    
+    border-radius: 1.5em;
     float: left;
-    position: inherit;
-    margin: 0.5em 0em 0.2em;
+    // position: inherit;
+    position: relative;
+    margin: 0.5em 0.25em 0.25em;
+    padding: 1.5em 2em 2em 2em;
     width: 100%;
     clear: both;
-
     .page__content,
     .page__meta,
     .page__share {
@@ -87,10 +89,8 @@ body {
       clear: both;
     }
   }
-  transition: all $global-transition-time cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all $global-transition-time cubic-bezier(0.33, 0.11, 0.02, 0.99);
 }
-
-
 
 .page-no-right-sidebar {
   width: 100%;
@@ -106,9 +106,6 @@ body {
 
   .page__inner-wrap {
     float: left;
-    margin-top: 0.5em;
-    margin-left: 0;
-    margin-right: 0;
     width: 100%;
     clear: both;
     flex: none;

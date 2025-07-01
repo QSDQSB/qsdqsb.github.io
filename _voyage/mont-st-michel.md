@@ -7,5 +7,5 @@ tags:
   - 🏛️Historic
   - 🌊Coastal
 header:
-  overlay_image: mont-st-michel-twilight-3v1.jpg
+  overlay_image: cover/mont-st-michel-twilight-3v1.jpg
 ---

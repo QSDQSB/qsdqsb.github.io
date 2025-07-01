@@ -7,5 +7,5 @@ tags:
   - 🌆Metropolis
   - 🌴Tropical (≈hot as hell)
 header:
-  overlay_image: hongkong_3v1.jpg
+  overlay_image: cover/hongkong-3v1.jpg
 ---
