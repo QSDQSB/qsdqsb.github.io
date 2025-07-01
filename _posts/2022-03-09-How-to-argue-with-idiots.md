@@ -58,4 +58,5 @@ header:
 
 ---
 
-<img src="https://cdn.mathpix.com/snip/images/yq1XedeSwuRvh9rj9RwWYOU2AMSNJC1FKu2R9j1zR8Y.original.fullsize.png" class="align-center" style="width=100px" alt="快看傻逼！">
+<img src="https://cdn.mathpix.com/snip/images/yq1XedeSwuRvh9rj9RwWYOU2AMSNJC1FKu2R9j1zR8Y.original.fullsize.png" style="width=100px" alt="快看傻逼！">
+{: .article-image}
