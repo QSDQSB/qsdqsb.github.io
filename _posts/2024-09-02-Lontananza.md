@@ -25,6 +25,8 @@ header:
 </div>
 <br>
 
+---
+
 ### `2. Azul`
 <div style="font-family: 'Courier'; text-align: justify;">
 蓝调时间的北外滩Kaws真好，可惜美好的东西总是转瞬即逝。
@@ -33,10 +35,12 @@ header:
 {: .article-image}
 
 <div style="font-family: 'Courier'; text-align: justify;">
-想起了在Porto的那个晚上，人群随着蔷薇色的晚霞缓缓散去。Dom Luís I大桥上只余下那一对年轻恋人，依偎在那如墨的蓝色苍穹之下，时间在此刻停滞。
+想起了在Porto的那个晚上，人群随着蔷薇色的晚霞缓缓散去。Dom Luís I大桥上只余下两人依偎在如墨的蓝色苍穹之下。时间在此刻停滞。
 </div>
 
 <br>
+
+---
 
 ### `3. Lontananza`
 
@@ -47,6 +51,9 @@ Abriele D'Annunzio, an Italian poet and writer, often used <code>Lontananza</cod
 </div>
 
 <br>
+
+---
+
 ### `4. Fatum`
 <div style="font-family: 'Noto Serif SC', serif;letter-spacing: 2px;">
 回忆里，被遗忘的梦貘
