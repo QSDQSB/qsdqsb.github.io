@@ -8,5 +8,5 @@ tags:
   - 🏛️Historic
   - 🌉Bridges
 header:
-  overlay_image: London-shard-3v1.jpg
+  overlay_image: cover/london-shard-3v1.jpg
 ---

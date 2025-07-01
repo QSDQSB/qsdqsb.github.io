@@ -6,5 +6,5 @@ date: 2025-03-21
 tags:
   - 🏛️Historic
 header:
-  overlay_image: voyage/japan/Nara-3v1.jpg
+  overlay_image: cover/japan/Nara-3v1.jpg
 ---

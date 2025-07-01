@@ -6,5 +6,5 @@ gallery_name: "beijing"
 tags:
   - 🏛️Historic
 header:
-  overlay_image: Summerpalace-3v1.jpg
+  overlay_image: cover/beijing-summer-palace-3v1.jpg
 ---

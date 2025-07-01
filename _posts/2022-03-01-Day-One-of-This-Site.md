@@ -39,8 +39,7 @@ We have buried the past, but yet its grip remains. How do we truly unshackle our
 I only wish to catch a glimpse of my own life, joyful or not, before it slips into the undertow of time.
 
 --- 
-
-<h3 class="text-center macaron grey-hover" style='font-style: normal;'>"To see the world as it is and to love it."</h3>
+<h4 class="text-center macaron grey-hover" style='font-style: italic; cursor: crosshair;'>‘To see the world as it is and to love it.’</h4>
 
 ---
 
@@ -52,5 +51,5 @@ Mar 1, 2022
 
 <div style="height: 8em;"></div>
 
-<img class="wheel_of_fortune grey-hover" src="/images/QSDLogos/QSD_logo_splash.jpg" style="width:8em; border-radius: 1.5em; aspect-ratio: 1; object-fit: cover; ">
+<img class="wheel_of_fortune grey-hover" src="/images/QSDLogos/QSD_logo_splash.jpg" style="width:8em; border-radius: 1.5em; aspect-ratio: 1; object-fit: cover;">
 {: .article-image}

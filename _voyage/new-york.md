@@ -6,5 +6,5 @@ gallery_name: new-york
 tags:
   - 🌆Metropolis
 header:
-  overlay_image: newyork_3v1.jpg
+  overlay_image: cover/newyork-3v1.jpg
 ---

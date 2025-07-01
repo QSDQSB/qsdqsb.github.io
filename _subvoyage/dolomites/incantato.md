@@ -9,5 +9,5 @@ tags:
   - 🍝Italy
   - 🥾Hiking
 header:
-  overlay_image: voyage/dolomites/Incantato-3v1.jpg
+  overlay_image: cover/dolomites/Incantato-3v1.jpg
 ---

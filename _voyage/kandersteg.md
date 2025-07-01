@@ -9,5 +9,5 @@ tags:
   - 🥾Hiking
   - 🚤Lake
 header:
-  overlay_image: kandersteg_3v1.jpg
+  overlay_image: cover/kandersteg-3v1.jpg
 ---

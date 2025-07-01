@@ -6,5 +6,5 @@ date: 2024-07-28
 tags:
   - 🏰Baroque
 header:
-  overlay_image: dresden_3v1.jpg
+  overlay_image: cover/dresden-3v1.jpg
 ---

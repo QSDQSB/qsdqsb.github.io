@@ -7,5 +7,5 @@ tags:
   - 🏛️Historic
   - 🌊Coastal
 header:
-  overlay_image: morocco-sahara-3v1.jpg
+  overlay_image: cover/morocco-sahara-3v1.jpg
 ---

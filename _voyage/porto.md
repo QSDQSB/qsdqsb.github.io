@@ -7,5 +7,5 @@ tags:
   - 🌉Bridges
   - 🌊Coastal
 header:
-  overlay_image: LuisIBridge_3v1.jpg
+  overlay_image: cover/porto-luis-i-bridge-3v1.jpg
 ---

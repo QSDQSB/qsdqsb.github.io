@@ -456,14 +456,14 @@ a.reversefootnote {
 
 .grey-hover {
   filter: grayscale(95%);
-  transition: filter 2s ease-in-out;
+  transition: filter ($global-transition-time*3) ease-in-out;
   &:hover {
     filter: grayscale(0%);
   }
 }
 .opacity-hover {
   opacity: 0.2;
-  transition: opacity 1s ease-in-out;
+  transition: opacity ($global-transition-time*2) ease-in-out;
   &:hover {
     opacity: 1;
   }

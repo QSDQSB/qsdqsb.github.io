@@ -7,5 +7,5 @@ tags:
   - 🍝Italy
   - 🏛️Historic
 header:
-  overlay_image: cover/florence_3v1.jpg
+  overlay_image: cover/florence-3v1.jpg
 ---
