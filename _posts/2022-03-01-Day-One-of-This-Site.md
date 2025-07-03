@@ -10,13 +10,13 @@ redirect_from:
   - /posts/2022-03-01-Day-One-of-This-Site/
   - /day-one
   - /day-one-of-this-site
-excerpt: "Everything faded into mist."
+excerpt: "Everything fades into mist."
 tags:
   - 📘Diary
   - 😢Emo
 header:
   overlay_image: TateRadio-3v1.jpg
-  caption: "Tate Modern, 15/12/2021"
+  overlay_filter: 0.2
 ---
 
 # DAY ONE OF THIS SITE
