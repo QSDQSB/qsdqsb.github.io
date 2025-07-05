@@ -1,8 +1,6 @@
 ---
 tags:
-  - DFS
-  - Heap
-  - Leetcode-Medium
+  - 🏦卷！
 share: false
 title: "Leetcode July Daily Challenges"
 left_tarot_card: "ace-of-wands"

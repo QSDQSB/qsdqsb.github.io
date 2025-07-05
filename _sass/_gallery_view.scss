@@ -418,7 +418,7 @@
 		}
 
 /* Header */
-#gallery_main #header.header {
+#gallery_main #header {
 	padding: 1.5em 1em 0.5em 1em;
 	h1 {
 		font-family: $didot-family;
@@ -447,7 +447,7 @@
 
 	#thumbnails {
 		h1, h2, h3, h4, h5, h6 {
-			color: #fff;
+			color: $text-color;
 			font-family: "Barlow";
 			font-weight: 200;
 		}

@@ -14,6 +14,7 @@ excerpt: "Everything fades into mist."
 tags:
   - 📘Diary
   - 😢Emo
+  - 💍Horcrux
 header:
   overlay_image: TateRadio-3v1.jpg
   overlay_filter: 0.2
@@ -51,5 +52,4 @@ Mar 1, 2022
 
 <div style="height: 8em;"></div>
 
-<img class="wheel_of_fortune grey-hover" src="/images/QSDLogos/QSD_logo_splash.jpg" style="width:8em; border-radius: 1.5em; aspect-ratio: 1; object-fit: cover;">
-{: .article-image}
+{% include qsd-logo.html extra_classes="wheel_of_fortune grey-hover" logo_name="splash.jpg" %}

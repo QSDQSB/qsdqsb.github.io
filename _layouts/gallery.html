@@ -43,12 +43,12 @@ layout: compress
     </div>
   {% include scripts.html %}
   </div>
-  {% include presented-by-qsd.html %}
   {% if site.tag_voyage.type and page.tags[0] %}
   <div class="center_wrapper">
   {% include tag-list.html %}
   </div>
   {% endif %}
+  {% include presented-by-qsd.html %}
   </body>
   {% include random_voyage_anchor.html posts = subs %}
 {% else %} 
@@ -136,10 +136,10 @@ layout: compress
                 {% for post in updated_random_posts %}
                   {% include archive-single.html %}
                 {% endfor %}
+                {% if site.tag_voyage.type and page.tags[0] %}
+                  {% include tag-list.html %}
+                {% endif %}
             </div>
-            {% if site.tag_voyage.type and page.tags[0] %}
-              {% include tag-list.html %}
-            {% endif %}
             {% include scripts.html %}
             <script src="{{ '/assets/js/gallery.js' | relative_url }}"></script>
           </body>

@@ -25,11 +25,10 @@
       console.log("Navigating to ", url);
       $.smoothScroll({
         scrollTarget: url,
-        offset: -100,
+        offset: -50,
         speed: 880,
         easing: 'swing',  
       });
-      history.pushState(null, '', url);
     }
     window.goToRandomPost = goToRandomPost;
   </script>

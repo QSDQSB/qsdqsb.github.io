@@ -5,6 +5,7 @@ permalink: /posts/2024/lontananza
 excerpt: "Memory images, once they are fixed in words, are erased."
 tags:
   - 🍜Life
+  - 💍Horcrux
 left_tarot_card: "queen-of-swords"
 left_tarot_href: /posts/2024/war-declaration-to-boredom
 header:

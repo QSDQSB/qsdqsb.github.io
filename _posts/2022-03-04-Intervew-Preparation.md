@@ -80,6 +80,5 @@ header:
     - Computer simulation
     - real-world simulation
 
----
-
-![](/images/undraw_to_the_moon_re_q21i.svg){: .align-center}
+<img src="/images/undraw_to_the_moon_re_q21i.svg" alt="To the Moon" style="width: 30%" />
+{: .article-image }
