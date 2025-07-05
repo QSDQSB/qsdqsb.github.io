@@ -324,7 +324,7 @@ body {
   font-size: $type-size-7;
 
   p {
-    margin: 0;
+    margin: 0 auto;
   }
 }
 
@@ -340,9 +340,11 @@ body {
    ========================================================================== */
 
 .page__taxonomy {
+  display: inline-block;
   border-radius: 0.5em;
-  border: 2px dashed $border-color;
+  border: 1px dashed $border-color;
   padding: 0.5em;
+  text-align: center;
   .sep {
     display: inline;
   }

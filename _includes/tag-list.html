@@ -17,7 +17,7 @@
     {% assign path_to_tag = site.tag_voyage.path %}
     {% assign tag_palettes = site.data.tag_colours.voyage_tag_colours %}
   {% endif %}
-  <p class="page__taxonomy">
+  <div class="page__taxonomy">
     <i class="fa fa-fw fa-tags" aria-hidden="true"></i>
     <span itemprop="keywords">
     {% for hash in tag_hashes %}
@@ -29,5 +29,5 @@
           class="page__taxonomy-item" style="{% if tag_colour %} --tag-color: {{ tag_colour | append: 'bf' }}; {% endif %}" rel="tag">{{ tag_word }}</a>{% unless forloop.last %}<span class="sep"> </span>{% endunless %}
     {% endfor %}
     </span>
-  </p>
+  </div>
 {% endif %}

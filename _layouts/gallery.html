@@ -137,7 +137,9 @@ layout: compress
                   {% include archive-single.html %}
                 {% endfor %}
                 {% if site.tag_voyage.type and page.tags[0] %}
+                  <div class="center_wrapper">
                   {% include tag-list.html %}
+                  </div>
                 {% endif %}
             </div>
             {% include scripts.html %}
