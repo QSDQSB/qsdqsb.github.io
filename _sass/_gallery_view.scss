@@ -300,13 +300,13 @@
 
 .gallery_view .archive {
 	width: 100%;
-	transition:  cubic-bezier(.33,.11,.02,.99) 0.8s;
+	transition: all 1s cubic-bezier(.33,.11,.02,.99);
 	margin-bottom: 0.5em;
-	h5 {
-		margin: 0;
-		pointer-events: none;
+	h1, h2, h3, h4, h5, h6 {
 		font-family: "Barlow";
 		text-align: left;
+		color: $text-color;
+		border-bottom: 1px dashed $border-color;
 	}
 	.card {
 		border: 2px solid rgba(188, 188, 188, 0.3);
