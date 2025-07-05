@@ -1,28 +1,27 @@
 voyage_tag_colours:
-  "🌆Metropolis": "#4b3f45"       # Smoky aubergine
+  "🌆Metropolis": "#d1c7bd"       # Smoky aubergine
   "🌉Bridges": "#5a506f"          # Dusky indigo steel
   "🌊Coastal": "#506273"          # Muted ocean slate
   "🌴Tropical (≈hot as hell)": "#a0733c" # Sienna bronze
   "🍝Italy": "#874343"            # Terra cotta wine
-  "🏔️Alps": "#5e6e5f"            # Mossy stone
+  "🏔️Alps": "#c8cacd"        # Alpine silver
   "🏛️Historic": "#6e5240"        # Burnished umber
-  "🏛️Museum": "#6b5a72"          # Dusty lavender ink
+  "🏛️Museum": "#cac5a9"          # Dusty lavender ink
   "🏞️QSD's Favourite": "#a48395" # Make QSD Great AGAIN!
   "🏰Baroque": "#8c6b4d"          # Baroque gold-brown
-  "🕹️Everyone deserves a tag -- even the...": "#75689b" # Antique violet
-  "🚞Switzerland": "#7b5e3f"      # Garnet leather red
+  "🕹️Everyone deserves a tag -- even the ...": "#96482f" # Antique violet
+  "🚞Switzerland": "#5e9e6f" # mossy stone
   "🚤Lake": "#4a6075"             # Weathered blue slate
   "🛤️Retrace": "#6b657c"         # Charcoal mauve
-  "🥾Hiking": "#586b53"           # Forest lichen
+  "🥾Hiking": "#ac6139"           
 post_tag_colours:
   "📘Diary": "#6356a4"
   "😢Emo": "#4b8195"
   "😻Happy Moments": "#7d587a"
-  "🍜Life": "#7e4b5a"
+  "🍜Life": "#cfa17d"
   "🏦卷！": "#3b7153"
   "🐮Ox": "#144479"
   "🗒TODO": "#936530"
   "🧼QSD's Philosophy": "#2a7676"
-  "🚦Tutorial": "#4c6a6c"
   "🔖Notes": "#864c3b"
   "💍Horcrux": "#794d65"
