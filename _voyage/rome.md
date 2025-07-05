@@ -10,5 +10,5 @@ tags:
   - 🏞️QSD's Favourite
   - 🛤️Retrace
 header:
-  overlay_image: cover/rome-venice-plaza-3v1.jpg
+  overlay_image: cover/rome-piazza-venezia-3v1.jpg
 ---

@@ -6,7 +6,6 @@
 # `jekyll serve`. If you change this file, please restart the server process.
 
 # Site Settings
-minimal_mistakes_skin: "neon"
 locale                   : "en-UK"
 title                    : "QSD's House of Wonders"
 title_separator          : "·"
@@ -84,7 +83,7 @@ analytics:
 # Site Author
 author:
   name             : "QSD"
-  avatar           : "profile.png"
+  avatar           : "QSDLogos/QSD_logo_profile.jpg"
   bio              : "不是，个人简介到底有什么存在的意义啊。"
   location         : "Oxford"
   googlescholar    : 

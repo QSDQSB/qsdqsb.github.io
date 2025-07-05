@@ -322,9 +322,13 @@ body:hover .visually-hidden button {
 
 .center_wrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   margin: 0 auto;
   padding: 1em;
+  * {
+    margin: 0 auto;
+  }
 }
 .sticky_bottom {
   @include clearfix();
@@ -338,7 +342,7 @@ body:hover .visually-hidden button {
 }
 .didot {
   font-family: $didot-family;
-  h1, h2, h3, h4, h5, h6, p, blockquote {
+  h1, h2, h3, h4, h5, h6, p, a, blockquote {
     font-family: $didot-family;
   }
 }

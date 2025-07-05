@@ -27,7 +27,7 @@ header:
 🖥️ QSD and his friends welcome you to enjoy this site on a laptop.
 {: .notice--info}
 
-🔮There *may or **may not*** be some `💫Tarot cards` hidden in the lower corners **[laptop only]**. As a hint, This page's lower left corner leads to QSD's $\text{Rolling 7 days Favourite}$ voyage, and lower right to ...? 
+🔮There *may or **may not*** be some *💫Tarot cards* hidden in the lower corners **[laptop only]**. As a hint, This page's lower left corner leads to QSD's rolling 7-day favourite voyage, and lower right to ...? 
 {: .notice--success}
 
 ➡️➡️➡️ <a href="files/Commitments/Commitment_2022_1.pdf" target="_blank"> QSD减肥进行时💨💨！！</a>
@@ -46,24 +46,25 @@ header:
 - 📷Photography rookie
 - 🎸Amateur music composer
   - 🎹This guy really used to know piano, but not anymore
-  - 🎻So-called 网易音乐人
-- 📱Wechat $\times\times\times\times\times\times$; <span class="barlow">Would argue reasonably straightforward to guess based on this site.</span>
+  - 🎻Proudly self-claim to be learning violin
+  - 🎺So-called 网易音乐人
+- 📱WeChat $\times\times\times\times\times\times$; <span class="barlow">Would argue reasonably straightforward to guess based on this site.</span>
 - 🎮Civilization VI! But suck at it :(
 - 🧱Lego [76042](https://www.lego.com/en-gb/product/the-shield-helicarrier-76042)+[71043](https://www.lego.com/en-gb/product/hogwarts-castle-71043)+[21327](https://www.lego.com/en-gb/product/typewriter-21327)
 - ⚠️The previous red brick has nothing to do with Keble College.
 - 🧙‍♂️𝕽𝖆𝖛𝖊𝖓𝖈𝖑𝖆𝖜🦅
 - 🕶S.H.I.E.L.D. agent
-- 📺[YPM](https://www.imdb.com/title/tt0086831/)! [Silicon Valley](https://www.imdb.com/title/tt2575988/)! [Better Call Saul](https://www.imdb.com/title/tt3032476/)! [Disenchantment](https://www.imdb.com/title/tt5363918/)!
+- 📺<span class="barlow">[💷YPM](https://www.imdb.com/title/tt0086831/)! [💻Silicon Valley](https://www.imdb.com/title/tt2575988/)! [🧑‍💼Better Call Saul](https://www.imdb.com/title/tt3032476/)! [👸🏼Disenchantment](https://www.imdb.com/title/tt5363918/)! [🤖Westworld S1-2](https://www.imdb.com/title/tt0475784/)! [🐉Game of Thrones S1-4](https://www.imdb.com/title/tt0944947/)!</span>
 - 👾Emoji crusher(as you can see from this page)
 - 🎨<span class="macaron">马卡龙色系yyds</span>
 - 🐱骨灰级猫猫粉
 - 🐟enjoy *摸鱼* every day
 - 🏃努力减肥中(但愿)
-- 🇨🇳Geographically Hangzhounese, spiritually Shanghainese
+- 🪷Geographically Hangzhounese, spiritually Shanghainese
 
 ----------
 
-‼️Note that every picture in this website is shot by QSD himself, or his beloved friends.
+‼️Note every picture in this website is shot by QSD himself, or his beloved friends.
 {: .notice--pinky}
 ## What's New!
 _"有哪些文件夹刚刚被新建了呢？"_

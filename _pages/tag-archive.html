@@ -25,10 +25,17 @@ toc: true
     <div class="tag-grid sticky_bottom">
       {% for tag in group_names %}
         {% assign display_tag = tag | slice: 0, 15 %}
+        {% assign tag_colour = site.data.tag_colours.post_tag_colours[tag] %}
+        {% if tag_colour %} 
+        <!-- Assign tag_colour with alpha channel -->
+          {% assign tag_colour_1 = tag_colour | append: "3b" %}
+          {% assign tag_colour_2 = tag_colour | append: "5a" %}
+          {% assign tag_colour_3 = tag_colour | append: "22" %}
+        {% endif %}
         {% if tag.size > 15 %}
           {% assign display_tag = display_tag | append: "..." %}
         {% endif %}
-        <a href="#{{ tag | slugify }}" class="tag-grid__item">
+        <a href="#{{ tag | slugify }}" class="tag-grid__item" {% if tag_colour %}style="background: linear-gradient(21deg, {{ tag_colour_1 }} 0%, {{ tag_colour_2 }} 40%, {{ tag_colour_3 }} 70%, #7777772a 100%);" {% endif %}>
           <p>{{ display_tag }}</p>
         </a>
       {% endfor %}

@@ -94,10 +94,6 @@
   @include breakpoint($x-large) {
     padding-right: $right-sidebar-width-wide;
   }
-
-  .page__meta {
-    margin: 0 0 0;
-  }
 }
 
 /* zidingyi */
@@ -267,10 +263,6 @@
   
   margin: 20px;
 	align-items: center;
-
-  .page__meta {
-    margin: 0 0 4px;
-  }
 
   .archive__item-title {
     margin-left: 0.5em;
@@ -472,12 +464,7 @@
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   &:hover {
-    box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
-    0 1px  6px  rgba(0, 0, 0, .20),
-    0 8px  8px  rgba(0, 0, 0, .25), 
-    0 16px 16px rgba(0, 0, 0, .25), 
-    8px 32px 32px rgba(0, 0, 0, .35), 
-    8px 64px 64px rgba(0, 0, 0, .35);
+    box-shadow: $box-shadow-fancy;
     height: 7.5rem;
   }
   a:hover {
@@ -488,20 +475,19 @@
   }
 }
 .tag-grid__item {
-  display: block;
-  border: 1px solid rgba(188, 188, 188, 0.3);
+  border: 2px solid rgba(188, 188, 188, 0.3);
   height: 3rem;
   min-width: 4.5rem;
   max-width: 7.5rem;
   font-size: $type-code-size;
   font-family: $tag-font-family;
   border-radius: $border-radius;
-  padding: 0.2em;
+  padding: 0.3rem 0.2rem;
   text-align: center;
   background-color: rgba(133, 102, 102, 0.3);
   transition: all 0.5s cubic-bezier(.33,.11,.02,.99);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px) brightness(0.85);
+  backdrop-filter: blur(10px) brightness(0.85);
   text-shadow: rgba(14, 14, 14, 0.2) 0px 7px 14px, rgba(24, 24, 24, 0.25) 0px 5px 5px;
   overflow: hidden;
   p {
@@ -510,6 +496,9 @@
     color: $text-color;
     -webkit-hyphens: auto;
     hyphens: auto;
+    overflow-y: visible;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
 .tag-grid__item:hover {

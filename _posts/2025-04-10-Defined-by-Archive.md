@@ -11,6 +11,7 @@ right_tarot_reversed: true
 tags:
   - 🧼QSD's Philosophy
   - 🗒TODO
+  - 💍Horcrux
 header:
   overlay_image: cover/Greenwich-gallery-3v1.jpg
   overlay_filter: 0.25
@@ -24,6 +25,11 @@ Memory, for all its warmth, deceives. It smooths the edges, reorders the past, c
 
 
 ## The Postcards.
+
+It all starts from a tradition in our middle school: we write postcards to friends and classmates during special days.
+
+The idea behind the postcard is just fascinating. A small defiance against forgetting. It carries little—an image, a few words, a date—but it arrives whole, touched by time and distance. It does not explain; it gestures. A fragment, sent with intent, from one moment to another.
+
 
 
 ```sql

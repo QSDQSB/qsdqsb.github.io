@@ -1,0 +1,16 @@
+{% include base_path %}
+<div class="article-image">
+{% assign logo_width = include.logo_width | default: '8em' %}
+{% assign border_radius = include.border_radius | default: '1.5em' %}
+{% assign path_to_logo = "/images/QSDLogos/QSD_logo_" %}
+{% assign logo_candidates = "splash.jpg,two_colours.jpg,svg.svg,profile.jpg" | split: "," %}
+{% if include.logo_name %}
+    {% assign logo_name = include.logo_name | prepend: path_to_logo %}
+{% else %}
+    {% assign sampled_logo = logo_candidates | sample %}
+    {% assign logo_name = path_to_logo | append: sampled_logo %}
+{% endif %}
+    <img {% if include.extra_classes %} class="{{ include.extra_classes }}" {% endif %}
+        src="{{ logo_name }}"
+    style="width: {{ logo_width }}; border-radius: {{ border_radius }}; aspect-ratio: 1; object-fit: cover;">
+</div>
