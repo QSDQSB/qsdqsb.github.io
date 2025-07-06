@@ -5,7 +5,7 @@ gallery_name: "dolomites/incantato"
 date: 2023-09-01
 tags:
   - 🏔️Alps
-  - 🚤Lake
+  - 🛥️Lake
   - 🍝Italy
   - 🥾Hiking
 header:

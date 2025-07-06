@@ -7,7 +7,7 @@ date: 2023-08-26
 tags:
   - 🏔️Alps
   - 🏞️QSD's Favourite
-  - 🚤Lake
+  - 🛥️Lake
   - 🍝Italy
   - 🥾Hiking
   - 🛤️Retrace

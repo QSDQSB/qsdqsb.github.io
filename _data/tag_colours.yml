@@ -1,8 +1,8 @@
 voyage_tag_colours:
   "🌆Metropolis": "#d1c7bd"       # Smoky aubergine
   "🌉Bridges": "#5a506f"          # Dusky indigo steel
-  "🌊Coastal": "#506273"          # Muted ocean slate
-  "🌴Tropical (≈hot as hell)": "#a0733c" # Sienna bronze
+  "🌊Coastal": "#325473"          # Muted ocean slate
+  "🌴Tropical (≈hot as hell)": "#e6c769" # Sienna bronze
   "🍝Italy": "#874343"            # Terra cotta wine
   "🏔️Alps": "#c8cacd"        # Alpine silver
   "🏛️Historic": "#6e5240"        # Burnished umber
@@ -11,7 +11,7 @@ voyage_tag_colours:
   "🏰Baroque": "#8c6b4d"          # Baroque gold-brown
   "🕹️Everyone deserves a tag -- even the ...": "#96482f" # Antique violet
   "🚞Switzerland": "#5e9e6f" # mossy stone
-  "🚤Lake": "#4a6075"             # Weathered blue slate
+  "🛥️Lake": "#2784d0"             # Weathered blue slate
   "🛤️Retrace": "#6b657c"         # Charcoal mauve
   "🥾Hiking": "#ac6139"           
 post_tag_colours:

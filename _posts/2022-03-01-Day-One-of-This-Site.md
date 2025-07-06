@@ -29,11 +29,9 @@ There are moments we do not want to forget, and moments we entreat ourselves to 
 
 But the past does not just recede. It reshapes us. It defines us. It lives with us like a watermark, etched deeply beneath skin. 
 
-There was joy, there was hope; there was sorrow, there was abyss. 
+There was joy, there was hope; there was sorrow, there was abyss. Hearts are kindled and exiled over and over, like the sentence of Sisyphus.
 
-Scars are carved upon flesh, engraved upon our soul. Hearts kindled and exiled over and over, like the sentence of Sisyphus.
-
-Time will soften the edges, luckily. But it does not absolve. To move forward, we must first look back - with clarity, not concealment. Memory demands not erasure, but faithful reckoning.
+Luckily, time eventually softens the edges. But it does not absolve. To move forward, we should first look back - with clarity, not concealment. Memory demands not erasure, but faithful reckoning.
 
 We have buried the past, but yet its grip remains. How do we truly unshackle ourselves? **We inscribe an epitaph**. An epilogue, a farewell to the vanishing self. And that is the purpose of this site.
 
