@@ -24,10 +24,10 @@ header:
 **NOTICE BOARD**
 {: .text-center}
 
-🖥️ QSD and his friends welcome you to enjoy this site on a laptop.
+🖥️ QSD and his friends welcome you to enjoy this site on a laptop, in particular <u>Chrome</u> and <u>Safari</u>.
 {: .notice--info}
 
-🔮There *may or **may not*** be some *💫Tarot cards* hidden in the lower corners **[laptop only]**. As a hint, This page's lower left corner leads to QSD's rolling 7-day favourite voyage, and lower right to ...? 
+🔮There *may or **may not*** be some *💫Tarot cards* hidden in the lower corners [laptop only]. As a hint, This page's lower left corner leads to QSD's rolling 7-day favourite voyage, and lower right to ...? 
 {: .notice--success}
 
 ➡️➡️➡️ <a href="files/Commitments/Commitment_2022_1.pdf" target="_blank"> QSD减肥进行时💨💨！！</a>

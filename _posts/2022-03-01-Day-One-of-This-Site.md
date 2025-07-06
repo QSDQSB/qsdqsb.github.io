@@ -25,13 +25,14 @@ header:
 
 As they say, whereof what is past is prologue.
 
-There are moments we do not want to forget, and moments we entreat ourselves to forget. 
+There are moments we yearn to remember, and moments we entreat to forget. 
 
-But the past does not just recede. It reshapes us. It defines us. It lives with us like a watermark, etched deeply beneath skin. 
+But the past does not just recede. It reshapes us. It defines us. It seeps beneath the skin like a watermark - quiet yet indelible.
+
 
 There was joy, there was hope; there was sorrow, there was abyss. Hearts are kindled and exiled over and over, like the sentence of Sisyphus.
 
-Luckily, time eventually softens the edges. But it does not absolve. To move forward, we should first look back - with clarity, not concealment. Memory demands not erasure, but faithful reckoning.
+Time, at its kindest, softens the edges. But it does not absolve. To move forward, we should first look back - with clarity, not concealment. Memory demands not erasure, but faithful reckoning.
 
 We have buried the past, but yet its grip remains. How do we truly unshackle ourselves? **We inscribe an epitaph**. An epilogue, a farewell to the vanishing self. And that is the purpose of this site.
 
