@@ -29,10 +29,6 @@ permalink: /sitemap.xml
     </url>
   {% endfor %}
   <url>
-    <loc>{{ site.url }}/voyage/</loc>
-    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
-  </url>
-  <url>
     <loc>{{ site.url }}/voyage-by-tags/</loc>
     <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
   </url>
