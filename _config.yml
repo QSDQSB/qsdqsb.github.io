@@ -160,12 +160,15 @@ collections:
   portfolio:
     output: true
     permalink: /:collection/:path/
+    sitemap: true
   voyage:
     output: true
     # permalink: /voyage/:path/
+    sitemap: true
   subvoyage:
     output: true
     permalink: /voyage/:path/
+    sitemap: true
 # Defaults
 defaults:
   # _posts

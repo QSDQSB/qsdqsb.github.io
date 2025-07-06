@@ -24,7 +24,6 @@ What we call the self is but a scattering of moments - most of which dissolve qu
 Memory, for all its warmth, deceives. It smooths the edges, reorders the past, cloaks regret in sentiment. But the archive does not lie. A letter yellowed by time, a postcard scribbled in haste - these are fragments of reality that endured. They are proof that something once was, lasting or otherwise.
 
 
-
 ```sql
 To be continued. Sincere articles in this age are extremely difficult. :(
 Hopefully with some meaningful animations! :)
