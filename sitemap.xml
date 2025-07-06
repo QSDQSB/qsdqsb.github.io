@@ -4,18 +4,38 @@ permalink: /sitemap.xml
 ---
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>{{ site.url }}/year-archive/</loc>
+    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
+  </url>
+  <url>
+    <loc>{{ site.url }}/tags/</loc>
+    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
+  </url>
   {% for post in site.posts %}
     <url>
       <loc>{{ site.url }}{{ post.url }}</loc>
       <lastmod>{{ post.date | date: "%Y-%m-%d" }}</lastmod>
     </url>
   {% endfor %}
+  <url>
+    <loc>{{ site.url }}/portfolio/</loc>
+    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
+  </url>
   {% for post in site.portfolio %}
     <url>
       <loc>{{ site.url }}{{ post.url }}</loc>
       <lastmod>{{ post.date | date: "%Y-%m-%d" }}</lastmod>
     </url>
   {% endfor %}
+  <url>
+    <loc>{{ site.url }}/voyage/</loc>
+    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
+  </url>
+  <url>
+    <loc>{{ site.url }}/voyage-by-tags/</loc>
+    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
+  </url>
   {% for post in site.voyage %}
     <url>
       <loc>{{ site.url }}{{ post.url }}</loc>
@@ -30,6 +50,10 @@ permalink: /sitemap.xml
   {% endfor %}
   <url>
     <loc>{{ site.url }}</loc>
+    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
+  </url>
+  <url>
+    <loc>{{ site.url }}/cv/</loc>
     <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
   </url>
 </urlset>
