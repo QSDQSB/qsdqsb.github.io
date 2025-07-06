@@ -24,13 +24,6 @@ What we call the self is but a scattering of moments - most of which dissolve qu
 Memory, for all its warmth, deceives. It smooths the edges, reorders the past, cloaks regret in sentiment. But the archive does not lie. A letter yellowed by time, a postcard scribbled in haste - these are fragments of reality that endured. They are proof that something once was, lasting or otherwise.
 
 
-## The Postcards.
-
-It all starts from a tradition in our middle school: we write postcards to friends and classmates during special days.
-
-The idea behind the postcard is just fascinating. A small defiance against forgetting. It carries little—an image, a few words, a date—but it arrives whole, touched by time and distance. It does not explain; it gestures. A fragment, sent with intent, from one moment to another.
-
-
 
 ```sql
 To be continued. Sincere articles in this age are extremely difficult. :(
