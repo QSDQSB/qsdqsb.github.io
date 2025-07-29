@@ -94,6 +94,14 @@ body:hover .visually-hidden button {
   color: $text-color;
 }
 //  utility classes for post signatures
+.sans-serif {
+  font-family: $sans-serif;
+  color: $primary-color;
+  h1, h2, h3, h4, h5, h6, p, a, blockquote {
+    font-family: $sans-serif;
+    color: $primary-color;
+  }
+}
 .h3_right_thin {
   color: $text-color;
   text-align: right;
@@ -341,6 +349,7 @@ body:hover .visually-hidden button {
   }
 }
 .didot {
+  color: $primary-color;
   font-family: $didot-family;
   h1, h2, h3, h4, h5, h6, p, a, blockquote {
     font-family: $didot-family;
