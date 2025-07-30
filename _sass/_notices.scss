@@ -12,15 +12,14 @@
 
 @mixin notice($notice-color) {
   text-align: center;
-  margin: 1em 4em !important;  /* override*/
+  margin: 1em auto !important;  /* override*/
   padding: 1em 1em;
   font-family: 'Barlow', sans-serif;
   font-weight: 200;
   font-size: $type-size-7 !important;
   text-indent: initial; /* override*/
   background-color: mix(rgba(255,255,255,0.2),$notice-color, 0.5);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  max-width: 90%;
 
   border-radius: $border-radius;
   h4 {
