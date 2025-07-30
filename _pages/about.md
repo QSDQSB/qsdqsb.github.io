@@ -19,7 +19,8 @@ header:
   overlay_filter: 0.2
 ---
 
-# 欢迎来到QSD妙妙屋！
+# Welcome to QSD's House of Wonders! 🏄
+欢迎来到QSD妙妙屋！
 
 **NOTICE BOARD**
 {: .text-center}
@@ -30,7 +31,7 @@ header:
 🔮There *may or **may not*** be some *💫Tarot cards* hidden in the lower corners [laptop only]. As a hint, This page's lower left corner leads to QSD's rolling 7-day favourite voyage, and lower right to ...? 
 {: .notice--success}
 
-➡️➡️➡️ <a href="files/Commitments/Commitment_2022_1.pdf" target="_blank"> QSD减肥进行时💨💨！！</a>
+➡️➡️➡️ <a href="posts/2022/03/jianfei-diary" target="_blank"> QSD减肥进行时💨💨！！</a>
 {: .notice--pinky}
 
 ## A Bizzard Self-Intro...?
