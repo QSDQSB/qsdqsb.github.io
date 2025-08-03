@@ -11,6 +11,7 @@
     {% assign logo_name = path_to_logo | append: sampled_logo %}
 {% endif %}
     <img {% if include.extra_classes %} class="{{ include.extra_classes }}" {% endif %}
+    alt="QSD Logo"
         src="{{ logo_name }}"
-    style="width: {{ logo_width }}; border-radius: {{ border_radius }}; aspect-ratio: 1; object-fit: cover;">
+    style="width: {{ logo_width }}; border-radius: {{ border_radius }}; aspect-ratio: 1; object-fit: cover;{% if include.extra_style %} {{ include.extra_style }} {% endif %}">
 </div>
