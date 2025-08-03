@@ -19,20 +19,30 @@ header:
   overlay_filter: 0.2
 ---
 
-# Welcome to QSD's House of Wonders! 🏄
-欢迎来到QSD妙妙屋！
+
+<h1 style="padding: 0;"><span class="text-type-writer" style="--n-contents: 10;" label="Welcome to QSD's House of Wonders!">
+  <span>
+    <span>🏄 Welcome to QSD's House of Wonders !</span>
+    <span>🔮 欢迎来到QSD妙妙屋 !</span>
+    <span>🏄 Welcome to QSD's House of Wonders !</span>
+    <span>🔮 欢迎来到QSD妙妙屋 !</span>
+    <span>🏄 Welcome to QSD's House of Wonders !</span>
+    <span>🗺️ Here's a page for you 👉 <a href="/voyage/rome/" target="_blank"><i>Voyage - S·P·Q·R</i></a> !</span>
+    <span>🏄 Welcome to QSD's House of Wonders !</span>
+    <span>🔮 欢迎来到QSD妙妙屋 !</span>
+    <span>👨‍⚖️ QSD&QSB wish you a <i>spectacular</i> day!</span>
+    <span>🤷‍♂️ Who the hell is QSD ???</span>
+  </span>
+</span></h1>
 
 **NOTICE BOARD**
 {: .text-center}
 
-🖥️ QSD and his friends welcome you to enjoy this site on a laptop, in particular <u>Chrome</u> and <u>Safari</u>.
-{: .notice--info}
+<p class="notice--info">🖥️ <span class="sans-serif">QSD</span> and his friends welcome you to enjoy this site on a laptop, in particular <u>Chrome</u> and <u>Safari</u>.</p>
 
-🔮There *may or **may not*** be some *💫Tarot cards* hidden in the lower corners [laptop only]. As a hint, This page's lower left corner leads to QSD's rolling 7-day favourite voyage, and lower right to ...? 
-{: .notice--success}
+<p class="notice--success">🌗There <i>may</i> or <i>may not</i> be some <i>Tarot cards</i> hidden at the lower corners [laptop only]. As a hint, This page's lower left corner leads to QSD's rolling 7-day favourite voyage, and lower right to ...?</p>
 
-➡️➡️➡️ <a href="posts/2022/03/jianfei-diary" target="_blank"> QSD减肥进行时💨💨！！</a>
-{: .notice--pinky}
+<p class="notice--pinky">➡️➡️➡️  <a href="posts/2022/03/jianfei-diary" target="_blank">QSD减肥进行时 🏃‍♂️💨💨... !</a></p>
 
 ## A Bizzard Self-Intro...?
 
@@ -94,5 +104,4 @@ Don't know what this is? It's quite simple, just get a maths degree and you will
 
 Consider a language that doesn't support the logic `not`, 13 years after someone pointing out: *[The Mighty Liquid](https://github.com/Shopify/liquid/issues/138)*
 {: .notice--info}
-
-<div class="logo_wrapper"><a href="#欢迎来到qsd妙妙屋"><img src="/images/QSDLOGO-2000.svg" alt="QSD Logo" class="logo_style"></a></div>
+<div class="logo_wrapper" style="max-width: 75%;"><a href="#a-bizzard-self-intro"><img src="/images/QSDLOGO-2000.svg" alt="QSD Logo" class="logo_style"></a></div>

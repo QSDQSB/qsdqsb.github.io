@@ -481,3 +481,48 @@ a.reversefootnote {
     opacity: 1;
   }
 }
+
+// Typewriter effect
+
+.text-type-writer {
+  --type-writer-duration:7s; /* duration */
+  display:inline-block;
+  vertical-align: bottom;
+  line-height: 1.2;
+  > span {
+  display:grid;
+  overflow: hidden;
+  height: $type-size-4;
+  }
+}
+
+.text-type-writer span span {
+  width:0%;
+  max-width:max-content;
+  vertical-align: bottom;
+  overflow: hidden;
+  height:inherit;
+  word-break:break-all;
+  animation:
+    cursor-blink-animation 1s infinite steps(1),  
+    type-writer-complete-typing var(--type-writer-duration) linear infinite alternate,
+    type-writer-moving calc(var(--type-writer-duration)*2*var(--n-contents)) steps(var(--n-contents)) infinite;
+}
+.text-type-writer span span:before {
+  content:" ";
+  display:inline-block;
+}
+
+@keyframes type-writer-complete-typing{
+  30%,100% {width:100%}
+  0%, 5% {width:0%}
+}
+
+@keyframes cursor-blink-animation{
+  0%,100%{box-shadow:4px 0 0 $code-background-color}
+  50%    {box-shadow:4px 0 0 $border-color}
+}
+
+@keyframes type-writer-moving {
+  100% {transform:translateY(calc(-100%*var(--n-contents)))}
+}
