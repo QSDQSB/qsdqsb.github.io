@@ -136,11 +136,13 @@ abbr[data-original-title] {
 
 blockquote {
   font-family: $serif;
-  margin: 0.5em;
-  padding-left: 1em;
-  border-left: 0.1em solid $twitter-color;
-  border-radius: 10px;
-  border-bottom: 0.1em solid $twitter-color;
+  padding: 1em 1.25em;
+  border: 1px double $darker-gray;
+  background-color: $center-wrapper-background-color;
+  border-radius: $border-radius * 2;
+  text-align: justify;
+  position: relative;
+
   cite {
 
     &:before {
