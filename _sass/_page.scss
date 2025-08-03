@@ -12,7 +12,7 @@
   padding-left: 1em;
   padding-right: 1em;
   animation: intro 0.3s both;
-  animation-delay: 0.2s;
+  animation-delay: 0.15s;
 }
 
 .article-image {
@@ -237,7 +237,7 @@ body {
     .page__lead,
     .btn {
       color: $text-color;
-      text-shadow: 1px 1px 4px rgba(#000, 0.5);
+      text-shadow: 1px 1px 4px rgba($darker-gray, 0.5);
     }
 
     .page__lead {
@@ -269,7 +269,7 @@ body {
   right: 0;
   margin: 0 auto;
   padding: 2px 5px;
-  color: #fff;
+  color: $text-color;
   font-family: $caption-font-family;
   font-size: $type-size-8;
   background: #222;
@@ -283,7 +283,7 @@ body {
   }
 
   a {
-    color: #fff;
+    color: $text-color;
     text-decoration: none;
   }
 }
@@ -324,7 +324,7 @@ body {
 .page__meta {
   margin-top: 2em;
   margin-bottom: 1em;
-  color: white;
+  color: $text-color;
   font-size: $type-size-7;
 
   p {
@@ -632,4 +632,19 @@ tradingview-widget-container {
       width: 30%;
     }
   }
+}
+
+.qsd_logo_stroke_display {
+  min-width: 120px;
+  min-height: 120px;
+  max-width: 50%;
+  max-height: 50%;
+  height: 6em;
+  aspect-ratio: 1 !important;
+  mask-image: url("/images/QSDLogos/QSD_logo_stroke_path.svg");
+  mask-repeat: no-repeat;
+	mask-position: center;
+	mask-size: contain;
+  background: $conic-gradient-blue;
+  opacity: 0.6;
 }
