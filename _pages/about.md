@@ -24,12 +24,12 @@ header:
   <span>
     <span>🏄 Welcome to QSD's House of Wonders !</span>
     <span>🔮 欢迎来到QSD妙妙屋 !</span>
-    <span>🏄 Welcome to QSD's House of Wonders !</span>
-    <span>🔮 欢迎来到QSD妙妙屋 !</span>
-    <span>🏄 Welcome to QSD's House of Wonders !</span>
-    <span>🗺️ Here's a page for you 👉 <a href="/voyage/rome/" target="_blank"><i>Voyage - S·P·Q·R</i></a> !</span>
-    <span>🏄 Welcome to QSD's House of Wonders !</span>
-    <span>🔮 欢迎来到QSD妙妙屋 !</span>
+    <span>👋🏻 Welcome to QSD's House of Wonders !</span>
+    <span>🐈 欢迎来到QSD妙妙屋 !</span>
+    <span>🦹🏼‍♀️ Welcome to QSD's House of Wonders !</span>
+    <span>🗺️ Here's a page for you 👉 <a href="/voyage/rome/" target="_blank"><i>Voyage ✨ S·P·Q·R</i></a> !</span>
+    <span>☕️ Welcome to QSD's House of Wonders !</span>
+    <span>🥂 欢迎来到QSD妙妙屋 !</span>
     <span>👨‍⚖️ QSD&QSB wish you a <i>spectacular</i> day!</span>
     <span>🤷‍♂️ Who the hell is QSD ???</span>
   </span>
