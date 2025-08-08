@@ -20,18 +20,19 @@ header:
 ---
 
 
-<h1 style="padding: 0;"><span class="text-type-writer" style="--n-contents: 10;" label="Welcome to QSD's House of Wonders!">
+<h1 style="padding: 0;"><span class="text-type-writer" style="--n-contents: 11;" label="Welcome to QSD's House of Wonders!">
   <span>
     <span>🏄 Welcome to QSD's House of Wonders !</span>
     <span>🔮 欢迎来到QSD妙妙屋 !</span>
-    <span>👋🏻 Welcome to QSD's <i>House of Wonders</i> !</span>
     <span>👨‍⚖️ QSD&QSB wish you a <i class="macaron">spectacular</i> day!</span>
+    <span>👋🏻 Welcome to QSB's House of Wonders !</span>
     <span>🗺️ Here's a page for you 👉 <a href="/voyage/rome/" target="_blank"><i>Voyage ✨ S·P·Q·R</i></a> !</span>
     <span>🐈 欢迎来到QSD妙妙屋 !</span>
     <span>🤷‍♂️ Who the hell is QSD ???</span>
     <span>🫵🏻 Maybe you are QSD !</span>
     <span>🥂 Welcome to QSB's House of Wonders !</span>
-    <span>🪦 The foundation of this site: <a href="/posts/day-one/" target="_blank"><i>Day One · The Epitaph of QSD .</i></a></span>
+    <span>🪦 The foundation of this site: <a href="/posts/day-one" target="_blank"><i>Day One · The Epitaph .</i></a></span>
+    <span>🍭 Do you know QSD are once known as QXD ?</span>
   </span>
 </span></h1>
 
@@ -104,4 +105,5 @@ Don't know what this is? It's quite simple, just get a maths degree and you will
 
 Consider a language that doesn't support the logic `not`, 13 years after someone pointing out: *[The Mighty Liquid](https://github.com/Shopify/liquid/issues/138)*
 {: .notice--info}
-<div class="logo_wrapper" style="max-width: 75%;"><a href="#a-bizzard-self-intro"><img src="/images/QSDLOGO-2000.svg" alt="QSD Logo" class="logo_style"></a></div>
+
+<div class="logo_wrapper" style="max-width: 60%;"><a href="#a-bizzard-self-intro"><img src="/images/QSDLOGO-2000.svg" alt="QSD Logo" class="logo_style"></a></div>

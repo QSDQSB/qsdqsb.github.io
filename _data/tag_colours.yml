@@ -2,8 +2,8 @@ voyage_tag_colours:
   "🌆Metropolis": "#d1c7bd"       # Smoky aubergine
   "🌉Bridges": "#5a506f"          # Dusky indigo steel
   "🌊Coastal": "#325473"          # Muted ocean slate
-  "🌴Tropical (≈hot as hell)": "#e6c769" # Sienna bronze
-  "🍝Italy": "#874343"            # Terra cotta wine
+  "🌴Tropical (≈hot as hell)": "#c5c1a0" # Sienna bronze
+  "🍝Italy": "#a77772"            # Terra cotta wine
   "🏔️Alps": "#c8cacd"        # Alpine silver
   "🏛️Historic": "#6e5240"        # Burnished umber
   "🏛️Museum": "#cac5a9"          # Dusty lavender ink
@@ -11,7 +11,7 @@ voyage_tag_colours:
   "🏰Baroque": "#8c6b4d"          # Baroque gold-brown
   "🕹️Everyone deserves a tag -- even the ...": "#96482f" # Antique violet
   "🚞Switzerland": "#5e9e6f" # mossy stone
-  "🛥️Lake": "#2784d0"             # Weathered blue slate
+  "🛥️Lake": "#5b89a9"             # Weathered blue slate
   "🛤️Retrace": "#6b657c"         # Charcoal mauve
   "🥾Hiking": "#ac6139"           
 post_tag_colours:
@@ -25,3 +25,4 @@ post_tag_colours:
   "🧼QSD's Philosophy": "#2a7676"
   "🔖Notes": "#864c3b"
   "💍Horcrux": "#794d65"
+  "🍡Tutorial": "#78421e"
