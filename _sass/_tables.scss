@@ -4,33 +4,55 @@
 
 table {
   margin-bottom: 1em;
-  width: 100%;
+  max-width: 90%;
   font-family: $global-font-family;
   font-size: $type-size-7;
-  border-collapse: collapse;
-  border: 1px solid $light-gray;
-
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid $border-color;
+  overflow: hidden;
+  margin: 1em auto;
   & + table {
     margin-top: 1em;
   }
+  border-radius: $border-radius * 2;
+  font-family: $barlow-font-family;
 }
 
 thead {
-  background-color: $code-background-color-dark;
-  border-bottom: 1px solid $light-gray;
+  border-bottom: 1px solid $border-color;
+  th {
+    padding: 0.5em 0.75em;
+    border-bottom: 1px solid $border-color;
+    font-weight: bold;
+  }
 }
 
 th {
   padding: 0.5em;
   font-weight: bold;
   text-align: center;
-  border-right: 1px solid $light-gray;
+  border-right: 1px solid $border-color;
+  &:last-of-type {
+    border-right: none;
+  }
 }
 
 td {
-  padding: 0.5em;
-  border-bottom: 1px solid $light-gray;
-  border-right: 1px solid $light-gray;
+  padding: 0.5em 1em;
+  border-bottom: 1px solid $border-color;
+  border-right: 1px solid $border-color;
+  transition: background-color 0.1s ease;
+  &:hover {
+    background-color: $obsidian-gray;
+  }
+  &:last-of-type {
+    border-right: none;
+    padding-right: 1.5em;
+  }
+  &:first-of-type {
+    padding-left: 1.5em;
+  }
 }
 
 tr, td, th {

@@ -25,7 +25,7 @@ header:
     <span>🏄 Welcome to QSD's House of Wonders !</span>
     <span>🔮 欢迎来到QSD妙妙屋 !</span>
     <span>👨‍⚖️ QSD&QSB wish you a <i class="macaron">spectacular</i> day!</span>
-    <span>👋🏻 Welcome to QSB's House of Wonders !</span>
+    <span>🛡️ House of QSD: <i>Mors potius quam taedium</i></span>
     <span>🗺️ Here's a page for you 👉 <a href="/voyage/rome/" target="_blank"><i>Voyage ✨ S·P·Q·R</i></a> !</span>
     <span>🐈 欢迎来到QSD妙妙屋 !</span>
     <span>🤷‍♂️ Who the hell is QSD ???</span>
