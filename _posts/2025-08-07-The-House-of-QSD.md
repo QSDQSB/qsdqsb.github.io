@@ -15,11 +15,17 @@ header:
 
 #TODO
 
-<img src="/images/QSDSigils/qsd-heraldic-emblem-with-motto.jpg" alt="QSD's Heraldic with Motto" style="width: 30%">
-{: .article-image}
+<h1 style="padding: 0;"><span class="text-type-writer" style="--n-contents: 4;" label="Tutorial: How to make a house sigil.">
+  <span>
+    <span>👨‍🎓 Tutorial: How to Make Your House Sigil (in 2025) ?</span>
+    <span>🛡️ House QSD: <i>Mors potius quam taedium .</i></span>
+    <span>🐈‍⬛ House QSD: Rather death than the weariness of soul .</span>
+    <span style="font-family: 'didot'">⚔️ House QSD: 毋沉于倦俗 。</span>
+  </span>
+</span></h1>
 
-<img src="/images/QSDSigils/qsd-heraldic-gothic-cathedral-window.jpg" alt="QSD's Heraldic cat on gothic cathedral window" style="width: 30%">
-{: .article-image}
+<img src="/images/QSDSigils/horizontal-rule-qsd-emblem-classic.svg" alt="horizontal rule with QSD's emblem" style="width: 60%">
+{: .center-wrapper}
 
 <img src="/images/QSDSigils/qsd-sigil-tarot-qsd.png" alt="QSD's Heraldic as Tarot @QSD" style="width: 30%; border-radius: 30px;">
 {: .article-image}
@@ -27,5 +33,10 @@ header:
 <img src="/images/QSDSigils/qsd-sigil-tarot-qsb.png" alt="QSD's Heraldic as Tarot @QSB" style="width: 30%; border-radius: 30px;">
 {: .article-image}
 
-<img src="/images/QSDSigils/qsd-heraldic-emblem-with-motto-no-bg.png" alt="QSD's Heraldic as Tarot @QSB" style="width: 25%">
-{: .article-image}
+
+<div class="svg-display-center-wrapper">
+  {% include assets/qsd-heraldic-emblem-classic-no-bg.svg %}
+</div>
+
+[Vector Magic](https://vectormagic.com)
+[Boxy SVG](https://boxy-svg.com/)
