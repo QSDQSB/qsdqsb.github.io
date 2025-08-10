@@ -328,7 +328,7 @@ body:hover .visually-hidden button {
   }
 }
 
-.center_wrapper {
+.center-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -525,4 +525,28 @@ a.reversefootnote {
 
 @keyframes type-writer-moving {
   100% {transform:translateY(calc(-100%*var(--n-contents)))}
+}
+
+.svg-with-drop-shadow {
+  filter: drop-shadow(3px 3px 5px #0a0a0a57 );
+  transition: all ease-in-out 0.3s;
+  &:hover {
+    filter: drop-shadow(5px 5px 10px #0a0a0ab5);
+  }
+}
+
+.svg-display-center-wrapper {
+  display: block;
+  margin: 1em auto;
+  padding: 1em 2em;
+
+  max-width: 50%;
+  @include breakpoint($x-large) {
+    max-width: 30%;
+  }
+
+  transition: transform 0.3s ease-in-out;
+  &:hover {
+    transform: scale(1.05);
+  }
 }
