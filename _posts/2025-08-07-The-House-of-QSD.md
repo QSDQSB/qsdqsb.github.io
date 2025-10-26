@@ -15,11 +15,15 @@ header:
 
 #TODO
 
+On a wholly unremarkable Thursday evening, QSD picked up a Game of Thrones episode. Upon beholding the Lannister & Baratheon flags fluttering over King's Landing, he was inspired to create his own house sigil - and realised that this is entirely doable within a single night - What a magnificent use of AIGC tools in 2025!
+
+We document the whole process, mainly the negotiation with ChatGPT, for the benefit of anyone interested. All the tools and prompts will be specified.
+
 <h1 style="padding: 0;"><span class="text-type-writer" style="--n-contents: 4;" label="Tutorial: How to make a house sigil.">
   <span>
     <span>👨‍🎓 Tutorial: How to Make Your House Sigil (in 2025) ?</span>
     <span>🛡️ House QSD: <i>Mors potius quam taedium .</i></span>
-    <span>🐈‍⬛ House QSD: Rather death than the weariness of soul .</span>
+    <span>🐈‍⬛ House QSD: Rather death than bordem .</span>
     <span style="font-family: 'didot'">⚔️ House QSD: 毋沉于倦俗 。</span>
   </span>
 </span></h1>
