@@ -16,18 +16,17 @@ right_tarot_href: /posts/day-one
 right_tarot_wheel_of_fortune: true
 header:
   overlay_image: QSD_Night_4v1.jpg
-  overlay_filter: 0.2
+  overlay_filter: 0.25
 ---
-
 
 <h1 style="padding: 0;"><span class="text-type-writer" style="--n-contents: 11;" label="Welcome to QSD's House of Wonders!">
   <span>
     <span>🏄 Welcome to QSD's House of Wonders !</span>
-    <span>🔮 欢迎来到QSD妙妙屋 !</span>
+    <span lang="zh">🔮 欢迎来到QSD妙妙屋 !</span>
     <span>👨‍⚖️ QSD&QSB wish you a <i class="macaron">spectacular</i> day!</span>
-    <span>🛡️ House of QSD: <i>Mors potius quam taedium</i></span>
+    <span>🛡️ House of QSD: <i lang="la">Mors potius quam tædium</i></span>
     <span>🗺️ Here's a page for you 👉 <a href="/voyage/rome/" target="_blank"><i>Voyage ✨ S·P·Q·R</i></a> !</span>
-    <span>🐈 欢迎来到QSD妙妙屋 !</span>
+    <span lang="zh">🐈 欢迎来到QSD妙妙屋 !</span>
     <span>🤷‍♂️ Who the hell is QSD ???</span>
     <span>🫵🏻 Maybe you are QSD !</span>
     <span>🥂 Welcome to QSB's House of Wonders !</span>
@@ -43,11 +42,11 @@ header:
 
 <p class="notice--success">🌗There <i>may</i> or <i>may not</i> be some <i>Tarot cards</i> hidden at the lower corners [laptop only]. As a hint, This page's lower left corner leads to QSD's rolling 7-day favourite voyage, and lower right to ...?</p>
 
-<p class="notice--pinky">➡️➡️➡️  <a href="posts/2022/03/jianfei-diary" target="_blank">QSD减肥进行时 🏃‍♂️💨💨... !</a></p>
+<p class="notice--pinky">➡️➡️➡️  <a href="posts/2022/03/jianfei-diary" target="_blank" lang="zh">QSD减肥进行时 🏃‍♂️💨💨... !</a></p>
 
 ## A Bizzard Self-Intro...?
 
-| 🌃第五届熬夜锦标赛全球总亚军 | 😅流汗黄豆常在心间 | 🐟摸鱼王 | ⌚️时间管理废物 | 🚦选恐晚期 | 🤤热衷无所事事 |
+| 🌃<span lang="zh">第五届熬夜锦标赛全球总亚军</span> | 😅<span lang="zh">流汗黄豆常在心间</span> | 🐟<span lang="zh">摸鱼王</span> | ⌚️<span lang="zh">时间管理废物</span> | 🚦<span lang="zh">选恐晚期</span> | 🤤<span lang="zh">热衷无所事事</span> |
 {: .text-center}
 
 - 🤖QSDQSB
@@ -59,7 +58,7 @@ header:
 - 🎸Amateur music composer
   - 🎹This guy really used to know piano, but not anymore
   - 🎻Proudly self-claim to be learning violin
-  - 🎺So-called 网易音乐人
+  - 🎺So-called <span lang="zh">网易音乐人</span>
 - 📱WeChat $\times\times\times\times\times\times$; <span class="barlow">Would argue reasonably straightforward to guess based on this site.</span>
 - 🎮Civilization VI! But suck at it :(
 - 🧱Lego [76042](https://www.lego.com/en-gb/product/the-shield-helicarrier-76042)+[71043](https://www.lego.com/en-gb/product/hogwarts-castle-71043)+[21327](https://www.lego.com/en-gb/product/typewriter-21327)
@@ -68,10 +67,10 @@ header:
 - 🕶S.H.I.E.L.D. agent
 - 📺<span class="barlow">[💷YPM](https://www.imdb.com/title/tt0086831/)! [💻Silicon Valley](https://www.imdb.com/title/tt2575988/)! [🧑‍💼Better Call Saul](https://www.imdb.com/title/tt3032476/)! [👸🏼Disenchantment](https://www.imdb.com/title/tt5363918/)! [🤖Westworld S1-2](https://www.imdb.com/title/tt0475784/)! [🐉Game of Thrones S1-4](https://www.imdb.com/title/tt0944947/)!</span>
 - 👾Emoji crusher(as you can see from this page)
-- 🎨<span class="macaron">马卡龙色系yyds</span>
-- 🐱骨灰级猫猫粉
-- 🐟enjoy *摸鱼* every day
-- 🏃努力减肥中(但愿)
+- 🎨<span class="macaron" lang="zh">马卡龙色系yyds</span>
+- 🐱<span class="macaron" lang="zh">骨灰级猫猫粉</span>
+- 🐟enjoy *<span lang="zh">摸鱼</span>* every day
+- 🏃<span lang="zh">努力减肥中(但愿)</span>
 - 🪷Geographically Hangzhounese, spiritually Shanghainese
 
 ----------
@@ -79,7 +78,7 @@ header:
 ‼️Note every picture in this website is shot by QSD himself, or his beloved friends.
 {: .notice--pinky}
 ## What's New!
-_"有哪些文件夹刚刚被新建了呢？"_
+_"<span lang="zh">有哪些文件夹刚刚被新建了呢？</span>"_
 
 ## What else should we do before publishing this page?
 

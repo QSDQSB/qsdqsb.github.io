@@ -6,7 +6,7 @@
 # `jekyll serve`. If you change this file, please restart the server process.
 
 # Site Settings
-locale                   : "en-UK"
+locale                   : "en-GB"
 title                    : "QSD's House of Wonders"
 title_separator          : "·"
 name                     : &name "QSD"
