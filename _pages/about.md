@@ -42,7 +42,9 @@ header:
 
 <p class="notice--success">🌗There <i>may</i> or <i>may not</i> be some <i>Tarot cards</i> hidden at the lower corners [laptop only]. As a hint, This page's lower left corner leads to QSD's rolling 7-day favourite voyage, and lower right to ...?</p>
 
-<p class="notice--pinky">➡️➡️➡️  <a href="posts/2022/03/jianfei-diary" target="_blank" lang="zh">QSD减肥进行时 🏃‍♂️💨💨... !</a></p>
+<a href="/posts/2022/03/jianfei-diary" target="_blank" class="notice--pinky background-color-peach-pink hover-scale" style="display: block; text-decoration: none; color: inherit; border-radius: 0.5em;">
+➡️➡️➡️  <span><b lang="zh">QSD减肥进行时</b> 🏃‍♂️💨💨... !</span><br><i>[<span class="didot" style="color: #FFFFFF; font-variant:small-caps;">Attempt #8</span> von 27.10.2025]</i>
+</a>
 
 ## A Bizzard Self-Intro...?
 
