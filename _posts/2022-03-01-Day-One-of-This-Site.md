@@ -10,7 +10,6 @@ redirect_from:
   - /posts/2022-03-01-Day-One-of-This-Site/
   - /day-one
   - /day-one-of-this-site
-  - /posts/day-one/
 excerpt: "Everything fades into mist."
 tags:
   - 📘Diary

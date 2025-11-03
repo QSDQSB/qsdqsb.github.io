@@ -552,3 +552,11 @@ a.reversefootnote {
     transform: scale(1.05);
   }
 }
+
+.hover-scale {
+  transition: $cubic-bezier-default-05s;
+  transform: scale(1);
+  &:hover {
+    transform: scale(1.05);
+  }
+}
