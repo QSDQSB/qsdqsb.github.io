@@ -16,8 +16,9 @@ $indent-var                 : 0.8em;
 $serif                      : "Roboto", "PT Serif", Georgia, Times, serif;
 $sans-serif                 : "Playfair Display", "Didot", apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
 $monospace                  : "Monaco", Consolas, "Lucida Console", monospace;
-$didot-family              : "Didot", "Playfair Display", serif; 
+$didot-family              : "Didot", "CMU Serif", "Playfair Display", serif;
 /* sans serif typefaces */
+$cmu-serif-family           : "CMU Serif", "Didot", "Playfair Display", serif;
 $sans-serif-narrow          : "Roboto", $sans-serif;
 $helvetica                  : Helvetica, "Helvetica Neue", Arial, sans-serif;
 $barlow-font-family         : "Barlow", $sans-serif-narrow;

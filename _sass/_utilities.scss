@@ -357,6 +357,13 @@ body:hover .visually-hidden button {
     font-family: $didot-family;
   }
 }
+.cmu-serif {
+  color: $primary-color;
+  font-family: $cmu-serif-family;
+  h1, h2, h3, h4, h5, h6, p, a, blockquote {
+    font-family: $cmu-serif-family;
+  }
+}
 /*
    Wells
    ========================================================================== */
