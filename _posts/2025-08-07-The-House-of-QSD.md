@@ -24,7 +24,7 @@ We document the whole process, mainly the negotiation with ChatGPT, for the bene
     <span>👨‍🎓 Tutorial: How to Make Your House Sigil (in 2025) ?</span>
     <span>🛡️ House QSD: <i>Mors potius quam taedium .</i></span>
     <span>🐈‍⬛ House QSD: Rather death than bordem .</span>
-    <span style="font-family: 'didot'">⚔️ House QSD: 毋沉于倦俗 。</span>
+    <span style="font-family: 'didot'">⚔️ House QSD: 毋沉倦俗 。</span>
   </span>
 </span></h1>
 

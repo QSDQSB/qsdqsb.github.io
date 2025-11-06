@@ -185,6 +185,7 @@ defaults:
       toc: true
       toc_sticky: true
       ticker-tape: false
+      intriguing-word: true
   # _pages
   - scope:
       path: ""
