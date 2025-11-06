@@ -3,7 +3,7 @@
 
 <div class="word_card_container">
     <div class="word_card" alt="📇 A word that might intrigue you - {{ sample_word.title }}">
-        <h1>{{ sample_word.title }}</h1>
+        <h1 lang="{{ sample_word.language | default: 'en' }}" translate="no">{{ sample_word.title }}</h1>
         <p>{{ sample_word.description }}</p>
     </div>
 </div>

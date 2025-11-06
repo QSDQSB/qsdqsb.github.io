@@ -140,11 +140,11 @@
     }
   }
 
-  &:hover {
+  &:hover, &:focus-within {
     @include breakpoint($medium) {
       aspect-ratio: 3.3;
     }
-      text-decoration: none;
+    text-decoration: none;
     border-color: $border-color;
     box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
                 0 1px  6px  rgba(0, 0, 0, .20),
@@ -152,7 +152,7 @@
                 0 16px 16px rgba(0, 0, 0, .25), 
                 8px 32px 32px rgba(0, 0, 0, .35), 
                 8px 64px 64px rgba(0, 0, 0, .35); 
- 
+    
     transform: scale(1.03)
               translateY(-0.25em);
     .content h3 {
@@ -418,7 +418,7 @@
       animation-play-state: paused;
     }
   }
-  &:hover {
+  &:hover, &:focus-within {
     span {
       &::after {
         width: 60px;
@@ -569,7 +569,7 @@
                   0 4px 4px rgba(50, 50, 50, 0.25),
                   0 8px 8px rgba(50, 50, 50, 0.25);
       background: hsl(276, 5%, 15%); // linear-gradient(to right, hsl(280, 20%, 9%), hsl(278, 25%, 8%));
-      width: 80%;
+      width: max(80%, 20em);
       max-width: 40em;
       border: 1px solid hsl(38, 18%, 42%);
       position: relative;
@@ -578,14 +578,17 @@
       transition: $cubic-bezier-default;
       h1 {
         color: hsl(40, 26%, 68%); // hsl(40, 70%, 85%);
-        font-size: calc($type-size-2 * 1.1);
+        font-size: $type-size-2;
         font-family: $didot-family;
         border: none;
+        overflow-wrap: break-word;
+        hyphens: auto;
       }
       p {
         color: hsl(40, 26%, 68%); // hsl(40, 70%, 85%);
         padding-bottom: 1em;
         font-family: $cmu-serif-family;
+        font-size: $type-size-7;
         font-weight: 500;
         font-style: italic;
       }
@@ -615,7 +618,7 @@
         color: hsl(40, 65%, 85%);
         opacity: 0.75;
       }
-      &:hover {
+      &:hover, &:focus-within {
 
         box-shadow: $box-shadow-fancy;
         transform: scale(1.05);
