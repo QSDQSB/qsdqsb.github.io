@@ -557,6 +557,82 @@
   }
 }
 
+.word_card_container {
+  display: flex;
+  
+  margin: 0.5em auto;
+  padding: 1em 2em;
+  color: hsl(40, 26%, 68%);
+  .word_card {
+      display: block;
+      box-shadow: 0 1px 1px rgba(50, 50, 50, 0.25), 
+                  0 4px 4px rgba(50, 50, 50, 0.25),
+                  0 8px 8px rgba(50, 50, 50, 0.25);
+      background: hsl(276, 5%, 15%); // linear-gradient(to right, hsl(280, 20%, 9%), hsl(278, 25%, 8%));
+      width: 80%;
+      max-width: 40em;
+      border: 1px solid hsl(38, 18%, 42%);
+      position: relative;
+      padding: 1em 2.5em;
+      border-radius: 1em;
+      transition: $cubic-bezier-default;
+      h1 {
+        color: hsl(40, 26%, 68%); // hsl(40, 70%, 85%);
+        font-size: calc($type-size-2 * 1.1);
+        font-family: $didot-family;
+        border: none;
+      }
+      p {
+        color: hsl(40, 26%, 68%); // hsl(40, 70%, 85%);
+        padding-bottom: 1em;
+        font-family: $cmu-serif-family;
+        font-weight: 500;
+        font-style: italic;
+      }
+      p .to-emphasise {
+        position: relative;
+        &::after {
+          transition: inherit;
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 0;
+          height: 1px;
+          background-color: hsl(40, 90%, 90%);
+          transition: width $cubic-bezier-default;
+        }
+      }
+      &::before {
+        content: "Word that intrigues Mr.Q";
+        position: absolute;
+        bottom: 0.5em;
+        right: 1em;
+        font-size: $type-size-8;
+        font-weight: bold;
+        font-variant: small-caps;
+        font-family: $sans-serif-narrow;
+        color: hsl(40, 65%, 85%);
+        opacity: 0.75;
+      }
+      &:hover {
+
+        box-shadow: $box-shadow-fancy;
+        transform: scale(1.05);
+        border: 1px solid hsl(40, 40%, 80%);
+        h1 {
+          color: hsl(40, 70%, 85%);
+        }
+        p .to-emphasise {
+            color: hsl(40, 95%, 90%);
+            position: relative;
+            &::after {
+              width: 100%;
+          }
+        }
+      }
+    }
+}
 
 .floating_tarot_card {
   display: block;

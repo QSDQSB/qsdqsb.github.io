@@ -1,0 +1,9 @@
+{% assign word_lists = site.data.words %}
+{% assign sample_word = word_lists | sample %}
+
+<div class="word_card_container">
+    <div class="word_card" alt="📇 A word that might intrigue you - {{ sample_word.title }}">
+        <h1>{{ sample_word.title }}</h1>
+        <p>{{ sample_word.description }}</p>
+    </div>
+</div>

@@ -67,6 +67,10 @@ layout: default
       {% include post_pagination.html %}
     </div>
 
+    {% if page.intriguing-word %}
+      <h4 class="barlow"><i class="fa-solid fa-dice"></i> A Random Word</h4>
+      {% include word-card.html %}
+    {% endif %}
     {% if site.comments.provider and page.comments %}
       {% include comments.html %}
     {% endif %}
@@ -74,7 +78,7 @@ layout: default
     {% if page.id and page.related and site.related_posts.size > 0 %}
       <div class="page__related">
         {% if site.data.ui-text[site.locale].related_label %}
-          <h4 class="page__related-title">{{ site.data.ui-text[site.locale].related_label | default: "You May Also Enjoy" }}</h4>
+          <h4 class="page__related-title barlow"><i class="fa-solid fa-map-location-dot"></i> {{ site.data.ui-text[site.locale].related_label | default: "You May Also Enjoy" }}</h4>
         {% endif %}
         <div class="grid__wrapper">
           {% assign random_posts = site[page.collection] | sample: 4 %}
