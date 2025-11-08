@@ -6,8 +6,7 @@ table {
   margin-bottom: 1em;
   max-width: 90%;
   font-family: $global-font-family;
-  font-size: $type-size-7;
-  border-collapse: separate;
+  font-size: $type-size-8;
   border-spacing: 0;
   border: 1px solid $border-color;
   overflow: hidden;
@@ -17,6 +16,9 @@ table {
   }
   border-radius: $border-radius * 2;
   font-family: $barlow-font-family;
+  overflow-wrap: break-word; 
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
 
 thead {

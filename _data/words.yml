@@ -1,6 +1,6 @@
 - title: "Adabana"
   language: 'ja'
-  description: 'Flowers that <span class="to-emphasise">only blooms</span> but never bear fruits. (Japanese <span class="to-emphasise" lang="ja">徒花</span>).'
+  description: '(Jpn. “<span class="to-emphasise" lang="ja">徒花</span>”). Flowers that <span class="to-emphasise">only blooms</span> but never bear fruits.'
 
 - title: "Pluviophile"
   description: 'A person who finds joy, <span class="to-emphasise">peace</span>, or comfort during <span class="to-emphasise">rainy</span> days. From Latin pluvia meaning rain, and the Greek suffix -phile meaning love.'
@@ -11,4 +11,19 @@
 
 - title: "Lebensmüdigkeit"
   language: 'de'
-  description: 'A state of deep <span class="to-emphasise">existential exhaustion</span> in which one has lost the desire to continue living or striving. [German] weariness of life.'
+  description: '(De. “weariness of life”). A state of deep <span class="to-emphasise">existential exhaustion</span> in which one has lost the desire to continue living or striving.'
+
+- title: "Thanatos"
+  description: '(in Freudian theory) The primordial <span class="to-emphasise">death instinct</span> that impels the soul towards stillness and <span class="to-emphasise">oblivion</span>.'
+
+- title: "Untergangssehnsucht"
+  language: 'de'
+  description: "A yearning for one's own downfall or <span class='to-emphasise'>demise</span>. The fascination with <span class='to-emphasise'>collapse</span> as both destiny and release."
+
+- title: "Ricercare"
+  language: 'it'
+  description: '(It. “to search out, <span class="to-emphasise">to seek</span>”). A Renaissance instrumental composition where a single theme is repeated and developed to different melodies through <span class="to-emphasise">imitation</span>. The precursor to the fugue.'
+
+- title: "flâner"
+  language: 'fr'
+  description: '(Fr.) To amble. The act of taking a stroll, often in a city, without any destination or purpose. From Old Norse word flana, “to wander aimlessly”.'
