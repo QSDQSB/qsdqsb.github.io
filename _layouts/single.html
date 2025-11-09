@@ -68,8 +68,11 @@ layout: default
     </div>
 
     {% if page.intriguing-word %}
-      <h4 class="barlow" style="color: #c3b498;"><i class="fa-solid fa-dice"></i> A Random Word</h4>
+      <hr>
+      <div class="page__intriguing-word-wrapper">
+        <h4 class="barlow"><i class="fa-solid fa-dice"></i> A Random Word</h4>
       {% include word-card.html %}
+      </div>
     {% endif %}
     {% if site.comments.provider and page.comments %}
       {% include comments.html %}

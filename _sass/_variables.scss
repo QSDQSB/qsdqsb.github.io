@@ -188,7 +188,7 @@ $linear-gradient-megatron: linear-gradient(to right, #c6ffdd, #fbd786, #f7797d);
 $linear-gradient-peach-pink: linear-gradient(49deg, rgba(255, 255, 196, 1.000) 0%, rgba(255, 97, 100, 1.000) 55%, rgb(198, 74, 68) 100%);
 $linear-gradient-sunset-orange-blue: linear-gradient(90deg, rgba(164, 116, 81, 1.000) 0.000%, rgba(156, 152, 129, 1.000) 16.667%, rgba(115, 160, 157, 1.000) 33.333%, rgba(59, 137, 154, 1.000) 50.000%, rgba(9, 91, 121, 1.000) 66.667%, rgba(0, 40, 71, 1.000) 83.333%, rgba(0, 1, 22, 1.000) 100.000%);
 $conic-gradient-blue: conic-gradient(from 210deg, rgba(197, 187, 184, 1.000) 0.000deg, rgba(197, 187, 184, 1.000) 24.000deg, rgba(184, 181, 184, 1.000) 24.000deg, rgba(184, 181, 184, 1.000) 48.000deg, rgba(169, 175, 183, 1.000) 48.000deg, rgba(169, 175, 183, 1.000) 72.000deg, rgba(154, 168, 181, 1.000) 72.000deg, rgba(154, 168, 181, 1.000) 96.000deg, rgba(139, 161, 179, 1.000) 96.000deg, rgba(139, 161, 179, 1.000) 120.000deg, rgba(125, 152, 175, 1.000) 120.000deg, rgba(125, 152, 175, 1.000) 144.000deg, rgba(112, 144, 171, 1.000) 144.000deg, rgba(112, 144, 171, 1.000) 168.000deg, rgba(101, 135, 166, 1.000) 168.000deg, rgba(101, 135, 166, 1.000) 192.000deg, rgba(92, 126, 161, 1.000) 192.000deg, rgba(92, 126, 161, 1.000) 216.000deg, rgba(85, 117, 155, 1.000) 216.000deg, rgba(85, 117, 155, 1.000) 240.000deg, rgba(81, 108, 148, 1.000) 240.000deg, rgba(81, 108, 148, 1.000) 264.000deg, rgba(79, 99, 141, 1.000) 264.000deg, rgba(79, 99, 141, 1.000) 288.000deg, rgba(80, 90, 133, 1.000) 288.000deg, rgba(80, 90, 133, 1.000) 312.000deg, rgba(84, 83, 125, 1.000) 312.000deg, rgba(84, 83, 125, 1.000) 336.000deg, rgba(91, 75, 116, 1.000) 336.000deg 360.000deg);
-
+$linear-gradient-titanium: linear-gradient(73deg, #283048, rgb(116, 130, 135));
 @mixin gradient-background($gradient-background) {
    background: $gradient-background;
 }
@@ -236,4 +236,37 @@ $conic-gradient-blue: conic-gradient(from 210deg, rgba(197, 187, 184, 1.000) 0.0
 }
 .background-color-sunset-orange-blue {
    @include gradient-background($linear-gradient-sunset-orange-blue);
+}
+.background-color-titanium {
+   @include gradient-background($linear-gradient-titanium);
+}
+
+@property --linear-gradient-animation-degree {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 49deg;
+}
+
+.background-color-peach-pink-animated {
+   transition: $cubic-bezier-default-05s;
+   background: linear-gradient(var(--linear-gradient-animation-degree), rgba(255, 255, 196, 1.000) 0%, rgba(255, 97, 100, 1.000) 55%, rgb(198, 74, 68) 100%);
+   animation: infinite-gradient-animation 15s ease-in-out infinite;
+}
+
+@keyframes infinite-gradient-animation {
+   0% {
+      --linear-gradient-animation-degree: 49deg;
+   }
+   25% {
+      --linear-gradient-animation-degree: 159deg;
+   }
+   50% {
+      --linear-gradient-animation-degree: 229deg;
+   }
+   75% {
+      --linear-gradient-animation-degree: 319deg;
+   }
+   100% {
+      --linear-gradient-animation-degree: 409deg; // 49deg + 360deg to complete the cycle
+   }
 }

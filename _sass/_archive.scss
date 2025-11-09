@@ -557,19 +557,29 @@
   }
 }
 
+
+.page__intriguing-word-wrapper {
+  display: block;
+  margin: 1em auto;
+  color: hsl(40, 26%, 68%);
+
+  text-align: center;
+}
+.page__intriguing-word-wrapper h4 {
+  color: #c3b498;
+}
+
 .word_card_container {
-  display: flex;
-  
   margin: 0.5em auto;
   padding: 1em 2em;
-  color: hsl(40, 26%, 68%);
   .word_card {
-      display: block;
+      display: inline-block;
       box-shadow: 0 1px 1px rgba(7,7,7, 0.25), 
                   0 10px 10px rgba(12,12,12, 0.5),
                   0 1px 6px rgba(0, 0, 0, 0.3);
       background: hsl(276, 5%, 15%); // linear-gradient(to right, hsl(280, 20%, 9%), hsl(278, 25%, 8%));
       width: max(80%, 20em);
+      margin: 0 auto;
       max-width: 40em;
       border: 1px solid 	#7e7058;
       position: relative;
@@ -607,7 +617,7 @@
         }
       }
       &::before {
-        content: "Word that intrigues Mr.Q";
+        content: "Word that intrigues QSD";
         position: absolute;
         bottom: 0.5em;
         right: 1em;
