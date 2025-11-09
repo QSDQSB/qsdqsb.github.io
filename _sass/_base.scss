@@ -34,11 +34,11 @@ a {
 }
 
 
-#glassmorphism-card-effect {
+.glassmorphism-card-effect {
 
   background-color: rgba(255, 255, 255, .05);
-  backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
   border-radius: $border-radius;
 }
 

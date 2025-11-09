@@ -74,6 +74,7 @@ body {
     margin: 0.5em 0em 0em 0em;
     padding: 0.5em;
     border-radius: 0.5em;
+    -webkit-overflow-scrolling: touch;
     @include breakpoint($large) {
       padding: 1.5em 2em 2em 2em;
       border-radius: 1.5em;
