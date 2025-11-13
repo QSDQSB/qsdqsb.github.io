@@ -1,6 +1,6 @@
 - title: "Adabana"
   language: 'ja'
-  description: '(Jpn. “<span class="to-emphasise" lang="ja">徒花</span>”). Flowers that <span class="to-emphasise">only blooms</span> but never bear fruits.'
+  description: '(Jpn.) — “<span class="to-emphasise" lang="ja">徒花</span>”. Flowers that <span class="to-emphasise">only blooms</span> but never bear fruits.'
 
 - title: "Pluviophile"
   description: 'A person who finds joy, <span class="to-emphasise">peace</span>, or comfort during <span class="to-emphasise">rainy</span> days. From Latin pluvia meaning rain, and the Greek suffix -phile meaning love.'
@@ -11,7 +11,7 @@
 
 - title: "Lebensmüdigkeit"
   language: 'de'
-  description: '(De. “weariness of life”). A state of deep <span class="to-emphasise">existential exhaustion</span> in which one has lost the desire to continue living or striving.'
+  description: '(De.) — weariness of life. A state of deep <span class="to-emphasise">existential exhaustion</span> in which one has lost the desire to continue living or striving.'
 
 - title: "Thanatos"
   description: '(in Freudian theory) The primordial <span class="to-emphasise">death instinct</span> that impels the soul towards stillness and <span class="to-emphasise">oblivion</span>.'
@@ -22,12 +22,20 @@
 
 - title: "Ricercare"
   language: 'it'
-  description: '(It. “to search out, <span class="to-emphasise">to seek</span>”). A Renaissance instrumental composition where a single theme is repeated and developed to different melodies through <span class="to-emphasise">imitation</span>. The precursor to the fugue.'
+  description: '(It.) — to search out, <span class="to-emphasise">to seek</span>”). A Renaissance instrumental composition where a single theme is repeated and developed to different melodies through <span class="to-emphasise">imitation</span>. The precursor to the fugue.'
 
 - title: "flâner"
   language: 'fr'
-  description: '(Fr.) To amble. The act of taking a stroll, often in a city, without any destination or purpose. From Old Norse word flana, “to wander aimlessly”.'
+  description: '(Fr.) — to amble. The act of taking a stroll, often in a city, without any destination or purpose. From Old Norse word flana, “to wander aimlessly”.'
 
 - title: "Sonder"
   language: 'en'
   description: 'the realization that every individual you encounter has a life as <span class="to-emphasise">vivid and complex</span> as your own, filled with their own ambitions, routines, and worries. Coined in 2012 by U.S. writer John Koenig.'
+
+- title: "Alea iacta est."
+  language: 'la'
+  description: '(Latin) — the die has been cast. Indicate the moment of <span class="to-emphasise">irrevocable</span> decision when <span class="to-emphasise">fate</span> is set in motion; by Julius Caesar as he led his army across the Rubicon river, and thereby beginning the civil war.'
+
+- title: "Verschlimmbessern"
+  language: 'de'
+  description: '(De.) — to make something worse while trying to improve it. An effort at correction that <span class="to-emphasise">unintentionally</span> deepens the flaw.'
