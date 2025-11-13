@@ -59,108 +59,114 @@
    ========================================================================== */
 
 .pagination {
-
-  @include full();
-  @include clearfix();
-  margin-top: 1em;
-  margin-left: auto;
-  margin-right: auto;
-  width: 80%;
-  align-items: center;
-  ul {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-    font-family: $sans-serif;
-  }
-
-  li {
-    display: block;
-    padding: 0 1em;
-    float: left;
-    margin-left: -1px;
-    a {
-      margin-bottom: 0.25em;
-      padding: 0.5em 1em;
-      font-family: $sans-serif;
-      font-size: 1.2em;
-      font-weight: bold;
-      line-height: 1.5;
-      text-align: center;
-      text-decoration: none;
-      color: mix(#fff, $gray, 25%);
-      border-radius: 0;
-
-      &:hover {
-        color: $link-color-hover;
-      }
-
-      &.current {
-        color: #fff;
-        background: $code-background-color;
-      }
-
-      &.disabled {
-        color: mix(#fff, $gray, 75%);
-        background: $gray;
-        pointer-events: none;
-        cursor: not-allowed;
-      }
-    }
-
-    &:first-child {
-      margin-left: 0;
-
-      a {
-        border-top-left-radius: $border-radius;
-        border-bottom-left-radius: $border-radius;
-      }
-    }
-
-    &:last-child {
-      a {
-        border-top-right-radius: $border-radius;
-        border-bottom-right-radius: $border-radius;
-      }
-    }
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 1rem;
+  flex-wrap: wrap;
+  a {
+    text-decoration: none;
+    color: inherit;
   }
 
   /* next/previous buttons */
   &--pager {
-    transition: all 0.5s cubic-bezier(0.215, 0.610, 0.355, 1);
-    padding: 1em 1em;
-    float: left;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 1em 1.25em;
+    max-width: 45%;
+    flex: 1;
+    min-width: 20%;
+    transition: $cubic-bezier-default-05s;
     font-family: $tag-font-family;
     font-size: $type-size-5;
 
-    color: lightgray;
-    border-radius: $border-radius;
-    &:hover {
-      background-color: $linkedin-color;
+    color: whitesmoke;
+    &:hover, &:focus {
+      .title {
+        background: hsl(278, 6%, 18%);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        opacity: 1;
+      }
+      color: $text-color;
+      scale: 1.05;
       text-decoration: none;
     }
-
-    &.disabled {
-      color: darkgray;
-      pointer-events: none;
-      cursor: not-allowed;
+    &--left:hover:before {
+      opacity: 1;
+      transform: translateX(-3px);
     }
-    &.disabled:hover {
-      color: darkgray;
+    &--right:hover:after {
+      opacity: 1;
+      transform: translateX(3px);
+    }
+    .title {
+      border: 1px solid $border-color;
+      border-radius: 1em;
+      background: hsl(278, 3%, 14%);
+      padding: 0.5em 1em;
+      border-radius: 1em;
+      font-weight: 500;
+      font-family: $barlow-font-family;
+      font-variant: small-caps;
+      letter-spacing: 0.05em;
+      font-size: $type-size-8;
+      opacity: 0.6;
+    }
+
+    &--left {
+      justify-content: flex-start;
+      text-align: left;
+      flex-direction: row;
+    }
+    &--right {
+      justify-content: flex-end;
+      text-align: right;
+      flex-direction: row;
     }
   }
 }
 
-.page__content + .pagination,
-.page__meta + .pagination,
-.page__share + .pagination,
-.page__comments + .pagination {
-  margin-top: 1em;
+.pagination--pager--left::before {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background: currentColor;
+  mask: url("/assets/css/images/chevron-left.svg") no-repeat center;
+  -webkit-mask: url("/assets/css/images/chevron-left.svg") no-repeat center;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  margin-right: 0.2em;
+  opacity: 0.7;
 }
 
-.page__content + .pagination,
-.page__comments + .pagination {
-  border-top: 1px solid $border-color;
+/* Add icon background — right pager */
+.pagination--pager--right::after {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background: currentColor;
+  mask: url("/assets/css/images/chevron-right.svg") no-repeat center;
+  -webkit-mask: url("/assets/css/images/chevron-right.svg") no-repeat center;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  margin-left: 0.2em;
+  opacity: 0.7;
+}
+
+@media (max-width: 640px) {
+  .pagination {
+    flex-direction: column;
+  }
+
+  .pagination--pager {
+    max-width: 100%;
+    justify-content: space-between;
+  }
 }
 /*
    Priority plus navigation
@@ -429,11 +435,11 @@
 }
 
 
-.pagination--pager {
-  text-align: center;
-  text-decoration: none;
-  padding: 0 2em;
-  &:hover {
-    transform: none;
-  }
-}
+// .pagination--pager {
+//   text-align: center;
+//   text-decoration: none;
+//   padding: 0 2em;
+//   &:hover {
+//     transform: none;
+//   }
+// }

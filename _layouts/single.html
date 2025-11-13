@@ -56,22 +56,19 @@ layout: default
         {% endif %}
         {{ content }}
         {% if page.link %}<div><a href="{{ page.link }}" class="btn btn--primary">{{ site.data.ui-text[site.locale].ext_link_label | default: "Direct Link" }}</a></div>{% endif %}
-      </section>
-
+      </section>      
+    </div>
+      <hr>
       <footer class="page__meta">
         {% include page__taxonomy.html %}
+        {% include post_pagination.html %}
+        {% if page.share %}{% include social-share.html %}{% endif %}
       </footer>
-
-      {% if page.share %}{% include social-share.html %}{% endif %}
-
-      {% include post_pagination.html %}
-    </div>
-
     {% if page.intriguing-word %}
       <hr>
       <div class="page__intriguing-word-wrapper">
         <h4 class="barlow"><i class="fa-solid fa-dice"></i> A Random Word</h4>
-      {% include word-card.html %}
+        {% include word-card.html %}
       </div>
     {% endif %}
     {% if site.comments.provider and page.comments %}
@@ -84,7 +81,14 @@ layout: default
           <h4 class="page__related-title barlow"><i class="fa-solid fa-map-location-dot"></i> {{ site.data.ui-text[site.locale].related_label | default: "You Might Also Enjoy" }}</h4>
         {% endif %}
         <div class="grid__wrapper">
-          {% assign random_posts = site[page.collection] | sample: 4 %}
+            {% assign random_posts = site[page.collection] | where_exp: "post", "post.path != page.path" %}
+            {% if page.previous %}
+              {% assign random_posts = random_posts | where_exp: "post", "post.path != page.previous.path" %}
+            {% endif %}
+            {% if page.next %}
+              {% assign random_posts = random_posts | where_exp: "post", "post.path != page.next.path" %}
+            {% endif %}
+            {% assign random_posts = random_posts | sample: 4 %}
           {% for post in random_posts %}
             {% include archive-single.html type="grid" %}
           {% endfor %}

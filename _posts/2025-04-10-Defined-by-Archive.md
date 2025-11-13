@@ -47,7 +47,3 @@ Can you guess the language of code block renderer based on the colour highlight?
 
 <p>In the echo of all unwritten words,<br>QSD, QSB, and the once beloved QXD</p>
 {: .p_right_thin}
-
-
-----
-
