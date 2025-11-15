@@ -47,6 +47,13 @@ header:
 <br><i><span style="color: #FCFCFC; font-variant: small-caps;">Attempt #8</span> von 27.10.2025</i>
 </a>
 
+## What's New!
+{: .barlow}
+
+_"<span lang="zh">有哪些文件夹刚刚被新建了呢？</span>"_
+
+{% include new_release.html %}
+
 ## A Bizzard Self-Intro...?
 
 | 🌃<span lang="zh">第五届熬夜锦标赛全球总亚军</span> | 😅<span lang="zh">流汗黄豆常在心间</span> | 🐟<span lang="zh">摸鱼王</span> | ⌚️<span lang="zh">时间管理废物</span> | 🚦<span lang="zh">选恐晚期</span> | 🤤<span lang="zh">热衷无所事事</span> |
@@ -80,10 +87,8 @@ header:
 
 <div class="notice--pinky background-color-titanium">‼️Note every picture in this website is shot by QSD himself, or his beloved friends.</div>
 
-## What's New!
-_"<span lang="zh">有哪些文件夹刚刚被新建了呢？</span>"_
-
 ## What else should we do before publishing this page?
+{: .barlow}
 
 Test `latex`: 
 $$\small\forall x \in \mathbb{R}, \exists \,\varepsilon >0 \,\,s.t. $$
