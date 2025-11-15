@@ -1,0 +1,40 @@
+{% include base_path %}
+<link rel="stylesheet" href="{{ '/assets/css/swiper-bundle.min.css' | relative_url }}" />
+<body>
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+<div class="new-release-slider-container">
+  <div class="swiper new-release-swiper">
+    <div class="swiper-wrapper">
+      {% for release in site.data.new-release %}
+      <div class="swiper-slide">
+        <a href="{{ release.url }}" class="release-card" target="_blank">
+          <div class="release-card__image" style="background-image: url('{{ release.background_image }}');"></div>
+          <div class="release-card__content">
+            <h3 class="release-card__title">{{ release.title }}</h3>
+            <p class="release-card__description">{{ release.description }}</p>
+            <div class="release-card__icon">
+              {% assign icon_class = 'fa-solid fa-cable-car' %}
+              {% if release.type == 'post' %}
+                {% assign icon_class = 'fa-regular fa-newspaper' %}
+              {% endif %}
+              <i class="{{ icon_class }}"></i>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Optional navigation -->
+    <!-- <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div> -->
+  </div>
+</div>
+
+  <!-- Swiper JS (core library) -->
+  <script src="{{ '/assets/js/swiper-bundle.min.js' | relative_url }}"></script>
+
+  <!-- Your custom Swiper config -->
+  <script src="{{ '/assets/js/slider.js' | relative_url }}"></script>
+</body>

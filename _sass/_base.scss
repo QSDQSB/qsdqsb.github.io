@@ -159,31 +159,6 @@ blockquote {
 }
 
 
-h3::before {  
-  transform: scaleX(0);
-  transform-origin: bottom right;
-}
-​
-h3:hover::before {
-  transform: scaleX(1);
-  transform-origin: bottom left;
-}
-​
-h3::before {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 0; right: 0; bottom: 0; left: 0;
-  inset: 0 0 0 0;
-  background: rgb(108, 206, 255);
-  z-index: -1;
-  transition: transform .3s ease;
-}
-​
-h3 {
-  position: relative;
-}
-
 @media (orientation: landscape) {
   body {
     grid-auto-flow: column;
@@ -387,5 +362,105 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
 }
 
 
+// slider
 
- 
+.new-release-slider-container {
+  width: 95%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.release-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 95%;
+  aspect-ratio: 2 / 3;
+  border-radius: 1rem;
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2),
+              0 6px 6px rgba(0, 0, 0, 0.1);
+  color: inherit;
+  background: $code-background-color;
+  position: relative;
+  transition: $cubic-bezier-default-05s;
+  &:hover, &:focus {
+    text-decoration: none;
+    color: inherit;
+    transform: translateY(-4px);
+    scale: 1.05;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.5),
+      0 1px 4px rgba(0, 0, 0, 0.3),
+      0 6px 6px rgba(0, 0, 0, 0.5);
+    .release-card__content .release-card__icon {
+      opacity: 1;
+    }
+  }
+}
+
+.release-card__image {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.75);
+  transition: filter 0.3s ease;
+}
+
+.release-card:hover .release-card__image {
+  filter: brightness(0.9);
+}
+
+.release-card__content {
+  position: relative;
+  z-index: 2;
+  background: rgba(201, 201, 201, 0.05);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to top, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
+  padding: 1rem;
+  transition: inherit;
+  h3 {
+    text-shadow: 2px 2px 4px rgba(12, 12, 12, 0.1),
+                 4px 4px 8px rgba(12, 12, 12, 0.15);
+  }
+}
+
+.release-card__title {
+  font-size: $type-size-4;
+  margin-bottom: 0.4rem;
+  color: $text-color;
+}
+
+.release-card__description {
+  font-size: $type-size-8;
+  color: $text-color;
+  line-height: 1.4;
+}
+
+.release-card__icon {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  font-size: $type-size-8;
+  color: $text-color;
+  opacity: 0;
+  transition: inherit;
+}
+
+.swiper-wrapper {
+  padding: 1rem;
+}
+// .swiper-button-next,
+// .swiper-button-prev {
+//   color: #fff;
+//   transition: opacity 0.3s;
+// }
+
+// .swiper-button-next:hover,
+// .swiper-button-prev:hover {
+//   opacity: 0.7;
+// }
