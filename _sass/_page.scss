@@ -6,13 +6,14 @@
 #main {
   display: flex;
   @include clearfix;
-  margin-top: 1em;
+  margin-top: 1rem;
   margin-left: 0;
   max-width: 100%;
-  padding-left: 1em;
-  padding-right: 1em;
+  padding-left: 1rem;
+  padding-right: 1rem;
   animation: intro 0.3s both;
   animation-delay: 0.15s;
+  container-type: inline-size;
 }
 
 .article-image {
@@ -564,8 +565,8 @@ tradingview-widget-container {
    ========================================================================== */
 
 .page__related {
-  margin-top: 2em;
-  padding-top: 1em;
+  margin-top: 2rem;
+  padding-top: 1rem;
   border-top: 1px solid $border-color;
   @include clearfix();
   float: left;
@@ -578,7 +579,7 @@ tradingview-widget-container {
 }
 
 .page__related-title {
-  margin-bottom: 10px;
+  margin-bottom: 0.3rem;
   font-size: $type-size-6;
   text-transform: uppercase;
 }

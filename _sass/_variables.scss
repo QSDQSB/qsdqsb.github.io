@@ -6,7 +6,7 @@
    Typography
    ========================================================================== */
 
-$doc-font-size              : 18;
+$doc-font-size              : 16;
 
 /* paragraph indention */
 $paragraph-indent           : false; // true, false (default)
@@ -42,7 +42,7 @@ $type-size-4                : 1.3em;   // ~20px
 $type-size-5                : 1.2em;      // ~16px
 $type-size-6                : 1.1em;   // ~12px
 $type-size-7                : 1.0em; // ~11px
-$type-size-8                : 0.90em;  // ~10px
+$type-size-8                : 0.9em;  // ~10px
 $type-code-size             : 0.85em;
 
 /*
@@ -123,11 +123,11 @@ $large                      : 1200px;
 $x-large                    : 1800px;
 */
 
-$small: 600px !default;
-$medium: 768px !default;
-$medium-wide: 900px !default;
-$large: 1024px !default;
-$x-large: 1280px !default;
+$small: 37.5rem !default;        // 600px
+$medium: 48rem !default;         // 768px
+$medium-wide: 56.25rem !default; // 900px
+$large: 64rem !default;          // 1024px
+$x-large: 80rem !default;        // 1280px
 $max-width: $x-large !default;
 
 /*
@@ -135,19 +135,19 @@ $max-width: $x-large !default;
    ========================================================================== */
 
 
-$right-sidebar-width-narrow: 180px !default;
-$right-sidebar-width: 280px !default;
-$right-sidebar-width-wide: 380px !default;
+$right-sidebar-width-narrow: 11.25rem !default;
+$right-sidebar-width: 15rem !default;
+$right-sidebar-width-wide: 20rem !default;
 
 
 $susy: (
   columns: 12,
-  column-width: 120px,
+  column-width: 1rem,
   gutters: 1/4,
   math: fluid,
   output: float,
   gutter-position: after,
-  container: $large,
+  container: 80rem,
   global-box-sizing: border-box,
   // debug: (
   //   image: show,

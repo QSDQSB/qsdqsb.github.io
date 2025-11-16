@@ -6,7 +6,9 @@
 <div class="new-release-slider-container">
   <div class="swiper new-release-swiper">
     <div class="swiper-wrapper">
-      {% for release in site.data.new-release %}
+      {% assign new-releases = site.data.new-release %}
+      {% assign new-releases = new-releases | sort: 'title' | reverse %}
+      {% for release in new-releases %}
       <div class="swiper-slide">
         <a href="{{ release.url }}" class="release-card" target="_blank">
           <div class="release-card__image" style="background-image: url('{{ release.background_image }}');"></div>
@@ -14,11 +16,17 @@
             <h3 class="release-card__title">{{ release.title }}</h3>
             <p class="release-card__description">{{ release.description }}</p>
             <div class="release-card__icon">
+              {% assign tag = release.tag | default: '' %}
+              {% if tag == 'in-progress' %}
+                <i class="fa-solid fa-person-digging" title="Still in progress!"></i>
+              {% endif %}
               {% assign icon_class = 'fa-solid fa-cable-car' %}
+              {% assign icon_title = 'voyage' %}
               {% if release.type == 'post' %}
                 {% assign icon_class = 'fa-regular fa-newspaper' %}
+                {% assign icon_title = 'post' %}
               {% endif %}
-              <i class="{{ icon_class }}"></i>
+              <i class="{{ icon_class }}" title="{{ icon_title }}"></i>
             </div>
           </div>
         </a>
