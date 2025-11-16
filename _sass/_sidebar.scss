@@ -6,20 +6,32 @@
    Default
    ========================================================================== */
 
+@container (max-width: $large) {
+  .sidebar {
+    display: none;
+    visibility: hidden;
+  }
+}
+@container (max-width: 1080px) {
+  .sidebar {
+    display: none;
+    visibility: hidden;
+  }
+}
 .sidebar {
   width: auto;
-  min-width: 0;
   align-self: flex-start;
-  display: inline-block;
   -webkit-transform: translate3d(0, 0 , 0);
           transform: translate3d(0, 0 , 0);
   border-radius: $border-radius*2;
   @include clearfix();
-  margin-bottom: 1em;
+  margin-bottom: 1rem;
+  margin-right: 0;
 
   @include breakpoint($large) {
     @include span(2 of 12);
-
+    padding-right: 0;
+    // min-width: 200px;
     opacity: 0.8;
     transition: $cubic-bezier-default;
     &:hover {
@@ -32,18 +44,13 @@
                 8px 32px 32px rgba(0, 0, 0, .35), 
                 8px 64px 64px rgba(0, 0, 0, .35); 
  
-     transform: scale(1.05)
+     transform: scale(1.05);
     }
     overflow: hidden;
   }
 
-
-  @include breakpoint($x-large) {
-    padding-right: 0;
-  }
-
   h2, h3, h4, h5, h6 {
-    margin-bottom: 0;
+    margin-bottom: 0.25rem;
     font-family: $sans-serif-narrow;
   }
 
@@ -76,14 +83,14 @@
     right: 0;
     width: $right-sidebar-width-narrow;
     margin-right: -1 * $right-sidebar-width-narrow;
-    padding-left: 2em;
+    padding-left: 1rem;
     z-index: 10;
 
     &.sticky {
       @include clearfix();
       position: -webkit-sticky;
       position: sticky;
-      top: 2em;
+      top: 2rem;
       float: right;
       .toc {
         .toc__menu {
