@@ -11,9 +11,9 @@
       {% for release in new-releases %}
       <div class="swiper-slide">
         <a href="{{ release.url }}" class="release-card" target="_blank">
-          <div class="release-card__image" style="background-image: url('{{ release.background_image }}');"></div>
+          <div class="release-card__image" style="background-image: url('{{ release.background_image }}');" loading="lazy"></div>
           <div class="release-card__content">
-            <h3 class="release-card__title">{{ release.title }}</h3>
+            <h3 class="release-card__title" data-swiper-parallax-x="-7" data-swiper-parallax-duration="1000">{{ release.title }}</h3>
             <p class="release-card__description">{{ release.description }}</p>
             <div class="release-card__icon">
               {% assign tag = release.tag | default: '' %}

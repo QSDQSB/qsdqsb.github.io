@@ -8,6 +8,7 @@
         <span class="title">{{ page.previous.title | markdownify }}</span>
       </a>
     {% else %}
+      <a></a>
       <!-- <a href="#" class="pagination--pager disabled">{{ site.data.ui-text[site.locale].pagination_previous | default: "Previous" }}</a> -->
     {% endif %}
     {% if page.next %}
@@ -16,6 +17,8 @@
         <span class="title">{{ page.next.title | markdownify }}</span>
       </a>
     {% else %}
+      <a></a>
+      <!-- <a href="#" class="pagination--pager disabled">{{ site.data.ui-text[site.locale].pagination_next | default: "Next" }}</a> -->
     {% endif %}
   </nav>
 {% endif %}

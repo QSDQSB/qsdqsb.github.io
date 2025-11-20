@@ -20,8 +20,8 @@ header:
 # I. The Fragility
 {: .didot }
 
-What we call the self is but a scattering of moments - most of which dissolve quietly across time.
-{: .didot }
+*What we call the self is but a scattering of moments, most of which dissolve quietly across time.*
+{: .cmu-serif }
 
 Memory, for all its warmth, deceives. It smooths the edges, reorders narratives, cloaks regret in sentiment. The mind hardly retrieves experience as it was; it reassembles from fragments, softening with our yearning, and distorting with our fears.
 
