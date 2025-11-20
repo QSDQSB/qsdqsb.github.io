@@ -14,7 +14,7 @@
   description: '(De.) — weariness of life. A state of deep <span class="to-emphasise">existential exhaustion</span> in which one has lost the desire to continue living or striving.'
 
 - title: "Thanatos"
-  description: '(in Freudian theory) The primordial <span class="to-emphasise">death instinct</span> that impels the soul towards stillness and <span class="to-emphasise">oblivion</span>.'
+  description: '(Freudian Theory) The primordial <span class="to-emphasise">death instinct</span> that impels the soul towards stillness and <span class="to-emphasise">oblivion</span>.'
 
 - title: "Untergangssehnsucht"
   language: 'de'
@@ -22,7 +22,7 @@
 
 - title: "Ricercare"
   language: 'it'
-  description: '(It.) — to search out, <span class="to-emphasise">to seek</span>”). A Renaissance instrumental composition where a single theme is repeated and developed to different melodies through <span class="to-emphasise">imitation</span>. The precursor to the fugue.'
+  description: '(It.) — to search out, <span class="to-emphasise">to seek</span>. A Renaissance instrumental composition where a single theme is repeated and developed to different melodies through <span class="to-emphasise">imitation</span>. The precursor to the fugue.'
 
 - title: "flâner"
   language: 'fr'
@@ -38,4 +38,17 @@
 
 - title: "Verschlimmbessern"
   language: 'de'
-  description: '(De.) — to make something worse while trying to improve it. An effort at correction that <span class="to-emphasise">unintentionally</span> deepens the flaw.'
+  description: 'To make something worse while trying to improve it. An effort at correction that <span class="to-emphasise">unintentionally</span> deepens the flaw.'
+
+- title: "Sublunary"
+  description: 'Beneath the moon; things pertaining to the <span class="to-emphasise">transient</span> mortal realm, as opposed to the permanence of the heavens.'
+
+- title: "Trompe l'œil"
+  language: 'fr'
+  description: "(Fr.) — literally “deceive the eye”. An art <span class='to-emphasise'>illusion</span> that tricks the eye into perceiving a painting as a three-dimensional object; (Figurative) Something that <span class='to-emphasise'>misleads</span> the senses or the mind by presenting a <span class='to-emphasise'>convincing</span> yet false appearance of reality."
+
+- title: "Palimpsest"
+  description: '(From Greek) παλίμψηστος — scraped again. A manuscript whose earlier text has been erased and <span class="to-emphasise">overwritten</span>; (Figurative) Things layered with traces of the past, where earlier meanings or histories <span class="to-emphasise">persist</span> beneath the surface of the present.'
+
+- title: "Chimera"
+  description: '(Greek Mythology) Χίμαιρα - a mythical creature made up of lion, goat, and serpent; (Figurative) A fanciful illusion that is wildly imaginative but ultimately unattainable or impossible.'

@@ -9,8 +9,7 @@ const swiper = new Swiper('.new-release-swiper', {
     centeredSlides: true,
     loop: true,
     grabCursor: true,
-  
-  
+    speed: 1000,
     autoplay: {
       delay: 5000,
       disableOnInteraction: false,
@@ -21,7 +20,13 @@ const swiper = new Swiper('.new-release-swiper', {
     preventInteractionOnTransition: true,
     observer: true,
     observeParents: true,
-
+    keyboard: {
+      enabled: true,
+      onlyInViewport: true,
+    },
+    parallax: {
+      enabled: true,
+    },
     navigation: {
       nextEl: '.swiper-button-next',
       prevEl: '.swiper-button-prev',

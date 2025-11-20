@@ -405,12 +405,12 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: brightness(0.75);
+  filter: brightness(0.7);
   transition: filter 0.3s ease;
 }
 
 .release-card:hover .release-card__image {
-  filter: brightness(0.9);
+  filter: brightness(0.95);
 }
 
 .release-card__content {
@@ -422,10 +422,11 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
   mask-image: linear-gradient(to top, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
   -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
   padding: 0.25rem;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.75rem;
   line-height: 1;
   @include breakpoint($large) {
     padding: 1rem;
+    padding-bottom: 1.25rem;
   }
   transition: inherit;
   h3 {
