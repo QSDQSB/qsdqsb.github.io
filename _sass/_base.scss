@@ -381,7 +381,8 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
   overflow: hidden;
   text-decoration: none;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2),
-              0 6px 6px rgba(0, 0, 0, 0.1);
+              0 6px 6px rgba(0, 0, 0, 0.1),
+              0 8px 28px rgba(0,0,0,0.24);
   color: inherit;
   background: $code-background-color;
   position: relative;
@@ -395,9 +396,16 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
   scale: 1.05;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.5),
     0 4px 8px rgba(0, 0, 0, 0.3),
-    0 6px 6px rgba(0, 0, 0, 0.5);
+    0 6px 6px rgba(0, 0, 0, 0.5),
+    0 8px 28px rgba(0,0,0,0.24);
+    
   .release-card__content .release-card__icon {
     opacity: 1;
+  }
+  .release-card__content .release-card__title {
+    h3 {
+      color: whitesmoke;
+    }
   }
 }
 .release-card__image {
@@ -405,8 +413,10 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: brightness(0.7);
+  filter: brightness(0.72);
   transition: filter 0.3s ease;
+  box-shadow: inset 0 0 60px rgba(0,0,0,0.35),
+              inset 0 0 20px rgba(0,0,0,0.15);
 }
 
 .release-card:hover .release-card__image {
@@ -438,7 +448,7 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
 .release-card__title {
   font-size: $type-code-size;
   @include breakpoint($medium) {
-    font-size: $type-size-8;
+    font-size: $type-code-size;
   }
   @include breakpoint($large) {
     font-size: $type-size-7;

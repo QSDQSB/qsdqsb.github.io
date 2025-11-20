@@ -375,7 +375,7 @@
   border-radius: $border-radius;
   .nav__title {
     color: lightgrey;
-    font-size: $type-size-7;
+    font-size: $type-size-8;
     border-top-left-radius: $border-radius;
     border-top-right-radius: $border-radius;
   }
@@ -385,43 +385,43 @@
 .toc__menu {
   transition: all 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
   list-style: none;
-  font-size: 0.8rem;
+  font-size: $type-code-size - 0.05em;
   font-weight: 400;
   font-family: $tag-font-family;
   a {
     color: $light-gray;
-    text-decoration: none !important;
+    text-decoration: none;
     display: block;
-    padding: 0.5rem 1rem;
+    border-radius: $border-radius / 2;
+    padding: 0.5em 1em;
     line-height: 1;
     border-bottom: 1px solid darken($border-color, 0.5) !important;
     &:hover {
       color: black;
-      background: $link-color;
+      background: $intriguiging-word-color;
       text-decoration: none;
     }
   }
 
   li ul > li a {
-    padding-left: 1.5rem;
+    padding-left: 1rem;
   }
 
   li ul li ul > li a {
-    padding-left: 2rem;
+    padding-left: 1.5rem;
   }
 
   li ul li ul li ul > li a {
-    padding-left: 2.5rem;
+    padding-left: 2rem;
   }
 
   li ul li ul li ul li ul > li a {
-    padding-left: 3rem;
+    padding-left: 2.5rem;
   }
 
   li ul li ul li ul li ul li ul > li a {
     padding-left: 3rem;
-    font-size: 0.6rem;
-    color: $primary-color;
+    font-size: $type-code-size - 0.25em;
   }
 
   /* hide sub sub links on small screens*/
