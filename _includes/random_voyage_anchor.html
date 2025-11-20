@@ -11,10 +11,10 @@
   {% endif %}
 {% endfor %}
 {% assign post_urls = post_urls | prepend: '[' | append: ']' %}
-  
+{% assign tarot_card_for_random_page = include.tarot_card | default: "wheel-of-fortune" %}
 <body>
-  <a class="floating_tarot_card_container floating_tarot_card_container--right wheel_of_fortune" title="🔮Wheel of Fortune: Fly to a random voyage on this page!" onclick="goToRandomPost(); return false;">
-    <div class="floating_tarot_card" alt="Tarot - Wheel of Fortune" style="mask-image: url('/assets/css/images/tarots/wheel-of-fortune.svg');"></div>
+  <a class="floating_tarot_card_container floating_tarot_card_container--right wheel_of_fortune" onclick="goToRandomPost(); return false;">
+    <div class="floating_tarot_card" alt="Tarot - Wheel of Fortune" style="mask-image: url('/assets/css/images/tarots/{{ tarot_card_for_random_page }}.svg');"></div>
   </a>
     <script>
     const postUrls = {{ post_urls | safe }};

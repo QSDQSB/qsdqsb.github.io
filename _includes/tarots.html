@@ -20,7 +20,13 @@
 {% endif %}
 
 {% if right_tarot_card != "" %}
+  {% if right_tarot_card == "random-voyage" %}
+    {% include random_voyage_anchor.html posts = site.voyage %}
+  {% elsif right_tarot_card == "random-post" %}
+    {% include random_voyage_anchor.html posts = site.posts tarot_card="death" %}
+  {% else %}
   <a class="floating_tarot_card_container floating_tarot_card_container--right {% if page.right_tarot_reversed %}floating_tarot_card_container--reverse{% endif %} {% if page.right_tarot_wheel_of_fortune %}wheel_of_fortune{% endif %}" href="{{ right_tarot_href }}">
     <div class="floating_tarot_card" alt="Tarot - {{ right_tarot_card }}" title="🦄Mysterious Tarot" style="mask-image: url('/assets/css/images/tarots/{{ right_tarot_card }}.svg');"></div>
   </a>
+  {% endif %}
 {% endif %}

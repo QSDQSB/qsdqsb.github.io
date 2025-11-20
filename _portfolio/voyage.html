@@ -3,6 +3,9 @@ layout: archive
 title: "Voyage"
 excerpt: "Through boundless paths we roam."
 permalink: /voyage/
+left_tarot_card: 'the-world'
+left_tarot_href: '/voyage-by-tags'
+right_tarot_card: 'random-voyage'
 header:
   overlay_image: pr-tram-3v1.jpg
   overlay_filter: 0.5
@@ -17,9 +20,4 @@ header:
     {% endfor %}
   </div>
 
-  <a class="floating_tarot_card_container" href="/voyage-by-tags">
-    <div class="floating_tarot_card" alt="Tarot - The World"></div>
-  </a>
-
-  {% include random_voyage_anchor.html posts = site.voyage %}
   {% include presented-by-qsd.html %}

@@ -32,7 +32,7 @@
   {% assign post_link = post.url | prepend: base_path %}
 {% endif %}
 
-<a class="card" href={{ post_link }} style="{{ ovl_address }}">
+<a class="card" id="{{ title | slugify }}" href={{ post_link }} style="{{ ovl_address }}">
   <span></span>
     <div class="content">
       <h3>{{ title }}</h3>
@@ -48,7 +48,7 @@
 
     <div class="date">
       {% if post.date %}
-          <p><time datetime="{{ post.date | default: "1900-01-01" | date_to_xmlschema }}">{{ post.date | default: "1900-01-01" | date: "%B %d" }}</time></p>
+          <p><time datetime="{{ post.date | default: "2022-01-01" | date_to_xmlschema }}">{{ post.date | default: "2022-01-01" | date: "%B %d" }}</time></p>
         {% endif %}
     </div>
   </a>

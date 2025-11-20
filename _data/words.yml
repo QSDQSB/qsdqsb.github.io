@@ -45,10 +45,14 @@
 
 - title: "Trompe l'œil"
   language: 'fr'
-  description: "(Fr.) — literally “deceive the eye”. An art <span class='to-emphasise'>illusion</span> that tricks the eye into perceiving a painting as a three-dimensional object; (Figurative) Something that <span class='to-emphasise'>misleads</span> the senses or the mind by presenting a <span class='to-emphasise'>convincing</span> yet false appearance of reality."
+  description: "(Fr.) — literally “deceive the eye”. An art <span class='to-emphasise'>illusion</span> that tricks the eye into perceiving a painting as a three-dimensional object; (Figurative) something that <span class='to-emphasise'>misleads</span> the senses or the mind by presenting a <span class='to-emphasise'>convincing</span> yet false appearance of reality."
 
 - title: "Palimpsest"
-  description: '(From Greek) παλίμψηστος — scraped again. A manuscript whose earlier text has been erased and <span class="to-emphasise">overwritten</span>; (Figurative) Things layered with traces of the past, where earlier meanings or histories <span class="to-emphasise">persist</span> beneath the surface of the present.'
+  description: '(From Greek) παλίμψηστος — scraped again. A manuscript whose earlier text has been erased and <span class="to-emphasise">overwritten</span>; (Figurative) things layered with traces of the past, where earlier meanings or histories <span class="to-emphasise">persist</span> beneath the surface of the present.'
 
 - title: "Chimera"
-  description: '(Greek Mythology) Χίμαιρα - a mythical creature made up of lion, goat, and serpent; (Figurative) A fanciful illusion that is wildly imaginative but ultimately unattainable or impossible.'
+  description: '(Greek Mythology) Χίμαιρα - a mythical creature made up of lion, goat, and serpent; (Figurative) a fanciful illusion that is wildly imaginative but ultimately unattainable or impossible.'
+
+- title: "Crepuscolo"
+  language: 'it'
+  description: '(It.) - twilight. The soft glowing light at twilight when the sun is just below the horizon. (Figurative) Something fading, uncertain, or <span class="to-emphasise">hazy</span>; a period of decline or approaching end.'

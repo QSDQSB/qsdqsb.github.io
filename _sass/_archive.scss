@@ -404,7 +404,7 @@
       position: absolute;
       width: 20px;
       aspect-ratio: 1;
-      border-radius: 8px;
+      border-radius: $border-radius * 0.8;
       background: rgba(0,0,0,0.1);
       -webkit-backdrop-filter: blur(4px);
       backdrop-filter: blur(4px);
@@ -566,7 +566,7 @@
   text-align: center;
 }
 .page__intriguing-word-wrapper h4 {
-  color: #c3b498;
+  color: $intriguiging-word-color;
 }
 
 .word_card_container {
@@ -668,12 +668,12 @@
 .floating_tarot_card_container {
   cursor: pointer;
   position: fixed;
-  bottom: 1.5rem;
+  bottom: 1.5em;
   left: 1.5em;
   width: 7.5em;
   padding: 8px;
   opacity: 0;
-  border-radius: 10px;
+  border-radius: $border-radius;
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   background: rgba(4, 4, 4, 0.23);
