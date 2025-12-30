@@ -207,7 +207,7 @@ defaults:
       path: ""
       type: portfolio
     values:
-      layout: single
+      layout: gallery
       author_profile: true
       share: false
       comment: false
