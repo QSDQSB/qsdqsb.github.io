@@ -2,7 +2,7 @@
 title: "Lontananza"
 date: 2024-09-02
 permalink: /posts/2024/lontananza
-excerpt: "Memory images, once they are fixed in words, are erased."
+excerpt: "Memory's images, once they are fixed in words, are erased."
 tags:
   - 🍜Life
   - 💍Horcrux

@@ -28,8 +28,7 @@ We document the whole process, mainly the negotiation with ChatGPT, for the bene
   </span>
 </span></h1>
 
-<img src="/images/QSDSigils/horizontal-rule-qsd-emblem-classic.svg" alt="horizontal rule with QSD's emblem" style="width: 60%">
-{: .center-wrapper}
+{% include qsd-emblem-horizontal-rule.html %}
 
 <img src="/images/QSDSigils/qsd-sigil-tarot-qsd.png" alt="QSD's Heraldic as Tarot @QSD" style="width: 30%; border-radius: 30px;">
 {: .article-image}
