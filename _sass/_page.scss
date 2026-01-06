@@ -332,6 +332,10 @@ body {
   p {
     margin: 0 auto;
   }
+  &_read_time, &_date {
+    text-align: unset;
+    font-family: $barlow-font-family;
+  }
 }
 
 .page__meta-title {
