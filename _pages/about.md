@@ -3,6 +3,10 @@ permalink: /
 title: "Hi! Meet QSD😵‍💫!"
 author_profile: true
 excerpt: "A procrastinator, a nihilist, a deconstructionist, an idiot. "
+excerpts:
+- A procrastinator, a nihilist, a deconstructionist, an idiot.
+- A voyager, a melancholic, an aesthete, an escapist .
+- A contraian, a formalist, a self-saboteur, a cynic.
 toc: true
 toc_sticky: true
 ticker-tape: true
@@ -17,6 +21,16 @@ right_tarot_wheel_of_fortune: true
 header:
   overlay_image: QSD_Night_4v1.jpg
   overlay_filter: 0.25
+swipers:
+- title: "Hi! Meet QSD 😵‍💫!"
+  excerpt: A procrastinator, a nihilist, a deconstructionist, an idiot.
+  overlay_image: QSD_Night_4v1.jpg
+- title: "Say hello to QSD 😗!"
+  excerpt: A voyager, a self-saboteur, an escapist, a romantic.
+  overlay_image: cover/Prague-charles-bridge-dawn-2-3v1.jpg
+- title: "Hi! This is QSB 🤚!"
+  excerpt: "<i style='font-variant: small-caps;'>Mors potius quam tædium.</i>"
+  overlay_image: cover/posts/qsd-house-sigil-baroque-interior-wall-3v1.jpg
 ---
 
 <h1 style="padding: 0;"><span class="text-type-writer" style="--n-contents: 11;" label="Welcome to QSD's House of Wonders!">

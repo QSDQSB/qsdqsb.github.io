@@ -116,3 +116,19 @@
     font-weight: 700;
   }
 }
+.with_qsd_logo_afront {
+  padding-left: 2em;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 1.5em;
+    height: 1.5em;
+    transform: translateY(-50%);
+    background-image: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+}
