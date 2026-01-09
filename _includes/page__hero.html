@@ -18,12 +18,62 @@
   {% capture overlay_img_path %}{{ page.header.overlay_image | prepend: "/images/" | prepend: base_path }}{% endcapture %}
 {% endif %}
 
+<!-- Overrider if the include contains a different overlay image -->
 {% if page.header.overlay_filter contains "rgba" %}
   {% capture overlay_filter %}{{ page.header.overlay_filter }}{% endcapture %}
 {% elsif page.header.overlay_filter %}
   {% capture overlay_filter %}rgba(0, 0, 0, {{ page.header.overlay_filter }}){% endcapture %}
 {% endif %}
 
+
+{% if page.swipers %}
+
+<div class="swiper page-overlay-swiper" style='background-color: transparent; width: 100%;'>
+  <div class="swiper-wrapper">
+    {% for swiper_content in page.swipers %}
+      {% if swiper_content.overlay_image %}
+        {% if swiper_content.overlay_image contains "://" %}
+          {% capture overlay_img_path %}{{ swiper_content.overlay_image }}{% endcapture %}
+        {% else %}
+          {% capture overlay_img_path %}{{ swiper_content.overlay_image | prepend: "/images/" | prepend: base_path }}{% endcapture %}
+        {% endif %}
+      {% endif %}
+      <div class="swiper-slide">
+        <div class="page__hero--overlay" style="background-image: {% if overlay_filter %}linear-gradient({{ overlay_filter }}, {{ overlay_filter }}), {% endif %}url('{{ overlay_img_path }}');">
+          <div class="wrapper">
+            <h1 class="page__title" itemprop="headline" data-swiper-parallax="-210" data-swiper-parallax-duration="900">
+              {% if paginator %}
+                {{ site.title }}{% unless paginator.page == 1 %} {{ site.data.ui-text[site.locale].page | default: "Page" }} {{ paginator.page }}{% endunless %}
+              {% else %}
+                {{ swiper_content.title | default: page.title | markdownify | remove: "<p>" | remove: "</p>" }}
+              {% endif %}
+            </h1>
+            
+            {% if swiper_content.excerpt or page.excerpt %}
+              {% if swiper_content.excerpt %}
+                {% assign excerpt = swiper_content.excerpt | remove: "<p>" | remove: "</p>" %}
+              {% else %}
+                {% assign excerpt = page.excerpt | markdownify | remove: "<p>" | remove: "</p>" %}
+              {% endif %}
+              <p class="page__lead" data-swiper-parallax="-180" data-swiper-parallax-duration="800">{{ excerpt }}</p>
+            {% endif %}
+            {% if site.read_time and page.read_time %}
+              <p class="page__meta"><i class="fa fa-clock-o" aria-hidden="true"></i> {% include read-time.html %}</p>
+            {% endif %}
+            {% if page.header.cta_url %}
+              <p><a href="{{ cta_path }}" class="btn btn--light-outline btn--large">{{ page.header.cta_label | default: site.data.ui-text[site.locale].more_label | default: "Learn More" }}</a></p>
+            {% endif %}
+          </div>
+          {% if page.header.caption %}
+            <span class="page__hero-caption">{{ page.header.caption | markdownify | remove: "<p>" | remove: "</p>" }}</span>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% else %}
 <div class="page__hero{% if page.header.overlay_color or page.header.overlay_image %}--overlay{% endif %}"
   style="{% if page.header.overlay_color %}background-color: {{ page.header.overlay_color | default: 'transparent' }};{% endif %} {% if overlay_img_path %}background-image: {% if overlay_filter %}linear-gradient({{ overlay_filter }}, {{ overlay_filter }}), {% endif %}url('{{ overlay_img_path }}');{% endif %}"
 >
@@ -53,3 +103,5 @@
     <span class="page__hero-caption">{{ page.header.caption | markdownify | remove: "<p>" | remove: "</p>" }}</span>
   {% endif %}
 </div>
+
+{% endif %}

@@ -6,13 +6,13 @@
 #main {
   display: flex;
   @include clearfix;
-  margin-top: 1rem;
+  // margin-top: 1rem;
   margin-left: 0;
   max-width: 100%;
   padding-left: 1rem;
   padding-right: 1rem;
   animation: intro 0.3s both;
-  animation-delay: 0.15s;
+  // animation-delay: 0.15s;
   container-type: inline-size;
 }
 
@@ -204,7 +204,7 @@ body {
 }
 
 .page__hero {
-  transition: all $global-transition-time cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: $cubic-bezier-default-05s;
   position: relative;
   margin-bottom: 2em;
   @include clearfix;
@@ -258,6 +258,14 @@ body {
   }
 }
 
+.swiper .page__hero {
+  animation: none;
+  animation-delay: unset;
+  &--overlay {
+    animation: none;
+    animation-delay: none;
+  }
+}
 
 .page__hero-image {
   width: 100%;
