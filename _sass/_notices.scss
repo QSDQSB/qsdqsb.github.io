@@ -99,3 +99,17 @@
   @include notice(rgb(165, 65, 165));
 }
 
+.notice--dark-amber {
+  @include notice(#5B3A29);
+}
+
+.notice--olive-green {
+  @include notice(#2F3A32);
+}
+
+.notice--antique-green {
+  @include notice(#4A6E4D);
+}
+.notice--burgundy-red {
+  @include notice(#3B1F1F);
+}
