@@ -135,7 +135,7 @@ abbr[data-original-title] {
 /* blockquotes */
 
 blockquote {
-  font-family: $serif;
+  font-family: $cmu-serif-family;
   padding: 1em 1.25em;
   border: 1px double $darker-gray;
   background-color: $center-wrapper-background-color;
@@ -481,8 +481,4 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
   color: rgba(248, 248, 248, 0.85);
   opacity: 0;
   transition: inherit;
-}
-
-.swiper-wrapper {
-  padding: 1rem 0;
 }
