@@ -11,8 +11,24 @@ var $vlinks = $('#site-nav .visible-links');
 var $hlinks = $('#site-nav .hidden-links');
 
 var breaks = [];
+var recursionDepth = 0;
+var MAX_RECURSION_DEPTH = 50;
 
 function updateNav() {
+  // Check if required elements exist
+  if (!$nav.length || !$vlinks.length || !$hlinks.length) {
+    recursionDepth = 0;
+    return;
+  }
+  
+  // Prevent infinite recursion
+  if (recursionDepth >= MAX_RECURSION_DEPTH) {
+    console.warn('updateNav: Maximum recursion depth reached, stopping to prevent stack overflow');
+    recursionDepth = 0;
+    return;
+  }
+  
+  recursionDepth++;
 
   var availableSpace = $btn.hasClass('hidden') ? $nav.width() : $nav.width() - $btn.width() - 30;
 
@@ -52,8 +68,12 @@ function updateNav() {
   $btn.attr("count", breaks.length);
 
   // Recur if the visible list is still overflowing the nav
-  if($vlinks.width() > availableSpace) {
+  // Only recurse if there are items left to move (prevent infinite loop)
+  if($vlinks.width() > availableSpace && $vlinks.children().length > 0) {
     updateNav();
+  } else {
+    // Reset recursion depth when done
+    recursionDepth = 0;
   }
 
 }

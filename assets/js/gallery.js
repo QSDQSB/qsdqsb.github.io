@@ -197,8 +197,15 @@ var main = (function($) { var _ = {
 			_.$navNext = _.$viewer.find('.nav-next');
 			_.$navPrevious = _.$viewer.find('.nav-previous');
 			_.$imageDisplay = _.$viewer.find('.toggle-image-display');
-			// Background size.
-			_.background_size = 'cover';
+			// Background size - read from cookie or default to 'cover'
+			var savedDisplay = getCookie('gallery_image_display');
+			if (savedDisplay === 'cover' || savedDisplay === 'contain') {
+				_.background_size = savedDisplay;
+			} else {
+				_.background_size = 'cover';
+				// Initialize cookie with default value if unset
+				setCookie('gallery_image_display', 'cover', 365);
+			}
 		// Main wrapper.
 			_.$main = $('#gallery_main');
 		// Leave_gallery
@@ -768,6 +775,8 @@ var main = (function($) { var _ = {
 			_.background_size = 'cover';
 			var YTranslate = '100%';
 		}
+		// Save preference to cookie (365 days expiration)
+		setCookie('gallery_image_display', _.background_size, 365);
 		var $image = _.$viewer.find('.image');
 		var transitionDuration = parseFloat($image.css('transition-duration')) * 1000;
 		$image.css('transform', 'translateY(' + YTranslate + ')');
