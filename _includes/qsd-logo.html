@@ -3,7 +3,7 @@
 {% assign logo_width = include.logo_width | default: '8em' %}
 {% assign border_radius = include.border_radius | default: '1.5em' %}
 {% assign path_to_logo = "/images/QSDLogos/QSD_logo_" %}
-{% assign logo_candidates = "splash.jpg,two_colours.jpg,svg.svg,profile.jpg" | split: "," %}
+{% assign logo_candidates = "splash.jpg,two_colours.jpg,svg.svg,profile.jpg,emblem_neon.svg" | split: "," %}
 {% if include.logo_name %}
     {% assign logo_name = include.logo_name | prepend: path_to_logo %}
 {% else %}
