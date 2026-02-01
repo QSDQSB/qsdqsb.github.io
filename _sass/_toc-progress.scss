@@ -1,0 +1,181 @@
+/* ==========================================================================
+   TOC SCROLL SPY AND PROGRESS INDICATOR
+   ========================================================================== */
+
+/* Active TOC link styling */
+.toc__menu {
+  a.toc-active,
+  li.toc-active > a {
+    color: $primary-color !important;
+    background: rgba($primary-color, 0.12) !important;
+    font-weight: 500;
+    border-left: 3px solid $primary-color;
+    padding-left: calc(1em - 3px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1; /* Above progress indicator */
+    
+    &:hover,
+    &:focus {
+      background: rgba($primary-color, 0.18) !important;
+      color: $primary-color !important;
+      text-decoration: none;
+      outline: none;
+    }
+  }
+  
+  /* Regular TOC links - align hover with focus/active style */
+  a {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    
+    &:hover,
+    &:focus {
+      color: $primary-color !important;
+      background: rgba($primary-color, 0.08) !important;
+      text-decoration: none;
+      outline: none;
+      border-left: 2px solid rgba($primary-color, 0.5);
+      padding-left: calc(1em - 2px);
+    }
+    
+    /* Focus visible for keyboard navigation */
+    &:focus-visible {
+      color: $primary-color !important;
+      background: rgba($primary-color, 0.12) !important;
+      border-left: 3px solid $primary-color;
+      padding-left: calc(1em - 3px);
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    }
+  }
+
+  /* Nested active items */
+  li.toc-active {
+    > a {
+      color: $primary-color !important;
+      background: rgba($primary-color, 0.12) !important;
+    }
+    
+    /* Ensure nested items also get proper styling */
+    ul li > a.toc-active {
+      border-left: 3px solid $primary-color;
+      padding-left: calc(1rem - 3px);
+    }
+  }
+  
+  /* Override default border-bottom for active items */
+  a.toc-active {
+    border-bottom: 1px solid darken($border-color, 0.5) !important;
+  }
+}
+
+/* Progress Indicator */
+.toc-progress-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: 0%;
+  background: linear-gradient(
+    to bottom,
+    rgba($primary-color, 0.4),
+    $primary-color,
+    rgba($primary-color, 0.4)
+  );
+  transition: height 0.15s ease-out;
+  z-index: 1;
+  pointer-events: none;
+  
+  /* Add subtle glow effect */
+  box-shadow: 0 0 6px rgba($primary-color, 0.5);
+  
+  /* Smooth animation */
+  will-change: height;
+  
+  /* Border radius for rounded top */
+  border-radius: 0 0 2px 2px;
+}
+
+.sidebar__right {
+  .toc {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    
+    .toc-progress-indicator {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2px;
+      height: 0%;
+      z-index: 0; /* Behind menu items */
+      border-radius: 0;
+    }
+  }
+}
+
+.sidebar__right .toc__menu {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Sticky sidebar adjustments */
+.sidebar__right.sticky {
+  .toc {
+    .toc-progress-indicator {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2px;
+    }
+  }
+}
+
+/* Responsive: hide on small screens (right sidebar is usually hidden anyway) */
+.toc-progress-indicator {
+  display: none;
+}
+
+@include breakpoint($large) {
+  .toc-progress-indicator {
+    display: block;
+  }
+}
+
+/* Smooth scroll behavior for TOC links */
+.toc__menu a {
+  scroll-margin-top: 2rem; /* Account for sticky header if any */
+}
+
+/* Enhanced active state with subtle animation */
+@keyframes toc-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.toc__menu a.toc-active {
+  animation: toc-pulse 2s ease-in-out infinite;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .toc-progress-indicator {
+    transition: none;
+  }
+  
+  .toc__menu a.toc-active {
+    animation: none;
+  }
+  
+  .toc__menu a {
+    transition: none;
+  }
+}
+

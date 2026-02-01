@@ -368,7 +368,8 @@
 
 .toc {
   transition: $cubic-bezier-default;
-
+  max-height: 60vh;
+  overflow: hidden;
   font-family: $tag-font-family;
   color: $light-gray;
   border: 1px solid $border-color;
@@ -396,11 +397,6 @@
     padding: 0.5em 1em;
     line-height: 1;
     border-bottom: 1px solid darken($border-color, 0.5) !important;
-    &:hover {
-      color: black;
-      background: $intriguiging-word-color;
-      text-decoration: none;
-    }
   }
 
   li ul > li a {

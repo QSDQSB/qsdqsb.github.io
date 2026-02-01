@@ -30,6 +30,18 @@ layout: default
     {% if page.date %}<meta itemprop="datePublished" content="{{ page.date | date: "%B %d, %Y" }}">{% endif %}
     {% if page.modified %}<meta itemprop="dateModified" content="{{ page.modified | date: "%B %d, %Y" }}">{% endif %}
 
+    {% if page.toc %}
+      <aside class="sidebar__right {% if page.toc_sticky %}sticky{% endif %}">
+        {% if page.date %}
+          <p class="page__date"><i class="fa fa-fw fa-calendar-alt" aria-hidden="true"></i><time datetime="{{ page.date | date: "%Y-%m-%d" }}">{{ page.date | date: "%B %d, %Y" }}</time></p>
+        {% endif %}
+        <nav class="toc">
+          <header><h5 class="nav__title"><i class="fas fa-{{ page.toc_icon | default: 'list-ol' }}"></i> {{ page.toc_label | default: site.data.ui-text[site.locale].toc_label | default: "On this page" }}</h5></header>
+          {% include toc.html sanitize=true html=content h_min=1 h_max=6 class="toc__menu" skip_no_ids=true %}
+        </nav>
+      </aside>
+    {% endif %}
+
     <div class="page__inner-wrap">
       {% unless page.header.overlay_color or page.header.overlay_image %}
         <header>
@@ -40,17 +52,6 @@ layout: default
         </header>
       {% endunless %}
       <section class="page__content e-content" itemprop="text">
-        {% if page.toc %}
-          <aside class="sidebar__right {% if page.toc_sticky %}sticky{% endif %}">
-            {% if page.date %}
-              <p class="page__date"><i class="fa fa-fw fa-calendar-alt" aria-hidden="true"></i><time datetime="{{ page.date | date: "%Y-%m-%d" }}">{{ page.date | date: "%B %d, %Y" }}</time></p>
-            {% endif %}
-            <nav class="toc">
-              <header><h5 class="nav__title"><i class="fas fa-{{ page.toc_icon | default: 'list-ol' }}"></i> {{ page.toc_label | default: site.data.ui-text[site.locale].toc_label | default: "On this page" }}</h5></header>
-              {% include toc.html sanitize=true html=content h_min=1 h_max=6 class="toc__menu" skip_no_ids=true %}
-            </nav>
-          </aside>
-        {% endif %}
         {% if page.ticker-tape %}
           {% include ticker-tape.html %}
         {% endif %}
