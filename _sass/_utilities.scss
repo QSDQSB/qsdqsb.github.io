@@ -568,3 +568,29 @@ a.reversefootnote {
     transform: scale(1.05);
   }
 }
+
+.lyrics {
+  display: block;
+  margin-top: 1rem;
+  font-family: $cmu-serif-family;
+  font-style: italic;
+  &-block {
+    margin-bottom: 1.5rem;
+    padding: 0.5em 1em;
+    border-radius: $border-radius;
+    transition: ease-in-out 0.3s;
+    &:focus, &:hover, &:active {
+      background-color: $code-background-color;
+    }
+  }
+  &-fr {
+    color:inherit;
+  }
+  &-en, &-cn {
+    color: $gray;
+    font-size: $type-size-8;
+  }
+  &-cn {
+    font-family: $didot-family;
+  }
+}
