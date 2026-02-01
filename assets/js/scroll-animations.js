@@ -53,6 +53,20 @@
     }
   );
 
+  // Observe normally so elements animate as they scroll into view.
   candidates.forEach((el) => observer.observe(el));
+
+  // On initial load, some elements partially overlap the viewport but
+  // don't meet the IntersectionObserver `threshold` (e.g. content sitting
+  // just inside the bottom of the viewport). Reveal those immediately
+  // so the lower part of the page is not left visually empty.
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+  candidates.forEach((el) => {
+    const rect = el.getBoundingClientRect();
+    if (rect.bottom > 0 && rect.top < viewportHeight) {
+      el.classList.add('is-visible');
+      observer.unobserve(el);
+    }
+  });
 })();
 
