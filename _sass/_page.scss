@@ -371,12 +371,6 @@ body {
   ol,ul {
     list-style-position: inside;
   }
-
-  hr {
-    width: 75%;
-    border: 0.5px solid $light-gray;
-    border-radius: 0.25em;
-  }
 }
 .translucent_border {
   border: 1px dashed $border-color;

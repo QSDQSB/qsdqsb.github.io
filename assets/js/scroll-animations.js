@@ -24,10 +24,36 @@
   // Mark JS-ready to avoid any accidental no-js hiding.
   document.documentElement.classList.add('scroll-reveal-ready');
 
-  const candidates = Array.from(pageContent.children).filter((el) => {
+  // Collect direct children plus specific inner containers so nested
+  // sections (e.g. `.center-wrapper`, `.lyrics`) can reveal independently.
+  // Use a more robust approach than a complex :scope selector to ensure
+  // nested wrappers at any depth are picked up across browsers.
+  const directChildren = Array.from(pageContent.children);
+  // Find wrapper-like nested targets and use their direct element children
+  // as candidates so the wrapper itself is not treated as a single reveal unit.
+  const nestedWrappers = Array.from(
+    pageContent.querySelectorAll('.paragraph-center-wrapper, .center-wrapper, .lyrics, .reveal-on-scroll-target')
+  );
+  const nestedChildren = [];
+  nestedWrappers.forEach((wrapper) => {
+    if (!(wrapper instanceof HTMLElement)) return;
+    const elChildren = Array.from(wrapper.children).filter((c) => c instanceof HTMLElement);
+    if (elChildren.length > 0) {
+      nestedChildren.push(...elChildren);
+    } else {
+      // If wrapper has no element children, fall back to the wrapper itself
+      nestedChildren.push(wrapper);
+    }
+  });
+
+  // Merge direct children and nested children, dedupe with Set.
+  const uniqueNodes = Array.from(new Set(directChildren.concat(nestedChildren)));
+
+  const candidates = uniqueNodes.filter((el) => {
     if (!(el instanceof HTMLElement)) return false;
-    if (el.classList.contains('sidebar__right')) return false; // TOC
-    if (el.matches('script, style, noscript')) return false;
+    // Skip elements inside the right sidebar / TOC
+    if (el.closest && el.closest('.sidebar__right')) return false;
+    if (el.matches && el.matches('script, style, noscript')) return false;
     // Skip empty wrappers that often exist in markdown
     if (!el.textContent || el.textContent.trim().length === 0) return false;
     return true;
