@@ -1,0 +1,70 @@
+/* ==========================================================================
+   CODE BLOCK COPY BUTTON
+   ========================================================================== */
+
+div.highlighter-rouge,
+figure.highlight {
+  /* Ensure the button can anchor correctly */
+  position: relative;
+
+  .code-copy-btn {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    z-index: 3;
+
+    padding: 0.25rem 0.5rem;
+    font-size: $type-size-8;
+    font-family: $barlow-font-family;
+    line-height: 1;
+    border-radius: $border-radius / 2;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+
+    color: $text-color;
+    background: rgba(64, 64, 64, 0.25);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    opacity: 0;
+    transform: translateY(-2px);
+    pointer-events: none;
+    transition: $cubic-bezier-default-05s;
+
+    &:hover {
+      background: rgba(64, 64, 64, 0.5);
+    }
+
+    &:focus-visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    }
+
+    &.is-copied {
+      border-color: rgba($primary-color, 0.35);
+      background: rgba($primary-color, 0.12);
+    }
+
+    &.is-error {
+      border-color: rgba($danger-color, 0.35);
+      background: rgba($danger-color, 0.12);
+    }
+  }
+
+  &:hover .code-copy-btn,
+  &:focus-within .code-copy-btn {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  div.highlighter-rouge .code-copy-btn,
+  figure.highlight .code-copy-btn {
+    transition: none;
+  }
+}
+
