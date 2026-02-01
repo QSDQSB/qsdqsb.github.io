@@ -50,6 +50,12 @@
       return true;
     }
 
+    // Skip gallery thumbnails and any links inside the gallery thumbnails
+    // area so existing gallery handlers (gallery.js) can manage clicks.
+    if (link.classList.contains('thumbnail') || link.closest && (link.closest('#thumbnails') || link.closest('.gallery_view'))) {
+      return true;
+    }
+
     // Skip if link has target="_blank"
     if (link.target === '_blank') {
       return true;
@@ -114,10 +120,9 @@
         return;
       }
 
-      // Prevent default navigation
+      // Prevent default navigation but allow other handlers to run
       e.preventDefault();
       e.stopPropagation();
-      e.stopImmediatePropagation(); // Also stop other handlers
 
       log('Starting view transition to:', targetUrl.href);
 
