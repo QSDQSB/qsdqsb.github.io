@@ -81,29 +81,24 @@
     position: absolute;
     top: 0;
     right: 0;
+    bottom: 0; /* allow sticky child to persist through full page height */
     width: $right-sidebar-width-narrow;
-    margin-right: -1 * $right-sidebar-width-narrow;
     padding-left: 1rem;
     z-index: 10;
 
     &.sticky {
       @include clearfix();
-      position: -webkit-sticky;
-      position: sticky;
-      top: 2rem;
-      float: right;
+      /* make TOC itself sticky */
       .toc {
-        .toc__menu {
-          overflow-y: auto;
-          max-height: calc(100vh - 7em);
-        }
+        position: -webkit-sticky;
+        position: sticky;
+        top: 2rem;
       }
     }
   }
 
   @include breakpoint($x-large) {
     width: $right-sidebar-width;
-    margin-right: -1 * $right-sidebar-width;
   }
 
 }

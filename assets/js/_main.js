@@ -95,7 +95,6 @@ $(document).ready(function(){
 
   // init smooth scroll
   $("a").smoothScroll({offset: -20});
-  $("a[href^='#']").smoothScroll();
 
   // add lightbox class to all image links
   $("a[href$='.jpg'],a[href$='.jpeg'],a[href$='.JPG'],a[href$='.png'],a[href$='.gif']").addClass("image-popup");
@@ -135,6 +134,12 @@ $(document).ready(function(){
 });
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
+      // If another handler (e.g. jQuery smoothScroll) already handled this, do nothing.
+      if (e.defaultPrevented) return;
+
+      // Let the TOC's own smooth scrolling handle TOC clicks to avoid double-scrolling.
+      if (this.closest('.toc') || this.closest('.toc__menu')) return;
+
       const href = this.getAttribute('href');
       const targetElement = document.querySelector(href);
 
