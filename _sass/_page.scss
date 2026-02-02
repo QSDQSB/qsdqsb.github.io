@@ -375,6 +375,9 @@ body {
 .translucent_border {
   border: 1px dashed $border-color;
 }
+.solid_border {
+  border: 1px solid $border-color;
+}
 
 /*
    Page taxonomy
