@@ -1,0 +1,100 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Seceda",
+        "country": "Italy",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": "/voyage/dolomites/seceda/",
+        "description": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.7257836,
+          46.6005922
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sesto",
+        "country": "Italy",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": "/voyage/dolomites/sesto/",
+        "description": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.35,
+          46.6667
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Alpe di Siusi",
+        "country": "Italy",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": "/voyage/dolomites/siusi/",
+        "description": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.6247091,
+          46.531056
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Selva",
+        "country": "Italy",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": "/voyage/dolomites/selva/",
+        "description": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.0737,
+          46.4751
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Incantato",
+        "country": "Italy",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": "/voyage/dolomites/incantato/",
+        "description": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.0854,
+          46.6943
+        ]
+      }
+    }
+  ]
+}

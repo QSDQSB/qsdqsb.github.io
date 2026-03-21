@@ -1,0 +1,138 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "St Peter's Basilica",
+        "country": "Italy",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": "/voyage/rome/st-peters-basilica/",
+        "description": "Where apostolic keys reign above Berninian colonnades"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4931577,
+          41.893851
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Vatican Museum",
+        "country": "Italy",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": "/voyage/rome/vatican-museum-vol-1/",
+        "description": "Where fresco incarnates reason beneath papal creed"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4527,
+          41.9029
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Trevi Fountain",
+        "country": "Italy",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": "/voyage/rome/trevi-fountain/",
+        "description": "Where alabaster gods melt in crystalline grace"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4832848,
+          41.9009778
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Palatine Hill",
+        "country": "Italy",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": "/voyage/rome/palatine-hill/",
+        "description": "Where the empire lingers along fractured arches"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4871093,
+          41.8893064
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Castel Sant'Angelo",
+        "country": "Italy",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": "/voyage/rome/castel-sant-angelo/",
+        "description": "Where archangel's blade glints above the ramparts"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4663427,
+          41.9031178
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Vittoriano",
+        "country": "Italy",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": "/voyage/rome/vittoriano/",
+        "description": "Where argent propylaea intones revival"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4830664,
+          41.8946867
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Bocche di Verità",
+        "country": "Italy",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": "/voyage/rome/bocche-di-verita/",
+        "description": "Where copious mouths evince fabrication"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4814,
+          41.8882
+        ]
+      }
+    }
+  ]
+}

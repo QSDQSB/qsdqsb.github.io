@@ -1,0 +1,108 @@
+{
+  "tokyo|japan": {
+    "lat": 35.6768601,
+    "lng": 139.7638947
+  },
+  "singapore|singapore": {
+    "lat": 1.357107,
+    "lng": 103.8194992
+  },
+  "bangkok|thailand": {
+    "lat": 13.7524938,
+    "lng": 100.4935089
+  },
+  "mumbai|india": {
+    "lat": 19.054999,
+    "lng": 72.8692035
+  },
+  "london|united kingdom": {
+    "lat": 51.5074456,
+    "lng": -0.1277653
+  },
+  "berlin|germany": {
+    "lat": 52.5173885,
+    "lng": 13.3951309
+  },
+  "paris|france": {
+    "lat": 48.8534951,
+    "lng": 2.3483915
+  },
+  "amsterdam|netherlands": {
+    "lat": 52.3730796,
+    "lng": 4.8924534
+  },
+  "zurich|switzerland": {
+    "lat": 47.3744489,
+    "lng": 8.5410422
+  },
+  "new york|united states": {
+    "lat": 40.7127281,
+    "lng": -74.0060152
+  },
+  "san francisco|united states": {
+    "lat": 37.7879363,
+    "lng": -122.4075201
+  },
+  "toronto|canada": {
+    "lat": 43.6534817,
+    "lng": -79.3839347
+  },
+  "são paulo|brazil": {
+    "lat": -23.5506507,
+    "lng": -46.6333824
+  },
+  "sydney|australia": {
+    "lat": -33.8698439,
+    "lng": 151.2082848
+  },
+  "cairo|egypt": {
+    "lat": 30.0443879,
+    "lng": 31.2357257
+  },
+  "seceda|italy": {
+    "lat": 46.6005922,
+    "lng": 11.7257836
+  },
+  "sesto|italy": {
+    "lat": 46.7027433,
+    "lng": 12.350544
+  },
+  "alpe di siusi|italy": {
+    "lat": 46.531056,
+    "lng": 11.6247091
+  },
+  "selva|italy": {
+    "lat": 45.4670902,
+    "lng": 11.3567995
+  },
+  "kyoto|japan": {
+    "lat": 35.0115754,
+    "lng": 135.7681441
+  },
+  "nara|japan": {
+    "lat": 34.6845445,
+    "lng": 135.8048359
+  },
+  "st peter's basilica|italy": {
+    "lat": 41.893851,
+    "lng": 12.4931577
+  },
+  "vatican museum|italy": null,
+  "trevi fountain|italy": {
+    "lat": 41.9009778,
+    "lng": 12.4832848
+  },
+  "palatine hill|italy": {
+    "lat": 41.8893064,
+    "lng": 12.4871093
+  },
+  "castel sant'angelo|italy": {
+    "lat": 41.9031178,
+    "lng": 12.4663427
+  },
+  "vittoriano|italy": {
+    "lat": 41.8946867,
+    "lng": 12.4830664
+  },
+  "bocche di verità|italy": null
+}
