@@ -43,6 +43,13 @@ layout: compress
     </div>
   {% include scripts.html %}
   </div>
+    
+  {% if page.map_dataset %}
+    <div class="unselectable-div" style="padding: 1em;">
+      {% include map.html %}
+    </div>
+  {% endif %}
+  
   {% if site.tag_voyage.type and page.tags[0] %}
   <div class="center-wrapper">
   {% include tag-list.html %}

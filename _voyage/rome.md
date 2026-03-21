@@ -9,6 +9,7 @@ tags:
   - 🏛️Historic
   - 🏞️QSD's Favourite
   - 🛤️Retrace
+map_dataset: rome
 header:
   overlay_image: cover/rome-piazza-venezia-3v1.jpg
 ---

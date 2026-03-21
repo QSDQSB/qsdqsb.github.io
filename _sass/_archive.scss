@@ -566,7 +566,7 @@
   text-align: center;
 }
 .page__intriguing-word-wrapper h4 {
-  color: $intriguiging-word-color;
+  color: $intriguing-word-color;
 }
 
 .word_card_container {
@@ -586,7 +586,7 @@
   width: max(75%, 20em);
   margin: 0 auto;
   max-width: 40rem;
-  border: 1px solid 	#7e7058;
+  border: 1px solid $intriguing-word-border-color;
   position: relative;
   padding: 1rem 2.5rem;
   border-radius: 1rem;

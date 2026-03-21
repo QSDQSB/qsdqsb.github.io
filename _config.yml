@@ -118,6 +118,8 @@ exclude:
   - Rakefile
   - assets/js/_main.js
   - assets/js/plugins
+  - scripts
+  - node_modules
   - assets/js/vendor
   - config
   - gulpfile.js

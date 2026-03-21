@@ -4,6 +4,7 @@ excerpt: "Where the nature's fiery forges"
 layout: gallery
 subgalleries: true
 date: 2023-08-26
+map_dataset: dolomites
 tags:
   - 🏔️Alps
   - 🏞️QSD's Favourite
