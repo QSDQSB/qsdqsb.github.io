@@ -594,3 +594,11 @@ a.reversefootnote {
     font-family: $didot-family;
   }
 }
+
+.unselectable-div {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Safari, Chrome, Opera, Android */
+  -khtml-user-select: none;    /* Konqueror HTML */
+  -moz-user-select: none;      /* Old Firefox */
+  user-select: none;           /* Non-prefixed version, currently supported by all modern browsers */
+}

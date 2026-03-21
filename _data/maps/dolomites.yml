@@ -1,0 +1,36 @@
+viewport:
+  scope: city
+  city: dolomites
+  center: [46.63, 11.96]
+  zoom: 7
+  minZoom: 6
+  maxZoom: 20
+
+
+cities:
+  - name: "Seceda"
+    country: "Italy"
+    href: "/voyage/dolomites/seceda/"
+    
+  - name: "Sesto"
+    country: "Italy"
+    href: "/voyage/dolomites/sesto/"
+    lat: 46.6667
+    lng: 12.3500 
+    
+  - name: "Alpe di Siusi"
+    country: "Italy"
+    href: "/voyage/dolomites/siusi/"
+    
+  - name: "Selva"
+    country: "Italy"
+    href: "/voyage/dolomites/selva/"
+    lat: 46.4751
+    lng: 12.0737
+    
+  - name: "Incantato"
+    country: "Italy"
+    href: "/voyage/dolomites/incantato/"
+    # Add custom location to override to Lake Braies
+    lat: 46.6943
+    lng: 12.0854

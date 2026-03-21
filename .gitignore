@@ -5,3 +5,7 @@ node_modules/
 package-lock.json
 docs
 improvements.md
+
+# Map system generated cache files
+assets/maps/*.geojson
+scripts/.geocode-cache.json

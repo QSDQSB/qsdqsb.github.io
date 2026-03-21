@@ -1,0 +1,27 @@
+<!-- Reusable Map Renderer Include -->
+<!-- Usage: Add 'map_dataset: world-cities' to page front matter, then include this -->
+
+{% if page.map_dataset %}
+{% assign map_data = site.data.maps[page.map_dataset] %}
+<div id="map-container-{{ page.map_dataset }}" class="map-container" data-dataset="{{ page.map_dataset }}" data-geojson="/assets/maps/{{ page.map_dataset }}.geojson" data-viewport='{{ map_data.viewport | jsonify }}' >
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const container = document.getElementById('map-container-{{ page.map_dataset }}');
+  if (!container) return;
+  const datasetName = container.dataset.dataset;
+  const geojsonPath = container.dataset.geojson;
+  const viewportData = container.dataset.viewport ? JSON.parse(container.dataset.viewport) : null;
+  if (typeof window.MapRenderer !== 'undefined') {
+    window.MapRenderer.init(container, { geojsonPath: geojsonPath, datasetName: datasetName, viewport: viewportData });
+  } else {
+    console.warn('MapRenderer not yet loaded. Ensure Leaflet and map.js are included.');
+  }
+});
+</script>
+{% else %}
+<div class="notice notice--warning" style="padding: 1rem; border-left: 4px solid #FF6B6B; background: rgba(255, 107, 107, 0.05); margin: 1rem 0;">
+  <strong>⚠️ Map Error:</strong> No <code>map_dataset</code> in page front matter. Add <code>map_dataset: dataset-name</code>.
+</div>
+{% endif %}

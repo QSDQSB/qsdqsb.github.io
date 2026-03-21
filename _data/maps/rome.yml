@@ -1,0 +1,47 @@
+viewport:
+  scope: city
+  city: rome
+  center: [41.898, 12.49]
+  zoom: 13.5
+  minZoom: 6
+  maxZoom: 20
+
+cities:
+  - name: "St Peter's Basilica"
+    country: "Italy"
+    href: "/voyage/rome/st-peters-basilica/"
+    description: "Where apostolic keys reign above Berninian colonnades"
+    
+  - name: "Vatican Museum"
+    country: "Italy"
+    href: "/voyage/rome/vatican-museum-vol-1/"
+    description: "Where fresco incarnates reason beneath papal creed"
+    lat: 41.9029
+    lng: 12.4527
+    
+  - name: "Trevi Fountain"
+    country: "Italy"
+    href: "/voyage/rome/trevi-fountain/"
+    description: "Where alabaster gods melt in crystalline grace"
+    
+  - name: "Palatine Hill"
+    country: "Italy"
+    href: "/voyage/rome/palatine-hill/"
+    description: "Where the empire lingers along fractured arches"
+    
+  - name: "Castel Sant'Angelo"
+    country: "Italy"
+    href: "/voyage/rome/castel-sant-angelo/"
+    description: "Where archangel's blade glints above the ramparts"
+    
+  - name: "Vittoriano"
+    country: "Italy"
+    href: "/voyage/rome/vittoriano/"
+    description: "Where argent propylaea intones revival"
+    
+  - name: "Bocche di Verità"
+    country: "Italy"
+    href: "/voyage/rome/bocche-di-verita/"
+    description: "Where copious mouths evince fabrication"
+    lat: 41.8882
+    lng: 12.4814

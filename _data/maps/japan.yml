@@ -1,0 +1,13 @@
+viewport:
+  scope: country
+  country_scope: Japan
+
+cities:
+  - name: "Tokyo"
+    country: "Japan"
+    
+  - name: "Kyoto"
+    country: "Japan"
+    
+  - name: "Nara"
+    country: "Japan"

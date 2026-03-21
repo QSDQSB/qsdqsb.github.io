@@ -15,6 +15,10 @@
 <meta name="theme-color" content="#f0f0f0">
 <link rel="stylesheet" href="{{ base_path }}/assets/css/academicons.css"/>
 
+<!-- Preload key local fonts to reduce layout shift -->
+<link rel="preload" href="{{ base_path }}/assets/fonts/Barlow/Barlow-Regular.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="{{ base_path }}/assets/fonts/Barlow/Barlow-Italic.ttf" as="font" type="font/ttf" crossorigin>
+
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,5 +38,16 @@
   });
 </script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+<!-- Leaflet Map Library (CSS & JS) - Load BEFORE map.js, NO integrity checks -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+crossorigin=""></script>
+
+<!-- Map Renderer Script - Loads AFTER Leaflet -->
+<script src="{{ base_path }}/assets/js/map.js"></script>
 
 <!-- end custom head snippets -->

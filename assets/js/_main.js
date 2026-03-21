@@ -44,10 +44,19 @@ $(document).ready(function(){
       $("body").css("margin-bottom", $(".page__footer").outerHeight(true));
     },
     didResize = false;
+    // Track last known window size and DPR to ignore trivial resize events
+    var _lastWindowState = { w: window.innerWidth, h: window.innerHeight, dpr: window.devicePixelRatio };
 
   bumpIt();
 
   $(window).resize(function() {
+    var now = { w: window.innerWidth, h: window.innerHeight, dpr: window.devicePixelRatio };
+    var dw = Math.abs(now.w - _lastWindowState.w);
+    var dh = Math.abs(now.h - _lastWindowState.h);
+    var ddpr = Math.abs(now.dpr - _lastWindowState.dpr);
+    // Ignore very small changes (e.g., fractional layout changes from zoom) to avoid rapid toggles.
+    if (dw < 60 && dh < 40 && ddpr === 0) return;
+    _lastWindowState = now;
     didResize = true;
   });
   setInterval(function() {
@@ -83,6 +92,12 @@ $(document).ready(function(){
   stickySideBar();
 
   $(window).resize(function(){
+    var now = { w: window.innerWidth, h: window.innerHeight, dpr: window.devicePixelRatio };
+    var dw = Math.abs(now.w - _lastWindowState.w);
+    var dh = Math.abs(now.h - _lastWindowState.h);
+    var ddpr = Math.abs(now.dpr - _lastWindowState.dpr);
+    if (dw < 60 && dh < 40 && ddpr === 0) return;
+    _lastWindowState = now;
     stickySideBar();
   });
 
