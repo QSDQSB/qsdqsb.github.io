@@ -1,0 +1,62 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Tokyo",
+        "country": "Japan",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": null,
+        "description": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.7638947,
+          35.6768601
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Kyoto",
+        "country": "Japan",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": null,
+        "description": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.7681441,
+          35.0115754
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Nara",
+        "country": "Japan",
+        "category": null,
+        "categoryLabel": null,
+        "color": "#FF6B6B",
+        "href": null,
+        "description": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.8048359,
+          34.6845445
+        ]
+      }
+    }
+  ]
+}
