@@ -36,6 +36,8 @@ Thusly, if the self is defined solely by memory, it will forever be in flux. How
 # II. The Anchor
 {: .didot }
 
+{: .didot }
+
 
 ```sql
 To be continued. Sincere articles in this age are extremely difficult. :(
