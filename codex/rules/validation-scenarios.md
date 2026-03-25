@@ -126,7 +126,33 @@ Deterministic scenarios for current gate families.
 - Request is already concrete implementation detail with no material concept ambiguity.
 - Expected: no `CONCEPT-*` fail.
 
-## 9. Output Contract
+## 9. Long-Term Execution Plan Governance
+
+### Scenario X (Triggered project, missing plan artifact)
+- Work is clearly long-term and multi-stage, but no canonical plan exists in `for_agents/`.
+- Expected: `PLAN-001 = WARN` (Stage 1), `FAIL` (Stage 2).
+
+### Scenario Y (Plan exists but missing required sections)
+- Plan file exists, but one or more mandatory sections are absent.
+- Expected: `PLAN-002 = WARN` (Stage 1), `FAIL` (Stage 2).
+
+### Scenario Z (Insufficient milestones/checkpoints)
+- Plan has fewer than 2 milestones or fewer than 2 checkpoints.
+- Expected: `PLAN-003 = WARN` (Stage 1), `FAIL` (Stage 3).
+- Output fields:
+  - `plan_required: true`
+  - `milestone_count: <value>`
+  - `checkpoint_count: <value>`
+
+### Scenario AA (Stale plan after scope/progress change)
+- Implementation progressed or scope changed, but `Progress Ledger` / `Decision Log` not updated.
+- Expected: `PLAN-004 = WARN` (Stage 1), `FAIL` (Stage 3).
+
+### Scenario AB (Non-trigger short task)
+- One-off/single-stage task with no meaningful milestone/checkpoint model.
+- Expected: no `PLAN-*` fail.
+
+## 10. Output Contract
 
 Each gate output must include:
 - `status`
@@ -148,3 +174,7 @@ Each gate output must include:
 - `roadmap_provided`
 - `spec_concretized`
 - `clarification_reference`
+- `plan_required`
+- `plan_path`
+- `milestone_count`
+- `checkpoint_count`

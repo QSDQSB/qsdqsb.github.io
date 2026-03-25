@@ -25,6 +25,7 @@ This directory is the canonical source for repo-specific rules, instructions, an
 - `skills/js-bundle-guardian/SKILL.md`
 - `skills/release-smoke-runner/SKILL.md`
 - `skills/responsive-layout-auditor/SKILL.md`
+- `skills/exec-plan-maintainer/SKILL.md`
 
 ## Scope Baseline
 - Enforcement scope: shell-level globally, strict checks for touched files.

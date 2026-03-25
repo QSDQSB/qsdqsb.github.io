@@ -24,6 +24,10 @@ recommendations_provided: true | false
 roadmap_provided: true | false
 spec_concretized: true | false
 clarification_reference: string | n/a
+plan_required: true | false
+plan_path: string | n/a
+milestone_count: number | 0
+checkpoint_count: number | 0
 ```
 
 ## Check Families
@@ -68,6 +72,12 @@ clarification_reference: string | n/a
 - `CONCEPT-002`: Recommendations with tradeoffs and a phased roadmap were provided.
 - `CONCEPT-CONFIRM-001`: Concrete spec was completed before implementation step when concept protocol was triggered.
 
+### Long-Term Execution Plan Governance
+- `PLAN-001`: Multi-stage long-term initiatives (with multiple milestones/checkpoints) have a canonical markdown plan under `for_agents/`.
+- `PLAN-002`: Plan includes required sections (`Context`, `Scope`, `Milestones`, `Checkpoints`, `Execution Phases`, `Risks & Mitigations`, `Decision Log`, `Progress Ledger`).
+- `PLAN-003`: Plan tracks at least 2 milestones and at least 2 checkpoints.
+- `PLAN-004`: Plan status is updated when implementation scope/progress changes.
+
 ### Safety Scope
 - `SCOPE-001`: Ignore `_sass/vendor/**` for strict CSS token checks.
 - `SCOPE-002`: No forced global retrofit on untouched legacy files.
@@ -87,10 +97,10 @@ clarification_reference: string | n/a
 - If ambiguity protocol is triggered and concrete spec is missing before implementation, emit `FAIL`.
 
 ### Stage 2 (Block selected high-signal checks)
-- Promote to blocking: `WF-001`, `WF-002`, `CT-001`, `DATA-001`, `DATA-002`, `CSS-001`, `CSS-003`, `RESP-002`, `RESP-003`.
+- Promote to blocking: `WF-001`, `WF-002`, `CT-001`, `DATA-001`, `DATA-002`, `CSS-001`, `CSS-003`, `RESP-002`, `RESP-003`, `PLAN-001`, `PLAN-002`.
 
 ### Stage 3 (Block advanced governance checks)
-- Promote to blocking: `WF-003`, `CT-002`, `DATA-003`, `CSS-002`, `CSS-004`, `GOV-001`, `CONCEPT-001`, `CONCEPT-002`.
+- Promote to blocking: `WF-003`, `CT-002`, `DATA-003`, `CSS-002`, `CSS-004`, `GOV-001`, `CONCEPT-001`, `CONCEPT-002`, `PLAN-003`, `PLAN-004`.
 - Keep `RESP-CONFIRM-001` blocking.
 - Keep `GOV-CONFIRM-001` blocking.
 - Keep `CONCEPT-CONFIRM-001` blocking.
