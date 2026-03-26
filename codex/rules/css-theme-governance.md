@@ -30,6 +30,7 @@ Before adding a token:
 2. Document dedup check for near-identical existing values.
 3. Add a new token only when existing scales are insufficient.
 4. If one-off effect is necessary, tag it as Tier 3 exception with visual-intent rationale.
+5. Reject local-tunability one-off variables unless they encode reusable semantic value.
 
 ## Literal Value Restrictions
 - Disallowed in component SCSS (default): raw hex/HSL/RGB for theme properties.
@@ -37,6 +38,7 @@ Before adding a token:
   - `_sass/_variables.scss` (token definitions)
   - vendor files under `_sass/vendor/**`
   - explicitly documented legacy-exemption regions
+- Avoid arbitrary one-off numbers for spacing/sizing/opacity/timing in component SCSS when scale tokens are available.
 
 ## Mandatory CSS Change Sequence
 1. Audit existing class candidates.
@@ -45,11 +47,13 @@ Before adding a token:
 4. If needed, add/extend token(s) in `_sass/_variables.scss` with dedup + insufficiency evidence.
 5. Apply token-backed updates to selectors.
 6. Add new class only with documented rationale.
+7. If any material choice confidence is below `0.90`, get explicit user approval before repo-mutating edits.
 
 ## Compliance Outcome
 - `PASS`: token-backed change; existing-class-first respected.
 - `WARN`: possible improvement (e.g., class could likely be reused).
 - `FAIL`: ad hoc theme literal or unjustified new class.
+- `FAIL`: below-threshold confidence choice changed without explicit user confirmation.
 
 ## Rollout
 - Stage 1 (`warn`): report violations and recommend fixes.

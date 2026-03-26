@@ -35,6 +35,17 @@ reuse_candidates_checked: string | n/a
 new_token_required: true | false
 new_class_required: true | false
 exception_rationale: string | n/a
+decision_confidence: number | n/a
+explicit_approval_required: true | false
+explicit_approval_reference: string | n/a
+magic_number_present: true | false
+deprecated_usage_residue_detected: true | false
+build_status_reported: true | false
+build_status_result: pass | fail | blocked | n/a
+value_delta_reported: true | false
+major_delta_detected: true | false
+major_delta_threshold: string | n/a
+major_delta_confirmation_reference: string | n/a
 ```
 
 ## Check Families
@@ -69,6 +80,19 @@ exception_rationale: string | n/a
 - `TOKEN-002`: New token includes insufficiency and dedup evidence.
 - `TOKEN-003`: New class includes selector-reuse evidence and rationale.
 - `TOKEN-004`: One-off visual effect values are tagged as explicit exception with rationale.
+- `TOKEN-005`: New token/variable is rejected when it is one-off/local-tunability and lacks reusable semantic value.
+- `TOKEN-006`: Arbitrary magic numbers are rejected unless unavoidable constraints and scale-insufficiency rationale are documented.
+
+### Decision Confidence Governance
+- `CONF-001`: Material implementation choices below `0.90` confidence require explicit user approval before repo mutation.
+- `CONF-CONFIRM-001`: When `CONF-001` is triggered, explicit user approval reference is mandatory.
+
+### Janitor Recovery Governance
+- `JAN-001`: Removed/deprecated `_sass/_variables.scss` tokens must have zero references across `_sass/**` after cleanup.
+- `JAN-002`: Deprecated token usage replacements must use canonical unified variable names when available.
+- `JAN-003`: `bundle exec jekyll build` status is explicitly reported in janitor execution output.
+- `JAN-004`: If build is blocked by non-CSS upstream error, blocker and CSS-specific regression checks are explicitly reported.
+- `DELTA-CONFIRM-001`: Replacement value deltas exceeding gate (`>=20%` relative or `>=0.25rem` absolute/equivalent) require explicit user confirmation before mutation.
 
 ### Responsive
 - `RESP-001`: Desktop baseline maintained.
@@ -112,15 +136,25 @@ exception_rationale: string | n/a
 - If a significant gap is detected and confirmation is missing, emit `FAIL`.
 - `CONCEPT-CONFIRM-001` is enforced immediately.
 - If ambiguity protocol is triggered and concrete spec is missing before implementation, emit `FAIL`.
+- `CONF-CONFIRM-001` is enforced immediately.
+- If confidence threshold is not met and explicit approval reference is missing, emit `FAIL`.
+- `DELTA-CONFIRM-001` is enforced immediately.
+- If major replacement delta is detected and confirmation is missing, emit `FAIL`.
 
 ### Stage 2 (Block selected high-signal checks)
 - Promote to blocking: `WF-001`, `WF-002`, `CT-001`, `DATA-001`, `DATA-002`, `CSS-001`, `CSS-003`, `RESP-002`, `RESP-003`, `PLAN-001`, `PLAN-002`, `IMPL-001`, `TOKEN-001`, `TOKEN-002`.
+- Promote to blocking: `TOKEN-005`.
+- Promote to blocking: `JAN-001`, `JAN-003`.
 
 ### Stage 3 (Block advanced governance checks)
 - Promote to blocking: `WF-003`, `CT-002`, `DATA-003`, `CSS-002`, `CSS-004`, `GOV-001`, `CONCEPT-001`, `CONCEPT-002`, `PLAN-003`, `PLAN-004`, `IMPL-002`, `TOKEN-003`, `TOKEN-004`.
+- Promote to blocking: `TOKEN-006`, `CONF-001`.
+- Promote to blocking: `JAN-002`, `JAN-004`.
 - Keep `RESP-CONFIRM-001` blocking.
 - Keep `GOV-CONFIRM-001` blocking.
 - Keep `CONCEPT-CONFIRM-001` blocking.
+- Keep `CONF-CONFIRM-001` blocking.
+- Keep `DELTA-CONFIRM-001` blocking.
 
 ## Regression Safety
 - Enforce strictness on touched files first.
