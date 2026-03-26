@@ -28,6 +28,13 @@ plan_required: true | false
 plan_path: string | n/a
 milestone_count: number | 0
 checkpoint_count: number | 0
+implementation_note_required: true | false
+implementation_note_path: string | n/a
+token_tier_used: tier1 | tier2 | tier3 | n/a
+reuse_candidates_checked: string | n/a
+new_token_required: true | false
+new_class_required: true | false
+exception_rationale: string | n/a
 ```
 
 ## Check Families
@@ -57,6 +64,12 @@ checkpoint_count: number | 0
 - `CSS-003`: Theme-affecting values use `_sass/_variables.scss` tokens.
 - `CSS-004`: Existing-class-first analysis documented.
 
+### Token Reuse Governance
+- `TOKEN-001`: Changed CSS properties map to existing semantic-scale tokens when available.
+- `TOKEN-002`: New token includes insufficiency and dedup evidence.
+- `TOKEN-003`: New class includes selector-reuse evidence and rationale.
+- `TOKEN-004`: One-off visual effect values are tagged as explicit exception with rationale.
+
 ### Responsive
 - `RESP-001`: Desktop baseline maintained.
 - `RESP-002`: Mobile-small layout remains readable/usable.
@@ -78,6 +91,10 @@ checkpoint_count: number | 0
 - `PLAN-003`: Plan tracks at least 2 milestones and at least 2 checkpoints.
 - `PLAN-004`: Plan status is updated when implementation scope/progress changes.
 
+### Implementation Notes
+- `IMPL-001`: Completed functionality has a tiny implementation note under `for_agents/IMPLEMENTATIONS/`.
+- `IMPL-002`: Note includes behavior, main change, and relative file references.
+
 ### Safety Scope
 - `SCOPE-001`: Ignore `_sass/vendor/**` for strict CSS token checks.
 - `SCOPE-002`: No forced global retrofit on untouched legacy files.
@@ -97,10 +114,10 @@ checkpoint_count: number | 0
 - If ambiguity protocol is triggered and concrete spec is missing before implementation, emit `FAIL`.
 
 ### Stage 2 (Block selected high-signal checks)
-- Promote to blocking: `WF-001`, `WF-002`, `CT-001`, `DATA-001`, `DATA-002`, `CSS-001`, `CSS-003`, `RESP-002`, `RESP-003`, `PLAN-001`, `PLAN-002`.
+- Promote to blocking: `WF-001`, `WF-002`, `CT-001`, `DATA-001`, `DATA-002`, `CSS-001`, `CSS-003`, `RESP-002`, `RESP-003`, `PLAN-001`, `PLAN-002`, `IMPL-001`, `TOKEN-001`, `TOKEN-002`.
 
 ### Stage 3 (Block advanced governance checks)
-- Promote to blocking: `WF-003`, `CT-002`, `DATA-003`, `CSS-002`, `CSS-004`, `GOV-001`, `CONCEPT-001`, `CONCEPT-002`, `PLAN-003`, `PLAN-004`.
+- Promote to blocking: `WF-003`, `CT-002`, `DATA-003`, `CSS-002`, `CSS-004`, `GOV-001`, `CONCEPT-001`, `CONCEPT-002`, `PLAN-003`, `PLAN-004`, `IMPL-002`, `TOKEN-003`, `TOKEN-004`.
 - Keep `RESP-CONFIRM-001` blocking.
 - Keep `GOV-CONFIRM-001` blocking.
 - Keep `CONCEPT-CONFIRM-001` blocking.

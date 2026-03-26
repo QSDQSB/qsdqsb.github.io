@@ -7,6 +7,7 @@ Defines the canonical AI workflow for this repository.
 1. `prepare`
 2. `serve` or `build`
 3. `verify`
+4. `document` (implementation note for completed functionality)
 
 ## `prepare` Requirements
 
@@ -38,9 +39,12 @@ Defines the canonical AI workflow for this repository.
 - Missing preprocess step: workflow non-compliant.
 - Source/artifact JS drift: non-compliant.
 - Map/galleries changed without corresponding preprocess execution: non-compliant.
+- Completed functionality without tiny implementation note in `for_agents/IMPLEMENTATIONS`: non-compliant.
 
 ## Related Checks
 
 - `WF-001` canonical sequence applied
 - `WF-002` preprocess completeness
 - `WF-003` JS source/artifact sync
+- `IMPL-001` implementation note presence
+- `IMPL-002` implementation note completeness

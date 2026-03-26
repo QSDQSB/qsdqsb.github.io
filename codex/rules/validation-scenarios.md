@@ -152,7 +152,47 @@ Deterministic scenarios for current gate families.
 - One-off/single-stage task with no meaningful milestone/checkpoint model.
 - Expected: no `PLAN-*` fail.
 
-## 10. Output Contract
+## 10. Implementation Notes
+
+### Scenario AC (Functionality done, no note)
+- Functionality implementation is completed, but no note exists in `for_agents/IMPLEMENTATIONS/`.
+- Expected: `IMPL-001 = WARN` (Stage 1), `FAIL` (Stage 2).
+
+### Scenario AD (Note exists, incomplete content)
+- Note exists but misses one required element (`Behavior`, `Main Change`, or file references).
+- Expected: `IMPL-002 = WARN` (Stage 1), `FAIL` (Stage 3).
+
+### Scenario AE (Compliant tiny note)
+- Note includes behavior, main change, and relative file references.
+- Expected: `IMPL-001 = PASS`, `IMPL-002 = PASS`.
+
+### Scenario AF (Non-trigger planning turn)
+- No implementation occurred (planning/discussion only).
+- Expected: no `IMPL-*` fail.
+
+## 11. Token Reuse Governance
+
+### Scenario AG (Semantic scale reuse path)
+- A style change reuses existing global semantic spacing/radius/type tokens and existing selectors.
+- Expected: `TOKEN-001 = PASS`, `TOKEN-003 = PASS`.
+
+### Scenario AH (New token justified)
+- No existing semantic-scale token fits; insufficiency and dedup evidence are provided.
+- Expected: `TOKEN-002 = PASS`.
+
+### Scenario AI (Per-class custom value despite reusable token)
+- Change introduces class-specific padding/size while suitable semantic token exists.
+- Expected: `TOKEN-001 = WARN` (Stage 1), `FAIL` (Stage 2).
+
+### Scenario AJ (One-off effect missing rationale)
+- A one-off visual effect value is introduced without explicit exception rationale.
+- Expected: `TOKEN-004 = WARN` (Stage 1), `FAIL` (Stage 3).
+
+### Scenario AK (New class without selector-reuse evidence)
+- New class is added and selector-insufficiency evidence is missing.
+- Expected: `TOKEN-003 = WARN` (Stage 1), `FAIL` (Stage 3).
+
+## 12. Output Contract
 
 Each gate output must include:
 - `status`
@@ -178,3 +218,10 @@ Each gate output must include:
 - `plan_path`
 - `milestone_count`
 - `checkpoint_count`
+- `implementation_note_required`
+- `implementation_note_path`
+- `token_tier_used`
+- `reuse_candidates_checked`
+- `new_token_required`
+- `new_class_required`
+- `exception_rationale`

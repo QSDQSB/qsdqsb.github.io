@@ -22,6 +22,7 @@ description: Run and validate the canonical repository flow (`prepare -> serve/b
    - provide phased roadmap
    - concretize spec before implementation
 6. If a significant missing governance gap is discovered, emit a proposal record and request user confirmation before adding a new rule/instruction/skill artifact.
+7. After completed functionality implementation, write a tiny note under `for_agents/IMPLEMENTATIONS/` with behavior, main change, and relative file references.
 
 ## Enforcement Mapping
 - `../../workflow-contract.md`
@@ -42,3 +43,6 @@ description: Run and validate the canonical repository flow (`prepare -> serve/b
   - `roadmap_provided`
   - `spec_concretized`
   - `clarification_reference`
+- Include implementation-note metadata when applicable:
+  - `implementation_note_required`
+  - `implementation_note_path`
