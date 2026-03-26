@@ -115,3 +115,5 @@ clarification_reference: string | n/a
 | "Detect one-off hex values outside token file" | `skill` | Reusable validation routine | `skills/design-token-steward/SKILL.md` |
 | "Allow cinematic hero motion only as explicit exception" | `rule` | Persistent motion policy | `design-language.md` |
 | "Refactor selector reuse before adding new CSS class" | `skill` | Repeatable class-first refactor workflow | `skills/css-theme-refactor/SKILL.md` |
+| "Run CSS janitor cleanup for deduplication and variable unification" | `skill` | Reusable entropy-reduction workflow | `skills/css-scss-janitor/SKILL.md` |
+| "If confidence is below 90%, ask for explicit approval before changing files" | `rule` | Durable cross-feature decision safety gate | `decision-confidence-governance.md` |

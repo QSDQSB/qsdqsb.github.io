@@ -7,6 +7,7 @@ This directory is the canonical source for repo-specific rules, instructions, an
 - `design-language.md`: Visual and motion language contract for the site.
 - `css-theme-governance.md`: CSS theming governance; token-first and existing-class-first policy.
 - `token-scale-governance.md`: Tiered token admission policy (global-first, exception-only) with dedup and evidence requirements.
+- `decision-confidence-governance.md`: 0.90 confidence threshold, explicit approval protocol, and anti-tunability guardrails.
 - `workflow-contract.md`: Canonical AI execution flow (`prepare -> serve/build -> verify`).
 - `content-contracts.md`: Frontmatter contracts by collection and touched-file enforcement.
 - `data-integrity.md`: Map/gallery/tag consistency checks.
@@ -29,6 +30,7 @@ This directory is the canonical source for repo-specific rules, instructions, an
 - `skills/responsive-layout-auditor/SKILL.md`
 - `skills/exec-plan-maintainer/SKILL.md`
 - `skills/token-scale-curator/SKILL.md`
+- `skills/css-scss-janitor/SKILL.md`
 
 ## Scope Baseline
 - Enforcement scope: shell-level globally, strict checks for touched files.
@@ -36,4 +38,6 @@ This directory is the canonical source for repo-specific rules, instructions, an
 - Exception: `RESP-CONFIRM-001` is a mandatory confirmation gate.
 - Exception: `GOV-CONFIRM-001` is a mandatory confirmation gate.
 - Exception: `CONCEPT-CONFIRM-001` is a mandatory confirmation gate.
+- Exception: `CONF-CONFIRM-001` is a mandatory confirmation gate.
 - CSS token authority: `_sass/_variables.scss`.
+- Path reference convention for rule/skill docs: use repo-relative paths (for example `_includes/page__hero.html`), not absolute filesystem paths.

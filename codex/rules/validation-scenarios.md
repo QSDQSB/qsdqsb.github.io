@@ -192,7 +192,71 @@ Deterministic scenarios for current gate families.
 - New class is added and selector-insufficiency evidence is missing.
 - Expected: `TOKEN-003 = WARN` (Stage 1), `FAIL` (Stage 3).
 
-## 12. Output Contract
+### Scenario AL (One-off token for local tunability)
+- A selector-specific variable is added for a single offset/opacity tweak with no reusable semantic purpose.
+- Expected: `TOKEN-005 = WARN` (Stage 1), `FAIL` (Stage 2).
+
+### Scenario AM (Arbitrary magic number without rationale)
+- New spacing/timing literal is introduced and existing scale could have been reused; no insufficiency rationale is provided.
+- Expected: `TOKEN-006 = WARN` (Stage 1), `FAIL` (Stage 3).
+
+## 12. Decision Confidence Governance
+
+### Scenario AN (Below-threshold confidence without explicit approval)
+- A material implementation choice is made with confidence `< 0.90`, but no explicit user confirmation reference is recorded.
+- Expected: `CONF-CONFIRM-001 = FAIL` immediately.
+- Output fields:
+  - `decision_confidence: <0.90`
+  - `explicit_approval_required: true`
+  - `explicit_approval_reference: n/a`
+
+### Scenario AO (Below-threshold confidence with explicit approval)
+- Material choice has confidence `< 0.90` and explicit user approval reference is present before mutation.
+- Expected: `CONF-001 = PASS`, `CONF-CONFIRM-001 = PASS`.
+
+### Scenario AP (High-confidence path)
+- Material choice has confidence `>= 0.90`; no special escalation required.
+- Expected: `CONF-001 = PASS`.
+
+## 13. Janitor Recovery Governance
+
+### Scenario AQ (Deprecated usage residue remains)
+- A token is removed from `_sass/_variables.scss`, but at least one usage remains in `_sass/**`.
+- Expected: `JAN-001 = WARN` (Stage 1), `FAIL` (Stage 2).
+- Output fields:
+  - `deprecated_usage_residue_detected: true`
+
+### Scenario AR (Replacement skips canonical unified token)
+- Deprecated usage is replaced with a literal while a canonical unified token is available.
+- Expected: `JAN-002 = WARN` (Stage 1), `FAIL` (Stage 3).
+
+### Scenario AS (Build status omitted)
+- Janitor cleanup is executed but `bundle exec jekyll build` status is not reported.
+- Expected: `JAN-003 = WARN` (Stage 1), `FAIL` (Stage 2).
+- Output fields:
+  - `build_status_reported: false`
+  - `build_status_result: n/a`
+
+### Scenario AT (Blocked build without blocker/reporting discipline)
+- Build is blocked by non-CSS upstream error, but blocker details or CSS-specific regression checks are not reported.
+- Expected: `JAN-004 = WARN` (Stage 1), `FAIL` (Stage 3).
+- Output fields:
+  - `build_status_reported: true`
+  - `build_status_result: blocked`
+
+### Scenario AU (Major delta without confirmation)
+- Replacement delta exceeds threshold (`>=20%` relative or `>=0.25rem` absolute/equivalent) and no explicit confirmation exists.
+- Expected: `DELTA-CONFIRM-001 = FAIL` immediately.
+- Output fields:
+  - `value_delta_reported: true`
+  - `major_delta_detected: true`
+  - `major_delta_confirmation_reference: n/a`
+
+### Scenario AV (Major delta with confirmation)
+- Replacement delta exceeds threshold and explicit confirmation exists before mutation.
+- Expected: `DELTA-CONFIRM-001 = PASS`.
+
+## 14. Output Contract
 
 Each gate output must include:
 - `status`
@@ -225,3 +289,14 @@ Each gate output must include:
 - `new_token_required`
 - `new_class_required`
 - `exception_rationale`
+- `decision_confidence`
+- `explicit_approval_required`
+- `explicit_approval_reference`
+- `magic_number_present`
+- `deprecated_usage_residue_detected`
+- `build_status_reported`
+- `build_status_result`
+- `value_delta_reported`
+- `major_delta_detected`
+- `major_delta_threshold`
+- `major_delta_confirmation_reference`
