@@ -1,0 +1,99 @@
+/* ==========================================================================
+   BILINGUAL SWITCH
+   ========================================================================== */
+
+[data-bilingual] {
+  position: relative;
+  border-radius: 0.9rem;
+}
+
+/* Progressive fallback before JS enhancement. */
+[data-bilingual] > [data-bilingual-lang]:not(:first-of-type) {
+  display: none;
+}
+
+[data-bilingual].is-bilingual-enhanced {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 0.32rem;
+}
+
+[data-bilingual].is-bilingual-enhanced > [data-bilingual-lang] {
+  display: block;
+  min-width: 0;
+}
+
+[data-bilingual].is-bilingual-enhanced > [data-bilingual-lang][hidden] {
+  display: none !important;
+}
+
+[data-bilingual].is-bilingual-enhanced > [data-bilingual-lang]:not([hidden]) > :first-child {
+  margin-top: 0;
+}
+
+[data-bilingual].is-bilingual-enhanced > [data-bilingual-lang]:not([hidden]) > :last-child {
+  margin-bottom: 0;
+}
+
+.bilingual-switch {
+  position: relative;
+  z-index: 1;
+  justify-self: end;
+  display: inline-flex;
+  gap: 0.1rem;
+  align-items: center;
+  border: 1px solid rgba($light-gray, 0.22);
+  border-radius: 999px;
+  padding: 0.1rem;
+  background: rgba($background-color, 0.56);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.16);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.bilingual-switch__button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: mix($text-color, #fff, 56%);
+  border-radius: 999px;
+  padding: 0.06rem 0.46rem;
+  font-size: 0.7rem;
+  font-family: $sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.035em;
+  line-height: 1.35;
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+
+  &:hover {
+    color: mix($text-color, #fff, 72%);
+    background: rgba($light-gray, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba($primary-color, 0.85);
+    outline-offset: 1px;
+  }
+}
+
+.bilingual-switch__button.is-active {
+  background: rgba(mix(#fff, $primary-color, 76%), 0.86);
+  color: #171717;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.22);
+}
+
+@include responsive-down(compact) {
+  [data-bilingual].is-bilingual-enhanced > [data-bilingual-lang] {
+    font-size: 0.98em;
+  }
+
+  .bilingual-switch {
+    margin-bottom: 0.38rem;
+  }
+
+  .bilingual-switch__button {
+    font-size: 0.67rem;
+    padding: 0.07rem 0.46rem;
+  }
+}
