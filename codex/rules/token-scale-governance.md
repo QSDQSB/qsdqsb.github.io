@@ -1,0 +1,47 @@
+# Token Scale Governance
+
+Defines global-first token reuse policy to reduce variable/class sprawl while preserving deliberate visual craft.
+
+## Authority and Objective
+
+- `_sass/_variables.scss` is the authoritative theme token source.
+- Default behavior is reuse of shared semantic scales before creating new tokens or classes.
+
+## Token Tiers
+
+### Tier 1: Global Semantic Scale (preferred default)
+- Use shared reusable tokens for common styling intent:
+  - spacing rhythm (padding/margin/gap/inset)
+  - radius
+  - shadows/elevation
+  - type scale
+  - key border/surface/text tones
+- Most layout and component styling should map to Tier 1.
+
+### Tier 2: Component Semantic Token (allowed when needed)
+- Allowed only when Tier 1 cannot represent intent safely.
+- Token must still be semantically named and reusable for that component family, not one-selector only.
+
+### Tier 3: One-Off Visual Effect Exception (restricted)
+- Allowed only for deliberate visual effect not representable by Tier 1/Tier 2 without regression.
+- Requires explicit rationale and must be recorded as an exception in change notes.
+
+## Admission Criteria (New Token/Class)
+
+Before introducing a new token:
+1. Scan Tier 1/Tier 2 candidates and document what was checked.
+2. Run dedup review for near-identical values already present.
+3. Justify why existing tokens are insufficient.
+4. For Tier 3, include visual-intent rationale and risk note.
+
+Before introducing a new class:
+1. Perform existing-selector-first analysis.
+2. Document why selector reuse/extension is insufficient.
+3. Keep values token-backed and mapped to tiers.
+
+## Related Checks
+
+- `TOKEN-001` semantic-scale mapping when available
+- `TOKEN-002` new-token insufficiency + dedup evidence
+- `TOKEN-003` new-class selector-reuse evidence
+- `TOKEN-004` one-off effect exception rationale

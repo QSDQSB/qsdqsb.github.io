@@ -5,6 +5,10 @@ This contract governs CSS theme changes in this repository.
 ## Authoritative Token Source
 - Theme tokens must be defined in `_sass/_variables.scss`.
 - For theme-affecting values (color, shadows, gradients, spacing rhythm, border radius, motion timings), do not introduce ad hoc literals in component SCSS when a token can be used.
+- Apply tiered token policy from `token-scale-governance.md`:
+  - Tier 1 global semantic scale first
+  - Tier 2 component semantic token only when Tier 1 is insufficient
+  - Tier 3 one-off visual exception only with rationale
 
 ## Existing-Class-First Policy
 Before adding a new class:
@@ -18,6 +22,14 @@ A new class is allowed only when all are true:
 - New selector has clear semantic purpose.
 - Values are token-backed from `_sass/_variables.scss`.
 - Change notes include rationale and why existing selectors were insufficient.
+- Semantic-scale mapping was attempted before class creation.
+
+## Token Admission Criteria
+Before adding a token:
+1. Document Tier 1/Tier 2 reuse scan.
+2. Document dedup check for near-identical existing values.
+3. Add a new token only when existing scales are insufficient.
+4. If one-off effect is necessary, tag it as Tier 3 exception with visual-intent rationale.
 
 ## Literal Value Restrictions
 - Disallowed in component SCSS (default): raw hex/HSL/RGB for theme properties.
@@ -28,10 +40,11 @@ A new class is allowed only when all are true:
 
 ## Mandatory CSS Change Sequence
 1. Audit existing class candidates.
-2. Reuse/extend existing selector if feasible.
-3. If needed, add/extend token(s) in `_sass/_variables.scss`.
-4. Apply token-backed updates to selectors.
-5. Add new class only with documented rationale.
+2. Map changed declarations to existing semantic-scale tokens first.
+3. Reuse/extend existing selector if feasible.
+4. If needed, add/extend token(s) in `_sass/_variables.scss` with dedup + insufficiency evidence.
+5. Apply token-backed updates to selectors.
+6. Add new class only with documented rationale.
 
 ## Compliance Outcome
 - `PASS`: token-backed change; existing-class-first respected.

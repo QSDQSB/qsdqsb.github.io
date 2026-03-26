@@ -6,9 +6,11 @@ This directory is the canonical source for repo-specific rules, instructions, an
 - `preference-classification.md`: Classifier for deciding whether a user preference is a `rule`, `instruction`, or `skill`.
 - `design-language.md`: Visual and motion language contract for the site.
 - `css-theme-governance.md`: CSS theming governance; token-first and existing-class-first policy.
+- `token-scale-governance.md`: Tiered token admission policy (global-first, exception-only) with dedup and evidence requirements.
 - `workflow-contract.md`: Canonical AI execution flow (`prepare -> serve/build -> verify`).
 - `content-contracts.md`: Frontmatter contracts by collection and touched-file enforcement.
 - `data-integrity.md`: Map/gallery/tag consistency checks.
+- `implementation-notes-contract.md`: Post-implementation tiny note contract under `for_agents/IMPLEMENTATIONS`.
 - `responsive-layout-governance.md`: Desktop-first + mobile-required responsive policy and confirmation gate.
 - `quality-gates.md`: Validation outcomes and warn-then-block rollout plan.
 - `agent-style-checklist.md`: Required execution sequence for style/theme changes.
@@ -26,6 +28,7 @@ This directory is the canonical source for repo-specific rules, instructions, an
 - `skills/release-smoke-runner/SKILL.md`
 - `skills/responsive-layout-auditor/SKILL.md`
 - `skills/exec-plan-maintainer/SKILL.md`
+- `skills/token-scale-curator/SKILL.md`
 
 ## Scope Baseline
 - Enforcement scope: shell-level globally, strict checks for touched files.
