@@ -174,6 +174,7 @@ $global-transition: all 0.3s ease-in-out !default;
 $cubic-bezier-param: cubic-bezier(.33,.11,.02,.99);
 $cubic-bezier-default: all 1s $cubic-bezier-param;
 $cubic-bezier-default-05s: all 0.5s $cubic-bezier-param;
+$cubic-bezier-smooth: cubic-bezier(0.22, 1, 0.36, 1);
 $intro-transition: intro 0.3s both !default;
 $global-transition-time: 0.5s;
 $rose-gold-gradient-translucent: linear-gradient(195deg,#FAC39EBB 0%, #FBD0B7BB 25%, #FBD6C4BB 65%, #DF989FAA 100%);
@@ -183,6 +184,67 @@ $box-shadow-fancy:
    0 8px 8px rgba(0, 0, 0, 0.5),
    0 16px 16px rgba(0, 0, 0, 0.5),
    8px 32px 32px rgba(0, 0, 0, 0.5);
+$shadow-soft:
+   0 14px 32px rgba(0, 0, 0, 0.22),
+   0 4px 12px rgba(0, 0, 0, 0.18);
+$shadow-floating:
+   0 20px 48px rgba(0, 0, 0, 0.28),
+   0 8px 20px rgba(0, 0, 0, 0.18);
+
+// Navigation and shared UI geometry/motion should be tokenized here first.
+// Avoid introducing new ad hoc literals in component SCSS when a reusable token fits.
+$nav-shell-padding-y: 0.16rem;
+$nav-shell-padding-x: 0.2rem;
+$nav-shell-gap: 0.14rem;
+$nav-brand-mark-size: 1.9rem;
+$nav-brand-mark-size-mobile: 1.74rem;
+$nav-brand-gap-expanded: 0.78rem;
+$nav-brand-pad-y: 0.34rem;
+$nav-brand-logo-shell-size: $nav-brand-mark-size + ($nav-brand-pad-y * 2);
+$nav-brand-logo-shell-size-mobile: $nav-brand-mark-size-mobile + (0.32rem * 2);
+$nav-brand-text-max-width: 26rem;
+$nav-link-padding-y: 0.36rem;
+$nav-link-padding-x: 0.68rem;
+$nav-action-size: 1.82rem;
+$nav-action-size-mobile: 1.36rem;
+$nav-action-border-color: rgba(255, 255, 255, 0.12);
+$nav-action-border-color-hover: rgba(255, 255, 255, 0.24);
+$nav-action-focus-ring-color: rgba(255, 255, 255, 0.3);
+$nav-action-surface: rgba(255, 255, 255, 0.07);
+$nav-action-surface-hover: rgba(255, 255, 255, 0.16);
+$nav-action-surface-active: rgba(255, 255, 255, 0.2);
+$nav-action-icon-color: #fff;
+$nav-action-hover-lift: -1px;
+$nav-action-hover-scale: 1.035;
+$nav-action-icon-size: 1.02rem;
+$nav-action-sweep-gradient: linear-gradient(110deg, rgba(255, 255, 255, 0) 14%, rgba(255, 255, 255, 0.24) 48%, rgba(255, 255, 255, 0) 82%);
+$nav-action-sweep-duration: 0.38s;
+$nav-action-blur: 12px;
+$nav-overflow-toggle-offset: 0.3rem;
+$nav-overflow-reserve-width: 2.55rem;
+$nav-overflow-icon-width: 1.32rem;
+$nav-overflow-icon-height: 0.18rem;
+$nav-overflow-icon-width-mobile: 0.84rem;
+$nav-overflow-icon-height-mobile: 0.12rem;
+$nav-collapsed-width: ($nav-shell-padding-x * 2) + $nav-brand-logo-shell-size;
+$nav-shell-ease: cubic-bezier(0.18, 1, 0.32, 1);
+$nav-content-delay: 0.24s;
+$nav-content-fade-duration: 0.72s;
+$nav-auto-fade-duration: 0.25s;
+$resize-runtime-transition-duration: 0.1s;
+
+$search-panel-page-padding: 1rem;
+$search-panel-page-padding-mobile: 0.75rem;
+$search-panel-offset-y: 2rem;
+$search-panel-padding-x: 0.95rem;
+$search-panel-padding-x-large: 1.15rem;
+$search-panel-input-surface: $code-background-color;
+$search-panel-input-border-color-focus: rgba($link-color, 0.42);
+$search-panel-muted-text: mix(#fff, $text-color, 20%);
+$search-suggestion-padding-x: 0.9rem;
+$search-suggestion-radius: 0.9rem;
+$search-suggestion-accent-inset: 0.5rem;
+$search-suggestion-accent-default: rgba($primary-color, 0.18);
 
 $linear-gradient-macaron: linear-gradient(90deg, rgba(249,237,209,1) 0%, rgba(254,170,194,1) 20%, rgba(247,117,169,1) 40%, rgba(184,222,164,1) 60%, rgba(182,237,232,1) 80%, rgba(143,219,216,1) 100%);
 $linear-gradient-megatron: linear-gradient(to right, #c6ffdd, #fbd786, #f7797d); 

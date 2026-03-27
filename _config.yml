@@ -51,6 +51,7 @@ atom_feed:
   path                   : # blank (default) uses feed.xml
 
 search: true
+search_full_content: true
 # SEO Related
 google_site_verification :
 bing_site_verification   :
@@ -237,7 +238,6 @@ defaults:
       image: true
 
 image_position: "left center"
-search: false
 
 # Sass/SCSS
 sass:

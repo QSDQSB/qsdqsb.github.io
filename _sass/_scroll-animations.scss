@@ -19,7 +19,7 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@include responsive-reduced-motion {
   .reveal-on-scroll {
     opacity: 1 !important;
     transform: none !important;

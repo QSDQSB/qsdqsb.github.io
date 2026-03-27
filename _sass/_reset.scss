@@ -13,7 +13,7 @@ html {
     animation: gradient 20s ease infinite;
 */
   background-color: $background-color;
-  @include breakpoint($medium) {
+  @include responsive-up(tablet) {
     font-size: 20px;
   }
 

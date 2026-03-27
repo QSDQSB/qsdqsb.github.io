@@ -3,54 +3,204 @@
    ========================================================================== */
 
 .masthead {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  overflow: visible;
+  z-index: 40;
+  pointer-events: none;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
   -webkit-animation: intro 0.3s both;
           animation: intro 0.3s both;
   -webkit-animation-delay: 0.15s;
           animation-delay: 0.15s;
-  z-index: 20;
 
   &__inner-wrap {
     @include clearfix;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 1em;
-    max-width: 100%;
-    display: -webkit-box;
-    display: -ms-flexbox;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0.75rem 1rem 0;
+    width: 100%;
+    max-width: none;
     display: flex;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
+    justify-content: flex-start;
     font-family: $sans-serif-narrow;
-
-    @include breakpoint($x-large) {
-      max-width: $max-width;
-    }
+    pointer-events: none;
 
     nav {
       z-index: 10;
+      pointer-events: auto;
     }
 
     a {
       text-decoration: none;
     }
   }
+
+  &__menu {
+    float: none;
+    margin-left: 0;
+    margin-right: 0;
+    width: auto;
+    max-width: calc(100vw - 2rem);
+    clear: none;
+    display: flex;
+    justify-content: flex-start;
+    flex: 0 1 auto;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition:
+      opacity $nav-auto-fade-duration $nav-shell-ease,
+      transform $nav-auto-fade-duration $nav-shell-ease;
+
+    .site-nav {
+      margin-left: 0;
+      width: fit-content;
+
+      @include responsive-up(mobile) {
+        float: none;
+        margin-left: 0;
+      }
+    }
+
+    ul {
+      margin: 0;
+      padding: 0;
+      clear: both;
+      list-style-type: none;
+    }
+  }
+
+  &.is-nav-collapsed {
+    .greedy-nav {
+      transform: translate3d(0, -0.08rem, 0) scale(0.985);
+      clip-path: inset(0 calc(100% - var(--nav-collapsed-width)) 0 0 round 999px);
+      box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.16),
+        0 5px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .masthead__menu-item:not(.masthead__menu-item--brand),
+    .search__toggle,
+    .greedy-nav > .greedy-nav__toggle {
+      opacity: 0;
+      pointer-events: none;
+      transition-delay: 0s;
+    }
+
+    .masthead__brand-group {
+      gap: 0;
+      transition-delay: 0s;
+    }
+
+    .masthead__brand-name {
+      max-width: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition-delay: 0s;
+    }
+  }
+
+  &.is-nav-expanded {
+    .greedy-nav {
+      clip-path: inset(0 0 0 0 round 999px);
+      transform: translate3d(0, 0, 0) scale(1);
+      box-shadow: $shadow-floating;
+    }
+
+    .masthead__menu-item,
+    .search__toggle,
+    .greedy-nav > .greedy-nav__toggle {
+      opacity: 1;
+      pointer-events: auto;
+      transition-delay: $nav-content-delay;
+    }
+
+    .masthead__brand-group {
+      gap: $nav-brand-gap-expanded;
+      transition-delay: $nav-content-delay;
+    }
+
+    .masthead__brand-name {
+      max-width: $nav-brand-text-max-width;
+      opacity: 1;
+      pointer-events: auto;
+      transition-delay: $nav-content-delay;
+    }
+  }
+
+  &.is-hidden {
+    .greedy-nav {
+      opacity: 0;
+      transform: translate3d(0, -0.95rem, 0) scale(0.92);
+      clip-path: inset(0 100% 0 0 round 999px);
+      box-shadow: none;
+      pointer-events: none;
+    }
+
+    .masthead__menu-item,
+    .search__toggle,
+    .greedy-nav > .greedy-nav__toggle,
+    .masthead__brand-name {
+      opacity: 0;
+      pointer-events: none;
+      transition-delay: 0s;
+    }
+
+    .masthead__brand-group {
+      gap: 0;
+      transition-delay: 0s;
+    }
+  }
+
+  &.is-nav-faded {
+    .masthead__menu {
+      opacity: 0;
+      transform: translate3d(0, -0.2rem, 0) scale(0.985);
+      pointer-events: none;
+    }
+  }
+
+  &.is-scrolled.is-nav-expanded {
+    .greedy-nav {
+      background: rgba(8, 8, 10, 0.58);
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+  }
 }
 
+html.is-resizing {
+  .masthead {
+    .masthead__menu,
+    .greedy-nav,
+    .masthead__brand-group,
+    .masthead__brand-name,
+    .masthead__menu-item,
+    .search__toggle,
+    .greedy-nav__toggle,
+    .hidden-links {
+      transition-duration: $resize-runtime-transition-duration !important;
+      animation-duration: $resize-runtime-transition-duration !important;
+      animation-delay: 0s !important;
+    }
+  }
+}
 
 .site-logo img {
   max-height: 2rem;
 }
 
+
 .site-title {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -ms-flex-item-align: center;
   align-self: center;
   font-weight: bold;
-  // z-index: 20;
+  letter-spacing: 0.02em;
 }
 
 .site-subtitle {
@@ -58,77 +208,106 @@
   font-size: $type-size-8;
 }
 
-.masthead__menu {
-  float: left;
-  margin-left: 0;
-  margin-right: 0;
-  width: 100%;
-  clear: both;
-
-  .site-nav {
-    margin-left: 0;
-
-    @include breakpoint($small) {
-      float: right;
-    }
-  }
-
-  ul {
-    margin: 0;
-    padding: 0;
-    clear: both;
-    list-style-type: none;
-  }
-}
-
-.masthead__menu {
-  float: left;
-  margin-left: 0;
-  margin-right: 0;
-  width: 100%;
-  clear: both;
-
-  .site-nav {
-    margin-left: 0;
-
-    @include breakpoint($small) {
-      float: right;
-    }
-  }
-
-  ul {
-    margin: 0;
-    padding: 0;
-    clear: both;
-    list-style-type: none;
-  }
-}
-
 .masthead__menu-item {
-  display: block;
+  display: flex;
+  align-items: center;
   list-style-type: none;
   white-space: nowrap;
+  padding: 0.1rem 0.12rem;
+  transition:
+    opacity $nav-content-fade-duration $nav-shell-ease;
 
-  padding: 0.5em;
-  
   &--lg {
-    padding-right: 2em;
+    padding-right: 0.08rem;
     font-weight: 700;
   }
-}
-.with_qsd_logo_afront {
-  padding-left: 2em;
 
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    width: 1.5em;
-    height: 1.5em;
-    transform: translateY(-50%);
-    background-image: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg");
-    background-repeat: no-repeat;
-    background-size: contain;
+  &--brand {
+    padding: 0;
+  }
+}
+
+.masthead .greedy-nav {
+  margin-left: 0;
+}
+
+.masthead__brand-group {
+  display: inline-flex;
+  align-items: center;
+  gap: $nav-brand-gap-expanded;
+  min-width: 0;
+  transition:
+    gap calc($global-transition-time * 3) $nav-shell-ease;
+}
+
+.masthead__brand-logo,
+.masthead__brand-name {
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+}
+
+.masthead__brand-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 $nav-brand-logo-shell-size;
+  width: $nav-brand-logo-shell-size;
+  height: $nav-brand-logo-shell-size;
+  border-radius: 999px;
+}
+
+.masthead__brand-mark {
+  flex: 0 0 $nav-brand-mark-size;
+  width: $nav-brand-mark-size;
+  height: $nav-brand-mark-size;
+  border-radius: 999px;
+  background-image: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+.masthead__brand-name {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  max-width: $nav-brand-text-max-width;
+  overflow: hidden;
+  color: $masthead-link-color;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 1;
+  transition:
+    max-width calc($global-transition-time * 3) $nav-shell-ease,
+    opacity $nav-content-fade-duration $nav-shell-ease,
+    color 0.35s $cubic-bezier-smooth;
+}
+
+@include responsive-down(compact) {
+  .masthead {
+    &__inner-wrap {
+      padding: 0.65rem 0.6rem 0;
+    }
+
+    &__menu {
+      max-width: calc(100vw - 1.2rem);
+    }
+  }
+
+  .masthead__brand-group {
+    gap: 0.62rem;
+  }
+
+  .masthead__brand-logo {
+    flex-basis: $nav-brand-logo-shell-size-mobile;
+    width: $nav-brand-logo-shell-size-mobile;
+    height: $nav-brand-logo-shell-size-mobile;
+  }
+
+  .masthead__brand-mark {
+    flex-basis: $nav-brand-mark-size-mobile;
+    width: $nav-brand-mark-size-mobile;
+    height: $nav-brand-mark-size-mobile;
   }
 }
