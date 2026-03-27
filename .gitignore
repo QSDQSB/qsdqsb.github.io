@@ -6,3 +6,5 @@ package-lock.json
 docs
 improvements.md
 for_agents/
+.playwright-cli
+.sass-cache/

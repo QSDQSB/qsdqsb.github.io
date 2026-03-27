@@ -61,7 +61,7 @@ figure.highlight {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@include responsive-reduced-motion {
   div.highlighter-rouge .code-copy-btn,
   figure.highlight .code-copy-btn {
     transition: none;

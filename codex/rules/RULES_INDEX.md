@@ -11,6 +11,7 @@ This directory is the canonical source for repo-specific rules, instructions, an
 - `workflow-contract.md`: Canonical AI execution flow (`prepare -> serve/build -> verify`).
 - `content-contracts.md`: Frontmatter contracts by collection and touched-file enforcement.
 - `data-integrity.md`: Map/gallery/tag consistency checks.
+- `voyage-subvoyage-gallery-behavior.md`: Canonical execution/parameter contract for voyage/subvoyage gallery layout behavior.
 - `implementation-notes-contract.md`: Post-implementation tiny note contract under `for_agents/IMPLEMENTATIONS`.
 - `responsive-layout-governance.md`: Desktop-first + mobile-required responsive policy and confirmation gate.
 - `quality-gates.md`: Validation outcomes and warn-then-block rollout plan.

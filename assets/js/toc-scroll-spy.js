@@ -1,48 +1,63 @@
 /**
  * TOC Scroll Spy and Reading Progress Indicator
- * 
+ *
  * Features:
  * 1. Auto-highlights current section in TOC based on viewport
  * 2. Shows reading progress with a thin progress line
  */
 
 (function() {
-  'use strict';
+  "use strict";
 
   // Check if TOC exists on page
-  const tocMenu = document.querySelector('.toc__menu');
-  const sidebarRight = document.querySelector('.sidebar__right');
-  
+  const tocMenu = document.querySelector(".toc__menu");
+  const sidebarRight = document.querySelector(".sidebar__right");
+
   if (!tocMenu || !sidebarRight) {
     return; // No TOC, exit early
   }
 
   // Get all TOC links
-  const tocLinks = tocMenu.querySelectorAll('a[href^="#"]');
-  
-  if (tocLinks.length === 0) {
+  const allTocLinks = Array.from(tocMenu.querySelectorAll("a[href^=\"#\"]"));
+  if (allTocLinks.length === 0) {
     return; // No TOC links, exit early
   }
 
-  // Get all headings that have IDs (targets of TOC links)
-  const headings = Array.from(tocLinks).map(link => {
-    const href = link.getAttribute('href');
-    if (!href || !href.startsWith('#')) return null;
-    
-    const id = href.substring(1);
-    const heading = document.getElementById(id);
-    return heading ? { id, heading, link } : null;
-  }).filter(Boolean);
+  function decodeHashId(rawId) {
+    try {
+      return decodeURIComponent(rawId);
+    } catch (error) {
+      return rawId;
+    }
+  }
 
-  if (headings.length === 0) {
+  function getHeadingFromLink(link) {
+    const href = link.getAttribute("href");
+    if (!href || !href.startsWith("#") || href.length <= 1) return null;
+
+    const rawId = href.substring(1);
+    const decodedId = decodeHashId(rawId);
+    return document.getElementById(decodedId) || document.getElementById(rawId);
+  }
+
+  // Collect all headings once for observers.
+  const observerHeadings = Array.from(
+    new Set(
+      allTocLinks
+        .map(getHeadingFromLink)
+        .filter(Boolean)
+    )
+  );
+
+  if (observerHeadings.length === 0) {
     return; // No valid headings found
   }
 
   // Create progress indicator element - place it inside the TOC
-  const toc = sidebarRight.querySelector('.toc');
-  const progressIndicator = document.createElement('div');
-  progressIndicator.className = 'toc-progress-indicator';
-  
+  const toc = sidebarRight.querySelector(".toc");
+  const progressIndicator = document.createElement("div");
+  progressIndicator.className = "toc-progress-indicator";
+
   // Insert at the beginning of TOC for proper positioning
   if (toc) {
     toc.insertBefore(progressIndicator, toc.firstChild);
@@ -51,8 +66,30 @@
   }
 
   // State
-  let activeHeading = null;
+  let activeHeadingId = null;
   let scrollRaf = null;
+
+  function isHiddenForToc(element) {
+    if (!element) return true;
+    if (element.hidden) return true;
+    if (element.getAttribute("aria-hidden") === "true") return true;
+    return !!element.closest("[hidden], [aria-hidden=\"true\"]");
+  }
+
+  function getVisibleHeadings() {
+    return allTocLinks
+      .filter(link => !isHiddenForToc(link) && !isHiddenForToc(link.parentElement))
+      .map(link => {
+        const heading = getHeadingFromLink(link);
+        if (!heading) return null;
+        return {
+          id: heading.id,
+          heading: heading,
+          link: link
+        };
+      })
+      .filter(Boolean);
+  }
 
   function scrollTocMenuToLink(link) {
     if (!link) return;
@@ -87,6 +124,7 @@
     scrollRaf = requestAnimationFrame(() => {
       updateActiveTOC();
       updateProgress();
+      scrollRaf = null;
     });
   }
 
@@ -94,6 +132,16 @@
    * Update active TOC link based on current viewport position
    */
   function updateActiveTOC() {
+    const headings = getVisibleHeadings();
+    if (headings.length === 0) {
+      allTocLinks.forEach(link => {
+        link.classList.remove("toc-active");
+        if (link.parentElement) link.parentElement.classList.remove("toc-active");
+      });
+      activeHeadingId = null;
+      return;
+    }
+
     // Get viewport center point (or slightly above center for better UX)
     const viewportCenter = window.innerHeight * 0.3; // 30% from top
     const scrollPosition = window.scrollY + viewportCenter;
@@ -118,24 +166,28 @@
       currentHeading = headings[0];
     }
 
+    if (!currentHeading) return;
+
     // Update active state
-    if (currentHeading && currentHeading !== activeHeading) {
+    if (currentHeading.id !== activeHeadingId) {
       // Remove active class from all links
-      tocLinks.forEach(link => {
-        link.classList.remove('toc-active');
-        link.parentElement?.classList.remove('toc-active');
+      allTocLinks.forEach(link => {
+        link.classList.remove("toc-active");
+        if (link.parentElement) link.parentElement.classList.remove("toc-active");
       });
 
       // Add active class to current link
       if (currentHeading.link) {
-        currentHeading.link.classList.add('toc-active');
-        currentHeading.link.parentElement?.classList.add('toc-active');
+        currentHeading.link.classList.add("toc-active");
+        if (currentHeading.link.parentElement) {
+          currentHeading.link.parentElement.classList.add("toc-active");
+        }
 
         // Scroll the TOC container (not the page) if needed
         scrollTocMenuToLink(currentHeading.link);
       }
 
-      activeHeading = currentHeading;
+      activeHeadingId = currentHeading.id;
     }
   }
 
@@ -143,28 +195,34 @@
    * Update reading progress indicator
    */
   function updateProgress() {
+    const headings = getVisibleHeadings();
+    if (headings.length === 0) {
+      progressIndicator.style.height = "0%";
+      return;
+    }
+
     // Prefer the actual content container for a stable start/end
-    const pageContent = document.querySelector('.page__content');
+    const pageContent = document.querySelector(".page__content");
     const contentTop = pageContent ? (pageContent.getBoundingClientRect().top + window.scrollY) : 0;
     const contentBottom = pageContent
       ? (pageContent.getBoundingClientRect().bottom + window.scrollY)
       : document.documentElement.scrollHeight;
 
     // Use first heading as the "start" anchor when possible
-    const firstHeadingTop = headings[0]?.heading?.getBoundingClientRect().top + window.scrollY;
+    const firstHeadingTop = headings[0].heading.getBoundingClientRect().top + window.scrollY;
     const articleStart = Number.isFinite(firstHeadingTop) ? firstHeadingTop : contentTop;
     const articleEnd = contentBottom;
     const articleHeight = articleEnd - articleStart;
-    
+
     if (articleHeight <= 0) {
-      progressIndicator.style.height = '0%';
+      progressIndicator.style.height = "0%";
       return;
     }
 
     const scrollProgress = window.scrollY - articleStart;
     const progress = Math.max(0, Math.min(100, (scrollProgress / articleHeight) * 100));
-    
-    progressIndicator.style.height = progress + '%';
+
+    progressIndicator.style.height = progress + "%";
   }
 
   /**
@@ -186,7 +244,7 @@
     }, options);
 
     // Observe all headings
-    headings.forEach(({ heading }) => {
+    observerHeadings.forEach(heading => {
       observer.observe(heading);
     });
   }
@@ -196,28 +254,32 @@
    */
   function init() {
     // Use Intersection Observer for better accuracy
-    if ('IntersectionObserver' in window) {
+    if ("IntersectionObserver" in window) {
       initIntersectionObserver();
     }
 
     // Always update both active TOC + progress on scroll (works in both directions)
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     // Initial update
     handleScroll();
-    
+
     // Update on resize
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       handleScroll();
     }, { passive: true });
+
+    // Re-sync after bilingual visibility updates.
+    window.addEventListener("qsd:bilingual-change", () => {
+      handleScroll();
+    });
   }
 
   // Initialize when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
   } else {
     init();
   }
 
 })();
-

@@ -1,0 +1,100 @@
+/* ==========================================================================
+   Responsive Policy Hub
+   ========================================================================== */
+
+// Single source-of-truth for responsive breakpoints and query helpers.
+// Component SCSS should consume these mixins instead of raw @media/@container.
+
+$responsive-epsilon: 0.02rem !default;
+
+$responsive-breakpoints: (
+  phone: 30rem,        // 480px
+  compact: 40rem,      // 640px
+  mobile: $small,      // 600px
+  tablet: $medium,     // 768px
+  tablet-wide: $medium-wide, // 900px
+  desktop: $large,     // 1024px
+  wide: $x-large,      // 1280px
+  ultra: 96rem         // 1536px
+) !default;
+
+$responsive-left-rail-breakpoint: ultra !default;
+$responsive-single-left-rail-compact-breakpoint: 72rem !default;
+$responsive-single-left-rail-full-breakpoint: $responsive-left-rail-breakpoint !default;
+$responsive-single-dual-rail-min-width: 82rem !default;
+$responsive-single-left-rail-width-compact: 11rem !default;
+$responsive-single-left-rail-width-full: 13rem !default;
+$responsive-single-shell-gap: 1rem !default;
+$responsive-single-min-content-width: 46rem !default;
+
+@function responsive-resolve($point) {
+  @if map-has-key($responsive-breakpoints, $point) {
+    @return map-get($responsive-breakpoints, $point);
+  }
+
+  @if type-of($point) == number and unit($point) != "" {
+    @return $point;
+  }
+
+  @error "Unknown responsive point `#{$point}`. Add it to $responsive-breakpoints or pass a length.";
+}
+
+@mixin responsive-up($point) {
+  $min: responsive-resolve($point);
+  @media (min-width: $min) {
+    @content;
+  }
+}
+
+@mixin responsive-down($point) {
+  $max: responsive-resolve($point) - $responsive-epsilon;
+  @media (max-width: $max) {
+    @content;
+  }
+}
+
+@mixin responsive-between($min-point, $max-point) {
+  $min: responsive-resolve($min-point);
+  $max: responsive-resolve($max-point) - $responsive-epsilon;
+  @media (min-width: $min) and (max-width: $max) {
+    @content;
+  }
+}
+
+@mixin responsive-container-down($point) {
+  $max: responsive-resolve($point) - $responsive-epsilon;
+  @container (max-width: $max) {
+    @content;
+  }
+}
+
+@mixin responsive-reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+@mixin responsive-landscape {
+  @media (orientation: landscape) {
+    @content;
+  }
+}
+
+// Shared shell policy:
+// 1. Content uses full width by default.
+// 2. Left author/sidebar rail is enabled only from the left-rail breakpoint.
+@mixin responsive-shell-content-base {
+  @include span(12 of 12);
+}
+
+@mixin responsive-shell-content-with-left-rail {
+  @include responsive-up($responsive-left-rail-breakpoint) {
+    @include span(10 of 12 last);
+  }
+}
+
+@mixin responsive-shell-left-rail {
+  @include responsive-up($responsive-left-rail-breakpoint) {
+    @include span(2 of 12);
+  }
+}

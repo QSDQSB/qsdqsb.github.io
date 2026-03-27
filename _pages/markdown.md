@@ -36,6 +36,45 @@ redirect_from:
 
 ## Markdown guide
 
+## Bilingual Content Switcher
+
+Use this plugin-free structure in any Markdown file:
+
+```html
+<div data-bilingual>
+<section data-bilingual-lang="EN" markdown="1">
+### English heading
+English markdown content.
+</section>
+<section data-bilingual-lang="FR" markdown="1">
+### Titre francais
+Contenu markdown en francais.
+</section>
+</div>
+```
+
+Notes:
+
+* Use exactly 2 direct language sections inside each `data-bilingual` wrapper.
+* Keep language labels in `data-bilingual-lang` (for example `EN`, `FR`, `ZH`).
+* `markdown="1"` lets you keep writing normal markdown in each language section.
+* If you have multiple bilingual blocks on the same page, switching one updates all blocks.
+
+Whole-page pattern (same syntax, larger content):
+
+```html
+<div data-bilingual>
+<section data-bilingual-lang="EN" markdown="1">
+# Full page in English
+...all sections...
+</section>
+<section data-bilingual-lang="FR" markdown="1">
+# Page complete en francais
+...all sections...
+</section>
+</div>
+```
+
 ### Header three
 
 #### Header four
