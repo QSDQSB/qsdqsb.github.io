@@ -6,19 +6,9 @@
    Default
    ========================================================================== */
 
-@container (max-width: $large) {
-  .sidebar {
-    display: none;
-    visibility: hidden;
-  }
-}
-@container (max-width: 1080px) {
-  .sidebar {
-    display: none;
-    visibility: hidden;
-  }
-}
 .sidebar {
+  display: none;
+  visibility: hidden;
   width: auto;
   align-self: flex-start;
   -webkit-transform: translate3d(0, 0 , 0);
@@ -27,27 +17,6 @@
   @include clearfix();
   margin-bottom: 1rem;
   margin-right: 0;
-
-  @include breakpoint($large) {
-    @include span(2 of 12);
-    padding-right: 0;
-    // min-width: 200px;
-    opacity: 0.8;
-    transition: $cubic-bezier-default;
-    &:hover {
-      opacity: 1;
-      border-color: white;
-      box-shadow: 0 4px  4px  rgba(0, 0, 0, .25),
-                0 1px  6px  rgba(0, 0, 0, .15),
-                0 8px  8px  rgba(0, 0, 0, .25), 
-                0 16px 16px rgba(0, 0, 0, .25), 
-                8px 32px 32px rgba(0, 0, 0, .35), 
-                8px 64px 64px rgba(0, 0, 0, .35); 
- 
-     transform: scale(1.05);
-    }
-    overflow: hidden;
-  }
 
   h2, h3, h4, h5, h6 {
     margin-bottom: 0.25rem;
@@ -67,53 +36,129 @@
   img {
     width: 100%;
   }
+
+  > :first-child {
+    margin-top: 0;
+  }
+}
+
+#main.has-sidebar > .sidebar {
+  @include responsive-up($responsive-left-rail-breakpoint) {
+    display: block;
+    visibility: visible;
+    @include responsive-shell-left-rail;
+    padding-right: 0;
+    opacity: 0.8;
+    transition: $cubic-bezier-default;
+
+    &:hover {
+      opacity: 1;
+      border-color: white;
+      box-shadow: 0 4px  4px  rgba(0, 0, 0, .25),
+                0 1px  6px  rgba(0, 0, 0, .15),
+                0 8px  8px  rgba(0, 0, 0, .25), 
+                0 16px 16px rgba(0, 0, 0, .25), 
+                8px 32px 32px rgba(0, 0, 0, .35), 
+                8px 64px 64px rgba(0, 0, 0, .35); 
+
+      transform: scale(1.05);
+    }
+
+    overflow: hidden;
+  }
+}
+
+#main.has-left-sidebar > .sidebar {
+  @include responsive-up($responsive-single-left-rail-compact-breakpoint) {
+    display: block;
+    visibility: visible;
+    width: $responsive-single-left-rail-width-compact;
+    min-width: $responsive-single-left-rail-width-compact;
+    max-width: $responsive-single-left-rail-width-compact;
+    flex: 0 0 $responsive-single-left-rail-width-compact;
+    padding-right: 0;
+    margin-right: 0;
+    opacity: 0.8;
+    transition: $cubic-bezier-default;
+
+    &:hover {
+      opacity: 1;
+      border-color: white;
+      box-shadow: 0 4px  4px  rgba(0, 0, 0, .25),
+                0 1px  6px  rgba(0, 0, 0, .15),
+                0 8px  8px  rgba(0, 0, 0, .25), 
+                0 16px 16px rgba(0, 0, 0, .25), 
+                8px 32px 32px rgba(0, 0, 0, .35), 
+                8px 64px 64px rgba(0, 0, 0, .35); 
+
+      transform: scale(1.05);
+    }
+
+    overflow: hidden;
+  }
+
+  @include responsive-up($responsive-single-left-rail-full-breakpoint) {
+    width: $responsive-single-left-rail-width-full;
+    min-width: $responsive-single-left-rail-width-full;
+    max-width: $responsive-single-left-rail-width-full;
+    flex-basis: $responsive-single-left-rail-width-full;
+  }
+}
+
+// TOC has priority on single pages: under dual-rail pressure, hide the left author rail first.
+@include responsive-between(wide, $responsive-single-dual-rail-min-width) {
+  #main.has-left-sidebar.has-right-toc > .sidebar {
+    display: none;
+    visibility: hidden;
+  }
 }
 
 
 .sidebar__right {
   margin-bottom: 1em;
+  position: relative;
+  width: 100%;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  padding-left: 0;
+  z-index: 10;
 
   a {
     color: primary;
   }
 
-  @include breakpoint($large) {
+  &.sticky {
+    @include clearfix();
+    .toc {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 1rem;
+    }
+  }
+
+  @include responsive-up(wide) {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0; /* allow sticky child to persist through full page height */
-    width: $right-sidebar-width-narrow;
+    width: $right-sidebar-width;
     padding-left: 1rem;
-    z-index: 10;
 
     &.sticky {
-      @include clearfix();
-      /* make TOC itself sticky */
       .toc {
-        position: -webkit-sticky;
-        position: sticky;
         top: 2rem;
       }
     }
   }
-
-  @include breakpoint($x-large) {
-    width: $right-sidebar-width;
-  }
-
 }
 
 .splash .sidebar__right {
-  @include breakpoint($large) {
+  @include responsive-up(wide) {
     position: relative;
     float: right;
     margin-right: 0;
   }
-
-  @include breakpoint($x-large) {
-    margin-right: 0;
-  }
-
 }
 /*
    Author profile and links
@@ -128,7 +173,7 @@
   // set width only, for non-square avatars
   // height: 36px;
 
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     display: block;
     width: auto;
     height: auto;
@@ -138,7 +183,7 @@
     max-width: 175px;
     border-radius: 50%;
 
-    @include breakpoint($large) {
+    @include responsive-up(desktop) {
       padding: 5px;
       border: 1px solid $border-color;
     }
@@ -167,7 +212,7 @@
   padding-right: 8px;
   line-height: 1;
 
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     display: block;
     width: 100%;
     padding-left: 0;
@@ -179,7 +224,7 @@
   font-family: $sans-serif !important;
   display: none;
   margin: 0;
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     display: block;
     margin-top: 8px;
     margin-bottom: 8px;
@@ -219,7 +264,7 @@
   text-align: center;
   cursor: default;
   font-weight: 400;
-  @include breakpoint($x-large) {
+  @include responsive-up(wide) {
     display: block;
     margin-top: 8px;
 
@@ -242,7 +287,7 @@
     }
   }
 
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     display: block;
   }
 
@@ -262,7 +307,7 @@
   cursor: default;
   transition: $cubic-bezier-default;
 
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     display: block;
     position: relative;
     margin: 0;
@@ -284,7 +329,7 @@
     border-color: $border-color transparent;
     z-index: 0;
 
-    @include breakpoint($large) {
+    @include responsive-up(desktop) {
       display: none;
     }
   }
@@ -301,7 +346,7 @@
     border-color: #000 transparent;
     z-index: 1;
 
-    @include breakpoint($large) {
+    @include responsive-up(desktop) {
       display: none;
     }
   }

@@ -1,12 +1,15 @@
 ---
 layout: single
 title: "Curriculum Vitae"
+excerpt: "Records persist, meaning negotiable."
 permalink: /cv/
 toc: true
 toc_sticky: true
 author_profile: true
 redirect_from:
   - /resume
+header:
+  overlay_image: "/gallery/mont-st-michel/DSCF4261_Chemin_des_Dits,_Pontorson,_France__XF90mm_f2.0_1:140s_ISO4000.jpg"
 ---
 
 {% include base_path %}

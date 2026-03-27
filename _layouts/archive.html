@@ -13,8 +13,15 @@ layout: default
   {% endunless %}
 {% endif %}
 
-<div id="main" role="main">
-  {% include sidebar.html %}
+{% assign has_sidebar = false %}
+{% if page.author_profile or layout.author_profile or page.sidebar %}
+  {% assign has_sidebar = true %}
+{% endif %}
+
+<div id="main" role="main" class="{% if has_sidebar %}has-sidebar{% else %}no-sidebar{% endif %}">
+  {% if has_sidebar %}
+    {% include sidebar.html %}
+  {% endif %}
 
   <div class="archive">
     {% unless page.header.overlay_color or page.header.overlay_image %}

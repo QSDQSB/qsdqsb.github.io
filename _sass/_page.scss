@@ -5,6 +5,8 @@
 
 #main {
   display: flex;
+  align-items: flex-start;
+  gap: $responsive-single-shell-gap;
   @include clearfix;
   // margin-top: 1rem;
   margin-left: 0;
@@ -14,6 +16,35 @@
   animation: intro 0.3s both;
   // animation-delay: 0.15s;
   container-type: inline-size;
+}
+
+#main > .page,
+#main > .page-no-right-sidebar {
+  float: none;
+  flex: 1 1 auto;
+  width: auto;
+  max-width: none;
+  min-width: 0;
+}
+
+@include responsive-up($responsive-single-left-rail-compact-breakpoint) {
+  #main.has-left-sidebar > .page,
+  #main.has-left-sidebar > .page-no-right-sidebar {
+    flex-basis: calc(100% - #{$responsive-single-left-rail-width-compact} - #{$responsive-single-shell-gap});
+  }
+}
+
+@include responsive-up($responsive-single-left-rail-full-breakpoint) {
+  #main.has-left-sidebar > .page,
+  #main.has-left-sidebar > .page-no-right-sidebar {
+    flex-basis: calc(100% - #{$responsive-single-left-rail-width-full} - #{$responsive-single-shell-gap});
+  }
+}
+
+@include responsive-up($responsive-single-dual-rail-min-width) {
+  #main.has-left-sidebar.has-right-toc > .page {
+    min-width: $responsive-single-min-content-width;
+  }
 }
 
 .article-image {
@@ -54,15 +85,40 @@ body {
   flex: 1 0 auto;
 }
 
+body.has-overlay-hero {
+  #main {
+    position: relative;
+    z-index: 8;
+    padding-top: clamp(3rem, 5.5vw, 5.2rem);
+  }
+
+  #main .page__inner-wrap {
+    margin-top: 0;
+  }
+
+  #main > .sidebar > :first-child,
+  #main > .archive > :first-child,
+  #main .page__inner-wrap > :first-child {
+    margin-top: 0;
+  }
+
+  @include responsive-down(tablet) {
+    #main {
+      padding-top: clamp(1.7rem, 4.8vw, 3rem);
+    }
+  }
+
+  @include responsive-down(compact) {
+    #main {
+      padding-top: clamp(0.75rem, 3.6vw, 1.4rem);
+    }
+  }
+}
+
 .page {
   float: right;
   position: relative;
-  @include breakpoint($large) {
-    float: right;
-    padding-right: $right-sidebar-width-narrow;
-  }
-
-  @include breakpoint($x-large) {
+  @include responsive-up(wide) {
     float: right;
     padding-right: $right-sidebar-width;
   }
@@ -77,7 +133,7 @@ body {
     padding: 0.5em;
     border-radius: 0.5em;
     -webkit-overflow-scrolling: touch;
-    @include breakpoint($large) {
+    @include responsive-up(desktop) {
       padding: 1.5em 2em 2em 2em;
       border-radius: 1.5em;
       margin: 0.5em 0em 0.2em;
@@ -100,12 +156,12 @@ body {
 
 .page-no-right-sidebar {
   width: 100%;
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     float: right;
     padding-right: 0;
   }
 
-  @include breakpoint($x-large) {
+  @include responsive-up(wide) {
     float: right;
     padding-right: 0;
   }
@@ -142,10 +198,10 @@ body {
 .page__lead {
   font-family: $global-font-family;
   font-size: $type-size-7;
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     font-size: $type-size-5;
   }    
-  @include breakpoint($x-large) {
+  @include responsive-up(wide) {
     font-size: $type-size-4;
   }
 }
@@ -207,32 +263,148 @@ body {
 .page__hero {
   transition: $cubic-bezier-default-05s;
   position: relative;
-  margin-bottom: 2em;
+  margin-bottom: 1.5rem;
   @include clearfix;
   animation: intro 0.3s both;
   animation-delay: 0.25s;
   &--overlay {
     position: relative;
-    margin-bottom: 1em;
-    padding: 2em 0;
+    margin-bottom: 0;
+    padding: clamp(5rem, 10vw, 6rem) 0 clamp(1.4rem, 4vw, 2.4rem);
     @include clearfix;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    min-height: clamp(24rem, 68vh, 38rem);
+    min-height: clamp(24rem, 68svh, 38rem);
+    overflow: hidden;
     animation: intro 0.3s both;
     animation-delay: 0.25s;
+    .page__hero-media {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      transform: translateZ(0);
+      -webkit-mask-image:
+        linear-gradient(
+          to bottom,
+          #000 0%,
+          #000 $overlay-hero-dissolve-start,
+          rgba(0, 0, 0, 0.78) $overlay-hero-dissolve-mid,
+          rgba(0, 0, 0, 0) $overlay-hero-dissolve-end
+        );
+      mask-image:
+        linear-gradient(
+          to bottom,
+          #000 0%,
+          #000 $overlay-hero-dissolve-start,
+          rgba(0, 0, 0, 0.78) $overlay-hero-dissolve-mid,
+          rgba(0, 0, 0, 0) $overlay-hero-dissolve-end
+        );
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-size: 100% 100%;
+      mask-size: 100% 100%;
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: inherit;
+        background-size: inherit;
+        background-repeat: inherit;
+        background-position: inherit;
+        filter: blur(10px);
+        opacity: 0.44;
+        transform: scale(1.04);
+        -webkit-mask-image:
+          linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0) $overlay-hero-seam-blur-start,
+            #000 100%
+          );
+        mask-image:
+          linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0) $overlay-hero-seam-blur-start,
+            #000 100%
+          );
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(10, 10, 12, 0.02) 0%,
+            rgba(10, 10, 12, 0.11) 42%,
+            rgba(10, 10, 12, 0.56) 86%,
+            rgba(10, 10, 12, 0.64) 100%
+          );
+      }
+    }
+
+    @supports not ((-webkit-mask-image: linear-gradient(#000, rgba(0, 0, 0, 0))) or (mask-image: linear-gradient(#000, rgba(0, 0, 0, 0)))) {
+      .page__hero-media {
+        -webkit-mask-image: none;
+        mask-image: none;
+      }
+
+      .page__hero-media::before {
+        display: none;
+      }
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: clamp(3.6rem, 9vw, 6.8rem);
+      pointer-events: none;
+      z-index: 1;
+      background:
+        linear-gradient(
+          to bottom,
+          rgba($background-color, 0) 0%,
+          rgba($background-color, 0.42) 62%,
+          rgba($background-color, 1) 100%
+        );
+      opacity: 0;
+    }
+
+    @supports not ((-webkit-mask-image: linear-gradient(#000, rgba(0, 0, 0, 0))) or (mask-image: linear-gradient(#000, rgba(0, 0, 0, 0)))) {
+      &::after {
+        opacity: 1;
+      }
+    }
+
     a {
       color: $text-color;
     }
 
     .wrapper {
-      padding-left: 1em;
-      padding-right: 1em;
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      padding-left: clamp(1rem, 3vw, 2.4rem);
+      padding-right: clamp(1rem, 3vw, 2.4rem);
+      display: flex;
+      align-items: flex-end;
 
-      @include breakpoint($x-large) {
+      @include responsive-up(wide) {
         max-width: $x-large;
       }
-      aspect-ratio: 4;
+      aspect-ratio: auto;
     }
 
     .page__title,
@@ -243,19 +415,159 @@ body {
       text-shadow: 1px 1px 4px rgba($darker-gray, 0.5);
     }
 
+    .page__title,
+    .page__lead,
+    .page__meta {
+      width: min(100%, 33rem);
+      margin-left: 0;
+      text-align: left;
+    }
+
     .page__lead {
-      max-width: $medium;
+      max-width: 32rem;
+      margin-top: $overlay-hero-title-excerpt-gap;
+      font-size: clamp(1.02rem, 1.34vw, 1.34rem);
+      line-height: 1.26;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      opacity: 0.9;
     }
 
     .page__title {
-      font-size: $type-size-3;
-      @include breakpoint($large) {
-        font-size: $type-size-2;
+      max-width: none;
+      margin-bottom: 0;
+      font-size: clamp(1.75rem, 2.8vw, 2.85rem);
+      line-height: 1;
+      letter-spacing: 0.015em;
+      white-space: nowrap;
+      @include responsive-up(desktop) {
+        font-size: clamp(1.95rem, 2.6vw, 3rem);
       }    
-      @include breakpoint($x-large) {
-        font-size: $type-size-1;
+      @include responsive-up(wide) {
+        font-size: clamp(2.1rem, 2.35vw, 3.1rem);
       }
     }
+  }
+}
+
+.page-overlay-swiper--hero {
+  .swiper-slide {
+    height: auto;
+  }
+
+  .page__hero--overlay-home {
+    .page__title,
+    .page__lead,
+    .page__meta,
+    .btn {
+      position: relative;
+    }
+
+    .page__title {
+      padding: 0;
+      border-radius: 0;
+      background: none;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      box-shadow: none;
+    }
+
+    .page__lead {
+      padding: 0;
+      border-radius: 0;
+      background: none;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      box-shadow: none;
+    }
+  }
+}
+
+@include responsive-down(tablet) {
+  .page__hero--overlay {
+    min-height: clamp(19rem, 62vh, 30rem);
+    min-height: clamp(19rem, 62svh, 30rem);
+    padding: clamp(4.4rem, 13vh, 5.2rem) 0 clamp(0.95rem, 3.5vh, 1.2rem);
+    padding: clamp(4.4rem, 13svh, 5.2rem) 0 clamp(0.95rem, 3.5svh, 1.2rem);
+    align-items: flex-end;
+    background-position: center center;
+  }
+
+  .page__hero--overlay .wrapper {
+    align-items: flex-end;
+  }
+
+  .page__hero--overlay .page__title,
+  .page__hero--overlay .page__lead,
+  .page__hero--overlay .page__meta {
+    width: min(100%, 18rem);
+  }
+
+  .page__hero--overlay .page__title {
+    max-width: none;
+    font-size: clamp(1.2rem, 5vw, 1.65rem);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .page__hero--overlay .page__lead {
+    margin-top: clamp(0.5rem, 2.8vw, 0.82rem);
+    font-size: clamp(0.86rem, 3.15vw, 1.04rem);
+    line-height: 1.22;
+    letter-spacing: 0.065em;
+    white-space: nowrap;
+  }
+}
+
+body.overlay-opening-enabled .page__hero--overlay .page__lead-inner {
+  display: inline-block;
+  transition:
+    opacity $global-transition-time $cubic-bezier-smooth,
+    clip-path $global-transition-time $cubic-bezier-smooth,
+    transform $global-transition-time $cubic-bezier-smooth;
+  will-change: opacity, clip-path, transform;
+}
+
+body.overlay-opening-enabled:not(.overlay-opening-excerpt-visible) .page__hero--overlay .page__lead-inner {
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+  transform: translate3d(-0.9rem, 0, 0);
+}
+
+body.overlay-opening-enabled.overlay-opening-excerpt-visible .page__hero--overlay .page__lead-inner {
+  opacity: 0.88;
+  clip-path: inset(0 0 0 0);
+  transform: translate3d(0, 0, 0);
+}
+
+@include responsive-reduced-motion {
+  body.overlay-opening-enabled .page__hero--overlay .page__lead-inner {
+    transition: none;
+    opacity: 0.88;
+    clip-path: none;
+    transform: none;
+  }
+
+  .page__hero-caption {
+    -webkit-animation: none;
+            animation: none;
+    opacity: 0.9;
+    transform: none;
+  }
+}
+
+html.is-resizing {
+  .page__hero,
+  .page__hero--overlay,
+  .page__hero .wrapper,
+  .page__hero .page__title,
+  .page__hero .page__lead,
+  .page__hero .page__meta,
+  .page-overlay-swiper--hero .swiper-slide {
+    transition-duration: $resize-runtime-transition-duration !important;
+    animation-duration: $resize-runtime-transition-duration !important;
+    animation-delay: 0s !important;
   }
 }
 
@@ -276,21 +588,26 @@ body {
 
 .page__hero-caption {
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: 0.35rem;
+  right: 0.5rem;
   margin: 0 auto;
-  padding: 2px 5px;
+  padding: $hero-caption-padding-y $hero-caption-padding-x;
   color: $text-color;
   font-family: $caption-font-family;
   font-size: $type-size-8;
-  background: #222;
+  background: rgba(10, 10, 12, 0.1);
   text-align: right;
   z-index: 5;
-  opacity: 0.6;
+  opacity: 0;
+  transform: translate3d(0, $hero-caption-reveal-offset-y, 0);
   border-radius: $border-radius 0 $border-radius 0;
+  -webkit-animation: hero-caption-reveal $hero-caption-reveal-duration $cubic-bezier-smooth both;
+          animation: hero-caption-reveal $hero-caption-reveal-duration $cubic-bezier-smooth both;
+  -webkit-animation-delay: $hero-caption-reveal-delay;
+          animation-delay: $hero-caption-reveal-delay;
 
-  @include breakpoint($large) {
-    padding: 5px 10px;
+  @include responsive-up(desktop) {
+    padding: 0.3rem 0.68rem;
   }
 
   a {
@@ -307,7 +624,7 @@ body {
   padding-top: 1em;
   border-top: 1px solid $border-color;
 
-  @include breakpoint(max-width $small) {
+  @include responsive-down(mobile) {
     .btn span {
       border: 0;
       clip: rect(0 0 0 0);
@@ -524,7 +841,7 @@ tradingview-widget-container {
   width: 60px;
   height: 60px;
 
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     width: 100px;
     height: 100px;
   }
@@ -535,7 +852,7 @@ tradingview-widget-container {
   height: 40px;
   border-radius: 50%;
 
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     width: 80px;
     height: 80px;
     padding: 5px;
@@ -547,7 +864,7 @@ tradingview-widget-container {
   float: right;
   width: calc(100% - 60px);
 
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     width: calc(100% - 100px);
   }
 }
@@ -601,21 +918,21 @@ tradingview-widget-container {
 
 .wide {
   .page {
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     padding-right: 0;
   }
 
-  @include breakpoint($x-large) {
+  @include responsive-up(wide) {
     padding-right: 0;
   }
   }
 
   .page__related {
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     padding-right: 0;
   }
 
-  @include breakpoint($x-large) {
+  @include responsive-up(wide) {
     padding-right: 0;
   }
   }
@@ -640,7 +957,7 @@ tradingview-widget-container {
     transition: $cubic-bezier-default;
 
     width: 40%;
-    @include breakpoint($x-large) {
+    @include responsive-up(wide) {
       width: 30%;
     }
   }

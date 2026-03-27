@@ -12,6 +12,7 @@ body {
   margin: 0;
   padding: 0;
   padding-bottom: 6em;
+  background-color: $background-color;
   color: $text-color;
   font-family: $global-font-family;
   line-height: 1.5;
@@ -159,7 +160,7 @@ blockquote {
 }
 
 
-@media (orientation: landscape) {
+@include responsive-landscape {
   body {
     grid-auto-flow: column;
   }
@@ -257,7 +258,7 @@ figure {
   &.half {
     > a,
     > img {
-      @include breakpoint($small) {
+      @include responsive-up(mobile) {
         width: calc(50% - 0.5em);
       }
     }
@@ -270,7 +271,7 @@ figure {
   &.third {
     > a,
     > img {
-      @include breakpoint($small) {
+      @include responsive-up(mobile) {
         width: calc(33.3333% - 0.5em);
       }
     }
@@ -437,7 +438,7 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
   padding: 0.25rem;
   padding-bottom: 0.75rem;
   line-height: 1;
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     padding: 1rem;
     padding-bottom: 1.25rem;
   }
@@ -451,10 +452,10 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
 .release-card__title {
   font-size: $type-code-size - 0.2em;
   line-height: 1.1;
-  @include breakpoint($medium) {
+  @include responsive-up(tablet) {
     font-size: $type-code-size;
   }
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     font-size: $type-size-7;
   }
   color: $text-color;
@@ -467,7 +468,7 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
   font-style: italic;
   line-height: 1;
   display: none;
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     font-size: $type-code-size;
     display: inherit;
   }

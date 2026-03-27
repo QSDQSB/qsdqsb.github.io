@@ -19,3 +19,25 @@
     opacity: 1;
   }
 }
+
+@-webkit-keyframes hero-caption-reveal {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, $hero-caption-reveal-offset-y, 0);
+  }
+  100% {
+    opacity: 0.95;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes hero-caption-reveal {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, $hero-caption-reveal-offset-y, 0);
+  }
+  100% {
+    opacity: 0.95;
+    transform: translate3d(0, 0, 0);
+  }
+}

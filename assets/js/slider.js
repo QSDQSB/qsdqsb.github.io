@@ -1,9 +1,17 @@
 // Customize swiper for different layouts.
 document.addEventListener("DOMContentLoaded", function () {
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let newReleaseSwiper = null;
+  let pageOverlaySwiper = null;
+  let pageOverlayInitTimer = null;
+  let pageOverlayRetryTimer = null;
+  let viewportUpdateRaf = null;
+  let pendingViewportPhase = null;
+
   // Swiper config for new-release voyage galleries
   const newReleaseEl = document.querySelector('.new-release-swiper');
   if (newReleaseEl) {
-    new Swiper('.new-release-swiper', {
+    newReleaseSwiper = new Swiper('.new-release-swiper', {
       slidesPerView: 3,
       spaceBetween: 10,
       centeredSlides: true,
@@ -58,6 +66,12 @@ document.addEventListener("DOMContentLoaded", function () {
   // Swiper config for page overlay
   function initPageOverlaySwiper() {
     const pageOverlayEl = document.querySelector('.page-overlay-swiper');
+    if (pageOverlaySwiper && !pageOverlaySwiper.destroyed) {
+      pageOverlaySwiper.update();
+      pageOverlaySwiper.updateSlides();
+      return;
+    }
+
     if (pageOverlayEl && typeof Swiper !== 'undefined') {
       const swiperWrapper = pageOverlayEl.querySelector('.swiper-wrapper');
       const slides = swiperWrapper && swiperWrapper.querySelectorAll('.swiper-slide');
@@ -67,15 +81,17 @@ document.addEventListener("DOMContentLoaded", function () {
         void pageOverlayEl.offsetHeight;
         
         // Use setTimeout to ensure DOM is fully ready (Chrome fix)
-        setTimeout(function() {
-          const pageOverlaySwiper = new Swiper('.page-overlay-swiper', {
+        window.clearTimeout(pageOverlayInitTimer);
+        pageOverlayInitTimer = window.setTimeout(function() {
+          pageOverlayInitTimer = null;
+          pageOverlaySwiper = new Swiper('.page-overlay-swiper', {
             slidesPerView: 1,
             centeredSlides: true,
             loop: slides.length > 1,
-            speed: 800,
+            speed: prefersReducedMotion ? 0 : 1100,
             allowTouchMove: false, 
             spaceBetween: 0,
-            autoplay: {
+            autoplay: prefersReducedMotion ? false : {
               delay: 9000,
               disableOnInteraction: false,
             },
@@ -84,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
             observeParents: true,
             watchOverflow: true,
             parallax: {
-              enabled: true,
+              enabled: !prefersReducedMotion,
             },
             on: {
               init: function() {
@@ -102,10 +118,40 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     } else if (pageOverlayEl && typeof Swiper === 'undefined') {
       // Retry if Swiper not loaded yet
-      setTimeout(initPageOverlaySwiper, 200);
+      window.clearTimeout(pageOverlayRetryTimer);
+      pageOverlayRetryTimer = window.setTimeout(initPageOverlaySwiper, 200);
     }
   }
+
+  const scheduleSwiperViewportUpdate = function (event) {
+    const detail = event && event.detail ? event.detail : {};
+    const phase = detail.phase || "active";
+    pendingViewportPhase = phase === "settled" ? "settled" : (pendingViewportPhase || phase);
+
+    if (viewportUpdateRaf) return;
+
+    viewportUpdateRaf = window.requestAnimationFrame(function () {
+      viewportUpdateRaf = null;
+      const queuedPhase = pendingViewportPhase || "active";
+      pendingViewportPhase = null;
+
+      if (queuedPhase !== "settled") return;
+
+      if (newReleaseSwiper && !newReleaseSwiper.destroyed) {
+        newReleaseSwiper.update();
+        newReleaseSwiper.updateSlides();
+      }
+
+      if (pageOverlaySwiper && !pageOverlaySwiper.destroyed) {
+        pageOverlaySwiper.update();
+        pageOverlaySwiper.updateSlides();
+      } else {
+        initPageOverlaySwiper();
+      }
+    });
+  };
   
   // Initialize page overlay swiper
   initPageOverlaySwiper();
+  window.addEventListener("qsd:viewport-change", scheduleSwiperViewportUpdate, { passive: true });
 });

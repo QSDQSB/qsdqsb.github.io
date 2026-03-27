@@ -15,11 +15,20 @@ layout: default
     {% include breadcrumbs.html %}
   {% endunless %}
 {% endif %}
-<div id="main" role="main">
-  {% if page.author_profile %}
+{% assign has_left_sidebar = false %}
+{% if page.author_profile or layout.author_profile or page.sidebar %}
+  {% assign has_left_sidebar = true %}
+{% endif %}
+{% assign has_right_toc = false %}
+{% if page.toc %}
+  {% assign has_right_toc = true %}
+{% endif %}
+
+<div id="main" role="main" class="{% if has_left_sidebar %}has-left-sidebar{% else %}no-left-sidebar{% endif %} {% if has_right_toc %}has-right-toc{% else %}no-right-toc{% endif %}">
+  {% if has_left_sidebar %}
     {% include sidebar.html %}
   {% endif %}
-  {% if page.toc %}
+  {% if has_right_toc %}
     <div class="page">
   {% else %}
     <div class="page-no-right-sidebar">
@@ -30,7 +39,7 @@ layout: default
     {% if page.date %}<meta itemprop="datePublished" content="{{ page.date | date: "%B %d, %Y" }}">{% endif %}
     {% if page.modified %}<meta itemprop="dateModified" content="{{ page.modified | date: "%B %d, %Y" }}">{% endif %}
 
-    {% if page.toc %}
+    {% if has_right_toc %}
       <aside class="sidebar__right {% if page.toc_sticky %}sticky{% endif %}">
         {% if page.date %}
           <p class="page__date"><i class="fa fa-fw fa-calendar-alt" aria-hidden="true"></i><time datetime="{{ page.date | date: "%Y-%m-%d" }}">{{ page.date | date: "%B %d, %Y" }}</time></p>

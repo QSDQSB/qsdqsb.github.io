@@ -4,13 +4,16 @@
 
 .archive {
   margin-bottom: 2em;
-  @include breakpoint($medium) {
-    @include span(12 of 12);
-  }
+  @include responsive-shell-content-base;
+}
 
-  @include breakpoint($large) {
-    @include span(10 of 12 last);
-    // @include prefix(0.5 of 12);
+#main.has-sidebar .archive {
+  @include responsive-shell-content-with-left-rail;
+}
+
+#main.no-sidebar .archive {
+  @include responsive-up($responsive-left-rail-breakpoint) {
+    @include span(12 of 12);
   }
 }
 
@@ -82,18 +85,7 @@
    ========================================================================== */
 
 .list__item {
-  
-  @include breakpoint($medium) {
-    padding-right: $right-sidebar-width-narrow;
-  }
-
-  @include breakpoint($large) {
-    padding-right: $right-sidebar-width;
-  }
-
-  @include breakpoint($x-large) {
-    padding-right: $right-sidebar-width-wide;
-  }
+  padding-right: 0;
 }
 
 /* zidingyi */
@@ -109,10 +101,10 @@
 
 .card {
   min-height: 6rem;
-  width: 99%;
-  margin: 1.5rem 0.5rem;
+  width: 100%;
+  margin: 1.5rem 0;
   max-width: 100%;
-  @include breakpoint($medium) {
+  @include responsive-up(tablet) {
     aspect-ratio: 3.5;
   }
   box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
@@ -135,13 +127,13 @@
     text-shadow:rgba(0, 0, 0, 0.6) 0px 7px 14px, rgba(0, 0, 0, 0.65) 0px 5px 5px;
     font-size: $type-size-8;
     color: $text-color;
-    @include breakpoint($large) {
+    @include responsive-up(desktop) {
       margin-top: 0;
     }
   }
 
   &:hover, &:focus-within {
-    @include breakpoint($medium) {
+    @include responsive-up(tablet) {
       aspect-ratio: 3.3;
     }
     text-decoration: none;
@@ -200,11 +192,11 @@
       margin-bottom: 0;
       transform: translateY(0);
       font-size: $type-size-4;
-      @include breakpoint($large) {
+      @include responsive-up(desktop) {
         font-size: $type-size-3;
         margin-top: 0.5em;
       }
-      @include breakpoint($x-large) {
+      @include responsive-up(wide) {
         font-size: $type-size-2;
         margin-top: 0.5em;
       }
@@ -277,14 +269,14 @@
     display: none;
   }
 
-  @include breakpoint($small) {
+  @include responsive-up(mobile) {
     @include gallery(5 of 10);
     .archive__item-teaser {
       max-height: 200px;
     }
   }
 
-  @include breakpoint($medium) {
+  @include responsive-up(tablet) {
     margin-left: 0.5rem; /* reset before mixin does its thing*/
     margin-right: 0.5rem; /* reset before mixin does its thing*/
     @include gallery(2.5 of 10);
@@ -318,7 +310,7 @@
   margin-bottom: 2rem;
   font-size: 1.25rem;
 
-  @include breakpoint($small) {
+  @include responsive-up(mobile) {
     margin-bottom: 0;
     @include gallery(4 of 12);
 
@@ -336,7 +328,7 @@
       margin-bottom: 2rem;
     }
 
-    @include breakpoint($small) {
+    @include responsive-up(mobile) {
       .archive__item-teaser {
         @include span(5 of 12);
       }
@@ -357,7 +349,7 @@
       margin-bottom: 2rem;
     }
 
-    @include breakpoint($small) {
+    @include responsive-up(mobile) {
       text-align: right;
 
       .archive__item-teaser {
@@ -380,7 +372,7 @@
       margin-bottom: 2rem;
     }
 
-    @include breakpoint($small) {
+    @include responsive-up(mobile) {
       text-align: center;
 
       .archive__item-teaser {
@@ -449,7 +441,7 @@
   padding: 0.5rem;
   gap: 0.5rem;
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  @include breakpoint($medium) {
+  @include responsive-up(tablet) {
     width: 80%;
     padding: 1rem;
     gap: 1rem;
@@ -526,7 +518,7 @@
   padding: 1rem;
   max-width: 100%;
   margin: 1rem auto;
-  @include breakpoint($large) {
+  @include responsive-up(desktop) {
     grid-template-columns: repeat(auto-fit, minmax(20em, 1fr));
   }
 
@@ -692,7 +684,7 @@
   z-index: 1100;
   transform-style: preserve-3d;
   display: none;
-  @include breakpoint($small) {
+  @include responsive-up(mobile) {
     display: flex;
   }
   justify-content: center;

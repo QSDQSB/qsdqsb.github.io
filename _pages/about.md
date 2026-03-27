@@ -29,7 +29,7 @@ swipers:
   excerpt: A voyager, a self-saboteur, an escapist, a romantic.
   overlay_image: cover/Prague-charles-bridge-dawn-2-3v1.jpg
 - title: "Introducing.. House of QSD."
-  excerpt: "<b><i style='font-variant: small-caps;'>Mors potius quam tædium.</i></b>"
+  excerpt: "Mors potius quam tædium."
   overlay_image: cover/qsd-emblem-palace-night-with-candle-vase-3v1.jpg
 ---
 
