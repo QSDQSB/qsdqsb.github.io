@@ -18,22 +18,22 @@
   box-shadow: $box-shadow;
   
   // Large desktop (1024px and up)
-  @media (min-width: 1024px) {
+  @include responsive-up(desktop) {
     min-height: 500px;
   }
   
   // Tablet landscape (768px to 1023px)
-  @media (min-width: 768px) and (max-width: 1023px) {
+  @include responsive-between(tablet, desktop) {
     min-height: 400px;
   }
   
   // Tablet portrait (481px to 767px)
-  @media (min-width: 481px) and (max-width: 767px) {
+  @include responsive-between(30.0625rem, tablet) {
     min-height: 300px;
   }
   
   // Mobile portrait (max 480px)
-  @media (max-width: 480px) {
+  @include responsive-down(phone) {
     min-height: 300px;
   }
 }
@@ -340,7 +340,7 @@
 }
 
 // Responsive map legend
-@media (max-width: 640px) {
+@include responsive-down(compact) {
   .map-legend {
     max-width: 200px;
     padding: 10px 12px;

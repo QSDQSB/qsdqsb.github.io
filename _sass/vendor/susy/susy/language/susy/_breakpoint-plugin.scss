@@ -39,7 +39,7 @@ $_susy-media-context: ();
   $no-query: $susy-media-fallback
 ) {
   $old-context: $_susy-media-context;
-  $name: if(map-has-key($susy-media, $query), $query, null);
+  $name: if(type-of($query) == string and map-has-key($susy-media, $query), $query, null);
   $query: susy-get-media($query);
   $query: susy-parse-media($query);
 

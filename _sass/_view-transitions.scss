@@ -109,7 +109,7 @@
   }
 
   /* Respect user's motion preferences */
-  @media (prefers-reduced-motion: reduce) {
+  @include responsive-reduced-motion {
     ::view-transition-group(*),
     ::view-transition-old(*),
     ::view-transition-new(*) {

@@ -164,13 +164,13 @@ $susy: (
    ========================================================================== */
 
 
-$border-radius: 10px !default;
-$box-shadow: 0 1px 1px rgba(50, 50, 50, 0.25) !default;
-$nav-height: 2em !default;
-$nav-toggle-height: 2rem !default;
-$navicon-width: 1.5rem !default;
-$navicon-height: 0.25rem !default;
-$global-transition: all 0.3s ease-in-out !default;
+$border-radius: 10px;
+$box-shadow: 0 1px 1px rgba(50, 50, 50, 0.25);
+$nav-height: 2em;
+$nav-toggle-height: 2rem;
+$navicon-width: 1.5rem;
+$navicon-height: 0.25rem;
+$global-transition: all 0.3s ease-in-out;
 $cubic-bezier-param: cubic-bezier(.33,.11,.02,.99);
 $cubic-bezier-default: all 1s $cubic-bezier-param;
 $cubic-bezier-default-05s: all 0.5s $cubic-bezier-param;
@@ -232,6 +232,16 @@ $nav-content-delay: 0.24s;
 $nav-content-fade-duration: 0.72s;
 $nav-auto-fade-duration: 0.25s;
 $resize-runtime-transition-duration: 0.1s;
+$overlay-hero-dissolve-start: 72%;
+$overlay-hero-dissolve-mid: 88%;
+$overlay-hero-dissolve-end: 100%;
+$overlay-hero-seam-blur-start: 76%;
+$overlay-hero-title-excerpt-gap: clamp(0.72rem, 1.5vw, 1.08rem);
+$hero-caption-padding-y: 0.18rem;
+$hero-caption-padding-x: 0.48rem;
+$hero-caption-reveal-delay: 0.5s;
+$hero-caption-reveal-duration: 0.42s;
+$hero-caption-reveal-offset-y: 0.28rem;
 
 $search-panel-page-padding: 1rem;
 $search-panel-page-padding-mobile: 0.75rem;

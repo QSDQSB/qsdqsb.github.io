@@ -139,7 +139,7 @@
   display: none;
 }
 
-@include breakpoint($large) {
+@include responsive-up(desktop) {
   .toc-progress-indicator {
     display: block;
   }
@@ -165,7 +165,7 @@
 }
 
 /* Respect reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
+@include responsive-reduced-motion {
   .toc-progress-indicator {
     transition: none;
   }

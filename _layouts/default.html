@@ -3,6 +3,10 @@ layout: compress
 ---
 
 {% include base_path %}
+{% assign has_overlay_hero = false %}
+{% if page.header.overlay_color or page.header.overlay_image or page.swipers %}
+  {% assign has_overlay_hero = true %}
+{% endif %}
 
 <!doctype html>
 <html lang="{{ site.locale | slice: 0,2 }}" class="no-js">
@@ -11,7 +15,7 @@ layout: compress
     {% include head/custom.html %}
   </head>
 
-  <body>
+  <body class="{% if page.url == "/" %}layout--home {% endif %}{% if has_overlay_hero %}has-overlay-hero {% endif %}">
     {% include_cached masthead.html %}
     {{ content }}
 

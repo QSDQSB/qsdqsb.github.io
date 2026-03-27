@@ -63,7 +63,7 @@
 
 	*/
 
-	@media screen and (max-width: 480px) {
+	@include responsive-down(phone) {
 
 		html, body {
 			min-width: 320px;
@@ -78,7 +78,7 @@
 
 /* Type */
 
-		@media screen and (max-width: 1680px) {
+		@include responsive-down(105rem) {
 
 			html {
 				font-size: 12pt;
@@ -86,7 +86,7 @@
 
 		}
 
-		@media screen and (max-width: 1280px) {
+		@include responsive-down(wide) {
 
 			html {
 				font-size: 11pt;
@@ -392,7 +392,7 @@
 		}
 
 
-		@media screen and (max-width: 480px) {
+		@include responsive-down(phone) {
 
 			#gallery_main {
 				transition: opacity 0.5s ease, visibility 0.5s;
@@ -543,7 +543,7 @@
 				opacity: 1;
 			}
 
-		@media screen and (max-width: 480px) {
+		@include responsive-down(phone) {
 
 			#thumbnails article .thumbnail:before {
 				display: none;
@@ -787,7 +787,7 @@
 			opacity: 0;
 		}
 
-		@media screen and (max-width: 480px) {
+		@include responsive-down(phone) {
 			#gallery_main {
 				.toggle, .leave_gallery {
 					display: block;
