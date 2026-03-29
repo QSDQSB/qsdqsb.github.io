@@ -31,6 +31,8 @@ Before adding a token:
 3. Add a new token only when existing scales are insufficient.
 4. If one-off effect is necessary, tag it as Tier 3 exception with visual-intent rationale.
 5. Reject local-tunability one-off variables unless they encode reusable semantic value.
+6. If target value is an exact multiple of an existing token, use direct arithmetic instead of adding a new token.
+   Example: use `$transition-time * 2` for `1s` when `$transition-time` is `0.5s`.
 
 ## Literal Value Restrictions
 - Disallowed in component SCSS (default): raw hex/HSL/RGB for theme properties.
