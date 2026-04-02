@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const TOP_INTENT_ZONE = 120;
   const IDLE_COLLAPSE_MS = 2600;
   const MOUSEMOVE_THROTTLE_MS = 180;
-  const desktopMediaQuery = window.matchMedia("(min-width: 641px)");
   let lastScrollY = window.scrollY;
   let directionalScrollIntent = 0;
   let scrollActivityUntil = 0;
@@ -42,16 +41,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  const isDesktopViewport = function () {
-    return desktopMediaQuery.matches;
-  };
-
   const canAutoFadeCollapsed = function () {
     return (
       !prefersReducedMotion &&
       !navLocked &&
       navState === "collapsed" &&
-      isDesktopViewport()
+      !isOverflowMenuOpen()
     );
   };
 
@@ -257,14 +252,6 @@ document.addEventListener("DOMContentLoaded", function () {
       syncGreedyToggle();
 
       if (phase !== "settled") {
-        if (!isDesktopViewport()) {
-          revealAutoFadedNav();
-        }
-        return;
-      }
-
-      if (!isDesktopViewport()) {
-        revealAutoFadedNav();
         return;
       }
 
@@ -277,11 +264,6 @@ document.addEventListener("DOMContentLoaded", function () {
     overflowSyncRaf = window.requestAnimationFrame(function () {
       overflowSyncRaf = null;
       syncGreedyToggle();
-
-      if (!isDesktopViewport()) {
-        revealAutoFadedNav();
-        return;
-      }
 
       if (navState === "collapsed") {
         scheduleAutoFadeIfEligible();
