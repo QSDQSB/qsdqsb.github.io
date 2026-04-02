@@ -134,7 +134,7 @@
         }
       }
 
-      var item = link.parentElement;
+      var item = typeof link.closest === "function" ? link.closest("li") : link.parentElement;
       if (item) {
         item.hidden = !isVisible;
         item.setAttribute("aria-hidden", isVisible ? "false" : "true");
