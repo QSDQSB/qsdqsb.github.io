@@ -24,40 +24,50 @@
   // Mark JS-ready to avoid any accidental no-js hiding.
   document.documentElement.classList.add('scroll-reveal-ready');
 
-  // Collect direct children plus specific inner containers so nested
-  // sections (e.g. `.center-wrapper`, `.lyrics`) can reveal independently.
-  // Use a more robust approach than a complex :scope selector to ensure
-  // nested wrappers at any depth are picked up across browsers.
-  const directChildren = Array.from(pageContent.children);
-  // Find wrapper-like nested targets and use their direct element children
-  // as candidates so the wrapper itself is not treated as a single reveal unit.
-  const nestedWrappers = Array.from(
-    pageContent.querySelectorAll('.paragraph-center-wrapper, .center-wrapper, .lyrics, .reveal-on-scroll-target')
-  );
-  const nestedChildren = [];
-  nestedWrappers.forEach((wrapper) => {
-    if (!(wrapper instanceof HTMLElement)) return;
-    const elChildren = Array.from(wrapper.children).filter((c) => c instanceof HTMLElement);
-    if (elChildren.length > 0) {
-      nestedChildren.push(...elChildren);
-    } else {
-      // If wrapper has no element children, fall back to the wrapper itself
-      nestedChildren.push(wrapper);
-    }
-  });
+  const nestedRevealSelectors = [
+    '.paragraph-center-wrapper',
+    '.center-wrapper',
+    '.lyrics',
+    '.reveal-on-scroll-target',
+    '[data-bilingual]',
+    '[data-bilingual-lang]',
+    '.bilingual-switch__panel'
+  ].join(', ');
 
-  // Merge direct children and nested children, dedupe with Set.
-  const uniqueNodes = Array.from(new Set(directChildren.concat(nestedChildren)));
-
-  const candidates = uniqueNodes.filter((el) => {
+  function isValidCandidate(el) {
     if (!(el instanceof HTMLElement)) return false;
     // Skip elements inside the right sidebar / TOC
     if (el.closest && el.closest('.sidebar__right')) return false;
-    if (el.matches && el.matches('script, style, noscript')) return false;
+    if (el.matches && el.matches('script, style, noscript, .bilingual-switch')) return false;
+    // Skip hidden language panels until they become active
+    if (el.hidden || el.getAttribute('aria-hidden') === 'true') return false;
     // Skip empty wrappers that often exist in markdown
     if (!el.textContent || el.textContent.trim().length === 0) return false;
     return true;
-  });
+  }
+
+  function collectCandidates() {
+    // Collect direct children plus specific inner containers so nested
+    // sections (e.g. `.center-wrapper`, `.lyrics`, bilingual panels) can
+    // reveal independently.
+    const directChildren = Array.from(pageContent.children);
+    const nestedWrappers = Array.from(pageContent.querySelectorAll(nestedRevealSelectors));
+    const nestedChildren = [];
+
+    nestedWrappers.forEach((wrapper) => {
+      if (!(wrapper instanceof HTMLElement)) return;
+      const elChildren = Array.from(wrapper.children).filter((c) => c instanceof HTMLElement);
+      if (elChildren.length > 0) {
+        nestedChildren.push(...elChildren);
+      } else {
+        nestedChildren.push(wrapper);
+      }
+    });
+
+    return Array.from(new Set(directChildren.concat(nestedChildren))).filter(isValidCandidate);
+  }
+
+  const candidates = collectCandidates();
 
   if (candidates.length === 0) return;
 
@@ -79,20 +89,27 @@
     }
   );
 
-  // Observe normally so elements animate as they scroll into view.
-  candidates.forEach((el) => observer.observe(el));
+  function registerCandidates(nodes) {
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
 
-  // On initial load, some elements partially overlap the viewport but
-  // don't meet the IntersectionObserver `threshold` (e.g. content sitting
-  // just inside the bottom of the viewport). Reveal those immediately
-  // so the lower part of the page is not left visually empty.
-  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-  candidates.forEach((el) => {
-    const rect = el.getBoundingClientRect();
-    if (rect.bottom > 0 && rect.top < viewportHeight) {
-      el.classList.add('is-visible');
-      observer.unobserve(el);
-    }
+    nodes.forEach((el) => {
+      el.classList.add('reveal-on-scroll');
+      observer.observe(el);
+
+      // If the active language was switched while the element is already in
+      // view, reveal it immediately instead of waiting for the next scroll.
+      const rect = el.getBoundingClientRect();
+      if (rect.bottom > 0 && rect.top < viewportHeight) {
+        el.classList.add('is-visible');
+        observer.unobserve(el);
+      }
+    });
+  }
+
+  // Observe normally so elements animate as they scroll into view.
+  registerCandidates(candidates);
+
+  window.addEventListener('qsd:bilingual-change', () => {
+    registerCandidates(collectCandidates());
   });
 })();
-

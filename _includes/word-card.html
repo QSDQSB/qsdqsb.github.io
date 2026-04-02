@@ -1,5 +1,18 @@
 {% assign word_lists = site.data.words %}
-{% assign sample_word = word_lists | sample %}
+{% assign sample_word = nil %}
+
+{% if page.intruiging_words %}
+    {% for candidate in page.intruiging_words %}
+        {% assign sample_word = word_lists | where: "title", candidate | first %}
+        {% if sample_word %}
+            {% break %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% unless sample_word %}
+    {% assign sample_word = word_lists | sample %}
+{% endunless %}
 
 <div class="word_card_container">
     <div class="word_card" alt="📇 A word that might intrigue you - {{ sample_word.title }}">

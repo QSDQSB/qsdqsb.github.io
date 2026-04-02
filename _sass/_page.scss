@@ -431,11 +431,8 @@ body.has-overlay-hero {
       letter-spacing: 0.08em;
       text-transform: uppercase;
       white-space: normal;
+      overflow-wrap: anywhere;
       opacity: 0.9;
-
-      @include responsive-up(desktop) {
-        white-space: nowrap;
-      }
     }
 
     .page__title {
