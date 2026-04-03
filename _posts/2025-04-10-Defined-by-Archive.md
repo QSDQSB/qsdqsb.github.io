@@ -37,7 +37,7 @@ The mind does not retrieve the past. It reassembles it. Every act of remembering
 
 Consider what the self consists of: there is the *experiential self*,  immediate consciousness, the present moment as it is lived. There is the *narrative self*, the story we tell about who we are, stitched from selective memory into something that resembles coherence. And there is the *historical self*, what actually occurred, independent of how it has since been interpreted. Of these three, only the last is beyond direct recovery — by memory, or by anything kept in its name. Memory sustains the narrative self. In doing so, it distorts the historical one.
 
-<p class="notice--info" style="background-color: #00214724; border: 1px solid #00214705; max-width: 70%;"><span class="barlow" style="color: #f8e6b1d2"><i>Tempora mutantur, nos et mutamur in illis</i></span>: Time, Times change, and we change with them.</p>
+<p class="notice--info" style="background-color: #00214724; border: 1px solid #00214705; max-width: 70%;"><span class="barlow" style="color: #f8e6b1d2"><i>Tempora mutantur, nos et mutamur in illis</i></span>: Times change, and we change with them.</p>
 
 The witness and the testimony are the same entity, and both are in motion.
 
@@ -163,7 +163,7 @@ This frightens me and steadies me in equal measure, and I have stopped trying to
 
 我们都熟悉这种“抵达”的方式：在陌生走廊中忽然遇见的一段气味，在名字尚未浮现前便已被辨认出的笔迹。这些都是非自愿的「唤起者」，表明自我具有某种沉积。然而它们并不可靠——不经召唤而来，迅速消散，所携带的也不过是一种印象。
 
-某种更具抵抗性的存在是可能的。不是记忆——它会重构；不是感官——它转瞬即逝；而是物质性的痕迹：信件、日记页、手工之物，那些曾经在某处、与某人、以某种特定自我存在过的残余——即***档案***。
+某种更具抵抗性的存在是可能的。不是记忆——它会重构；不是感官——它转瞬即逝；而是物质性的痕迹：信件、日记页、手工制作的礼物，那些曾经在某处、与某人、以某种特定自我存在过的残余——即***档案***。
 
 此处所说的“档案”，并非制度性的机构，而是更为微小之物：在当下被记录之物，在回顾尚未介入之前完成。它的决定性特征，不在于其所包含的内容，而在于其所抵抗的扭曲。不同于记忆，墨迹不会屈从于当下的需要；它保留着当时实际被写下的形式。其证据性并不在于它能够说明发生了什么，而在于它抵抗了一种记忆无法抵抗的扭曲——那种无人选择、却持续发生的无意识改写。
 
@@ -194,7 +194,7 @@ This frightens me and steadies me in equal measure, and I have stopped trying to
 
 一个没有档案的自我，并不会更自由。它只会更孤立地面对自身的重构。叙事自我在无约束之下，会持续修订过去：抹平不一致，重排事件的先后，悄然调整谁说了什么、谁感受了什么，以及其理由。档案对这一过程施加一种「重力」——不足以将过去固定在原处，却足以使某些偏离变得费力。自我可以修订，但无法无阻地修订。其机制并非阻止，而是显现。在既有记录之上进行修订，必然在「曾被记录之物」与「此刻被主张之物」之间留下一个可被追溯的间隙。这个间隙并不阻止修订，但使修订变得可被察觉。
 
-这正是此处**重力**的含义：并非过去无法被重塑，而是当档案在场时，对其重塑无法以无痕的方式进行。无痕修订，是叙事自我的主要手段——它调整过去，使这种调整本身不留下任何痕迹。档案所打断的正是这一种能力——不是修订本身，而是无痕的修订。无论自我此刻如何主张过去，既有的书写仍然作为其当时所知的记录而存在。修订是可能的；无痕则不再可能。
+这正是此处**重力**的含义：并非过去无法被重塑，而是当档案在场时，对其重塑无法以无痕的方式进行。无痕修订，是叙事自我的主要手段——它调整过去，使这种调整本身不留下任何痕迹。档案所打断的正是这一种能力——不是修订本身，而是无痕的修订。无论自我此刻如何主张过去，既有的书写仍然作为其当时所知的记录而存在。修订可以发生，但沉默地修订不再可能。
 
 这种抵抗具有累积性。档案很少只是单一记录，它通常由一系列记录构成。每一条都封存于其各自的时刻，每一条都产生于后来将试图吸纳它的修订性叙事之前。一句「我爱你」可以被重新解释；但一整年的书信与日记，则更难以在无痕中被改写。要将一整年的证据视为错觉，就必须构造出一个能够与之对抗的连贯反叙事。这种构造并非不可能，但它已不再是漂移，而成为一种工程。而工程，与漂移不同，会留下其自身的痕迹。
 
@@ -212,7 +212,7 @@ This frightens me and steadies me in equal measure, and I have stopped trying to
 
 *Hoc fuit* 是一个哲学上的答案，却不是一个人的答案。
 
-感伤提供一种解释：我们存档，是因为依恋过去，因为无法放手。怀旧提供另一种：我们存档，是为了保留一个我们更偏爱的自我版本。这两种解释都真实，但都不足。依恋并不能解释这一行为，它只描述了一种情感；而怀旧，正是档案所要抵抗的病症——将“曾经如此”柔化为“本该如此”。
+感伤提供一种解释：我们存档是因为依恋过去，因为无法放手。怀旧提供了另一种思路：我们存档，是为了保留一个我们更偏爱的自我版本。这两种解释都真实，但都不足。依恋并不能解释这一行为，它只描述了一种情感；而怀旧，正是档案所要抵抗的病症——将“曾经如此”柔化为“本该如此”。
 
 档案为叙事自我的工程引入一种对抗力量。它并不完美，也不全面，但它真实存在。这个工程，本质上是对连贯历史的渴望：抹平歧义，将矛盾折叠为某种可以栖居其中的结构。在档案在场的情况下维持某些虚构，必须付出对抗它的努力。而这种努力，本身并非无物。
 
@@ -246,7 +246,7 @@ This frightens me and steadies me in equal measure, and I have stopped trying to
 
 而我仍然回来。去寻找，去记录。
 
-在这样的回返之中，我所获得的，并非安慰，而是一种仅凭记忆必将消散的真相：它裸露、冷静、对意义漠不关心，只忠于其所发生之时。
+在这样的回返之中，我所获得的，并非安慰，而是一种仅凭记忆必将消散的真相：它裸露、冷静。它所固定的是所发生的瞬间，而非其意义。
 
 不是“这定义了我”。不是“这就是我”。只是：此曾在。而我已与这一主张的微小达成和解。遗物并不言说；它持续。过去的有形遗物承载一种真相，而记忆则使之失真——并非因为它们更生动，而是因为它们具有证据性，而记忆只是叙述。这并非全部的真相，但它是不需要自我许可的那一部分。
 
