@@ -138,7 +138,7 @@ And yet I come back. To seek, and to document.
 
 What I find, in returning, is not comfort. It is the kind of truth memory alone would fade: bare, indifferent, fixed to the moment rather than to its meaning.
 
-Not “this defined me.” Not “this was who I was.” Simply *this was*. And I have made my peace with the smallness of that claim. The relic does not speak; it persists. Tangible relics of the past bear a truth where memory alone tarnishes — not because they are more vivid, but because they are evidential where memory is narrative. It is not the whole truth. But it is the part that does not require the self's permission.
+Not “this defined me.” Not “this was who I was.” Simply *this was*. And I have made my peace with the smallness of that claim. The relic does not speak; it persists. **Tangible relics of the past bear a truth where memory alone tarnishes** — not because they are more vivid, but because they are evidential where memory is narrative. It is not the whole truth. But it is the part that does not require the self's permission.
 
 This frightens me and steadies me in equal measure, and I have stopped trying to resolve the contradiction. A person's archive is not a record of what happened to them. It is a record of what they refused to let dissolve. That refusal — its shape, its selections, its silences — is the closest thing to a self-portrait that honest autobiography can produce.
 
@@ -190,19 +190,74 @@ This frightens me and steadies me in equal measure, and I have stopped trying to
 
 # IV. 见证
 
+先前的失败并非偶然，它们是澄清。档案从未能够保存自我——在墨迹干涸之前，自我已然发生变化。悖论所指出的，是我们对档案的期待与其实际能力之间的错位。
+
+一个没有档案的自我，并不会更自由。它只会更孤立地面对自身的重构。叙事自我在无约束之下，会持续修订过去：抹平不一致，重排事件的先后，悄然调整谁说了什么、谁感受了什么，以及其理由。档案对这一过程施加一种「重力」——不足以将过去固定在原处，却足以使某些偏离变得费力。自我可以修订，但无法无阻地修订。其机制并非阻止，而是显现。在既有记录之上进行修订，必然在「曾被记录之物」与「此刻被主张之物」之间留下一个可被追溯的间隙。这个间隙并不阻止修订，但使修订变得可被察觉。
+
+这正是此处**重力**的含义：并非过去无法被重塑，而是当档案在场时，对其重塑无法以无痕的方式进行。无痕修订，是叙事自我的主要手段——它调整过去，使这种调整本身不留下任何痕迹。档案所打断的正是这一种能力——不是修订本身，而是无痕的修订。无论自我此刻如何主张过去，既有的书写仍然作为其当时所知的记录而存在。修订是可能的；无痕则不再可能。
+
+这种抵抗具有累积性。档案很少只是单一记录，它通常由一系列记录构成。每一条都封存于其各自的时刻，每一条都产生于后来将试图吸纳它的修订性叙事之前。一句「我爱你」可以被重新解释；但一整年的书信与日记，则更难以在无痕中被改写。要将一整年的证据视为错觉，就必须构造出一个能够与之对抗的连贯反叙事。这种构造并非不可能，但它已不再是漂移，而成为一种工程。而工程，与漂移不同，会留下其自身的痕迹。
+
+档案所能提供的，比我们曾期望的更为狭窄，却也更为诚实。它不能保存体验——卡尔维诺已关闭这条路径；它不能保存身份——自我总会超出任何被固定的遗物。它所能保存的更为有限：不是事件本身，而是对事件被抹除的抵抗。不是“你是谁”，而是“曾经有什么被记录”。不是情感的重量，而是情感曾经具有重量的证据。
+
+**Hoc fuit. 此曾在。**一个极小的主张，且是相对的。它不提供解释，不作判断，也不要求连续性。它并不证明某事确实发生；它所抵抗的，是将其抹除为仿佛从未发生。记忆可以消解“曾经发生”这一事实本身；而档案得以超出这种特定的消解。
+
+*Hoc fuit* 所确保的，比“某一事件发生过”更为精确。它所确保的是，在那个时刻，某种事物被判定为具有足够的重要性，从而被记录下来。这一「被记录」本身是真实的，无论该记录是否无偏，无论该书写是否受某种被想象的目光所塑造。表演仍然是一种行动，而行动依然发生。然而，它的表达条件被封存于当时——它们无法在无痕中吸纳一个后来之我所施加的修订。
+
+档案的主张并不建立在其“纯粹性”之上——这一点早已被放弃。它建立在其时间性之上。彼时所写之物，并不可能预知其后的发展：情感如何收束，人将成为什么样的存在，那一刻后来被赋予何种意义。记忆总是从当下出发进行重构；而书写，则封存于其自身的时刻。这种封存并非证明，但它构成了见证与回溯性叙述之间的差异。
+
+这里的区分，在于*身份的保存*与*存在的保存*。我们曾期望档案给予前者——一个可跨越时间被取回的稳定自我。但档案无法提供这一点。它所能提供的，是后者：某物曾经存在的证据，对回溯性抹除的抵抗，对后来叙事的冷漠。这并不等同，但也并非虚无。或许，这是过去所能承载的唯一一种诚实形式。
+
 # V. 纪念碑
+
+*Hoc fuit* 是一个哲学上的答案，却不是一个人的答案。
+
+感伤提供一种解释：我们存档，是因为依恋过去，因为无法放手。怀旧提供另一种：我们存档，是为了保留一个我们更偏爱的自我版本。这两种解释都真实，但都不足。依恋并不能解释这一行为，它只描述了一种情感；而怀旧，正是档案所要抵抗的病症——将“曾经如此”柔化为“本该如此”。
+
+档案为叙事自我的工程引入一种对抗力量。它并不完美，也不全面，但它真实存在。这个工程，本质上是对连贯历史的渴望：抹平歧义，将矛盾折叠为某种可以栖居其中的结构。在档案在场的情况下维持某些虚构，必须付出对抗它的努力。而这种努力，本身并非无物。
+
+但这一解释也有其界限。档案并不纯粹。它具有选择性：由被保留之物、被放弃之物，以及媒介所允许被记录之物共同塑造。何物进入档案，本身已经是一种解释行为。档案抵抗某些修订，同时也在无声中促成另一些。
+
+更令人不安的失败在更深处。档案并非在无人观察之中被生成——它总是在某种目光之下形成，即便那目光仅属于未来的自我。日记、信件——无一是完全自发的。它们是在“将被阅读”这一前提之下被写下。自我塑形，从书写之时即已介入，而不仅仅是在回顾之中。被固定之物，从一开始便带有表演性——它被塑造成写作者希望档案记录的样子，而非当下本身的全部内容。档案能够抵抗无意识的回溯性改写，却无法抵抗有意识的前瞻性构造。它未通过记忆所要求的客观性检验——但失败发生得更早，也更自觉：不在回溯，而在起始。
+
+然而，这并不消解档案的约束功能——反而使之更为清晰。一个被封存于其自身时刻的构造，保留着一种后来叙事无法取消的独立性：它发生于那些后来将试图重塑它的修订之前。彼时被写入档案之物，并不可能预知后来之我会对其提出何种要求。约束正源于此——不是记录的纯粹性，而是其时间上的先在性。档案之所以构成约束，并非因为它无偏，而是因为它在先。
+
+这一批评成立。然而，存档的选择仍然存续。它并非通过反驳得以维持，而是与批评并置而立。
+更深层的答案并不属于认识论，而属于存在论。我并非为了理解自己而存档。档案对此过于受限：过于选择性，过于表演性，也过于受制于我所想象的目光。我之所以存档，是因为另一种可能更不可接受——让曾经之物完全溶解为当下的便利记忆。**在“部分记录”与“无记录”之间做出选择，并非天真，而是唯一可行的诚实。**档案不是保存，而是一种建构：由一个明知其工具不完美的自我所完成，并仍然继续。不是因为记录是纯净的，而是因为这种拒绝是真实的。
+
+一段曾在之物的碎片，对抗湮灭而立。纪念物无需长存。建造它的行为，本身即为论证。
+消解的对立面，并非永恒，而是参与。存档，是拒绝让过去无限可塑的消极状态——一种微小的、不完美的、且不可避免地片段化的行动，对抗那种将一切还原为“后来之我”叙述的熵。
 
 # VI. 残余
 
-[ #TODO ]
+<p class="notice--info" style="background-color: #00214724; border: 1px solid #00214705; max-width: 80%;"><span class="barlow" style="color: #f8e6b1d2"><i>Tempus edax rerum</i></span>: 时间，万物的吞噬者。</p>
+
+档案并非对时间的胜利。Tempus edax rerum ——包括档案本身。拍立得会泛黄，墨迹会褪色。即便是最精心保存的记录，终将对任何人都不再可读。纪念物是暂时的。这从一开始便是其条件。档案所达成的，并非永恒，而是延迟。它是一种与时间的协商，而这场协商，时间终将取胜。
+
+这一论证，并不能使我们免于其所描述之物。
+
+<span style="color: #f0f0f0;">档案带给我恐惧。</span>不是戏剧性的那种，也不是被评判的恐惧，而更接近一种眩晕：当我打开某个旧物，发现那个过往的自我，曾在我后来放弃之事上是正确的，或在我仍然坚持之事上是错误的。档案不取悦。它只是等待。
+
+<span style="color: #f0f0f0;">档案带给我悲伤。</span>不是温热的那种，而是近乎解剖式的——在分析之后，在卡尔维诺问题被命名并被接受之后才出现的那种。被固定于当下之物，已经消逝；留下的，是其替代之物。我知道这一点。我仍然存档。这是我无法完全解释的部分。
+
+<span style="color: #f0f0f0;">它也给予我某种信心</span>——一种奇特而暂时的信心。并非对其持久性的信心，也并非对其被阅读的信心，而是对这一行为本身曾经发生的信心。某物曾在此，对抗消解，对抗抹除，主张其发生。纪念物无需存续于建造者之后。这不是关于遗产的信心，而是关于“我曾在场”的信心。我曾坚持认为，此处有某物值得这种抵抗。
+
+<span style="color: #f0f0f0;">还有怀疑。</span>这个冲动究竟源于信念，还是仅仅源于无法放手？Hoc fuit 究竟是一种哲学立场，还是一层被拉丁文包裹以显得不那么像悲伤的安慰？时间并不协商。它只是继续，并带走我试图捕捉的一切。
+
+而我仍然回来。去寻找，去记录。
+
+在这样的回返之中，我所获得的，并非安慰，而是一种仅凭记忆必将消散的真相：它裸露、冷静、对意义漠不关心，只忠于其所发生之时。
+
+不是“这定义了我”。不是“这就是我”。只是：此曾在。而我已与这一主张的微小达成和解。遗物并不言说；它持续。过去的有形遗物承载一种真相，而记忆则使之失真——并非因为它们更生动，而是因为它们具有证据性，而记忆只是叙述。这并非全部的真相，但它是不需要自我许可的那一部分。
+
+这既使我不安，也使我安定，而我已不再试图调和这一矛盾。一个人的档案并不是其经历的记录，而是其拒绝让其消散之物的记录。这种拒绝——其形状、其选择、其沉默——或许就是诚实自传最接近的自我肖像。
 
 </section>
 </div>
 
-<!-- Leave a 2.5em vertical space -->
 <div style="height: 2.5em;"></div>
 
-<p style="font-size: 1.125em; line-height: 1.9em; letter-spacing: 0.02em;">In the echo of all unwritten words,<br>QSD, QSB, <span style="color: #d0d0d0;">and the once beloved QXD</span><br>April 1, 2026</p>
+<p style="font-size: 1.15em; line-height: 1.9em; letter-spacing: 0.02em;">In the echo of all unwritten words,<br>QSD, QSB, <span style="color: #d0d0d0;">and the once beloved QXD</span><br>April 1, 2026</p>
 {: .p_right_thin}
 
 {% include qsd-emblem-horizontal-rule.html %}
