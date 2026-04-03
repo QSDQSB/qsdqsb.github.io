@@ -370,15 +370,26 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
   max-width: 80rem;
   margin: 0 auto;
 
+  .new-release-swiper {
+    padding-top: $new-release-slider-track-clearance-y;
+    padding-bottom: $new-release-slider-track-clearance-y;
+    margin-top: -$new-release-slider-track-clearance-y;
+    margin-bottom: -$new-release-slider-track-clearance-y;
+  }
+
+  .new-release-swiper .swiper-wrapper {
+    align-items: stretch;
+  }
+
+  .new-release-swiper .swiper-slide {
+    height: auto;
+  }
+
   .swiper-slide-active .release-card, .release-card:hover, .release-card:focus {
     text-decoration: none;
     color: inherit;
-    transform: translateY(-6px);
-    scale: 1.05;
-    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.5),
-      0 4px 8px rgba(0, 0, 0, 0.3),
-      0 6px 6px rgba(0, 0, 0, 0.5),
-      0 8px 28px rgba(0,0,0,0.24);
+    transform: translateY(calc(-1 * #{$new-release-card-hover-lift})) scale(1.05);
+    box-shadow: $shadow-soft;
       
     .release-card__content .release-card__icon {
       opacity: 1;
