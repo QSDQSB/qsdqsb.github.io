@@ -2,10 +2,11 @@
 
 /**
  * Geocoding Preprocessing Script for Map Datasets
- * 
- * Reads all _data/maps/*.yml files, geocodes missing coordinates,
- * and generates derived GeoJSON cache files in assets/maps/
- * 
+ *
+ * Reads manual _data/maps/*.yml files, geocodes missing coordinates,
+ * generates derived GeoJSON cache files in assets/maps/,
+ * and builds the mega voyage atlas directly from _voyage frontmatter.
+ *
  * Usage: node scripts/geocode-maps.js
  */
 
@@ -14,21 +15,25 @@ const path = require('path');
 const yaml = require('js-yaml');
 const https = require('https');
 
-// Configuration
 const MAPS_DATA_DIR = path.join(__dirname, '../_data/maps');
 const MAPS_CACHE_DIR = path.join(__dirname, '../assets/maps');
+const VOYAGE_DIR = path.join(__dirname, '../_voyage');
+const TAG_COLOURS_FILE = path.join(__dirname, '../_data/tag_colours.yml');
+const ATLAS_OUTPUT_FILE = path.join(MAPS_CACHE_DIR, 'voyage-atlas.geojson');
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search';
 const USER_AGENT = 'Jekyll-Maps-Geocoder/1.0';
 const CACHE_FILE = path.join(__dirname, '.geocode-cache.json');
+const ATLAS_FALLBACK_COLOR = '#7d746d';
+const PRIMARY_TAG_LIMIT = 7;
 
-// Ensure output directory exists
-if (!fs.existsSync(MAPS_CACHE_DIR)) {
-  fs.mkdirSync(MAPS_CACHE_DIR, { recursive: true });
+ensureDirectory(MAPS_CACHE_DIR);
+
+function ensureDirectory(dirPath) {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
 }
 
-/**
- * Load or initialize geocoding cache (to avoid re-querying same locations)
- */
 function loadGeocodeCache() {
   if (fs.existsSync(CACHE_FILE)) {
     const data = fs.readFileSync(CACHE_FILE, 'utf8');
@@ -37,26 +42,17 @@ function loadGeocodeCache() {
   return {};
 }
 
-/**
- * Save geocoding cache
- */
 function saveGeocodeCache(cache) {
   fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2));
 }
 
-/**
- * Query Nominatim for coordinates (with caching)
- * Returns { lat, lng } or null if not found
- */
 async function geocodeLocation(cityName, countryName, cache) {
   const cacheKey = `${cityName}|${countryName || ''}`.toLowerCase();
-  
-  // Check cache first
-  if (cache[cacheKey]) {
+
+  if (cache[cacheKey] !== undefined) {
     return cache[cacheKey];
   }
 
-  // Build query
   let query = cityName;
   if (countryName) {
     query += `, ${countryName}`;
@@ -64,16 +60,15 @@ async function geocodeLocation(cityName, countryName, cache) {
 
   try {
     const result = await nominatimSearch(query);
-    
     if (result && result.lat && result.lon) {
       const coords = { lat: parseFloat(result.lat), lng: parseFloat(result.lon) };
       cache[cacheKey] = coords;
       return coords;
-    } else {
-      console.warn(`⚠️  Could not geocode: "${query}"`);
-      cache[cacheKey] = null;
-      return null;
     }
+
+    console.warn(`⚠️  Could not geocode: "${query}"`);
+    cache[cacheKey] = null;
+    return null;
   } catch (error) {
     console.error(`❌ Geocoding error for "${query}":`, error.message);
     cache[cacheKey] = null;
@@ -81,41 +76,82 @@ async function geocodeLocation(cityName, countryName, cache) {
   }
 }
 
-/**
- * HTTP request to Nominatim API (with delay to respect rate limits)
- */
+async function geocodeQuery(query, cache) {
+  const normalizedQuery = String(query || '').trim().toLowerCase();
+  if (!normalizedQuery) {
+    return null;
+  }
+
+  if (cache[normalizedQuery] !== undefined) {
+    return cache[normalizedQuery];
+  }
+
+  const prefixMatch = findPrefixCacheMatch(cache, normalizedQuery);
+  if (prefixMatch) {
+    cache[normalizedQuery] = prefixMatch;
+    return prefixMatch;
+  }
+
+  try {
+    const result = await nominatimSearch(query);
+    if (result && result.lat && result.lon) {
+      const coords = { lat: parseFloat(result.lat), lng: parseFloat(result.lon) };
+      cache[normalizedQuery] = coords;
+      return coords;
+    }
+
+    console.warn(`⚠️  Could not geocode atlas query: "${query}"`);
+    cache[normalizedQuery] = null;
+    return null;
+  } catch (error) {
+    console.error(`❌ Geocoding error for atlas query "${query}":`, error.message);
+    cache[normalizedQuery] = null;
+    return null;
+  }
+}
+
+function findPrefixCacheMatch(cache, normalizedQuery) {
+  const matches = Object.entries(cache)
+    .filter(([key, value]) => key.startsWith(`${normalizedQuery}|`) && value && typeof value.lat === 'number' && typeof value.lng === 'number')
+    .map(([, value]) => value);
+
+  if (matches.length === 1) {
+    return matches[0];
+  }
+
+  return null;
+}
+
 function nominatimSearch(query) {
   return new Promise((resolve, reject) => {
-    // Add delay to respect API rate limits (1 request per second)
     setTimeout(() => {
       const params = new URLSearchParams({
         q: query,
         format: 'json',
         limit: 1,
-        'accept-language': 'en'
+        'accept-language': 'en',
       });
 
       const url = `${NOMINATIM_URL}?${params}`;
-      
+
       https.get(url, { headers: { 'User-Agent': USER_AGENT } }, (res) => {
         let data = '';
-        res.on('data', chunk => data += chunk);
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
         res.on('end', () => {
           try {
             const results = JSON.parse(data);
             resolve(results[0] || null);
-          } catch (e) {
-            reject(e);
+          } catch (error) {
+            reject(error);
           }
         });
       }).on('error', reject);
-    }, 1100); // 1.1 second delay
+    }, 1100);
   });
 }
 
-/**
- * Convert dataset to GeoJSON FeatureCollection
- */
 function datasetToGeoJSON(datasetName, dataset) {
   const features = [];
 
@@ -124,22 +160,20 @@ function datasetToGeoJSON(datasetName, dataset) {
     return { type: 'FeatureCollection', features: [] };
   }
 
-  // Build category map for color lookup
   const categoryMap = {};
   if (dataset.categories && Array.isArray(dataset.categories)) {
-    dataset.categories.forEach(cat => {
+    dataset.categories.forEach((cat) => {
       categoryMap[cat.id] = cat;
     });
   }
 
-  // Convert each city to a GeoJSON feature
   dataset.cities.forEach((city, idx) => {
     if (!city.name) {
       console.warn(`⚠️  City at index ${idx} in "${datasetName}" missing required 'name'`);
       return;
     }
 
-    if (!city.lat || !city.lng) {
+    if (city.lat === undefined || city.lng === undefined) {
       console.warn(`⚠️  City "${city.name}" in "${datasetName}" missing coordinates (should be auto-geocoded)`);
       return;
     }
@@ -155,115 +189,300 @@ function datasetToGeoJSON(datasetName, dataset) {
         categoryLabel: categoryInfo.label || null,
         color: categoryInfo.color || '#FF6B6B',
         href: city.href || null,
-        description: city.description || null
+        description: city.description || null,
       },
       geometry: {
         type: 'Point',
-        coordinates: [city.lng, city.lat] // GeoJSON uses [lng, lat]
-      }
+        coordinates: [city.lng, city.lat],
+      },
     });
   });
 
   return {
     type: 'FeatureCollection',
-    features: features
+    features,
   };
 }
 
-/**
- * Process a single map dataset
- */
 async function processDataset(filePath, cache) {
   const fileName = path.basename(filePath, '.yml');
   console.log(`\n📍 Processing: ${fileName}`);
 
-  try {
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    const dataset = yaml.load(fileContent);
+  const fileContent = fs.readFileSync(filePath, 'utf8');
+  const dataset = yaml.load(fileContent);
 
-    if (!dataset) {
-      console.error(`❌ Failed to parse YAML: ${filePath}`);
-      return;
-    }
+  if (!dataset) {
+    throw new Error(`Failed to parse YAML: ${filePath}`);
+  }
 
-    // Geocode cities that are missing coordinates
-    if (dataset.cities && Array.isArray(dataset.cities)) {
-      for (const city of dataset.cities) {
-        // Skip if already has coordinates
-        if (city.lat !== undefined && city.lng !== undefined) {
-          continue;
-        }
+  if (dataset.cities && Array.isArray(dataset.cities)) {
+    for (const city of dataset.cities) {
+      if (city.lat !== undefined && city.lng !== undefined) {
+        continue;
+      }
 
-        // Geocode from name + country
-        const coords = await geocodeLocation(city.name, city.country, cache);
-        if (coords) {
-          city.lat = coords.lat;
-          city.lng = coords.lng;
-          console.log(`  ✅ Geocoded: ${city.name} (${city.country || 'Unknown'}) → [${city.lat.toFixed(4)}, ${city.lng.toFixed(4)}]`);
-        } else {
-          console.warn(`  ⚠️  Failed to geocode: ${city.name}`);
-        }
+      const coords = await geocodeLocation(city.name, city.country, cache);
+      if (coords) {
+        city.lat = coords.lat;
+        city.lng = coords.lng;
+        console.log(`  ✅ Geocoded: ${city.name} (${city.country || 'Unknown'}) → [${city.lat.toFixed(4)}, ${city.lng.toFixed(4)}]`);
+      } else {
+        console.warn(`  ⚠️  Failed to geocode: ${city.name}`);
       }
     }
-
-    // Convert to GeoJSON
-    const geojson = datasetToGeoJSON(fileName, dataset);
-
-    // Write GeoJSON cache file
-    const outputPath = path.join(MAPS_CACHE_DIR, `${fileName}.geojson`);
-    fs.writeFileSync(outputPath, JSON.stringify(geojson, null, 2));
-    console.log(`  💾 Wrote: ${outputPath}`);
-    console.log(`  📊 Features: ${geojson.features.length}`);
-
-  } catch (error) {
-    console.error(`❌ Error processing ${fileName}:`, error.message);
   }
+
+  const geojson = datasetToGeoJSON(fileName, dataset);
+  const outputPath = path.join(MAPS_CACHE_DIR, `${fileName}.geojson`);
+  fs.writeFileSync(outputPath, JSON.stringify(geojson, null, 2));
+  console.log(`  💾 Wrote: ${outputPath}`);
+  console.log(`  📊 Features: ${geojson.features.length}`);
 }
 
-/**
- * Main function
- */
+function parseFrontMatter(markdown) {
+  const match = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
+  if (!match) {
+    return {};
+  }
+
+  return yaml.load(match[1]) || {};
+}
+
+function loadVoyagePages(voyageDir = VOYAGE_DIR) {
+  if (!fs.existsSync(voyageDir)) {
+    return [];
+  }
+
+  return fs.readdirSync(voyageDir)
+    .filter((fileName) => fileName.endsWith('.md'))
+    .sort()
+    .map((fileName) => {
+      const filePath = path.join(voyageDir, fileName);
+      const frontmatter = parseFrontMatter(fs.readFileSync(filePath, 'utf8'));
+      return {
+        fileName,
+        filePath,
+        slug: path.basename(fileName, '.md'),
+        frontmatter,
+      };
+    });
+}
+
+function loadVoyageTagPalette(tagColoursFile = TAG_COLOURS_FILE) {
+  const raw = fs.readFileSync(tagColoursFile, 'utf8');
+  const data = yaml.load(raw) || {};
+  return data.voyage_tag_colours || {};
+}
+
+function deriveVoyageUrl(page) {
+  const permalink = page.frontmatter.permalink;
+  if (permalink) {
+    return permalink;
+  }
+
+  return `/voyage/${page.slug}/`;
+}
+
+function normalizeTags(frontmatterTags) {
+  if (!Array.isArray(frontmatterTags)) {
+    return [];
+  }
+
+  return frontmatterTags
+    .map((tag) => String(tag || '').trim())
+    .filter(Boolean);
+}
+
+function formatDateDisplay(value) {
+  if (!value) {
+    return null;
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return String(value);
+  }
+
+  return new Intl.DateTimeFormat('en', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(date);
+}
+
+function buildAtlasTagColors(tags, tagPalette) {
+  const tagColors = {};
+  tags.forEach((tag) => {
+    tagColors[tag] = tagPalette[tag] || ATLAS_FALLBACK_COLOR;
+  });
+  return tagColors;
+}
+
+function buildAtlasFeature(page, coords, tagPalette) {
+  const frontmatter = page.frontmatter || {};
+  const tags = normalizeTags(frontmatter.tags);
+  const tagColors = buildAtlasTagColors(tags, tagPalette);
+  const mainTag = tags[0] || null;
+  const excerpt = frontmatter.description || frontmatter.excerpt || '';
+
+  return {
+    type: 'Feature',
+    properties: {
+      slug: page.slug,
+      title: frontmatter.title || page.slug,
+      url: deriveVoyageUrl(page),
+      excerpt,
+      date: frontmatter.date || null,
+      dateDisplay: formatDateDisplay(frontmatter.date),
+      tags,
+      mainTag,
+      mainTagColor: mainTag ? (tagColors[mainTag] || ATLAS_FALLBACK_COLOR) : ATLAS_FALLBACK_COLOR,
+      tagColors,
+      fallbackColor: ATLAS_FALLBACK_COLOR,
+      primaryTagLimit: PRIMARY_TAG_LIMIT,
+    },
+    geometry: {
+      type: 'Point',
+      coordinates: [coords.lng, coords.lat],
+    },
+  };
+}
+
+async function resolveVoyageCoords(page, cache, geocodeFn) {
+  const mapConfig = page.frontmatter.map || {};
+  const hasLat = mapConfig.lat !== undefined;
+  const hasLng = mapConfig.lng !== undefined;
+
+  if (hasLat !== hasLng) {
+    throw new Error(`${page.fileName} requires both map.lat and map.lng when manually setting atlas coordinates`);
+  }
+
+  if (hasLat && hasLng) {
+    return {
+      lat: Number(mapConfig.lat),
+      lng: Number(mapConfig.lng),
+    };
+  }
+
+  const query = String(mapConfig.query || page.frontmatter.title || '').trim();
+  if (!query) {
+    throw new Error(`${page.fileName} is missing a geocodable title or map.query override`);
+  }
+
+  const coords = await geocodeFn(query, cache, page);
+  if (!coords) {
+    throw new Error(`${page.fileName} could not be geocoded. Add map.query or explicit map.lat/map.lng.`);
+  }
+
+  return coords;
+}
+
+async function buildVoyageAtlasGeoJSON(pages, options = {}) {
+  const cache = options.cache || {};
+  const tagPalette = options.tagPalette || {};
+  const geocodeFn = options.geocodeFn || geocodeQuery;
+  const features = [];
+
+  for (const page of pages) {
+    const mapConfig = (page.frontmatter && page.frontmatter.map) || {};
+    if (mapConfig.exclude === true) {
+      continue;
+    }
+
+    const coords = await resolveVoyageCoords(page, cache, geocodeFn);
+    features.push(buildAtlasFeature(page, coords, tagPalette));
+  }
+
+  if (features.length === 0) {
+    throw new Error('Voyage atlas generation produced no atlas points');
+  }
+
+  return {
+    type: 'FeatureCollection',
+    properties: {
+      kind: 'voyage-atlas',
+      primaryTagLimit: PRIMARY_TAG_LIMIT,
+      fallbackColor: ATLAS_FALLBACK_COLOR,
+    },
+    features,
+  };
+}
+
+async function processVoyageAtlas(cache, options = {}) {
+  const voyagePages = options.voyagePages || loadVoyagePages(options.voyageDir || VOYAGE_DIR);
+  const tagPalette = options.tagPalette || loadVoyageTagPalette(options.tagColoursFile || TAG_COLOURS_FILE);
+  const geocodeFn = options.geocodeFn || geocodeQuery;
+  const outputPath = options.outputPath || ATLAS_OUTPUT_FILE;
+
+  console.log('\n🧭 Building voyage atlas');
+  console.log(`  📚 Source pages: ${voyagePages.length}`);
+
+  const geojson = await buildVoyageAtlasGeoJSON(voyagePages, {
+    cache,
+    tagPalette,
+    geocodeFn,
+  });
+
+  fs.writeFileSync(outputPath, JSON.stringify(geojson, null, 2));
+  console.log(`  💾 Wrote: ${outputPath}`);
+  console.log(`  📊 Atlas points: ${geojson.features.length}`);
+  return geojson;
+}
+
 async function main() {
   console.log('🗺️  Map Geocoding Preprocessor');
   console.log('================================');
   console.log(`Data dir: ${MAPS_DATA_DIR}`);
   console.log(`Cache dir: ${MAPS_CACHE_DIR}`);
 
-  // Check if maps directory exists
   if (!fs.existsSync(MAPS_DATA_DIR)) {
-    console.error(`❌ Maps directory not found: ${MAPS_DATA_DIR}`);
-    process.exit(1);
+    throw new Error(`Maps directory not found: ${MAPS_DATA_DIR}`);
   }
 
-  // Load geocoding cache
   const cache = loadGeocodeCache();
-
-  // Find all .yml files in maps directory
   const mapFiles = fs.readdirSync(MAPS_DATA_DIR)
-    .filter(f => f.endsWith('.yml'))
-    .map(f => path.join(MAPS_DATA_DIR, f));
+    .filter((fileName) => fileName.endsWith('.yml'))
+    .map((fileName) => path.join(MAPS_DATA_DIR, fileName));
 
   if (mapFiles.length === 0) {
     console.warn('⚠️  No YAML map files found in _data/maps/');
-    return;
+  } else {
+    console.log(`\n📂 Found ${mapFiles.length} map dataset(s)\n`);
+    for (const filePath of mapFiles) {
+      await processDataset(filePath, cache);
+    }
   }
 
-  console.log(`\n📂 Found ${mapFiles.length} map dataset(s)\n`);
+  await processVoyageAtlas(cache);
 
-  // Process each dataset
-  for (const filePath of mapFiles) {
-    await processDataset(filePath, cache);
-  }
-
-  // Save cache for next run
   saveGeocodeCache(cache);
-
   console.log('\n✅ Geocoding complete!');
   console.log(`💾 Geocode cache saved: ${CACHE_FILE}`);
 }
 
-// Run
-main().catch(error => {
-  console.error('Fatal error:', error);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error('Fatal error:', error.message);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  ATLAS_FALLBACK_COLOR,
+  PRIMARY_TAG_LIMIT,
+  buildAtlasFeature,
+  buildVoyageAtlasGeoJSON,
+  datasetToGeoJSON,
+  findPrefixCacheMatch,
+  formatDateDisplay,
+  geocodeLocation,
+  geocodeQuery,
+  loadGeocodeCache,
+  loadVoyagePages,
+  loadVoyageTagPalette,
+  parseFrontMatter,
+  processDataset,
+  processVoyageAtlas,
+  resolveVoyageCoords,
+  saveGeocodeCache,
+};
