@@ -3,6 +3,7 @@ layout: archive
 title: "Voyage"
 excerpt: "Through boundless paths we roam."
 permalink: /voyage/
+map_dataset: voyage-atlas
 left_tarot_card: 'the-world'
 left_tarot_href: '/voyage-by-tags'
 right_tarot_card: 'random-voyage'
@@ -11,6 +12,10 @@ header:
   overlay_filter: 0.5
 ---
 {% include base_path %}
+
+  <div class="unselectable-div" style="padding: 1em;">
+    {% include map.html %}
+  </div>
 
   <div class="container">
     {% for post in site.voyage reversed%}
