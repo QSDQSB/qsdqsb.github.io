@@ -6,6 +6,7 @@ excerpt: "Memory's images, once they are fixed in words, are erased."
 tags:
   - 🍜Life
   - 💍Horcrux
+prose_justify: true
 left_tarot_card: "queen-of-swords"
 left_tarot_href: /posts/2024/war-declaration-to-boredom
 header:
@@ -29,13 +30,13 @@ header:
 ---
 
 ### `2. Azul`
-<div style="font-family: 'Courier'; text-align: justify;">
+<div style="font-family: 'Courier';">
 蓝调时间的北外滩Kaws真好，可惜美好的东西总是转瞬即逝。
 </div>
 <img src="https://images.lifestyleasia.com/wp-content/uploads/sites/6/2024/08/02155249/kaws-holiday-shanghai-2024-1.jpg?tr=w-1600" alt="moon by kaws at the Bond">
 {: .article-image}
 
-<div style="font-family: 'Courier'; text-align: justify;">
+<div style="font-family: 'Courier';">
 想起了在Porto的那个晚上，人群随着蔷薇色的晚霞缓缓散去。Dom Luís I大桥上只余下两人依偎在如墨的蓝色苍穹之下。时间在此刻停滞。
 </div>
 
@@ -46,7 +47,7 @@ header:
 ### `3. Lontananza`
 
 <div style="border-radius: 1em;">
-<p style="font-style: italic; font-family: 'Courier'; text-align: justify;">
+<p style="font-style: italic; font-family: 'Courier';">
 Abriele D'Annunzio, an Italian poet and writer, often used <code>Lontananza</code> in his works to evoke a sense of yearning and the romanticisation of things that are far away or lost in time. In his poetry, distance is not merely spatial but emotional, representing an idealised world or a memory that remains beautiful, precisely because it is unattainable.
 </p>
 </div>

@@ -7,6 +7,7 @@ excerpt: "Tangible relics of the past bear a truth where memory alone tarnishes.
 redirect_from: 
   - /posts/2025-04-10-Defined-by-Archive/
   - /posts/2025/defined-by-archive
+prose_justify: true
 intruiging_words: Weltschmerz
 right_tarot_card: 'the-hanged-man'
 right_tarot_href: /voyage/#london
@@ -23,7 +24,7 @@ header:
 
 
 <div data-bilingual>
-<section data-bilingual-lang="EN" markdown="1" style="text-align: justify; font-size: 1.125em; line-height: 1.9em; color: #d0d0d0; letter-spacing: 0.02em;">
+<section data-bilingual-lang="EN" markdown="1" style="color: #d0d0d0;">
 
 # I. The Drift
 {: .didot }
@@ -143,7 +144,7 @@ Not “this defined me.” Not “this was who I was.” Simply *this was*. And 
 This frightens me and steadies me in equal measure, and I have stopped trying to resolve the contradiction. A person's archive is not a record of what happened to them. It is a record of what they refused to let dissolve. That refusal — its shape, its selections, its silences — is the closest thing to a self-portrait that honest autobiography can produce.
 
 </section>
-<section data-bilingual-lang="中" class="didot" markdown="1" style="text-align: justify; font-size: 1.125em; line-height: 1.9em; color: #d0d0d0; letter-spacing: 0.02em;">
+<section data-bilingual-lang="中" class="didot" markdown="1" style="color: #d0d0d0;">
 
 # I. 漂移
 

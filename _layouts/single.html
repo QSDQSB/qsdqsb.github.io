@@ -60,7 +60,7 @@ layout: default
           {% endif %}
         </header>
       {% endunless %}
-      <section class="page__content e-content" itemprop="text">
+      <section class="page__content e-content{% if page.prose_justify %} page__content--justify{% endif %}" itemprop="text">
         {% if page.ticker-tape %}
           {% include ticker-tape.html %}
         {% endif %}
