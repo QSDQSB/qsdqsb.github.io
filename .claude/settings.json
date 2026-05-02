@@ -1,0 +1,66 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bundle exec jekyll build)",
+      "Bash(bundle exec jekyll serve *)",
+      "Bash(bundle exec rake *)",
+      "Bash(npm run *)",
+      "Bash(npm test *)",
+      "Bash(node scripts/geocode-maps.js)",
+      "Bash(bash scripts/check-responsive-policy.sh)",
+      "Bash(python3 scripts/check-single-use-variables.py *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git blame *)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(rg *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(diff *)",
+      "Bash(stat *)",
+      "Bash(jq *)",
+      "Bash(sed *)",
+      "Bash(awk *)",
+      "Read(*)"
+    ],
+    "deny": [
+      "Bash(git push *)",
+      "Bash(git reset --hard *)",
+      "Bash(rm -rf *)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/hooks/post-tool-edit-nudges.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash scripts/hooks/post-tool-variables-check.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/hooks/stop-variables-check.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
