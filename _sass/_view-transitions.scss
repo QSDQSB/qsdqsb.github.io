@@ -2,13 +2,11 @@
    VIEW TRANSITIONS API
    ========================================================================== */
 
-/**
- * View Transitions API Styles
- * Provides smooth page transitions with native browser support
- * 
- * Browser Support: Chrome 111+, Edge 111+, Safari (experimental)
- * Gracefully degrades for unsupported browsers
- */
+/* Opt all pages into CSS-driven cross-document (MPA) view transitions.
+   Chrome 126+ picks this up automatically; older browsers ignore it safely. */
+@view-transition {
+  navigation: auto;
+}
 
 @supports (view-transition-name: none) {
   /* Assign view-transition-name to key elements */

@@ -1,0 +1,14 @@
+{% if page.date %}
+  <p class="page__date">
+    <i class="fa fa-fw fa-calendar-alt" aria-hidden="true"></i>
+    <time datetime="{{ page.date | date: "%Y-%m-%d" }}">{{ page.date | date: "%d.%m.%Y" }}</time>
+    {% if page.last_modified_at %}
+      {% assign _pub = page.date | date: "%Y-%m-%d" %}
+      {% assign _mod = page.last_modified_at | date: "%Y-%m-%d" %}
+      {% if _pub != _mod %}
+        &ensp;·&ensp;<i class="fa fa-fw fa-rotate-right" aria-hidden="true"></i>
+        <time datetime="{{ _mod }}">{{ page.last_modified_at | date: "%d.%m.%Y" }}</time>
+      {% endif %}
+    {% endif %}
+  </p>
+{% endif %}

@@ -3,7 +3,7 @@
  * Dark, minimalist Leaflet CSS overrides
  */
 
-// Map container styling
+// Map container
 .map-container {
   width: 100%;
   min-height: 500px;
@@ -16,33 +16,29 @@
   border-radius: $border-radius;
   border: 2px solid $border-color;
   box-shadow: $box-shadow;
-  
-  // Large desktop (1024px and up)
+
   @include responsive-up(desktop) {
     min-height: 500px;
   }
-  
-  // Tablet landscape (768px to 1023px)
+
   @include responsive-between(tablet, desktop) {
     min-height: 400px;
   }
-  
-  // Tablet portrait (481px to 767px)
+
   @include responsive-between(30.0625rem, tablet) {
     min-height: 300px;
   }
-  
-  // Mobile portrait (max 480px)
+
   @include responsive-down(phone) {
     min-height: 300px;
   }
 }
 
-// Leaflet base map overrides
+// Leaflet base overrides
 .map-container .leaflet-container {
   background-color: $background-color;
   font-family: $global-font-family;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -56,127 +52,94 @@
   }
 }
 
-// Tile loading fix - prevent light rectangles during zoom
-// Comprehensive fix to eliminate color block artifacts
-
+// Tile loading fix — prevent light rectangles during zoom
 .leaflet-container {
-    background-color: $background-color !important;
+  background-color: $background-color !important;
 }
-// Loading tile placeholder styling
-// .leaflet-tile-pane {
-//   background-color: $background-color !important;
-// }
 
-// Control styling (zoom buttons, etc.)
+// Controls (zoom, reset, fullscreen)
+// Tier 3 exception: glass control surfaces use near-black values
+// deliberately darker than $background-color for depth separation.
 .map-container .leaflet-control {
-  border-radius: 8px;
-  box-shadow: $box-shadow;
-  background-color: $obsidian-gray;
-  border: 1px solid $border-color;
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  background: rgba(14, 14, 14, 0.58);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba($lighter-gray, 0.1);
+}
+
+// Shared base for all map control buttons
+.map-container .leaflet-control-zoom a,
+.map-container .leaflet-control-reset .leaflet-control-reset-button,
+.map-container .leaflet-control-fullscreen .leaflet-control-fullscreen-button {
+  color: $text-color;
+  background-color: transparent;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+
+  &:hover {
+    background-color: rgba($lighter-gray, 0.06);
+    color: $lighter-gray;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }
 
 .map-container .leaflet-control-zoom {
-  background-color: $obsidian-gray;
-  
+  background: transparent;
+
   a {
-    color: $text-color;
-    background-color: transparent;
-    border: none;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 24px;
-    cursor: pointer;
-    
-    &:hover {
-      background-color: $darker-gray;
-      color: $lighter-gray;
-    }
-    
     &.leaflet-disabled {
       color: $darker-gray;
       cursor: not-allowed;
       opacity: 0.5;
-      
+
       &:hover {
         background-color: transparent;
         color: $darker-gray;
+        transform: none;
       }
     }
-    
+
     &:first-child {
-      border-bottom: 1px solid $border-color;
+      border-bottom: 1px solid rgba($lighter-gray, 0.08);
     }
   }
 }
 
-// Reset View control styling
 .map-container .leaflet-control-reset {
-  background-color: $obsidian-gray;
-  
+  background: transparent;
+
   .leaflet-control-reset-button {
-    color: $text-color;
-    background-color: transparent;
-    border: none;
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 24px;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    
-    &:hover {
-      background-color: $darker-gray;
-      color: $lighter-gray;
-    }
-    
-    &:active {
-      transform: scale(0.95);
-    }
+    font-size: 15px;
   }
 }
 
-// Fullscreen control styling
 .map-container .leaflet-control-fullscreen {
-  background-color: $obsidian-gray;
-  
+  background: transparent;
+
   .leaflet-control-fullscreen-button {
-    color: $text-color;
-    background-color: transparent;
-    border: none;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 24px;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    
-    &:hover {
-      background-color: $darker-gray;
-      color: $lighter-gray;
-    }
-    
-    &:active {
-      transform: scale(0.95);
-    }
-    
     &.leaflet-fullscreen-active {
-      color: $intriguing-word-color;
-      background-color: rgba(75, 192, 192, 0.1);
+      color: $lighter-gray;
+      background-color: rgba($lighter-gray, 0.08);
     }
   }
 }
 
-// Fullscreen mode styling
 .map-container:-webkit-full-screen,
 .map-container:fullscreen {
   width: 100vw;
@@ -190,118 +153,150 @@
   margin: 0;
 }
 
-// Attribution control - hidden for cleaner aesthetic
 .map-container .leaflet-control-attribution {
-  background-color: rgba(15, 15, 15, 0.92) !important;
+  background-color: rgba($background-color, 0.92) !important;
   color: $darker-gray !important;
   font-size: 9px !important;
   border: none;
   box-shadow: none;
   padding: 2px 4px !important;
-  
+
   a {
     color: $dark-gray !important;
     text-decoration: none;
-    
+
     &:hover {
       color: $gray !important;
     }
   }
 }
 
-// Popup styling (compact, minimal)
+// Popup
 .map-container .leaflet-popup {
   .leaflet-popup-content-wrapper {
     background-color: $obsidian-gray;
-    border: 1px solid $border-color;
-    border-radius: 8px;
-    box-shadow: $box-shadow;
-    padding: 10px 12px;
+    border: 1px solid rgba($lighter-gray, 0.09);
+    border-radius: 12px;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.34);
+    padding: 12px 14px;
     font-family: $barlow-font-family;
-    
+
     .leaflet-popup-content {
       margin: 0;
       color: $text-color;
       font-size: 13px;
       line-height: 1.5;
-      
-      // Popup heading (city name)
+
       .popup-title {
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 600;
         color: $lighter-gray;
-        margin-bottom: 6px;
+        margin-bottom: 7px;
         line-height: 1.3;
         font-family: $barlow-font-family;
       }
-      
-      // Popup description (hidden by default, shown on hover)
+
       .popup-description {
         font-size: 12px;
         color: $gray;
-        line-height: 1.4;
+        line-height: 1.5;
         font-style: italic;
         font-family: $barlow-font-family;
-        transition: display 0.15s ease;
       }
     }
   }
-  
+
   .leaflet-popup-tip {
     background-color: $obsidian-gray;
     border: 1px solid $border-color;
   }
+
+  .leaflet-popup-close-button {
+    top: 10px !important;
+    right: 10px !important;
+    color: rgba($lighter-gray, 0.38) !important;
+    font-size: 16px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    width: 18px;
+    height: 18px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: color 0.15s ease, background 0.15s ease;
+
+    &:hover {
+      color: $lighter-gray !important;
+      background: rgba($lighter-gray, 0.08);
+    }
+  }
 }
 
-// Marker styling (CircleMarkers)
+// Atlas popup: editorial title — design language: display/editorial role → $cmu-serif-family
+.map-container .leaflet-popup.map-popup--atlas .leaflet-popup-content .popup-title {
+  font-family: $cmu-serif-family;
+  font-size: 17px;
+  font-weight: normal;
+  font-style: italic;
+  letter-spacing: 0.01em;
+  padding-right: 18px; // clear of close button
+}
+
+// Markers (CircleMarkers)
 .map-container .leaflet-circle-marker {
   opacity: 0.85;
-  stroke: true;
   fill-opacity: 0.75;
 }
 
-// Map legend styling
+.map-container .leaflet-interactive {
+  transition: opacity 0.2s ease-out, fill-opacity 0.2s ease-out, stroke-opacity 0.2s ease-out, fill 0.2s ease-out, stroke 0.2s ease-out, stroke-width 0.2s ease-out;
+}
+
+// Default map legend (category filter)
 .map-legend {
   position: absolute;
   bottom: 30px;
   left: 10px;
-  background-color: rgba(21, 21, 21, 0.95);
+  background-color: rgba($background-color, 0.95);
   padding: 12px 16px;
   border-radius: 8px;
   border: 1px solid $border-color;
   box-shadow: $box-shadow;
   z-index: 1000;
   max-width: 250px;
-  
-  // Legend title
+
   .legend-title {
     font-size: 13px;
     font-weight: 700;
     color: $lighter-gray;
-    margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-bottom: 10px;
   }
-  
-  // Legend items
+
   .legend-item {
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
+    width: 100%;
     font-size: $type-code-size;
     color: $text-color;
     cursor: pointer;
     transition: color 0.1s ease;
-    
+    background: transparent;
+    border: 0;
+    text-align: left;
+    padding: 0;
+    margin-bottom: 8px;
+
     &:last-child {
       margin-bottom: 0;
     }
-    
+
     &:hover {
       color: $lighter-gray;
     }
-    
-    // Legend color indicator
+
     .legend-color {
       width: 12px;
       height: 12px;
@@ -309,29 +304,23 @@
       margin-right: 10px;
       flex-shrink: 0;
       border: 1px solid $border-color;
-      transition: all 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    
-    // Legend label text
+
     .legend-label {
       flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      min-width: 0;
+      font-family: $barlow-font-family;
     }
-    
-    // Active state for legend items
-    &.active {
-      .legend-color {
-        transform: scale(1.3);
-        box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
-      }
+
+    &.active .legend-color {
+      transform: scale(1.3);
+      box-shadow: 0 0 8px rgba($lighter-gray, 0.2);
     }
-    
-    // Inactive/filtered state
+
     &.inactive {
       opacity: 0.5;
-      
+
       .legend-color {
         opacity: 0.4;
       }
@@ -339,28 +328,267 @@
   }
 }
 
-// Responsive map legend
+// Atlas pill toggle
+.map-legend--atlas-pill {
+  top: 14px;
+  right: 14px;
+  left: auto;
+  bottom: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  max-width: none;
+}
+
+.map-container .map-legend--atlas,
+.map-container .map-legend-palette {
+  transition: opacity 0.24s ease-out, transform 0.24s ease-out;
+}
+
+.map-container--booting .map-legend--atlas,
+.map-container--booting .map-legend-palette {
+  opacity: 0;
+  transform: translateY(8px) scale(0.992);
+}
+
+.map-container--ready .map-legend--atlas,
+.map-container--ready .map-legend-palette {
+  opacity: 1;
+  transform: none;
+}
+
+.map-legend--atlas {
+  .legend-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.5rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid rgba($lighter-gray, 0.12);
+    background: rgba(14, 14, 14, 0.62); // Tier 3: glass pill surface
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: $lighter-gray;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease, color 0.18s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      background: rgba(18, 18, 18, 0.78); // Tier 3: glass pill surface hover
+      border-color: rgba($lighter-gray, 0.18);
+    }
+
+    &.is-active {
+      background: rgba(26, 26, 26, 0.82); // Tier 3: glass pill surface active
+      border-color: rgba($lighter-gray, 0.24);
+    }
+
+    &.has-filter::after {
+      content: '';
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: $intriguing-word-color;
+      margin-left: 7px;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// Atlas tag palette panel
+.map-legend-palette[hidden] {
+  display: none !important;
+}
+
+.map-legend-palette {
+  position: absolute;
+  top: 62px;
+  right: 14px;
+  width: min(320px, calc(100% - 28px));
+  max-height: min(28rem, calc(100% - 84px));
+  display: flex;
+  flex-direction: column;
+  background: rgba(16, 16, 16, 0.82); // Tier 3: glass palette surface
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba($lighter-gray, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.42);
+  z-index: 1005;
+  overflow: hidden;
+  transform: translateY(-8px) scale(0.985);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+
+  &.is-open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  .legend-palette-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0.95rem 1rem 0.85rem;
+    border-bottom: 1px solid rgba($lighter-gray, 0.08);
+  }
+
+  .legend-palette-title {
+    color: $lighter-gray;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .legend-palette-actions {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .legend-palette-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+    line-height: 1;
+    border-radius: 999px;
+    border: 1px solid rgba($lighter-gray, 0.1);
+    background: rgba($lighter-gray, 0.04);
+    color: $lighter-gray;
+    cursor: pointer;
+    transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+
+    &:hover {
+      background: rgba($lighter-gray, 0.08);
+      border-color: rgba($lighter-gray, 0.16);
+      transform: translateY(-1px);
+    }
+  }
+
+  .legend-palette-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0.75rem 0.5rem 1rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.3rem 0.5rem;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    color: $text-color;
+    text-align: left;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.22s ease, opacity 0.22s ease, background 0.22s ease, border-color 0.22s ease;
+
+    &:hover {
+      color: $lighter-gray;
+      background: rgba($lighter-gray, 0.04);
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-color: rgba($lighter-gray, 0.12);
+    }
+
+    &.is-active {
+      color: $lighter-gray;
+      background: rgba($lighter-gray, 0.06);
+      border-color: rgba($lighter-gray, 0.14);
+
+      .legend-color {
+        transform: scale(1.2);
+        box-shadow: 0 0 0 2px rgba($lighter-gray, 0.12);
+      }
+    }
+
+    .legend-color {
+      width: 10px;
+      height: 10px;
+      margin-right: 10px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      border: 1px solid rgba($lighter-gray, 0.1);
+      transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
+    }
+
+    .legend-label {
+      flex: 1;
+      min-width: 0;
+      font-size: $type-code-size;
+      font-family: $barlow-font-family;
+      line-height: 1.35;
+    }
+
+    .legend-count {
+      flex-shrink: 0;
+      margin-left: 8px;
+      color: $gray;
+      font-size: 10px;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &.has-filter .legend-item:not(.is-active) {
+    opacity: 0.38;
+  }
+
+  .legend-group--palette {
+    display: grid;
+    gap: 2px;
+  }
+}
+
+// Responsive legend
 @include responsive-down(compact) {
   .map-legend {
     max-width: 200px;
     padding: 10px 12px;
     font-size: 11px;
-    
+
     .legend-title {
       font-size: 12px;
       margin-bottom: 8px;
     }
-    
+
     .legend-item {
-      margin-bottom: 6px;
       font-size: 11px;
-      
+
       .legend-color {
         width: 10px;
         height: 10px;
         margin-right: 8px;
       }
     }
+  }
+
+  .map-legend--atlas-pill {
+    top: 12px;
+    right: 12px;
+  }
+
+  .map-legend-palette {
+    width: min(280px, calc(100% - 20px));
+    top: 58px;
+    right: 10px;
   }
 }
 
@@ -374,7 +602,7 @@
   background-color: $background-color;
   color: $gray;
   font-size: 14px;
-  
+
   &::after {
     content: '';
     display: inline-block;
@@ -385,12 +613,6 @@
     border-top-color: $intriguing-word-color;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
   }
 }
 
@@ -408,32 +630,133 @@
   text-align: center;
 }
 
-// Scrim/tooltip styling (if using)
 .leaflet-tooltip {
-  background-color: rgba(21, 21, 21, 0.95);
+  background-color: rgba($background-color, 0.95);
   border: 1px solid $border-color;
   border-radius: 4px;
   color: $text-color;
   font-size: 12px;
   padding: 6px 10px;
   box-shadow: $box-shadow;
-  
+
   &::before {
-    border-top-color: rgba(21, 21, 21, 0.95);
+    border-top-color: rgba($background-color, 0.95);
   }
 }
 
-// Ensure proper z-index stacking
+// Z-index stacking
 .map-container {
   .leaflet-pane {
     z-index: auto;
   }
-  
+
   .leaflet-marker-pane {
     z-index: 600;
   }
-  
+
   .leaflet-popup-pane {
     z-index: 700;
+  }
+}
+
+// Atlas popup content
+.popup-content--atlas {
+  min-width: 214px;
+
+  .popup-meta {
+    color: $gray;
+    font-size: 10px;
+    margin-top: 3px;
+    margin-bottom: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .popup-description--static {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 13px;
+    color: rgba($lighter-gray, 0.72);
+    font-style: normal;
+    line-height: 1.58;
+  }
+
+  .popup-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 14px;
+  }
+
+  .popup-tag {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    padding: 0.14rem 0.46rem;
+    border-radius: 999px;
+    border: 1px solid var(--tag-color, #7d746d);
+    background: rgba($lighter-gray, 0.04);
+    color: $lighter-gray;
+    font-size: 9.5px;
+    line-height: 1.3;
+    text-decoration: none;
+    transition: background 0.16s ease, border-color 0.16s ease;
+
+    &:hover {
+      background: rgba($lighter-gray, 0.08);
+      color: $lighter-gray;
+    }
+  }
+
+  .popup-tag--overflow {
+    border-color: $border-color;
+    background: rgba($lighter-gray, 0.04);
+    cursor: default;
+  }
+
+  .popup-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.4rem 0.82rem;
+    border-radius: 999px;
+    border: 1px solid $border-color;
+    color: $lighter-gray;
+    text-decoration: none;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: background 0.18s ease, border-color 0.18s ease;
+
+    &:hover {
+      color: $lighter-gray;
+      border-color: $gray;
+      background: rgba($lighter-gray, 0.04);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-container .leaflet-control-zoom a,
+  .map-container .leaflet-control-reset .leaflet-control-reset-button,
+  .map-container .leaflet-control-fullscreen .leaflet-control-fullscreen-button,
+  .map-container .leaflet-interactive,
+  .map-container .map-legend--atlas,
+  .map-container .map-legend-palette,
+  .map-container .map-legend-palette .legend-item,
+  .map-container .map-legend-palette .legend-item .legend-color,
+  .map-container .popup-action,
+  .map-container .leaflet-popup .leaflet-popup-close-button {
+    transition: none !important;
+  }
+
+  .map-container--booting .map-legend--atlas,
+  .map-container--booting .map-legend-palette {
+    opacity: 1;
+    transform: none;
   }
 }

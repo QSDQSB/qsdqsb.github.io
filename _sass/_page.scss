@@ -207,6 +207,13 @@ body.has-overlay-hero {
 }
 
 .page__content {
+  line-height: 1.9;
+  letter-spacing: 0.02em;
+
+  &--justify {
+    text-align: justify;
+  }
+
   h1 {
     border-bottom: 2px dashed $border-color;
     margin-bottom: 0.4em;
@@ -219,7 +226,7 @@ body.has-overlay-hero {
   }
 
   p, li, dl {
-    font-size: 1em;
+    font-size: 1.125em;
   }
 
   /* paragraph indents */
@@ -232,6 +239,17 @@ body.has-overlay-hero {
         text-indent: $indent-var;
         margin-top: -($indent-var);
       }
+    }
+  }
+
+  /* last-child margin reset — prevents asymmetric padding in containers */
+  blockquote,
+  .notice,
+  .paragraph-center-wrapper,
+  .word_card,
+  section[data-bilingual-lang] {
+    > p:last-child {
+      margin-bottom: 0;
     }
   }
 
@@ -416,21 +434,22 @@ body.has-overlay-hero {
     }
 
     .page__title,
-    .page__lead,
     .page__meta {
-      width: min(100%, 33rem);
+      width: min(100%, #{$overlay-hero-copy-max-width});
       margin-left: 0;
       text-align: left;
     }
 
     .page__lead {
-      max-width: 32rem;
+      width: min(100%, #{$overlay-hero-excerpt-max-width});
+      max-width: $overlay-hero-excerpt-max-width;
       margin-top: $overlay-hero-title-excerpt-gap;
       font-size: clamp(1.02rem, 1.34vw, 1.34rem);
       line-height: 1.26;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      white-space: nowrap;
+      white-space: normal;
+      overflow-wrap: anywhere;
       opacity: 0.9;
     }
 
@@ -486,11 +505,14 @@ body.has-overlay-hero {
 
 @include responsive-down(tablet) {
   .page__hero--overlay {
-    min-height: clamp(19rem, 62vh, 30rem);
-    min-height: clamp(19rem, 62svh, 30rem);
-    padding: clamp(4.4rem, 13vh, 5.2rem) 0 clamp(0.95rem, 3.5vh, 1.2rem);
-    padding: clamp(4.4rem, 13svh, 5.2rem) 0 clamp(0.95rem, 3.5svh, 1.2rem);
+    aspect-ratio: $overlay-hero-mobile-aspect-ratio;
+    min-height: $overlay-hero-mobile-min-height;
+    padding: $overlay-hero-mobile-padding-top 0 $overlay-hero-mobile-padding-bottom;
     align-items: flex-end;
+  }
+
+  .page__hero--overlay .page__hero-media,
+  .page__hero--overlay .page__hero-media::before {
     background-position: center center;
   }
 
@@ -516,12 +538,15 @@ body.has-overlay-hero {
     font-size: clamp(0.86rem, 3.15vw, 1.04rem);
     line-height: 1.22;
     letter-spacing: 0.065em;
-    white-space: nowrap;
+    white-space: normal;
   }
 }
 
 body.overlay-opening-enabled .page__hero--overlay .page__lead-inner {
-  display: inline-block;
+  display: block;
+  max-width: 100%;
+  white-space: inherit;
+  overflow-wrap: anywhere;
   transition:
     opacity $global-transition-time $cubic-bezier-smooth,
     clip-path $global-transition-time $cubic-bezier-smooth,
@@ -652,6 +677,7 @@ html.is-resizing {
 .page__meta {
   margin-top: 2em;
   margin-bottom: 1em;
+  clear: both;
   color: $text-color;
   font-size: $type-size-7;
   text-align: center;
@@ -661,6 +687,16 @@ html.is-resizing {
   &_read_time, &_date {
     text-align: unset;
     font-family: $barlow-font-family;
+  }
+  .page__date {
+    font-family: $barlow-font-family;
+    font-size: $type-size-8;
+    opacity: 0.65;
+    margin-top: 0.6em;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+    cursor: default;
   }
 }
 

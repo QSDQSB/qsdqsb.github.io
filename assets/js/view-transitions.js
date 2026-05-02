@@ -120,28 +120,15 @@
         return;
       }
 
-      // Prevent default navigation but allow other handlers to run
+      // Prevent default navigation then navigate explicitly.
+      // CSS @view-transition { navigation: auto } handles the animation;
+      // wrapping location.assign in startViewTransition breaks in Chrome 126+.
       e.preventDefault();
       e.stopPropagation();
 
-      log('Starting view transition to:', targetUrl.href);
+      log('Navigating to:', targetUrl.href);
 
-      // Start view transition
-      // For multi-page apps, we need to let the browser handle the navigation
-      // The View Transitions API will automatically handle the transition
-      const transition = document.startViewTransition(() => {
-        // Use location.assign for better compatibility
-        window.location.assign(targetUrl.href);
-      });
-
-      // Optional: Log transition events for debugging
-      if (DEBUG) {
-        transition.finished.then(() => {
-          log('View transition completed');
-        }).catch((err) => {
-          log('View transition error:', err);
-        });
-      }
+      window.location.assign(targetUrl.href);
     }, true); // Use capture phase to intercept before other handlers
   }
 
