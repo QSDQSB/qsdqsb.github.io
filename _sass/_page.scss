@@ -242,6 +242,17 @@ body.has-overlay-hero {
     }
   }
 
+  /* last-child margin reset — prevents asymmetric padding in containers */
+  blockquote,
+  .notice,
+  .paragraph-center-wrapper,
+  .word_card,
+  section[data-bilingual-lang] {
+    > p:last-child {
+      margin-bottom: 0;
+    }
+  }
+
 
   dt {
     margin-top: 1em;
@@ -675,6 +686,16 @@ html.is-resizing {
   &_read_time, &_date {
     text-align: unset;
     font-family: $barlow-font-family;
+  }
+  .page__date {
+    font-family: $barlow-font-family;
+    font-size: $type-size-8;
+    opacity: 0.65;
+    margin-top: 0.6em;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+    cursor: default;
   }
 }
 
