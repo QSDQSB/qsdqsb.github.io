@@ -6,6 +6,8 @@ gallery_name: "dragonstone"
 date: 2023-07-29
 tags:
   - 🌊Coastal
+map:
+  query: "Gaztelugatxe, Bakio, Spain"
 header:
   overlay_image: cover/dragonstone-3v1.jpg
 ---

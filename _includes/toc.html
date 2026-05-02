@@ -78,6 +78,8 @@
     {% assign firstHeader = true %}
     {% assign currLevel = 0 %}
     {% assign lastLevel = 0 %}
+    {% assign effectiveLevel = 0 %}
+    {% assign lastEffectiveLevel = 0 %}
 
     {% capture listModifier %}{% if orderedList %}ol{% else %}ul{% endif %}{% endcapture %}
 
@@ -110,15 +112,25 @@
             {% assign minHeader = currLevel %}
         {% endif %}
 
+        {% assign effectiveLevel = currLevel %}
+        {% if firstHeader %}
+            {% assign effectiveLevel = currLevel %}
+        {% elsif currLevel > lastEffectiveLevel %}
+            {% assign upwardJump = currLevel | minus: lastEffectiveLevel %}
+            {% if upwardJump > 1 %}
+                {% assign effectiveLevel = lastEffectiveLevel | plus: 1 %}
+            {% endif %}
+        {% endif %}
+
         {% capture _hAttrToStrip %}{{ _workspace[0] | split: '>' | first }}>{% endcapture %}
         {% assign header = _workspace[0] | replace: _hAttrToStrip, '' %}
 
         {% if include.item_class and include.item_class != blank %}
-            {% capture listItemClass %} class="{{ include.item_class | replace: '%level%', currLevel | split: '.' | join: ' ' }}"{% endcapture %}
+            {% capture listItemClass %} class="{{ include.item_class | replace: '%level%', effectiveLevel | split: '.' | join: ' ' }}"{% endcapture %}
         {% endif %}
 
         {% if include.submenu_class and include.submenu_class != blank %}
-            {% assign subMenuLevel = currLevel | minus: 1 %}
+            {% assign subMenuLevel = effectiveLevel | minus: 1 %}
             {% capture subMenuClass %} class="{{ include.submenu_class | replace: '%level%', subMenuLevel | split: '.' | join: ' ' }}"{% endcapture %}
         {% endif %}
 
@@ -138,13 +150,13 @@
             {% capture listItem %}{{ anchorBody }}{% endcapture %}
         {% endif %}
 
-        {% if currLevel > lastLevel %}
+        {% if effectiveLevel > lastEffectiveLevel %}
 
             {% capture jekyll_toc %}{{ jekyll_toc }}<{{ listModifier }}{{ subMenuClass }}>{% endcapture %}
 
             
-        {% elsif currLevel < lastLevel %}
-            {% assign repeatCount = lastLevel | minus: currLevel %}
+        {% elsif effectiveLevel < lastEffectiveLevel %}
+            {% assign repeatCount = lastEffectiveLevel | minus: effectiveLevel %}
 
             {% for i in (1..repeatCount) %}
                 {% capture jekyll_toc %}{{ jekyll_toc }}</li></{{ listModifier }}>{% endcapture %}
@@ -159,11 +171,12 @@
         {% capture jekyll_toc %}{{ jekyll_toc }}<li{{ listItemClass }}>{{ listItem }}{% endcapture %}
 
         {% assign lastLevel = currLevel %}
+        {% assign lastEffectiveLevel = effectiveLevel %}
         {% assign firstHeader = false %}
     {% endfor %}
 
     {% assign repeatCount = minHeader | minus: 1 %}
-    {% assign repeatCount = lastLevel | minus: repeatCount %}
+    {% assign repeatCount = lastEffectiveLevel | minus: repeatCount %}
     {% for i in (1..repeatCount) %}
         {% capture jekyll_toc %}{{ jekyll_toc }}</li></{{ listModifier }}>{% endcapture %}
     {% endfor %}

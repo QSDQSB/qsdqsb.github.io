@@ -59,6 +59,7 @@ Notes:
 * Keep language labels in `data-bilingual-lang` (for example `EN`, `FR`, `ZH`).
 * `markdown="1"` lets you keep writing normal markdown in each language section.
 * If you have multiple bilingual blocks on the same page, switching one updates all blocks.
+* Keep heading hierarchy reasonably consistent inside each language block when possible (for example avoid large jumps like `#` straight to `###` unless the structure genuinely needs it).
 
 Whole-page pattern (same syntax, larger content):
 

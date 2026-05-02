@@ -46,6 +46,8 @@ Before introducing a new class:
 
 - Avoid arbitrary literals for spacing/sizing/opacity/radius/timing when semantic scales already provide a close fit.
 - If a custom literal remains, include concrete constraint rationale and why scale-based options fail.
+- If a desired value is an exact multiple of an existing token, compose it via arithmetic instead of introducing another token.
+  Example: use `$transition-time * 2` for `1s` when `$transition-time` is `0.5s`.
 
 ## Confidence Escalation
 
