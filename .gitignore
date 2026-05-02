@@ -8,3 +8,4 @@ improvements.md
 for_agents/
 .playwright-cli
 .sass-cache/
+.claude/settings.local.json
