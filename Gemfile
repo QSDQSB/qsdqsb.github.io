@@ -26,6 +26,7 @@ group :jekyll_plugins do
   gem 'hawkins'
   gem 'jekyll-include-cache'
   gem "mini_magick"
+  gem 'jekyll-last-modified-at'
 end
 
 gem "webrick", "~> 1.7"

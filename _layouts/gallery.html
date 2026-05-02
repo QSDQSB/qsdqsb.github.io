@@ -55,6 +55,9 @@ layout: compress
   {% include tag-list.html %}
   </div>
   {% endif %}
+  <footer class="page__meta">
+    {% include page__dates.html %}
+  </footer>
   {% include presented-by-qsd.html %}
   </body>
   {% include random_voyage_anchor.html posts = subs %}
@@ -149,6 +152,9 @@ layout: compress
                   </div>
                 {% endif %}
             </div>
+            <footer class="page__meta">
+              {% include page__dates.html %}
+            </footer>
             {% include scripts.html %}
             <script src="{{ '/assets/js/gallery.js' | relative_url }}"></script>
           </body>
