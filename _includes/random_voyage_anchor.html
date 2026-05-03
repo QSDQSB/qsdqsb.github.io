@@ -13,23 +13,24 @@
 {% assign post_urls = post_urls | prepend: '[' | append: ']' %}
 {% assign tarot_card_for_random_page = include.tarot_card | default: "wheel-of-fortune" %}
 <body>
-  <a class="floating_tarot_card_container floating_tarot_card_container--right wheel_of_fortune" onclick="goToRandomPost(); return false;">
+  <a class="floating_tarot_card_container floating_tarot_card_container--right wheel_of_fortune" href="#" data-random-voyage-anchor>
     <div class="floating_tarot_card" alt="Tarot - Wheel of Fortune" style="mask-image: url('/assets/css/images/tarots/{{ tarot_card_for_random_page }}.svg');"></div>
   </a>
-    <script>
-    const postUrls = {{ post_urls | safe }};
-    console.log("Number of posts to explore:", postUrls.length );
-    function goToRandomPost() {
-      const randomIndex = Math.floor(Math.random() * postUrls.length);
-      const url = postUrls[randomIndex];
-      console.log("Navigating to ", url);
-      $.smoothScroll({
-        scrollTarget: url,
-        offset: -50,
-        speed: 880,
-        easing: 'swing',  
+  <script>
+    (function() {
+      const postUrls = {{ post_urls }};
+
+      const link = document.querySelector('a[data-random-voyage-anchor]');
+      if (!link) return;
+
+      link.addEventListener('click', function(event) {
+        event.preventDefault();
+        const hash = postUrls[Math.floor(Math.random() * postUrls.length)];
+        const target = document.querySelector(hash);
+        if (!target) return;
+        const top = target.getBoundingClientRect().top + window.scrollY - 50;
+        window.scrollTo({ top: top, behavior: 'smooth' });
       });
-    }
-    window.goToRandomPost = goToRandomPost;
+    })();
   </script>
 </body>
