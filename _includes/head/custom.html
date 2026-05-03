@@ -15,9 +15,11 @@
 <meta name="theme-color" content="#f0f0f0">
 <link rel="stylesheet" href="{{ base_path }}/assets/css/academicons.css"/>
 
-<!-- Preload key local fonts to reduce layout shift -->
-<link rel="preload" href="{{ base_path }}/assets/fonts/Barlow/Barlow-Regular.ttf" as="font" type="font/ttf" crossorigin>
-<link rel="preload" href="{{ base_path }}/assets/fonts/Barlow/Barlow-Italic.ttf" as="font" type="font/ttf" crossorigin>
+<!-- Preload key local fonts to reduce layout shift.
+     Note: no `crossorigin` — fonts are same-origin; Jekyll dev server does not
+     send CORS headers, so adding `crossorigin` makes Safari reject the preload. -->
+<link rel="preload" href="{{ base_path }}/assets/fonts/Barlow/Barlow-Regular.ttf" as="font" type="font/ttf">
+<link rel="preload" href="{{ base_path }}/assets/fonts/Barlow/Barlow-Italic.ttf" as="font" type="font/ttf">
 
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
