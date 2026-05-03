@@ -1,88 +1,86 @@
 /*
- * Greedy Navigation
+ * Greedy Navigation (vanilla JS — jQuery removed)
  *
  * Mobile overflow-safe variant:
  * - Uses intrinsic width checks (scrollWidth/clientWidth) for flex+clipped nav.
  * - Pins brand item in visible links.
  * - Shows overflow toggle only when hidden links exist.
  */
-(function ($) {
+(function () {
   "use strict";
 
-  var $nav = $("#site-nav");
-  if (!$nav.length) return;
+  var nav = document.getElementById("site-nav");
+  if (!nav) return;
 
-  var $toggle = $nav.find(".greedy-nav__toggle");
-  var $visibleLinks = $nav.find(".visible-links");
-  var $hiddenLinks = $nav.find(".hidden-links");
+  var toggle = nav.querySelector(".greedy-nav__toggle");
+  var visibleLinks = nav.querySelector(".visible-links");
+  var hiddenLinks = nav.querySelector(".hidden-links");
   var rafId = null;
   var rebalanceReason = "init";
   var MAX_PASSES = 200;
 
   function hasDom() {
-    return $nav.length && $toggle.length && $visibleLinks.length && $hiddenLinks.length;
+    return nav && toggle && visibleLinks && hiddenLinks;
+  }
+
+  function hiddenChildren() {
+    return hiddenLinks.querySelectorAll(":scope > li");
   }
 
   function hasHiddenItems() {
-    return $hiddenLinks.children("li").length > 0;
+    return hiddenChildren().length > 0;
   }
 
   function isOverflowMenuOpen() {
-    return hasHiddenItems() && !$hiddenLinks.hasClass("hidden");
+    return hasHiddenItems() && !hiddenLinks.classList.contains("hidden");
   }
 
   function hasVisibleOverflow() {
-    var node = $visibleLinks.get(0);
-    if (!node) return false;
-
     // Tolerance avoids 1px rounding noise across browsers/zoom levels.
-    return (node.scrollWidth - node.clientWidth) > 1;
+    return (visibleLinks.scrollWidth - visibleLinks.clientWidth) > 1;
   }
 
   function firstVisibleIsBrand() {
-    var $first = $visibleLinks.children("li").first();
-    return $first.hasClass("masthead__menu-item--brand");
+    var first = visibleLinks.querySelector(":scope > li");
+    return first && first.classList.contains("masthead__menu-item--brand");
   }
 
   function pinBrandToVisibleStart() {
-    var $brandFromHidden = $hiddenLinks.children(".masthead__menu-item--brand");
-    if ($brandFromHidden.length) {
-      $brandFromHidden.prependTo($visibleLinks);
+    var brandFromHidden = hiddenLinks.querySelector(".masthead__menu-item--brand");
+    if (brandFromHidden) {
+      visibleLinks.prepend(brandFromHidden);
     }
 
-    var $brandVisible = $visibleLinks.children(".masthead__menu-item--brand");
-    if ($brandVisible.length && !firstVisibleIsBrand()) {
-      $brandVisible.first().prependTo($visibleLinks);
+    var brandVisible = visibleLinks.querySelector(".masthead__menu-item--brand");
+    if (brandVisible && !firstVisibleIsBrand()) {
+      visibleLinks.prepend(brandVisible);
     }
   }
 
   function moveLastVisibleToHidden() {
-    var $candidate = $visibleLinks
-      .children("li")
-      .not(".masthead__menu-item--brand")
-      .last();
+    var items = visibleLinks.querySelectorAll(":scope > li:not(.masthead__menu-item--brand)");
+    if (!items.length) return false;
 
-    if (!$candidate.length) return false;
-
+    var candidate = items[items.length - 1];
     // Prepend preserves original nav order when items are restored.
-    $candidate.prependTo($hiddenLinks);
+    hiddenLinks.prepend(candidate);
     return true;
   }
 
   function moveFirstHiddenToVisible() {
-    var $item = $hiddenLinks.children("li").first();
-    if (!$item.length) return false;
+    var item = hiddenLinks.querySelector(":scope > li");
+    if (!item) return false;
 
-    $item.appendTo($visibleLinks);
+    visibleLinks.append(item);
     return true;
   }
 
   function syncToggleState() {
     var hasOverflow = hasHiddenItems();
 
-    $nav.toggleClass("greedy-nav--has-overflow", hasOverflow);
-    $toggle.toggleClass("hidden", !hasOverflow);
-    $toggle.toggleClass("greedy-nav__toggle--inactive", !hasOverflow);
+    nav.classList.toggle("greedy-nav--has-overflow", hasOverflow);
+    toggle.classList.toggle("hidden", !hasOverflow);
+    toggle.classList.toggle("greedy-nav__toggle--inactive", !hasOverflow);
 
     if (!hasOverflow) {
       closeOverflowMenu();
@@ -94,15 +92,15 @@
 
   function syncOverflowMenuState() {
     var menuOpen = isOverflowMenuOpen();
-    $nav.toggleClass("greedy-nav--menu-open", menuOpen);
-    $toggle.toggleClass("close", menuOpen);
+    nav.classList.toggle("greedy-nav--menu-open", menuOpen);
+    toggle.classList.toggle("close", menuOpen);
   }
 
   function closeOverflowMenu() {
-    var wasOpen = isOverflowMenuOpen() || $nav.hasClass("greedy-nav--menu-open") || $toggle.hasClass("close");
-    $hiddenLinks.addClass("hidden");
-    $toggle.removeClass("close");
-    $nav.removeClass("greedy-nav--menu-open");
+    var wasOpen = isOverflowMenuOpen() || nav.classList.contains("greedy-nav--menu-open") || toggle.classList.contains("close");
+    hiddenLinks.classList.add("hidden");
+    toggle.classList.remove("close");
+    nav.classList.remove("greedy-nav--menu-open");
     if (wasOpen) {
       emitOverflowState("menu-close");
     }
@@ -114,14 +112,7 @@
       hasOverflow: hasHiddenItems(),
       menuOpen: isOverflowMenuOpen()
     };
-    var overflowEvent;
-    if (typeof window.CustomEvent === "function") {
-      overflowEvent = new window.CustomEvent("qsd:nav-overflow-updated", { detail: detail });
-    } else {
-      overflowEvent = document.createEvent("CustomEvent");
-      overflowEvent.initCustomEvent("qsd:nav-overflow-updated", false, false, detail);
-    }
-    window.dispatchEvent(overflowEvent);
+    window.dispatchEvent(new CustomEvent("qsd:nav-overflow-updated", { detail: detail }));
   }
 
   function rebalance(source) {
@@ -168,10 +159,10 @@
     });
   }
 
-  if ($toggle.length) {
-    $toggle.on("click", function (event) {
+  if (toggle) {
+    toggle.addEventListener("click", function (event) {
       // Keep overflow button independent from search toggle behavior.
-      if ($(this).hasClass("hidden") || $(this).hasClass("greedy-nav__toggle--inactive")) {
+      if (toggle.classList.contains("hidden") || toggle.classList.contains("greedy-nav__toggle--inactive")) {
         event.preventDefault();
         return;
       }
@@ -181,19 +172,25 @@
         return;
       }
 
-      $hiddenLinks.toggleClass("hidden");
+      hiddenLinks.classList.toggle("hidden");
       syncOverflowMenuState();
       emitOverflowState("toggle-click");
     });
   }
 
-  $(document).on("mousedown touchstart", function (event) {
+  document.addEventListener("mousedown", function (event) {
     if (!isOverflowMenuOpen()) return;
-    if ($(event.target).closest("#site-nav").length) return;
+    if (event.target.closest("#site-nav")) return;
     closeOverflowMenu();
   });
 
-  $(document).on("keydown", function (event) {
+  document.addEventListener("touchstart", function (event) {
+    if (!isOverflowMenuOpen()) return;
+    if (event.target.closest("#site-nav")) return;
+    closeOverflowMenu();
+  }, { passive: true });
+
+  document.addEventListener("keydown", function (event) {
     if (!isOverflowMenuOpen()) return;
     if (event.key === "Escape" || event.keyCode === 27) {
       closeOverflowMenu();
@@ -208,7 +205,7 @@
     requestRebalance("viewport-" + phase);
   }, { passive: true });
 
-  $(window).on("load", function () {
+  window.addEventListener("load", function () {
     requestRebalance("load");
     window.setTimeout(function () { requestRebalance("load-180ms"); }, 180);
     window.setTimeout(function () { requestRebalance("load-600ms"); }, 600);
@@ -222,4 +219,4 @@
   }
 
   requestRebalance("init");
-})(jQuery);
+})();

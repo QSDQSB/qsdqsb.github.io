@@ -1,5 +1,5 @@
 /* ==========================================================================
-   jQuery plugin settings and other scripts
+   Site scripts (vanilla JS — jQuery removed)
    ========================================================================== */
 
 /* ==========================================================================
@@ -38,10 +38,14 @@ function setCookie(name, value, days) {
 	document.cookie = name + "=" + (value || "") + expires + "; path=/";
 }
 
-$(document).ready(function(){
+document.addEventListener("DOMContentLoaded", function(){
    // Sticky footer
   var bumpIt = function() {
-    $("body").css("margin-bottom", $(".page__footer").outerHeight(true));
+    var footer = document.querySelector(".page__footer");
+    if (!footer) { document.body.style.marginBottom = "0px"; return; }
+    var cs = getComputedStyle(footer);
+    var h = footer.offsetHeight + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom);
+    document.body.style.marginBottom = h + "px";
   };
   var VIEWPORT_TRAILING_MS = 140;
   var viewportRafScheduled = false;
@@ -49,7 +53,6 @@ $(document).ready(function(){
   var latestViewportRequest = null;
   var lastViewportSync = null;
   var stickyModeEnabled = null;
-  var stickyRuntimeInitialized = false;
   var stickyLastSettledWidth = null;
   var htmlRoot = document.documentElement;
 
@@ -95,64 +98,28 @@ $(document).ready(function(){
     }
     lastViewportSync = nextSnapshot;
 
-    var viewportEvent;
-    if (typeof window.CustomEvent === "function") {
-      viewportEvent = new window.CustomEvent("qsd:viewport-change", { detail: detail });
-    } else {
-      viewportEvent = document.createEvent("CustomEvent");
-      viewportEvent.initCustomEvent("qsd:viewport-change", false, false, detail);
-    }
-    window.dispatchEvent(viewportEvent);
+    window.dispatchEvent(new CustomEvent("qsd:viewport-change", { detail: detail }));
   };
 
-  // FitVids init
-  $("#main").fitVids();
-
-  // init sticky sidebar
-  $(".sticky").Stickyfill();
-  if (typeof Stickyfill !== "undefined") {
-    Stickyfill.init();
-    stickyRuntimeInitialized = true;
-  }
-
+  // Sticky sidebar (position: sticky is natively supported — no polyfill needed)
   var stickySideBar = function(options){
     options = options || {};
     var phase = options.phase || "active";
     var viewport = options.viewport || readViewport();
     var settled = phase === "settled";
-    var widthChanged = stickyLastSettledWidth !== null && viewport.width !== stickyLastSettledWidth;
-    var show = $(".author__urls-wrapper button").length === 0 ? $(window).width() > 1024 : !$(".author__urls-wrapper button").is(":visible");
+    var sidebarBtn = document.querySelector(".author__urls-wrapper button");
+    var show = !sidebarBtn ? viewport.width > 1024 : getComputedStyle(sidebarBtn).display === "none";
+
+    var authorUrls = document.querySelector(".author__urls");
+    if (!authorUrls) return;
 
     if (show !== stickyModeEnabled) {
       stickyModeEnabled = show;
-
-      if (show) {
-        if (typeof Stickyfill !== "undefined") {
-          if (!stickyRuntimeInitialized) {
-            Stickyfill.init();
-            stickyRuntimeInitialized = true;
-          }
-          Stickyfill.rebuild();
-        }
-        $(".author__urls").show();
-      } else {
-        if (typeof Stickyfill !== "undefined") {
-          Stickyfill.stop();
-        }
-        $(".author__urls").hide();
-      }
+      authorUrls.style.display = show ? "" : "none";
     } else if (show) {
-      if (
-        settled &&
-        widthChanged &&
-        typeof Stickyfill !== "undefined" &&
-        stickyRuntimeInitialized
-      ) {
-        Stickyfill.rebuild();
-      }
-      $(".author__urls").show();
+      authorUrls.style.display = "";
     } else {
-      $(".author__urls").hide();
+      authorUrls.style.display = "none";
     }
 
     if (settled) {
@@ -240,24 +207,28 @@ $(document).ready(function(){
   });
 
   // Follow menu drop down
+  var authorToggleBtn = document.querySelector(".author__urls-wrapper button");
+  if (authorToggleBtn) {
+    authorToggleBtn.addEventListener("click", function() {
+      var authorUrls = document.querySelector(".author__urls");
+      if (authorUrls) {
+        var isHidden = getComputedStyle(authorUrls).display === "none";
+        authorUrls.style.display = isHidden ? "" : "none";
+      }
+      authorToggleBtn.classList.toggle("open");
+    });
+  }
 
-  $(".author__urls-wrapper button").on("click", function() {
-    $(".author__urls").fadeToggle("fast", function() {});
-    $(".author__urls-wrapper button").toggleClass("open");
-  });
-
-  // init smooth scroll
-  $("a").smoothScroll({offset: -20});
-
-  var $searchPanel = $(".search-content");
-  var $searchToggle = $(".search__toggle");
-  var $searchInput = $("input#search").first();
-  var $searchSuggestions = $("#search-suggestions");
+  // Search panel
+  var searchPanel = document.querySelector(".search-content");
+  var searchToggle = document.querySelector(".search__toggle");
+  var searchInput = document.querySelector("input#search");
+  var searchSuggestions = document.getElementById("search-suggestions");
   var searchSuggestionCache = null;
   var searchBlurTimer = null;
 
   var normalizeSearchSuggestionValue = function(value) {
-    return $.trim(String(value || "")).toLowerCase();
+    return String(value || "").trim().toLowerCase();
   };
 
   var escapeSearchHtml = function(value) {
@@ -290,7 +261,7 @@ $(document).ready(function(){
       window.store.forEach(function(entry) {
         if (!entry) return;
 
-        var title = $.trim(entry.title || "");
+        var title = (entry.title || "").trim();
         var normalizedTitle = normalizeSearchSuggestionValue(title);
         if (normalizedTitle && !seenTitles[normalizedTitle]) {
           seenTitles[normalizedTitle] = true;
@@ -304,7 +275,7 @@ $(document).ready(function(){
 
         var entryTags = Array.isArray(entry.tags) ? entry.tags : (entry.tags ? [entry.tags] : []);
         entryTags.forEach(function(tag) {
-          var tagLabel = $.trim(tag || "");
+          var tagLabel = (tag || "").trim();
           var normalizedTag = normalizeSearchSuggestionValue(tagLabel);
           if (!normalizedTag || seenTags[normalizedTag]) return;
 
@@ -389,12 +360,14 @@ $(document).ready(function(){
   };
 
   var hideSearchSuggestions = function() {
-    if (!$searchSuggestions.length) return;
-    $searchSuggestions.removeClass("is--visible").prop("hidden", true).empty();
+    if (!searchSuggestions) return;
+    searchSuggestions.classList.remove("is--visible");
+    searchSuggestions.hidden = true;
+    searchSuggestions.innerHTML = "";
   };
 
   var renderSearchSuggestions = function(query) {
-    if (!$searchSuggestions.length) return;
+    if (!searchSuggestions) return;
 
     var matches = filterSearchSuggestions(query);
     if (!matches.length) {
@@ -416,93 +389,107 @@ $(document).ready(function(){
       );
     }).join("");
 
-    $searchSuggestions.html(markup).prop("hidden", false).addClass("is--visible");
+    searchSuggestions.innerHTML = markup;
+    searchSuggestions.hidden = false;
+    searchSuggestions.classList.add("is--visible");
   };
 
   var updateSearchPanelPosition = function() {
-    if (!$searchPanel.length) return;
+    if (!searchPanel) return;
 
     var mastheadMenu = document.querySelector(".masthead__menu");
     if (!mastheadMenu) return;
 
     var menuBounds = mastheadMenu.getBoundingClientRect();
     var panelTop = Math.max(menuBounds.bottom, 0);
-    $searchPanel.css("--search-panel-top", panelTop + "px");
+    searchPanel.style.setProperty("--search-panel-top", panelTop + "px");
   };
 
   var openSearchPanel = function() {
-    if (!$searchPanel.length || !$searchInput.length) return;
+    if (!searchPanel || !searchInput) return;
 
     cancelSearchBlurTimer();
     updateSearchPanelPosition();
-    $searchPanel.addClass("is--visible").attr("aria-hidden", "false");
-    $searchToggle.attr("aria-expanded", "true").addClass("is-active");
-    $searchInput.attr("tabindex", "0");
+    searchPanel.classList.add("is--visible");
+    searchPanel.setAttribute("aria-hidden", "false");
+    searchToggle.setAttribute("aria-expanded", "true");
+    searchToggle.classList.add("is-active");
+    searchInput.setAttribute("tabindex", "0");
 
     window.requestAnimationFrame(function() {
-      $searchInput.trigger("focus");
-      renderSearchSuggestions($searchInput.val());
-      $searchInput.trigger("input");
+      searchInput.focus();
+      renderSearchSuggestions(searchInput.value);
+      searchInput.dispatchEvent(new Event("input"));
     });
   };
 
   var closeSearchPanel = function() {
-    if (!$searchPanel.length) return;
+    if (!searchPanel) return;
 
     cancelSearchBlurTimer();
     hideSearchSuggestions();
-    $searchPanel.removeClass("is--visible").attr("aria-hidden", "true");
-    $searchToggle.attr("aria-expanded", "false").removeClass("is-active");
-    $searchInput.attr("tabindex", "-1");
+    searchPanel.classList.remove("is--visible");
+    searchPanel.setAttribute("aria-hidden", "true");
+    searchToggle.setAttribute("aria-expanded", "false");
+    searchToggle.classList.remove("is-active");
+    searchInput.setAttribute("tabindex", "-1");
   };
 
-  if ($searchPanel.length && $searchToggle.length && $searchInput.length) {
-    $searchPanel.attr({
-      id: "site-search-panel",
-      role: "region",
-      "aria-label": "Site search",
-      "aria-hidden": "true"
-    });
+  if (searchPanel && searchToggle && searchInput) {
+    searchPanel.id = "site-search-panel";
+    searchPanel.setAttribute("role", "region");
+    searchPanel.setAttribute("aria-label", "Site search");
+    searchPanel.setAttribute("aria-hidden", "true");
 
-    $searchToggle.attr({
-      "aria-controls": "site-search-panel",
-      "aria-expanded": "false"
-    });
+    searchToggle.setAttribute("aria-controls", "site-search-panel");
+    searchToggle.setAttribute("aria-expanded", "false");
 
-    $searchToggle.on("click", function(event) {
+    searchToggle.addEventListener("click", function(event) {
       event.preventDefault();
-      if ($searchPanel.hasClass("is--visible")) {
+      if (searchPanel.classList.contains("is--visible")) {
         closeSearchPanel();
       } else {
         openSearchPanel();
       }
     });
 
-    $searchInput.on("input focus", function() {
+    searchInput.addEventListener("input", function() {
       cancelSearchBlurTimer();
-      renderSearchSuggestions($(this).val());
+      renderSearchSuggestions(this.value);
     });
 
-    $searchInput.on("blur", function() {
+    searchInput.addEventListener("focus", function() {
+      cancelSearchBlurTimer();
+      renderSearchSuggestions(this.value);
+    });
+
+    searchInput.addEventListener("blur", function() {
       cancelSearchBlurTimer();
       searchBlurTimer = window.setTimeout(function() {
         hideSearchSuggestions();
       }, 140);
     });
 
-    $searchSuggestions.on("mousedown", ".search-suggestion", function(event) {
-      event.preventDefault();
-    });
+    if (searchSuggestions) {
+      searchSuggestions.addEventListener("mousedown", function(event) {
+        if (event.target.closest(".search-suggestion")) {
+          event.preventDefault();
+        }
+      });
 
-    $searchSuggestions.on("click", ".search-suggestion", function() {
-      var suggestionValue = $(this).data("searchSuggestion");
-      $searchInput.val(suggestionValue).trigger("input");
-      hideSearchSuggestions();
-    });
+      searchSuggestions.addEventListener("click", function(event) {
+        var btn = event.target.closest(".search-suggestion");
+        if (!btn) return;
+        var suggestionValue = btn.dataset.searchSuggestion;
+        searchInput.value = suggestionValue;
+        searchInput.dispatchEvent(new Event("input"));
+        hideSearchSuggestions();
+      });
+    }
 
     var searchPanelViewportRaf = null;
     var syncSearchPanelAfterViewportChange = function(event) {
-      if ($searchPanel.hasClass("is--visible")) {
+      if (searchPanel.classList.contains("is--visible")) {
         var phase = event && event.detail ? event.detail.phase : "active";
         if (phase === "active") {
           if (searchPanelViewportRaf) return;
@@ -516,22 +503,22 @@ $(document).ready(function(){
       }
     };
 
-    $(window).on("scroll", syncSearchPanelAfterViewportChange);
+    window.addEventListener("scroll", syncSearchPanelAfterViewportChange, { passive: true });
     window.addEventListener("qsd:viewport-change", syncSearchPanelAfterViewportChange, { passive: true });
 
-    $(document).on("mousedown", function(event) {
+    document.addEventListener("mousedown", function(event) {
       if (
-        $searchPanel.hasClass("is--visible") &&
-        !$(event.target).closest(".search-content, .search__toggle").length
+        searchPanel.classList.contains("is--visible") &&
+        !event.target.closest(".search-content, .search__toggle")
       ) {
         closeSearchPanel();
       }
     });
 
-    $(document).on("keydown", function(event) {
-      if (event.key === "Escape" && $searchPanel.hasClass("is--visible")) {
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Escape" && searchPanel.classList.contains("is--visible")) {
         closeSearchPanel();
-        $searchToggle.trigger("focus");
+        searchToggle.focus();
       }
     });
   }
@@ -539,7 +526,6 @@ $(document).ready(function(){
 });
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
-      // If another handler (e.g. jQuery smoothScroll) already handled this, do nothing.
       if (e.defaultPrevented) return;
 
       // Let the TOC's own smooth scrolling handle TOC clicks to avoid double-scrolling.
