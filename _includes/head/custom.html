@@ -39,15 +39,17 @@
 </script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
 
-<!-- Leaflet Map Library (CSS & JS) - Load BEFORE map.js, NO integrity checks -->
+<!-- Leaflet + map renderer — only on pages that declare a map_dataset.
+     Gating on page.map_dataset matches _includes/map.html and _layouts/gallery.html,
+     and saves ~180 KB of render-blocking JS+CSS on 96.5% of pages. -->
+{% if page.map_dataset %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
      crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-crossorigin=""></script>
-
-<!-- Map Renderer Script - Loads AFTER Leaflet -->
-<script src="{{ base_path }}/assets/js/map.js"></script>
+  crossorigin="" defer></script>
+<script src="{{ base_path }}/assets/js/map.js" defer></script>
+{% endif %}
 
 <!-- end custom head snippets -->
