@@ -10,6 +10,7 @@ excerpts:
 toc: true
 toc_sticky: true
 ticker-tape: true
+has_math: true
 redirect_from: 
   - /about/
   - /about.html

@@ -27,6 +27,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300&display=swap" rel="stylesheet" type="text/css">
 <link href="https://fonts.cdnfonts.com/css/cmu-serif" rel="stylesheet">
 
+<!-- MathJax — only on pages that opt in via `has_math: true` frontmatter -->
+{% if page.has_math %}
 <script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "all" } } }); </script>
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({
@@ -38,6 +40,7 @@
   });
 </script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
+{% endif %}
 
 <!-- Leaflet + map renderer — only on pages that declare a map_dataset.
      Gating on page.map_dataset matches _includes/map.html and _layouts/gallery.html,
