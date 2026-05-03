@@ -340,9 +340,14 @@
 	z-index: 3;
 	cursor: pointer;
 	transition: $cubic-bezier-default;
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	-webkit-mask-size: contain;
+	-webkit-mask-source-type: alpha; // legacy WebKit
 	mask-repeat: no-repeat;
 	mask-position: center;
 	mask-size: contain;
+	mask-mode: alpha; // The Feather SVGs are stroke-only, so default luminance mode masks them out.
 	&:hover {
 		opacity: 1;
 		scale: 1.1;
@@ -374,9 +379,11 @@
 
 		#gallery_main .toggle {
 			right: 0.8em;
+			-webkit-mask-image: url("images/chevrons-left.svg");
 			mask-image: url("images/chevrons-left.svg");
 		}
 		#gallery_main .leave_gallery {
+			-webkit-mask-image: url("images/x.svg");
 			mask-image: url("images/x.svg");
 			left: 0.8em;
 		}
@@ -615,16 +622,19 @@
 				-webkit-backdrop-filter: blur(1px) saturate(150%) contrast(2) brightness(0.5);
 				backdrop-filter: blur(1px) saturate(150%) contrast(2) brightness(0.5);
 				background-color: rgba(255, 255, 255, .3);
+				-webkit-mask-image: url('/assets/css/images/x.svg');
 				mask-image: url('/assets/css/images/x.svg');
 				left: 0.6em;
 			}
 			.toggle {
 				transform-origin: center;
+				-webkit-mask-image: url('/assets/css/images/chevrons-right.svg');
 				mask-image: url('/assets/css/images/chevrons-right.svg');
 				right: 0.8em;
 			}
-			
+
 			.toggle-image-display {
+				-webkit-mask-image: url('/assets/css/images/maximize-2.svg');
 				mask-image: url('/assets/css/images/maximize-2.svg');
 				right: 4em;
 			}
@@ -653,9 +663,11 @@
 				mask-repeat: no-repeat;
 				mask-position: center;
 				mask-size: contain;
+				mask-mode: alpha;
 				-webkit-mask-repeat: no-repeat;
 				-webkit-mask-position: center;
 				-webkit-mask-size: contain;
+				-webkit-mask-source-type: alpha;
 				&:hover {
 					scale: 1.2;
 					transition-delay: 0s;
@@ -665,11 +677,13 @@
 
 			.nav-previous {
 				left: 10px;
+				-webkit-mask-image: url('/assets/css/images/chevron-left.svg');
 				mask-image: url('/assets/css/images/chevron-left.svg');
 			}
 
 			.nav-next {
 				right: 10px;
+				-webkit-mask-image: url('/assets/css/images/chevron-right.svg');
 				mask-image: url('/assets/css/images/chevron-right.svg');
 			}
 
