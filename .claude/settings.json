@@ -32,7 +32,21 @@
     "deny": [
       "Bash(git push *)",
       "Bash(git reset --hard *)",
-      "Bash(rm -rf *)"
+      "Bash(rm -rf *)",
+      "Read(./_site/**)",
+      "Read(_site/**)",
+      "Read(./node_modules/**)",
+      "Read(node_modules/**)",
+      "Read(./.sass-cache/**)",
+      "Read(.sass-cache/**)",
+      "Read(./assets/js/main.min.js)",
+      "Read(assets/js/main.min.js)",
+      "Read(./assets/js/vendor/**)",
+      "Read(assets/js/vendor/**)",
+      "Read(./assets/maps/*.geojson)",
+      "Read(assets/maps/*.geojson)",
+      "Read(./package-lock.json)",
+      "Read(./Gemfile.lock)"
     ]
   },
   "hooks": {
