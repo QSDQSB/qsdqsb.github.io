@@ -210,6 +210,13 @@ body.has-overlay-hero {
   line-height: 1.9;
   letter-spacing: 0.02em;
 
+  // Responsive embeds (replaces FitVids jQuery plugin)
+  iframe,
+  embed,
+  object {
+    max-width: 100%;
+  }
+
   &--justify {
     text-align: justify;
   }
