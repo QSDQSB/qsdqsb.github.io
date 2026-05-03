@@ -13,5 +13,6 @@
     <img {% if include.extra_classes %} class="{{ include.extra_classes }}" {% endif %}
     alt="QSD Logo"
         src="{{ logo_name }}"
+    decoding="async"
     style="width: {{ logo_width }}; border-radius: {{ border_radius }}; aspect-ratio: 1; object-fit: cover;{% if include.extra_style %} {{ include.extra_style }} {% endif %}">
 </div>

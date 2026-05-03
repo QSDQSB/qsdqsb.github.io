@@ -113,7 +113,7 @@
       </div>
     </div>
   {% else %}
-    <img src="{{ img_path }}" alt="{{ page.title }}" class="page__hero-image">
+    <img src="{{ img_path }}" alt="{{ page.title }}" class="page__hero-image" loading="eager" fetchpriority="high" decoding="async">
   {% endif %}
   {% if page.header.caption %}
     <span class="page__hero-caption">{{ page.header.caption | markdownify | remove: "<p>" | remove: "</p>" }}</span>
