@@ -198,6 +198,11 @@ export async function morphTo(index, sourceImg = null) {
   }
 
   _morphActive = true;
+  // `body.vt-active` lets SCSS suppress concurrent CSS transitions on
+  // snapshotted elements (e.g. .image opacity fade) while the VT is
+  // animating. Without this, Safari sometimes runs both at once and
+  // produces visible jumps when the live DOM diverges from the snapshot.
+  document.body.classList.add('vt-active');
   try {
     const oldSlide = current !== null ? getSlide(current) : null;
     const fromImg = sourceImg ?? oldSlide?.slideImg ?? null;
@@ -224,9 +229,11 @@ export async function morphTo(index, sourceImg = null) {
     transition.finished.finally(() => {
       _clearVTName(fromImg);
       _clearVTName(newSlide.slideImg);
+      document.body.classList.remove('vt-active');
       _morphActive = false;
     });
   } catch (err) {
+    document.body.classList.remove('vt-active');
     _morphActive = false;
     throw err;
   }
