@@ -43,13 +43,16 @@ The `.claude/settings.json` `permissions.deny` list mechanically blocks `Read` o
 ## Build & Serve
 
 ```bash
-# Full build sequence (always in this order)
-bundle exec rake generate_thumbnails   # gallery thumbnail preprocessing
-npm run geocode                        # map data → geojson cache
-bundle exec jekyll build               # site build
+# Canonical local flow — both run the full pipeline:
+#   1. npm run generate:gallery   (Sharp: 1×/2× JPEG/WebP/AVIF + LQIP)
+#   2. npm run geocode            (map data → geojson cache)
+#   3. jekyll build/serve         (with RUBYOPT=-E utf-8:utf-8)
+npm run build
+npm run serve
 
-# Dev serve
-bundle exec jekyll serve
+# Faster iteration — generates only LQIPs + meta YAML, skips AVIF/WebP/2×.
+# Useful when you don't need the full image-format matrix locally.
+npm run generate:gallery:lqip
 
 # JS: source is assets/js/_main.js → minified to assets/js/main.min.js
 npm run build:js
@@ -58,9 +61,13 @@ npm run build:js
 npm test
 ```
 
+`bundle exec rake generate_thumbnails`, `bundle exec rake build`, and `bundle exec rake serve` all still work — they delegate to the corresponding `npm run …` scripts (compatibility shim in `Rakefile`). New code / docs should call `npm run` directly.
+
 Convenience slash commands: `/build`, `/serve`, `/geocode`, `/responsive-audit`, `/style-check`, `/content-check`, `/js-sync`, `/check-vars`, `/commit`.
 
 **Rule:** Never hand-edit `main.min.js`. Edit `_main.js`, then run `npm run build:js`.
+
+**Thumbnails are not tracked.** Every variant (1× JPEG, 2× JPEG, WebP, AVIF) is produced from `gallery/**` by `scripts/generate-gallery-assets.mjs` and gitignored. CI regenerates the full set on every push to `master` via `.github/workflows/deploy.yml`. Locally the same script runs as a prerequisite of `npm run build|serve`. First-time generation: ~30–60s for ~600 images; subsequent runs are near-instant due to mtime checks.
 
 ## Commit Style
 
@@ -200,7 +207,7 @@ Enforced on touched files only — no global retrofit of untouched legacy files.
 
 - **`gallery_name: <name>`** must resolve to two real directories:
   - `gallery/<name>/` (full images)
-  - `images/thumbnails/gallery/<name>/` (thumbnails — these don't generate themselves; run `bundle exec rake generate_thumbnails`)
+  - `images/thumbnails/gallery/<name>/` (thumbnails — gitignored; produced by `npm run generate:gallery` in CI and as a prerequisite of `npm run build|serve` locally)
 - **`map_dataset: <name>`** must match `_data/maps/<name>.yml`. If it doesn't, the map block silently renders empty.
 - **`subgalleries: true`** puts a voyage in enumerator mode. Parent voyage basename must align with `_subvoyage/<basename>/` so the enumerator can discover children — they're matched by path substring, not by an explicit reference.
 - **`tags`** should resolve to entries in `_data/tag_colours.yml`. Missing entries don't break rendering, but the tag will display without its accent colour.
@@ -248,7 +255,7 @@ For nested galleries (`gallery_name: parent/child`):
 
 ### Common traps
 
-- Adding `gallery_name` but forgetting to run `bundle exec rake generate_thumbnails` → empty grid.
+- Adding `gallery_name` but forgetting to run `npm run generate:gallery` (or rebuild via `npm run serve`) → empty grid.
 - Sub-voyage placed in `_subvoyage/` root instead of `_subvoyage/<parent>/` → invisible to enumerator.
 - Folder name drifts from parent basename (e.g. `_voyage/europe-2024.md` but folder `_subvoyage/europe/`) → invisible to enumerator.
 - `gallery_name` first segment doesn't match the parent → siblings won't link to each other.
