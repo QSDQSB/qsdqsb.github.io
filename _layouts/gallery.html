@@ -92,10 +92,10 @@ layout: compress
                 {% assign thumb_stem = image.basename %}
                 {% assign thumb_w    = image_meta.width  | default: 480 %}
                 {% assign thumb_h    = image_meta.height | default: 270 %}
-                {% capture wrap_style %}{% if image_meta.lqip %}background-image:url('{{ image_meta.lqip }}');background-size:cover;background-repeat:no-repeat;background-position:center{% endif %}{% endcapture %}
                 <article>
                   <a class="thumbnail" href="{{ site.gallery_d }}/{{ page.gallery_name }}/{{ image.name }}"{% if image_meta.lqip %} data-lqip="{{ image_meta.lqip }}"{% endif %} data-ar="{{ thumb_w }}/{{ thumb_h }}">
-                    <div class="thumb-wrap"{% if wrap_style != "" %} style="{{ wrap_style }}"{% endif %}>
+                    <div class="thumb-wrap">
+                      {% if image_meta.lqip %}<div class="thumb-lqip" style="background-image:url('{{ image_meta.lqip }}')"></div>{% endif %}
                       <picture>
                         {% if image_meta.avif %}<source type="image/avif" srcset="{{ thumb_dir }}{{ thumb_stem }}.avif{% if image_meta.avif2x %}, {{ thumb_dir }}{{ thumb_stem }}@2x.avif 2x{% endif %}">{% endif %}
                         {% if image_meta.webp %}<source type="image/webp" srcset="{{ thumb_dir }}{{ thumb_stem }}.webp{% if image_meta.webp2x %}, {{ thumb_dir }}{{ thumb_stem }}@2x.webp 2x{% endif %}">{% endif %}
