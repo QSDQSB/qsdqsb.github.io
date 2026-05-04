@@ -480,6 +480,10 @@
 		margin: 0 0.75em;
 	}
 
+		// Uniform two-column grid: every cell is exactly 16:9. Each photo is
+		// shown via `object-fit: contain` inside its cell, so portraits and
+		// panoramas stay uncropped — they just gain letterbox space (gap)
+		// inside the cell instead of distorting the row layout.
 		#thumbnails article {
 			position: relative;
 			width: 50%;
@@ -492,11 +496,15 @@
 				margin: 0.15em 0.1em;
 				overflow: hidden;
 
-				// LQIP container — holds the tiny blurred placeholder as background-image
-				// while the real <img> loads above it.
+				// LQIP container — fixed 16:9 cell. The blurred LQIP sits as a
+				// background-image (covers the cell) while the real <img>
+				// loads above it. After load, the <img> uses `object-fit:
+				// contain` so portrait / panoramic photos stay uncropped and
+				// the surrounding letterbox space reveals the LQIP underneath
+				// (a soft framed-print look).
 				.thumb-wrap {
 					display: block;
-					aspect-ratio: var(--ar, 16/9);
+					aspect-ratio: 16/9;
 					overflow: hidden;
 					background-color: #101010;
 					background-size: cover;
@@ -513,7 +521,7 @@
 					display: block;
 					width: 100%;
 					height: 100%;
-					object-fit: cover;
+					object-fit: contain;     // no cropping; letterbox/pillarbox if non-16:9
 					object-position: center;
 					opacity: 0;
 					transition: opacity 0.5s ease;
