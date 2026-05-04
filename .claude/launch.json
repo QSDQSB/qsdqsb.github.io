@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "jekyll",
+      "runtimeExecutable": "bundle",
+      "runtimeArgs": ["exec", "jekyll", "serve", "--port", "4000", "--no-watch", "--skip-initial-build", "--config", "_config.yml,_config_dev.yml"],
+      "port": 4000
+    }
+  ]
+}
+</content>
+</invoke>

@@ -1,0 +1,66 @@
+name: Deploy Jekyll site to Pages
+
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Generate gallery assets (AVIF + WebP thumbnails + LQIP)
+        # AVIF is slow — allow skipping via repo variable SKIP_AVIF=1
+        env:
+          SKIP_AVIF: ${{ vars.SKIP_AVIF || '0' }}
+        run: npm run generate:gallery
+
+      - name: Geocode maps
+        run: npm run geocode
+
+      - name: Build Jekyll site
+        env:
+          JEKYLL_ENV: production
+          RUBYOPT: "-E utf-8:utf-8"
+        run: bundle exec jekyll build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -18,11 +18,12 @@
   },
   "homepage": "https://qsdqsb.github.io/qsdqsb.github.io/",
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 18.0.0"
   },
   "devDependencies": {
     "npm-run-all": "^1.7.0",
     "onchange": "^7.1.0",
+    "sharp": "^0.34.5",
     "terser": "^5.43.1"
   },
   "scripts": {
@@ -32,8 +33,10 @@
     "build:js": "npm run uglify",
     "check:responsive-policy": "bash scripts/check-responsive-policy.sh",
     "geocode": "node scripts/geocode-maps.js",
-    "build": "npm run geocode && jekyll build",
-    "serve": "npm run geocode && jekyll serve"
+    "generate:gallery": "node scripts/generate-gallery-assets.mjs",
+    "generate:gallery:lqip": "node scripts/generate-gallery-assets.mjs --lqip-only",
+    "build": "npm run geocode && RUBYOPT=-E utf-8:utf-8 bundle exec jekyll build",
+    "serve": "npm run geocode && RUBYOPT=-E utf-8:utf-8 bundle exec jekyll serve"
   },
   "dependencies": {
     "js-yaml": "^4.1.0",
