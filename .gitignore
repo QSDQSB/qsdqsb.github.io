@@ -2,7 +2,6 @@ _site/
 .DS_Store
 **/.DS_Store
 node_modules/
-package-lock.json
 docs
 improvements.md
 for_agents/
