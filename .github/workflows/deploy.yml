@@ -14,16 +14,15 @@
 #      are committed; fail fast with a clear error if either is missing.
 #   3. Install Ruby 3.2 + Bundler-managed gems (Jekyll + github-pages stack).
 #   4. Install Node 20 + npm packages (Sharp for thumbnail generation).
-#   5. Generate thumbnails: 1×/2× JPEG + WebP + AVIF + LQIP data-URIs +
+#   5. Generate thumbnails: 1×/2× JPEG + WebP + LQIP data-URIs +
 #      per-image dimensions (writes _data/gallery_meta/*.yml).
+#      AVIF is intentionally NOT generated — see scripts/generate-gallery-assets.mjs
+#      header for rationale (savings vs. CI cost don't justify it on
+#      480w/960w thumbnails).
 #   6. Geocode map data → assets/maps/*.geojson.
 #   7. Build Jekyll site (production env, UTF-8 I/O).
 #   8. Sanity-check the generated _site (assert thumbnail count is plausible).
 #   9. Upload Pages artifact + deploy.
-#
-# Override knobs (Settings → Secrets and variables → Actions → Variables):
-#   SKIP_AVIF=1   — disables AVIF generation if it makes CI too slow.
-#                   Browsers fall back through <picture> sources to WebP/JPEG.
 
 name: Deploy Jekyll site to Pages
 
@@ -93,15 +92,14 @@ jobs:
         # `npm ci` is sufficient — no need for `apt-get install libvips`.
         run: npm ci --no-audit --no-fund
 
-      - name: Generate gallery assets (1×/2× JPEG/WebP/AVIF + LQIP)
+      - name: Generate gallery assets (1×/2× JPEG/WebP + LQIP)
         # Reads gallery/** (committed source images), writes:
-        #   - images/thumbnails/gallery/**/*.{jpg,webp,avif}  + 2× variants
+        #   - images/thumbnails/gallery/**/*.{jpg,webp}  + 2× variants
         #   - _data/gallery_meta/*.yml  (lqip + width + height + format flags)
         # Per-image flags drive Liquid in _layouts/gallery.html to emit only
         # the <source> tags + srcset entries for formats that actually exist,
-        # so the rendered HTML matches what's on disk.
-        env:
-          SKIP_AVIF: ${{ vars.SKIP_AVIF || '0' }}
+        # so the rendered HTML matches what's on disk. ~7-8 minutes for ~600
+        # images on a fresh runner.
         run: npm run generate:gallery
 
       - name: Geocode maps to GeoJSON
