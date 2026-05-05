@@ -1,0 +1,4 @@
+# Local-development overrides — used by `bundle exec jekyll serve --config _config.yml,_config_dev.yml`.
+# Empties site.url so base_path resolves to relative URLs (loading CSS/JS from localhost
+# instead of from https://qsdqsb.github.io).
+url: ""
