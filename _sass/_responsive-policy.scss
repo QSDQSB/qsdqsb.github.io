@@ -28,12 +28,21 @@ $responsive-single-shell-gap: 1rem !default;
 $responsive-single-min-content-width: 46rem !default;
 
 @function responsive-resolve($point) {
-  @if map-has-key($responsive-breakpoints, $point) {
-    @return map-get($responsive-breakpoints, $point);
-  }
-
+  // Length passthrough first — must precede `map-has-key`, because
+  // Ruby Sass 3.7.4 (the version github-pages 228 pins) raises
+  // "String can't be coerced into Integer" when `map-has-key` is asked
+  // to look up a Number key against a String-keyed map on Ruby 3.2.x.
+  // Locally (Ruby 3.2.1) hash collisions don't trigger eql?; on CI
+  // (Ruby 3.2.11) they do, and the build dies inside number.rb#-.
+  // Several callsites legitimately pass lengths (e.g. `72rem`,
+  // `$responsive-single-dual-rail-min-width`), so we must short-circuit
+  // those before any map lookup.
   @if type-of($point) == number and unit($point) != "" {
     @return $point;
+  }
+
+  @if type-of($point) == string and map-has-key($responsive-breakpoints, $point) {
+    @return map-get($responsive-breakpoints, $point);
   }
 
   @error "Unknown responsive point `#{$point}`. Add it to $responsive-breakpoints or pass a length.";
