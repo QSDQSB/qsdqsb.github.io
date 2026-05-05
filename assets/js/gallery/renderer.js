@@ -158,6 +158,17 @@ const VT_NAME = 'gallery-active-image';
 const _prefersReducedMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// Module-level guard — `state.locked` releases ~100ms after `finalize()`
+// (well before the View Transition's animation completes around 550ms).
+// Without an explicit transition-lifetime guard, a second click during the
+// in-flight VT animation kicks off a new `startViewTransition()` while the
+// previous one is still painting — Safari aborts the new one (sometimes
+// silently, sometimes mid-flight) because the spec is stricter about
+// overlapping transitions than Chromium's tolerant implementation. This
+// flag stays `true` for the *whole* VT lifetime so a rapid second click is
+// dropped cleanly. Chromium users see no behavioural change vs. before.
+let _morphActive = false;
+
 /**
  * View-Transitions-API-driven slide change.
  *
@@ -165,13 +176,15 @@ const _prefersReducedMotion = () =>
  * target slide's <img> with the same `view-transition-name`, then runs
  * the switch inside `document.startViewTransition`. The browser snapshots
  * old & new states and animates between them — for thumbnail clicks this
- * becomes a magnify morph; for slide-to-slide it's a crossfade with the
- * scale-bounce keyframes in _gallery_view.scss.
+ * becomes a magnify morph; for slide-to-slide it's a crossfade.
  *
  * Falls through to plain switchTo if the API is unavailable or the user
  * has prefers-reduced-motion.
  */
 export async function morphTo(index, sourceImg = null) {
+  // Synchronous gate FIRST — claim the lock before any await so two rapid
+  // calls in the same task can't both pass the guard.
+  if (_morphActive) return;
   const { current, locked } = getState();
   if (current === index) return;
   if (locked) return;
@@ -184,27 +197,53 @@ export async function morphTo(index, sourceImg = null) {
     return;
   }
 
-  const oldSlide = current !== null ? getSlide(current) : null;
-  const fromImg = sourceImg ?? oldSlide?.slideImg ?? null;
+  _morphActive = true;
+  // `body.vt-active` lets SCSS suppress concurrent CSS transitions on
+  // snapshotted elements (e.g. .image opacity fade) while the VT is
+  // animating. Without this, Safari sometimes runs both at once and
+  // produces visible jumps when the live DOM diverges from the snapshot.
+  document.body.classList.add('vt-active');
+  try {
+    const oldSlide = current !== null ? getSlide(current) : null;
+    const fromImg = sourceImg ?? oldSlide?.slideImg ?? null;
 
-  // Pre-load the full image so the post-snapshot is real, not blank.
-  await preloadSlide(newSlide);
+    // Pre-load the full image so the post-snapshot is real, not blank.
+    await preloadSlide(newSlide);
 
-  // Tag the source. Captured in the OLD snapshot.
-  if (fromImg) fromImg.style.viewTransitionName = VT_NAME;
+    // Defensive cleanup: clear stale view-transition-name from any previous
+    // run before tagging this round's source. Some Safari versions don't
+    // reliably remove the inline property when set to '', so use both forms.
+    _clearVTName(fromImg);
+    _clearVTName(newSlide.slideImg);
 
-  const transition = document.startViewTransition(async () => {
-    // Mutation phase: clear the source name (it's about to be torn down
-    // anyway) and tag the target before the new snapshot is captured.
-    if (fromImg) fromImg.style.viewTransitionName = '';
-    newSlide.slideImg.style.viewTransitionName = VT_NAME;
-    await switchToAsync(index);
-  });
+    if (fromImg) fromImg.style.viewTransitionName = VT_NAME;
 
-  transition.finished.finally(() => {
-    if (fromImg) fromImg.style.viewTransitionName = '';
-    newSlide.slideImg.style.viewTransitionName = '';
-  });
+    const transition = document.startViewTransition(async () => {
+      // Mutation phase: clear the source name (about to be torn down anyway)
+      // and tag the target before the new snapshot is captured.
+      _clearVTName(fromImg);
+      newSlide.slideImg.style.viewTransitionName = VT_NAME;
+      await switchToAsync(index);
+    });
+
+    transition.finished.finally(() => {
+      _clearVTName(fromImg);
+      _clearVTName(newSlide.slideImg);
+      document.body.classList.remove('vt-active');
+      _morphActive = false;
+    });
+  } catch (err) {
+    document.body.classList.remove('vt-active');
+    _morphActive = false;
+    throw err;
+  }
+}
+
+// Robustly remove an inline `view-transition-name` across browsers.
+function _clearVTName(el) {
+  if (!el || !el.style) return;
+  el.style.viewTransitionName = '';
+  el.style.removeProperty('view-transition-name');
 }
 
 function _animateCaption(slide) {

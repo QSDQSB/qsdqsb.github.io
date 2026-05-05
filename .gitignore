@@ -2,7 +2,6 @@ _site/
 .DS_Store
 **/.DS_Store
 node_modules/
-package-lock.json
 docs
 improvements.md
 for_agents/
@@ -16,5 +15,4 @@ for_agents/
 images/thumbnails/gallery/**/*.jpg
 images/thumbnails/gallery/**/*.jpeg
 images/thumbnails/gallery/**/*.webp
-images/thumbnails/gallery/**/*.avif
 _data/gallery_meta/
