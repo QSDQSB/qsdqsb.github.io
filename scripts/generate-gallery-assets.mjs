@@ -4,25 +4,31 @@
  *
  * For every source image under gallery/**\/*.{jpg,jpeg,png,...} produces:
  *
- *   1. JPEG thumbnail        →  <stem>.jpg       (480w, committed in repo)
- *   2. JPEG thumbnail @2x    →  <stem>@2x.jpg    (960w, CI-only, gitignored)
- *   3. WebP thumbnail        →  <stem>.webp      (480w, CI-only, gitignored)
- *   4. WebP thumbnail @2x    →  <stem>@2x.webp   (960w, CI-only, gitignored)
- *   5. AVIF thumbnail        →  <stem>.avif      (480w, CI-only, gitignored)
- *   6. AVIF thumbnail @2x    →  <stem>@2x.avif   (960w, CI-only, gitignored)
- *   7. LQIP data-URI         →  _data/gallery_meta/<key>.yml
+ *   1. JPEG thumbnail        →  <stem>.jpg       (480w)
+ *   2. JPEG thumbnail @2x    →  <stem>@2x.jpg    (960w)
+ *   3. WebP thumbnail        →  <stem>.webp      (480w)
+ *   4. WebP thumbnail @2x    →  <stem>@2x.webp   (960w)
+ *   5. LQIP data-URI         →  _data/gallery_meta/<key>.yml
  *
- * Also writes per-image width/height (for aspect-ratio + CLS prevention) and
- * flags marking which formats/sizes were generated, so Liquid can emit
- * <source> tags conditionally.
+ * AVIF is intentionally NOT generated. Bandwidth savings from AVIF on
+ * 480w/960w thumbnails are negligible (~30% over WebP, ~15 KB per image)
+ * relative to the CI cost of generating it (~30 minutes per push). WebP
+ * is the practical sweet spot for thumbnail compression with broad
+ * browser support; JPEG is the universal fallback.
+ *
+ * All output formats are gitignored — produced fresh by CI on every push,
+ * or locally via `npm run generate:gallery`.
+ *
+ * Also writes per-image width/height (for aspect-ratio + CLS prevention)
+ * and flags marking which formats/sizes were generated, so Liquid can
+ * emit <source> tags conditionally.
  *
  * Incremental: skips outputs newer than their source.
  *
  * Usage:
- *   node scripts/generate-gallery-assets.mjs [--no-avif] [--no-webp] [--no-2x] [--lqip-only]
+ *   node scripts/generate-gallery-assets.mjs [--no-webp] [--no-2x] [--lqip-only]
  *
  * Env:
- *   SKIP_AVIF=1   disable AVIF (slow on some CI runners)
  *   SKIP_WEBP=1   disable WebP
  *   SKIP_2X=1     skip @2x variants
  */
@@ -41,7 +47,6 @@ const THUMB_W_2X  = 960;
 const LQIP_W      = 32;
 const LQIP_Q      = 20;
 
-const SKIP_AVIF = process.env.SKIP_AVIF === '1' || process.argv.includes('--no-avif');
 const SKIP_WEBP = process.env.SKIP_WEBP === '1' || process.argv.includes('--no-webp');
 const SKIP_2X   = process.env.SKIP_2X   === '1' || process.argv.includes('--no-2x');
 const LQIP_ONLY = process.argv.includes('--lqip-only');
@@ -91,20 +96,16 @@ async function processImage(srcPath) {
     jpeg2x: path.join(thumbSubDir, `${stem}@2x.jpg`),
     webp:   path.join(thumbSubDir, `${stem}.webp`),
     webp2x: path.join(thumbSubDir, `${stem}@2x.webp`),
-    avif:   path.join(thumbSubDir, `${stem}.avif`),
-    avif2x: path.join(thumbSubDir, `${stem}@2x.avif`),
   };
 
   // 1× variants
-  await makeVariant(srcPath, out.jpeg,   THUMB_W, p => p.jpeg({ quality: 80, mozjpeg: true }));
+  await makeVariant(srcPath, out.jpeg, THUMB_W, p => p.jpeg({ quality: 80, mozjpeg: true }));
   if (!SKIP_WEBP) await makeVariant(srcPath, out.webp, THUMB_W, p => p.webp({ quality: 80 }));
-  if (!SKIP_AVIF) await makeVariant(srcPath, out.avif, THUMB_W, p => p.avif({ quality: 65 }));
 
   // 2× variants
   if (!SKIP_2X) {
     await makeVariant(srcPath, out.jpeg2x, THUMB_W_2X, p => p.jpeg({ quality: 78, mozjpeg: true }));
     if (!SKIP_WEBP) await makeVariant(srcPath, out.webp2x, THUMB_W_2X, p => p.webp({ quality: 78 }));
-    if (!SKIP_AVIF) await makeVariant(srcPath, out.avif2x, THUMB_W_2X, p => p.avif({ quality: 60 }));
   }
 
   // LQIP data-URI
@@ -125,9 +126,7 @@ async function processImage(srcPath) {
     lqip,
     width:    dims.width  || null,
     height:   dims.height || null,
-    avif:     fs.existsSync(out.avif),
     webp:     fs.existsSync(out.webp),
-    avif2x:   fs.existsSync(out.avif2x),
     webp2x:   fs.existsSync(out.webp2x),
     jpeg2x:   fs.existsSync(out.jpeg2x),
   };
@@ -135,7 +134,7 @@ async function processImage(srcPath) {
 
 // ── YAML writer ────────────────────────────────────────────────────────────────
 
-const FLAG_KEYS = ['avif', 'webp', 'avif2x', 'webp2x', 'jpeg2x'];
+const FLAG_KEYS = ['webp', 'webp2x', 'jpeg2x'];
 
 function writeMetaYaml(key, entries) {
   ensureDir(META_DIR);
@@ -162,9 +161,7 @@ function writeMetaYaml(key, entries) {
       lqip:   e.lqip,
       width:  e.width,
       height: e.height,
-      avif:   e.avif,
       webp:   e.webp,
-      avif2x: e.avif2x,
       webp2x: e.webp2x,
       jpeg2x: e.jpeg2x,
     };

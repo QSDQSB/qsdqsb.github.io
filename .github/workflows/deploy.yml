@@ -1,3 +1,29 @@
+# =============================================================================
+# Deploy Jekyll site to GitHub Pages
+# =============================================================================
+#
+# This workflow IS the canonical deploy mechanism. It only fires when
+# Settings → Pages → Build and deployment → Source = "GitHub Actions".
+# (If Source is set to "Deploy from a branch", legacy Pages auto-build runs
+# instead and this workflow's `actions/deploy-pages@v4` step would fail.)
+#
+# Pipeline:
+#   1. Checkout repo (gallery sources at gallery/** are committed; thumbnails
+#      and meta YAML are NOT — they're generated fresh on every run).
+#   2. Verify both dependency lock files (package-lock.json + Gemfile.lock)
+#      are committed; fail fast with a clear error if either is missing.
+#   3. Install Ruby 3.2 + Bundler-managed gems (Jekyll + github-pages stack).
+#   4. Install Node 20 + npm packages (Sharp for thumbnail generation).
+#   5. Generate thumbnails: 1×/2× JPEG + WebP + LQIP data-URIs +
+#      per-image dimensions (writes _data/gallery_meta/*.yml).
+#      AVIF is intentionally NOT generated — see scripts/generate-gallery-assets.mjs
+#      header for rationale (savings vs. CI cost don't justify it on
+#      480w/960w thumbnails).
+#   6. Geocode map data → assets/maps/*.geojson.
+#   7. Build Jekyll site (production env, UTF-8 I/O).
+#   8. Sanity-check the generated _site (assert thumbnail count is plausible).
+#   9. Upload Pages artifact + deploy.
+
 name: Deploy Jekyll site to Pages
 
 on:
@@ -10,56 +36,110 @@ permissions:
   pages: write
   id-token: write
 
+# Allow only one concurrent deployment, skipping in-flight runs in favour of
+# the latest. `cancel-in-progress: false` lets an active deploy finish before
+# starting the next so we don't leave Pages in a half-deployed state.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
   build:
+    name: Build site
     runs-on: ubuntu-latest
+    timeout-minutes: 25     # safety net — a healthy run is ~3-5 minutes
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Ruby
+      - name: Verify dependency lock files
+        # actions/setup-node and ruby/setup-ruby both rely on lock files for
+        # caching. If either is missing, the next steps fail with a confusing
+        # error message — we want a clear one upfront.
+        run: |
+          missing=0
+          if [ ! -f package-lock.json ]; then
+            echo "::error file=package.json,title=Missing lock file::package-lock.json missing — run 'npm install' locally and commit the lock file."
+            missing=1
+          fi
+          if [ ! -f Gemfile.lock ]; then
+            echo "::error file=Gemfile,title=Missing lock file::Gemfile.lock missing — run 'bundle install' locally and commit the lock file."
+            missing=1
+          fi
+          if [ "$missing" -eq 1 ]; then
+            exit 1
+          fi
+          echo "✓ package-lock.json and Gemfile.lock present"
+
+      - name: Setup Ruby + Bundler cache
+        # bundler-cache: true installs gems from Gemfile.lock and caches them
+        # keyed on the lock file's hash. github-pages gem (in Gemfile) pins
+        # Jekyll + plugins to versions whitelisted by GitHub Pages.
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.2"
           bundler-cache: true
 
-      - name: Setup Node
+      - name: Setup Node + npm cache
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
 
       - name: Install Node dependencies
-        run: npm ci
+        # Sharp ships prebuilt binaries for ubuntu-latest x64 + Node 20, so
+        # `npm ci` is sufficient — no need for `apt-get install libvips`.
+        run: npm ci --no-audit --no-fund
 
-      - name: Generate gallery assets (AVIF + WebP thumbnails + LQIP)
-        # AVIF is slow — allow skipping via repo variable SKIP_AVIF=1
-        env:
-          SKIP_AVIF: ${{ vars.SKIP_AVIF || '0' }}
+      - name: Generate gallery assets (1×/2× JPEG/WebP + LQIP)
+        # Reads gallery/** (committed source images), writes:
+        #   - images/thumbnails/gallery/**/*.{jpg,webp}  + 2× variants
+        #   - _data/gallery_meta/*.yml  (lqip + width + height + format flags)
+        # Per-image flags drive Liquid in _layouts/gallery.html to emit only
+        # the <source> tags + srcset entries for formats that actually exist,
+        # so the rendered HTML matches what's on disk. ~7-8 minutes for ~600
+        # images on a fresh runner.
         run: npm run generate:gallery
 
-      - name: Geocode maps
+      - name: Geocode maps to GeoJSON
         run: npm run geocode
 
       - name: Build Jekyll site
         env:
           JEKYLL_ENV: production
+          # Forces Ruby's I/O encoding to UTF-8 so Liquid + compress.html
+          # don't choke on the © glyph in _layouts/gallery.html (and the
+          # other UTF-8 chars in voyage subtitles).
           RUBYOPT: "-E utf-8:utf-8"
         run: bundle exec jekyll build
+
+      - name: Verify build output
+        # Sanity gate: if generate:gallery silently failed, _site would have
+        # very few thumbnail files. Fail loud rather than deploy a broken
+        # site. Threshold is intentionally conservative.
+        run: |
+          THUMB_COUNT=$(find _site/images/thumbnails/gallery -type f 2>/dev/null | wc -l)
+          PAGE_COUNT=$(find _site -name "index.html" 2>/dev/null | wc -l)
+          echo "Built _site: $PAGE_COUNT pages, $THUMB_COUNT thumbnail files"
+          if [ "$THUMB_COUNT" -lt 100 ]; then
+            echo "::error::Thumbnail count ($THUMB_COUNT) is suspiciously low — gallery generation likely failed silently."
+            exit 1
+          fi
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
 
   deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
+
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
