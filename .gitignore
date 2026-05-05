@@ -15,5 +15,4 @@ for_agents/
 images/thumbnails/gallery/**/*.jpg
 images/thumbnails/gallery/**/*.jpeg
 images/thumbnails/gallery/**/*.webp
-images/thumbnails/gallery/**/*.avif
 _data/gallery_meta/

@@ -44,13 +44,13 @@ The `.claude/settings.json` `permissions.deny` list mechanically blocks `Read` o
 
 ```bash
 # Canonical local flow — both run the full pipeline:
-#   1. npm run generate:gallery   (Sharp: 1×/2× JPEG/WebP/AVIF + LQIP)
+#   1. npm run generate:gallery   (Sharp: 1×/2× JPEG + WebP + LQIP)
 #   2. npm run geocode            (map data → geojson cache)
 #   3. jekyll build/serve         (with RUBYOPT=-E utf-8:utf-8)
 npm run build
 npm run serve
 
-# Faster iteration — generates only LQIPs + meta YAML, skips AVIF/WebP/2×.
+# Faster iteration — generates only LQIPs + meta YAML, skips JPEG/WebP/2×.
 # Useful when you don't need the full image-format matrix locally.
 npm run generate:gallery:lqip
 
@@ -67,7 +67,7 @@ Convenience slash commands: `/build`, `/serve`, `/geocode`, `/responsive-audit`,
 
 **Rule:** Never hand-edit `main.min.js`. Edit `_main.js`, then run `npm run build:js`.
 
-**Thumbnails are not tracked.** Every variant (1× JPEG, 2× JPEG, WebP, AVIF) is produced from `gallery/**` by `scripts/generate-gallery-assets.mjs` and gitignored. CI regenerates the full set on every push to `master` via `.github/workflows/deploy.yml`. Locally the same script runs as a prerequisite of `npm run build|serve`. First-time generation: ~30–60s for ~600 images; subsequent runs are near-instant due to mtime checks.
+**Thumbnails are not tracked.** Every variant (1×/2× JPEG, 1×/2× WebP) plus per-image LQIP+dimensions YAML is produced from `gallery/**` by `scripts/generate-gallery-assets.mjs` and gitignored. CI regenerates the full set on every push to `master` via `.github/workflows/deploy.yml` (~7-8 minutes on a fresh runner). Locally the same script runs as a prerequisite of `npm run build|serve`; subsequent local runs are near-instant due to mtime checks. AVIF is intentionally skipped — see the script header for rationale.
 
 ## Commit Style
 
