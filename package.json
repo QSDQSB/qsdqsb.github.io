@@ -35,8 +35,10 @@
     "geocode": "node scripts/geocode-maps.js",
     "generate:gallery": "node scripts/generate-gallery-assets.mjs",
     "generate:gallery:lqip": "node scripts/generate-gallery-assets.mjs --lqip-only",
-    "build": "npm run generate:gallery && npm run geocode && RUBYOPT=-E utf-8:utf-8 bundle exec jekyll build",
-    "serve": "npm run generate:gallery && npm run geocode && RUBYOPT=-E utf-8:utf-8 bundle exec jekyll serve"
+    "build": "npm run generate:gallery && npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll build",
+    "serve": "npm run generate:gallery && npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll serve",
+    "build:fast": "npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll build",
+    "serve:fast": "npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll serve"
   },
   "dependencies": {
     "js-yaml": "^4.1.0",

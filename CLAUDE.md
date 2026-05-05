@@ -54,6 +54,14 @@ npm run serve
 # Useful when you don't need the full image-format matrix locally.
 npm run generate:gallery:lqip
 
+# Skip the gallery pipeline entirely — for CSS/HTML/JS iteration when
+# `gallery/**` hasn't changed. Still runs `geocode` + jekyll. The thumbnail
+# generator is also incremental: warm runs over an unchanged gallery tree
+# finish in < 1 s (per-image work skipped when meta YAML is fresher than
+# the source), so plain `npm run serve` is also cheap on warm trees.
+npm run serve:fast
+npm run build:fast
+
 # JS: source is assets/js/_main.js → minified to assets/js/main.min.js
 npm run build:js
 

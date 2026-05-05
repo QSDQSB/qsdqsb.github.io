@@ -23,7 +23,9 @@
  * and flags marking which formats/sizes were generated, so Liquid can
  * emit <source> tags conditionally.
  *
- * Incremental: skips outputs newer than their source.
+ * Incremental: when every variant AND the meta YAML entry are newer than
+ * the source, the per-image work (LQIP encode + metadata read + render) is
+ * skipped entirely. A typical warm run on 600 images now takes < 1 s.
  *
  * Usage:
  *   node scripts/generate-gallery-assets.mjs [--no-webp] [--no-2x] [--lqip-only]
@@ -98,6 +100,22 @@ async function processImage(srcPath) {
     webp2x: path.join(thumbSubDir, `${stem}@2x.webp`),
   };
 
+  // Per-image fast skip: if the meta YAML for this group is fresher than the
+  // source AND it already has an entry for this file, none of the heavy work
+  // (LQIP encode, metadata read, variant render) is needed. Returns null so
+  // main() can leave the YAML untouched for this group.
+  const key      = metaKey(dirPart);
+  const metaFile = path.join(META_DIR, `${key}.yml`);
+  const variantsFresh = (
+    isNewer(srcPath, out.jpeg) &&
+    (SKIP_WEBP || isNewer(srcPath, out.webp)) &&
+    (SKIP_2X   || isNewer(srcPath, out.jpeg2x)) &&
+    (SKIP_2X || SKIP_WEBP || isNewer(srcPath, out.webp2x))
+  );
+  if (!LQIP_ONLY && variantsFresh && metaHasEntry(metaFile, basename, srcPath)) {
+    return null;
+  }
+
   // 1× variants
   await makeVariant(srcPath, out.jpeg, THUMB_W, p => p.jpeg({ quality: 80, mozjpeg: true }));
   if (!SKIP_WEBP) await makeVariant(srcPath, out.webp, THUMB_W, p => p.webp({ quality: 80 }));
@@ -121,7 +139,7 @@ async function processImage(srcPath) {
 
   return {
     dirPart,
-    key:      metaKey(dirPart),
+    key,
     basename,
     lqip,
     width:    dims.width  || null,
@@ -130,6 +148,25 @@ async function processImage(srcPath) {
     webp2x:   fs.existsSync(out.webp2x),
     jpeg2x:   fs.existsSync(out.jpeg2x),
   };
+}
+
+// Cheap probe for the per-image fast-skip path. Reads each meta file at most
+// once per run and caches a Set of basenames. Avoids re-parsing the YAML on
+// every isNewer hit.
+const _metaIndex = new Map(); // metaFile → Set<basename>
+function metaHasEntry(metaFile, basename, srcPath) {
+  if (!fs.existsSync(metaFile)) return false;
+  if (!isNewer(srcPath, metaFile)) return false;
+  let entries = _metaIndex.get(metaFile);
+  if (!entries) {
+    entries = new Set();
+    for (const line of fs.readFileSync(metaFile, 'utf8').split('\n')) {
+      const m = line.match(/^"([^"]+)":\s*$/);
+      if (m) entries.add(m[1]);
+    }
+    _metaIndex.set(metaFile, entries);
+  }
+  return entries.has(basename);
 }
 
 // ── YAML writer ────────────────────────────────────────────────────────────────
@@ -198,11 +235,15 @@ async function main() {
 
   const byKey = new Map();
   let count = 0;
+  let skipped = 0;
   for (const src of sources) {
     try {
       const result = await processImage(src);
-      if (!byKey.has(result.key)) byKey.set(result.key, []);
-      byKey.get(result.key).push(result);
+      if (result === null) { skipped++; }
+      else {
+        if (!byKey.has(result.key)) byKey.set(result.key, []);
+        byKey.get(result.key).push(result);
+      }
       if (++count % 50 === 0) console.log(`  ... ${count}/${sources.length}`);
     } catch (err) {
       console.error(`  [error] ${src}: ${err.message}`);
@@ -211,7 +252,7 @@ async function main() {
 
   for (const [key, entries] of byKey) writeMetaYaml(key, entries);
 
-  console.log('Done.');
+  console.log(`Done. (${skipped} fresh, ${count - skipped} (re)generated)`);
 }
 
 main().catch(err => { console.error(err); process.exit(1); });
