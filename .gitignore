@@ -9,3 +9,12 @@ for_agents/
 .playwright-cli
 .sass-cache/
 .claude/settings.local.json
+
+# Generated gallery thumbnails — produced by scripts/generate-gallery-assets.mjs.
+# CI generates a fresh set on every push; locally, `npm run build|serve` runs
+# the same script as a prerequisite. No thumbnail format is tracked in git.
+images/thumbnails/gallery/**/*.jpg
+images/thumbnails/gallery/**/*.jpeg
+images/thumbnails/gallery/**/*.webp
+images/thumbnails/gallery/**/*.avif
+_data/gallery_meta/

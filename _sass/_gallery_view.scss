@@ -76,6 +76,23 @@
 		overflow: hidden;
 	}
 
+	// Gallery-viewer pages are full-bleed: lock the body to the viewport so
+	// no global padding/min-height pushes the page into a scroll. Scoped to
+	// `.gallery-viewer` so only gallery layouts are affected.
+	// `@at-root` lifts the selector out of `.gallery_view` because the browser
+	// auto-corrects the source's nested `<body>` to be the document body, so
+	// `body` is NOT a descendant of `.gallery_view` in the live DOM.
+	@at-root html:has(body.gallery-viewer),
+	         body.gallery-viewer {
+		height: 100vh;
+		min-height: 100vh;
+		max-height: 100vh;
+		overflow: hidden;
+	}
+	@at-root body.gallery-viewer {
+		padding-bottom: 0;
+	}
+
 /* Type */
 
 		@include responsive-down(105rem) {
@@ -474,49 +491,46 @@
 				position: relative;
 				margin: 0.15em 0.1em;
 				overflow: hidden;
-				
-				.thumbnail-placeholder {
+
+				// LQIP container — holds the tiny blurred placeholder as background-image
+				// while the real <img> loads above it.
+				.thumb-wrap {
 					display: block;
-					min-height: 50px;
-					aspect-ratio: 16/9;
-					
+					aspect-ratio: var(--ar, 16/9);
 					overflow: hidden;
-				}
-				
-				.thumbnail-placeholder.loading {
-					background-color: rgba(16, 16, 16, 0.6);
-					animation: loadingPulse 2s infinite;
+					background-color: #101010;
+					background-size: cover;
+					background-position: center;
 				}
 
-				@keyframes loadingPulse {
-					0% { background-color: rgba(16, 16, 16, 0.6); }
-					50% { background-color: rgba(128, 128, 128, 0.8); }
-					100% { background-color: rgba(16, 16, 16, 0.6); }
-				}
-				
-				.thumbnail-placeholder.loaded {
-					background-color: transparent;
-				}
-				
-				.thumbnail-placeholder img {
+				picture {
 					display: block;
 					width: 100%;
 					height: 100%;
-					object-fit: contain;
-					aspect-ratio: inherit;
-					opacity: 0;
-					transition: opacity 0.5s ease;
 				}
-				
-				.thumbnail-placeholder img.loaded {
-					opacity: 1;
-				}
-			}
 
-				#thumbnails article .thumbnail .thumbnail-placeholder img {
+				.thumb-img {
 					display: block;
 					width: 100%;
+					height: 100%;
+					object-fit: cover;
+					object-position: center;
+					opacity: 0;
+					transition: opacity 0.5s ease;
+					-webkit-user-drag: none;
+					user-select: none;
+					-webkit-touch-callout: none;
+					// Right-clicks pass through to the parent .thumb-wrap so
+					// the browser's menu drops "Save Image As" / "Copy Image".
+					// Click events still reach the .thumbnail anchor via
+					// bubbling from the parent div.
+					pointer-events: none;
+
+					&.loaded {
+						opacity: 1;
+					}
 				}
+			}
 
 				#thumbnails article .thumbnail:before {
 					-moz-pointer-events: none;
@@ -571,6 +585,7 @@
 		width: calc(100% - 22.5em);
 		height: 100%;
 		left: 0;
+		overflow: hidden; // contain LQIP scale-1.08 + image blur within viewer rect
 	}
 
 		#viewer .inner {
@@ -710,7 +725,11 @@
 				position: absolute;
 				bottom: 0;
 				left: 0;
-				z-index: 1;
+				z-index: 2; // above .image (1) and .lqip-bg (0)
+				pointer-events: none; // let .image_title own its own hover area
+			}
+			#viewer .slide .caption .image_title {
+				pointer-events: auto;
 			}
 			#viewer .slide .caption .image_title {
 				transition: $cubic-bezier-default;
@@ -738,48 +757,162 @@
 					transform: translateY(-0.5em);
 				}
 			}
+			// Blurred LQIP backdrop — visible ONLY while an image is actively
+			// loading (`.loading`). For navigation between already-preloaded
+			// slides (the common case via the N±1 prefetcher), the LQIP
+			// stays at opacity 0 so the view-transition crossfade is the
+			// single source of motion — no fill/blur/disappear noise.
+			#viewer .slide .lqip-bg {
+				position: absolute;
+				inset: 0;
+				background-size: cover;
+				background-position: center;
+				background-repeat: no-repeat;
+				filter: blur(24px) saturate(1.15);
+				transform: scale(1.08); // clipped by #viewer overflow:hidden
+				z-index: 0;
+				pointer-events: none;
+				opacity: 0;
+				transition: opacity 350ms cubic-bezier(0.33, 0.11, 0.02, 0.99);
+			}
+			#viewer .slide.loading .lqip-bg {
+				opacity: 1;
+			}
+
+			// Slide-to-slide transitions are driven by the View Transitions
+			// API (see ::view-transition-* rules below) so the heavy lifting
+			// is GPU-cheap and frame-perfect. The CSS here only defines the
+			// resting/loading states of a slide — animations live elsewhere.
 			#viewer .slide .image {
-				transition: $cubic-bezier-default;
 				position: absolute;
 				top: 0;
 				left: 0;
 				width: 100%;
 				height: 100%;
-				background-repeat: no-repeat;
-				background-size: cover;
-				background-position: center;
+				z-index: 1;
 				opacity: 0;
+				// Soft fade for the *fallback* path (browsers without the
+				// View Transitions API, or initial-mount with async load).
+				transition: opacity 350ms cubic-bezier(0.33, 0.11, 0.02, 0.99);
+
+				img {
+					display: block;
+					width: 100%;
+					height: 100%;
+					object-fit: cover;
+					object-position: center;
+					opacity: 1;
+					-webkit-user-drag: none;
+					user-select: none;
+					// Right-clicks pass through to the parent .image div so
+					// the browser's menu drops "Save Image As" / "Copy Image"
+					// while keeping the rest of the context menu intact.
+					pointer-events: none;
+				}
+			}
+			#viewer .slide.active .image { opacity: 1; }
+
+			// Toggle between cover and contain via JS class on #viewer
+			#viewer.bg-contain .slide .image img {
+				object-fit: contain;
 			}
 
-			#viewer .slide:before {
-				animation: spinner 1s linear infinite;
-				transition: opacity 0.5s ease;
-				content: '';
-				display: block;
+			// Brief acknowledgement of cover/contain toggle (object-fit is not
+			// animatable, so we cross-fade the image during the swap).
+			#viewer .slide.bg-swapping .image img {
+				opacity: 0;
+				transition: opacity 150ms ease;
+			}
+
+			// View Transitions API — single motion vocabulary for both the
+			// thumbnail→viewer morph AND slide-to-slide navigation.
+			//
+			// Shared `view-transition-name: gallery-active-image` on the
+			// outgoing and incoming <img> lets the browser:
+			//   • interpolate position + size between them when they differ
+			//     (thumbnail click → magnify morph); and
+			//   • crossfade them when they coincide (next/prev → pure
+			//     photo-to-photo dissolve, no scale, no chrome).
+			//
+			// We deliberately do NOT apply custom transform/scale keyframes
+			// — the goal is total immersion in the photograph, with the
+			// browser's default behaviour as the single source of motion.
+			::view-transition-group(gallery-active-image),
+			::view-transition-old(gallery-active-image),
+			::view-transition-new(gallery-active-image) {
+				animation-duration: 0.55s;
+				animation-timing-function: cubic-bezier(0.33, 0.11, 0.02, 0.99);
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				::view-transition-old(gallery-active-image),
+				::view-transition-new(gallery-active-image) {
+					animation-duration: 0.01ms;
+				}
+			}
+
+			// Editorial loading treatment (replaces the legacy spinner):
+			//   1. The LQIP backdrop *is* the placeholder. While loading it
+			//      breathes subtly so the page feels alive.
+			//   2. A hairline antique-gold sweep along the top edge of the
+			//      viewer indicates progress — but only after a 400 ms delay
+			//      so fast loads never flash a bar.
+			@keyframes lqip-breathe {
+				0%, 100% { opacity: 1; }
+				50%      { opacity: 0.9; }
+			}
+
+			#viewer .slide.loading .lqip-bg {
+				animation: lqip-breathe 2.4s ease-in-out infinite;
+			}
+
+			#viewer .loading-bar {
 				position: absolute;
-				top: 50%;
-				left: 50%;
-				width: 3em;
-				height: 3em;
-				background-image: url("images/spinner.svg");
-				background-position: center;
-				background-repeat: no-repeat;
-				background-size: contain;
-				margin: -1.5em 0 0 -1.5em;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: 1.5px;
+				z-index: 10;
+				pointer-events: none;
 				opacity: 0;
+				background: linear-gradient(
+					90deg,
+					transparent 0%,
+					rgba(229, 207, 169, 0.0) 0%,
+					rgba(229, 207, 169, 0.85) 50%,
+					rgba(229, 207, 169, 0.0) 100%
+				);
+				background-size: 35% 100%;
+				background-repeat: no-repeat;
+				background-position: -35% 0;
+				// Fade-out (default direction) is fast so it disappears the
+				// instant the load completes.
+				transition: opacity 0.3s ease;
 			}
 
-			@keyframes spinner {
-				from {
-					transform: translate(-50%, -50%) rotate(0deg);
-				}
-				to {
-					transform: translate(-50%, -50%) rotate(360deg);
-				}
+			@keyframes loading-bar-sweep {
+				from { background-position: -35% 0; }
+				to   { background-position: 135%  0; }
 			}
 
-			#viewer .slide.loading:before {
+			// :has() lets one bar serve all slides without per-slide wiring.
+			#viewer:has(.slide.loading) .loading-bar {
 				opacity: 1;
+				// Fade-in is delayed so a quick load (e.g. cached image)
+				// finishes before the bar would appear at all.
+				transition: opacity 0.3s ease 0.4s;
+				animation: loading-bar-sweep 1.4s linear infinite;
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				#viewer .slide.loading .lqip-bg { animation: none; }
+				#viewer:has(.slide.loading) .loading-bar { animation: none; }
+				// Skip the focus-pull blur — keep a plain opacity crossfade only.
+				#viewer .slide .image img,
+				#viewer .slide.active .image img {
+					filter: none;
+					transition: opacity 0.3s ease;
+				}
 			}
 
 			#viewer .slide.active {

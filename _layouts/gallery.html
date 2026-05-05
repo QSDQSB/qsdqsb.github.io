@@ -1,7 +1,7 @@
 ---
 layout: compress
 ---
-<!-- Base Layout for Voyages and Subvoyages -->
+<!-- © Base Layout for Voyages and Subvoyages -->
 {% include base_path %}
 
 <html lang="{{ site.locale | slice: 0,2 }}" class="no-js">
@@ -68,7 +68,7 @@ layout: compress
 
 <div id="gallery_main">
         <div class="gallery_view">
-          <body class="is-loading-0 is-loading-1 is-loading-2">
+          <body class="is-loading-0 is-loading-1 is-loading-2 gallery-viewer">
             <header id="header">
               
               {% if page.title %}
@@ -84,12 +84,30 @@ layout: compress
             <section id="thumbnails">
               {% assign folderpath = "/" | append: page.gallery_name | append: "/" %}
               {% assign gallery = site.static_files | where: "image", true | where_exp: "file", "file.path contains folderpath" %}
+              {% assign meta_key = page.gallery_name | replace: "/", "_" %}
+              {% assign gallery_meta = site.data.gallery_meta[meta_key] %}
               {% for image in gallery %}
+                {% assign image_meta = gallery_meta[image.name] %}
+                {% assign thumb_dir  = "/images/thumbnails/gallery/" | append: page.gallery_name | append: "/" %}
+                {% assign thumb_stem = image.basename %}
+                {% assign thumb_w    = image_meta.width  | default: 480 %}
+                {% assign thumb_h    = image_meta.height | default: 270 %}
+                {% capture thumb_style %}--ar:{{ thumb_w }}/{{ thumb_h }}{% if image_meta.lqip %};background-image:url('{{ image_meta.lqip }}');background-size:cover;background-repeat:no-repeat;background-position:center{% endif %}{% endcapture %}
                 <article>
-                  <a class="thumbnail" href="{{ site.gallery_d }}/{{ page.gallery_name }}/{{ image.name }}" data-position="{{ site.thumbnail_position }}">
-                    <div class="thumbnail-placeholder" 
-                         data-src="{{ site.gallery_d }}/{{ page.gallery_name }}/{{ image.name }}"
-                         data-thumbnail="/images/thumbnails/gallery/{{ page.gallery_name }}/{{ image.name }}">
+                  <a class="thumbnail" href="{{ site.gallery_d }}/{{ page.gallery_name }}/{{ image.name }}"{% if image_meta.lqip %} data-lqip="{{ image_meta.lqip }}"{% endif %} data-ar="{{ thumb_w }}/{{ thumb_h }}">
+                    <div class="thumb-wrap" style="{{ thumb_style }}">
+                      <picture>
+                        {% if image_meta.avif %}<source type="image/avif" srcset="{{ thumb_dir }}{{ thumb_stem }}.avif{% if image_meta.avif2x %}, {{ thumb_dir }}{{ thumb_stem }}@2x.avif 2x{% endif %}">{% endif %}
+                        {% if image_meta.webp %}<source type="image/webp" srcset="{{ thumb_dir }}{{ thumb_stem }}.webp{% if image_meta.webp2x %}, {{ thumb_dir }}{{ thumb_stem }}@2x.webp 2x{% endif %}">{% endif %}
+                        <img class="thumb-img"
+                             src="{{ thumb_dir }}{{ image.name }}"
+                             {% if image_meta.jpeg2x %}srcset="{{ thumb_dir }}{{ image.name }}, {{ thumb_dir }}{{ thumb_stem }}@2x.jpg 2x"{% endif %}
+                             alt="{{ image.basename | replace: '__', ' | ' | replace: '_', ' ' | replace: ':', '/' }}"
+                             width="{{ thumb_w }}"
+                             height="{{ thumb_h }}"
+                             loading="lazy"
+                             decoding="async">
+                      </picture>
                     </div>
                   </a>
                   <div class="image_title">
@@ -156,7 +174,7 @@ layout: compress
               {% include page__dates.html %}
             </footer>
             {% include scripts.html %}
-            <script src="{{ '/assets/js/gallery.js' | relative_url }}" defer></script>
+            <script type="module" src="{{ '/assets/js/gallery/index.js' | relative_url }}"></script>
           </body>
         </div>
 </div>
