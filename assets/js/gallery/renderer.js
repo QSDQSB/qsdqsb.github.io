@@ -159,7 +159,7 @@ const _prefersReducedMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Module-level guard — `state.locked` releases ~100ms after `finalize()`
-// (well before the View Transition's animation completes around 550ms).
+// (well before the View Transition's animation completes at SLIDE_DURATION).
 // Without an explicit transition-lifetime guard, a second click during the
 // in-flight VT animation kicks off a new `startViewTransition()` while the
 // previous one is still painting — Safari aborts the new one (sometimes
@@ -249,7 +249,18 @@ function _clearVTName(el) {
 function _animateCaption(slide) {
   const title = slide.slideCaption.querySelector('.image_title');
   if (!title) return;
+  // The fade-IN is suppressed deliberately — the new caption should be part
+  // of the same crossfade snapshot as the image, not stage two of a two-act
+  // motion. We snap opacity to 1 with `transition: none`, then restore the
+  // transition next frame so the auto-hide (CAPTION_DURATION later) still
+  // fades out smoothly with the unified vocabulary.
+  const prev = title.style.transition;
+  title.style.transition = 'none';
   title.classList.add('hovered');
+  // Force layout flush so opacity:1 is committed before the View Transition
+  // captures the new snapshot.
+  void title.offsetHeight;
+  requestAnimationFrame(() => { title.style.transition = prev; });
   setTimeout(() => title.classList.remove('hovered'), CAPTION_DURATION);
 }
 
