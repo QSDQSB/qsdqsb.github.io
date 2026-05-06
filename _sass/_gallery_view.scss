@@ -416,12 +416,18 @@
 		}
 
 
-		@include responsive-down(phone) {
+		// Tab mode (< desktop, 1024px). The thumbnail panel takes the full
+		// viewport; the viewer is hidden until the user enters fullscreen.
+		// Raised from `phone` (480px) to `desktop` so every side-by-side
+		// viewport gets at least ~56% of width for the photo (1024 - 22.5em
+		// rail = ~574px viewer). Phones, tablets, and small foldables all
+		// get the swipeable tab UX rather than a viewport-starved split.
+		@include responsive-down(desktop) {
 
 			#gallery_main {
 				transition: opacity 0.5s ease, visibility 0.5s;
 				width: 100%;
-				
+
 				text-align: center;
 				p {
 					text-align: center;
@@ -440,6 +446,7 @@
 				}
 
 		}
+
 
 /* Header */
 #gallery_main #header {
@@ -982,7 +989,12 @@
 			opacity: 0;
 		}
 
-		@include responsive-down(phone) {
+		// Tab-mode interactivity (< desktop, 1024px). The .toggle / .leave
+		// chrome appears so the user can swap between thumbnail panel and
+		// fullscreen viewer; the viewer is hidden by default and revealed
+		// only when `body.fullscreen` is set. Matches the layout-mode
+		// breakpoint above.
+		@include responsive-down(desktop) {
 			#gallery_main {
 				.toggle, .leave_gallery {
 					display: block;
