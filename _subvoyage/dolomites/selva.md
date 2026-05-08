@@ -7,6 +7,9 @@ tags:
   - 🏔️Alps
   - 🍝Italy
   - 🥾Hiking
+map:
+  lat: 46.4751
+  lng: 12.0737
 header:
   overlay_image: cover/dolomites/Selva-3v1.jpg
 ---

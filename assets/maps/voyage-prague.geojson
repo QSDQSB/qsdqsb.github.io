@@ -1,0 +1,182 @@
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "kind": "voyage-atlas",
+    "primaryTagLimit": 7,
+    "fallbackColor": "#7d746d"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "astronomical-clock",
+        "title": "Astronomical Clock",
+        "url": "/voyage/prague/astronomical-clock/",
+        "excerpt": "A chronicle woven in ancient gears",
+        "date": "2023-06-18T00:00:00.000Z",
+        "dateDisplay": "Jun 18, 2023",
+        "tags": [
+          "🏰Baroque"
+        ],
+        "mainTag": "🏰Baroque",
+        "mainTagColor": "#8c6b4d",
+        "tagColors": {
+          "🏰Baroque": "#8c6b4d"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.4207138,
+          50.0869802
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "charles-bridge",
+        "title": "Charles Bridge",
+        "url": "/voyage/prague/charles-bridge/",
+        "excerpt": "Where Prague's soul dances with timeless melodies",
+        "date": "2023-06-16T00:00:00.000Z",
+        "dateDisplay": "Jun 16, 2023",
+        "tags": [
+          "🏰Baroque",
+          "🌉Bridges"
+        ],
+        "mainTag": "🏰Baroque",
+        "mainTagColor": "#8c6b4d",
+        "tagColors": {
+          "🏰Baroque": "#8c6b4d",
+          "🌉Bridges": "#5a506f"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.4101485,
+          50.0866258
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "church-tyn",
+        "title": "Church of Our Lady before Týn",
+        "url": "/voyage/prague/church-tyn/",
+        "excerpt": "Where gothic whispers adorn Týn's sacristy",
+        "date": "2023-06-18T00:00:00.000Z",
+        "dateDisplay": "Jun 18, 2023",
+        "tags": [
+          "🏰Baroque"
+        ],
+        "mainTag": "🏰Baroque",
+        "mainTagColor": "#8c6b4d",
+        "tagColors": {
+          "🏰Baroque": "#8c6b4d"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.422695,
+          50.0877207
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "petrin-hill",
+        "title": "Petřín Hill",
+        "url": "/voyage/prague/petrin-hill/",
+        "excerpt": "Where Petrin Tower beholds the thousand spires",
+        "date": "2023-06-16T00:00:00.000Z",
+        "dateDisplay": "Jun 16, 2023",
+        "tags": [
+          "🥾Hiking"
+        ],
+        "mainTag": "🥾Hiking",
+        "mainTagColor": "#ac6139",
+        "tagColors": {
+          "🥾Hiking": "#ac6139"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.3962198,
+          50.0835331
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "prague-castle",
+        "title": "Prague Castle",
+        "url": "/voyage/prague/prague-castle/",
+        "excerpt": "Where castle's regal height crowns the city",
+        "date": "2023-06-18T00:00:00.000Z",
+        "dateDisplay": "Jun 18, 2023",
+        "tags": [
+          "🏰Baroque",
+          "🏞️QSD's Favourite"
+        ],
+        "mainTag": "🏰Baroque",
+        "mainTagColor": "#8c6b4d",
+        "tagColors": {
+          "🏰Baroque": "#8c6b4d",
+          "🏞️QSD's Favourite": "#a48395"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.4005225,
+          50.0908114
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "st-nicolas",
+        "title": "St Nicolas Church",
+        "url": "/voyage/prague/st-nicolas/",
+        "excerpt": "A symphony of art unfolds.",
+        "date": "2023-06-13T00:00:00.000Z",
+        "dateDisplay": "Jun 13, 2023",
+        "tags": [
+          "🏰Baroque"
+        ],
+        "mainTag": "🏰Baroque",
+        "mainTagColor": "#8c6b4d",
+        "tagColors": {
+          "🏰Baroque": "#8c6b4d"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.4199005,
+          50.0879001
+        ]
+      }
+    }
+  ]
+}

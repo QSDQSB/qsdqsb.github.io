@@ -1,0 +1,235 @@
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "kind": "voyage-atlas",
+    "primaryTagLimit": 7,
+    "fallbackColor": "#7d746d",
+    "viewport": {
+      "center": [
+        41.898,
+        12.49
+      ],
+      "zoom": 13.5,
+      "minZoom": 6,
+      "maxZoom": 20
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "bocche-di-verita",
+        "title": "Bocche di verità",
+        "url": "/voyage/rome/bocche-di-verita/",
+        "excerpt": "Where copious mouths evince the same fabrication",
+        "date": "2025-05-31T00:00:00.000Z",
+        "dateDisplay": "May 31, 2025",
+        "tags": [],
+        "mainTag": null,
+        "mainTagColor": "#7d746d",
+        "tagColors": {},
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4814,
+          41.8882
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "castel-sant-angelo",
+        "title": "Castel Sant'Angelo",
+        "url": "/voyage/rome/castel-sant-angelo/",
+        "excerpt": "Where archangel's blade glints above the ramparts",
+        "date": "2025-05-29T00:00:00.000Z",
+        "dateDisplay": "May 29, 2025",
+        "tags": [
+          "🏛️Historic"
+        ],
+        "mainTag": "🏛️Historic",
+        "mainTagColor": "#6e5240",
+        "tagColors": {
+          "🏛️Historic": "#6e5240"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4663427,
+          41.9031178
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "palatine-hill",
+        "title": "Palatine Hill",
+        "url": "/voyage/rome/palatine-hill/",
+        "excerpt": "Where the empire lingers along fractured arches",
+        "date": "2025-05-27T00:00:00.000Z",
+        "dateDisplay": "May 27, 2025",
+        "tags": [],
+        "mainTag": null,
+        "mainTagColor": "#7d746d",
+        "tagColors": {},
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4871093,
+          41.8893064
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "st-peters-basilica",
+        "title": "St Peter's Basilica",
+        "url": "/voyage/rome/st-peters-basilica/",
+        "excerpt": "Where apostolic keys reign above Berninian colonnades",
+        "date": "2025-05-29T00:00:00.000Z",
+        "dateDisplay": "May 29, 2025",
+        "tags": [
+          "🏞️QSD's Favourite"
+        ],
+        "mainTag": "🏞️QSD's Favourite",
+        "mainTagColor": "#a48395",
+        "tagColors": {
+          "🏞️QSD's Favourite": "#a48395"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4931577,
+          41.893851
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "trevi-fountain",
+        "title": "Trevi Fountain",
+        "url": "/voyage/rome/trevi-fountain/",
+        "excerpt": "Where alabaster gods melt in crystalline grace",
+        "date": "2025-05-30T00:00:00.000Z",
+        "dateDisplay": "May 30, 2025",
+        "tags": [],
+        "mainTag": null,
+        "mainTagColor": "#7d746d",
+        "tagColors": {},
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4832848,
+          41.9009778
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "vatican-museum-vol-1",
+        "title": "Vatican Museum Vol. I",
+        "url": "/voyage/rome/vatican-museum-vol-1/",
+        "excerpt": "Where Quadratura breathes humanism into divine revelation",
+        "date": "2025-05-28T00:00:00.000Z",
+        "dateDisplay": "May 28, 2025",
+        "tags": [
+          "🏛️Museum",
+          "🏛️Historic"
+        ],
+        "mainTag": "🏛️Museum",
+        "mainTagColor": "#cac5a9",
+        "tagColors": {
+          "🏛️Museum": "#cac5a9",
+          "🏛️Historic": "#6e5240"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4527,
+          41.9029
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "vatican-museum-vol-2",
+        "title": "Vatican Museum Vol. II",
+        "url": "/voyage/rome/vatican-museum-vol-2/",
+        "excerpt": "Where fresco incarnates reason beneath papal creed",
+        "date": "2025-05-28T00:00:00.000Z",
+        "dateDisplay": "May 28, 2025",
+        "tags": [
+          "🏛️Museum",
+          "🏛️Historic"
+        ],
+        "mainTag": "🏛️Museum",
+        "mainTagColor": "#cac5a9",
+        "tagColors": {
+          "🏛️Museum": "#cac5a9",
+          "🏛️Historic": "#6e5240"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4527,
+          41.9029
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "vittoriano",
+        "title": "Vittoriano",
+        "url": "/voyage/rome/vittoriano/",
+        "excerpt": "Where argent propylaea intones revival",
+        "date": "2025-05-29T00:00:00.000Z",
+        "dateDisplay": "May 29, 2025",
+        "tags": [
+          "🏞️QSD's Favourite"
+        ],
+        "mainTag": "🏞️QSD's Favourite",
+        "mainTagColor": "#a48395",
+        "tagColors": {
+          "🏞️QSD's Favourite": "#a48395"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4830664,
+          41.8946867
+        ]
+      }
+    }
+  ]
+}

@@ -36,10 +36,12 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
 {% endif %}
 
-<!-- Leaflet + map renderer — only on pages that declare a map_dataset.
-     Gating on page.map_dataset matches _includes/map.html and _layouts/gallery.html,
-     and saves ~180 KB of render-blocking JS+CSS on 96.5% of pages. -->
-{% if page.map_dataset %}
+<!-- Leaflet + map renderer — only on pages that show a map.
+     Gate matches _layouts/gallery.html: a map appears whenever the page
+     declares `map_dataset` (legacy YAML path) OR `subgalleries: true`
+     (new path — the layout auto-derives `voyage-<slug>` from children).
+     Skipping these on the other ~96% of pages saves ~180 KB of render-blocking JS+CSS. -->
+{% if page.map_dataset or page.subgalleries %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
      crossorigin=""/>

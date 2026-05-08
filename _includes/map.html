@@ -1,14 +1,27 @@
-<!-- Reusable Map Renderer Include -->
-<!-- Usage: Add 'map_dataset: world-cities' to page front matter, then include this -->
+{%- comment -%}
+  Reusable Map Renderer Include.
 
-{% if page.map_dataset %}
-{% assign map_data = site.data.maps[page.map_dataset] %}
-<div id="map-container-{{ page.map_dataset }}" class="map-container" data-dataset="{{ page.map_dataset }}" data-geojson="/assets/maps/{{ page.map_dataset }}.geojson" data-viewport='{{ map_data.viewport | jsonify }}' >
+  Resolution order for the dataset id:
+    1. include.dataset (passed as `{% include map.html dataset="some-id" %}` —
+       used by gallery.html for parent voyages with `subgalleries: true`, where
+       the dataset is the derived `voyage-<slug>` GeoJSON written by
+       scripts/geocode-maps.js)
+    2. page.map_dataset (legacy frontmatter path — manual YAML in `_data/maps/`)
+
+  Viewport comes from `site.data.maps[<id>].viewport` when a YAML dataset of
+  that name exists; otherwise the renderer auto-fits to feature bounds (fine
+  for derived parent-voyage atlases, which have no YAML).
+{%- endcomment -%}
+
+{% assign map_dataset_id = include.dataset | default: page.map_dataset %}
+{% if map_dataset_id %}
+{% assign map_data = site.data.maps[map_dataset_id] %}
+<div id="map-container-{{ map_dataset_id }}" class="map-container" data-dataset="{{ map_dataset_id }}" data-geojson="/assets/maps/{{ map_dataset_id }}.geojson"{% if map_data.viewport %} data-viewport='{{ map_data.viewport | jsonify }}'{% endif %}>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  const container = document.getElementById('map-container-{{ page.map_dataset }}');
+  const container = document.getElementById('map-container-{{ map_dataset_id }}');
   if (!container) return;
   const datasetName = container.dataset.dataset;
   const geojsonPath = container.dataset.geojson;
@@ -22,6 +35,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 {% else %}
 <div class="notice notice--warning" style="padding: 1rem; border-left: 4px solid #FF6B6B; background: rgba(255, 107, 107, 0.05); margin: 1rem 0;">
-  <strong>⚠️ Map Error:</strong> No <code>map_dataset</code> in page front matter. Add <code>map_dataset: dataset-name</code>.
+  <strong>⚠️ Map Error:</strong> No dataset specified. Pass an <code>include.dataset</code> param or set <code>map_dataset:</code> in the page front matter.
 </div>
 {% endif %}

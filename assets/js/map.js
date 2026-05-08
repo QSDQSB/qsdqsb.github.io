@@ -54,7 +54,10 @@
       return VIEWPORT_PRESETS[`continent:${datasetName}`];
     }
 
-    return VIEWPORT_PRESETS.world;
+    // No user-supplied viewport — leave the preset null so the load step
+    // can fitBounds() to the actual feature collection. The L.map()
+    // initialiser falls back to world center/zoom while loading.
+    return null;
   }
 
   function buildPresetFromViewportData(viewportData) {
@@ -95,8 +98,21 @@
 
         L.DomEvent.on(button, 'click', L.DomEvent.stop);
         L.DomEvent.on(button, 'click', () => {
-          if (initialPreset && initialPreset.center && initialPreset.zoom !== undefined) {
-            map.setView(initialPreset.center, initialPreset.zoom, { animate: true, duration: 0.5 });
+          // Effective initial view, in precedence order:
+          //   1. `map._initialPreset` — the preset that was actually applied
+          //      after fetch (combines the constructor-time `initialPreset`
+          //      with any viewport carried in `geojson.properties.viewport`).
+          //      Falls back to the constructor-time preset if the GeoJSON
+          //      hasn't loaded yet (rare).
+          //   2. fitMapBounds against the loaded GeoJSON (derived atlases
+          //      with no curated viewport — reset = "back to cluster view").
+          const effective = map._initialPreset || initialPreset;
+          if (effective && effective.center && effective.zoom !== undefined) {
+            map.setView(effective.center, effective.zoom, { animate: true, duration: 0.5 });
+            return;
+          }
+          if (map._loadedGeoJSON) {
+            fitMapBounds(map, map._loadedGeoJSON);
           }
         });
 
@@ -207,11 +223,12 @@
     }
 
     const viewportPreset = getViewportPreset(datasetName, viewport);
+    const presetForInit = viewportPreset || VIEWPORT_PRESETS.world;
     const mapInstance = L.map(container, {
-      center: viewportPreset.center || [20, 0],
-      zoom: viewportPreset.zoom || 2,
-      minZoom: viewportPreset.minZoom || 1,
-      maxZoom: viewportPreset.maxZoom || 18,
+      center: presetForInit.center || [20, 0],
+      zoom: presetForInit.zoom !== undefined ? presetForInit.zoom : 2,
+      minZoom: presetForInit.minZoom || 1,
+      maxZoom: presetForInit.maxZoom || 18,
       zoomControl: true,
       attributionControl: true,
       scrollWheelZoom: true,
@@ -241,6 +258,10 @@
         return response.json();
       })
       .then((geojson) => {
+        // Stash the loaded collection on the map so the reset control can
+        // re-fit it when there is no explicit user-supplied preset.
+        map._loadedGeoJSON = geojson;
+
         const atlasDataset = isAtlasDataset(geojson);
         if (atlasDataset) {
           renderAtlasMap(map, geojson, container);
@@ -249,8 +270,28 @@
           renderDefaultLegend(map, geojson, container);
         }
 
-        const hasExplicitZoom = viewportPreset && viewportPreset.zoom !== undefined;
-        if (!hasExplicitZoom) {
+        // Effective viewport precedence:
+        //   1. viewportPreset (legacy YAML or explicit include override)
+        //   2. geojson.properties.viewport (new home for parent-voyage
+        //      curated viewport, written by scripts/geocode-maps.js from
+        //      the parent's `map: { center, zoom, minZoom, maxZoom }`)
+        //   3. fitMapBounds (auto-fit to feature bounds)
+        const datasetPreset = buildPresetFromViewportData(geojson.properties && geojson.properties.viewport);
+        const effectivePreset = viewportPreset || datasetPreset;
+        // Stash for the reset control so it knows where "initial view" is.
+        map._initialPreset = effectivePreset;
+
+        if (effectivePreset) {
+          if (effectivePreset.minZoom !== undefined) map.setMinZoom(effectivePreset.minZoom);
+          if (effectivePreset.maxZoom !== undefined) map.setMaxZoom(effectivePreset.maxZoom);
+          if (effectivePreset.center && effectivePreset.zoom !== undefined) {
+            map.setView(effectivePreset.center, effectivePreset.zoom);
+          } else if (effectivePreset.center) {
+            map.panTo(effectivePreset.center);
+          } else {
+            fitMapBounds(map, geojson);
+          }
+        } else {
           fitMapBounds(map, geojson);
         }
 

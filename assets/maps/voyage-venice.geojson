@@ -1,0 +1,82 @@
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "kind": "voyage-atlas",
+    "primaryTagLimit": 7,
+    "fallbackColor": "#7d746d"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "basilica-marco",
+        "title": "Basilica di San Marco",
+        "url": "/voyage/venice/basilica-marco/",
+        "excerpt": "QSD在Museo Correr的咖啡馆被意大利小姐姐教育喝咖啡：「If you order latte with ice cube, then it is just milk! latte with espresso is called latte coffee!!」",
+        "date": "2023-06-20T00:00:00.000Z",
+        "dateDisplay": "Jun 20, 2023",
+        "tags": [],
+        "mainTag": null,
+        "mainTagColor": "#7d746d",
+        "tagColors": {},
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.3398218,
+          45.4345479
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "campanile",
+        "title": "St Mark's Campanile",
+        "url": "/voyage/venice/campanile/",
+        "excerpt": "",
+        "date": "2023-06-20T00:00:00.000Z",
+        "dateDisplay": "Jun 20, 2023",
+        "tags": [],
+        "mainTag": null,
+        "mainTagColor": "#7d746d",
+        "tagColors": {},
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.3390443,
+          45.4340361
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "gondola",
+        "title": "Gondola",
+        "url": "/voyage/venice/gondola/",
+        "excerpt": "你能在布拉格飞威尼斯的飞机上听到欧洲的大部分语言。英语、法语、意大利语、捷克语，时不时传来几句中文，还有全欧洲哪里都有的韩国游客。英语口音甚至能分五六种。",
+        "date": "2023-06-20T00:00:00.000Z",
+        "dateDisplay": "Jun 20, 2023",
+        "tags": [],
+        "mainTag": null,
+        "mainTagColor": "#7d746d",
+        "tagColors": {},
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.3389,
+          45.4341
+        ]
+      }
+    }
+  ]
+}
