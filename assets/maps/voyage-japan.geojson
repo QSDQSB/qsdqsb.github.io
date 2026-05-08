@@ -1,0 +1,94 @@
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "kind": "voyage-atlas",
+    "primaryTagLimit": 7,
+    "fallbackColor": "#7d746d"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "kyoto",
+        "title": "Kyoto",
+        "url": "/voyage/japan/kyoto/",
+        "excerpt": "Where time folds into pine-shadow hush.",
+        "date": "2025-03-22T00:00:00.000Z",
+        "dateDisplay": "Mar 22, 2025",
+        "tags": [
+          "🏛️Historic"
+        ],
+        "mainTag": "🏛️Historic",
+        "mainTagColor": "#6e5240",
+        "tagColors": {
+          "🏛️Historic": "#6e5240"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.7681441,
+          35.0115754
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "nara",
+        "title": "Nara",
+        "url": "/voyage/japan/nara/",
+        "excerpt": "Where some creatures are adorable, and some are just creatures.",
+        "date": "2025-03-21T00:00:00.000Z",
+        "dateDisplay": "Mar 21, 2025",
+        "tags": [
+          "🏛️Historic"
+        ],
+        "mainTag": "🏛️Historic",
+        "mainTagColor": "#6e5240",
+        "tagColors": {
+          "🏛️Historic": "#6e5240"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.8048359,
+          34.6845445
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "slug": "tokyo",
+        "title": "Tokyo",
+        "url": "/voyage/japan/tokyo/",
+        "excerpt": "Where sakura blooms in the bustling metropolis.",
+        "date": "2025-03-21T00:00:00.000Z",
+        "dateDisplay": "Mar 21, 2025",
+        "tags": [
+          "🌆Metropolis"
+        ],
+        "mainTag": "🌆Metropolis",
+        "mainTagColor": "#d1c7bd",
+        "tagColors": {
+          "🌆Metropolis": "#d1c7bd"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.7638947,
+          35.6768601
+        ]
+      }
+    }
+  ]
+}

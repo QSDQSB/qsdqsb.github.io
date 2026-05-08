@@ -18,6 +18,7 @@ const https = require('https');
 const MAPS_DATA_DIR = path.join(__dirname, '../_data/maps');
 const MAPS_CACHE_DIR = path.join(__dirname, '../assets/maps');
 const VOYAGE_DIR = path.join(__dirname, '../_voyage');
+const SUBVOYAGE_DIR = path.join(__dirname, '../_subvoyage');
 const TAG_COLOURS_FILE = path.join(__dirname, '../_data/tag_colours.yml');
 const ATLAS_OUTPUT_FILE = path.join(MAPS_CACHE_DIR, 'voyage-atlas.geojson');
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search';
@@ -268,6 +269,30 @@ function loadVoyagePages(voyageDir = VOYAGE_DIR) {
     });
 }
 
+// Children of a parent voyage live at _subvoyage/<parentSlug>/*.md.
+// Mirrors loadVoyagePages's shape so downstream helpers (resolveVoyageCoords,
+// buildAtlasFeature) work without modification.
+function loadSubvoyagePages(parentSlug, subvoyageDir = SUBVOYAGE_DIR) {
+  const dir = path.join(subvoyageDir, parentSlug);
+  if (!fs.existsSync(dir)) {
+    return [];
+  }
+
+  return fs.readdirSync(dir)
+    .filter((fileName) => fileName.endsWith('.md'))
+    .sort()
+    .map((fileName) => {
+      const filePath = path.join(dir, fileName);
+      const frontmatter = parseFrontMatter(fs.readFileSync(filePath, 'utf8'));
+      return {
+        fileName,
+        filePath,
+        slug: path.basename(fileName, '.md'),
+        frontmatter,
+      };
+    });
+}
+
 function loadVoyageTagPalette(tagColoursFile = TAG_COLOURS_FILE) {
   const raw = fs.readFileSync(tagColoursFile, 'utf8');
   const data = yaml.load(raw) || {};
@@ -429,6 +454,120 @@ async function processVoyageAtlas(cache, options = {}) {
   return geojson;
 }
 
+// Build an atlas-shaped GeoJSON from a parent voyage's children.
+// Same shape as the global atlas (so the existing atlas renderer in map.js
+// picks it up automatically via `properties.kind === 'voyage-atlas'`), but
+// scoped to one parent's `_subvoyage/<parentSlug>/*.md` files.
+async function buildVoyageWithChildrenGeoJSON(parentPage, options = {}) {
+  const cache = options.cache || {};
+  const tagPalette = options.tagPalette || {};
+  const geocodeFn = options.geocodeFn || geocodeQuery;
+  const children = options.children || loadSubvoyagePages(parentPage.slug);
+  const features = [];
+  const parentTitle = (parentPage.frontmatter && parentPage.frontmatter.title) || parentPage.slug;
+
+  for (const child of children) {
+    const mapConfig = (child.frontmatter && child.frontmatter.map) || {};
+    if (mapConfig.exclude === true) {
+      continue;
+    }
+
+    // Subvoyage permalink follows Jekyll's collection routing
+    // (`/voyage/:path/` per `_config.yml`), which renders as
+    // `/voyage/<parentSlug>/<childSlug>/`. Pre-set this so deriveVoyageUrl
+    // (which prefers `permalink`) emits the correct URL on the feature.
+    if (!child.frontmatter.permalink) {
+      child.frontmatter.permalink = `/voyage/${parentPage.slug}/${child.slug}/`;
+    }
+
+    // For the title-based geocoding fallback, enrich the query with the
+    // parent voyage's title so common place names like "Tokyo" or "Selva"
+    // resolve unambiguously. Skipped if the subvoyage already declares
+    // explicit lat/lng or its own map.query override.
+    if (mapConfig.lat === undefined && mapConfig.lng === undefined && !mapConfig.query) {
+      const childTitle = (child.frontmatter && child.frontmatter.title) || child.slug;
+      child.frontmatter.map = {
+        ...mapConfig,
+        query: `${childTitle}, ${parentTitle}`,
+      };
+    }
+
+    let coords;
+    try {
+      coords = await resolveVoyageCoords(child, cache, geocodeFn);
+    } catch (err) {
+      console.warn(`  ⚠️  ${parentPage.slug}/${child.fileName}: ${err.message}`);
+      continue;
+    }
+    features.push(buildAtlasFeature(child, coords, tagPalette));
+  }
+
+  // Lift the parent's curated viewport (if any) into the FeatureCollection's
+  // top-level properties so the renderer can apply it as the initial view.
+  // This is the new home for what used to live in `_data/maps/<slug>.yml →
+  // viewport`. Children-specific keys (lat/lng/query/exclude) are intentionally
+  // dropped — those belong on the children, not the dataset envelope.
+  const properties = {
+    kind: 'voyage-atlas',
+    primaryTagLimit: PRIMARY_TAG_LIMIT,
+    fallbackColor: ATLAS_FALLBACK_COLOR,
+  };
+  const parentMap = (parentPage.frontmatter && parentPage.frontmatter.map) || {};
+  const viewport = pickViewportKeys(parentMap);
+  if (viewport) {
+    properties.viewport = viewport;
+  }
+
+  return {
+    type: 'FeatureCollection',
+    properties,
+    features,
+  };
+}
+
+// Extract just the viewport-shaped keys from a `map:` frontmatter block.
+// Returns null if none of the keys are present (so callers can omit the
+// `viewport` property entirely rather than emit an empty object).
+function pickViewportKeys(mapConfig) {
+  if (!mapConfig || typeof mapConfig !== 'object') return null;
+  const keys = ['center', 'zoom', 'minZoom', 'maxZoom'];
+  const out = {};
+  let any = false;
+  for (const k of keys) {
+    if (mapConfig[k] !== undefined) {
+      out[k] = mapConfig[k];
+      any = true;
+    }
+  }
+  return any ? out : null;
+}
+
+async function processVoyageWithChildren(parentPage, cache, options = {}) {
+  const tagPalette = options.tagPalette || loadVoyageTagPalette(options.tagColoursFile || TAG_COLOURS_FILE);
+  const geocodeFn = options.geocodeFn || geocodeQuery;
+  const outputPath = options.outputPath || path.join(MAPS_CACHE_DIR, `voyage-${parentPage.slug}.geojson`);
+
+  console.log(`\n🗺️  Building parent-voyage map: ${parentPage.slug}`);
+  const children = options.children || loadSubvoyagePages(parentPage.slug);
+  console.log(`  👶 Children: ${children.length}`);
+
+  if (children.length === 0) {
+    console.warn(`  ⚠️  No subvoyages under _subvoyage/${parentPage.slug}/ — emitting empty FeatureCollection`);
+  }
+
+  const geojson = await buildVoyageWithChildrenGeoJSON(parentPage, {
+    cache,
+    tagPalette,
+    geocodeFn,
+    children,
+  });
+
+  fs.writeFileSync(outputPath, JSON.stringify(geojson, null, 2));
+  console.log(`  💾 Wrote: ${outputPath}`);
+  console.log(`  📊 Features: ${geojson.features.length}`);
+  return geojson;
+}
+
 async function main() {
   console.log('🗺️  Map Geocoding Preprocessor');
   console.log('================================');
@@ -440,20 +579,41 @@ async function main() {
   }
 
   const cache = loadGeocodeCache();
+
+  // Legacy YAML datasets (manual marker lists) — kept for any future voyage
+  // that needs a hand-curated map without children. Parent voyages with
+  // `subgalleries: true` are handled by processVoyageWithChildren below
+  // instead, so they no longer need a YAML.
   const mapFiles = fs.readdirSync(MAPS_DATA_DIR)
     .filter((fileName) => fileName.endsWith('.yml'))
     .map((fileName) => path.join(MAPS_DATA_DIR, fileName));
 
   if (mapFiles.length === 0) {
-    console.warn('⚠️  No YAML map files found in _data/maps/');
+    console.log('\n📂 No legacy YAML map files (this is fine — parent voyages derive maps from subvoyage frontmatter)');
   } else {
-    console.log(`\n📂 Found ${mapFiles.length} map dataset(s)\n`);
+    console.log(`\n📂 Found ${mapFiles.length} legacy YAML map dataset(s)\n`);
     for (const filePath of mapFiles) {
       await processDataset(filePath, cache);
     }
   }
 
-  await processVoyageAtlas(cache);
+  // Global voyage atlas (one feature per top-level voyage).
+  const voyagePages = loadVoyagePages();
+  const tagPalette = loadVoyageTagPalette();
+  await processVoyageAtlas(cache, { voyagePages, tagPalette });
+
+  // Per-parent atlases (one feature per child of a `subgalleries: true` voyage).
+  // The output GeoJSON has the same shape as the global atlas, so the existing
+  // atlas renderer in assets/js/map.js picks it up unchanged.
+  const parentVoyages = voyagePages.filter((p) => p.frontmatter && p.frontmatter.subgalleries === true);
+  if (parentVoyages.length === 0) {
+    console.log('\n📚 No parent voyages with subgalleries found.');
+  } else {
+    console.log(`\n📚 Found ${parentVoyages.length} parent voyage(s) with subgalleries`);
+    for (const parent of parentVoyages) {
+      await processVoyageWithChildren(parent, cache, { tagPalette });
+    }
+  }
 
   saveGeocodeCache(cache);
   console.log('\n✅ Geocoding complete!');
@@ -472,17 +632,21 @@ module.exports = {
   PRIMARY_TAG_LIMIT,
   buildAtlasFeature,
   buildVoyageAtlasGeoJSON,
+  buildVoyageWithChildrenGeoJSON,
   datasetToGeoJSON,
   findPrefixCacheMatch,
   formatDateDisplay,
   geocodeLocation,
   geocodeQuery,
   loadGeocodeCache,
+  loadSubvoyagePages,
   loadVoyagePages,
   loadVoyageTagPalette,
   parseFrontMatter,
+  pickViewportKeys,
   processDataset,
   processVoyageAtlas,
+  processVoyageWithChildren,
   resolveVoyageCoords,
   saveGeocodeCache,
 };

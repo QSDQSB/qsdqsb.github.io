@@ -9,7 +9,14 @@ tags:
   - 🏛️Historic
   - 🏞️QSD's Favourite
   - 🛤️Retrace
-map_dataset: rome
+# Initial map viewport for the children-derived atlas. Tight city-scale
+# framing on central Rome — fitBounds alone would zoom further in than
+# the sites' visual scale warrants.
+map:
+  center: [41.898, 12.49]
+  zoom: 13.5
+  minZoom: 6
+  maxZoom: 20
 header:
   overlay_image: cover/rome-piazza-venezia-3v1.jpg
 ---

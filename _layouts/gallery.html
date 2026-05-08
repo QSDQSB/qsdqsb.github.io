@@ -44,11 +44,17 @@ layout: compress
   {% include scripts.html %}
   </div>
     
-  {% if page.map_dataset %}
-    <div class="unselectable-div" style="padding: 1em;">
-      {% include map.html %}
-    </div>
-  {% endif %}
+  {% comment %}
+    Every voyage with subgalleries: true gets an atlas-style map auto-derived
+    from its `_subvoyage/<slug>/*.md` children (one feature per child, with
+    tags + editorial popup). The geocoder writes to `assets/maps/voyage-<slug>.geojson`.
+    Falls back to `page.map_dataset` for any non-children-driven dataset.
+  {% endcomment %}
+  {% assign auto_map_id = "voyage-" | append: voyage_name %}
+  {% assign map_dataset_id = page.map_dataset | default: auto_map_id %}
+  <div class="unselectable-div" style="padding: 1em;">
+    {% include map.html dataset=map_dataset_id %}
+  </div>
   
   {% if site.tag_voyage.type and page.tags[0] %}
   <div class="center-wrapper">
