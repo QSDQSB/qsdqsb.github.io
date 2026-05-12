@@ -207,17 +207,32 @@ Enforced on touched files only — no global retrofit of untouched legacy files.
 | Collection | Required | Strongly expected / conditional |
 |---|---|---|
 | `_posts` | `title`, `date` | `permalink`, `tags`, `header` |
-| `_pages` | `title` | `layout` (non-default), `permalink` (routable), `map_dataset` (map-enabled pages) |
-| `_voyage` | `title`, `date`, `header` | exactly one of: `gallery_name` OR `subgalleries: true`; optional `map_dataset` |
-| `_subvoyage` | `title`, `date`, `header` | `gallery_name` (typically required for gallery routing) |
+| `_pages` | `title` | `layout` (non-default), `permalink` (routable), `map_dataset` (manual-YAML map pages) |
+| `_voyage` | `title`, `date`, `header` | exactly one of: `gallery_name` OR `subgalleries: true`; optional `map:` viewport block (only for `subgalleries:true` voyages); `map_dataset:` only as a legacy escape hatch (see below) |
+| `_subvoyage` | `title`, `date`, `header` | `gallery_name` (typically required for gallery routing); optional `map:` block to pin / refine the marker on the parent's auto-derived atlas |
 
 ### Conditional pairings (these are where things break)
 
 - **`gallery_name: <name>`** must resolve to two real directories:
   - `gallery/<name>/` (full images)
   - `images/thumbnails/gallery/<name>/` (thumbnails — gitignored; produced by `npm run generate:gallery` in CI and as a prerequisite of `npm run build|serve` locally)
-- **`map_dataset: <name>`** must match `_data/maps/<name>.yml`. If it doesn't, the map block silently renders empty.
-- **`subgalleries: true`** puts a voyage in enumerator mode. Parent voyage basename must align with `_subvoyage/<basename>/` so the enumerator can discover children — they're matched by path substring, not by an explicit reference.
+- **`subgalleries: true`** does two things:
+  1. Puts the voyage in enumerator mode (sub-voyage card list). Parent voyage basename must align with `_subvoyage/<basename>/` so the enumerator can discover children — they're matched by path substring, not by an explicit reference.
+  2. Auto-derives an atlas-style map from those same children. `scripts/geocode-maps.js` writes `assets/maps/voyage-<basename>.geojson` per parent; the renderer is the same atlas code path as the global voyage atlas. No `map_dataset:` needed.
+- **`map:` on a parent voyage with `subgalleries:true`** — optional, sets the initial viewport for the auto-derived map (otherwise the renderer fitBounds to all children). Shape:
+  ```yaml
+  map:
+    center: [41.898, 12.49]   # [lat, lng]
+    zoom: 13.5
+    minZoom: 6
+    maxZoom: 20
+  ```
+- **`map:` on a sub-voyage** — optional, refines the auto-derived marker:
+  - `map: { lat, lng }` — explicit coords (skip geocoding)
+  - `map: { query: "..." }` — override the title-based geocode query
+  - `map: { exclude: true }` — omit this child from the parent's map
+  - Default when nothing is set: geocode by `"<title>, <parent voyage title>"`. Atmospheric titles (Portraits, Twilight, Flow…) typically fail to geocode and are gracefully skipped with a build warning.
+- **`map_dataset: <name>`** — legacy hand-curated path, still supported. Must match `_data/maps/<name>.yml`. Use for any voyage that needs a manual marker list and does NOT have `subgalleries:true`. (If the parent has `subgalleries:true` and you also set `map_dataset:`, the dataset wins via `page.map_dataset | default: auto_map_id` in the layout, but you almost never want this.)
 - **`tags`** should resolve to entries in `_data/tag_colours.yml`. Missing entries don't break rendering, but the tag will display without its accent colour.
 
 ### Voyage frontmatter cheatsheet
@@ -232,11 +247,39 @@ header:
   caption: "..."
 gallery_name: barcelona-2024     # gallery viewer mode
 # OR
-subgalleries: true               # enumerator mode
+subgalleries: true               # enumerator mode (also auto-derives a map
+                                 # from `_subvoyage/barcelona/*.md`)
 tags:
   - europe
   - spain
-map_dataset: barcelona           # optional, must match _data/maps/<name>.yml
+map:                             # optional, only meaningful for subgalleries:true.
+  center: [41.398, 2.169]        # Sets the initial viewport for the auto-derived
+  zoom: 12                       # parent-voyage atlas. Omit to fitBounds the
+  minZoom: 6                     # children automatically.
+  maxZoom: 20
+# map_dataset: barcelona         # legacy hand-curated path. Only set for
+                                 # non-subgalleries voyages that need a manual
+                                 # marker list in `_data/maps/<name>.yml`.
+---
+```
+
+Sub-voyage cheatsheet (per file under `_subvoyage/<parent>/`):
+
+```yaml
+---
+title: "Park Güell"
+date: 2024-10-16
+gallery_name: barcelona-2024/park-guell
+tags:
+  - architecture
+  - gaudi
+map:                             # all keys optional
+  lat: 41.4145                   #   explicit coords skip geocoding
+  lng: 2.1527
+  # query: "Park Güell, Barcelona, Spain"  # alternative — override geocode query
+  # exclude: true                          # omit this child from the parent's map
+header:
+  overlay_image: cover/barcelona/park-guell-3v1.jpg
 ---
 ```
 
@@ -264,10 +307,12 @@ For nested galleries (`gallery_name: parent/child`):
 ### Common traps
 
 - Adding `gallery_name` but forgetting to run `npm run generate:gallery` (or rebuild via `npm run serve`) → empty grid.
-- Sub-voyage placed in `_subvoyage/` root instead of `_subvoyage/<parent>/` → invisible to enumerator.
+- Sub-voyage placed in `_subvoyage/` root instead of `_subvoyage/<parent>/` → invisible to enumerator AND not picked up by the map auto-derive.
 - Folder name drifts from parent basename (e.g. `_voyage/europe-2024.md` but folder `_subvoyage/europe/`) → invisible to enumerator.
 - `gallery_name` first segment doesn't match the parent → siblings won't link to each other.
-- Using `map_dataset` without running `npm run geocode` → empty map.
+- Setting `map_dataset` OR `subgalleries:true` without running `npm run geocode` → empty map (the corresponding `assets/maps/*.geojson` doesn't exist yet).
+- Curated viewport on a parent voyage written as a YAML `viewport:` block (legacy `_data/maps/*.yml` shape) instead of a frontmatter `map:` block on the voyage page itself → ignored; the page falls back to fitBounds.
+- Sub-voyage title is atmospheric (e.g. "Twilight", "Portraits", "Flow") with no `map:` block → geocoder fails to find a place and skips the feature with a warning. Add `map: { lat, lng }`, `map: { query }`, or `map: { exclude: true }` to disambiguate.
 
 ### Scaffolding
 
@@ -295,7 +340,11 @@ Gallery viewer asset contracts:
 - Thumbnails: `images/thumbnails/gallery/<gallery_name>/<file>`
 - Filenames must match between the two directories.
 
-Map block (`_includes/map.html`) is included after main content when `map_dataset` is set.
+Map block (`_includes/map.html`) is included after main content in two situations:
+1. Any voyage with `subgalleries: true` — the layout passes `dataset="voyage-<basename>"` and the renderer loads the auto-derived `assets/maps/voyage-<basename>.geojson` (one feature per child, same atlas renderer + tag legend + editorial popups as the global atlas).
+2. Any page with `map_dataset:` set — legacy hand-curated YAML path. The renderer loads `assets/maps/<dataset>.geojson` (built from `_data/maps/<dataset>.yml`).
+
+Both paths use the same Leaflet+map.js engine; the renderer branches on `geojson.properties.kind === 'voyage-atlas'` (atlas mode with tag filter + rich popups) versus default mode (simple circle markers, optional category legend).
 
 Gallery viewer keyboard: Backspace=parent, Shift=cover/contain toggle, Esc=fullscreen, arrows=navigate.
 
