@@ -134,8 +134,8 @@ function searchHighlightText(escapedText, terms) {
 }
 
 function searchRenderStatus(resultdiv, statusText) {
-  resultdiv.empty();
-  resultdiv.append('<p class="results__status">' + searchEscapeHtml(statusText) + '</p>');
+  resultdiv.innerHTML = '';
+  resultdiv.insertAdjacentHTML('beforeend', '<p class="results__status">' + searchEscapeHtml(statusText) + '</p>');
 }
 
 function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
@@ -143,16 +143,16 @@ function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
   if (totalCount > renderedCount) {
     foundText += ' · Showing top ' + renderedCount;
   }
-  resultdiv.prepend('<p class="results__found">' + searchEscapeHtml(foundText) + '</p>');
+  resultdiv.insertAdjacentHTML('afterbegin', '<p class="results__found">' + searchEscapeHtml(foundText) + '</p>');
 }
 
-$(document).ready(function() {
-  var $searchInput = $('input#search');
-  if (!$searchInput.length) return;
+(function() {
+  var searchInput = document.querySelector('input#search');
+  if (!searchInput) return;
 
   var searchDebounceTimer = null;
   var runSearch = function(rawQuery) {
-    var resultdiv = $('#results');
+    var resultdiv = document.getElementById('results');
     var normalizedQuery = String(rawQuery || "").trim().toLowerCase();
     var hasHan = searchHasHanText(normalizedQuery);
     var compactQueryLength = normalizedQuery.replace(/\s+/g, "").length;
@@ -207,7 +207,7 @@ $(document).ready(function() {
     var highlightTerms = searchCollectHighlightTerms(normalizedQuery);
     var renderedResults = result.slice(0, SEARCH_MAX_RENDERED_RESULTS);
 
-    resultdiv.empty();
+    resultdiv.innerHTML = '';
     searchRenderResultsFound(resultdiv, result.length, renderedResults.length);
 
     for (var itemIndex = 0; itemIndex < renderedResults.length; itemIndex++) {
@@ -262,7 +262,7 @@ $(document).ready(function() {
             tagsMarkup+
           '</article>'+
         '</div>';
-      resultdiv.append(searchitem);
+      resultdiv.insertAdjacentHTML('beforeend', searchitem);
     }
   };
 
@@ -275,9 +275,9 @@ $(document).ready(function() {
     }, SEARCH_DEBOUNCE_MS);
   };
 
-  $searchInput.on('input', function () {
-    scheduleSearch($(this).val());
+  searchInput.addEventListener('input', function () {
+    scheduleSearch(this.value);
   });
 
-  runSearch($searchInput.val());
-});
+  runSearch(searchInput.value);
+}());
