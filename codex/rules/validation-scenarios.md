@@ -37,7 +37,10 @@ Deterministic scenarios for current gate families.
 ## 4. Data Integrity
 
 ### Scenario G (Map cache mismatch)
-- `map_dataset: rome` referenced, missing `assets/maps/rome.geojson` after preprocess.
+- Any of:
+  - `map_dataset: <name>` referenced, missing `assets/maps/<name>.geojson` after preprocess (legacy hand-curated path).
+  - `_voyage/<slug>.md` has `subgalleries: true` but `assets/maps/voyage-<slug>.geojson` is missing after preprocess (auto-derived parent atlas).
+  - `_subvoyage/<slug>/*.md` added without geocodable title and no explicit `map: { lat, lng }` / `map: { query }` / `map: { exclude: true }`, leading to silent absence from the parent's atlas.
 - Expected: `DATA-001` warning (Stage 1), blocking (Stage 2).
 
 ### Scenario H (Gallery mismatch)
