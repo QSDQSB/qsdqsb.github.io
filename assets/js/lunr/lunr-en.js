@@ -22,12 +22,16 @@ var idx = lunr(function () {
   this.pipeline.remove(lunr.trimmer)
 
   for (var item in store) {
+    var rawTags = store[item].tags;
+    var indexTags = Array.isArray(rawTags)
+      ? rawTags.map(function(t) { return String(t || '').replace(/^[^\p{L}]+/u, ''); }).join(' ')
+      : String(rawTags || '').replace(/^[^\p{L}]+/u, '');
     this.add({
       title: store[item].title,
       excerpt: store[item].excerpt,
       content_excerpt: store[item].content_excerpt,
       categories: store[item].categories,
-      tags: store[item].tags,
+      tags: indexTags,
       search_keywords: store[item].search_keywords,
       cjk_terms: store[item].cjk_terms,
       id: item
