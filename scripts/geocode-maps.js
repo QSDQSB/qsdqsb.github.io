@@ -574,26 +574,22 @@ async function main() {
   console.log(`Data dir: ${MAPS_DATA_DIR}`);
   console.log(`Cache dir: ${MAPS_CACHE_DIR}`);
 
-  if (!fs.existsSync(MAPS_DATA_DIR)) {
-    throw new Error(`Maps directory not found: ${MAPS_DATA_DIR}`);
-  }
-
   const cache = loadGeocodeCache();
 
-  // Legacy YAML datasets (manual marker lists) — kept for any future voyage
-  // that needs a hand-curated map without children. Parent voyages with
-  // `subgalleries: true` are handled by processVoyageWithChildren below
-  // instead, so they no longer need a YAML.
-  const mapFiles = fs.readdirSync(MAPS_DATA_DIR)
-    .filter((fileName) => fileName.endsWith('.yml'))
-    .map((fileName) => path.join(MAPS_DATA_DIR, fileName));
-
-  if (mapFiles.length === 0) {
-    console.log('\n📂 No legacy YAML map files (this is fine — parent voyages derive maps from subvoyage frontmatter)');
+  if (!fs.existsSync(MAPS_DATA_DIR)) {
+    console.log('\n📂 No legacy _data/maps/ directory (parent voyages derive maps from subvoyage frontmatter)');
   } else {
-    console.log(`\n📂 Found ${mapFiles.length} legacy YAML map dataset(s)\n`);
-    for (const filePath of mapFiles) {
-      await processDataset(filePath, cache);
+    const mapFiles = fs.readdirSync(MAPS_DATA_DIR)
+      .filter((fileName) => fileName.endsWith('.yml'))
+      .map((fileName) => path.join(MAPS_DATA_DIR, fileName));
+
+    if (mapFiles.length === 0) {
+      console.log('\n📂 No legacy YAML map files (this is fine — parent voyages derive maps from subvoyage frontmatter)');
+    } else {
+      console.log(`\n📂 Found ${mapFiles.length} legacy YAML map dataset(s)\n`);
+      for (const filePath of mapFiles) {
+        await processDataset(filePath, cache);
+      }
     }
   }
 
