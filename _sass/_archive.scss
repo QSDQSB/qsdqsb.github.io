@@ -96,6 +96,7 @@
   padding: 0 0.5rem 0.5rem 0.5rem;
   margin: 0;
   width: 100%;
+  min-width: 100%; // #main is display:flex on this layout, and width:100% on a flex child can resolve to intrinsic content width instead of the parent's content box. min-width:100% pins it to the full flex-parent width so .card margins read symmetric L/R on mobile.
   display: block; /* Ensures it fits precisely within its parent */
 }
 
