@@ -4,7 +4,7 @@
     {
       "name": "jekyll",
       "runtimeExecutable": "/usr/local/opt/ruby/bin/bundle",
-      "runtimeArgs": ["exec", "jekyll", "serve", "--port", "4000", "--no-watch", "--skip-initial-build", "--config", "_config.yml,_config_dev.yml"],
+      "runtimeArgs": ["exec", "jekyll", "serve", "--port", "4000", "--skip-initial-build", "--config", "_config.yml,_config_dev.yml"],
       "port": 4000
     }
   ]
