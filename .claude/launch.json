@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "jekyll",
-      "runtimeExecutable": "/usr/local/opt/ruby/bin/bundle",
-      "runtimeArgs": ["exec", "jekyll", "serve", "--port", "4000", "--skip-initial-build", "--config", "_config.yml,_config_dev.yml"],
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["-c", "RUBYOPT='-E utf-8:utf-8' /usr/local/opt/ruby/bin/bundle exec jekyll serve --port 4000 --skip-initial-build --config _config.yml,_config_dev.yml"],
       "port": 4000
     }
   ]
