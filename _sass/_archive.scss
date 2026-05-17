@@ -251,37 +251,10 @@
 // span()/full()/prefix()/suffix()/clearfix() chain in the .feature__item
 // variants. If a feature-row layout is ever revived, rebuild on CSS Grid.
 
-.container .card {
-  span {
-    &::after {
-      content:'';
-      position: absolute;
-      width: 20px;
-      aspect-ratio: 1;
-      border-radius: $border-radius * 0.8;
-      background: rgba(0,0,0,0.1);
-      -webkit-backdrop-filter: blur(4px);
-      backdrop-filter: blur(4px);
-      top: -20px;
-      right: 20px;
-      opacity: 0;
-      box-shadow: 0 5px 15px rgba(200,200,200,0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      transition: $cubic-bezier-default;
-      animation: animate 5s cubic-bezier(.33,.11,.02,.99) infinite;
-      animation-play-state: paused;
-    }
-  }
-  &:hover, &:focus-within {
-    span {
-      &::after {
-        width: 60px;
-        opacity: 1;
-        animation-play-state: running;
-      }
-    }
-  }
-}
+// .container .card span::after rule + @keyframes animate were removed
+// together with the empty <span> inside .card markup (Commit 1).
+// They animated a small "comet" pseudo-element parked on a now-deleted
+// child element, so the entire block became orphan.
 
 // Tag selection view for archive by tags pages
 .tag-grid {
@@ -357,20 +330,6 @@
 }
 .tag-grid__item:hover {
   scale: 1.1;
-}
-
-@keyframes animate
-{
-  0%, 100%
-  {
-    transform: translateY(210px);
-  }
-  
-  50%
-  {
-    transform: translate(-60px);
-    scale: 110%;
-  }
 }
 
 .card_grid_view {
