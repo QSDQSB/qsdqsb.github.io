@@ -101,12 +101,19 @@
 }
 
 .card {
-  // INTENTIONAL EXCEPTION (2026-05 refresh): the multi-layer hardcoded
-  // shadows (rest / hover / active) and double text-shadows below are
-  // kept against CLAUDE.md's "no hardcoded shadows" rule. They are core
-  // to the editorial mood and the refresh deliberately preserved them.
-  // Do not auto-route these through $shadow-soft / $shadow-floating
-  // without explicit design review — the visual character will shift.
+  // The multi-layer box-shadow stacks below (rest / hover / active) are
+  // intentional single-use inline values — they do NOT match $shadow-soft
+  // / $shadow-floating in magnitude and should not be auto-swapped to
+  // those tokens. The editorial card mood depends on these specific
+  // depths. If a future refactor wants to tokenize them, validate the
+  // pixel-level drift against this rule's intent first.
+  //
+  // Type rendering (May 2026 Variant E refresh): the photograph reads as
+  // a magazine cover. Title and meta sit on a bottom-up gradient scrim
+  // (the ::before below) plus a tiny inline safety text-shadow. NO
+  // frosted plate, NO heavy text-shadow stacks — the image must stay
+  // legible behind the type. See feedback memory
+  // "Voyage cards are magazine covers" for the design philosophy.
   min-height: 6rem;
   width: 100%;
   margin: clamp(1rem, 2vw, 1.5rem) 0;
@@ -121,7 +128,7 @@
   align-items: flex-start;
   display: flex;
   box-sizing: border-box;
-  --bg-filter-opacity: 0.3;
+  --bg-filter-opacity: 0.32;
   background-size: cover;
   background-position: center;
   background-image: linear-gradient(rgba(12,12,12,var(--bg-filter-opacity)),rgba(0,0,0,var(--bg-filter-opacity))), var(--bg-img);
@@ -129,9 +136,22 @@
   transition: $cubic-bezier-default;
   text-decoration: none;
 
+  // Bottom-up gradient scrim — engineered contrast under the title /
+  // excerpt / date so type stays legible on bright-bottomed photos
+  // (white tile, deserts, edge-lit subjects) without a heavy text-shadow.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%);
+    pointer-events: none;
+    transition: inherit;
+  }
+
   * p {
     transition: inherit;
-    text-shadow:rgba(0, 0, 0, 0.6) 0px 7px 14px, rgba(0, 0, 0, 0.65) 0px 5px 5px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.45); // safety net against edge-case photos; scrim above does most of the contrast work
     font-size: $type-size-8;
     color: $text-color;
     @include responsive-up(desktop) {
@@ -155,7 +175,6 @@
     transform: scale(1.03)
               translateY(-0.25em);
     .content h3 {
-      text-shadow:rgba(0, 0, 0, 0.5) 0px 14px 28px, rgba(0, 0, 0, 0.44) 0px 10px 10px;
       transform: translateY(-0.25em);
     }
     .content .sci {
@@ -189,12 +208,13 @@
     transition: $cubic-bezier-default;
   }
   .content {
+    position: relative; // stack above the ::before scrim
     transform: translateY(0);
     transition: inherit;
 
     h3 {
       transition: inherit;
-      text-shadow:rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5); // safety net; scrim above does most of the contrast work
       text-align: left;
       margin-bottom: 0;
       margin-top: clamp(0rem, 1vw, 0.5em);
