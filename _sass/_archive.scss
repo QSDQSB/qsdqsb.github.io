@@ -379,7 +379,7 @@
 .page__intriguing-word-wrapper {
   display: block;
   margin: 1rem auto;
-  color: hsl(40, 26%, 68%);
+  color: $intriguing-word-color;
 
   text-align: center;
 }
@@ -410,7 +410,7 @@
   border-radius: 1rem;
   transition: $cubic-bezier-default;
   h1 {
-    color: hsl(40, 26%, 68%); // hsl(40, 70%, 85%);
+    color: $intriguing-word-color; // hsl(40, 70%, 85%);
     font-size: $type-size-2;
     font-family: $didot-family;
     border: none;
@@ -418,7 +418,7 @@
     hyphens: auto;
   }
   p {
-    color: hsl(40, 26%, 68%); // hsl(40, 70%, 85%);
+    color: $intriguing-word-color; // hsl(40, 70%, 85%);
     padding-bottom: 1rem;
     font-family: $cmu-serif-family;
     font-size: $type-size-7;
