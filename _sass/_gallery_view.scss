@@ -7,8 +7,8 @@
 
 /* Reset */
 	padding: 0.2em 0.4em;
-	animation: ease-in-out;
-	transition: $cubic-bezier-default;
+	// (Legacy malformed `animation` + `transition` declarations removed —
+	// they had no property name and were silently ignored by every browser.)
 
 	pre, abbr, acronym, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
 		font-size: 100%;
@@ -317,7 +317,11 @@
 
 .gallery_view .archive {
 	width: 100%;
-	transition: all 1s cubic-bezier(.33,.11,.02,.99);
+	// Explicit property list — `all` would interpolate any future property
+	// change (including ones we don't want animated) and can fight a
+	// concurrent View Transition in Safari.
+	transition: opacity 1s cubic-bezier(.33,.11,.02,.99),
+	            transform 1s cubic-bezier(.33,.11,.02,.99);
 	margin-bottom: 0.5em;
 	h1, h2, h3, h4, h5, h6 {
 		font-family: "Barlow";
@@ -515,6 +519,14 @@
 					aspect-ratio: 16/9;
 					overflow: hidden;
 					background-color: #101010;
+					// `isolation: isolate` makes .thumb-wrap a fresh stacking
+					// context so the inner <picture>'s z-index:1 stays scoped
+					// here instead of escaping to .thumbnail's context, where
+					// it would tie with .thumbnail::before (the blue selected-
+					// state border) and win by DOM order — hiding the border.
+					// Keeps the LQIP→image layering working while restoring
+					// the visible selected-state ring on the active thumb.
+					isolation: isolate;
 				}
 
 				.thumb-lqip {
@@ -607,11 +619,11 @@
 /* Viewer */
 
 	#viewer {
-		-moz-transition: opacity 0.8s ease, width 0.8s ease;
-		-webkit-transition: opacity 0.8s ease, width 0.8s ease;
-		-ms-transition: opacity 0.8s ease, width 0.8s ease;
+		// Explicit property list — the legacy `transition: all 0.8s ease`
+		// below it was silently overriding the explicit declaration and
+		// interpolating any property change (including transforms applied
+		// by the View Transitions API), which Safari rendered as flashes.
 		transition: opacity 0.8s ease, width 0.8s ease;
-		transition: all 0.8s ease;
 		position: absolute;
 		top: 0;
 		width: calc(100% - 22.5em);
@@ -779,6 +791,20 @@
 				// `.slide .image` rule for rationale on duration + easing.
 				transition: opacity 0.5s cubic-bezier(0.45, 0, 0.55, 1),
 				            transform 0.5s cubic-bezier(0.45, 0, 0.55, 1);
+
+				// While a View Transition is in flight (`body.vt-active`),
+				// suppress this CSS transition. Without this, adding the
+				// `.hovered` class inside the VT callback starts a 0.5s
+				// opacity transition that Safari captures mid-fade in the
+				// post-snapshot — visible as a caption flash. With the
+				// transition suppressed the class change snaps to its
+				// target value, the post-snapshot captures opacity:1, and
+				// the VT root crossfade is the single source of caption
+				// motion. Symmetric to the `.image` rule above.
+				body.vt-active & {
+					transition: none;
+				}
+
 				cursor: default;
 				display: inline-block;
 				border-radius:10px;
@@ -896,6 +922,19 @@
 			// We deliberately do NOT apply custom transform/scale keyframes
 			// — the goal is total immersion in the photograph, with the
 			// browser's default behaviour as the single source of motion.
+			// One crossfade vocabulary for both layers of the View
+			// Transition — the tagged image AND the root group (every other
+			// element: captions, chrome, page background).
+			//
+			// Without this, the root falls back to the browser's UA default
+			// (~0.25s ease in Chrome, varying in Safari). The root crossfade
+			// finishing while the tagged group is still mid-morph reads as a
+			// two-stage transition: chrome snaps to its destination, then
+			// the photo finishes catching up. Locking both to the same
+			// 0.5s curve makes the whole VT feel like one breath.
+			::view-transition-group(root),
+			::view-transition-old(root),
+			::view-transition-new(root),
 			::view-transition-group(gallery-active-image),
 			::view-transition-old(gallery-active-image),
 			::view-transition-new(gallery-active-image) {
@@ -907,6 +946,8 @@
 			}
 
 			@media (prefers-reduced-motion: reduce) {
+				::view-transition-old(root),
+				::view-transition-new(root),
 				::view-transition-old(gallery-active-image),
 				::view-transition-new(gallery-active-image) {
 					animation-duration: 0.01ms;
@@ -958,7 +999,11 @@
 			}
 
 			// :has() lets one bar serve all slides without per-slide wiring.
-			#viewer:has(.slide.loading) .loading-bar {
+			// `#viewer.pending` covers the pre-VT await in `morphTo`
+			// (renderer.js) so a slow click on a not-yet-warmed slide
+			// still gets the same 0.4s-delayed sweep feedback.
+			#viewer:has(.slide.loading) .loading-bar,
+			#viewer.pending .loading-bar {
 				opacity: 1;
 				// Fade-in is delayed so a quick load (e.g. cached image)
 				// finishes before the bar would appear at all.

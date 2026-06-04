@@ -95,8 +95,9 @@ export function switchTo(index, noHide) {
   const finalize = () => {
     newSlide.slideEl.classList.remove('loading');
     newSlide.slideEl.classList.add('active');
+    if (oldSlide) _concealCaption(oldSlide);
+    _revealCaption(newSlide);
     setTimeout(() => setState({ locked: false }), 100);
-    _animateCaption(newSlide);
   };
 
   if (newSlide.loaded) {
@@ -105,15 +106,11 @@ export function switchTo(index, noHide) {
     finalize();
   } else {
     newSlide.slideEl.classList.add('loading');
-    newSlide.slideImg.onload = () => {
-      newSlide.loaded = true;
+    newSlide.load().then(() => {
+      // Bail if the user navigated away while we were loading.
+      if (getState().current !== index) return;
       finalize();
-    };
-    newSlide.slideImg.onerror = () => {
-      newSlide.slideEl.classList.remove('loading');
-      setState({ locked: false });
-    };
-    newSlide.slideImg.src = newSlide.url;
+    });
   }
 }
 
@@ -139,18 +136,12 @@ export function switchToAsync(index, noHide) {
 /**
  * Pre-load a slide's full image so a subsequent switchTo is instant — used
  * to make View Transitions snapshots show a real image, not a blank.
+ *
+ * Thin wrapper over `slide.load()` (slides.js) — kept for backward-compat
+ * with any external caller; new code should call `slide.load()` directly.
  */
 export function preloadSlide(slide) {
-  if (slide.loaded) return Promise.resolve();
-  return new Promise(resolve => {
-    const tmp = new Image();
-    tmp.onload = tmp.onerror = () => {
-      slide.slideImg.src = slide.url;
-      slide.loaded = true;
-      resolve();
-    };
-    tmp.src = slide.url;
-  });
+  return slide.load();
 }
 
 const VT_NAME = 'gallery-active-image';
@@ -203,12 +194,21 @@ export async function morphTo(index, sourceImg = null) {
   // animating. Without this, Safari sometimes runs both at once and
   // produces visible jumps when the live DOM diverges from the snapshot.
   document.body.classList.add('vt-active');
+  // `#viewer.pending` marks the gap between the click landing and the VT
+  // actually starting — usually zero with the warm-up preloader running,
+  // but non-zero if the visitor outruns it on a slow connection. The
+  // loading-bar reveal has a 0.4s delay (see SCSS) so cached/warm clicks
+  // never flash a bar; only genuinely-waiting clicks show feedback.
+  _viewer.classList.add('pending');
   try {
     const oldSlide = current !== null ? getSlide(current) : null;
     const fromImg = sourceImg ?? oldSlide?.slideImg ?? null;
 
-    // Pre-load the full image so the post-snapshot is real, not blank.
-    await preloadSlide(newSlide);
+    // Pre-load (and DECODE) the full image so the post-snapshot is real
+    // pixels, not a blank or half-decoded <img>. `slide.load()` is the
+    // single owner of the <img>'s load lifecycle — see slides.js.
+    await newSlide.load();
+    _viewer.classList.remove('pending');
 
     // Defensive cleanup: clear stale view-transition-name from any previous
     // run before tagging this round's source. Some Safari versions don't
@@ -229,11 +229,21 @@ export async function morphTo(index, sourceImg = null) {
     transition.finished.finally(() => {
       _clearVTName(fromImg);
       _clearVTName(newSlide.slideImg);
-      document.body.classList.remove('vt-active');
-      _morphActive = false;
+      // Defer the `vt-active` removal by one frame. Safari occasionally
+      // resolves `finished` a tick before the last paint settles; dropping
+      // the class synchronously can re-enable the suppressed CSS
+      // transitions (.image opacity, caption opacity) just in time to fire
+      // a tiny secondary fade on the just-landed slide — perceived as a
+      // soft double-flash. One RAF guarantees the VT animation has fully
+      // committed before transitions re-arm.
+      requestAnimationFrame(() => {
+        document.body.classList.remove('vt-active');
+        _morphActive = false;
+      });
     });
   } catch (err) {
     document.body.classList.remove('vt-active');
+    _viewer.classList.remove('pending');
     _morphActive = false;
     throw err;
   }
@@ -246,22 +256,35 @@ function _clearVTName(el) {
   el.style.removeProperty('view-transition-name');
 }
 
-function _animateCaption(slide) {
+/**
+ * Reveal the title overlay on a slide and schedule its auto-hide.
+ *
+ * The new caption is meant to ride the same VT crossfade as the photograph,
+ * not animate in afterwards. We rely on SCSS (`body.vt-active .image_title`
+ * with `transition: none`) to snap opacity to 1 during the View Transition
+ * — no inline-style hacks, no forced reflow inside the VT callback. Once
+ * `vt-active` is cleared, the auto-hide fades the title out with the
+ * unified opacity vocabulary.
+ */
+function _revealCaption(slide) {
   const title = slide.slideCaption.querySelector('.image_title');
   if (!title) return;
-  // The fade-IN is suppressed deliberately — the new caption should be part
-  // of the same crossfade snapshot as the image, not stage two of a two-act
-  // motion. We snap opacity to 1 with `transition: none`, then restore the
-  // transition next frame so the auto-hide (CAPTION_DURATION later) still
-  // fades out smoothly with the unified vocabulary.
-  const prev = title.style.transition;
-  title.style.transition = 'none';
+  clearTimeout(slide._captionTimer);
   title.classList.add('hovered');
-  // Force layout flush so opacity:1 is committed before the View Transition
-  // captures the new snapshot.
-  void title.offsetHeight;
-  requestAnimationFrame(() => { title.style.transition = prev; });
-  setTimeout(() => title.classList.remove('hovered'), CAPTION_DURATION);
+  slide._captionTimer = setTimeout(() => {
+    title.classList.remove('hovered');
+  }, CAPTION_DURATION);
+}
+
+/**
+ * Symmetric pair of `_revealCaption`. Hides the previously-shown title so
+ * old and new captions don't stack overlapped in the VT root snapshot.
+ */
+function _concealCaption(slide) {
+  const title = slide.slideCaption.querySelector('.image_title');
+  if (!title) return;
+  clearTimeout(slide._captionTimer);
+  title.classList.remove('hovered');
 }
 
 // ─── Navigation helpers ──────────────────────────────────────────────────────
