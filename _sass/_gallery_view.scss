@@ -335,7 +335,7 @@
 		&:hover {
 			aspect-ratio: 3;
 		}
-		padding: 1.5em 1em 1em 2em;
+		padding: clamp(0.75rem, 1.5vw, 1.5em) clamp(0.5rem, 1vw, 1em) clamp(0.5rem, 1vw, 1em) clamp(1rem, 2vw, 2em);
 		.content {
 			h3 {
 				font-size: inherit;
