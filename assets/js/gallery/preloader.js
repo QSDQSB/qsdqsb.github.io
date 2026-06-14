@@ -13,7 +13,7 @@
  *      remaining slides during idle frames and load them all. This is the
  *      key to eliminating click-to-transition dead time: by the time the
  *      visitor clicks a far-away thumbnail, its full image is already
- *      decoded, so the View Transition starts the same frame as the click
+ *      decoded, so the crossfade starts the same frame as the click
  *      rather than after a half-second `await` on the network.
  */
 
