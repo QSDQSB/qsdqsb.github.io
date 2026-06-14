@@ -10,7 +10,6 @@ import { build, slideCount }  from './slides.js';
 import {
   init      as initRenderer,
   switchTo,
-  morphTo,
   next, previous,
   setLastTrigger,
   toggle,
@@ -125,10 +124,9 @@ function _bindEvents(thumbnailsEl, viewer, galleryMain) {
   const navPrev    = viewer.querySelector('.nav-previous');
   const imgDisplay = viewer.querySelector('.toggle-image-display');
 
-  // Delegated click on thumbnails. Calls morphTo with no source argument
-  // so it uses exactly the same default crossfade as nav-next/prev — no
-  // thumb-to-viewer magnify morph. The whole gallery uses one quiet
-  // photo-to-photo dissolve, keeping the focus on the photograph.
+  // Delegated click on thumbnails. Uses exactly the same crossfade as
+  // nav-next/prev — one quiet photo-to-photo dissolve everywhere, keeping
+  // the focus on the photograph.
   thumbnailsEl.addEventListener('click', e => {
     const thumb = e.target.closest('.thumbnail');
     if (!thumb || !thumbnailsEl.contains(thumb)) return;
@@ -138,7 +136,7 @@ function _bindEvents(thumbnailsEl, viewer, galleryMain) {
     const index = parseInt(thumb.dataset.index, 10);
     if (!isNaN(index)) {
       setLastTrigger(thumb);
-      morphTo(index);
+      switchTo(index);
     }
   });
 

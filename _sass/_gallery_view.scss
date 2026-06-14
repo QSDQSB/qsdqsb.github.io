@@ -756,15 +756,9 @@
 			}
 
 		// .slide is the visual container for one photograph in the viewer.
-		// It is *snapshotted* by the View Transitions API during slide-to-slide
-		// navigation; the API is the sole motion source for that swap. We
-		// deliberately declare NO `transition` and NO `animation` on .slide
-		// itself — leftover declarations from the legacy gallery template
-		// (a malformed `animation: 1s cubic-bezier(...)` with no name, plus
-		// a `transition: all 1s ...`) caused concurrent CSS transitions to
-		// run on .slide during the VT, which Safari aborts/glitches under
-		// the spec's stricter overlap rules. Chromium tolerated the conflict
-		// invisibly. Removing both gives Safari a clean canvas.
+		// Slides stack absolutely; the crossfade lives on the child `.image`
+		// (opacity), NOT on .slide. We declare NO `transition`/`animation` on
+		// .slide itself so nothing competes with that single opacity fade.
 		#viewer .slide {
 			position: absolute;
 			top: 0;
@@ -787,24 +781,10 @@
 				pointer-events: auto;
 			}
 			#viewer .slide .caption .image_title {
-				// Same vocabulary as the image cross-fade above — see the
+				// Same vocabulary as the image cross-fade — see the
 				// `.slide .image` rule for rationale on duration + easing.
 				transition: opacity 0.5s cubic-bezier(0.45, 0, 0.55, 1),
 				            transform 0.5s cubic-bezier(0.45, 0, 0.55, 1);
-
-				// While a View Transition is in flight (`body.vt-active`),
-				// suppress this CSS transition. Without this, adding the
-				// `.hovered` class inside the VT callback starts a 0.5s
-				// opacity transition that Safari captures mid-fade in the
-				// post-snapshot — visible as a caption flash. With the
-				// transition suppressed the class change snaps to its
-				// target value, the post-snapshot captures opacity:1, and
-				// the VT root crossfade is the single source of caption
-				// motion. Symmetric to the `.image` rule above.
-				body.vt-active & {
-					transition: none;
-				}
-
 				cursor: default;
 				display: inline-block;
 				border-radius:10px;
@@ -831,9 +811,9 @@
 			}
 			// Blurred LQIP backdrop — visible ONLY while an image is actively
 			// loading (`.loading`). For navigation between already-preloaded
-			// slides (the common case via the N±1 prefetcher), the LQIP
-			// stays at opacity 0 so the view-transition crossfade is the
-			// single source of motion — no fill/blur/disappear noise.
+			// slides (the common case via the warm-up preloader), the LQIP
+			// stays at opacity 0 so the opacity crossfade is the single
+			// source of motion — no fill/blur/disappear noise.
 			#viewer .slide .lqip-bg {
 				position: absolute;
 				inset: 0;
@@ -851,10 +831,14 @@
 				opacity: 1;
 			}
 
-			// Slide-to-slide transitions are driven by the View Transitions
-			// API (see ::view-transition-* rules below) so the heavy lifting
-			// is GPU-cheap and frame-perfect. The CSS here only defines the
-			// resting/loading states of a slide — animations live elsewhere.
+			// THE crossfade. Each slide's `.image` rests at opacity 0 and
+			// rises to 1 when its slide gains `.active` (set by renderer.js
+			// one frame after the slide is stacked on top). The outgoing
+			// slide stays opaque underneath until it's removed, so the new
+			// image fades in over the old with no background dip. This single
+			// `transition: opacity` is the ONLY motion source for a slide
+			// swap — engine-agnostic, identical in Safari/Chrome/Firefox.
+			// Duration + easing MUST match SLIDE_DURATION in renderer.js.
 			#viewer .slide .image {
 				position: absolute;
 				top: 0;
@@ -863,22 +847,7 @@
 				height: 100%;
 				z-index: 1;
 				opacity: 0;
-				// Soft fade for the *fallback* path (browsers without the
-				// View Transitions API, or initial-mount with async load).
-				// Duration + easing MUST match the ::view-transition-*
-				// rule below and SLIDE_DURATION in renderer.js — one
-				// crossfade vocabulary across every code path so users
-				// never see a different speed depending on their browser.
 				transition: opacity 0.5s cubic-bezier(0.45, 0, 0.55, 1);
-
-				// While a View Transition is in flight (renderer.js sets
-				// body.vt-active for the full duration), suppress this CSS
-				// transition. Safari abuses concurrent transitions on a
-				// snapshotted element; this guarantees the VT is the sole
-				// motion source.
-				body.vt-active & {
-					transition: none;
-				}
 
 				img {
 					display: block;
@@ -909,48 +878,13 @@
 				transition: opacity 150ms ease;
 			}
 
-			// View Transitions API — single motion vocabulary for both the
-			// thumbnail→viewer morph AND slide-to-slide navigation.
-			//
-			// Shared `view-transition-name: gallery-active-image` on the
-			// outgoing and incoming <img> lets the browser:
-			//   • interpolate position + size between them when they differ
-			//     (thumbnail click → magnify morph); and
-			//   • crossfade them when they coincide (next/prev → pure
-			//     photo-to-photo dissolve, no scale, no chrome).
-			//
-			// We deliberately do NOT apply custom transform/scale keyframes
-			// — the goal is total immersion in the photograph, with the
-			// browser's default behaviour as the single source of motion.
-			// One crossfade vocabulary for both layers of the View
-			// Transition — the tagged image AND the root group (every other
-			// element: captions, chrome, page background).
-			//
-			// Without this, the root falls back to the browser's UA default
-			// (~0.25s ease in Chrome, varying in Safari). The root crossfade
-			// finishing while the tagged group is still mid-morph reads as a
-			// two-stage transition: chrome snaps to its destination, then
-			// the photo finishes catching up. Locking both to the same
-			// 0.5s curve makes the whole VT feel like one breath.
-			::view-transition-group(root),
-			::view-transition-old(root),
-			::view-transition-new(root),
-			::view-transition-group(gallery-active-image),
-			::view-transition-old(gallery-active-image),
-			::view-transition-new(gallery-active-image) {
-				// Duration + easing MUST match the `.slide .image` fallback
-				// transition above. Single crossfade vocabulary is the
-				// whole point — no path-dependent speed deltas.
-				animation-duration: 0.5s;
-				animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
-			}
-
+			// Reduced motion — collapse the crossfade to a near-instant swap
+			// (no animated opacity ramp). The image still appears; it just
+			// doesn't fade.
 			@media (prefers-reduced-motion: reduce) {
-				::view-transition-old(root),
-				::view-transition-new(root),
-				::view-transition-old(gallery-active-image),
-				::view-transition-new(gallery-active-image) {
-					animation-duration: 0.01ms;
+				#viewer .slide .image,
+				#viewer .slide .caption .image_title {
+					transition-duration: 0.01ms;
 				}
 			}
 
@@ -999,7 +933,7 @@
 			}
 
 			// :has() lets one bar serve all slides without per-slide wiring.
-			// `#viewer.pending` covers the pre-VT await in `morphTo`
+			// `#viewer.pending` covers the load-wait in `switchTo`
 			// (renderer.js) so a slow click on a not-yet-warmed slide
 			// still gets the same 0.4s-delayed sweep feedback.
 			#viewer:has(.slide.loading) .loading-bar,

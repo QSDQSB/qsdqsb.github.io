@@ -1,6 +1,24 @@
 /**
  * DOM renderer: slide switching, loading states, bgSize toggle, fullscreen.
  * All visual mutations live here; other modules call these functions.
+ *
+ * MOTION MODEL — a single, engine-agnostic opacity crossfade.
+ *
+ * Every slide is an absolutely-positioned layer filling the viewer. To switch
+ * images we stack the incoming slide ON TOP of the outgoing one at opacity 0
+ * and fade it to 1; the outgoing slide stays fully opaque underneath until the
+ * fade completes, then it is removed. Because the new image always covers the
+ * old one at every opacity step, the composite never reveals the background —
+ * there is no mid-transition darkening "dip", just a clean dissolve.
+ *
+ * This deliberately uses ONLY a CSS `transition: opacity` (see `.slide .image`
+ * in _gallery_view.scss). There is no View Transitions API, no snapshotting,
+ * no decode-before-snapshot race, and no cross-browser divergence: the swap
+ * looks and times identically in Safari, Chrome, and Firefox. An earlier
+ * iteration drove this with `document.startViewTransition` and suppressed the
+ * CSS fallback during the transition — which produced hard cuts in Safari
+ * whenever its VT under-delivered, because nothing was left to animate. This
+ * model has no such failure mode.
  */
 
 import { getState, setState, subscribe } from './state.js';
@@ -56,12 +74,21 @@ export function init(body, viewer) {
   });
 }
 
-export const getViewer     = () => _viewer;
-export const getBody       = () => _body;
+export const getViewer      = () => _viewer;
+export const getBody        = () => _body;
 export const setLastTrigger = el => { _lastTrigger = el; };
 
-// ─── Core slide switch ───────────────────────────────────────────────────────
+// ─── Core slide switch — the one and only motion path ────────────────────────
 
+/**
+ * Switch the active slide to `index`, crossfading the new image in over the
+ * old. If the new image isn't decoded yet, the old image stays in place and a
+ * hairline loading bar shows until the new one is ready — so the visitor never
+ * sees a blank frame or a half-painted image.
+ *
+ * `noHide` skips the auto-collapse of the thumbnail rail on small viewports
+ * (used for the initial slide on load and for hash/popstate navigation).
+ */
 export function switchTo(index, noHide) {
   const { current, locked } = getState();
 
@@ -78,193 +105,68 @@ export function switchTo(index, noHide) {
 
   setState({ current: index, mode: 'viewer' });
 
-  if (oldSlide) {
+  // Move the thumbnail-rail selection (blue border) immediately — it should
+  // track intent, not wait for the image to finish loading.
+  if (oldSlide && oldSlide !== newSlide) {
     oldSlide.parent.classList.remove('active');
-    oldSlide.slideEl.classList.remove('active');
-    // The View Transitions API renders its own snapshot of the old slide
-    // for the duration of the transition, so we can remove the live DOM
-    // node fairly quickly without a visible cut.
-    setTimeout(() => oldSlide.slideEl.remove(), SLIDE_DURATION);
+    _concealCaption(oldSlide);
   }
-
   newSlide.parent.classList.add('active');
   newSlide.parent.focus();
 
-  _viewer.appendChild(newSlide.slideEl);
+  const crossfade = () => {
+    // Bail if the visitor navigated on while we were waiting to load.
+    if (getState().current !== index) { _viewer.classList.remove('pending'); return; }
 
-  const finalize = () => {
+    _viewer.classList.remove('pending');
     newSlide.slideEl.classList.remove('loading');
-    newSlide.slideEl.classList.add('active');
-    if (oldSlide) _concealCaption(oldSlide);
+
+    // Stack the incoming slide on top (appendChild moves it last == highest in
+    // the equal-z stacking order). It begins at opacity 0 via `.slide .image`.
+    _viewer.appendChild(newSlide.slideEl);
+
+    // Commit the opacity:0 starting state to layout BEFORE flipping to active,
+    // so the browser actually runs the 0→1 transition instead of collapsing
+    // append+active into a single frame (which would be an instant cut).
+    void newSlide.slideEl.offsetHeight;
+
+    newSlide.slideEl.classList.add('active'); // image fades 0 → 1 over the old
     _revealCaption(newSlide);
-    setTimeout(() => setState({ locked: false }), 100);
+
+    if (oldSlide && oldSlide !== newSlide) {
+      // Keep the old slide fully opaque UNDERNEATH the fading-in new one (no
+      // background dip), then retire it once the crossfade has completed.
+      const dying = oldSlide.slideEl;
+      setTimeout(() => {
+        // Don't remove it if the visitor has navigated back to it meanwhile.
+        if (getSlide(getState().current)?.slideEl !== dying) {
+          dying.classList.remove('active');
+          dying.remove();
+        }
+      }, SLIDE_DURATION);
+    }
+
+    // Release the lock partway through the fade so navigation stays responsive
+    // without letting a second swap start before this one is visually underway.
+    setTimeout(() => setState({ locked: false }), SLIDE_DURATION * 0.4);
   };
 
   if (newSlide.loaded) {
-    // Already loaded — finalize directly. (RAF can stall while a View
-    // Transition is awaiting its callback's promise, leaving locked=true.)
-    finalize();
+    crossfade();
   } else {
+    // Genuinely waiting on the network. Leave the old image on screen, show the
+    // loading bar, and crossfade only once the new image is fetched + decoded.
+    _viewer.classList.add('pending');
     newSlide.slideEl.classList.add('loading');
-    newSlide.load().then(() => {
-      // Bail if the user navigated away while we were loading.
-      if (getState().current !== index) return;
-      finalize();
-    });
+    newSlide.load().then(crossfade);
   }
 }
 
-/**
- * Same as switchTo but returns a promise that resolves once the slide is
- * fully active (image loaded, locked released). Used by the View Transitions
- * wrapper so the callback can await DOM settle before the post-snapshot.
- */
-export function switchToAsync(index, noHide) {
-  return new Promise(resolve => {
-    let started = false;
-    const unsub = subscribe('locked', val => {
-      if (val) { started = true; return; }
-      if (started) { unsub(); resolve(); }
-    });
-    switchTo(index, noHide);
-    // If switchTo bailed early (same index, locked, or no slide), nothing locked.
-    // Resolve next tick so callers don't hang.
-    queueMicrotask(() => { if (!started) { unsub(); resolve(); } });
-  });
-}
+// ─── Captions ────────────────────────────────────────────────────────────────
 
 /**
- * Pre-load a slide's full image so a subsequent switchTo is instant — used
- * to make View Transitions snapshots show a real image, not a blank.
- *
- * Thin wrapper over `slide.load()` (slides.js) — kept for backward-compat
- * with any external caller; new code should call `slide.load()` directly.
- */
-export function preloadSlide(slide) {
-  return slide.load();
-}
-
-const VT_NAME = 'gallery-active-image';
-
-const _prefersReducedMotion = () =>
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-// Module-level guard — `state.locked` releases ~100ms after `finalize()`
-// (well before the View Transition's animation completes at SLIDE_DURATION).
-// Without an explicit transition-lifetime guard, a second click during the
-// in-flight VT animation kicks off a new `startViewTransition()` while the
-// previous one is still painting — Safari aborts the new one (sometimes
-// silently, sometimes mid-flight) because the spec is stricter about
-// overlapping transitions than Chromium's tolerant implementation. This
-// flag stays `true` for the *whole* VT lifetime so a rapid second click is
-// dropped cleanly. Chromium users see no behavioural change vs. before.
-let _morphActive = false;
-
-/**
- * View-Transitions-API-driven slide change.
- *
- * Tags the source element (or current slide's <img> by default) and the
- * target slide's <img> with the same `view-transition-name`, then runs
- * the switch inside `document.startViewTransition`. The browser snapshots
- * old & new states and animates between them — for thumbnail clicks this
- * becomes a magnify morph; for slide-to-slide it's a crossfade.
- *
- * Falls through to plain switchTo if the API is unavailable or the user
- * has prefers-reduced-motion.
- */
-export async function morphTo(index, sourceImg = null) {
-  // Synchronous gate FIRST — claim the lock before any await so two rapid
-  // calls in the same task can't both pass the guard.
-  if (_morphActive) return;
-  const { current, locked } = getState();
-  if (current === index) return;
-  if (locked) return;
-
-  const newSlide = getSlide(index);
-  if (!newSlide) return;
-
-  if (!document.startViewTransition || _prefersReducedMotion()) {
-    switchTo(index);
-    return;
-  }
-
-  _morphActive = true;
-  // `body.vt-active` lets SCSS suppress concurrent CSS transitions on
-  // snapshotted elements (e.g. .image opacity fade) while the VT is
-  // animating. Without this, Safari sometimes runs both at once and
-  // produces visible jumps when the live DOM diverges from the snapshot.
-  document.body.classList.add('vt-active');
-  // `#viewer.pending` marks the gap between the click landing and the VT
-  // actually starting — usually zero with the warm-up preloader running,
-  // but non-zero if the visitor outruns it on a slow connection. The
-  // loading-bar reveal has a 0.4s delay (see SCSS) so cached/warm clicks
-  // never flash a bar; only genuinely-waiting clicks show feedback.
-  _viewer.classList.add('pending');
-  try {
-    const oldSlide = current !== null ? getSlide(current) : null;
-    const fromImg = sourceImg ?? oldSlide?.slideImg ?? null;
-
-    // Pre-load (and DECODE) the full image so the post-snapshot is real
-    // pixels, not a blank or half-decoded <img>. `slide.load()` is the
-    // single owner of the <img>'s load lifecycle — see slides.js.
-    await newSlide.load();
-    _viewer.classList.remove('pending');
-
-    // Defensive cleanup: clear stale view-transition-name from any previous
-    // run before tagging this round's source. Some Safari versions don't
-    // reliably remove the inline property when set to '', so use both forms.
-    _clearVTName(fromImg);
-    _clearVTName(newSlide.slideImg);
-
-    if (fromImg) fromImg.style.viewTransitionName = VT_NAME;
-
-    const transition = document.startViewTransition(async () => {
-      // Mutation phase: clear the source name (about to be torn down anyway)
-      // and tag the target before the new snapshot is captured.
-      _clearVTName(fromImg);
-      newSlide.slideImg.style.viewTransitionName = VT_NAME;
-      await switchToAsync(index);
-    });
-
-    transition.finished.finally(() => {
-      _clearVTName(fromImg);
-      _clearVTName(newSlide.slideImg);
-      // Defer the `vt-active` removal by one frame. Safari occasionally
-      // resolves `finished` a tick before the last paint settles; dropping
-      // the class synchronously can re-enable the suppressed CSS
-      // transitions (.image opacity, caption opacity) just in time to fire
-      // a tiny secondary fade on the just-landed slide — perceived as a
-      // soft double-flash. One RAF guarantees the VT animation has fully
-      // committed before transitions re-arm.
-      requestAnimationFrame(() => {
-        document.body.classList.remove('vt-active');
-        _morphActive = false;
-      });
-    });
-  } catch (err) {
-    document.body.classList.remove('vt-active');
-    _viewer.classList.remove('pending');
-    _morphActive = false;
-    throw err;
-  }
-}
-
-// Robustly remove an inline `view-transition-name` across browsers.
-function _clearVTName(el) {
-  if (!el || !el.style) return;
-  el.style.viewTransitionName = '';
-  el.style.removeProperty('view-transition-name');
-}
-
-/**
- * Reveal the title overlay on a slide and schedule its auto-hide.
- *
- * The new caption is meant to ride the same VT crossfade as the photograph,
- * not animate in afterwards. We rely on SCSS (`body.vt-active .image_title`
- * with `transition: none`) to snap opacity to 1 during the View Transition
- * — no inline-style hacks, no forced reflow inside the VT callback. Once
- * `vt-active` is cleared, the auto-hide fades the title out with the
- * unified opacity vocabulary.
+ * Reveal the title overlay on a slide and schedule its auto-hide. The caption
+ * rides the same opacity vocabulary as the image (see `.image_title` in SCSS).
  */
 function _revealCaption(slide) {
   const title = slide.slideCaption.querySelector('.image_title');
@@ -276,10 +178,7 @@ function _revealCaption(slide) {
   }, CAPTION_DURATION);
 }
 
-/**
- * Symmetric pair of `_revealCaption`. Hides the previously-shown title so
- * old and new captions don't stack overlapped in the VT root snapshot.
- */
+/** Hide a slide's title — symmetric to `_revealCaption`. */
 function _concealCaption(slide) {
   const title = slide.slideCaption.querySelector('.image_title');
   if (!title) return;
@@ -293,28 +192,28 @@ export function next() {
   const { current, locked } = getState();
   if (locked) return;
   const n = slideCount();
-  morphTo(current >= n - 1 ? 0 : current + 1);
+  switchTo(current >= n - 1 ? 0 : current + 1);
 }
 
 export function previous() {
   const { current, locked } = getState();
   if (locked) return;
   const n = slideCount();
-  morphTo(current <= 0 ? n - 1 : current - 1);
+  switchTo(current <= 0 ? n - 1 : current - 1);
 }
 
 export function up() {
   if (_body.classList.contains('fullscreen')) return;
   const { current } = getState();
   const n = slideCount(), tpr = 2; // thumbnailsPerRow — must match SCSS
-  morphTo(current <= tpr - 1 ? n - (tpr - 1 - current) - 1 : current - tpr);
+  switchTo(current <= tpr - 1 ? n - (tpr - 1 - current) - 1 : current - tpr);
 }
 
 export function down() {
   if (_body.classList.contains('fullscreen')) return;
   const { current } = getState();
   const n = slideCount(), tpr = 2;
-  morphTo(current >= n - tpr ? current - n + tpr : current + tpr);
+  switchTo(current >= n - tpr ? current - n + tpr : current + tpr);
 }
 
 // ─── Panel show / hide / toggle ──────────────────────────────────────────────
