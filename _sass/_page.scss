@@ -185,6 +185,24 @@ body.has-overlay-hero {
   transition: all $global-transition-time cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+/* ==========================================================================
+   POST READING MODE — posts collection only (body.collection--posts)
+
+   Long-form prose discipline, applied to the article body
+   (`section.page__content`) ONLY — the shell, page footer, pagination,
+   and related grid keep their stock geometry. Didot for the reading
+   face, and a fixed typographic measure of ~44 CJK glyphs per line at
+   the post body size, centred within the card. Screens narrower than
+   the measure naturally get the full width.
+   ========================================================================== */
+
+body.collection--posts .page__inner-wrap .page__content {
+  float: none;
+  max-width: 50rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 
 .page__title {
   margin-top: 0;

@@ -16,3 +16,6 @@ images/thumbnails/gallery/**/*.jpg
 images/thumbnails/gallery/**/*.jpeg
 images/thumbnails/gallery/**/*.webp
 _data/gallery_meta/
+
+.playwright-mcp
+design/

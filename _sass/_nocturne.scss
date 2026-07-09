@@ -1,0 +1,89 @@
+/* ==========================================================================
+   NOCTURNE — post-scoped literary treatment
+
+   A quiet, chapter-plate reading mode for elegiac long-form pieces.
+   Opt in per post with `body_class: nocturne` in frontmatter.
+
+   Motion rides the sitewide scroll-reveal state machine
+   (assets/js/scroll-animations.js adds `.reveal-on-scroll` / `.is-visible`),
+   which never runs under `prefers-reduced-motion` — so the overrides below
+   inherit that safety without their own gating.
+   ========================================================================== */
+
+body.nocturne {
+  .page__content {
+    line-height: 2.15;
+    font-family: $didot-family;
+    // Chapter plates — the numerals read as stations along the walk,
+    // not document headings.
+    h2 {
+      margin: 4.5rem 0 2.5rem;
+      padding-bottom: 0;
+      border-bottom: 0;
+      text-align: center;
+      font-weight: 400;
+      font-size: $type-size-4;
+      // trailing tracking offsets the last glyph; text-indent recentres
+      text-indent: 0.5em;
+    }
+
+    // The piece's own title plate — centred like the chapter numerals.
+    h1 {
+      text-align: center;
+      border-bottom: 0;
+    }
+
+  }
+
+  // The held silence of a chapter that goes unwritten.
+  // (kramdown renders the source `...` as a single … glyph)
+  .nocturne-silence {
+    margin: 5rem 0;
+    text-align: center;
+    text-indent: 0;
+    font-family: $didot-family;
+    font-size: $type-size-3;
+    opacity: 0.45;
+  }
+
+  // Departure — extra air before the closing image.
+  .nocturne-final {
+    margin-top: 4rem;
+    text-indent: 0;
+  }
+}
+
+/* Scroll-reveal overrides — same state machine, different gestures. */
+.js.scroll-reveal-ready body.nocturne {
+
+  // The silence holds its breath before appearing.
+  .nocturne-silence.reveal-on-scroll {
+    transform: none;
+    transition: opacity 2.4s ease;
+
+    &.is-visible {
+      transform: none;
+      opacity: 0.45;
+    }
+  }
+
+  // The last image develops out of darkness, like a print in the tray.
+  .nocturne-final.reveal-on-scroll {
+    transform: none;
+    filter: blur(6px);
+    transition:
+      opacity 1.8s $cubic-bezier-smooth,
+      filter 1.8s $cubic-bezier-smooth;
+
+    &.is-visible {
+      transform: none;
+      filter: blur(0);
+    }
+  }
+}
+
+@include responsive-reduced-motion {
+  body.nocturne .nocturne-final {
+    filter: none !important;
+  }
+}
