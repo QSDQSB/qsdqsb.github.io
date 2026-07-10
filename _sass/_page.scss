@@ -51,7 +51,14 @@
   display: block;
   text-align: center;
   img {
-    max-width: 80%;
+    // Display logic: authors express a desired width via the `--img-max`
+    // custom property in markup (e.g. `style="--img-max: 880px"`); default
+    // is the historical 80% of the column. The `min(…, 100%)` clamp lives
+    // here in CSS, so the image can never exceed its container — no inline
+    // value can defeat it. This is what prevents mobile viewport breach.
+    // (unquote keeps Ruby Sass 3.7 from trying to evaluate the CSS min().)
+    max-width: unquote("min(var(--img-max, 80%), 100%)");
+    height: auto;
     margin: 0.5em auto;
     align-self: center;
     border-radius: 1em;
