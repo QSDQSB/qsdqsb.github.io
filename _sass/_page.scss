@@ -478,8 +478,7 @@ body.collection--posts .page__inner-wrap .page__content {
       margin-top: $overlay-hero-title-excerpt-gap;
       font-size: clamp(1.02rem, 1.34vw, 1.34rem);
       line-height: 1.26;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      letter-spacing: 0.015em;
       white-space: normal;
       overflow-wrap: anywhere;
       opacity: 0.9;
@@ -569,7 +568,7 @@ body.collection--posts .page__inner-wrap .page__content {
     margin-top: clamp(0.5rem, 2.8vw, 0.82rem);
     font-size: clamp(0.86rem, 3.15vw, 1.04rem);
     line-height: 1.22;
-    letter-spacing: 0.065em;
+    letter-spacing: 0.015em;
     white-space: normal;
   }
 }
