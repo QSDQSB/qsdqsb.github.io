@@ -45,7 +45,7 @@ swipers:
     <span>🤷‍♂️ Who the hell is QSD ???</span>
     <span>🫵🏻 Maybe you are QSD !</span>
     <span>🥂 Welcome to QSB's House of Wonders !</span>
-    <span>🪦 The foundation of this site: <a href="/posts/day-one" target="_blank"><i>Day One · The Epitaph .</i></a></span>
+    <span>🪦 The foundation of this site: <a href="/posts/day-one/" target="_blank"><i>Day One · The Epitaph .</i></a></span>
     <span>🍭 Do you know QSD were once known as QXD ?</span>
   </span>
 </span></h1>
