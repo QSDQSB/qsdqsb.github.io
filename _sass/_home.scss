@@ -7,31 +7,7 @@
 
 /* ---- Full-screen atmospheric backdrop behind the whole page ---- */
 body.layout--home {
-  background-color: #08080c;
-}
-
-body.layout--home::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  pointer-events: none;
-  background:
-    radial-gradient(58% 48% at 74% 20%, rgba(198, 162, 74, 0.10), transparent 60%),
-    radial-gradient(66% 66% at 16% 88%, rgba(74, 107, 138, 0.10), transparent 70%),
-    radial-gradient(52% 52% at 50% 55%, rgba(107, 92, 134, 0.07), transparent 72%),
-    linear-gradient(180deg, #08080c 0%, #0b0a10 55%, #08080c 100%);
-}
-
-body.layout--home::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  @include atmospheric-backdrop;
 }
 
 /* #main defaults to the flex sidebar shell; Home has no sidebar, so restore
@@ -325,37 +301,54 @@ body.layout--home::after {
   margin-top: 2.5rem;
 }
 
-/* ======================= ENTRANCE CHOREOGRAPHY ======================= */
-/* Pure-CSS load cascade — robust (content is never left hidden), no JS, no scroll
-   dependency. `backwards` fill holds the hidden state only during the delay, then
-   reverts to the natural style so portal :hover transforms keep working. */
+/* ======================= SCROLL-REVEAL CHOREOGRAPHY ======================= */
+/* Sections reveal as they scroll into view. Gated on `html.home-reveal-ready`,
+   which the observer in home.html adds only when motion is allowed and JS runs —
+   so reduced-motion / no-JS users get everything statically visible (no hiding). */
 
-@keyframes home-rise {
-  from { opacity: 0; transform: translateY(22px); }
-  to { opacity: 1; transform: none; }
+html.home-reveal-ready .home .reveal-up {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.75s $cubic-bezier-smooth,
+    transform 0.85s $cubic-bezier-smooth;
+  will-change: opacity, transform;
 }
 
-.home .reveal-up {
-  animation: home-rise 0.9s $cubic-bezier-smooth backwards;
+html.home-reveal-ready .home .reveal-up.is-in {
+  opacity: 1;
+  transform: none;
 }
-.home__orient { animation-delay: 0.15s; }
-.home__whats-new { animation-delay: 0.3s; }
-.home__notice { animation-delay: 0.4s; }
 
-/* Portal tiles stagger in individually (the grid itself is not animated). */
-.home__portals .portal {
-  animation: home-rise 0.85s $cubic-bezier-smooth backwards;
+/* The portals <nav> is only a trigger — keep the box itself visible and stagger
+   the individual tiles once it enters view. */
+html.home-reveal-ready .home__portals.reveal-up {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
 }
-.home__portals .portal:nth-child(1) { animation-delay: 0.26s; }
-.home__portals .portal:nth-child(2) { animation-delay: 0.34s; }
-.home__portals .portal:nth-child(3) { animation-delay: 0.42s; }
-.home__portals .portal:nth-child(4) { animation-delay: 0.5s; }
 
-/* Reduced-motion: no entrance animations at all, everything static + visible. */
+html.home-reveal-ready .home__portals .portal {
+  opacity: 0;
+  transform: translateY(24px) scale(0.985);
+  transition:
+    opacity 0.65s $cubic-bezier-smooth,
+    transform 0.8s $cubic-bezier-smooth;
+}
+
+html.home-reveal-ready .home__portals.is-in .portal {
+  opacity: 1;
+  transform: none;
+}
+
+.home__portals .portal:nth-child(1) { transition-delay: 0.04s; }
+.home__portals .portal:nth-child(2) { transition-delay: 0.12s; }
+.home__portals .portal:nth-child(3) { transition-delay: 0.2s; }
+.home__portals .portal:nth-child(4) { transition-delay: 0.28s; }
+
+/* Reduced-motion: neutralise the wordmark + scroll-cue animations too. */
 @include responsive-reduced-motion {
-  .layout--home .home__wordmark,
-  .home__scrollcue,
-  .home__scrollcue-arrow,
-  .home .reveal-up,
-  .home__portals .portal { animation: none; }
+  .layout--home .home__wordmark { animation: none; }
+  .home__scrollcue { animation: none; }
+  .home__scrollcue-arrow { animation: none; }
 }

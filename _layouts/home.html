@@ -36,3 +36,41 @@ layout: default
     {{ content }}
   </div>
 </div>
+
+<script>
+  // Scoped scroll-reveal for the Home sections (Home has no .page__content, so the
+  // site-wide scroll-animations.js does not run here). IntersectionObserver-based,
+  // matching the site's approach. Fails safe: if JS/IO is unavailable or the user
+  // prefers reduced motion, `home-reveal-ready` is never set and every section stays
+  // statically visible (the hiding CSS is gated on that class).
+  (function () {
+    var els = Array.prototype.slice.call(document.querySelectorAll(".home .reveal-up"));
+    if (!els.length) return;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || !("IntersectionObserver" in window)) {
+      els.forEach(function (el) { el.classList.add("is-in"); });
+      return;
+    }
+    document.documentElement.classList.add("home-reveal-ready");
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.add("is-in");
+        io.unobserve(e.target);
+      });
+    }, { rootMargin: "0px 0px -10% 0px", threshold: 0.12 });
+    els.forEach(function (el) {
+      if (el.getBoundingClientRect().top < vh) {
+        el.classList.add("is-in"); // already in view on load
+      } else {
+        io.observe(el);
+      }
+    });
+    // Safety net: never leave a section permanently hidden if the observer never
+    // fires for some reason. Below-fold sections just reveal after a short idle.
+    window.setTimeout(function () {
+      els.forEach(function (el) { el.classList.add("is-in"); });
+    }, 6000);
+  })();
+</script>

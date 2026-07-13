@@ -4,6 +4,18 @@
    Scoped under `.page--about` (set via about.md `body_class`).
    ========================================================================== */
 
+/* Shared cinematic depth with Home — fixed gradient-mesh + grain backdrop. */
+body.page--about {
+  @include atmospheric-backdrop;
+}
+
+/* Taller, more immersive hero to echo Home's cinematic scale (still content-first,
+   so it keeps the dissolve-into-page treatment rather than filling the viewport). */
+.page--about .page__hero--overlay {
+  min-height: clamp(28rem, 76vh, 46rem);
+  min-height: clamp(28rem, 76svh, 46rem);
+}
+
 /* #main defaults to the flex sidebar shell; About has no sidebar, so restore
    normal block flow — otherwise .about becomes a non-shrinking flex item and
    overflows the viewport horizontally (same fix as Home). */
