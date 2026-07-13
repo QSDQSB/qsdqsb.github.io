@@ -43,8 +43,8 @@ body.layout--home {
   content: "";
   position: absolute;
   inset: -4%;
-  background: linear-gradient(rgba(6, 6, 11, 0.4), rgba(6, 6, 11, 0.6)), var(--hero-photo) center / cover no-repeat;
-  filter: brightness(0.78) saturate(0.95);
+  background: linear-gradient(rgba(6, 6, 11, 0.52), rgba(6, 6, 11, 0.72)), var(--hero-photo) center / cover no-repeat;
+  filter: brightness(0.6) saturate(0.92);
   transform: scale(1.02);
   /* gradient mask — the photo reads through the centre and fades out at the edges */
   -webkit-mask-image: radial-gradient(125% 115% at 50% 44%, #000 32%, rgba(0, 0, 0, 0.5) 64%, transparent 94%);
@@ -77,9 +77,9 @@ body.layout--home {
 .home__hero-blobs .blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(55px);
+  filter: blur(60px);
   mix-blend-mode: screen;
-  opacity: 0.5;
+  opacity: 0.4;
   will-change: transform;
 }
 .blob--1 {
@@ -123,9 +123,11 @@ body.layout--home {
   position: absolute;
   inset: 0;
   z-index: 1;
-  -webkit-backdrop-filter: blur(10px) saturate(112%) brightness(0.85);
-          backdrop-filter: blur(10px) saturate(112%) brightness(0.85);
-  background: linear-gradient(180deg, rgba(7, 7, 11, 0.2) 0%, rgba(7, 7, 11, 0.34) 55%, rgba(7, 7, 11, 0.56) 100%);
+  -webkit-backdrop-filter: blur(16px) saturate(110%) brightness(0.72);
+          backdrop-filter: blur(16px) saturate(110%) brightness(0.72);
+  background:
+    linear-gradient(100deg, rgba(6, 6, 10, 0.62) 0%, rgba(6, 6, 10, 0.3) 40%, rgba(6, 6, 10, 0) 68%),
+    linear-gradient(180deg, rgba(7, 7, 11, 0.26) 0%, rgba(7, 7, 11, 0.4) 55%, rgba(7, 7, 11, 0.62) 100%);
   animation: home-frost 4.4s ease-out both;
 }
 
@@ -406,23 +408,24 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
 /* On load the background settles back: the QSD photo is briefly glimpsed, then
    darkens and blurs into the frosted distance so the title takes over. */
 @keyframes home-darken {
-  from { filter: brightness(1.05) saturate(1.08); }
-  to { filter: brightness(0.78) saturate(0.95); }
+  from { filter: brightness(0.92) saturate(1.02); }
+  to { filter: brightness(0.6) saturate(0.92); }
 }
 @keyframes home-frost {
   from {
-    -webkit-backdrop-filter: blur(1px) saturate(106%) brightness(0.98);
-            backdrop-filter: blur(1px) saturate(106%) brightness(0.98);
+    -webkit-backdrop-filter: blur(4px) saturate(108%) brightness(0.9);
+            backdrop-filter: blur(4px) saturate(108%) brightness(0.9);
   }
   to {
-    -webkit-backdrop-filter: blur(10px) saturate(112%) brightness(0.85);
-            backdrop-filter: blur(10px) saturate(112%) brightness(0.85);
+    -webkit-backdrop-filter: blur(16px) saturate(110%) brightness(0.72);
+            backdrop-filter: blur(16px) saturate(110%) brightness(0.72);
   }
 }
-/* Reveal the shiny QSD centre from time to time. */
+/* Reveal the shiny QSD centre from time to time — kept gentle so it never
+   competes with the white title. */
 @keyframes home-qsd-pulse {
-  0%, 100% { opacity: 0.08; }
-  50% { opacity: 0.72; }
+  0%, 100% { opacity: 0.06; }
+  50% { opacity: 0.48; }
 }
 @keyframes home-bg-drift {
   from { transform: translate3d(-2%, 1%, 0) scale(1); opacity: 0.78; }
