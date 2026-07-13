@@ -1,4 +1,84 @@
 /* ==========================================================================
    ABOUT — editorial self-intro page at `/about/`
-   The relocated scrapbook: clustered self-intro, coda marginalia, banner.
+   The relocated scrapbook: clustered self-intro, coda asides, banner + logo.
+   Scoped under `.page--about` (set via about.md `body_class`).
    ========================================================================== */
+
+/* #main defaults to the flex sidebar shell; About has no sidebar, so restore
+   normal block flow — otherwise .about becomes a non-shrinking flex item and
+   overflows the viewport horizontally (same fix as Home). */
+.page--about #main {
+  display: block;
+}
+
+.about {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.2rem 4rem;
+}
+
+/* --- self-deprecating label row above the clusters --- */
+.about__labels {
+  font-family: $barlow-font-family;
+  font-size: $type-size-7;
+  text-align: center;
+  line-height: 2.1;
+  color: rgba($primary-color, 0.6);
+  margin: 1.5rem 0 2rem;
+}
+
+/* --- the self-intro, grouped into scannable clusters --- */
+.about__clusters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0 2.5rem;
+
+  @include responsive-down(mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.about__cluster {
+  background: rgba($primary-color, 0.035);
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  padding: 1.15rem 1.3rem 1.35rem;
+
+  h3 {
+    font-family: $barlow-font-family;
+    font-size: $type-size-8;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba($primary-color, 0.7);
+    margin: 0 0 0.85rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  li {
+    font-family: $barlow-font-family;
+    font-size: $type-size-6;
+    line-height: 1.4;
+    color: rgba($primary-color, 0.85);
+  }
+}
+
+/* --- coda asides (post-scriptum): quiet marginalia, replaces the old
+   "what should we do before publishing" scaffolding --- */
+.about__aside {
+  font-family: $barlow-font-family;
+  font-size: $type-size-6;
+  line-height: 1.55;
+  color: rgba($primary-color, 0.72);
+  border-left: 2px solid $border-color;
+  padding: 0.15rem 0 0.15rem 1rem;
+  margin: 1rem 0;
+}
