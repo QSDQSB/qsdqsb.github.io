@@ -1,17 +1,16 @@
 /* ==========================================================================
-   HOME — bespoke cinematic landing page at `/`
-   Scoped under `.layout--home` (set by _layouts/default.html when page.url == "/").
-   Full-screen hero reuses .page__hero--overlay hooks so the develop-in opening
-   scene fires; everything below floats over a fixed atmospheric backdrop.
+   HOME — typographic editorial landing at `/`
+   Scoped under `.layout--home`. A LoveFrom-leaning composition: a type-forward
+   hero (motto + line-revealed wordmark + a typewriter identity), an editorial
+   destination index with hover image-reveal, and a premium What's New feature.
+   Everything floats over the shared atmospheric backdrop.
    ========================================================================== */
 
-/* ---- Full-screen atmospheric backdrop behind the whole page ---- */
 body.layout--home {
   @include atmospheric-backdrop;
 }
 
-/* #main defaults to the flex sidebar shell; Home has no sidebar, so restore
-   normal block flow and let content sit above the fixed backdrop. */
+/* #main is the flex sidebar shell by default; Home has no sidebar. */
 .layout--home #main {
   display: block;
   position: relative;
@@ -19,434 +18,273 @@ body.layout--home {
 }
 
 /* ============================ HERO ============================ */
-
-/* Full-screen cinematic panel (overrides the shared bounded/dissolving hero). */
-.layout--home .home__hero {
+.home__hero {
+  position: relative;
   min-height: 100vh;
   min-height: 100svh;
-  align-items: flex-end;
-  margin-bottom: 0;
-  padding: clamp(5rem, 12vh, 8rem) 0 clamp(4.5rem, 13vh, 8rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(5rem, 12vh, 8rem) clamp(1.4rem, 5vw, 4rem) clamp(4rem, 10vh, 7rem);
 }
 
-/* Photo fills the whole viewport — drop the "dissolve into page" mask and
-   replace it with a cinematic vignette + bottom scrim for legibility. A slow
-   Ken Burns push gives the still photo life. */
-.layout--home .home__hero .page__hero-media {
-  -webkit-mask-image: none;
-  mask-image: none;
-  transform-origin: 60% 45%;
-  animation: home-kenburns 28s ease-out both;
+.home__hero-inner { width: 100%; max-width: 1180px; margin: 0 auto; }
 
-  &::before {
-    display: none;
-  }
-
-  &::after {
-    background:
-      radial-gradient(125% 85% at 50% 30%, transparent 34%, rgba(6, 6, 10, 0.55) 100%),
-      linear-gradient(
-        180deg,
-        rgba(6, 6, 10, 0.5) 0%,
-        rgba(6, 6, 10, 0.12) 22%,
-        rgba(6, 6, 10, 0.12) 42%,
-        rgba(6, 6, 10, 0.84) 100%
-      );
-  }
-}
-
-/* Drifting aurora glow — atmosphere + colour over the dark photo. */
-.home__aurora {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  background:
-    radial-gradient(38% 30% at 18% 78%, rgba(198, 162, 74, 0.16), transparent 68%),
-    radial-gradient(34% 30% at 82% 26%, rgba(74, 107, 138, 0.14), transparent 70%),
-    radial-gradient(30% 26% at 60% 60%, rgba(138, 52, 48, 0.10), transparent 72%);
-  animation: home-aurora 22s ease-in-out infinite alternate;
-}
-
-/* Signature interaction: a warm light that follows the pointer across the hero
-   (--mx/--my set by the script in home.html; pointer-fine + motion only). */
-.home__spotlight {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0;
-  mix-blend-mode: screen;
-  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(201, 162, 75, 0.2) 0%, rgba(201, 162, 75, 0.08) 14%, transparent 34%);
-  transition: opacity 0.6s $cubic-bezier-smooth;
-}
-.home__hero:hover .home__spotlight {
-  opacity: 1;
-}
-
-/* Keep the hero copy above the aurora + media + spotlight layers. */
-.layout--home .home__hero .wrapper {
-  position: relative;
-  z-index: 2;
-}
-
-/* Latin-motto eyebrow above the wordmark (small-caps handles the æ ligature
-   gracefully, unlike letter-spaced text-transform: uppercase). */
 .home__eyebrow {
   font-family: $barlow-font-family;
   font-size: $type-size-6;
-  font-variant: small-caps;
   font-style: italic;
-  letter-spacing: 0.22em;
+  font-variant: small-caps;
+  letter-spacing: 0.34em;
   color: $h2-color;
-  margin: 0 0 1.1rem;
-  padding-left: 0.2em;
+  margin: 0 0 2.2rem;
+  padding-left: 0.3em;
+  opacity: 0;
+  animation: home-rise 1.1s $cubic-bezier-smooth 0.3s forwards;
 }
 
-/* Wordmark — Didot in aged brass, with a light-written entrance + slow sheen.
-   The gold gradient stops are intrinsic to this one treatment, so they stay inline. */
-.layout--home .home__wordmark {
+.home__wordmark {
   font-family: $didot-family;
-  font-size: clamp(2.8rem, 8.5vw, 6rem);
-  line-height: 1;
-  letter-spacing: 0.006em;
+  font-weight: 600;
+  font-size: clamp(3.2rem, 11vw, 9.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.015em;
   margin: 0;
-  animation: home-wordmark-in 1.5s $cubic-bezier-smooth 0.35s both;
-}
-
-.layout--home .home__wordmark .page__title-text {
-  display: inline-block;
   text-wrap: balance;
-  background: linear-gradient(96deg, #f6efe0 0%, #efd9a4 38%, #c9a24b 52%, #f6efe0 100%);
-  background-size: 220% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  filter: drop-shadow(0 4px 26px rgba(0, 0, 0, 0.6));
-  animation: home-sheen 7.5s ease-in-out 1.9s infinite;
-}
 
-@keyframes home-kenburns {
-  from { transform: scale(1.02); }
-  to { transform: scale(1.13); }
-}
-
-@keyframes home-aurora {
-  from { opacity: 0.65; transform: translate3d(-1.5%, 1%, 0) scale(1); }
-  to { opacity: 1; transform: translate3d(2%, -1.5%, 0) scale(1.08); }
-}
-
-@keyframes home-sheen {
-  0%, 100% { background-position: 0% 0; }
-  50% { background-position: 100% 0; }
-}
-
-@keyframes home-wordmark-in {
-  from {
-    opacity: 0;
-    letter-spacing: 0.22em;
-    filter: blur(7px);
-    transform: translateY(0.5em);
+  .ln { display: block; overflow: hidden; }
+  .ln > span {
+    display: block;
+    transform: translateY(105%);
+    animation: home-line-up 1.15s $cubic-bezier-smooth forwards;
   }
-  60% {
-    opacity: 1;
-  }
-  to {
-    opacity: 1;
-    letter-spacing: 0.01em;
-    filter: blur(0);
-    transform: translateY(0);
+  .ln:nth-child(1) > span { animation-delay: 0.42s; }
+  .ln:nth-child(2) > span { animation-delay: 0.54s; }
+  .ln:nth-child(3) > span { animation-delay: 0.66s; }
+
+  .gold {
+    background: linear-gradient(94deg, #f6efe0, #e6ce8f 42%, #c9a24b 56%, #f6efe0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    filter: drop-shadow(0 4px 26px rgba(0, 0, 0, 0.55));
   }
 }
 
-.layout--home .home__hero .page__lead {
-  font-size: clamp(1rem, 2.4vw, 1.4rem);
-  margin-top: 1rem;
+/* Typewriter identity line — cycles the persona excerpts, one at a time
+   (reuses the site's .text-type-writer component). */
+.home__identity {
+  margin-top: 2.5rem;
+  opacity: 0;
+  animation: home-rise 1s $cubic-bezier-smooth 1.05s forwards;
 }
+.home__identity .text-type-writer {
+  font-family: $didot-family;
+  font-style: italic;
+  font-size: clamp(1.05rem, 2vw, 1.5rem);
+  color: rgba($primary-color, 0.72);
+  line-height: 1.3;
+}
+.home__identity .text-type-writer > span { height: 1.5em; }
 
-/* Scroll cue pinned to the bottom of the hero. */
 .home__scrollcue {
   position: absolute;
-  left: 50%;
-  bottom: clamp(1.4rem, 4vh, 2.6rem);
-  transform: translateX(-50%);
-  z-index: 3;
+  left: clamp(1.4rem, 5vw, 4rem);
+  bottom: 2.4rem;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.65rem;
-  color: rgba($primary-color, 0.68);
-  text-decoration: none;
-  animation: home-cue-in 1s ease 1.7s both;
-}
-
-.home__scrollcue:hover,
-.home__scrollcue:focus-visible {
-  color: $primary-color;
-}
-
-.home__scrollcue-word {
-  font-family: $barlow-font-family;
-  font-size: $type-size-8;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  padding-left: 0.34em;
-}
-
-.home__scrollcue-arrow {
-  width: 1.3rem;
-  height: 1.3rem;
-  border-right: 1px solid currentColor;
-  border-bottom: 1px solid currentColor;
-  transform: rotate(45deg);
-  animation: home-cue-bob 1.9s ease-in-out infinite;
-}
-
-@keyframes home-cue-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes home-cue-bob {
-  0%, 100% { transform: rotate(45deg) translate(0, 0); }
-  50% { transform: rotate(45deg) translate(0.3rem, 0.3rem); }
-}
-
-/* ======================= CONTENT (below hero) ======================= */
-
-.home {
-  max-width: 68rem;
-  margin: 0 auto;
-  padding: clamp(3.5rem, 9vh, 7rem) 1.2rem 5.5rem;
-  position: relative;
-}
-
-/* Orienting line, directly under the hero. */
-.home__orient {
-  font-family: $didot-family;
-  font-size: $type-size-4;
-  line-height: 1.5;
-  color: $primary-color;
-  text-align: center;
-  max-width: 40rem;
-  margin: 0 auto;
-  opacity: 0.92;
-}
-
-/* ---- Four portals: the primary "ways in" ---- */
-.home__portals {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
   gap: 0.9rem;
-  margin: clamp(3rem, 7vh, 5rem) 0 4rem;
-
-  @include responsive-down(tablet-wide) {
-    grid-template-columns: 1fr 1fr;
-  }
-  @include responsive-down(mobile) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.portal {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-height: 18.5rem;
-  padding: 1.5rem;
-  border-radius: $border-radius;
-  color: $primary-color;
-  text-decoration: none;
-  box-shadow: $shadow-soft;
-  transition:
-    transform $global-transition-time $cubic-bezier-smooth,
-    box-shadow $global-transition-time $cubic-bezier-smooth;
-
-  /* photo-as-tone */
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -3;
-    background-image: var(--portal-img);
-    background-size: cover;
-    background-position: center;
-    transform: scale(1.04);
-    transition: transform 1.3s $cubic-bezier-smooth;
-  }
-
-  /* tonal scrim + per-portal accent glow + a 2px accent hairline along the top
-     edge (accent supplied inline via --portal-accent) */
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -2;
-    background:
-      linear-gradient(180deg, rgba(var(--portal-accent), 0.95) 0, rgba(var(--portal-accent), 0.95) 2px, transparent 2px),
-      linear-gradient(180deg, rgba(12, 11, 15, 0.1) 0%, rgba(12, 11, 15, 0.86) 100%),
-      radial-gradient(130% 92% at 18% 10%, rgba(var(--portal-accent), 0.42), transparent 62%);
-    transition: opacity $global-transition-time $cubic-bezier-smooth;
-  }
-
-  /* cursor-following accent highlight (--mx/--my set by the hero script) */
-  .portal__sheen {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    opacity: 0;
-    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(var(--portal-accent), 0.5), transparent 42%);
-    transition: opacity 0.4s $cubic-bezier-smooth;
-  }
-  &:hover .portal__sheen,
-  &:focus-visible .portal__sheen {
-    opacity: 1;
-  }
-
-  &:hover,
-  &:focus-visible {
-    transform: translateY(-0.5rem);
-    box-shadow:
-      $shadow-floating,
-      0 0 0 1px rgba(var(--portal-accent), 0.5),
-      0 16px 46px -14px rgba(var(--portal-accent), 0.62);
-  }
-  &:hover::before,
-  &:focus-visible::before {
-    transform: scale(1.12);
-  }
-  &:hover::after,
-  &:focus-visible::after {
-    opacity: 0.82;
-  }
-
-  @include responsive-reduced-motion {
-    transition: none;
-    &::before { transition: none; }
-    &:hover, &:focus-visible { transform: none; }
-    &:hover::before, &:focus-visible::before { transform: scale(1.04); }
-  }
-}
-
-.portal__kicker {
   font-family: $barlow-font-family;
   font-size: $type-size-8;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  letter-spacing: 0.22em;
-  color: rgba($primary-color, 0.72);
-}
-
-.portal__title {
-  font-family: $didot-family;
-  font-size: $type-size-2;
-  line-height: 1.02;
-  margin-top: 0.2rem;
-}
-
-.portal__desc {
-  font-family: $barlow-font-family;
-  font-size: $type-size-7;
-  line-height: 1.35;
-  color: rgba($primary-color, 0.78);
-  margin-top: 0.55rem;
-  min-height: 2.7em; /* reserve two lines so portal titles align across tiles */
-  opacity: 0.82;
-  transition:
-    color $global-transition-time $cubic-bezier-smooth,
-    opacity $global-transition-time $cubic-bezier-smooth;
-}
-
-.portal:hover .portal__desc,
-.portal:focus-visible .portal__desc {
-  opacity: 1;
-  color: rgba($primary-color, 0.95);
-}
-
-@include responsive-reduced-motion {
-  .portal__desc { transition: none; }
-}
-
-/* ---- What's New section frame around the reused new_release carousel ---- */
-.home__whats-new {
-  margin: clamp(3.5rem, 8vh, 6rem) 0 3rem;
-}
-
-.home__section-title {
-  font-family: $didot-family;
-  font-size: $type-size-2;
-  text-align: center;
-  margin: 0;
-}
-
-.home__section-lead {
-  font-family: $barlow-font-family;
-  text-align: center;
-  color: rgba($primary-color, 0.65);
-  margin: 0.4rem 0 1.8rem;
-}
-
-/* ---- Laptop notice, quiet footer note ---- */
-.home__notice {
-  margin-top: 2.5rem;
-}
-
-/* ======================= SCROLL-REVEAL CHOREOGRAPHY ======================= */
-/* Sections reveal as they scroll into view. Gated on `html.home-reveal-ready`,
-   which the observer in home.html adds only when motion is allowed and JS runs —
-   so reduced-motion / no-JS users get everything statically visible (no hiding). */
-
-html.home-reveal-ready .home .reveal-up {
+  color: rgba($primary-color, 0.4);
   opacity: 0;
-  transform: translateY(22px);
-  transition:
-    opacity 0.75s $cubic-bezier-smooth,
-    transform 0.85s $cubic-bezier-smooth;
+  animation: home-rise 1s ease 1.5s forwards;
+
+  .rule { width: 3.4rem; height: 1px; background: rgba($primary-color, 0.4); position: relative; overflow: hidden; }
+  .rule::after { content: ""; position: absolute; inset: 0; background: $h2-color; transform: translateX(-100%); animation: home-sweep 2.6s ease-in-out infinite; }
+  &:hover { color: rgba($primary-color, 0.8); }
+}
+
+/* ============================ CONTENT SHELL ============================ */
+.home {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 clamp(1.4rem, 5vw, 4rem) clamp(4rem, 9vh, 7rem);
+  position: relative;
+}
+
+.home__section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
+}
+.home__label { font-family: $barlow-font-family; font-size: $type-size-7; letter-spacing: 0.3em; text-transform: uppercase; color: $h2-color; }
+.home__note { font-family: $didot-family; font-style: italic; font-size: $type-size-6; color: rgba($primary-color, 0.4); }
+
+/* ---------------- The destination index ---------------- */
+.home__index { padding: clamp(4rem, 10vh, 9rem) 0 clamp(3.5rem, 8vh, 6rem); position: relative; }
+.home__index-body { position: relative; }
+
+.home__doors { list-style: none; margin: 0; padding: 0; position: relative; z-index: 2; }
+.door-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.6rem);
+  padding: clamp(1.4rem, 3.4vw, 2.4rem) 0.4rem;
+  border-top: 1px solid rgba($primary-color, 0.1);
+  transition: padding-left 0.55s $cubic-bezier-smooth;
+  color: $primary-color;
+  text-decoration: none;
+}
+.home__doors li:last-child .door-row { border-bottom: 1px solid rgba($primary-color, 0.1); }
+.door-num { font-family: $barlow-font-family; font-size: $type-size-7; letter-spacing: 0.18em; color: rgba($primary-color, 0.4); font-variant-numeric: tabular-nums; transition: color 0.5s; }
+.door-title { font-family: $didot-family; font-weight: 600; font-size: clamp(1.9rem, 5.2vw, 3.9rem); line-height: 1; letter-spacing: -0.01em; transition: color 0.5s; }
+.door-desc { font-family: $barlow-font-family; font-size: $type-size-7; color: rgba($primary-color, 0.55); text-align: right; max-width: 22ch; justify-self: end; transition: color 0.5s; }
+.door-arrow { font-family: $didot-family; font-size: 1.5rem; color: rgba($primary-color, 0.4); transform: translateX(-8px); opacity: 0; transition: transform 0.55s $cubic-bezier-smooth, opacity 0.5s, color 0.5s; }
+
+.home__doors:hover .door-row { opacity: 0.4; transition: opacity 0.5s; }
+.door-row:hover { opacity: 1; padding-left: clamp(0.8rem, 2.4vw, 1.8rem); }
+.door-row:hover .door-title { color: #e6ce8f; }
+.door-row:hover .door-num { color: $h2-color; }
+.door-row:hover .door-arrow { transform: translateX(0); opacity: 1; color: $h2-color; }
+.door-row:hover .door-desc { color: $primary-color; }
+
+/* the big image that fades in on hover (editorial reveal) */
+.door-preview {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: min(46%, 560px);
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  overflow: hidden;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  box-shadow: 0 30px 90px -30px rgba(0, 0, 0, 0.8);
+  -webkit-mask-image: radial-gradient(120% 100% at 50% 50%, #000 55%, transparent 100%);
+          mask-image: radial-gradient(120% 100% at 50% 50%, #000 55%, transparent 100%);
+}
+.door-preview.show { opacity: 0.55; }
+.door-pane {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0; transform: scale(1.06);
+  transition: opacity 0.6s ease, transform 1.2s ease;
+}
+.door-pane.on { opacity: 1; transform: scale(1.12); }
+
+/* ---------------- What's New — editorial feature ---------------- */
+.home__whatsnew { padding: clamp(2rem, 5vh, 4rem) 0 clamp(2rem, 5vh, 4rem); }
+.wn-grid { display: grid; grid-template-columns: 1.55fr 1fr; gap: 1rem; }
+
+%wn-tile {
+  position: relative; overflow: hidden; isolation: isolate;
+  border: 1px solid rgba($primary-color, 0.1);
+  border-radius: 16px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  text-decoration: none; color: $primary-color;
+  transition: transform 0.5s $cubic-bezier-smooth, border-color 0.5s;
+
+  .wn-media { position: absolute; inset: 0; z-index: -2; background-size: cover; background-position: center; background-image: var(--cover); transform: scale(1.03); transition: transform 1.1s $cubic-bezier-smooth; }
+  .wn-scrim { position: absolute; inset: 0; z-index: -1; }
+  &:hover { transform: translateY(-4px); border-color: rgba(201, 162, 75, 0.4); }
+  &:hover .wn-media { transform: scale(1.09); }
+}
+.wn-tag { font-family: $barlow-font-family; font-size: $type-size-8; letter-spacing: 0.24em; text-transform: uppercase; color: $h2-color; margin-bottom: 0.5rem; }
+.wn-card h3, .wn-item h3 { font-family: $didot-family; font-weight: 600; line-height: 1.03; letter-spacing: -0.01em; margin: 0; color: $primary-color; transition: color 0.4s; }
+.wn-card:hover h3, .wn-item:hover h3 { color: #e6ce8f; }
+
+.wn-card {
+  @extend %wn-tile;
+  grid-row: span 2;
+  min-height: clamp(20rem, 42vh, 30rem);
+  padding: 1.8rem;
+  .wn-scrim { background: linear-gradient(180deg, rgba(9, 9, 12, 0.05) 0%, rgba(9, 9, 12, 0.55) 55%, rgba(9, 9, 12, 0.9) 100%); }
+  h3 { font-size: clamp(1.8rem, 3.4vw, 2.7rem); }
+  p { font-family: $barlow-font-family; color: rgba($primary-color, 0.7); margin: 0.5rem 0 0; max-width: 34ch; }
+}
+.wn-arrow { margin-top: 0.9rem; font-family: $barlow-font-family; font-size: $type-size-8; letter-spacing: 0.2em; text-transform: uppercase; color: rgba($primary-color, 0.55); display: inline-flex; gap: 0.5rem; transition: color 0.4s, gap 0.4s; }
+.wn-card:hover .wn-arrow { color: $h2-color; gap: 0.9rem; }
+
+.wn-side { display: grid; grid-template-rows: 1fr 1fr; gap: 1rem; }
+.wn-item {
+  @extend %wn-tile;
+  min-height: clamp(9rem, 19vh, 13.5rem);
+  padding: 1.3rem;
+  .wn-scrim { background: linear-gradient(180deg, rgba(9, 9, 12, 0.1), rgba(9, 9, 12, 0.82)); }
+  h3 { font-size: 1.15rem; }
+}
+
+.home__foot { text-align: center; font-family: $didot-family; font-style: italic; font-size: $type-size-6; color: rgba($primary-color, 0.4); padding: clamp(2rem, 5vh, 4rem) 0 0; }
+
+/* ============================ SCROLL REVEAL ============================ */
+/* Gated on `.home-reveal-ready` (added by the observer in home.html only when
+   motion is allowed + JS runs) — reduced-motion / no-JS keep everything visible. */
+html.home-reveal-ready .reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.8s $cubic-bezier-smooth, transform 0.9s $cubic-bezier-smooth;
   will-change: opacity, transform;
 }
+html.home-reveal-ready .reveal.is-in { opacity: 1; transform: none; }
 
-html.home-reveal-ready .home .reveal-up.is-in {
-  opacity: 1;
-  transform: none;
+/* stagger the door rows once the index reveals */
+html.home-reveal-ready .home__doors .door-row { opacity: 0; transform: translateY(20px); transition: opacity 0.7s $cubic-bezier-smooth, transform 0.8s $cubic-bezier-smooth; }
+html.home-reveal-ready .home__index.is-in .door-row { opacity: 1; transform: none; }
+.home__doors li:nth-child(1) .door-row { transition-delay: 0.05s; }
+.home__doors li:nth-child(2) .door-row { transition-delay: 0.13s; }
+.home__doors li:nth-child(3) .door-row { transition-delay: 0.21s; }
+.home__doors li:nth-child(4) .door-row { transition-delay: 0.29s; }
+/* the :hover dim shouldn't fight the reveal transform */
+html.home-reveal-ready .home__index.is-in .home__doors:hover .door-row { transform: none; }
+
+@keyframes home-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes home-line-up { to { transform: translateY(0); } }
+@keyframes home-sheen { 0%, 100% { background-position: 0 0; } 50% { background-position: 100% 0; } }
+@keyframes home-sweep { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(100%); } }
+
+/* ---------------- responsive ---------------- */
+@include responsive-down(tablet-wide) {
+  .wn-grid { grid-template-columns: 1fr; }
+  .wn-card { grid-row: auto; min-height: 16rem; }
+}
+@include responsive-down(tablet) {
+  .door-row { grid-template-columns: auto 1fr auto; }
+  .door-desc { display: none; }
+  .door-preview { display: none; }
+  .home__doors:hover .door-row { opacity: 1; }
+
+  /* The single-line typewriter clips long persona lines on narrow screens, so on
+     small viewports show the primary excerpt as a clean static wrapping line. */
+  .home__identity .text-type-writer { display: block; font-size: 1rem; }
+  .home__identity .text-type-writer > span { display: block; height: auto; overflow: visible; }
+  .home__identity .text-type-writer span span {
+    animation: none;
+    width: auto;
+    max-width: none;
+    white-space: normal;
+    word-break: normal;
+    height: auto;
+    box-shadow: none;
+  }
+  .home__identity .text-type-writer span span:not(:first-child) { display: none; }
 }
 
-/* The portals <nav> is only a trigger — keep the box itself visible and stagger
-   the individual tiles once it enters view. */
-html.home-reveal-ready .home__portals.reveal-up {
-  opacity: 1;
-  transform: none;
-  will-change: auto;
-}
-
-html.home-reveal-ready .home__portals .portal {
-  opacity: 0;
-  transform: translateY(24px) scale(0.985);
-  transition:
-    opacity 0.65s $cubic-bezier-smooth,
-    transform 0.8s $cubic-bezier-smooth;
-}
-
-html.home-reveal-ready .home__portals.is-in .portal {
-  opacity: 1;
-  transform: none;
-}
-
-.home__portals .portal:nth-child(1) { transition-delay: 0.04s; }
-.home__portals .portal:nth-child(2) { transition-delay: 0.12s; }
-.home__portals .portal:nth-child(3) { transition-delay: 0.2s; }
-.home__portals .portal:nth-child(4) { transition-delay: 0.28s; }
-
-/* Reduced-motion: neutralise every ambient/entrance animation. */
 @include responsive-reduced-motion {
-  .layout--home .home__hero .page__hero-media,
-  .home__aurora,
-  .layout--home .home__wordmark,
-  .layout--home .home__wordmark .page__title-text,
-  .home__scrollcue,
-  .home__scrollcue-arrow { animation: none; }
+  .home__eyebrow, .home__wordmark .ln > span, .home__wordmark .gold,
+  .home__identity, .home__identity .text-type-writer span span,
+  .home__scrollcue, .home__scrollcue .rule::after { animation: none !important; }
+  .home__wordmark .ln > span { transform: none; }
+  .home__eyebrow, .home__identity, .home__scrollcue { opacity: 1; }
 }

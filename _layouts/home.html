@@ -5,49 +5,44 @@ layout: default
 {% include base_path %}
 
 {% comment %}
-  Dedicated full-screen Home hero — renders its own .page__hero--overlay markup
-  (rather than the generic page__hero include) for a cinematic 100vh panel, while
-  keeping the exact class hooks (.page__hero--overlay + .page__lead-inner) that
-  overlay-opening-scene.js and _page.scss drive the develop-in opening scene from.
+  Typographic editorial hero — motto eyebrow, a line-revealed wordmark, and a
+  typewriter identity line (reusing the site's .text-type-writer component to
+  cycle the persona excerpts one at a time). No photo / no opening scene here.
 {% endcomment %}
-{% assign home_filter = page.header.overlay_filter | default: 0.25 %}
-{% assign home_overlay = page.header.overlay_image | prepend: "/images/" | relative_url %}
-
-<div class="page__hero--overlay page__hero--overlay-home home__hero">
-  <div class="page__hero-media" style="background-image: linear-gradient(rgba(0,0,0,{{ home_filter }}), rgba(0,0,0,{{ home_filter }})), url('{{ home_overlay }}');"></div>
-  <div class="home__aurora" aria-hidden="true"></div>
-  <div class="home__spotlight" aria-hidden="true"></div>
-  <div class="wrapper">
-    <div class="page__hero-copy">
-      <p class="home__eyebrow" lang="la">Mors potius quam taedium</p>
-      <h1 class="page__title home__wordmark" itemprop="headline">
-        <span class="page__title-text">{{ page.title | default: site.title }}</span>
-      </h1>
-      {% if page.excerpt %}
-        <p class="page__lead"><span class="page__lead-inner">{{ page.excerpt | markdownify | remove: "<p>" | remove: "</p>" }}</span></p>
-      {% endif %}
+<section class="home__hero">
+  <div class="home__hero-inner">
+    <p class="home__eyebrow" lang="la">Mors potius quam taedium</p>
+    <h1 class="home__wordmark" itemprop="headline">
+      <span class="ln"><span>QSD&rsquo;s</span></span>
+      <span class="ln"><span>House of</span></span>
+      <span class="ln"><span class="gold">Wonders</span></span>
+    </h1>
+    <div class="home__identity">
+      <span class="text-type-writer" style="--n-contents: 3; --type-writer-duration: 3.4s;" label="A procrastinator, a nihilist, a deconstructionist, an idiot.">
+        <span>
+          <span>A procrastinator, a nihilist, a deconstructionist, an idiot.</span>
+          <span>A voyager, a melancholic, an aesthete, an escapist.</span>
+          <span>A contrarian, a formalist, a self-saboteur, a cynic.</span>
+        </span>
+      </span>
     </div>
   </div>
-  <a class="home__scrollcue" href="#home-explore" aria-label="Scroll to explore">
-    <span class="home__scrollcue-word">Enter</span>
-    <span class="home__scrollcue-arrow" aria-hidden="true"></span>
-  </a>
-</div>
+  <a class="home__scrollcue" href="#home-enter" aria-label="Scroll to enter"><span class="rule"></span>Scroll to enter</a>
+</section>
 
 <div id="main" role="main">
-  <div class="home" id="home-explore">
+  <div class="home" id="home-enter">
     {{ content }}
   </div>
 </div>
 
 <script>
-  // Scoped scroll-reveal for the Home sections (Home has no .page__content, so the
-  // site-wide scroll-animations.js does not run here). IntersectionObserver-based,
-  // matching the site's approach. Fails safe: if JS/IO is unavailable or the user
-  // prefers reduced motion, `home-reveal-ready` is never set and every section stays
-  // statically visible (the hiding CSS is gated on that class).
+  // Scroll-reveal for the Home (no .page__content here, so the site-wide
+  // scroll-animations.js does not run). IntersectionObserver-based; fails safe —
+  // reduced-motion / no-JS keep everything statically visible, and a 6s timeout
+  // guarantees nothing is ever left hidden.
   (function () {
-    var els = Array.prototype.slice.call(document.querySelectorAll(".home .reveal-up"));
+    var els = Array.prototype.slice.call(document.querySelectorAll(".home .reveal, .home__index"));
     if (!els.length) return;
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce || !("IntersectionObserver" in window)) {
@@ -57,44 +52,28 @@ layout: default
     document.documentElement.classList.add("home-reveal-ready");
     var vh = window.innerHeight || document.documentElement.clientHeight;
     var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        e.target.classList.add("is-in");
-        io.unobserve(e.target);
-      });
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } });
     }, { rootMargin: "0px 0px -10% 0px", threshold: 0.12 });
-    els.forEach(function (el) {
-      if (el.getBoundingClientRect().top < vh) {
-        el.classList.add("is-in"); // already in view on load
-      } else {
-        io.observe(el);
-      }
-    });
-    // Safety net: never leave a section permanently hidden if the observer never
-    // fires for some reason. Below-fold sections just reveal after a short idle.
-    window.setTimeout(function () {
-      els.forEach(function (el) { el.classList.add("is-in"); });
-    }, 6000);
+    els.forEach(function (el) { if (el.getBoundingClientRect().top < vh) el.classList.add("is-in"); else io.observe(el); });
+    window.setTimeout(function () { els.forEach(function (el) { el.classList.add("is-in"); }); }, 6000);
   })();
 
-  // Signature interaction: a warm light that follows the pointer across the hero,
-  // and an accent highlight that tracks the cursor inside each portal. Desktop
-  // fine-pointer + motion-allowed only; touch/reduced-motion get the static design.
+  // Destination index: fade a large cover image in beside the hovered row.
   (function () {
-    if (!window.matchMedia) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-
-    function track(el) {
-      el.addEventListener("pointermove", function (e) {
-        var r = el.getBoundingClientRect();
-        el.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100).toFixed(1) + "%");
-        el.style.setProperty("--my", ((e.clientY - r.top) / r.height * 100).toFixed(1) + "%");
-      }, { passive: true });
-    }
-
-    var hero = document.querySelector(".home__hero");
-    if (hero) track(hero);
-    Array.prototype.forEach.call(document.querySelectorAll(".home__portals .portal"), track);
+    var doors = Array.prototype.slice.call(document.querySelectorAll(".door-row"));
+    var preview = document.getElementById("doorPreview");
+    if (!doors.length || !preview) return;
+    var panes = preview.querySelectorAll(".door-pane");
+    doors.forEach(function (row, i) {
+      row.addEventListener("mouseenter", function () {
+        preview.classList.add("show");
+        panes.forEach(function (p, j) { p.classList.toggle("on", j === i); });
+      });
+    });
+    var list = document.querySelector(".home__doors");
+    if (list) list.addEventListener("mouseleave", function () {
+      preview.classList.remove("show");
+      panes.forEach(function (p) { p.classList.remove("on"); });
+    });
   })();
 </script>

@@ -1,0 +1,30 @@
+{% assign releases = site.data['new-release'] %}
+{% assign feat = releases[0] %}
+<section class="home__whatsnew reveal">
+  <div class="home__section-head">
+    <span class="home__label">What&rsquo;s New</span>
+    <span class="home__note" lang="zh">有哪些文件夹刚刚被新建了呢？</span>
+  </div>
+  <div class="wn-grid">
+    <a class="wn-card" href="{{ feat.url | relative_url }}" style="--cover: url('{{ feat.background_image | relative_url }}');">
+      <div class="wn-media"></div>
+      <div class="wn-scrim"></div>
+      <span class="wn-tag">{{ feat.type }}{% if feat.tag %} &middot; {{ feat.tag }}{% endif %}</span>
+      <h3>{{ feat.title }}</h3>
+      {% if feat.description and feat.description != "" %}<p>{{ feat.description }}</p>{% endif %}
+      <span class="wn-arrow">Enter the folder &rarr;</span>
+    </a>
+    <div class="wn-side">
+      {% for r in releases offset: 1 limit: 2 %}
+      <a class="wn-item" href="{{ r.url | relative_url }}" style="--cover: url('{{ r.background_image | relative_url }}');">
+        <div class="wn-media"></div>
+        <div class="wn-scrim"></div>
+        <span class="wn-tag">{{ r.type }}</span>
+        <h3>{{ r.title }}</h3>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<p class="home__foot">Best enjoyed on a laptop &mdash; every picture here shot by QSD, or his beloved friends.</p>
