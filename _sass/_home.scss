@@ -1,38 +1,178 @@
 /* ==========================================================================
-   HOME — bespoke landing page at `/`
+   HOME — bespoke cinematic landing page at `/`
    Scoped under `.layout--home` (set by _layouts/default.html when page.url == "/").
-   The hero reuses .page__hero--overlay hooks so the develop-in opening scene
-   (overlay-opening-scene.js + _page.scss) fires unchanged; everything below the
-   hero is dedicated to this page.
+   Full-screen hero reuses .page__hero--overlay hooks so the develop-in opening
+   scene fires; everything below floats over a fixed atmospheric backdrop.
    ========================================================================== */
 
-/* #main defaults to the flex sidebar shell (single.html); Home has no sidebar,
-   so restore normal block flow — otherwise .home becomes a non-shrinking flex
-   item and overflows the viewport horizontally. */
+/* ---- Full-screen atmospheric backdrop behind the whole page ---- */
+body.layout--home {
+  background-color: #08080c;
+}
+
+body.layout--home::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(58% 48% at 74% 20%, rgba(198, 162, 74, 0.10), transparent 60%),
+    radial-gradient(66% 66% at 16% 88%, rgba(74, 107, 138, 0.10), transparent 70%),
+    radial-gradient(52% 52% at 50% 55%, rgba(107, 92, 134, 0.07), transparent 72%),
+    linear-gradient(180deg, #08080c 0%, #0b0a10 55%, #08080c 100%);
+}
+
+body.layout--home::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* #main defaults to the flex sidebar shell; Home has no sidebar, so restore
+   normal block flow and let content sit above the fixed backdrop. */
 .layout--home #main {
   display: block;
+  position: relative;
+  z-index: 1;
 }
+
+/* ============================ HERO ============================ */
+
+/* Full-screen cinematic panel (overrides the shared bounded/dissolving hero). */
+.layout--home .home__hero {
+  min-height: 100vh;
+  min-height: 100svh;
+  align-items: flex-end;
+  margin-bottom: 0;
+  padding: clamp(5rem, 12vh, 8rem) 0 clamp(4.5rem, 13vh, 8rem);
+}
+
+/* Photo fills the whole viewport — drop the "dissolve into page" mask and
+   replace it with a cinematic vignette + bottom scrim for legibility. */
+.layout--home .home__hero .page__hero-media {
+  -webkit-mask-image: none;
+  mask-image: none;
+
+  &::before {
+    display: none;
+  }
+
+  &::after {
+    background:
+      radial-gradient(125% 85% at 50% 30%, transparent 34%, rgba(6, 6, 10, 0.55) 100%),
+      linear-gradient(
+        180deg,
+        rgba(6, 6, 10, 0.5) 0%,
+        rgba(6, 6, 10, 0.12) 22%,
+        rgba(6, 6, 10, 0.12) 42%,
+        rgba(6, 6, 10, 0.84) 100%
+      );
+  }
+}
+
+/* Wordmark — dramatic Didot with a light-written entrance. */
+.layout--home .home__wordmark {
+  font-family: $didot-family;
+  font-size: clamp(2.6rem, 8vw, 5.5rem);
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+  margin: 0;
+  text-shadow: 0 2px 34px rgba(0, 0, 0, 0.55);
+  animation: home-wordmark-in 1.5s $cubic-bezier-smooth 0.35s both;
+}
+
+.layout--home .home__wordmark .page__title-text {
+  display: inline-block;
+  text-wrap: balance;
+}
+
+@keyframes home-wordmark-in {
+  from {
+    opacity: 0;
+    letter-spacing: 0.22em;
+    filter: blur(7px);
+    transform: translateY(0.5em);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    letter-spacing: 0.01em;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+.layout--home .home__hero .page__lead {
+  font-size: clamp(1rem, 2.4vw, 1.4rem);
+  margin-top: 1rem;
+}
+
+/* Scroll cue pinned to the bottom of the hero. */
+.home__scrollcue {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.4rem, 4vh, 2.6rem);
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  color: rgba($primary-color, 0.68);
+  text-decoration: none;
+  animation: home-cue-in 1s ease 1.7s both;
+}
+
+.home__scrollcue:hover,
+.home__scrollcue:focus-visible {
+  color: $primary-color;
+}
+
+.home__scrollcue-word {
+  font-family: $barlow-font-family;
+  font-size: $type-size-8;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  padding-left: 0.34em;
+}
+
+.home__scrollcue-arrow {
+  width: 1.3rem;
+  height: 1.3rem;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+  animation: home-cue-bob 1.9s ease-in-out infinite;
+}
+
+@keyframes home-cue-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes home-cue-bob {
+  0%, 100% { transform: rotate(45deg) translate(0, 0); }
+  50% { transform: rotate(45deg) translate(0.3rem, 0.3rem); }
+}
+
+/* ======================= CONTENT (below hero) ======================= */
 
 .home {
   max-width: 68rem;
   margin: 0 auto;
-  padding: 0 1.2rem 4.5rem;
+  padding: clamp(3.5rem, 9vh, 7rem) 1.2rem 5.5rem;
+  position: relative;
 }
 
-/* --- Hero wordmark: light-written Didot, scoped to home only --- */
-.layout--home {
-  .home__wordmark {
-    font-family: $didot-family;
-    letter-spacing: 0.02em;
-  }
-
-  .home__wordmark .page__title-text {
-    display: inline-block;
-    text-wrap: balance;
-  }
-}
-
-/* --- Orienting line, directly under the hero --- */
+/* Orienting line, directly under the hero. */
 .home__orient {
   font-family: $didot-family;
   font-size: $type-size-4;
@@ -40,16 +180,16 @@
   color: $primary-color;
   text-align: center;
   max-width: 40rem;
-  margin: 3rem auto 0;
+  margin: 0 auto;
   opacity: 0.92;
 }
 
-/* --- Four portals: the primary "ways in" --- */
+/* ---- Four portals: the primary "ways in" ---- */
 .home__portals {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0.9rem;
-  margin: 3.5rem 0 4rem;
+  margin: clamp(3rem, 7vh, 5rem) 0 4rem;
 
   @include responsive-down(tablet-wide) {
     grid-template-columns: 1fr 1fr;
@@ -66,8 +206,8 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  min-height: 15rem;
-  padding: 1.35rem;
+  min-height: 16rem;
+  padding: 1.4rem;
   border-radius: $border-radius;
   color: $primary-color;
   text-decoration: none;
@@ -86,7 +226,7 @@
     background-size: cover;
     background-position: center;
     transform: scale(1.04);
-    transition: transform 1.2s $cubic-bezier-smooth;
+    transition: transform 1.3s $cubic-bezier-smooth;
   }
 
   /* tonal scrim + per-portal accent glow (accent supplied inline via --portal-accent) */
@@ -96,19 +236,23 @@
     inset: 0;
     z-index: -1;
     background:
-      linear-gradient(180deg, rgba(12, 11, 15, 0.12) 0%, rgba(12, 11, 15, 0.85) 100%),
-      radial-gradient(130% 90% at 18% 12%, rgba(var(--portal-accent), 0.4), transparent 62%);
+      linear-gradient(180deg, rgba(12, 11, 15, 0.1) 0%, rgba(12, 11, 15, 0.86) 100%),
+      radial-gradient(130% 92% at 18% 10%, rgba(var(--portal-accent), 0.42), transparent 62%);
     transition: opacity $global-transition-time $cubic-bezier-smooth;
   }
 
   &:hover,
   &:focus-visible {
-    transform: translateY(-0.35rem);
+    transform: translateY(-0.4rem);
     box-shadow: $shadow-floating;
   }
   &:hover::before,
   &:focus-visible::before {
-    transform: scale(1.1);
+    transform: scale(1.11);
+  }
+  &:hover::after,
+  &:focus-visible::after {
+    opacity: 0.82;
   }
 
   @include responsive-reduced-motion {
@@ -142,8 +286,6 @@
   margin-top: 0.55rem;
   min-height: 2.7em; /* reserve two lines so portal titles align across tiles */
   opacity: 0.82;
-  /* always visible (informative on a landing page, identical across breakpoints);
-     hover just brightens it */
   transition:
     color $global-transition-time $cubic-bezier-smooth,
     opacity $global-transition-time $cubic-bezier-smooth;
@@ -159,9 +301,9 @@
   .portal__desc { transition: none; }
 }
 
-/* --- What's New section frame around the reused new_release carousel --- */
+/* ---- What's New section frame around the reused new_release carousel ---- */
 .home__whats-new {
-  margin: 4rem 0 3rem;
+  margin: clamp(3.5rem, 8vh, 6rem) 0 3rem;
 }
 
 .home__section-title {
@@ -178,7 +320,42 @@
   margin: 0.4rem 0 1.8rem;
 }
 
-/* --- Laptop notice, quiet footer note --- */
+/* ---- Laptop notice, quiet footer note ---- */
 .home__notice {
   margin-top: 2.5rem;
+}
+
+/* ======================= ENTRANCE CHOREOGRAPHY ======================= */
+/* Pure-CSS load cascade — robust (content is never left hidden), no JS, no scroll
+   dependency. `backwards` fill holds the hidden state only during the delay, then
+   reverts to the natural style so portal :hover transforms keep working. */
+
+@keyframes home-rise {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: none; }
+}
+
+.home .reveal-up {
+  animation: home-rise 0.9s $cubic-bezier-smooth backwards;
+}
+.home__orient { animation-delay: 0.15s; }
+.home__whats-new { animation-delay: 0.3s; }
+.home__notice { animation-delay: 0.4s; }
+
+/* Portal tiles stagger in individually (the grid itself is not animated). */
+.home__portals .portal {
+  animation: home-rise 0.85s $cubic-bezier-smooth backwards;
+}
+.home__portals .portal:nth-child(1) { animation-delay: 0.26s; }
+.home__portals .portal:nth-child(2) { animation-delay: 0.34s; }
+.home__portals .portal:nth-child(3) { animation-delay: 0.42s; }
+.home__portals .portal:nth-child(4) { animation-delay: 0.5s; }
+
+/* Reduced-motion: no entrance animations at all, everything static + visible. */
+@include responsive-reduced-motion {
+  .layout--home .home__wordmark,
+  .home__scrollcue,
+  .home__scrollcue-arrow,
+  .home .reveal-up,
+  .home__portals .portal { animation: none; }
 }

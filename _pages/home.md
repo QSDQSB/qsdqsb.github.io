@@ -14,9 +14,9 @@ header:
   overlay_filter: 0.25
 ---
 
-<p class="home__orient">A blog, a travel gallery, and a portfolio — kept in equal parts irony and earnest.</p>
+<p class="home__orient reveal-up">A blog, a travel gallery, and a portfolio — kept in equal parts irony and earnest.</p>
 
-<nav class="home__portals reveal-on-scroll" aria-label="Explore the house">
+<nav class="home__portals" aria-label="Explore the house">
   <a class="portal" href="/year-archive/" style="--portal-img: url('/images/Legotypewriter1-3v1.jpg'); --portal-accent: 138, 52, 48;">
     <span class="portal__kicker">Words</span>
     <span class="portal__title">Posts</span>
@@ -39,10 +39,10 @@ header:
   </a>
 </nav>
 
-<section class="home__whats-new reveal-on-scroll">
+<section class="home__whats-new reveal-up">
   <h2 class="home__section-title">What's New</h2>
   <p class="home__section-lead"><em lang="zh">有哪些文件夹刚刚被新建了呢？</em></p>
   {% include new_release.html %}
 </section>
 
-<p class="notice--success home__notice">🖥️ Best enjoyed on a laptop — in particular <u>Chrome</u> or <u>Safari</u>.</p>
+<p class="notice--success home__notice reveal-up">🖥️ Best enjoyed on a laptop — in particular <u>Chrome</u> or <u>Safari</u>.</p>
