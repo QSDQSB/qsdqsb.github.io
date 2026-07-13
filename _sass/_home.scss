@@ -43,9 +43,12 @@ body.layout--home {
   content: "";
   position: absolute;
   inset: -4%;
-  background: linear-gradient(rgba(5, 5, 9, 0.66), rgba(5, 5, 9, 0.8)), var(--hero-photo) center / cover no-repeat;
-  filter: brightness(0.55) saturate(0.9);
+  background: linear-gradient(rgba(6, 6, 11, 0.4), rgba(6, 6, 11, 0.6)), var(--hero-photo) center / cover no-repeat;
+  filter: brightness(0.78) saturate(0.95);
   transform: scale(1.02);
+  /* gradient mask — the photo reads through the centre and fades out at the edges */
+  -webkit-mask-image: radial-gradient(125% 115% at 50% 44%, #000 32%, rgba(0, 0, 0, 0.5) 64%, transparent 94%);
+          mask-image: radial-gradient(125% 115% at 50% 44%, #000 32%, rgba(0, 0, 0, 0.5) 64%, transparent 94%);
   animation:
     home-bg-zoom 42s ease-out infinite alternate,
     home-darken 4.4s ease-out both;
@@ -66,10 +69,28 @@ body.layout--home {
   position: absolute;
   inset: 0;
   z-index: 1;
-  -webkit-backdrop-filter: blur(26px) saturate(115%) brightness(0.72);
-          backdrop-filter: blur(26px) saturate(115%) brightness(0.72);
-  background: linear-gradient(180deg, rgba(7, 7, 11, 0.32) 0%, rgba(7, 7, 11, 0.5) 55%, rgba(7, 7, 11, 0.72) 100%);
+  -webkit-backdrop-filter: blur(10px) saturate(112%) brightness(0.85);
+          backdrop-filter: blur(10px) saturate(112%) brightness(0.85);
+  background: linear-gradient(180deg, rgba(7, 7, 11, 0.2) 0%, rgba(7, 7, 11, 0.34) 55%, rgba(7, 7, 11, 0.56) 100%);
   animation: home-frost 4.4s ease-out both;
+}
+
+/* The shiny "QSD" at the centre of the photo, revealed from time to time: the
+   same image masked tight to the centre and kept sharp (it sits above the frost),
+   screen-blended, pulsing in and out on a slow loop. */
+.home__hero-qsd {
+  position: absolute;
+  inset: -4%;
+  z-index: 1;
+  background: var(--hero-photo) center / cover no-repeat;
+  filter: brightness(1.12) contrast(1.04) saturate(1.02);
+  -webkit-mask-image: radial-gradient(56% 52% at 50% 44%, #000 0%, #000 18%, transparent 60%);
+          mask-image: radial-gradient(56% 52% at 50% 44%, #000 0%, #000 18%, transparent 60%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation:
+    home-bg-zoom 42s ease-out infinite alternate,
+    home-qsd-pulse 14s ease-in-out 5s infinite;
 }
 
 .home__hero-inner { position: relative; z-index: 2; width: 100%; max-width: 1180px; margin: 0 auto; }
@@ -331,18 +352,23 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
 /* On load the background settles back: the QSD photo is briefly glimpsed, then
    darkens and blurs into the frosted distance so the title takes over. */
 @keyframes home-darken {
-  from { filter: brightness(1) saturate(1.05); }
-  to { filter: brightness(0.55) saturate(0.9); }
+  from { filter: brightness(1.05) saturate(1.08); }
+  to { filter: brightness(0.78) saturate(0.95); }
 }
 @keyframes home-frost {
   from {
-    -webkit-backdrop-filter: blur(2px) saturate(108%) brightness(0.96);
-            backdrop-filter: blur(2px) saturate(108%) brightness(0.96);
+    -webkit-backdrop-filter: blur(1px) saturate(106%) brightness(0.98);
+            backdrop-filter: blur(1px) saturate(106%) brightness(0.98);
   }
   to {
-    -webkit-backdrop-filter: blur(26px) saturate(115%) brightness(0.72);
-            backdrop-filter: blur(26px) saturate(115%) brightness(0.72);
+    -webkit-backdrop-filter: blur(10px) saturate(112%) brightness(0.85);
+            backdrop-filter: blur(10px) saturate(112%) brightness(0.85);
   }
+}
+/* Reveal the shiny QSD centre from time to time. */
+@keyframes home-qsd-pulse {
+  0%, 100% { opacity: 0.08; }
+  50% { opacity: 0.72; }
 }
 @keyframes home-bg-drift {
   from { transform: translate3d(-2%, 1%, 0) scale(1); opacity: 0.78; }
@@ -380,10 +406,11 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
 }
 
 @include responsive-reduced-motion {
-  .home__hero-media::before, .home__hero-media::after, .home__hero-veil,
+  .home__hero-media::before, .home__hero-media::after, .home__hero-veil, .home__hero-qsd,
   .home__eyebrow, .home__wordmark .ln > span, .home__wordmark .gold,
   .home__identity, .home__identity .text-type-writer span span,
   .home__scrollcue, .home__scrollcue .rule::after { animation: none !important; }
   .home__wordmark .ln > span { transform: none; }
   .home__eyebrow, .home__identity, .home__scrollcue { opacity: 1; }
+  .home__hero-qsd { opacity: 0.32; }
 }
