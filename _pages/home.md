@@ -16,7 +16,7 @@ header:
 
 <p class="home__orient reveal-up">A blog, a travel gallery, and a portfolio — kept in equal parts irony and earnest.</p>
 
-<nav class="home__portals" aria-label="Explore the house">
+<nav class="home__portals reveal-up" aria-label="Explore the house">
   <a class="portal" href="/year-archive/" style="--portal-img: url('/images/Legotypewriter1-3v1.jpg'); --portal-accent: 138, 52, 48;">
     <span class="portal__kicker">Words</span>
     <span class="portal__title">Posts</span>
