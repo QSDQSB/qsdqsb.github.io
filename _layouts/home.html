@@ -60,22 +60,15 @@ layout: default
     window.setTimeout(function () { els.forEach(function (el) { el.classList.add("is-in"); }); }, 6000);
   })();
 
-  // Destination index: fade a large cover image in beside the hovered row.
+  // Destination index: crossfade the contained image stage to the hovered door.
   (function () {
-    var doors = Array.prototype.slice.call(document.querySelectorAll(".door-row"));
-    var preview = document.getElementById("doorPreview");
-    if (!doors.length || !preview) return;
-    var panes = preview.querySelectorAll(".door-pane");
-    doors.forEach(function (row, i) {
-      row.addEventListener("mouseenter", function () {
-        preview.classList.add("show");
-        panes.forEach(function (p, j) { p.classList.toggle("on", j === i); });
+    var doors = Array.prototype.slice.call(document.querySelectorAll(".home__doors .door"));
+    var shots = Array.prototype.slice.call(document.querySelectorAll(".door-shot"));
+    if (!doors.length || !shots.length) return;
+    doors.forEach(function (door, i) {
+      door.addEventListener("mouseenter", function () {
+        shots.forEach(function (s, j) { s.classList.toggle("is-on", j === i); });
       });
-    });
-    var list = document.querySelector(".home__doors");
-    if (list) list.addEventListener("mouseleave", function () {
-      preview.classList.remove("show");
-      panes.forEach(function (p) { p.classList.remove("on"); });
     });
   })();
 </script>
