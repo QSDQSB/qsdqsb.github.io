@@ -1,7 +1,7 @@
 ---
 title: "Interview Preparation"
 date: 2022-03-04
-permalink: /posts/2022/03/interview-preparation/
+permalink: /posts/interview-preparation/
 excerpt: "我超，👴爱死苟盛了。"
 published: false
 toc: true

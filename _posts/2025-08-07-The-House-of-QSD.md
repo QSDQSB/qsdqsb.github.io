@@ -1,7 +1,9 @@
 ---
 title: "The House of QSD"
 date: 2025-08-07
-permalink: /posts/2025/the-house-of-qsd
+permalink: /posts/the-house-of-qsd/
+redirect_from:
+  - /posts/2025/the-house-of-qsd/
 excerpt: "Mors potius quam taedium"
 
 tags:

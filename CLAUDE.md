@@ -8,7 +8,7 @@ A heavily customised Jekyll site (forked from Minimal Mistakes / Academic Pages)
 
 ```
 _config.yml          Jekyll config — collections, defaults, plugins, site vars
-_layouts/            Page layouts (10 — see "Layouts & Gallery System" below)
+_layouts/            Page layouts (9 — see "Layouts & Gallery System" below)
 _includes/           50+ partials — masthead, gallery, map, hero, sidebar…
 _sass/               SCSS partials — _variables.scss is the token authority
 assets/js/           Custom JS (_main.js → main.min.js) + vendor (jQuery, Three.js, Swiper)
@@ -322,7 +322,7 @@ When adding a new voyage, the `voyage-scaffolder` agent (under `.claude/agents/`
 
 ## Layouts & Gallery System
 
-10 layouts. The two with the most behaviour are `gallery.html` and the page hero overlay.
+9 layouts. The two with the most behaviour are `gallery.html` and the page hero overlay.
 
 ### `gallery.html` — two execution modes
 
@@ -370,7 +370,7 @@ Reduced-motion users (`prefers-reduced-motion`) bypass the animated opening flow
 - `single.html` — post/page view with sidebar + TOC.
 - `splash.html` — hero/landing.
 - `archive.html`, `archive-taxonomy.html` — tag/category archives.
-- `talk.html`, `search.html`, `multiverse.html`, `compress.html` — specialised.
+- `search.html`, `multiverse.html`, `compress.html` — specialised.
 
 ### When editing layouts
 

@@ -3,53 +3,64 @@ layout: none
 permalink: /sitemap.xml
 ---
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  {%- comment -%}
+    Image entries: Googlebot never drives the fullscreen JS viewer, so the
+    full-size images under gallery/** are invisible to Google Images unless
+    listed here. Prefix-match on file.path (slice, not contains) so the
+    generated thumbnails under /images/thumbnails/gallery/ never leak in.
+    lastmod comes from jekyll-last-modified-at (real git dates — CI checks
+    out with full history), falling back to the publish date.
+  {%- endcomment -%}
+  {%- assign gallery_files = site.static_files | where_exp: "f", "f.path contains '/gallery/'" %}
   <url>
     <loc>{{ site.url }}/year-archive/</loc>
-    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
   </url>
   <url>
     <loc>{{ site.url }}/tags/</loc>
-    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
   </url>
   {% for post in site.posts %}
     <url>
       <loc>{{ site.url }}{{ post.url }}</loc>
-      <lastmod>{{ post.date | date: "%Y-%m-%d" }}</lastmod>
+      <lastmod>{{ post.last_modified_at | default: post.date | date: "%Y-%m-%d" }}</lastmod>
     </url>
   {% endfor %}
   <url>
     <loc>{{ site.url }}/portfolio/</loc>
-    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
   </url>
   {% for post in site.portfolio %}
     <url>
       <loc>{{ site.url }}{{ post.url }}</loc>
-      <lastmod>{{ post.date | date: "%Y-%m-%d" }}</lastmod>
+      <lastmod>{{ post.last_modified_at | default: post.date | date: "%Y-%m-%d" }}</lastmod>
     </url>
   {% endfor %}
   <url>
     <loc>{{ site.url }}/voyage-by-tags/</loc>
-    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
   </url>
-  {% for post in site.voyage %}
+  {% assign gallery_pages = site.voyage | concat: site.subvoyage %}
+  {% for post in gallery_pages %}
     <url>
       <loc>{{ site.url }}{{ post.url }}</loc>
-      <lastmod>{{ post.date | date: "%Y-%m-%d" }}</lastmod>
-    </url>
-  {% endfor %}
-  {% for post in site.subvoyage %}
-    <url>
-      <loc>{{ site.url }}{{ post.url }}</loc>
-      <lastmod>{{ post.date | date: "%Y-%m-%d" }}</lastmod>
+      <lastmod>{{ post.last_modified_at | default: post.date | date: "%Y-%m-%d" }}</lastmod>
+      {%- if post.gallery_name %}
+        {%- assign gallery_prefix = "/gallery/" | append: post.gallery_name | append: "/" %}
+        {%- assign prefix_len = gallery_prefix | size %}
+        {%- for file in gallery_files %}
+          {%- assign file_head = file.path | slice: 0, prefix_len %}
+          {%- if file_head == gallery_prefix %}
+      <image:image>
+        <image:loc>{{ site.url }}{{ file.path | uri_escape | escape }}</image:loc>
+      </image:image>
+          {%- endif %}
+        {%- endfor %}
+      {%- endif %}
     </url>
   {% endfor %}
   <url>
     <loc>{{ site.url }}</loc>
-    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
   </url>
   <url>
     <loc>{{ site.url }}/cv/</loc>
-    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
   </url>
 </urlset>
