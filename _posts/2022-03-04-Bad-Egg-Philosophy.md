@@ -1,8 +1,9 @@
 ---
 title: "Bad Egg Philosophy"
 date: 2022-03-02
-permalink: /posts/2022/03/bad-egg
-redirect_from: 
+permalink: /posts/bad-egg/
+redirect_from:
+  - /posts/2022/03/bad-egg/
 excerpt: "“这个鸡蛋臭了，真难吃。”"
 tags:
   - 😻Happy Moments
