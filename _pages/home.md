@@ -18,21 +18,25 @@ header:
 
 <nav class="home__portals reveal-up" aria-label="Explore the house">
   <a class="portal" href="/year-archive/" style="--portal-img: url('/images/Legotypewriter1-3v1.jpg'); --portal-accent: 138, 52, 48;">
+    <span class="portal__sheen" aria-hidden="true"></span>
     <span class="portal__kicker">Words</span>
     <span class="portal__title">Posts</span>
     <span class="portal__desc">Essays, epitaphs, and diaries.</span>
   </a>
   <a class="portal" href="/voyage/" style="--portal-img: url('/images/cover/Prague-charles-bridge-dawn-2-3v1.jpg'); --portal-accent: 74, 107, 138;">
+    <span class="portal__sheen" aria-hidden="true"></span>
     <span class="portal__kicker">Places</span>
     <span class="portal__title">Voyage</span>
     <span class="portal__desc">Photographs from the road.</span>
   </a>
   <a class="portal" href="/portfolio/" style="--portal-img: url('/images/ZahaHadid1-3v1.jpg'); --portal-accent: 95, 147, 132;">
+    <span class="portal__sheen" aria-hidden="true"></span>
     <span class="portal__kicker">Work</span>
     <span class="portal__title">Portfolio</span>
     <span class="portal__desc">Selected things I've made.</span>
   </a>
   <a class="portal" href="/cv/" style="--portal-img: url('/images/cover/qsd-emblem-palace-night-with-candle-vase-3v1.jpg'); --portal-accent: 198, 162, 74;">
+    <span class="portal__sheen" aria-hidden="true"></span>
     <span class="portal__kicker">On paper</span>
     <span class="portal__title">CV</span>
     <span class="portal__desc">Formally, and in brief.</span>

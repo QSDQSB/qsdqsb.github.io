@@ -69,7 +69,23 @@ body.layout--home {
   animation: home-aurora 22s ease-in-out infinite alternate;
 }
 
-/* Keep the hero copy above the aurora + media layers. */
+/* Signature interaction: a warm light that follows the pointer across the hero
+   (--mx/--my set by the script in home.html; pointer-fine + motion only). */
+.home__spotlight {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(201, 162, 75, 0.2) 0%, rgba(201, 162, 75, 0.08) 14%, transparent 34%);
+  transition: opacity 0.6s $cubic-bezier-smooth;
+}
+.home__hero:hover .home__spotlight {
+  opacity: 1;
+}
+
+/* Keep the hero copy above the aurora + media + spotlight layers. */
 .layout--home .home__hero .wrapper {
   position: relative;
   z-index: 2;
@@ -241,8 +257,8 @@ body.layout--home {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  min-height: 16rem;
-  padding: 1.4rem;
+  min-height: 18.5rem;
+  padding: 1.5rem;
   border-radius: $border-radius;
   color: $primary-color;
   text-decoration: none;
@@ -256,7 +272,7 @@ body.layout--home {
     content: "";
     position: absolute;
     inset: 0;
-    z-index: -2;
+    z-index: -3;
     background-image: var(--portal-img);
     background-size: cover;
     background-position: center;
@@ -264,16 +280,33 @@ body.layout--home {
     transition: transform 1.3s $cubic-bezier-smooth;
   }
 
-  /* tonal scrim + per-portal accent glow (accent supplied inline via --portal-accent) */
+  /* tonal scrim + per-portal accent glow + a 2px accent hairline along the top
+     edge (accent supplied inline via --portal-accent) */
   &::after {
     content: "";
     position: absolute;
     inset: 0;
-    z-index: -1;
+    z-index: -2;
     background:
+      linear-gradient(180deg, rgba(var(--portal-accent), 0.95) 0, rgba(var(--portal-accent), 0.95) 2px, transparent 2px),
       linear-gradient(180deg, rgba(12, 11, 15, 0.1) 0%, rgba(12, 11, 15, 0.86) 100%),
       radial-gradient(130% 92% at 18% 10%, rgba(var(--portal-accent), 0.42), transparent 62%);
     transition: opacity $global-transition-time $cubic-bezier-smooth;
+  }
+
+  /* cursor-following accent highlight (--mx/--my set by the hero script) */
+  .portal__sheen {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(var(--portal-accent), 0.5), transparent 42%);
+    transition: opacity 0.4s $cubic-bezier-smooth;
+  }
+  &:hover .portal__sheen,
+  &:focus-visible .portal__sheen {
+    opacity: 1;
   }
 
   &:hover,
