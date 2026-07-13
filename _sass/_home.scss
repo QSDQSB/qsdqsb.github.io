@@ -20,6 +20,8 @@ body.layout--home {
 /* ============================ HERO ============================ */
 .home__hero {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   min-height: 100vh;
   min-height: 100svh;
   display: flex;
@@ -28,7 +30,46 @@ body.layout--home {
   padding: clamp(5rem, 12vh, 8rem) clamp(1.4rem, 5vw, 4rem) clamp(4rem, 10vh, 7rem);
 }
 
-.home__hero-inner { width: 100%; max-width: 1180px; margin: 0 auto; }
+/* Hero background: a heavily darkened QSD night photo + slowly drifting dark
+   gradients, all pushed behind a glassmorphism veil so the backdrop reads
+   distant and frosted and the eye stays on the title. */
+.home__hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.home__hero-media::before {
+  content: "";
+  position: absolute;
+  inset: -4%;
+  background: linear-gradient(rgba(5, 5, 9, 0.66), rgba(5, 5, 9, 0.8)), var(--hero-photo) center / cover no-repeat;
+  filter: brightness(0.55) saturate(0.9);
+  transform: scale(1.02);
+  animation: home-bg-zoom 42s ease-out infinite alternate;
+}
+.home__hero-media::after {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  background:
+    radial-gradient(42% 38% at 22% 28%, rgba(201, 162, 75, 0.20), transparent 70%),
+    radial-gradient(40% 40% at 80% 24%, rgba(84, 120, 160, 0.18), transparent 72%),
+    radial-gradient(46% 42% at 66% 78%, rgba(154, 59, 54, 0.15), transparent 72%),
+    radial-gradient(38% 36% at 30% 82%, rgba(122, 106, 150, 0.14), transparent 74%);
+  mix-blend-mode: screen;
+  animation: home-bg-drift 30s ease-in-out infinite alternate;
+}
+.home__hero-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  -webkit-backdrop-filter: blur(26px) saturate(115%) brightness(0.72);
+          backdrop-filter: blur(26px) saturate(115%) brightness(0.72);
+  background: linear-gradient(180deg, rgba(7, 7, 11, 0.32) 0%, rgba(7, 7, 11, 0.5) 55%, rgba(7, 7, 11, 0.72) 100%);
+}
+
+.home__hero-inner { position: relative; z-index: 2; width: 100%; max-width: 1180px; margin: 0 auto; }
 
 .home__eyebrow {
   font-family: $barlow-font-family;
@@ -90,6 +131,7 @@ body.layout--home {
 
 .home__scrollcue {
   position: absolute;
+  z-index: 3;
   left: clamp(1.4rem, 5vw, 4rem);
   bottom: 2.4rem;
   display: flex;
@@ -249,6 +291,11 @@ html.home-reveal-ready .home__index.is-in .door-row { opacity: 1; transform: non
 /* the :hover dim shouldn't fight the reveal transform */
 html.home-reveal-ready .home__index.is-in .home__doors:hover .door-row { transform: none; }
 
+@keyframes home-bg-zoom { from { transform: scale(1.02); } to { transform: scale(1.13); } }
+@keyframes home-bg-drift {
+  from { transform: translate3d(-2%, 1%, 0) scale(1); opacity: 0.78; }
+  to { transform: translate3d(2.5%, -2%, 0) scale(1.06); opacity: 1; }
+}
 @keyframes home-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes home-line-up { to { transform: translateY(0); } }
 @keyframes home-sheen { 0%, 100% { background-position: 0 0; } 50% { background-position: 100% 0; } }
@@ -282,6 +329,7 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door-row { transfo
 }
 
 @include responsive-reduced-motion {
+  .home__hero-media::before, .home__hero-media::after,
   .home__eyebrow, .home__wordmark .ln > span, .home__wordmark .gold,
   .home__identity, .home__identity .text-type-writer span span,
   .home__scrollcue, .home__scrollcue .rule::after { animation: none !important; }
