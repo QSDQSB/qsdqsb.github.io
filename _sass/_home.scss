@@ -30,10 +30,13 @@ body.layout--home {
 }
 
 /* Photo fills the whole viewport — drop the "dissolve into page" mask and
-   replace it with a cinematic vignette + bottom scrim for legibility. */
+   replace it with a cinematic vignette + bottom scrim for legibility. A slow
+   Ken Burns push gives the still photo life. */
 .layout--home .home__hero .page__hero-media {
   -webkit-mask-image: none;
   mask-image: none;
+  transform-origin: 60% 45%;
+  animation: home-kenburns 28s ease-out both;
 
   &::before {
     display: none;
@@ -52,20 +55,76 @@ body.layout--home {
   }
 }
 
-/* Wordmark — dramatic Didot with a light-written entrance. */
+/* Drifting aurora glow — atmosphere + colour over the dark photo. */
+.home__aurora {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(38% 30% at 18% 78%, rgba(198, 162, 74, 0.16), transparent 68%),
+    radial-gradient(34% 30% at 82% 26%, rgba(74, 107, 138, 0.14), transparent 70%),
+    radial-gradient(30% 26% at 60% 60%, rgba(138, 52, 48, 0.10), transparent 72%);
+  animation: home-aurora 22s ease-in-out infinite alternate;
+}
+
+/* Keep the hero copy above the aurora + media layers. */
+.layout--home .home__hero .wrapper {
+  position: relative;
+  z-index: 2;
+}
+
+/* Latin-motto eyebrow above the wordmark (small-caps handles the æ ligature
+   gracefully, unlike letter-spaced text-transform: uppercase). */
+.home__eyebrow {
+  font-family: $barlow-font-family;
+  font-size: $type-size-6;
+  font-variant: small-caps;
+  font-style: italic;
+  letter-spacing: 0.22em;
+  color: $h2-color;
+  margin: 0 0 1.1rem;
+  padding-left: 0.2em;
+}
+
+/* Wordmark — Didot in aged brass, with a light-written entrance + slow sheen.
+   The gold gradient stops are intrinsic to this one treatment, so they stay inline. */
 .layout--home .home__wordmark {
   font-family: $didot-family;
-  font-size: clamp(2.6rem, 8vw, 5.5rem);
-  line-height: 1.02;
-  letter-spacing: 0.01em;
+  font-size: clamp(2.8rem, 8.5vw, 6rem);
+  line-height: 1;
+  letter-spacing: 0.006em;
   margin: 0;
-  text-shadow: 0 2px 34px rgba(0, 0, 0, 0.55);
   animation: home-wordmark-in 1.5s $cubic-bezier-smooth 0.35s both;
 }
 
 .layout--home .home__wordmark .page__title-text {
   display: inline-block;
   text-wrap: balance;
+  background: linear-gradient(96deg, #f6efe0 0%, #efd9a4 38%, #c9a24b 52%, #f6efe0 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 4px 26px rgba(0, 0, 0, 0.6));
+  animation: home-sheen 7.5s ease-in-out 1.9s infinite;
+}
+
+@keyframes home-kenburns {
+  from { transform: scale(1.02); }
+  to { transform: scale(1.13); }
+}
+
+@keyframes home-aurora {
+  from { opacity: 0.65; transform: translate3d(-1.5%, 1%, 0) scale(1); }
+  to { opacity: 1; transform: translate3d(2%, -1.5%, 0) scale(1.08); }
+}
+
+@keyframes home-sheen {
+  0%, 100% { background-position: 0% 0; }
+  50% { background-position: 100% 0; }
 }
 
 @keyframes home-wordmark-in {
@@ -219,12 +278,15 @@ body.layout--home {
 
   &:hover,
   &:focus-visible {
-    transform: translateY(-0.4rem);
-    box-shadow: $shadow-floating;
+    transform: translateY(-0.5rem);
+    box-shadow:
+      $shadow-floating,
+      0 0 0 1px rgba(var(--portal-accent), 0.5),
+      0 16px 46px -14px rgba(var(--portal-accent), 0.62);
   }
   &:hover::before,
   &:focus-visible::before {
-    transform: scale(1.11);
+    transform: scale(1.12);
   }
   &:hover::after,
   &:focus-visible::after {
@@ -346,9 +408,12 @@ html.home-reveal-ready .home__portals.is-in .portal {
 .home__portals .portal:nth-child(3) { transition-delay: 0.2s; }
 .home__portals .portal:nth-child(4) { transition-delay: 0.28s; }
 
-/* Reduced-motion: neutralise the wordmark + scroll-cue animations too. */
+/* Reduced-motion: neutralise every ambient/entrance animation. */
 @include responsive-reduced-motion {
-  .layout--home .home__wordmark { animation: none; }
-  .home__scrollcue { animation: none; }
+  .layout--home .home__hero .page__hero-media,
+  .home__aurora,
+  .layout--home .home__wordmark,
+  .layout--home .home__wordmark .page__title-text,
+  .home__scrollcue,
   .home__scrollcue-arrow { animation: none; }
 }

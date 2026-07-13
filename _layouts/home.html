@@ -15,8 +15,10 @@ layout: default
 
 <div class="page__hero--overlay page__hero--overlay-home home__hero">
   <div class="page__hero-media" style="background-image: linear-gradient(rgba(0,0,0,{{ home_filter }}), rgba(0,0,0,{{ home_filter }})), url('{{ home_overlay }}');"></div>
+  <div class="home__aurora" aria-hidden="true"></div>
   <div class="wrapper">
     <div class="page__hero-copy">
+      <p class="home__eyebrow" lang="la">Mors potius quam tædium</p>
       <h1 class="page__title home__wordmark" itemprop="headline">
         <span class="page__title-text">{{ page.title | default: site.title }}</span>
       </h1>
