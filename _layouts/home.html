@@ -1,0 +1,37 @@
+---
+layout: default
+---
+
+{% include base_path %}
+
+{% comment %}
+  Dedicated Home hero — renders its own .page__hero--overlay markup (rather than the
+  generic page__hero include) for full control of the light-written wordmark, while
+  keeping the exact class hooks (.page__hero--overlay + .page__lead-inner) that
+  overlay-opening-scene.js and _page.scss drive the develop-in opening scene from.
+{% endcomment %}
+{% assign home_filter = page.header.overlay_filter | default: 0.25 %}
+{% assign home_overlay = page.header.overlay_image | prepend: "/images/" | relative_url %}
+
+<div class="page__hero--overlay page__hero--overlay-home home__hero">
+  <div class="page__hero-media" style="background-image: linear-gradient(rgba(0,0,0,{{ home_filter }}), rgba(0,0,0,{{ home_filter }})), url('{{ home_overlay }}');"></div>
+  <div class="wrapper">
+    <div class="page__hero-copy">
+      <h1 class="page__title home__wordmark" itemprop="headline">
+        <span class="page__title-text">{{ page.title | default: site.title }}</span>
+      </h1>
+      {% if page.excerpt %}
+        <p class="page__lead"><span class="page__lead-inner">{{ page.excerpt | markdownify | remove: "<p>" | remove: "</p>" }}</span></p>
+      {% endif %}
+    </div>
+  </div>
+  {% if page.header.caption %}
+    <span class="page__hero-caption">{{ page.header.caption | markdownify | remove: "<p>" | remove: "</p>" }}</span>
+  {% endif %}
+</div>
+
+<div id="main" role="main">
+  <div class="home">
+    {{ content }}
+  </div>
+</div>
