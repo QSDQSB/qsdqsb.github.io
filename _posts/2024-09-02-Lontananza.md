@@ -1,14 +1,16 @@
 ---
 title: "Lontananza"
 date: 2024-09-02
-permalink: /posts/2024/lontananza
+permalink: /posts/lontananza/
+redirect_from:
+  - /posts/2024/lontananza/
 excerpt: "Memory's images, once they are fixed in words, are erased."
 tags:
   - 🍜Life
   - 💍Horcrux
 prose_justify: true
 left_tarot_card: "queen-of-swords"
-left_tarot_href: /posts/2024/war-declaration-to-boredom
+left_tarot_href: /posts/war-declaration-to-boredom/
 header:
   overlay_image: Lontananza_3v1.jpg
   overlay_filter: 0.25

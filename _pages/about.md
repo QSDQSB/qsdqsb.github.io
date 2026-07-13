@@ -57,7 +57,7 @@ swipers:
 
 <!-- <p class="notice--success">🌗There <i>may</i> or <i>may not</i> be some <i>Tarot cards</i> hidden at the lower corners [laptop only].<br>As a hint, This page's lower left corner leads to QSD's rolling 7-day favourite voyage, and lower right to ...?</p> -->
 
-<a href="/posts/2022/03/jianfei-diary" target="_blank" class="notice--pinky background-color-peach-pink-animated hover-scale" style="display: block; text-decoration: none; color: inherit; border-radius: 0.5em;">
+<a href="/posts/jianfei-diary/" target="_blank" class="notice--pinky background-color-peach-pink-animated hover-scale" style="display: block; text-decoration: none; color: inherit; border-radius: 0.5em;">
 ➡️➡️➡️  <span class="sans-serif"><b lang="zh">QSD减肥进行时</b> 🏃‍♂️💨💨... !</span>
 <br><i><span style="color: #FCFCFC; font-variant: small-caps;">Attempt #8</span> von 27.10.2025</i>
 </a>

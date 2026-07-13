@@ -1,7 +1,9 @@
 ---
 title: "Fantastic Beasts and How to Argue with Them"
 date: 2022-03-09
-permalink: /posts/2022/03/argue-with-idiots
+permalink: /posts/argue-with-idiots/
+redirect_from:
+  - /posts/2022/03/argue-with-idiots/
 excerpt: "别和猪讲道理，猪不高兴，你也不高兴。"
 left_tarot_card: page-of-swords
 left_tarot_href: /#a-bizzard-self-intro

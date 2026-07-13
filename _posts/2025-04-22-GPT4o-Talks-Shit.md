@@ -1,10 +1,12 @@
 ---
 title: "GPT-4o Talks bull**it 🌈💨"
 date: 2025-04-22
-permalink: /posts/2025/gpt4o-talks-shit
+permalink: /posts/gpt4o-talks-shit/
+redirect_from:
+  - /posts/2025/gpt4o-talks-shit/
 excerpt: "The majestic capability of deifying any pile of sh1t, presented by ___His Holiness___ **GPT4o**"
 left_tarot_card: 'the-fool'
-left_tarot_href: /posts/2022/03/argue-with-idiots
+left_tarot_href: /posts/argue-with-idiots/
 tags:
   - 🧼QSD's Philosophy
   - 😻Happy Moments
