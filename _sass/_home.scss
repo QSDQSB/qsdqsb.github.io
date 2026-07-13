@@ -170,61 +170,86 @@ body.layout--home {
 .home__note { font-family: $didot-family; font-style: italic; font-size: $type-size-6; color: rgba($primary-color, 0.4); }
 
 /* ---------------- The destination index ---------------- */
-.home__index { padding: clamp(4rem, 10vh, 9rem) 0 clamp(3.5rem, 8vh, 6rem); position: relative; }
-.home__index-body { position: relative; }
+.home__index { padding: clamp(4rem, 10vh, 9rem) 0 clamp(3.5rem, 8vh, 6rem); }
 
-.home__doors { list-style: none; margin: 0; padding: 0; position: relative; z-index: 2; }
-.door-row {
-  position: relative;
+.home__index-grid {
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  grid-template-columns: 1fr clamp(17rem, 32%, 27rem);
+  gap: clamp(2rem, 5vw, 5rem);
   align-items: center;
-  gap: clamp(1rem, 3vw, 2.6rem);
-  padding: clamp(1.4rem, 3.4vw, 2.4rem) 0.4rem;
-  border-top: 1px solid rgba($primary-color, 0.1);
-  transition: padding-left 0.55s $cubic-bezier-smooth;
-  color: $primary-color;
+}
+
+.home__doors { list-style: none; margin: 0; padding: 0; }
+
+/* The row is an <a>, so hard-reset any inherited link colour/underline
+   (the site's global link styles must never bleed into the index). */
+.home__doors .door,
+.home__doors .door:link,
+.home__doors .door:visited,
+.home__doors .door:hover,
+.home__doors .door:focus,
+.home__doors .door:focus-visible {
   text-decoration: none;
+  color: $primary-color;
 }
-.home__doors li:last-child .door-row { border-bottom: 1px solid rgba($primary-color, 0.1); }
-.door-num { font-family: $barlow-font-family; font-size: $type-size-7; letter-spacing: 0.18em; color: rgba($primary-color, 0.4); font-variant-numeric: tabular-nums; transition: color 0.5s; }
-.door-title { font-family: $didot-family; font-weight: 600; font-size: clamp(1.9rem, 5.2vw, 3.9rem); line-height: 1; letter-spacing: -0.01em; transition: color 0.5s; }
-.door-desc { font-family: $barlow-font-family; font-size: $type-size-7; color: rgba($primary-color, 0.55); text-align: right; max-width: 22ch; justify-self: end; transition: color 0.5s; }
-.door-arrow { font-family: $didot-family; font-size: 1.5rem; color: rgba($primary-color, 0.4); transform: translateX(-8px); opacity: 0; transition: transform 0.55s $cubic-bezier-smooth, opacity 0.5s, color 0.5s; }
 
-.home__doors:hover .door-row { opacity: 0.4; transition: opacity 0.5s; }
-.door-row:hover { opacity: 1; padding-left: clamp(0.8rem, 2.4vw, 1.8rem); }
-.door-row:hover .door-title { color: #e6ce8f; }
-.door-row:hover .door-num { color: $h2-color; }
-.door-row:hover .door-arrow { transform: translateX(0); opacity: 1; color: $h2-color; }
-.door-row:hover .door-desc { color: $primary-color; }
+.door {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: clamp(1rem, 2.4vw, 2rem);
+  padding: clamp(1.3rem, 3vw, 2.1rem) 0.2rem;
+  border-top: 1px solid rgba($primary-color, 0.1);
+  transition: padding-left 0.5s $cubic-bezier-smooth, opacity 0.45s;
+}
+.home__doors li:last-child .door { border-bottom: 1px solid rgba($primary-color, 0.1); }
 
-/* the big image that fades in on hover (editorial reveal) */
-.door-preview {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  width: min(46%, 560px);
-  aspect-ratio: 4 / 3;
-  border-radius: 14px;
+.door__num { font-family: $barlow-font-family; font-size: $type-size-7; letter-spacing: 0.16em; color: rgba($primary-color, 0.38); font-variant-numeric: tabular-nums; transition: color 0.45s; }
+.door__text { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
+.door__title { font-family: $didot-family; font-weight: 600; font-size: clamp(1.9rem, 4.4vw, 3.4rem); line-height: 1; letter-spacing: -0.01em; color: $primary-color; transition: color 0.45s; }
+.door__desc { font-family: $barlow-font-family; font-size: $type-size-7; color: rgba($primary-color, 0.5); transition: color 0.45s; }
+.door__arrow { font-family: $didot-family; font-size: 1.4rem; color: rgba($primary-color, 0.35); transform: translateX(-6px); opacity: 0; transition: transform 0.5s $cubic-bezier-smooth, opacity 0.45s, color 0.45s; }
+
+/* hover: dim the others, lift the active one — no underline, no link-blue */
+.home__doors:hover .door { opacity: 0.4; }
+.home__doors .door:hover,
+.home__doors .door:focus-visible { opacity: 1; padding-left: clamp(0.6rem, 1.6vw, 1.2rem); }
+.door:hover .door__title,
+.door:focus-visible .door__title { color: #e6ce8f; }
+.door:hover .door__num,
+.door:focus-visible .door__num { color: $h2-color; }
+.door:hover .door__desc,
+.door:focus-visible .door__desc { color: rgba($primary-color, 0.85); }
+.door:hover .door__arrow,
+.door:focus-visible .door__arrow { transform: translateX(0); opacity: 1; color: $h2-color; }
+
+/* right-hand image stage — contained in its own column, never overlaps the list */
+.home__index-stage { position: relative; }
+.door-frame {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 16px;
   overflow: hidden;
-  z-index: 1;
-  opacity: 0;
+  border: 1px solid rgba($primary-color, 0.1);
+  box-shadow: $shadow-floating;
+}
+.door-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(9, 9, 12, 0.08) 0%, rgba(9, 9, 12, 0.42) 100%);
   pointer-events: none;
-  transition: opacity 0.6s ease;
-  box-shadow: 0 30px 90px -30px rgba(0, 0, 0, 0.8);
-  -webkit-mask-image: radial-gradient(120% 100% at 50% 50%, #000 55%, transparent 100%);
-          mask-image: radial-gradient(120% 100% at 50% 50%, #000 55%, transparent 100%);
 }
-.door-preview.show { opacity: 0.55; }
-.door-pane {
-  position: absolute; inset: 0;
-  background-size: cover; background-position: center;
-  opacity: 0; transform: scale(1.06);
-  transition: opacity 0.6s ease, transform 1.2s ease;
+.door-shot {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 0.7s ease, transform 1.5s ease;
 }
-.door-pane.on { opacity: 1; transform: scale(1.12); }
+.door-shot.is-on { opacity: 1; transform: scale(1); }
 
 /* ---------------- What's New — editorial feature ---------------- */
 .home__whatsnew { padding: clamp(2rem, 5vh, 4rem) 0 clamp(2rem, 5vh, 4rem); }
@@ -282,14 +307,14 @@ html.home-reveal-ready .reveal {
 html.home-reveal-ready .reveal.is-in { opacity: 1; transform: none; }
 
 /* stagger the door rows once the index reveals */
-html.home-reveal-ready .home__doors .door-row { opacity: 0; transform: translateY(20px); transition: opacity 0.7s $cubic-bezier-smooth, transform 0.8s $cubic-bezier-smooth; }
-html.home-reveal-ready .home__index.is-in .door-row { opacity: 1; transform: none; }
-.home__doors li:nth-child(1) .door-row { transition-delay: 0.05s; }
-.home__doors li:nth-child(2) .door-row { transition-delay: 0.13s; }
-.home__doors li:nth-child(3) .door-row { transition-delay: 0.21s; }
-.home__doors li:nth-child(4) .door-row { transition-delay: 0.29s; }
+html.home-reveal-ready .home__doors .door { opacity: 0; transform: translateY(20px); transition: opacity 0.7s $cubic-bezier-smooth, transform 0.8s $cubic-bezier-smooth, padding-left 0.5s $cubic-bezier-smooth; }
+html.home-reveal-ready .home__index.is-in .door { opacity: 1; transform: none; }
+.home__doors li:nth-child(1) .door { transition-delay: 0.05s; }
+.home__doors li:nth-child(2) .door { transition-delay: 0.13s; }
+.home__doors li:nth-child(3) .door { transition-delay: 0.21s; }
+.home__doors li:nth-child(4) .door { transition-delay: 0.29s; }
 /* the :hover dim shouldn't fight the reveal transform */
-html.home-reveal-ready .home__index.is-in .home__doors:hover .door-row { transform: none; }
+html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: none; }
 
 @keyframes home-bg-zoom { from { transform: scale(1.02); } to { transform: scale(1.13); } }
 @keyframes home-bg-drift {
@@ -307,10 +332,9 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door-row { transfo
   .wn-card { grid-row: auto; min-height: 16rem; }
 }
 @include responsive-down(tablet) {
-  .door-row { grid-template-columns: auto 1fr auto; }
-  .door-desc { display: none; }
-  .door-preview { display: none; }
-  .home__doors:hover .door-row { opacity: 1; }
+  .home__index-grid { grid-template-columns: 1fr; }
+  .home__index-stage { display: none; }
+  .home__doors:hover .door { opacity: 1; }
 
   /* The single-line typewriter clips long persona lines on narrow screens, so on
      small viewports show the primary excerpt as a clean static wrapping line. */
