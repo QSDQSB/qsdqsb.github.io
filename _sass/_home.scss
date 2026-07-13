@@ -65,6 +65,60 @@ body.layout--home {
   mix-blend-mode: screen;
   animation: home-bg-drift 30s ease-in-out infinite alternate;
 }
+/* Slow glowing colour blobs drifting behind the glass — the veil frosts them into
+   soft moving light, adding vibrancy without pulling focus from the title. */
+.home__hero-blobs {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.home__hero-blobs .blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(55px);
+  mix-blend-mode: screen;
+  opacity: 0.5;
+  will-change: transform;
+}
+.blob--1 {
+  width: 34vw; height: 34vw; left: 6%; top: 32%;
+  background: radial-gradient(circle, rgba(201, 162, 75, 0.55) 0%, transparent 68%);
+  animation: home-blob-a 34s ease-in-out infinite;
+}
+.blob--2 {
+  width: 30vw; height: 30vw; right: 4%; top: 10%;
+  background: radial-gradient(circle, rgba(84, 120, 160, 0.5) 0%, transparent 68%);
+  animation: home-blob-b 44s ease-in-out infinite;
+}
+.blob--3 {
+  width: 27vw; height: 27vw; left: 42%; bottom: 2%;
+  background: radial-gradient(circle, rgba(122, 106, 150, 0.46) 0%, transparent 70%);
+  animation: home-blob-c 39s ease-in-out infinite;
+}
+.blob--4 {
+  width: 24vw; height: 24vw; left: 20%; top: 4%;
+  background: radial-gradient(circle, rgba(154, 59, 54, 0.42) 0%, transparent 70%);
+  animation: home-blob-b 50s ease-in-out infinite reverse;
+}
+
+@keyframes home-blob-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(12vw, 9vh) scale(1.2); }
+  66% { transform: translate(-7vw, -11vh) scale(0.85); }
+}
+@keyframes home-blob-b {
+  0%, 100% { transform: translate(0, 0) scale(1.05); }
+  35% { transform: translate(-14vw, 11vh) scale(0.88); }
+  70% { transform: translate(9vw, -9vh) scale(1.28); }
+}
+@keyframes home-blob-c {
+  0%, 100% { transform: translate(0, 0) scale(0.95); }
+  40% { transform: translate(11vw, -13vh) scale(1.18); }
+  75% { transform: translate(-11vw, 7vh) scale(1); }
+}
+
 .home__hero-veil {
   position: absolute;
   inset: 0;
@@ -407,6 +461,7 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
 
 @include responsive-reduced-motion {
   .home__hero-media::before, .home__hero-media::after, .home__hero-veil, .home__hero-qsd,
+  .home__hero-blobs .blob,
   .home__eyebrow, .home__wordmark .ln > span, .home__wordmark .gold,
   .home__identity, .home__identity .text-type-writer span span,
   .home__scrollcue, .home__scrollcue .rule::after { animation: none !important; }
