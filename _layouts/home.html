@@ -9,9 +9,10 @@ layout: default
   typewriter identity line (reusing the site's .text-type-writer component to
   cycle the persona excerpts one at a time). No photo / no opening scene here.
 {% endcomment %}
-<section class="home__hero">
-  <div class="home__hero-media" aria-hidden="true" style="--hero-photo: url('{{ '/images/QSD_Night_5v2.jpg' | relative_url }}');"></div>
+<section class="home__hero" style="--hero-photo: url('{{ '/images/QSD_Night_5v2.jpg' | relative_url }}');">
+  <div class="home__hero-media" aria-hidden="true"></div>
   <div class="home__hero-veil" aria-hidden="true"></div>
+  <div class="home__hero-qsd" aria-hidden="true"></div>
   <div class="home__hero-inner">
     <p class="home__eyebrow" lang="la">Mors potius quam taedium</p>
     <h1 class="home__wordmark" itemprop="headline">
