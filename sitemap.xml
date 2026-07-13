@@ -6,11 +6,9 @@ permalink: /sitemap.xml
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>{{ site.url }}/year-archive/</loc>
-    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
   </url>
   <url>
     <loc>{{ site.url }}/tags/</loc>
-    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
   </url>
   {% for post in site.posts %}
     <url>
@@ -20,7 +18,6 @@ permalink: /sitemap.xml
   {% endfor %}
   <url>
     <loc>{{ site.url }}/portfolio/</loc>
-    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
   </url>
   {% for post in site.portfolio %}
     <url>
@@ -30,7 +27,6 @@ permalink: /sitemap.xml
   {% endfor %}
   <url>
     <loc>{{ site.url }}/voyage-by-tags/</loc>
-    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
   </url>
   {% for post in site.voyage %}
     <url>
@@ -46,10 +42,8 @@ permalink: /sitemap.xml
   {% endfor %}
   <url>
     <loc>{{ site.url }}</loc>
-    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
   </url>
   <url>
     <loc>{{ site.url }}/cv/</loc>
-    <lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod>
   </url>
 </urlset>
