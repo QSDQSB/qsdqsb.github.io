@@ -5,8 +5,8 @@ layout: default
 {% include base_path %}
 
 {% comment %}
-  Dedicated Home hero — renders its own .page__hero--overlay markup (rather than the
-  generic page__hero include) for full control of the light-written wordmark, while
+  Dedicated full-screen Home hero — renders its own .page__hero--overlay markup
+  (rather than the generic page__hero include) for a cinematic 100vh panel, while
   keeping the exact class hooks (.page__hero--overlay + .page__lead-inner) that
   overlay-opening-scene.js and _page.scss drive the develop-in opening scene from.
 {% endcomment %}
@@ -25,13 +25,14 @@ layout: default
       {% endif %}
     </div>
   </div>
-  {% if page.header.caption %}
-    <span class="page__hero-caption">{{ page.header.caption | markdownify | remove: "<p>" | remove: "</p>" }}</span>
-  {% endif %}
+  <a class="home__scrollcue" href="#home-explore" aria-label="Scroll to explore">
+    <span class="home__scrollcue-word">Enter</span>
+    <span class="home__scrollcue-arrow" aria-hidden="true"></span>
+  </a>
 </div>
 
 <div id="main" role="main">
-  <div class="home">
+  <div class="home" id="home-explore">
     {{ content }}
   </div>
 </div>
