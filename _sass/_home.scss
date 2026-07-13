@@ -253,6 +253,14 @@ body.layout--home {
 
 /* ---------------- What's New — editorial feature ---------------- */
 .home__whatsnew { padding: clamp(2rem, 5vh, 4rem) 0 clamp(2rem, 5vh, 4rem); }
+
+/* Hard-reset link styling on the What's New tiles (they are <a>): no link-blue,
+   no underline on hover/focus — same guard as the destination index. */
+.wn-card, .wn-card:link, .wn-card:visited, .wn-card:hover, .wn-card:focus, .wn-card:focus-visible,
+.wn-item, .wn-item:link, .wn-item:visited, .wn-item:hover, .wn-item:focus, .wn-item:focus-visible {
+  text-decoration: none;
+  color: $primary-color;
+}
 .wn-grid { display: grid; grid-template-columns: 1.55fr 1fr; gap: 1rem; }
 
 %wn-tile {
