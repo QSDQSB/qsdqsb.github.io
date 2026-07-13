@@ -1,7 +1,9 @@
 ---
 title: "The Unreachable Bridge"
 date: 2026-07-09
-permalink: /posts/2026/shihuqiao
+permalink: /posts/shihuqiao/
+redirect_from:
+  - /posts/2026/shihuqiao/
 excerpt: "The city exists and it has a simple secret: it knows only departures, not returns."
 
 tags:

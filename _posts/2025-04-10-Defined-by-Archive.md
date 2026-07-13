@@ -1,10 +1,10 @@
 ---
 title: "Defined by Archive"
 date: 2025-04-10
-permalink: /posts/defined-by-archive
+permalink: /posts/defined-by-archive/
 excerpt: "Tangible relics of the past bear a truth where memory alone tarnishes."
 
-redirect_from: 
+redirect_from:
   - /posts/2025-04-10-Defined-by-Archive/
   - /posts/2025/defined-by-archive
 prose_justify: true

@@ -1,0 +1,26 @@
+---
+layout: none
+permalink: /llms.txt
+---
+# {{ site.title }}
+
+> {{ site.description }} The personal blog, travel galleries, and portfolio of QSD. Essays live under /posts/, photographic voyages under /voyage/.
+
+## Posts
+
+{% assign posts = site.posts | sort: "date" | reverse -%}
+{% for post in posts -%}
+- [{{ post.title | strip_html | strip_newlines | strip }}]({{ site.url }}{{ post.url }}){% if post.excerpt %}: {{ post.excerpt | strip_html | strip_newlines | strip | truncate: 140 }}{% endif %}
+{% endfor %}
+## Voyages
+
+{% assign voyages = site.voyage | sort: "date" | reverse -%}
+{% for v in voyages -%}
+- [{{ v.title | strip_html | strip_newlines | strip }}]({{ site.url }}{{ v.url }}){% if v.excerpt %}: {{ v.excerpt | strip_html | strip_newlines | strip | truncate: 140 }}{% endif %}
+{% endfor %}
+## Indexes
+
+- [All posts by year]({{ site.url }}/year-archive/)
+- [Posts by tag]({{ site.url }}/tags/)
+- [Voyages by tag]({{ site.url }}/voyage-by-tags/)
+- [CV]({{ site.url }}/cv/)

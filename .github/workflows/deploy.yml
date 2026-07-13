@@ -52,6 +52,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # Full history so jekyll-last-modified-at reads real per-file git
+          # dates (sitemap <lastmod>, article:modified_time). A shallow
+          # clone would stamp every file with the latest commit's date.
+          fetch-depth: 0
 
       - name: Verify dependency lock files
         # actions/setup-node and ruby/setup-ruby both rely on lock files for
@@ -127,6 +132,26 @@ jobs:
             exit 1
           fi
 
+      - name: Verify sitemap
+        # The sitemap must stay well-formed XML with only canonical
+        # https://qsdqsb.github.io URLs — Search Console gives no useful
+        # diagnostics when a sitemap is subtly broken, so we prove the
+        # artifact healthy on every deploy instead.
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          ns = '{http://www.sitemaps.org/schemas/sitemap/0.9}'
+          img = '{http://www.google.com/schemas/sitemap-image/1.1}'
+          root = ET.parse('_site/sitemap.xml').getroot()
+          locs = [e.text for e in root.iter(ns + 'loc')]
+          imgs = [e.text for e in root.iter(img + 'loc')]
+          bad = [u for u in locs + imgs if not (u or '').startswith('https://qsdqsb.github.io')]
+          assert len(locs) > 50, f'sitemap has only {len(locs)} URLs - generation likely broken'
+          assert len(imgs) > 50, f'sitemap has only {len(imgs)} gallery images - image entries likely broken'
+          assert not bad, f'non-canonical sitemap URLs: {bad[:5]}'
+          print(f'sitemap OK: {len(locs)} page URLs, {len(imgs)} gallery images')
+          PY
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
 
@@ -144,3 +169,32 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Submit sitemap URLs to IndexNow
+        # Google does not support IndexNow — this feeds Bing/Yandex, whose
+        # indexes power ChatGPT Search and Copilot. The key is public by
+        # protocol design (it is served at /<key>.txt), so committing it is
+        # fine. Never allowed to fail the deploy.
+        continue-on-error: true
+        run: |
+          sleep 30
+          curl -sS --max-time 30 https://qsdqsb.github.io/sitemap.xml -o /tmp/sitemap.xml
+          python3 - <<'PY'
+          import json, urllib.request, xml.etree.ElementTree as ET
+          ns = '{http://www.sitemaps.org/schemas/sitemap/0.9}'
+          locs = [e.text for e in ET.parse('/tmp/sitemap.xml').getroot().iter(ns + 'loc')]
+          key = '3fb10d5bff3eb87abe2dad2186078f68'
+          payload = {
+              'host': 'qsdqsb.github.io',
+              'key': key,
+              'keyLocation': f'https://qsdqsb.github.io/{key}.txt',
+              'urlList': locs,
+          }
+          req = urllib.request.Request(
+              'https://api.indexnow.org/indexnow',
+              data=json.dumps(payload).encode(),
+              headers={'Content-Type': 'application/json; charset=utf-8'},
+          )
+          with urllib.request.urlopen(req, timeout=30) as r:
+              print(f'IndexNow accepted {len(locs)} URLs (HTTP {r.status})')
+          PY

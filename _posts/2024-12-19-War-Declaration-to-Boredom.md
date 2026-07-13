@@ -1,7 +1,9 @@
 ---
 title: "War Declaration Upon the Tyranny of Boredom"
 date: 2024-12-19
-permalink: /posts/2024/war-declaration-to-boredom
+permalink: /posts/war-declaration-to-boredom/
+redirect_from:
+  - /posts/2024/war-declaration-to-boredom/
 excerpt: "QSD proclaims his enduring hostilities against the reign of *Ennui* and all disciples in its service."
 tags:
   - 🧼QSD's Philosophy
