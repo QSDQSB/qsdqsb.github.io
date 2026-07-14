@@ -143,36 +143,42 @@
 
   /* ---- 3. motion (restrained; below-the-fold only, so no flash) ---- */
   if (reduce) return;
-  var fig = content.querySelector(".jf-fig");
-  var revealTargets = exhibits.slice();
-  if (fig) revealTargets.push(fig);
-  revealTargets.forEach(function (t) { t.classList.add("jf-reveal"); });
 
+  // gentle reveal of the two diet exhibits
+  var revealTargets = exhibits.slice();
+  revealTargets.forEach(function (t) { t.classList.add("jf-reveal"); });
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("jf-in"); io.unobserve(e.target); } });
     }, { rootMargin: "0px 0px -8% 0px", threshold: 0.1 });
     revealTargets.forEach(function (t) { io.observe(t); });
-
-    var plot = content.querySelector(".jf-plot");
-    var line = plot && plot.querySelector(".jf-line");
-    if (line && line.getTotalLength) {
-      var L = line.getTotalLength();
-      line.style.strokeDasharray = L;
-      line.style.strokeDashoffset = L;
-      var pio = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) {
-            void plot.getBoundingClientRect(); // reflow-commit before transition
-            plot.classList.add("jf-drawn");
-            line.style.strokeDashoffset = "0";
-            pio.unobserve(e.target);
-          }
-        });
-      }, { threshold: 0.3 });
-      pio.observe(plot);
-    }
   } else {
     revealTargets.forEach(function (t) { t.classList.add("jf-in"); });
+  }
+
+  // SIGNATURE ANIMATION: the weight descent writes itself as you scroll past it.
+  // Progress maps the figure's travel up the viewport to stroke-dashoffset, so the
+  // -6 kg line plots itself like a seismograph; area/points/labels follow the pen.
+  var plot = content.querySelector(".jf-plot");
+  var line = plot && plot.querySelector(".jf-line");
+  if (line && line.getTotalLength) {
+    var L = line.getTotalLength();
+    line.style.strokeDasharray = L;
+    var raf = null;
+    var draw = function () {
+      raf = null;
+      var rect = plot.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      // draw over a comfortable band as the figure rises from ~86% to ~24% of the viewport
+      var p = (vh * 0.86 - rect.top) / (vh * 0.62);
+      p = p < 0 ? 0 : p > 1 ? 1 : p;
+      line.style.strokeDashoffset = String(L * (1 - p));
+      plot.style.setProperty("--jf-p", p.toFixed(3));
+      if (p > 0.985) { plot.classList.add("jf-drawn"); } else { plot.classList.remove("jf-drawn"); }
+    };
+    var onScroll = function () { if (!raf) { raf = requestAnimationFrame(draw); } };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    draw();
   }
 })();
