@@ -84,6 +84,22 @@ body.jianfei-treatise {
       }
     }
 
+    /* illuminated opening "abstract" — JS replaces the intro code block with this,
+       each line led by its emoji as a versal. No-JS falls back to the styled block above. */
+    .jf-abstract { max-width: 40rem; margin: 0 0 2.6rem; }
+    .jf-abs-line {
+      display: grid;
+      grid-template-columns: 2.4rem 1fr;
+      gap: 0.9rem;
+      align-items: baseline;
+      margin: 0.62rem 0;
+      text-indent: 0;
+      text-align: left;
+      line-height: 1.6;
+      color: rgba($text-color, 0.84);
+    }
+    .jf-em { font-size: 1.6rem; line-height: 1; text-align: center; }
+
     /* horizontal rule between the documented era and the older attempts */
     hr {
       border: 0;
