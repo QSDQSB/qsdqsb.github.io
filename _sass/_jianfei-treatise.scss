@@ -110,28 +110,37 @@ body.jianfei-treatise {
     }
   }
 
-  /* ---- the "Commitment" instrument (existing <section> wrappers) ---- */
+  /* ---- the "Commitment" instrument (existing <section> wrappers) ----
+     No box. A formal-document treatment set into the running text: a heavier
+     top rule and a lighter bottom rule (booktabs \toprule / \bottomrule), the
+     centred title sitting under its own hairline \midrule — no side borders, no
+     fill. Reads as a printed contract clause, not a UI card. */
   .page__content .translucent_border,
   .page__content .paragraph-center-wrapper {
     font-family: $cmu-serif-family;
-    background: rgba($primary-color, 0.015);
-    border: 1px solid rgba($primary-color, 0.14);
+    background: transparent;
+    border: 0;
+    border-top: 2px solid rgba($primary-color, 0.5);
+    border-bottom: 1px solid rgba($primary-color, 0.24);
     border-radius: 0;
     box-shadow: none;
-    padding: 1.6rem 1.8rem;
-    margin: 1.6rem 0 0.6rem;
+    padding: 1.15rem 0 1.4rem;
+    margin: 2.4rem 0 1.4rem;
     text-align: justify;
 
-    // instrument title — the "Commitment 2025#2" H1s
+    // instrument title — the "Commitment 2025#2" H1s. Framed between the section's
+    // \toprule and its own \midrule as a formal document-header band.
     h1 {
       font-family: $cmu-serif-family;
       font-weight: 700;
       font-size: $type-size-4;
       text-align: center;
-      letter-spacing: 0.02em;
-      border-bottom: 1px solid rgba($primary-color, 0.12);
-      padding-bottom: 0.7rem;
-      margin: 0 auto 1rem;
+      letter-spacing: 0.04em;
+      // !important: the post authors these titles with inline border styling; match
+      // the approach used for .notice--info below and override it to the \midrule.
+      border-bottom: 1px solid rgba($primary-color, 0.28) !important;
+      padding-bottom: 0.8rem;
+      margin: 0.2rem auto 1.2rem;
     }
     // "Commitments" run-in label (existing <h6>)
     h6 {
@@ -230,14 +239,25 @@ body.jianfei-treatise {
     border-color: rgba($primary-color, 0.14);
   }
 
-  /* ---- unrecorded attempts (#1, #2 "TO BE UPDATED!") — muted ---- */
+  /* ---- unrecorded attempts (#1, #2 "TO BE UPDATED!") — a "record pending"
+     plate: muted italic set over a thin ruled blank, like a form field left
+     to be filled in. Verbatim text; the rule carries the meaning. ---- */
   .jf-unrecorded {
-    opacity: 0.5;
+    display: inline-block;
+    opacity: 0.62;
     font-style: italic;
     text-indent: 0 !important;
     font-family: $cmu-serif-family;
-    color: rgba($text-color, 0.6);
+    color: rgba($text-color, 0.55);
+    letter-spacing: 0.05em;
+    padding-bottom: 0.14rem;
+    border-bottom: 1px solid rgba($text-color, 0.22);
   }
+
+  /* ---- the sole "Ongoing" attempt: its 💨 gusts drift, still in motion.
+     JS wraps each gust glyph in `.jf-gust`; animation lives in the .js block
+     below and bails under reduced motion. ---- */
+  .jf-gust { display: inline-block; will-change: transform; }
 
   /* ---- optional: hero title in the treatise face ---- */
   .page__hero-copy .page__title { font-family: $cmu-serif-family; }
@@ -245,16 +265,18 @@ body.jianfei-treatise {
   /* =========================================================================
      Weight figure (§ Attempt #3) — a LaTeX-plot, self-drawing, success teal
      ========================================================================= */
-  .jf-fig { display: block; width: 100%; margin: 1.4rem 0 0.6rem; }
+  .jf-fig { display: block; width: 100%; margin: 1.6rem 0 0.6rem; }
+  /* No frame: the plot's own L-shaped axes carry the structure (pgfplots-style). */
   .jf-fig-frame {
     display: block;
     width: 100%;
-    border: 1px solid rgba($primary-color, 0.14);
-    padding: 1rem 0.6rem 0.4rem;
-    background: rgba($primary-color, 0.012);
+    border: 0;
+    padding: 0.4rem 0 0.2rem;
+    background: transparent;
   }
   .jf-plot { width: 100%; height: auto; display: block; overflow: visible; }
   .jf-grid { stroke: rgba($primary-color, 0.09); stroke-width: 1; }
+  .jf-axis { stroke: rgba($primary-color, 0.32); stroke-width: 1; }
   .jf-yl, .jf-xl, .jf-axt, .jf-ayt {
     fill: rgba($text-color, 0.55);
     font-family: $cmu-serif-family;
@@ -281,6 +303,16 @@ body.jianfei-treatise {
   }
   .jf-el-s { text-anchor: start; }
   .jf-el-e { text-anchor: end; fill: mix(#fff, $success-color, 40%); }
+  /* the payoff: a dashed reference line at the start weight + a right-edge
+     dimension bracket measuring the total −6.0 kg descent, set in success teal */
+  .jf-base { stroke: rgba($success-color, 0.3); stroke-width: 1; stroke-dasharray: 2 3.5; }
+  .jf-dim { stroke: rgba($success-color, 0.6); stroke-width: 1; }
+  .jf-dim-l {
+    font-family: $cmu-serif-family;
+    font-size: 13px;
+    fill: mix(#fff, $success-color, 42%);
+    text-anchor: middle;
+  }
 
   /* =========================================================================
      Diet exhibits — desktop calendar heatmap / mobile day-list (built by JS)
@@ -304,9 +336,16 @@ body.jianfei-treatise {
     display: flex;
     flex-direction: column;
     gap: 0.12rem;
+    transition: border-color 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
   }
   .jf-cell.empty { background: transparent; border-color: transparent; }
   .jf-cell.wknd { background: rgba($primary-color, 0.035); }
+  // a quiet micro-lift on hover — the one interactive flourish in the exhibit
+  .jf-cell:not(.empty):hover {
+    border-color: rgba($primary-color, 0.3);
+    background: rgba($primary-color, 0.06);
+    transform: translateY(-1px);
+  }
   .jf-cell-date { display: flex; justify-content: space-between; align-items: baseline; }
   .jf-cell-n { font-family: $cmu-serif-family; font-size: 0.72rem; color: rgba($primary-color, 0.75); }
   .jf-cell-d { font-family: $barlow-font-family; font-size: 0.5rem; color: rgba($text-color, 0.45); }
@@ -368,13 +407,24 @@ body.jianfei-treatise {
   // (no transition, so the pen tracks the scroll frame-for-frame); the area fills
   // with progress (--jf-p), and the points + endpoint labels land once fully drawn.
   .jf-area { opacity: var(--jf-p, 1); }
-  .jf-pt, .jf-el { opacity: 0; transition: opacity 0.5s ease; }
-  .jf-plot.jf-drawn .jf-pt { opacity: 1; }
-  .jf-plot.jf-drawn .jf-el { opacity: 1; }
+  .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { opacity: 0; transition: opacity 0.5s ease; }
+  .jf-plot.jf-drawn .jf-pt,
+  .jf-plot.jf-drawn .jf-el,
+  .jf-plot.jf-drawn .jf-base,
+  .jf-plot.jf-drawn .jf-dim,
+  .jf-plot.jf-drawn .jf-dim-l { opacity: 1; }
+
+  // The "Ongoing" line's gusts drift gently — the one campaign still running.
+  .jf-gust { animation: jf-gust-drift 2.6s $cubic-bezier-smooth infinite; }
 }
 
 @keyframes jf-abs-rise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
 @keyframes jf-abs-illumine { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+@keyframes jf-gust-drift {
+  0% { transform: translateX(0); opacity: 0.85; }
+  50% { transform: translateX(3px); opacity: 1; }
+  100% { transform: translateX(0); opacity: 0.85; }
+}
 
 /* Mobile: calendar → stacked list */
 body.jianfei-treatise {
@@ -392,29 +442,32 @@ body.jianfei-treatise {
   .js body.jianfei-treatise {
     .jf-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
     .jf-line { transition: none !important; stroke-dashoffset: 0 !important; }
-    .jf-area, .jf-pt, .jf-el { opacity: 1 !important; transition: none !important; }
+    .jf-area, .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { opacity: 1 !important; transition: none !important; }
     .jf-abs-line, .jf-em { animation: none !important; opacity: 1 !important; transform: none !important; }
+    .jf-gust { animation: none !important; transform: none !important; }
+    .jf-cell { transition: none !important; }
   }
 }
 
-/* Wide screens: Tufte-style right-margin apparatus.
-   The existing definition asides move into a reserved right gutter beside the text,
-   like a printed monograph; data exhibits + the figure reclaim the full measure.
-   Inline (current quiet-aside styling) below this breakpoint and with no JS. */
+/* Ultra-wide screens: a true monograph margin.
+   At normal widths the piece is simply the site's centred 50rem post measure with the
+   definitions as quiet inline asides — no reserved gutter, no empty band (that was the
+   old defect: a gutter carved into the already-narrow column stacked a second void on
+   top of the TOC reservation). Only once the viewport is wide enough that the centred
+   column has genuine right-margin room beside it — and safely clear of the TOC — do the
+   two definition asides float out into that margin as printed sidenotes. */
 body.jianfei-treatise {
-  @include responsive-up(wide) {
-    .page__content { position: relative; padding-right: 14.5rem; }
-
-    .jf-fig, .jf-exhibit { margin-right: -14.5rem; }
+  @include responsive-up(112rem) {
+    .page__content { position: relative; }
 
     .notice--info {
       float: right;
       clear: right;
-      width: 12rem;
-      margin: 0.3rem -13.4rem 0.9rem 0 !important;
-      padding: 0 0 0 0.85rem;
+      width: 11rem;
+      margin: 0.35rem -12.5rem 1rem 1.4rem !important;
+      padding: 0.1rem 0 0.1rem 0.9rem;
       border-left: 1px solid rgba($info-color, 0.5) !important;
-      font-size: 0.78em !important;
+      font-size: 0.76em !important;
       line-height: 1.5;
       color: rgba($text-color, 0.7);
       text-align: left;

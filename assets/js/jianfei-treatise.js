@@ -47,6 +47,33 @@
     if (s.charCodeAt(1) === 0xFE0F) { return s.slice(0, 2); }
     return s.charAt(0);
   }
+  // Wrap every occurrence of `mark` (a single glyph, possibly a surrogate pair)
+  // inside `root` in a <span class="jf-gust">, with a staggered animation delay,
+  // so the gusts drift independently. Text content is preserved exactly.
+  function wrapGusts(root, mark) {
+    var gi = 0, nodes = [];
+    (function collect(n) {
+      for (var c = n.firstChild; c; c = c.nextSibling) {
+        if (c.nodeType === 3) { nodes.push(c); }
+        else if (c.nodeType === 1) { collect(c); }
+      }
+    })(root);
+    nodes.forEach(function (tn) {
+      if (tn.nodeValue.indexOf(mark) === -1) return;
+      var frag = document.createDocumentFragment();
+      var parts = tn.nodeValue.split(mark);
+      for (var k = 0; k < parts.length; k++) {
+        if (parts[k]) { frag.appendChild(document.createTextNode(parts[k])); }
+        if (k < parts.length - 1) {
+          var sp = el("span", "jf-gust", mark);
+          sp.style.animationDelay = (gi * 0.4) + "s";
+          gi++;
+          frag.appendChild(sp);
+        }
+      }
+      tn.parentNode.replaceChild(frag, tn);
+    });
+  }
 
   /* ---- 0. front text: illuminate the opening "abstract" (emoji as versals) ---- */
   (function () {
@@ -169,6 +196,15 @@
   Array.prototype.forEach.call(content.querySelectorAll("p"), function (p) {
     if ((p.textContent || "").trim() === "TO BE UPDATED!") p.classList.add("jf-unrecorded");
   });
+
+  /* ---- 2b. the sole "Ongoing" line: wrap its gust glyphs so they can drift ---- */
+  (function () {
+    var GUST = String.fromCodePoint(0x1F4A8); // wind/gust emoji, built here to keep this file ASCII
+    var ps = content.querySelectorAll("p");
+    for (var i = 0; i < ps.length; i++) {
+      if ((ps[i].textContent || "").trim().indexOf("Ongoing") === 0) { wrapGusts(ps[i], GUST); break; }
+    }
+  })();
 
   /* ---- 3. motion (restrained; below-the-fold only, so no flash) ---- */
   if (reduce) return;
