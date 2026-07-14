@@ -1,0 +1,368 @@
+/* ==========================================================================
+   JIANFEI TREATISE — post-scoped, deadpan Computer-Modern academic treatment
+
+   A mock-academic "treatise" reading of the weight-loss diary: rigorous LaTeX /
+   Computer-Modern typography applied, straight-faced, to a trivial subject.
+   Opt in per post with `body_class: jianfei-treatise`.
+
+   Principles (from QSD's steer):
+   - Verbatim text only — the "paper" feel comes from type + structure, never
+     from added words. No invented labels, titles, or tags.
+   - No callout boxes — the existing `.notice--info` definitions become quiet
+     academic asides, not coloured boxes.
+   - Colour only where it carries meaning (the weight descent = success teal;
+     unrecorded attempts = muted). Otherwise near-monochrome CM on the dark ground.
+
+   Motion lives in assets/js/jianfei-treatise.js (adds `.jf-reveal` / `.jf-in`,
+   draws the figure). It bails under prefers-reduced-motion; the SCSS below also
+   nulls its transitions via the responsive-reduced-motion mixin, so the piece
+   inherits the dual guard.
+   ========================================================================== */
+
+body.jianfei-treatise {
+
+  /* ---- treatise body: Computer Modern, justified, LaTeX paragraph rhythm ---- */
+  .page__content {
+    font-family: $cmu-serif-family;
+    line-height: 1.55;
+    letter-spacing: 0;
+    text-align: justify;
+    hyphens: auto;
+
+    // fold the post's ad-hoc face classes into the single CM voice
+    .didot, .cmu-serif, .sans-serif { font-family: $cmu-serif-family; }
+
+    // LaTeX paragraphs — indented first line, minimal inter-paragraph gap
+    > p { text-indent: 1.5em; margin: 0.45em 0; }
+    > p:first-of-type,
+    > h1 + p, > h2 + p, > h3 + p, > h4 + p, > h5 + p, > h6 + p,
+    > hr + p, > blockquote + p { text-indent: 0; }
+
+    p, li, dl { font-size: 1.06em; }
+
+    /* section headings = the verbatim "Attempt #N: From …" H2s */
+    h2 {
+      font-family: $cmu-serif-family;
+      font-weight: 700;
+      text-align: left;
+      color: $primary-color;
+      font-size: $type-size-3;
+      letter-spacing: 0.01em;
+      margin: 3.2rem 0 1.1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid rgba($primary-color, 0.16);
+    }
+
+    /* subsection headings — "Daily Diet Record", "Weight Record" */
+    h3 {
+      font-family: $cmu-serif-family;
+      font-weight: 700;
+      text-align: left;
+      font-size: $type-size-5;
+      color: rgba($primary-color, 0.9);
+      margin: 1.8rem 0 0.6rem;
+      border-bottom: 0;
+    }
+
+    /* the intro fenced block (Chinese framing note) → academic epigraph */
+    .highlighter-rouge, pre.highlight, > pre {
+      background: transparent;
+      border: 0;
+      border-left: 2px solid rgba($primary-color, 0.18);
+      border-radius: 0;
+      margin: 0 0 2.4rem;
+      padding: 0.2rem 0 0.2rem 1.3rem;
+      box-shadow: none;
+      code, pre { white-space: pre-wrap; }
+      code {
+        font-family: $cmu-serif-family;
+        font-style: italic;
+        font-size: 1.02em;
+        color: rgba($text-color, 0.82);
+        background: transparent;
+        line-height: 1.6;
+      }
+    }
+
+    /* horizontal rule between the documented era and the older attempts */
+    hr {
+      border: 0;
+      height: 1px;
+      background: rgba($primary-color, 0.14);
+      margin: 2.6rem auto;
+      width: 40%;
+    }
+  }
+
+  /* ---- the "Commitment" instrument (existing <section> wrappers) ---- */
+  .page__content .translucent_border,
+  .page__content .paragraph-center-wrapper {
+    font-family: $cmu-serif-family;
+    background: rgba($primary-color, 0.015);
+    border: 1px solid rgba($primary-color, 0.14);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 1.6rem 1.8rem;
+    margin: 1.6rem 0 0.6rem;
+    text-align: justify;
+
+    // instrument title — the "Commitment 2025#2" H1s
+    h1 {
+      font-family: $cmu-serif-family;
+      font-weight: 700;
+      font-size: $type-size-4;
+      text-align: center;
+      letter-spacing: 0.02em;
+      border-bottom: 1px solid rgba($primary-color, 0.12);
+      padding-bottom: 0.7rem;
+      margin: 0 auto 1rem;
+    }
+    // "Commitments" run-in label (existing <h6>)
+    h6 {
+      font-family: $cmu-serif-family;
+      font-style: italic;
+      font-weight: 700;
+      color: rgba($primary-color, 0.85);
+      text-align: left;
+      margin: 1.2rem 0 0.3rem;
+      font-size: 1.02em;
+    }
+    p { margin: 0.5rem 0; }
+
+    /* enumerated commitments → LaTeX enumerate  (1) (2) (3) */
+    ol {
+      list-style: none;
+      counter-reset: jf-clause;
+      padding-left: 0;
+      margin: 0.5rem 0 1rem;
+      > li {
+        counter-increment: jf-clause;
+        position: relative;
+        padding: 0.32rem 0 0.32rem 2.5rem;
+        text-align: justify;
+        &::before {
+          content: "(" counter(jf-clause) ")";
+          position: absolute;
+          left: 0;
+          top: 0.32rem;
+          font-family: $cmu-serif-family;
+          color: rgba($primary-color, 0.75);
+          width: 2rem;
+        }
+      }
+    }
+    /* dash-item commitments (the <ul> attempts) */
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0.5rem 0 1rem;
+      > li {
+        position: relative;
+        padding: 0.3rem 0 0.3rem 1.6rem;
+        text-align: justify;
+        &::before {
+          content: "\2014"; // em dash
+          position: absolute;
+          left: 0.2rem;
+          top: 0.3rem;
+          color: rgba($primary-color, 0.55);
+        }
+      }
+    }
+
+    /* right-aligned italic signature blocks (existing .text-right) */
+    .text-right {
+      text-align: right;
+      font-style: italic;
+      h3, h6 { font-family: $cmu-serif-family; font-weight: 400; font-style: italic; text-align: right; border: 0; margin: 0.2rem 0 0; }
+    }
+    .text-center, .center-wrapper { text-align: center; }
+  }
+
+  /* ---- definitions: no box. Quiet academic aside (override inline bg) ---- */
+  .page__content .notice--info {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    border-left: 1px solid rgba($info-color, 0.55) !important;
+    border-radius: 0 !important;
+    max-width: none;
+    margin: 1.1rem 0 !important;
+    padding: 0.25rem 0 0.25rem 1.1rem;
+    text-align: left;
+    font-family: $cmu-serif-family;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 1em !important;
+    color: rgba($text-color, 0.78);
+    line-height: 1.6;
+    .macaron, .barlow { font-family: $cmu-serif-family; font-style: italic; }
+  }
+
+  /* ---- blockquote (the #3 "principles") — academic quotation ---- */
+  .page__content blockquote {
+    font-family: $cmu-serif-family;
+    font-style: italic;
+    color: rgba($text-color, 0.82);
+    ul > li::before { color: rgba($primary-color, 0.5); }
+  }
+
+  /* ---- legend table (emoji → dish) — quiet academic table ---- */
+  .page__content table {
+    font-family: $barlow-font-family;
+    font-size: 0.82em;
+    border-color: rgba($primary-color, 0.14);
+  }
+
+  /* ---- unrecorded attempts (#1, #2 "TO BE UPDATED!") — muted ---- */
+  .jf-unrecorded {
+    opacity: 0.5;
+    font-style: italic;
+    text-indent: 0 !important;
+    font-family: $cmu-serif-family;
+    color: rgba($text-color, 0.6);
+  }
+
+  /* ---- optional: hero title in the treatise face ---- */
+  .page__hero-copy .page__title { font-family: $cmu-serif-family; }
+
+  /* =========================================================================
+     Weight figure (§ Attempt #3) — a LaTeX-plot, self-drawing, success teal
+     ========================================================================= */
+  .jf-fig { display: block; width: 100%; margin: 1.4rem 0 0.6rem; }
+  .jf-fig-frame {
+    display: block;
+    width: 100%;
+    border: 1px solid rgba($primary-color, 0.14);
+    padding: 1rem 0.6rem 0.4rem;
+    background: rgba($primary-color, 0.012);
+  }
+  .jf-plot { width: 100%; height: auto; display: block; overflow: visible; }
+  .jf-grid { stroke: rgba($primary-color, 0.09); stroke-width: 1; }
+  .jf-yl, .jf-xl, .jf-axt, .jf-ayt {
+    fill: rgba($text-color, 0.55);
+    font-family: $cmu-serif-family;
+    font-size: 12px;
+  }
+  .jf-yl { text-anchor: end; }
+  .jf-xl, .jf-axt, .jf-ayt { text-anchor: middle; }
+  .jf-a0 { stop-color: $success-color; stop-opacity: 0.22; }
+  .jf-a1 { stop-color: $success-color; stop-opacity: 0; }
+  .jf-area { opacity: 1; }
+  .jf-line {
+    fill: none;
+    stroke: $success-color;
+    stroke-width: 1.7;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .jf-pt { fill: $success-color; }
+  .jf-pt-e { fill: mix(#fff, $success-color, 35%); }
+  .jf-el {
+    font-family: $cmu-serif-family;
+    font-size: 13px;
+    fill: rgba($text-color, 0.9);
+  }
+  .jf-el-s { text-anchor: start; }
+  .jf-el-e { text-anchor: end; fill: mix(#fff, $success-color, 40%); }
+
+  /* =========================================================================
+     Diet exhibits — desktop calendar heatmap / mobile day-list (built by JS)
+     ========================================================================= */
+  .jf-cal { display: flex; flex-direction: column; gap: 0.32rem; margin: 0.6rem 0 0.4rem; }
+  .jf-cal-head, .jf-cal-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.32rem; }
+  .jf-cal-hc {
+    font-family: $barlow-font-family;
+    font-size: 0.56rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: rgba($text-color, 0.5);
+    padding-bottom: 0.12rem;
+  }
+  .jf-cal-hc.wknd { color: rgba($primary-color, 0.5); }
+  .jf-cell {
+    background: rgba($primary-color, 0.02);
+    border: 1px solid rgba($primary-color, 0.09);
+    padding: 0.4rem 0.4rem;
+    min-height: 4.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem;
+  }
+  .jf-cell.empty { background: transparent; border-color: transparent; }
+  .jf-cell.wknd { background: rgba($primary-color, 0.035); }
+  .jf-cell-date { display: flex; justify-content: space-between; align-items: baseline; }
+  .jf-cell-n { font-family: $cmu-serif-family; font-size: 0.72rem; color: rgba($primary-color, 0.75); }
+  .jf-cell-d { font-family: $barlow-font-family; font-size: 0.5rem; color: rgba($text-color, 0.45); }
+  .jf-meal { display: flex; align-items: center; gap: 0.28rem; line-height: 1; }
+  .jf-meal-t { font-family: $barlow-font-family; font-size: 0.46rem; color: rgba($text-color, 0.45); width: 0.62rem; flex: none; }
+  .jf-meal-g { font-size: 0.82rem; }
+  .jf-legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin-top: 0.9rem; font-family: $barlow-font-family; font-size: 0.72rem; color: rgba($text-color, 0.55); align-items: center; }
+  .jf-legend b { font-family: $cmu-serif-family; color: rgba($primary-color, 0.8); font-weight: 400; margin-right: 0.15rem; }
+
+  /* stacked day-list (mobile / no-grid) */
+  .jf-list { display: none; list-style: none; padding: 0; margin: 0.6rem 0; }
+  .jf-row {
+    display: grid;
+    grid-template-columns: 1.9rem auto 1fr;
+    gap: 0.7rem;
+    align-items: baseline;
+    padding: 0.5rem 0.2rem;
+    border-bottom: 1px solid rgba($primary-color, 0.08);
+  }
+  .jf-row-n { font-family: $cmu-serif-family; color: rgba($primary-color, 0.75); font-size: 0.85rem; text-align: right; }
+  .jf-row-d { font-family: $barlow-font-family; font-size: 0.72rem; color: rgba($text-color, 0.5); white-space: nowrap; }
+  .jf-row-d em { font-style: normal; opacity: 0.6; margin-left: 0.2rem; }
+  .jf-row-m { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+  .jf-row-meal { display: inline-flex; align-items: center; gap: 0.2rem; }
+  .jf-row-t { font-family: $barlow-font-family; font-size: 0.56rem; color: rgba($primary-color, 0.55); }
+  .jf-row-g { font-size: 0.98rem; }
+
+  /* hide the original tables once JS has built the exhibits (no-JS keeps them) */
+  .jf-source-hidden { display: none; }
+
+  /* =========================================================================
+     Motion — restrained; applied only when JS marks `.js` + `.jf-reveal`
+     ========================================================================= */
+  .jf-reveal { opacity: 1; }
+}
+
+/* JS-enabled + not reduced-motion: reveal-on-scroll for treatise elements */
+.js body.jianfei-treatise {
+  .jf-reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 0.7s $cubic-bezier-smooth,
+      transform 0.8s $cubic-bezier-smooth;
+    will-change: opacity, transform;
+  }
+  .jf-reveal.jf-in { opacity: 1; transform: none; }
+
+  // figure draws its line via stroke-dashoffset (set inline by JS)
+  .jf-line { transition: stroke-dashoffset 2s $cubic-bezier-smooth; }
+  .jf-area, .jf-pt, .jf-el { opacity: 0; transition: opacity 0.6s ease; }
+  .jf-plot.jf-drawn .jf-area { opacity: 1; }
+  .jf-plot.jf-drawn .jf-pt { opacity: 1; transition-delay: 1.8s; }
+  .jf-plot.jf-drawn .jf-el { opacity: 1; transition-delay: 2s; }
+}
+
+/* Mobile: calendar → stacked list */
+body.jianfei-treatise {
+  @include responsive-down(mobile) {
+    .jf-cal, .jf-cal-head { display: none; }
+    .jf-list { display: block; }
+    .page__content .translucent_border,
+    .page__content .paragraph-center-wrapper { padding: 1.1rem 1.1rem; }
+    .page__content > p { text-indent: 0; } // justified indents read poorly on narrow screens
+  }
+}
+
+/* Reduced motion — everything to final state (dual guard with the JS bail) */
+@include responsive-reduced-motion {
+  .js body.jianfei-treatise {
+    .jf-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .jf-line { transition: none !important; }
+    .jf-area, .jf-pt, .jf-el { opacity: 1 !important; transition: none !important; }
+  }
+}
