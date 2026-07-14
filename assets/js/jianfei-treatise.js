@@ -36,6 +36,35 @@
     return s.split(/\s+/);
   }
   function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+  function leadGrapheme(s) {
+    s = String(s);
+    if (window.Intl && Intl.Segmenter) {
+      var itr = new Intl.Segmenter().segment(s)[Symbol.iterator]().next();
+      return itr.done ? "" : itr.value.segment;
+    }
+    var c0 = s.charCodeAt(0);
+    if (c0 >= 0xD800 && c0 <= 0xDBFF) { return s.slice(0, 2); }
+    if (s.charCodeAt(1) === 0xFE0F) { return s.slice(0, 2); }
+    return s.charAt(0);
+  }
+
+  /* ---- 0. front text: illuminate the opening "abstract" (emoji as versals) ---- */
+  (function () {
+    var block = content.querySelector(".highlighter-rouge, pre");
+    if (!block) return;
+    var codeEl = block.querySelector("code") || block;
+    var lines = (codeEl.textContent || "").split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
+    if (lines.length < 2) return;
+    var abs = el("div", "jf-abstract");
+    lines.forEach(function (ln) {
+      var em = leadGrapheme(ln);
+      var p = el("p", "jf-abs-line");
+      p.appendChild(el("span", "jf-em", em));
+      p.appendChild(el("span", "jf-tx", ln.slice(em.length)));
+      abs.appendChild(p);
+    });
+    block.parentNode.replaceChild(abs, block);
+  })();
 
   /* ---- 1. diet tables -> calendar + list exhibits ---- */
   function yearBefore(node) {
