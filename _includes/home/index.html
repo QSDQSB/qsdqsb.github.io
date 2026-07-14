@@ -29,12 +29,20 @@
     </ul>
 
     <div class="home__index-stage" aria-hidden="true">
-      <div class="door-frame">
-        <div class="door-shot is-on" style="background-image:url('{{ '/images/Legotypewriter1-3v1.jpg' | relative_url }}');"></div>
-        <div class="door-shot" style="background-image:url('{{ '/images/cover/Prague-charles-bridge-dawn-2-3v1.jpg' | relative_url }}');"></div>
-        <div class="door-shot" style="background-image:url('{{ '/images/ZahaHadid1-3v1.jpg' | relative_url }}');"></div>
-        <div class="door-shot" style="background-image:url('{{ '/images/cover/qsd-emblem-palace-night-with-candle-vase-3v1.jpg' | relative_url }}');"></div>
-      </div>
+      <figure class="door-plate">
+        <div class="door-plate__frame">
+          <div class="door-shot is-on" style="background-image:url('{{ '/images/Legotypewriter1-3v1.jpg' | relative_url }}');"></div>
+          <div class="door-shot" style="background-image:url('{{ '/images/cover/Prague-charles-bridge-dawn-2-3v1.jpg' | relative_url }}');"></div>
+          <div class="door-shot" style="background-image:url('{{ '/images/ZahaHadid1-3v1.jpg' | relative_url }}');"></div>
+          <div class="door-shot" style="background-image:url('{{ '/images/cover/qsd-emblem-palace-night-with-candle-vase-3v1.jpg' | relative_url }}');"></div>
+          <span class="door-plate__vignette"></span>
+          <span class="door-plate__grain"></span>
+        </div>
+        <figcaption class="door-plate__meta">
+          <span class="door-plate__no" id="doorPlateNo">N&deg;&#8201;01</span>
+          <span class="door-plate__enter">Enter <i aria-hidden="true">&#8599;</i></span>
+        </figcaption>
+      </figure>
     </div>
   </div>
 </section>
