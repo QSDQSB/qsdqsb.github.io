@@ -355,6 +355,15 @@ body.jianfei-treatise {
   }
   .jf-reveal.jf-in { opacity: 1; transform: none; }
 
+  // Opening abstract: the four lines rise in sequence on load, each emoji versal
+  // illuminating (scaling in) as its line arrives.
+  .jf-abs-line { opacity: 0; animation: jf-abs-rise 0.7s $cubic-bezier-smooth both; animation-delay: var(--jf-d, 0s); }
+  .jf-abs-line:nth-child(1) { --jf-d: 0.15s; }
+  .jf-abs-line:nth-child(2) { --jf-d: 0.30s; }
+  .jf-abs-line:nth-child(3) { --jf-d: 0.45s; }
+  .jf-abs-line:nth-child(4) { --jf-d: 0.60s; }
+  .jf-em { display: inline-block; transform-origin: center bottom; animation: jf-abs-illumine 0.66s $cubic-bezier-smooth both; animation-delay: var(--jf-d, 0s); }
+
   // Signature figure: JS scrubs the line's stroke-dashoffset to scroll position
   // (no transition, so the pen tracks the scroll frame-for-frame); the area fills
   // with progress (--jf-p), and the points + endpoint labels land once fully drawn.
@@ -363,6 +372,9 @@ body.jianfei-treatise {
   .jf-plot.jf-drawn .jf-pt { opacity: 1; }
   .jf-plot.jf-drawn .jf-el { opacity: 1; }
 }
+
+@keyframes jf-abs-rise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+@keyframes jf-abs-illumine { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
 
 /* Mobile: calendar → stacked list */
 body.jianfei-treatise {
@@ -381,6 +393,7 @@ body.jianfei-treatise {
     .jf-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
     .jf-line { transition: none !important; stroke-dashoffset: 0 !important; }
     .jf-area, .jf-pt, .jf-el { opacity: 1 !important; transition: none !important; }
+    .jf-abs-line, .jf-em { animation: none !important; opacity: 1 !important; transform: none !important; }
   }
 }
 
