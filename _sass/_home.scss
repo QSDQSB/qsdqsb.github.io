@@ -42,15 +42,17 @@ body.layout--home {
 .home__hero-media::before {
   content: "";
   position: absolute;
-  inset: -4%;
-  background: linear-gradient(rgba(6, 6, 11, 0.58), rgba(6, 6, 11, 0.78)), var(--hero-photo) center / cover no-repeat;
-  filter: brightness(0.52) saturate(0.9);
-  transform: scale(1.02);
+  inset: -8%;
+  background: linear-gradient(rgba(6, 6, 11, 0.5), rgba(6, 6, 11, 0.72)), var(--hero-photo) center / cover no-repeat;
+  /* Frost the photo directly (GPU-composited) rather than re-blurring it every
+     frame through a backdrop-filter — smoother with the moving blobs behind. */
+  filter: brightness(0.52) saturate(0.9) blur(14px);
+  transform: scale(1.04) translateZ(0);
   /* gradient mask — the photo reads through the centre and fades out at the edges */
   -webkit-mask-image: radial-gradient(125% 115% at 50% 44%, #000 32%, rgba(0, 0, 0, 0.5) 64%, transparent 94%);
           mask-image: radial-gradient(125% 115% at 50% 44%, #000 32%, rgba(0, 0, 0, 0.5) 64%, transparent 94%);
   animation:
-    home-bg-zoom 42s ease-out infinite alternate,
+    home-bg-zoom 44s ease-in-out infinite alternate,
     home-darken 4.4s ease-out both;
 }
 .home__hero-media::after {
@@ -123,10 +125,7 @@ body.layout--home {
   position: absolute;
   inset: 0;
   z-index: 1;
-  -webkit-backdrop-filter: blur(16px) saturate(110%) brightness(0.66);
-          backdrop-filter: blur(16px) saturate(110%) brightness(0.66);
-  background: linear-gradient(180deg, rgba(7, 7, 11, 0.34) 0%, rgba(7, 7, 11, 0.48) 55%, rgba(7, 7, 11, 0.68) 100%);
-  animation: home-frost 4.4s ease-out both;
+  background: linear-gradient(180deg, rgba(7, 7, 11, 0.42) 0%, rgba(7, 7, 11, 0.54) 55%, rgba(7, 7, 11, 0.72) 100%);
 }
 
 /* The shiny "QSD" at the centre of the photo, revealed from time to time: the
@@ -143,7 +142,7 @@ body.layout--home {
   mix-blend-mode: screen;
   opacity: 0;
   animation:
-    home-bg-zoom 42s ease-out infinite alternate,
+    home-bg-zoom 44s ease-in-out infinite alternate,
     home-qsd-pulse 14s ease-in-out 5s infinite;
 }
 
@@ -418,18 +417,8 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
 /* On load the background settles back: the QSD photo is briefly glimpsed, then
    darkens and blurs into the frosted distance so the title takes over. */
 @keyframes home-darken {
-  from { filter: brightness(0.85) saturate(1); }
-  to { filter: brightness(0.52) saturate(0.9); }
-}
-@keyframes home-frost {
-  from {
-    -webkit-backdrop-filter: blur(4px) saturate(108%) brightness(0.88);
-            backdrop-filter: blur(4px) saturate(108%) brightness(0.88);
-  }
-  to {
-    -webkit-backdrop-filter: blur(16px) saturate(110%) brightness(0.66);
-            backdrop-filter: blur(16px) saturate(110%) brightness(0.66);
-  }
+  from { filter: brightness(0.86) saturate(1) blur(4px); }
+  to { filter: brightness(0.52) saturate(0.9) blur(14px); }
 }
 /* Reveal the shiny QSD centre from time to time — kept gentle so it never
    competes with the white title. */
