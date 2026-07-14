@@ -339,12 +339,13 @@ body.jianfei-treatise {
   }
   .jf-reveal.jf-in { opacity: 1; transform: none; }
 
-  // figure draws its line via stroke-dashoffset (set inline by JS)
-  .jf-line { transition: stroke-dashoffset 2s $cubic-bezier-smooth; }
-  .jf-area, .jf-pt, .jf-el { opacity: 0; transition: opacity 0.6s ease; }
-  .jf-plot.jf-drawn .jf-area { opacity: 1; }
-  .jf-plot.jf-drawn .jf-pt { opacity: 1; transition-delay: 1.8s; }
-  .jf-plot.jf-drawn .jf-el { opacity: 1; transition-delay: 2s; }
+  // Signature figure: JS scrubs the line's stroke-dashoffset to scroll position
+  // (no transition, so the pen tracks the scroll frame-for-frame); the area fills
+  // with progress (--jf-p), and the points + endpoint labels land once fully drawn.
+  .jf-area { opacity: var(--jf-p, 1); }
+  .jf-pt, .jf-el { opacity: 0; transition: opacity 0.5s ease; }
+  .jf-plot.jf-drawn .jf-pt { opacity: 1; }
+  .jf-plot.jf-drawn .jf-el { opacity: 1; }
 }
 
 /* Mobile: calendar → stacked list */
@@ -362,7 +363,32 @@ body.jianfei-treatise {
 @include responsive-reduced-motion {
   .js body.jianfei-treatise {
     .jf-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
-    .jf-line { transition: none !important; }
+    .jf-line { transition: none !important; stroke-dashoffset: 0 !important; }
     .jf-area, .jf-pt, .jf-el { opacity: 1 !important; transition: none !important; }
+  }
+}
+
+/* Wide screens: Tufte-style right-margin apparatus.
+   The existing definition asides move into a reserved right gutter beside the text,
+   like a printed monograph; data exhibits + the figure reclaim the full measure.
+   Inline (current quiet-aside styling) below this breakpoint and with no JS. */
+body.jianfei-treatise {
+  @include responsive-up(wide) {
+    .page__content { position: relative; padding-right: 14.5rem; }
+
+    .jf-fig, .jf-exhibit { margin-right: -14.5rem; }
+
+    .notice--info {
+      float: right;
+      clear: right;
+      width: 12rem;
+      margin: 0.3rem -13.4rem 0.9rem 0 !important;
+      padding: 0 0 0 0.85rem;
+      border-left: 1px solid rgba($info-color, 0.5) !important;
+      font-size: 0.78em !important;
+      line-height: 1.5;
+      color: rgba($text-color, 0.7);
+      text-align: left;
+    }
   }
 }
