@@ -67,14 +67,16 @@ layout: default
     window.setTimeout(function () { els.forEach(function (el) { el.classList.add("is-in"); }); }, 6000);
   })();
 
-  // Destination index: crossfade the contained image stage to the hovered door.
+  // Destination index: cross-develop the plate to the hovered door + set its number.
   (function () {
     var doors = Array.prototype.slice.call(document.querySelectorAll(".home__doors .door"));
     var shots = Array.prototype.slice.call(document.querySelectorAll(".door-shot"));
     if (!doors.length || !shots.length) return;
+    var plateNo = document.getElementById("doorPlateNo");
     doors.forEach(function (door, i) {
       door.addEventListener("mouseenter", function () {
         shots.forEach(function (s, j) { s.classList.toggle("is-on", j === i); });
+        if (plateNo) plateNo.textContent = "N° " + ("0" + (i + 1)).slice(-2);
       });
     });
   })();
