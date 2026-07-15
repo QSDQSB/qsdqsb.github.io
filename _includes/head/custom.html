@@ -17,12 +17,15 @@
      send CORS headers, so adding `crossorigin` makes Safari reject the preload. -->
 <link rel="preload" href="{{ base_path }}/assets/fonts/Barlow/Barlow-Regular.woff2" as="font" type="font/woff2">
 <link rel="preload" href="{{ base_path }}/assets/fonts/Barlow/Barlow-Italic.woff2" as="font" type="font/woff2">
+<!-- Playfair Display is the site's body + heading face ($global-font-family /
+     $header-font-family) — preload the latin regular so first-paint text does
+     not wait on the CSS-discovered @font-face. -->
+<link rel="preload" href="{{ base_path }}/assets/fonts/PlayfairDisplay/PlayfairDisplay-400-normal-latin.woff2" as="font" type="font/woff2">
 
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" type="text/css">
-<link href="https://fonts.googleapis.com/css2?family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" type="text/css">
+<!-- Playfair Display + Philosopher are self-hosted (see _sass/_custom.scss) —
+     no fonts.googleapis.com request or preconnect needed. CMU Serif still comes
+     from cdnfonts (not on Google Fonts; kept as-is for now). -->
 <link href="https://fonts.cdnfonts.com/css/cmu-serif" rel="stylesheet">
 
 <!-- MathJax — only on pages that opt in via `has_math: true` frontmatter -->
