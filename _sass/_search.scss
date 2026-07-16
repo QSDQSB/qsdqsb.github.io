@@ -60,7 +60,7 @@
   i {
     position: relative;
     z-index: 1;
-    font-size: $nav-action-icon-size;
+    font-size: 1.02rem;
     line-height: 1;
   }
 
@@ -165,7 +165,7 @@
     pointer-events: auto;
 
     @include responsive-up(wide) {
-      max-width: $max-width;
+      max-width: $x-large;
     }
 
     @include responsive-up(desktop) {
