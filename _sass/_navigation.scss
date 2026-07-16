@@ -172,7 +172,7 @@
    ========================================================================== */
 
 .greedy-nav {
-  --nav-collapsed-width: #{$nav-collapsed-width};
+  --nav-collapsed-width: #{($nav-shell-padding-x * 2) + $nav-brand-logo-shell-size};
   position: relative;
   width: max-content;
   max-width: calc(100vw - 2rem);
@@ -180,7 +180,7 @@
   display: flex;
   align-items: center;
   gap: $nav-shell-gap;
-  padding: $nav-shell-padding-y $nav-shell-padding-x;
+  padding: 0.16rem $nav-shell-padding-x;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
   background: rgba(10, 10, 12, 0.44);
@@ -199,7 +199,7 @@
     opacity ($global-transition-time * 3) $nav-shell-ease;
 
   &.greedy-nav--has-overflow {
-    padding-right: $nav-overflow-reserve-width;
+    padding-right: 2.55rem;
   }
 
   &:hover {
@@ -211,7 +211,7 @@
     display: inline-flex;
     align-items: center;
     margin: 0;
-    padding: $nav-link-padding-y $nav-link-padding-x;
+    padding: 0.36rem 0.68rem;
     color: $primary-color;
     text-decoration: none;
     border-radius: 999px;
@@ -269,7 +269,7 @@
   > .greedy-nav__toggle {
     position: absolute;
     top: 50%;
-    right: $nav-overflow-toggle-offset;
+    right: 0.3rem;
     width: $nav-action-size;
     height: $nav-action-size;
     padding: 0;
@@ -447,7 +447,7 @@
       font-size: $type-size-5;
 
       &:hover {
-        color: $masthead-link-color-hover;
+        color: mix(#000, $primary-color, 35%);
         background: rgba(255, 255, 255, 0.08);
       }
     }
