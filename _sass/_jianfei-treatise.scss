@@ -29,8 +29,10 @@ body.jianfei-treatise {
     text-align: justify;
     hyphens: auto;
 
-    // fold the post's ad-hoc face classes into the single CM voice
-    .didot, .cmu-serif, .sans-serif { font-family: $cmu-serif-family; }
+    // fold the post's ad-hoc face classes into the single CM voice — including
+    // `.barlow`, which the post uses on a whole body paragraph (Attempt #3's
+    // "genesis…") and a few inline terms; a sans island breaks the CM illusion.
+    .didot, .cmu-serif, .sans-serif, .barlow { font-family: $cmu-serif-family; }
 
     // LaTeX paragraphs — indented first line, minimal inter-paragraph gap
     > p { text-indent: 1.5em; margin: 0.45em 0; }
@@ -40,7 +42,9 @@ body.jianfei-treatise {
 
     p, li, dl { font-size: 1.06em; }
 
-    /* section headings = the verbatim "Attempt #N: From …" H2s */
+    /* section headings = the verbatim "Attempt #N: From …" H2s.
+       scroll-margin-top so a TOC jump lands the heading below the floating masthead
+       (the site's offset was mistakenly on the TOC link, i.e. the wrong element). */
     h2 {
       font-family: $cmu-serif-family;
       font-weight: 700;
@@ -51,17 +55,21 @@ body.jianfei-treatise {
       margin: 3.2rem 0 1.1rem;
       padding-bottom: 0.4rem;
       border-bottom: 1px solid rgba($primary-color, 0.16);
+      scroll-margin-top: 5rem;
     }
 
-    /* subsection headings — "Daily Diet Record", "Weight Record" */
+    /* subsection headings — "Daily Diet Record", "Weight Record", "Ongoing!…".
+       color !important normalises the post's inline `whitesmoke` (#F5F5F5) on the
+       "Ongoing" h3 to the site's ivory token, so the piece uses one white, not two. */
     h3 {
       font-family: $cmu-serif-family;
       font-weight: 700;
       text-align: left;
       font-size: $type-size-5;
-      color: rgba($primary-color, 0.9);
+      color: rgba($primary-color, 0.9) !important;
       margin: 1.8rem 0 0.6rem;
       border-bottom: 0;
+      scroll-margin-top: 5rem;
     }
 
     /* the intro fenced block (Chinese framing note) → academic epigraph */
@@ -136,6 +144,7 @@ body.jianfei-treatise {
       font-size: $type-size-4;
       text-align: center;
       letter-spacing: 0.04em;
+      color: $primary-color !important; // normalise the inline `whitesmoke` to the ivory token
       // !important: the post authors these titles with inline border styling; match
       // the approach used for .notice--info below and override it to the \midrule.
       border-bottom: 1px solid rgba($primary-color, 0.28) !important;
@@ -244,11 +253,12 @@ body.jianfei-treatise {
      to be filled in. Verbatim text; the rule carries the meaning. ---- */
   .jf-unrecorded {
     display: inline-block;
-    opacity: 0.62;
     font-style: italic;
     text-indent: 0 !important;
     font-family: $cmu-serif-family;
-    color: rgba($text-color, 0.55);
+    // the italic + ruled blank carry the "muted / pending" read; keep the text itself
+    // above the ~3:1 floor rather than compounding a low alpha with opacity.
+    color: rgba($text-color, 0.62);
     letter-spacing: 0.05em;
     padding-bottom: 0.14rem;
     border-bottom: 1px solid rgba($text-color, 0.22);
@@ -324,7 +334,7 @@ body.jianfei-treatise {
     font-size: 0.56rem;
     letter-spacing: 0.13em;
     text-transform: uppercase;
-    color: rgba($text-color, 0.5);
+    color: rgba($text-color, 0.62);
     padding-bottom: 0.12rem;
   }
   .jf-cal-hc.wknd { color: rgba($primary-color, 0.5); }
@@ -336,7 +346,10 @@ body.jianfei-treatise {
     display: flex;
     flex-direction: column;
     gap: 0.12rem;
-    transition: border-color 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
+    transition:
+      border-color ($global-transition-time / 2) ease,
+      background-color ($global-transition-time / 2) ease,
+      transform ($global-transition-time / 2) ease;
   }
   .jf-cell.empty { background: transparent; border-color: transparent; }
   .jf-cell.wknd { background: rgba($primary-color, 0.035); }
@@ -348,9 +361,9 @@ body.jianfei-treatise {
   }
   .jf-cell-date { display: flex; justify-content: space-between; align-items: baseline; }
   .jf-cell-n { font-family: $cmu-serif-family; font-size: 0.72rem; color: rgba($primary-color, 0.75); }
-  .jf-cell-d { font-family: $barlow-font-family; font-size: 0.5rem; color: rgba($text-color, 0.45); }
+  .jf-cell-d { font-family: $barlow-font-family; font-size: 0.52rem; color: rgba($text-color, 0.6); }
   .jf-meal { display: flex; align-items: center; gap: 0.28rem; line-height: 1; }
-  .jf-meal-t { font-family: $barlow-font-family; font-size: 0.46rem; color: rgba($text-color, 0.45); width: 0.62rem; flex: none; }
+  .jf-meal-t { font-family: $barlow-font-family; font-size: 0.5rem; color: rgba($text-color, 0.62); width: 0.62rem; flex: none; }
   .jf-meal-g { font-size: 0.82rem; }
   .jf-legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin-top: 0.9rem; font-family: $barlow-font-family; font-size: 0.72rem; color: rgba($text-color, 0.55); align-items: center; }
   .jf-legend b { font-family: $cmu-serif-family; color: rgba($primary-color, 0.8); font-weight: 400; margin-right: 0.15rem; }
@@ -373,8 +386,11 @@ body.jianfei-treatise {
   .jf-row-t { font-family: $barlow-font-family; font-size: 0.56rem; color: rgba($primary-color, 0.55); }
   .jf-row-g { font-size: 0.98rem; }
 
-  /* hide the original tables once JS has built the exhibits (no-JS keeps them) */
-  .jf-source-hidden { display: none; }
+  /* Once JS builds the exhibit (which is aria-hidden), keep the original <table>
+     in the accessibility tree — visually hidden, not display:none — so screen
+     readers still get the real, header-associated diet data. No-JS keeps it visible.
+     Reuses the site's existing sr-only utility. */
+  .jf-source-hidden { @extend .visually-hidden; }
 
   /* =========================================================================
      Motion — restrained; applied only when JS marks `.js` + `.jf-reveal`
@@ -407,7 +423,7 @@ body.jianfei-treatise {
   // (no transition, so the pen tracks the scroll frame-for-frame); the area fills
   // with progress (--jf-p), and the points + endpoint labels land once fully drawn.
   .jf-area { opacity: var(--jf-p, 1); }
-  .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { opacity: 0; transition: opacity 0.5s ease; }
+  .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { opacity: 0; transition: opacity $global-transition-time ease; }
   .jf-plot.jf-drawn .jf-pt,
   .jf-plot.jf-drawn .jf-el,
   .jf-plot.jf-drawn .jf-base,
@@ -426,14 +442,36 @@ body.jianfei-treatise {
   100% { transform: translateX(0); opacity: 0.85; }
 }
 
-/* Mobile: calendar → stacked list */
+/* Treatise reading measure — override the site's 50rem post cap with a tighter
+   monograph measure. At the 20px desktop root the 50rem cap computes to ~1000px
+   (~90-100 justified chars/line), which loosens the justification the whole
+   Computer-Modern conceit relies on; ~42rem holds a ~monograph line length.
+   Matches the site rule's specificity (0,3,1) and wins by later import order. */
+body.jianfei-treatise .page__inner-wrap .page__content { max-width: 42rem; }
+
+/* Mobile: calendar → stacked list; ragged-right prose; legible figure labels */
 body.jianfei-treatise {
   @include responsive-down(mobile) {
     .jf-cal, .jf-cal-head { display: none; }
     .jf-list { display: block; }
     .page__content .translucent_border,
     .page__content .paragraph-center-wrapper { padding: 1.1rem 1.1rem; }
-    .page__content > p { text-indent: 0; } // justified indents read poorly on narrow screens
+    .page__content > p { text-indent: 0; }
+
+    // ragged-right on the narrow column: justified CM tears rivers at ~330px, so
+    // drop justification for prose, commitments, and the enumerated clauses.
+    .page__content,
+    .page__content .translucent_border,
+    .page__content .paragraph-center-wrapper,
+    .page__content .translucent_border ol > li,
+    .page__content .translucent_border ul > li,
+    .page__content .paragraph-center-wrapper ol > li,
+    .page__content .paragraph-center-wrapper ul > li { text-align: left; }
+
+    // the weight figure's SVG scales to ~0.45x on a phone column, so bump the label
+    // type in viewBox units to keep the axes and the −6 kg payoff readable.
+    .jf-yl, .jf-xl, .jf-axt, .jf-ayt { font-size: 22px; }
+    .jf-el, .jf-dim-l { font-size: 26px; }
   }
 }
 
@@ -460,12 +498,16 @@ body.jianfei-treatise {
   @include responsive-up(112rem) {
     .page__content { position: relative; }
 
-    .notice--info {
+    // NB: must be `.page__content .notice--info` — the base aside rule is
+    // `body.jianfei-treatise .page__content .notice--info !important` (0,3,1); the
+    // earlier `.notice--info` (0,2,1) lost, so the margin pull + font-size never
+    // applied and the note never left the column. Match specificity, win by order.
+    .page__content .notice--info {
       float: right;
       clear: right;
       width: 11rem;
       margin: 0.35rem -12.5rem 1rem 1.4rem !important;
-      padding: 0.1rem 0 0.1rem 0.9rem;
+      padding: 0.1rem 0 0.1rem 0.9rem !important;
       border-left: 1px solid rgba($info-color, 0.5) !important;
       font-size: 0.76em !important;
       line-height: 1.5;
