@@ -21,6 +21,7 @@
 
   document.documentElement.classList.add("js");
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var SEG = (window.Intl && Intl.Segmenter) ? new Intl.Segmenter() : null; // one instance, reused
 
   var MONTHS = { Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5, Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11 };
   var DOW = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
@@ -29,8 +30,8 @@
   function seg(s) {
     if (!s) return [];
     s = String(s).replace(/\+/g, " ").trim();
-    if (window.Intl && Intl.Segmenter) {
-      return Array.from(new Intl.Segmenter().segment(s), function (x) { return x.segment; })
+    if (SEG) {
+      return Array.from(SEG.segment(s), function (x) { return x.segment; })
         .filter(function (g) { return g.trim(); });
     }
     return s.split(/\s+/);
@@ -38,8 +39,8 @@
   function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
   function leadGrapheme(s) {
     s = String(s);
-    if (window.Intl && Intl.Segmenter) {
-      var itr = new Intl.Segmenter().segment(s)[Symbol.iterator]().next();
+    if (SEG) {
+      var itr = SEG.segment(s)[Symbol.iterator]().next();
       return itr.done ? "" : itr.value.segment;
     }
     var c0 = s.charCodeAt(0);
@@ -167,6 +168,7 @@
     return ol;
   }
   function transform(table) {
+    if (table.classList.contains("jf-source-hidden")) return; // idempotency: already built
     var head = headerCells(table);
     var di = head.indexOf("day"), dti = head.indexOf("date");
     if (di === -1 || dti === -1) return; // not a diet table (e.g. the emoji legend)
@@ -180,6 +182,7 @@
       });
     if (!rows.length) return;
     var wrap = el("div", "jf-exhibit");
+    wrap.setAttribute("aria-hidden", "true"); // decorative duplicate; the source <table> stays in the a11y tree
     wrap.appendChild(buildCal(rows));
     wrap.appendChild(buildList(rows));
     table.parentNode.insertBefore(wrap, table.nextSibling);
@@ -197,12 +200,13 @@
     if ((p.textContent || "").trim() === "TO BE UPDATED!") p.classList.add("jf-unrecorded");
   });
 
-  /* ---- 2b. the sole "Ongoing" line: wrap its gust glyphs so they can drift ---- */
+  /* ---- 2b. the sole "Ongoing" line: wrap its gust glyphs so they can drift.
+     The line is authored as an <h3> (not a <p>), so scan headings too. ---- */
   (function () {
     var GUST = String.fromCodePoint(0x1F4A8); // wind/gust emoji, built here to keep this file ASCII
-    var ps = content.querySelectorAll("p");
-    for (var i = 0; i < ps.length; i++) {
-      if ((ps[i].textContent || "").trim().indexOf("Ongoing") === 0) { wrapGusts(ps[i], GUST); break; }
+    var nodes = content.querySelectorAll("h1, h2, h3, h4, h5, h6, p");
+    for (var i = 0; i < nodes.length; i++) {
+      if ((nodes[i].textContent || "").trim().indexOf("Ongoing") === 0) { wrapGusts(nodes[i], GUST); break; }
     }
   })();
 
