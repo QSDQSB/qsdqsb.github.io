@@ -263,15 +263,7 @@ body.collection--posts .page__inner-wrap .page__content {
 
   /* paragraph indents */
   p {
-    margin: 0 0 $indent-var;
-
-    /* sibling indentation*/
-    @if $paragraph-indent == true {
-      & + p {
-        text-indent: $indent-var;
-        margin-top: -($indent-var);
-      }
-    }
+    margin: 0 0 0.8em;
   }
 
   /* last-child margin reset — prevents asymmetric padding in containers */
@@ -467,7 +459,7 @@ body.collection--posts .page__inner-wrap .page__content {
 
     .page__title,
     .page__meta {
-      width: min(100%, #{$overlay-hero-copy-max-width});
+      width: min(100%, 33rem);
       margin-left: 0;
       text-align: left;
     }
@@ -475,7 +467,7 @@ body.collection--posts .page__inner-wrap .page__content {
     .page__lead {
       width: min(100%, #{$overlay-hero-excerpt-max-width});
       max-width: $overlay-hero-excerpt-max-width;
-      margin-top: $overlay-hero-title-excerpt-gap;
+      margin-top: clamp(0.72rem, 1.5vw, 1.08rem);
       font-size: clamp(1.02rem, 1.34vw, 1.34rem);
       line-height: 1.26;
       letter-spacing: 0.015em;
@@ -536,9 +528,9 @@ body.collection--posts .page__inner-wrap .page__content {
 
 @include responsive-down(tablet) {
   .page__hero--overlay {
-    aspect-ratio: $overlay-hero-mobile-aspect-ratio;
-    min-height: $overlay-hero-mobile-min-height;
-    padding: $overlay-hero-mobile-padding-top 0 $overlay-hero-mobile-padding-bottom;
+    aspect-ratio: unquote("4 / 3");
+    min-height: 17rem;
+    padding: clamp(3.35rem, 10vw, 4.35rem) 0 clamp(0.85rem, 3vw, 1.1rem);
     align-items: flex-end;
   }
 
@@ -647,7 +639,7 @@ html.is-resizing {
   bottom: 0.35rem;
   right: 0.5rem;
   margin: 0 auto;
-  padding: $hero-caption-padding-y $hero-caption-padding-x;
+  padding: 0.18rem 0.48rem;
   color: $text-color;
   font-family: $caption-font-family;
   font-size: $type-size-8;
@@ -802,54 +794,6 @@ html.is-resizing {
     background-color: var(--tag-color);
     border-color: var(--tag-color);
     opacity: 1;
-    // &:nth-child(1) {
-    //   background-color: $geo-color; // Light pink
-    //   border-color: $geo-color;
-    // }
-    // &:nth-child(2) {
-    //   background-color: #ff9999; // Medium pink
-    //   border-color: #ff9999;
-    // }
-    // &:nth-child(3) {
-    //   background-color: $foursquare-color; // Darker pink
-    //   border-color: $foursquare-color;
-    // }
-    // &:nth-child(4) {
-    //   background-color: $h2-color;
-    //   border-color: $h2-color;
-    // }
-    // &:nth-child(5) {
-    //   background-color: $h5-color;
-    //   border-color: $h5-color;
-    // }
-    // &:nth-child(6) {
-    //   background-color: $h6-color;
-    //   border-color: $h6-color;
-    // }
-    // &:nth-child(7) {
-    //   background-color: $xing-color;
-    //   border-color: $xing-color;
-    // }
-    // &:nth-child(8) {
-    //   background-color: $vine-color;
-    //   border-color: $vine-color;
-    // }
-    // &:nth-child(9) {
-    //   background-color: salmon;
-    //   border-color: salmon;
-    // }
-    // &:nth-child(10) {
-    //   background-color: seagreen;
-    //   border-color: seagreen;
-    // }
-    // &:nth-child(11) {
-    //   background-color: $h3-color;
-    //   border-color: $h3-color;
-    // }
-    // &:nth-child(12) {
-    //   background-color: $dribbble-color;
-    //   border-color: $dribbble-color;
-    // }
   }
 }
 
@@ -1041,6 +985,6 @@ tradingview-widget-container {
   mask-repeat: no-repeat;
 	mask-position: center;
 	mask-size: contain;
-  background: $conic-gradient-blue;
+  background: conic-gradient(from 210deg, rgba(197, 187, 184, 1.000) 0.000deg, rgba(197, 187, 184, 1.000) 24.000deg, rgba(184, 181, 184, 1.000) 24.000deg, rgba(184, 181, 184, 1.000) 48.000deg, rgba(169, 175, 183, 1.000) 48.000deg, rgba(169, 175, 183, 1.000) 72.000deg, rgba(154, 168, 181, 1.000) 72.000deg, rgba(154, 168, 181, 1.000) 96.000deg, rgba(139, 161, 179, 1.000) 96.000deg, rgba(139, 161, 179, 1.000) 120.000deg, rgba(125, 152, 175, 1.000) 120.000deg, rgba(125, 152, 175, 1.000) 144.000deg, rgba(112, 144, 171, 1.000) 144.000deg, rgba(112, 144, 171, 1.000) 168.000deg, rgba(101, 135, 166, 1.000) 168.000deg, rgba(101, 135, 166, 1.000) 192.000deg, rgba(92, 126, 161, 1.000) 192.000deg, rgba(92, 126, 161, 1.000) 216.000deg, rgba(85, 117, 155, 1.000) 216.000deg, rgba(85, 117, 155, 1.000) 240.000deg, rgba(81, 108, 148, 1.000) 240.000deg, rgba(81, 108, 148, 1.000) 264.000deg, rgba(79, 99, 141, 1.000) 264.000deg, rgba(79, 99, 141, 1.000) 288.000deg, rgba(80, 90, 133, 1.000) 288.000deg, rgba(80, 90, 133, 1.000) 312.000deg, rgba(84, 83, 125, 1.000) 312.000deg, rgba(84, 83, 125, 1.000) 336.000deg, rgba(91, 75, 116, 1.000) 336.000deg 360.000deg);
   opacity: 0.6;
 }

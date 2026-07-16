@@ -33,7 +33,7 @@
     text-decoration: none;
     opacity: 0.6;
     font-size: smaller;
-    color: $foursquare-color;
+    color: #0072b1;
   }
   &:hover {
     a {
@@ -433,7 +433,7 @@
   width: max(75%, 20em);
   margin: 0 auto;
   max-width: 40rem;
-  border: 1px solid $intriguing-word-border-color;
+  border: 1px solid #7e7058;
   position: relative;
   padding: 1rem 2.5rem;
   border-radius: 1rem;
@@ -571,7 +571,7 @@
     transform: none;
   }
   .floating_tarot_card {
-    background: $rose-gold-gradient-translucent;
+    background: linear-gradient(195deg,#FAC39EBB 0%, #FBD0B7BB 25%, #FBD6C4BB 65%, #DF989FAA 100%);
   }
 }
 @keyframes oscillate {

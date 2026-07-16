@@ -162,7 +162,7 @@
   padding: 2px 4px !important;
 
   a {
-    color: $dark-gray !important;
+    color: mix(#000, $gray, 40%) !important;
     text-decoration: none;
 
     &:hover {
