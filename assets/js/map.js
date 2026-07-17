@@ -266,6 +266,11 @@
         if (atlasDataset) {
           renderAtlasMap(map, geojson, container);
         } else {
+          // tech-debt: every generated dataset now carries kind: 'voyage-atlas'
+          // (see scripts/geocode-maps.js), so this branch — and
+          // renderDefaultMarkers/createDefaultPopupContent/renderDefaultLegend/
+          // toggleCategoryFilter below — is currently unreachable. Retiring it
+          // is proposed but not yet decided; see the open tech-debt PR.
           renderDefaultMarkers(map, geojson);
           renderDefaultLegend(map, geojson, container);
         }
