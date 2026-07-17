@@ -196,6 +196,9 @@
         font-family: $barlow-font-family;
       }
 
+      // tech-debt: hover-reveal variant, only ever populated by the dead
+      // createDefaultPopupContent() in map.js — see the open tech-debt PR.
+      // .popup-description--static (below) is the one atlas mode actually uses.
       .popup-description {
         font-size: 12px;
         color: $gray;
@@ -253,7 +256,11 @@
   transition: opacity 0.2s ease-out, fill-opacity 0.2s ease-out, stroke-opacity 0.2s ease-out, fill 0.2s ease-out, stroke 0.2s ease-out, stroke-width 0.2s ease-out;
 }
 
-// Default map legend (category filter)
+// tech-debt: default map legend (category filter) — only rendered by the
+// dead renderDefaultLegend() in map.js, currently unreachable. The nested
+// `.map-legend` override in the compact-viewport block below is the same
+// dead selector; `.map-legend--atlas-pill` / `.map-legend-palette` are live
+// and unrelated. See the open tech-debt PR before deleting.
 .map-legend {
   position: absolute;
   bottom: 30px;

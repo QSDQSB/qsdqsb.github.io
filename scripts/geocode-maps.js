@@ -47,6 +47,11 @@ function saveGeocodeCache(cache) {
   fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2));
 }
 
+// tech-debt: only called by processDataset() below, which only runs for the
+// legacy _data/maps/*.yml pipeline — that directory doesn't exist in this
+// repo and no page sets map_dataset frontmatter, so this whole path is
+// currently dead. Near-duplicate of geocodeQuery() (used by the live voyage
+// atlas path). See the open tech-debt PR before deleting.
 async function geocodeLocation(cityName, countryName, cache) {
   const cacheKey = `${cityName}|${countryName || ''}`.toLowerCase();
 
@@ -153,6 +158,8 @@ function nominatimSearch(query) {
   });
 }
 
+// tech-debt: legacy _data/maps/*.yml pipeline, currently unreachable — see
+// geocodeLocation() above and the open tech-debt PR.
 function datasetToGeoJSON(datasetName, dataset) {
   const features = [];
 
@@ -205,6 +212,8 @@ function datasetToGeoJSON(datasetName, dataset) {
   };
 }
 
+// tech-debt: only called from main()'s legacy _data/maps/ branch, currently
+// unreachable — see the open tech-debt PR.
 async function processDataset(filePath, cache) {
   const fileName = path.basename(filePath, '.yml');
   console.log(`\n📍 Processing: ${fileName}`);
@@ -576,6 +585,10 @@ async function main() {
 
   const cache = loadGeocodeCache();
 
+  // tech-debt: MAPS_DATA_DIR never exists in this repo and no page sets
+  // map_dataset frontmatter — this whole branch (and datasetToGeoJSON /
+  // processDataset / geocodeLocation above) is currently dead. Proposed for
+  // removal; see the open tech-debt PR before deleting.
   if (!fs.existsSync(MAPS_DATA_DIR)) {
     console.log('\n📂 No legacy _data/maps/ directory (parent voyages derive maps from subvoyage frontmatter)');
   } else {

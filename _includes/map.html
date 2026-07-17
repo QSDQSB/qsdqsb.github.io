@@ -11,6 +11,11 @@
   Viewport comes from `site.data.maps[<id>].viewport` when a YAML dataset of
   that name exists; otherwise the renderer auto-fits to feature bounds (fine
   for derived parent-voyage atlases, which have no YAML).
+
+  tech-debt: path 2 (page.map_dataset) is currently dead — no _voyage/_pages
+  file sets map_dataset, and _data/maps/ doesn't exist in this repo. Proposed
+  for removal alongside the matching dead branches in map.js and
+  scripts/geocode-maps.js; see the open tech-debt PR before deleting.
 {%- endcomment -%}
 
 {% assign map_dataset_id = include.dataset | default: page.map_dataset %}
