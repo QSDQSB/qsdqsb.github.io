@@ -232,7 +232,7 @@ Enforced on touched files only — no global retrofit of untouched legacy files.
   - `map: { query: "..." }` — override the title-based geocode query
   - `map: { exclude: true }` — omit this child from the parent's map
   - Default when nothing is set: geocode by `"<title>, <parent voyage title>"`. Atmospheric titles (Portraits, Twilight, Flow…) typically fail to geocode and are gracefully skipped with a build warning.
-- **`map_dataset: <name>`** — legacy hand-curated path, still supported. Must match `_data/maps/<name>.yml`. Use for any voyage that needs a manual marker list and does NOT have `subgalleries:true`. (If the parent has `subgalleries:true` and you also set `map_dataset:`, the dataset wins via `page.map_dataset | default: auto_map_id` in the layout, but you almost never want this.)
+- **`map_dataset: <name>`** — legacy hand-curated path, still supported. Must match `_data/maps/<name>.yml`. Use for any voyage that needs a manual marker list and does NOT have `subgalleries:true`. (If the parent has `subgalleries:true` and you also set `map_dataset:`, the dataset wins via `page.map_dataset | default: auto_map_id` in the layout, but you almost never want this.) **Currently unused by any content** — a tech-debt PR proposes retiring the whole `_data/maps/` pipeline (`map.js`'s default-marker renderer, `scripts/geocode-maps.js`'s legacy branch, this frontmatter path); see that PR before adding new usage or deleting the code.
 - **`tags`** should resolve to entries in `_data/tag_colours.yml`. Missing entries don't break rendering, but the tag will display without its accent colour.
 
 ### Voyage frontmatter cheatsheet
