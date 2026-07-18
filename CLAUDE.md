@@ -370,7 +370,7 @@ Reduced-motion users (`prefers-reduced-motion`) bypass the animated opening flow
 - `single.html` — post/page view with sidebar + TOC.
 - `splash.html` — hero/landing.
 - `archive.html`, `archive-taxonomy.html` — tag/category archives.
-- `search.html`, `multiverse.html`, `compress.html` — specialised.
+- `search.html`, `compress.html` — specialised.
 
 ### When editing layouts
 
