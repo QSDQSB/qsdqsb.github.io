@@ -114,58 +114,30 @@
       return Array.prototype.map.call(tr.children, function (c) { return (c.textContent || "").trim(); });
     });
   }
-  function mealEl(tag, val) {
-    var m = el("div", "jf-meal");
-    m.appendChild(el("span", "jf-meal-t", tag));
-    m.appendChild(el("span", "jf-meal-g", seg(val).join("")));
-    return m;
-  }
-  function buildCal(rows) {
-    var cal = el("div", "jf-cal");
-    var head = el("div", "jf-cal-head");
-    DOW.forEach(function (d, i) { head.appendChild(el("div", "jf-cal-hc" + (i >= 5 ? " wknd" : ""), d)); });
-    cal.appendChild(head);
-    var weeks = {};
-    rows.forEach(function (r) { var m = new Date(r.d); m.setDate(r.d.getDate() - col(r.d)); (weeks[m.getTime()] = weeks[m.getTime()] || {})[col(r.d)] = r; });
-    Object.keys(weeks).map(Number).sort(function (a, b) { return a - b; }).forEach(function (k) {
-      var w = el("div", "jf-cal-week");
-      for (var c = 0; c < 7; c++) {
-        var r = weeks[k][c];
-        if (!r) { w.appendChild(el("div", "jf-cell empty")); continue; }
-        var cell = el("div", "jf-cell" + (c >= 5 ? " wknd" : ""));
-        var dt = el("div", "jf-cell-date");
-        dt.appendChild(el("span", "jf-cell-n", r.n));
-        dt.appendChild(el("span", "jf-cell-d", r.date));
-        cell.appendChild(dt);
-        cell.appendChild(mealEl("B", r.b));
-        cell.appendChild(mealEl("L", r.l));
-        cell.appendChild(mealEl("S", r.s));
-        w.appendChild(cell);
-      }
-      cal.appendChild(w);
-    });
-    return cal;
-  }
-  function buildList(rows) {
-    var ol = el("ol", "jf-list");
-    rows.forEach(function (r) {
-      var li = el("li", "jf-row");
-      li.appendChild(el("span", "jf-row-n", r.n));
-      var d = el("span", "jf-row-d");
-      d.appendChild(document.createTextNode(r.date + " "));
-      d.appendChild(el("em", null, r.dow));
-      li.appendChild(d);
-      var m = el("span", "jf-row-m");
+  function isWknd(d) { return col(d) >= 5; } // Sat/Sun
+  // One honest exhibit at every width: a responsive grid of day-cards. The DATE
+  // leads (a calendar's natural key); the attempt day-index is a quiet corner mark.
+  function buildDays(rows) {
+    var grid = el("div", "jf-days");
+    rows.forEach(function (r, i) {
+      var card = el("div", "jf-day" + (isWknd(r.d) ? " wknd" : ""));
+      card.style.setProperty("--i", i); // staggered reveal index
+      var head = el("div", "jf-day-h");
+      head.appendChild(el("span", "jf-day-date", r.date));
+      head.appendChild(el("span", "jf-day-dow", r.dow));
+      card.appendChild(head);
+      card.appendChild(el("span", "jf-day-n", "#" + r.n));
+      var meals = el("div", "jf-day-meals");
       [["B", r.b], ["L", r.l], ["S", r.s]].forEach(function (x) {
-        var sp = el("span", "jf-row-meal");
-        sp.appendChild(el("span", "jf-row-t", x[0]));
-        sp.appendChild(el("span", "jf-row-g", seg(x[1]).join("")));
-        m.appendChild(sp);
+        var row = el("div", "jf-day-meal");
+        row.appendChild(el("span", "jf-day-mt", x[0]));
+        row.appendChild(el("span", "jf-day-mg", seg(x[1]).join("")));
+        meals.appendChild(row);
       });
-      li.appendChild(m);
-      ol.appendChild(li);
+      card.appendChild(meals);
+      grid.appendChild(card);
     });
-    return ol;
+    return grid;
   }
   function transform(table) {
     if (table.classList.contains("jf-source-hidden")) return; // idempotency: already built
@@ -183,8 +155,7 @@
     if (!rows.length) return;
     var wrap = el("div", "jf-exhibit");
     wrap.setAttribute("aria-hidden", "true"); // decorative duplicate; the source <table> stays in the a11y tree
-    wrap.appendChild(buildCal(rows));
-    wrap.appendChild(buildList(rows));
+    wrap.appendChild(buildDays(rows));
     table.parentNode.insertBefore(wrap, table.nextSibling);
     table.classList.add("jf-source-hidden");
     return wrap;
@@ -213,9 +184,8 @@
   /* ---- 3. motion (restrained; below-the-fold only, so no flash) ---- */
   if (reduce) return;
 
-  // gentle reveal of the two diet exhibits
+  // stagger the day-cards in as each exhibit scrolls into view (cards key off `.jf-in`)
   var revealTargets = exhibits.slice();
-  revealTargets.forEach(function (t) { t.classList.add("jf-reveal"); });
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("jf-in"); io.unobserve(e.target); } });
@@ -233,9 +203,10 @@
   if (line && line.getTotalLength) {
     var L = line.getTotalLength();
     line.style.strokeDasharray = L;
-    var raf = null;
+    var raf = null, latched = false;
     var draw = function () {
       raf = null;
+      if (latched) return; // once fully drawn, it stays drawn -- never un-draw on scroll-up
       var rect = plot.getBoundingClientRect();
       var vh = window.innerHeight || document.documentElement.clientHeight;
       // draw over a comfortable band as the figure rises from ~86% to ~24% of the viewport
@@ -243,7 +214,12 @@
       p = p < 0 ? 0 : p > 1 ? 1 : p;
       line.style.strokeDashoffset = String(L * (1 - p));
       plot.style.setProperty("--jf-p", p.toFixed(3));
-      if (p > 0.985) { plot.classList.add("jf-drawn"); } else { plot.classList.remove("jf-drawn"); }
+      if (p > 0.985) {
+        latched = true;
+        line.style.strokeDashoffset = "0";
+        plot.style.setProperty("--jf-p", "1");
+        plot.classList.add("jf-drawn");
+      }
     };
     var onScroll = function () { if (!raf) { raf = requestAnimationFrame(draw); } };
     window.addEventListener("scroll", onScroll, { passive: true });
