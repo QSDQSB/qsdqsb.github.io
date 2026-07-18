@@ -15,9 +15,9 @@
      antique gold; unrecorded attempts muted. Otherwise near-monochrome CM on the
      dark ground. The emoji keep their own colour.
 
-   Motion lives in assets/js/jianfei-treatise.js (adds `.jf-reveal` / `.jf-in`,
-   draws the figure). It bails under prefers-reduced-motion; the SCSS below also
-   nulls its transitions via the responsive-reduced-motion mixin, so the piece
+   Motion lives in assets/js/jianfei-treatise.js (adds `.jf-in` to each exhibit to
+   stagger its day-cards, and scrubs the figure). It bails under prefers-reduced-motion;
+   the SCSS below also nulls its transitions via the responsive-reduced-motion mixin, so the piece
    inherits the dual guard.
    ========================================================================== */
 
@@ -43,6 +43,10 @@ body.jianfei-treatise {
     > hr + p, > blockquote + p { text-indent: 0; }
 
     p, li, dl { font-size: 1.06em; }
+
+    // gilded cross-references (the \ref-style "COMMITMENT #2025-1" link + PDF refs) —
+    // keeps the palette to two warm accents instead of the site's default lapis link.
+    a { color: $geo-color; text-decoration-color: rgba($geo-color, 0.45); }
 
     /* section headings = the verbatim "Attempt #N: From …" H2s.
        scroll-margin-top so a TOC jump lands the heading below the floating masthead
@@ -220,7 +224,7 @@ body.jianfei-treatise {
     background: transparent !important;
     box-shadow: none !important;
     border: 0 !important;
-    border-left: 1px solid rgba($danger-color, 0.55) !important;
+    border-left: 1px solid rgba($danger-color, 0.85) !important; // a semantic rule wants to be seen
     border-radius: 0 !important;
     max-width: none;
     margin: 1.1rem 0 !important;
@@ -289,7 +293,7 @@ body.jianfei-treatise {
   }
   .jf-plot { width: 100%; height: auto; display: block; overflow: visible; }
   .jf-grid { stroke: rgba($primary-color, 0.09); stroke-width: 1; }
-  .jf-axis { stroke: rgba($primary-color, 0.32); stroke-width: 1; }
+  .jf-axis { stroke: rgba($primary-color, 0.42); stroke-width: 1; } // above the 3:1 graphical floor
   .jf-yl, .jf-xl, .jf-axt, .jf-ayt {
     fill: rgba($text-color, 0.55);
     font-family: $cmu-serif-family;
@@ -321,7 +325,8 @@ body.jianfei-treatise {
   .jf-el-e { text-anchor: end; fill: mix($danger-color, $geo-color, 15%); }
   /* the payoff: a dashed oxblood reference line at the start weight + a right-edge
      dimension bracket measuring the total −6.0 kg descent, called out in antique gold */
-  .jf-base { stroke: rgba($danger-color, 0.3); stroke-width: 1; stroke-dasharray: 2 3.5; }
+  // visible enough to read as the reference the gold bracket measures from
+  .jf-base { stroke: rgba($danger-color, 0.5); stroke-width: 1; stroke-dasharray: 3 3; }
   // the −6 kg payoff is the one gilded focal accent — the oxblood descent lands on it
   .jf-dim { stroke: rgba(mix($danger-color, $geo-color, 15%), 0.72); stroke-width: 1; }
   .jf-dim-l {
@@ -332,90 +337,85 @@ body.jianfei-treatise {
   }
 
   /* =========================================================================
-     Diet exhibits — desktop calendar heatmap / mobile day-list (built by JS)
+     Diet exhibit — one responsive grid of day-cards at every width (built by JS).
+     The date leads (a calendar's natural key); the meals read per card; the
+     attempt day-index is a quiet corner mark; weekends carry a warm oxblood tint.
      ========================================================================= */
-  .jf-cal { display: flex; flex-direction: column; gap: 0.32rem; margin: 0.6rem 0 0.4rem; }
-  .jf-cal-head, .jf-cal-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.32rem; }
-  .jf-cal-hc {
-    font-family: $barlow-font-family;
-    font-size: 0.56rem;
-    letter-spacing: 0.13em;
-    text-transform: uppercase;
-    color: rgba($text-color, 0.62);
-    padding-bottom: 0.12rem;
+  .jf-days {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+    gap: 0.5rem;
+    margin: 0.9rem 0 0.5rem;
   }
-  .jf-cal-hc.wknd { color: rgba($primary-color, 0.5); }
-  .jf-cell {
-    background: rgba($primary-color, 0.02);
-    border: 1px solid rgba($primary-color, 0.09);
-    padding: 0.4rem 0.4rem;
-    min-height: 4.4rem;
+  .jf-day {
+    position: relative;
+    background: rgba($primary-color, 0.022);
+    border: 1px solid rgba($primary-color, 0.08);
+    padding: 0.55rem 0.65rem 0.6rem;
     display: flex;
     flex-direction: column;
-    gap: 0.12rem;
+    gap: 0.4rem;
     transition:
       border-color ($global-transition-time / 2) ease,
       background-color ($global-transition-time / 2) ease,
       transform ($global-transition-time / 2) ease;
   }
-  .jf-cell.empty { background: transparent; border-color: transparent; }
-  .jf-cell.wknd { background: rgba($primary-color, 0.035); }
-  // a quiet micro-lift on hover — the one interactive flourish in the exhibit
-  .jf-cell:not(.empty):hover {
-    border-color: rgba($primary-color, 0.3);
-    background: rgba($primary-color, 0.06);
-    transform: translateY(-1px);
+  .jf-day.wknd { background: rgba($danger-color, 0.05); } // warm oxblood tint marks the weekend
+  .jf-day:hover {
+    border-color: rgba($danger-color, 0.42);
+    background: rgba($primary-color, 0.05);
+    transform: translateY(-2px);
   }
-  .jf-cell-date { display: flex; justify-content: space-between; align-items: baseline; }
-  .jf-cell-n { font-family: $cmu-serif-family; font-size: 0.72rem; color: rgba($primary-color, 0.75); }
-  .jf-cell-d { font-family: $barlow-font-family; font-size: 0.52rem; color: rgba($text-color, 0.6); }
-  .jf-meal { display: flex; align-items: center; gap: 0.28rem; line-height: 1; }
-  .jf-meal-t { font-family: $barlow-font-family; font-size: 0.5rem; color: rgba($text-color, 0.62); width: 0.62rem; flex: none; }
-  .jf-meal-g { font-size: 0.82rem; }
-  .jf-legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin-top: 0.9rem; font-family: $barlow-font-family; font-size: 0.72rem; color: rgba($text-color, 0.55); align-items: center; }
-  .jf-legend b { font-family: $cmu-serif-family; color: rgba($primary-color, 0.8); font-weight: 400; margin-right: 0.15rem; }
-
-  /* stacked day-list (mobile / no-grid) */
-  .jf-list { display: none; list-style: none; padding: 0; margin: 0.6rem 0; }
-  .jf-row {
-    display: grid;
-    grid-template-columns: 1.9rem auto 1fr;
-    gap: 0.7rem;
-    align-items: baseline;
-    padding: 0.5rem 0.2rem;
-    border-bottom: 1px solid rgba($primary-color, 0.08);
+  .jf-day-h { display: flex; align-items: baseline; gap: 0.4rem; }
+  .jf-day-date { font-family: $cmu-serif-family; font-size: 0.98rem; color: $primary-color; white-space: nowrap; }
+  .jf-day-dow {
+    font-family: $barlow-font-family;
+    font-size: 0.56rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba($text-color, 0.55);
   }
-  .jf-row-n { font-family: $cmu-serif-family; color: rgba($primary-color, 0.75); font-size: 0.85rem; text-align: right; }
-  .jf-row-d { font-family: $barlow-font-family; font-size: 0.72rem; color: rgba($text-color, 0.5); white-space: nowrap; }
-  .jf-row-d em { font-style: normal; opacity: 0.6; margin-left: 0.2rem; }
-  .jf-row-m { display: flex; flex-wrap: wrap; gap: 0.55rem; }
-  .jf-row-meal { display: inline-flex; align-items: center; gap: 0.2rem; }
-  .jf-row-t { font-family: $barlow-font-family; font-size: 0.56rem; color: rgba($primary-color, 0.55); }
-  .jf-row-g { font-size: 0.98rem; }
+  .jf-day.wknd .jf-day-dow { color: rgba($danger-color, 0.95); }
+  .jf-day-n {
+    position: absolute;
+    top: 0.42rem;
+    right: 0.55rem;
+    font-family: $barlow-font-family;
+    font-size: 0.52rem;
+    color: rgba($text-color, 0.32);
+  }
+  .jf-day-meals {
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+    border-top: 1px solid rgba($primary-color, 0.07);
+    padding-top: 0.4rem;
+  }
+  .jf-day-meal { display: flex; align-items: center; gap: 0.45rem; line-height: 1.1; }
+  .jf-day-mt {
+    font-family: $barlow-font-family;
+    font-size: 0.54rem;
+    letter-spacing: 0.08em;
+    color: rgba($text-color, 0.55);
+    width: 0.7rem;
+    flex: none;
+  }
+  .jf-day-mg { font-size: 0.98rem; }
 
   /* Once JS builds the exhibit (which is aria-hidden), keep the original <table>
      in the accessibility tree — visually hidden, not display:none — so screen
      readers still get the real, header-associated diet data. No-JS keeps it visible.
      Reuses the site's existing sr-only utility. */
   .jf-source-hidden { @extend .visually-hidden; }
-
-  /* =========================================================================
-     Motion — restrained; applied only when JS marks `.js` + `.jf-reveal`
-     ========================================================================= */
-  .jf-reveal { opacity: 1; }
 }
 
 /* JS-enabled + not reduced-motion: reveal-on-scroll for treatise elements */
 .js body.jianfei-treatise {
-  .jf-reveal {
-    opacity: 0;
-    transform: translateY(12px);
-    transition:
-      opacity 0.7s $cubic-bezier-smooth,
-      transform 0.8s $cubic-bezier-smooth;
-    will-change: opacity, transform;
+  // Day-cards deal in with a light stagger as their exhibit scrolls into view.
+  .jf-exhibit.jf-in .jf-day {
+    animation: jf-day-in 0.5s $cubic-bezier-smooth both;
+    animation-delay: calc(var(--i, 0) * 0.018s);
   }
-  .jf-reveal.jf-in { opacity: 1; transform: none; }
 
   // Opening abstract: the four lines rise in sequence on load, each emoji versal
   // illuminating (scaling in) as its line arrives.
@@ -448,19 +448,20 @@ body.jianfei-treatise {
   50% { transform: translateX(3px); opacity: 1; }
   100% { transform: translateX(0); opacity: 0.85; }
 }
+@keyframes jf-day-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
 /* Treatise reading measure — override the site's 50rem post cap with a tighter
    monograph measure. At the 20px desktop root the 50rem cap computes to ~1000px
    (~90-100 justified chars/line), which loosens the justification the whole
-   Computer-Modern conceit relies on; ~42rem holds a ~monograph line length.
-   Matches the site rule's specificity (0,3,1) and wins by later import order. */
-body.jianfei-treatise .page__inner-wrap .page__content { max-width: 42rem; }
+   Computer-Modern conceit relies on; ~38rem (~760px, ~72 chars/line) sits in the
+   justified-serif sweet spot. Matches the site rule's specificity (0,3,1) and wins
+   by later import order. */
+body.jianfei-treatise .page__inner-wrap .page__content { max-width: 38rem; }
 
-/* Mobile: calendar → stacked list; ragged-right prose; legible figure labels */
+/* Mobile: ragged-right prose; legible figure labels + line. The day-card grid is
+   already responsive (auto-fill), so it needs no width switch here. */
 body.jianfei-treatise {
   @include responsive-down(mobile) {
-    .jf-cal, .jf-cal-head { display: none; }
-    .jf-list { display: block; }
     .page__content .translucent_border,
     .page__content .paragraph-center-wrapper { padding: 1.1rem 1.1rem; }
     .page__content > p { text-indent: 0; }
@@ -476,21 +477,22 @@ body.jianfei-treatise {
     .page__content .paragraph-center-wrapper ul > li { text-align: left; }
 
     // the weight figure's SVG scales to ~0.45x on a phone column, so bump the label
-    // type in viewBox units to keep the axes and the −6 kg payoff readable.
+    // type in viewBox units and thicken the line to keep the axes, the descent, and
+    // the −6 kg payoff readable.
     .jf-yl, .jf-xl, .jf-axt, .jf-ayt { font-size: 22px; }
     .jf-el, .jf-dim-l { font-size: 26px; }
+    .jf-line { stroke-width: 2.6; }
   }
 }
 
 /* Reduced motion — everything to final state (dual guard with the JS bail) */
 @include responsive-reduced-motion {
   .js body.jianfei-treatise {
-    .jf-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
     .jf-line { transition: none !important; stroke-dashoffset: 0 !important; }
     .jf-area, .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { opacity: 1 !important; transition: none !important; }
     .jf-abs-line, .jf-em { animation: none !important; opacity: 1 !important; transform: none !important; }
     .jf-gust { animation: none !important; transform: none !important; }
-    .jf-cell { transition: none !important; }
+    .jf-day { animation: none !important; opacity: 1 !important; transform: none !important; transition: none !important; }
   }
 }
 
@@ -515,7 +517,7 @@ body.jianfei-treatise {
       width: 11rem;
       margin: 0.35rem -12.5rem 1rem 1.4rem !important;
       padding: 0.1rem 0 0.1rem 0.9rem !important;
-      border-left: 1px solid rgba($danger-color, 0.5) !important;
+      border-left: 1px solid rgba($danger-color, 0.85) !important;
       font-size: 0.76em !important;
       line-height: 1.5;
       color: rgba($text-color, 0.7);
