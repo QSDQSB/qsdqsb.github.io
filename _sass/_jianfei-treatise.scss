@@ -10,8 +10,9 @@
      from added words. No invented labels, titles, or tags.
    - No callout boxes — the existing `.notice--info` definitions become quiet
      academic asides, not coloured boxes.
-   - Colour only where it carries meaning (the weight descent = success teal;
-     unrecorded attempts = muted). Otherwise near-monochrome CM on the dark ground.
+   - Colour only where it carries meaning: the weight descent in warm oxblood with
+     its −6 kg payoff in orange; the definition asides ruled in oxblood; unrecorded
+     attempts muted. Otherwise near-monochrome CM on the dark ground.
 
    Motion lives in assets/js/jianfei-treatise.js (adds `.jf-reveal` / `.jf-in`,
    draws the figure). It bails under prefers-reduced-motion; the SCSS below also
@@ -218,7 +219,7 @@ body.jianfei-treatise {
     background: transparent !important;
     box-shadow: none !important;
     border: 0 !important;
-    border-left: 1px solid rgba($info-color, 0.55) !important;
+    border-left: 1px solid rgba($danger-color, 0.55) !important;
     border-radius: 0 !important;
     max-width: none;
     margin: 1.1rem 0 !important;
@@ -273,7 +274,8 @@ body.jianfei-treatise {
   .page__hero-copy .page__title { font-family: $cmu-serif-family; }
 
   /* =========================================================================
-     Weight figure (§ Attempt #3) — a LaTeX-plot, self-drawing, success teal
+     Weight figure (§ Attempt #3) — a LaTeX-plot, self-drawing; oxblood descent,
+     warm-orange −6 kg payoff
      ========================================================================= */
   .jf-fig { display: block; width: 100%; margin: 1.6rem 0 0.6rem; }
   /* No frame: the plot's own L-shaped axes carry the structure (pgfplots-style). */
@@ -294,33 +296,36 @@ body.jianfei-treatise {
   }
   .jf-yl { text-anchor: end; }
   .jf-xl, .jf-axt, .jf-ayt { text-anchor: middle; }
-  .jf-a0 { stop-color: $success-color; stop-opacity: 0.22; }
-  .jf-a1 { stop-color: $success-color; stop-opacity: 0; }
+  .jf-a0 { stop-color: $danger-color; stop-opacity: 0.22; }
+  .jf-a1 { stop-color: $danger-color; stop-opacity: 0; }
   .jf-area { opacity: 1; }
   .jf-line {
     fill: none;
-    stroke: $success-color;
-    stroke-width: 1.7;
+    // oxblood warmed a touch toward the orange payoff — more presence on the dark
+    // ground than pure oxblood, still distinct from the orange −6 kg call-out.
+    stroke: mix($warning-color, $danger-color, 25%);
+    stroke-width: 1.8;
     stroke-linejoin: round;
     stroke-linecap: round;
   }
-  .jf-pt { fill: $success-color; }
-  .jf-pt-e { fill: mix(#fff, $success-color, 35%); }
+  .jf-pt { fill: mix($warning-color, $danger-color, 25%); }
+  .jf-pt-e { fill: mix(#fff, $danger-color, 35%); }
   .jf-el {
     font-family: $cmu-serif-family;
     font-size: 13px;
     fill: rgba($text-color, 0.9);
   }
   .jf-el-s { text-anchor: start; }
-  .jf-el-e { text-anchor: end; fill: mix(#fff, $success-color, 40%); }
-  /* the payoff: a dashed reference line at the start weight + a right-edge
-     dimension bracket measuring the total −6.0 kg descent, set in success teal */
-  .jf-base { stroke: rgba($success-color, 0.3); stroke-width: 1; stroke-dasharray: 2 3.5; }
-  .jf-dim { stroke: rgba($success-color, 0.6); stroke-width: 1; }
+  .jf-el-e { text-anchor: end; fill: mix(#fff, $danger-color, 40%); }
+  /* the payoff: a dashed oxblood reference line at the start weight + a right-edge
+     dimension bracket measuring the total −6.0 kg descent, called out in warm orange */
+  .jf-base { stroke: rgba($danger-color, 0.3); stroke-width: 1; stroke-dasharray: 2 3.5; }
+  // the −6 kg payoff is the one warm-orange focal accent — the oxblood descent lands on it
+  .jf-dim { stroke: rgba($warning-color, 0.72); stroke-width: 1; }
   .jf-dim-l {
     font-family: $cmu-serif-family;
     font-size: 13px;
-    fill: mix(#fff, $success-color, 42%);
+    fill: $warning-color;
     text-anchor: middle;
   }
 
@@ -508,7 +513,7 @@ body.jianfei-treatise {
       width: 11rem;
       margin: 0.35rem -12.5rem 1rem 1.4rem !important;
       padding: 0.1rem 0 0.1rem 0.9rem !important;
-      border-left: 1px solid rgba($info-color, 0.5) !important;
+      border-left: 1px solid rgba($danger-color, 0.5) !important;
       font-size: 0.76em !important;
       line-height: 1.5;
       color: rgba($text-color, 0.7);
