@@ -211,6 +211,16 @@ Enforced on touched files only — no global retrofit of untouched legacy files.
 | `_voyage` | `title`, `date`, `header` | exactly one of: `gallery_name` OR `subgalleries: true`; optional `map:` viewport block (only for `subgalleries:true` voyages); `map_dataset:` only as a legacy escape hatch (see below) |
 | `_subvoyage` | `title`, `date`, `header` | `gallery_name` (typically required for gallery routing); optional `map:` block to pin / refine the marker on the parent's auto-derived atlas |
 
+### `seo_description` — search metadata, never displayed (all collections)
+
+Optional cross-collection key. It feeds **only** the `<meta name="description">` tag (`_includes/seo.html`) that search engines read for result snippets. No layout renders it, so it is deliberately decoupled from the page's visible copy.
+
+- **Why it exists:** `excerpt` / `description` are the site's *display* voice — poetic, atmospheric, often oblique ("Where whispers dance on liquid streets"). That reads well on the page but tells Google nothing about *what the page is*. `seo_description` carries the plain, content-descriptive summary instead.
+- **Voice:** factual and concrete, ~150–160 chars, no QSD irony. Name the actual subject so specific long-tail queries can match — real place names for voyages ("Seceda, Alpe di Siusi"), the actual theme for essays ("memory, impermanence and the self"). This is the one place on the site that is intentionally *un*-stylised.
+- **Scope:** hand-written only, per page — there is **no** auto-generated fallback. Pages without it fall back (for `<meta name="description">`) to `description` → `excerpt` → `site.description`, exactly as before.
+- **Social cards are separate:** `og:description` / `twitter:description` keep using the poetic `description` / `excerpt`, so shares stay evocative. Only the search-engine `<meta name="description">` prefers `seo_description`.
+- **Don't** write one for a stub / `#TODO` page — a meta description must accurately describe content that actually exists.
+
 ### Conditional pairings (these are where things break)
 
 - **`gallery_name: <name>`** must resolve to two real directories:

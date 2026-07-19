@@ -3,6 +3,7 @@ title: "Defined by Archive"
 date: 2025-04-10
 permalink: /posts/defined-by-archive/
 excerpt: "Tangible relics of the past bear a truth where memory alone tarnishes."
+seo_description: "A bilingual essay on memory, impermanence and the self — experiential, narrative and historical — and why only the archive outlives what memory quietly distorts. By QSD."
 
 redirect_from:
   - /posts/2025-04-10-Defined-by-Archive/
