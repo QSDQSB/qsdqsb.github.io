@@ -20,6 +20,12 @@ permalink: /sitemap.xml
   <url>
     <loc>{{ site.url }}/tags/</loc>
   </url>
+  <url>
+    <loc>{{ site.url }}/categories/</loc>
+  </url>
+  <url>
+    <loc>{{ site.url }}/terms/</loc>
+  </url>
   {% for post in site.posts %}
     <url>
       <loc>{{ site.url }}{{ post.url }}</loc>
