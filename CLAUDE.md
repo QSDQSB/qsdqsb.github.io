@@ -223,6 +223,7 @@ Optional cross-collection key. It feeds **only** the `<meta name="description">`
   3. `description` → `excerpt` → `site.description` (the poetic display copy), for everything else — posts and pages get **no** template, so hand-write `seo_description` for any essay you want discoverable.
 - **Social cards are separate:** `og:description` / `twitter:description` keep using the poetic `description` / `excerpt`, so shares stay evocative. Only the search-engine `<meta name="description">` prefers `seo_description`.
 - **Don't** write one for a stub / `#TODO` page — a meta description must accurately describe content that actually exists.
+- **Coverage audit:** `npm run check:seo` (`scripts/check-seo-descriptions.py`) classifies every page by which source its `<meta name="description">` comes from — `authored` (frontmatter), `template` (voyage/subvoyage), `display` (poetic excerpt — weak), `gap` (generic `site.description`), or `stub` (skipped). It mirrors the precedence above, so it reports what actually ships. Exit 1 on any `gap`; `--strict` also fails on `display`-only pages. Run it after adding content to see where a hand-written `seo_description` is still owed.
 
 ### Conditional pairings (these are where things break)
 
