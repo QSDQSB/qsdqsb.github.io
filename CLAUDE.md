@@ -217,7 +217,10 @@ Optional cross-collection key. It feeds **only** the `<meta name="description">`
 
 - **Why it exists:** `excerpt` / `description` are the site's *display* voice — poetic, atmospheric, often oblique ("Where whispers dance on liquid streets"). That reads well on the page but tells Google nothing about *what the page is*. `seo_description` carries the plain, content-descriptive summary instead.
 - **Voice:** factual and concrete, ~150–160 chars, no QSD irony. Name the actual subject so specific long-tail queries can match — real place names for voyages ("Seceda, Alpe di Siusi"), the actual theme for essays ("memory, impermanence and the self"). This is the one place on the site that is intentionally *un*-stylised.
-- **Scope:** hand-written only, per page — there is **no** auto-generated fallback. Pages without it fall back (for `<meta name="description">`) to `description` → `excerpt` → `site.description`, exactly as before.
+- **Scope & fallback chain** for `<meta name="description">` (in `_includes/seo.html`):
+  1. hand-written `seo_description` (richest; use it wherever the templated line below is too thin — essays especially, since a template can't summarise prose).
+  2. **templated fallback for `_voyage` / `_subvoyage` only** — one place per gallery, so a plain `"<place> — travel photography by QSD"` is descriptive and unique. Subvoyages fold in the parent voyage's real title (`"<sub>, <parent> — travel photography by QSD"`). This beats the poetic excerpt for search and means every voyage/subvoyage is covered without hand-writing.
+  3. `description` → `excerpt` → `site.description` (the poetic display copy), for everything else — posts and pages get **no** template, so hand-write `seo_description` for any essay you want discoverable.
 - **Social cards are separate:** `og:description` / `twitter:description` keep using the poetic `description` / `excerpt`, so shares stay evocative. Only the search-engine `<meta name="description">` prefers `seo_description`.
 - **Don't** write one for a stub / `#TODO` page — a meta description must accurately describe content that actually exists.
 

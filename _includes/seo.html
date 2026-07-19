@@ -24,16 +24,44 @@
   Two deliberately separate descriptions:
   - social_description → og:/twitter: share cards. Keeps the poetic display
     copy (page.description / excerpt) so shares stay evocative.
-  - meta_description → <meta name="description"> for search engines. Prefers
-    the non-displayed, content-descriptive `seo_description` frontmatter key,
-    written for long-tail discovery; falls back to the social copy when absent.
+  - meta_description → <meta name="description"> for search engines.
 {% endcomment %}
 {% assign social_description = page.description | default: page.excerpt | default: site.description %}
 {% if social_description %}
   {% assign social_description = social_description | markdownify | strip_html | strip_newlines | escape_once %}
 {% endif %}
 
-{% assign meta_description = page.seo_description | default: social_description %}
+{% comment %}
+  <meta name="description"> precedence:
+    1. hand-written page.seo_description (richest, non-displayed, any collection)
+    2. templated fallback for voyage/subvoyage — one place per gallery, so a
+       plain "<place> — travel photography by QSD" is content-descriptive and
+       unique, and beats the poetic excerpt for search. Subvoyages fold in the
+       parent place (looked up for its real title) for disambiguation.
+    3. social_description (poetic display copy) → excerpt → site.description
+{% endcomment %}
+{% assign meta_description = page.seo_description %}
+{% unless meta_description %}
+  {% if page.collection == 'subvoyage' %}
+    {% comment %} Parent = the containing folder (_subvoyage/<parent>/…), which the
+       repo contract guarantees equals the parent voyage's basename — more reliable
+       than gallery_name, which atmospheric subvoyages may omit. {% endcomment %}
+    {% assign _parts = page.path | split: '/' %}
+    {% assign _pidx = _parts.size | minus: 2 %}
+    {% assign _parent_slug = _parts[_pidx] %}
+    {% assign _parent_match = '/' | append: _parent_slug | append: '.' %}
+    {% assign _parent_voyage = site.voyage | where_exp: 'v', 'v.path contains _parent_match' | first %}
+    {% assign _parent_title = _parent_voyage.title | default: _parent_slug %}
+    {% if _parent_slug and _parent_title != page.title %}
+      {% assign meta_description = page.title | append: ', ' | append: _parent_title | append: ' — travel photography by QSD.' %}
+    {% else %}
+      {% assign meta_description = page.title | append: ' — travel photography by QSD.' %}
+    {% endif %}
+  {% elsif page.collection == 'voyage' %}
+    {% assign meta_description = page.title | append: ' — travel photography by QSD.' %}
+  {% endif %}
+{% endunless %}
+{% assign meta_description = meta_description | default: social_description %}
 {% if meta_description %}
   {% assign meta_description = meta_description | markdownify | strip_html | strip_newlines | escape_once %}
 {% endif %}
