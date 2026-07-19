@@ -21,6 +21,12 @@
    inherits the dual guard.
    ========================================================================== */
 
+// Antique gold — the treatise's second warm accent (the −6 kg payoff + gilded
+// cross-refs), paired with $danger-color oxblood. Kept local: it's used only in
+// this component, so it stays here rather than in the shared _variables.scss.
+// (Previously borrowed the site's $jf-gold brand token, which master removed.)
+$jf-gold: #e0a432;
+
 body.jianfei-treatise {
 
   /* ---- treatise body: Computer Modern, justified, LaTeX paragraph rhythm ---- */
@@ -46,7 +52,7 @@ body.jianfei-treatise {
 
     // gilded cross-references (the \ref-style "COMMITMENT #2025-1" link + PDF refs) —
     // keeps the palette to two warm accents instead of the site's default lapis link.
-    a { color: $geo-color; text-decoration-color: rgba($geo-color, 0.45); }
+    a { color: $jf-gold; text-decoration-color: rgba($jf-gold, 0.45); }
 
     /* section headings = the verbatim "Attempt #N: From …" H2s.
        scroll-margin-top so a TOC jump lands the heading below the floating masthead
@@ -308,31 +314,31 @@ body.jianfei-treatise {
     fill: none;
     // the descent stays oxblood — warmed a hair toward gold for presence on the
     // dark ground; only the payoff below is gilded.
-    stroke: mix($geo-color, $danger-color, 18%);
+    stroke: mix($jf-gold, $danger-color, 18%);
     stroke-width: 1.8;
     stroke-linejoin: round;
     stroke-linecap: round;
   }
-  .jf-pt { fill: mix($geo-color, $danger-color, 18%); }
+  .jf-pt { fill: mix($jf-gold, $danger-color, 18%); }
   // the endpoint marker + label are the gilded landing (antique gold = brass-aged geo gold)
-  .jf-pt-e { fill: mix($danger-color, $geo-color, 15%); }
+  .jf-pt-e { fill: mix($danger-color, $jf-gold, 15%); }
   .jf-el {
     font-family: $cmu-serif-family;
     font-size: 13px;
     fill: rgba($text-color, 0.9);
   }
   .jf-el-s { text-anchor: start; }
-  .jf-el-e { text-anchor: end; fill: mix($danger-color, $geo-color, 15%); }
+  .jf-el-e { text-anchor: end; fill: mix($danger-color, $jf-gold, 15%); }
   /* the payoff: a dashed oxblood reference line at the start weight + a right-edge
      dimension bracket measuring the total −6.0 kg descent, called out in antique gold */
   // visible enough to read as the reference the gold bracket measures from
   .jf-base { stroke: rgba($danger-color, 0.5); stroke-width: 1; stroke-dasharray: 3 3; }
   // the −6 kg payoff is the one gilded focal accent — the oxblood descent lands on it
-  .jf-dim { stroke: rgba(mix($danger-color, $geo-color, 15%), 0.72); stroke-width: 1; }
+  .jf-dim { stroke: rgba(mix($danger-color, $jf-gold, 15%), 0.72); stroke-width: 1; }
   .jf-dim-l {
     font-family: $cmu-serif-family;
     font-size: 13px;
-    fill: mix($danger-color, $geo-color, 15%);
+    fill: mix($danger-color, $jf-gold, 15%);
     text-anchor: middle;
   }
 
