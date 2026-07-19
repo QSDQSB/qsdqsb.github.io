@@ -20,10 +20,24 @@
 
 <title>{{ seo_title | default: site.title }}{% if paginator %}{% unless paginator.page == 1 %} {{ site.title_separator }} {{ site.data.ui-text[site.locale].page | default: "Page" }} {{ paginator.page }}{% endunless %}{% endif %}</title>
 
-{% assign seo_description = page.description | default: page.excerpt | default: site.description %}
-{% if seo_description %}
-  {% assign seo_description = seo_description | markdownify | strip_html | strip_newlines | escape_once %}
+{% comment %}
+  Two deliberately separate descriptions:
+  - social_description → og:/twitter: share cards. Keeps the poetic display
+    copy (page.description / excerpt) so shares stay evocative.
+  - meta_description → <meta name="description"> for search engines. Prefers
+    the non-displayed, content-descriptive `seo_description` frontmatter key,
+    written for long-tail discovery; falls back to the social copy when absent.
+{% endcomment %}
+{% assign social_description = page.description | default: page.excerpt | default: site.description %}
+{% if social_description %}
+  {% assign social_description = social_description | markdownify | strip_html | strip_newlines | escape_once %}
 {% endif %}
+
+{% assign meta_description = page.seo_description | default: social_description %}
+{% if meta_description %}
+  {% assign meta_description = meta_description | markdownify | strip_html | strip_newlines | escape_once %}
+{% endif %}
+{% if meta_description %}<meta name="description" content="{{ meta_description }}">{% endif %}
 
 {% assign seo_author = page.author | default: page.author[0] | default: site.author[0] %}
 {% if seo_author %}
@@ -48,14 +62,14 @@
   <meta property="og:url" content="{{ page.url | prepend: seo_url | replace: "/index.html", "/" }}">
 {% endif %}
 
-{% if page.excerpt %}
-  <meta property="og:description" content="{{ seo_description }}">
+{% if page.description or page.excerpt %}
+  <meta property="og:description" content="{{ social_description }}">
 {% endif %}
 
 {% if site.twitter.username %}
   <meta name="twitter:site" content="@{{ site.twitter.username | replace: "@", "" }}">
   <meta name="twitter:title" content="{{ page.title | default: site.title | markdownify | strip_html | strip_newlines | escape_once }}">
-  <meta name="twitter:description" content="{{ seo_description }}">
+  <meta name="twitter:description" content="{{ social_description }}">
   <meta name="twitter:url" content="{{ canonical_url }}">
 
   {% if page.header.image %}
