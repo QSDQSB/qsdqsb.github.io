@@ -747,7 +747,7 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@include responsive-reduced-motion {
   .map-container .leaflet-control-zoom a,
   .map-container .leaflet-control-reset .leaflet-control-reset-button,
   .map-container .leaflet-control-fullscreen .leaflet-control-fullscreen-button,

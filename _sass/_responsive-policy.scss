@@ -89,6 +89,12 @@ $responsive-single-min-content-width: 46rem !default;
   }
 }
 
+@mixin responsive-coarse-pointer {
+  @media (hover: none), (pointer: coarse) {
+    @content;
+  }
+}
+
 // Shared shell policy:
 // 1. Content uses full width by default.
 // 2. Left author/sidebar rail is enabled only from the left-rail breakpoint.
