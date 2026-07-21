@@ -1,6 +1,7 @@
 ---
 title: "Dolomites"
 excerpt: "Where the nature's fiery forges"
+seo_description: "Landscape and mountain photography from the Dolomites, Italy — Seceda, Alpe di Siusi, Selva and Sesto. Alpine peaks, lakes and hiking trails, shot by QSD."
 layout: gallery
 subgalleries: true
 date: 2023-08-26

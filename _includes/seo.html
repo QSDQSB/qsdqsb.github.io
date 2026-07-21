@@ -7,7 +7,14 @@
 {% assign seo_url = seo_url | default: site.github.url %}
 
 {% if page.title %}
-  {% assign seo_title = page.title | append: " " | append: site.title_separator | append: " " | append: site.title %}
+  {% comment %} Voyage/subvoyage <title> tags carry a "— Travel Photography" cue
+     (SERP + browser tab only; the visible page heading is untouched) so they
+     match long-tail photography queries. {% endcomment %}
+  {% assign _title_core = page.title %}
+  {% if page.collection == 'voyage' or page.collection == 'subvoyage' %}
+    {% assign _title_core = page.title | append: " — Travel Photography" %}
+  {% endif %}
+  {% assign seo_title = _title_core | append: " " | append: site.title_separator | append: " " | append: site.title %}
 {% endif %}
 
 {% if seo_title %}
@@ -20,10 +27,57 @@
 
 <title>{{ seo_title | default: site.title }}{% if paginator %}{% unless paginator.page == 1 %} {{ site.title_separator }} {{ site.data.ui-text[site.locale].page | default: "Page" }} {{ paginator.page }}{% endunless %}{% endif %}</title>
 
-{% assign seo_description = page.description | default: page.excerpt | default: site.description %}
-{% if seo_description %}
-  {% assign seo_description = seo_description | markdownify | strip_html | strip_newlines | escape_once %}
+{% comment %}
+  Two deliberately separate descriptions:
+  - social_description → og:/twitter: share cards. Keeps the poetic display
+    copy (page.description / excerpt) so shares stay evocative.
+  - meta_description → <meta name="description"> for search engines.
+{% endcomment %}
+{% assign social_description = page.description | default: page.excerpt | default: site.description %}
+{% if social_description %}
+  {% assign social_description = social_description | markdownify | strip_html | strip_newlines | escape_once %}
 {% endif %}
+
+{% comment %} Shared: for subvoyages, resolve the parent voyage once — used by
+   both the meta-description template and the BreadcrumbList JSON-LD below.
+   Parent = the containing folder (_subvoyage/<parent>/…), which the repo
+   contract guarantees equals the parent voyage's basename (more reliable than
+   gallery_name, which atmospheric subvoyages may omit). {% endcomment %}
+{% if page.collection == 'subvoyage' %}
+  {% assign _parts = page.path | split: '/' %}
+  {% assign _pidx = _parts.size | minus: 2 %}
+  {% assign _parent_slug = _parts[_pidx] %}
+  {% assign _parent_match = '/' | append: _parent_slug | append: '.' %}
+  {% assign _parent_voyage = site.voyage | where_exp: 'v', 'v.path contains _parent_match' | first %}
+  {% assign _parent_title = _parent_voyage.title | default: _parent_slug %}
+{% endif %}
+
+{% comment %}
+  <meta name="description"> precedence:
+    1. hand-written page.seo_description (richest, non-displayed, any collection)
+    2. templated fallback for voyage/subvoyage — one place per gallery, so a
+       plain "<place> — travel photography by QSD" is content-descriptive and
+       unique, and beats the poetic excerpt for search. Subvoyages fold in the
+       parent place for disambiguation.
+    3. social_description (poetic display copy) → excerpt → site.description
+{% endcomment %}
+{% assign meta_description = page.seo_description %}
+{% unless meta_description %}
+  {% if page.collection == 'subvoyage' %}
+    {% if _parent_slug and _parent_title != page.title %}
+      {% assign meta_description = page.title | append: ', ' | append: _parent_title | append: ' — travel photography by QSD.' %}
+    {% else %}
+      {% assign meta_description = page.title | append: ' — travel photography by QSD.' %}
+    {% endif %}
+  {% elsif page.collection == 'voyage' %}
+    {% assign meta_description = page.title | append: ' — travel photography by QSD.' %}
+  {% endif %}
+{% endunless %}
+{% assign meta_description = meta_description | default: social_description %}
+{% if meta_description %}
+  {% assign meta_description = meta_description | markdownify | strip_html | strip_newlines | escape_once %}
+{% endif %}
+{% if meta_description %}<meta name="description" content="{{ meta_description }}">{% endif %}
 
 {% assign seo_author = page.author | default: page.author[0] | default: site.author[0] %}
 {% if seo_author %}
@@ -48,14 +102,14 @@
   <meta property="og:url" content="{{ page.url | prepend: seo_url | replace: "/index.html", "/" }}">
 {% endif %}
 
-{% if page.excerpt %}
-  <meta property="og:description" content="{{ seo_description }}">
+{% if page.description or page.excerpt %}
+  <meta property="og:description" content="{{ social_description }}">
 {% endif %}
 
 {% if site.twitter.username %}
   <meta name="twitter:site" content="@{{ site.twitter.username | replace: "@", "" }}">
   <meta name="twitter:title" content="{{ page.title | default: site.title | markdownify | strip_html | strip_newlines | escape_once }}">
-  <meta name="twitter:description" content="{{ seo_description }}">
+  <meta name="twitter:description" content="{{ social_description }}">
   <meta name="twitter:url" content="{{ canonical_url }}">
 
   {% if page.header.image %}
@@ -104,26 +158,40 @@
   <link rel="next" href="{{ paginator.next_page_path | prepend: seo_url }}">
 {% endif %}
 
-{% if site.og_image %}
+{% comment %}
+  Structured data (schema.org / JSON-LD). Replaces the previously dormant
+  Organization/Person blocks — those were gated on unset site.og_image /
+  site.social, so nothing ever shipped. This gives search engines an explicit
+  model of the author entity, the essays, and the voyage hierarchy.
+{% endcomment %}
+{% assign social_links = "" | split: "," %}
+{% if site.author.instagram %}{% capture _s %}https://www.instagram.com/{{ site.author.instagram }}{% endcapture %}{% assign social_links = social_links | push: _s %}{% endif %}
+{% if site.author.github %}{% capture _s %}https://github.com/{{ site.author.github }}{% endcapture %}{% assign social_links = social_links | push: _s %}{% endif %}
+{% if site.author.linkedin %}{% capture _s %}https://www.linkedin.com/in/{{ site.author.linkedin }}{% endcapture %}{% assign social_links = social_links | push: _s %}{% endif %}
+
+{% assign _hdr_img = page.header.image | default: page.header.overlay_image %}
+{% if _hdr_img %}
+  {% if _hdr_img contains '://' %}{% assign _img_url = _hdr_img %}{% else %}{% assign _img_url = _hdr_img | prepend: '/images/' | prepend: seo_url %}{% endif %}
+{% endif %}
+
+{% if page.url == '/' %}
   <script type="application/ld+json">
-    {
-      "@context": "http://schema.org",
-      "@type": "Organization",
-      "url": {{ seo_url | jsonify }},
-      "logo": {{ site.og_image | prepend: "/images/" | prepend: base_path | jsonify }}
-    }
+{"@context":"https://schema.org","@type":"WebSite","name":{{ site.title | jsonify }},"alternateName":{{ site.name | jsonify }},"url":{{ seo_url | append: '/' | jsonify }},"description":{{ site.description | jsonify }},"inLanguage":{{ site.locale | jsonify }}}
+  </script>
+  <script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":{{ site.author.name | jsonify }},"url":{{ seo_url | append: '/' | jsonify }}{% if site.author.avatar %},"image":{% if site.author.avatar contains '://' %}{{ site.author.avatar | jsonify }}{% else %}{{ site.author.avatar | prepend: '/images/' | prepend: seo_url | jsonify }}{% endif %}{% endif %}{% if social_links != empty %},"sameAs":{{ social_links | jsonify }}{% endif %}}
   </script>
 {% endif %}
 
-{% if site.social %}
+{% if page.date and page.layout == 'single' %}
   <script type="application/ld+json">
-    {
-      "@context" : "http://schema.org",
-      "@type" : "{% if site.social.type %}{{ site.social.type }}{% else %}Person{% endif %}",
-      "name" : "{{ site.social.name | default: site.name }}",
-      "url" : {{ seo_url | jsonify }},
-      "sameAs" : {{ site.social.links | jsonify }}
-    }
+{"@context":"https://schema.org","@type":"BlogPosting","headline":{{ page.title | markdownify | strip_html | strip_newlines | jsonify }}{% if meta_description %},"description":{{ meta_description | jsonify }}{% endif %},"datePublished":{{ page.date | date_to_xmlschema | jsonify }},"dateModified":{{ page.last_modified_at | default: page.date | date_to_xmlschema | jsonify }},"author":{"@type":"Person","name":{{ site.author.name | jsonify }},"url":{{ seo_url | append: '/' | jsonify }}},"publisher":{"@type":"Person","name":{{ site.author.name | jsonify }}},"mainEntityOfPage":{{ canonical_url | jsonify }},"url":{{ canonical_url | jsonify }}{% if _img_url %},"image":{{ _img_url | jsonify }}{% endif %}{% if page.tags %},"keywords":{{ page.tags | jsonify }}{% endif %},"inLanguage":{{ site.locale | jsonify }}}
+  </script>
+{% endif %}
+
+{% if page.collection == 'voyage' or page.collection == 'subvoyage' %}
+  <script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":{{ seo_url | append: '/' | jsonify }}},{"@type":"ListItem","position":2,"name":"Voyages","item":{{ seo_url | append: '/voyage/' | jsonify }}}{% if page.collection == 'subvoyage' and _parent_voyage %},{"@type":"ListItem","position":3,"name":{{ _parent_title | jsonify }},"item":{{ _parent_voyage.url | prepend: seo_url | jsonify }}},{"@type":"ListItem","position":4,"name":{{ page.title | jsonify }},"item":{{ canonical_url | jsonify }}}{% else %},{"@type":"ListItem","position":3,"name":{{ page.title | jsonify }},"item":{{ canonical_url | jsonify }}}{% endif %}]}
   </script>
 {% endif %}
 

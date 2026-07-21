@@ -107,7 +107,7 @@ layout: compress
                         <img class="thumb-img"
                              src="{{ thumb_dir }}{{ image.name }}"
                              {% if image_meta.jpeg2x %}srcset="{{ thumb_dir }}{{ image.name }}, {{ thumb_dir }}{{ thumb_stem }}@2x.jpg 2x"{% endif %}
-                             alt="{{ image.basename | replace: '__', ' | ' | replace: '_', ' ' | replace: ':', '/' }}"
+                             alt="{{ page.title }} — {{ image.basename | replace: '__', ' | ' | replace: '_', ' ' | replace: ':', '/' }}"
                              width="{{ thumb_w }}"
                              height="{{ thumb_h }}"
                              loading="lazy"
