@@ -230,7 +230,7 @@
       margin: 0;
       // Touch devices have no hover state, so the excerpt would never
       // surface. Show it by default on coarse pointers / no-hover devices.
-      @media (hover: none), (pointer: coarse) {
+      @include responsive-coarse-pointer {
         opacity: 1;
       }
     }
@@ -259,7 +259,7 @@
     right: 1rem;
     opacity: 0;
     // Touch devices: surface the date by default (no hover state).
-    @media (hover: none), (pointer: coarse) {
+    @include responsive-coarse-pointer {
       opacity: 1;
     }
   }
