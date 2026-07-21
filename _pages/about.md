@@ -3,6 +3,7 @@ permalink: /
 title: "Hi! Meet QSD😵‍💫!"
 author_profile: true
 excerpt: "A procrastinator, a nihilist, a deconstructionist, an idiot. "
+seo_description: "QSD's personal literary blog and travel-photography journal — bilingual English/Chinese essays on memory and impermanence, plus photo galleries from across Europe."
 excerpts:
 - A procrastinator, a nihilist, a deconstructionist, an idiot.
 - A voyager, a melancholic, an aesthete, an escapist .

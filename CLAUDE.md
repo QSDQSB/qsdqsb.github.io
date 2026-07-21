@@ -211,6 +211,20 @@ Enforced on touched files only — no global retrofit of untouched legacy files.
 | `_voyage` | `title`, `date`, `header` | exactly one of: `gallery_name` OR `subgalleries: true`; optional `map:` viewport block (only for `subgalleries:true` voyages); `map_dataset:` only as a legacy escape hatch (see below) |
 | `_subvoyage` | `title`, `date`, `header` | `gallery_name` (typically required for gallery routing); optional `map:` block to pin / refine the marker on the parent's auto-derived atlas |
 
+### `seo_description` — search metadata, never displayed (all collections)
+
+Optional cross-collection key. It feeds **only** the `<meta name="description">` tag (`_includes/seo.html`) that search engines read for result snippets. No layout renders it, so it is deliberately decoupled from the page's visible copy.
+
+- **Why it exists:** `excerpt` / `description` are the site's *display* voice — poetic, atmospheric, often oblique ("Where whispers dance on liquid streets"). That reads well on the page but tells Google nothing about *what the page is*. `seo_description` carries the plain, content-descriptive summary instead.
+- **Voice:** factual and concrete, ~150–160 chars, no QSD irony. Name the actual subject so specific long-tail queries can match — real place names for voyages ("Seceda, Alpe di Siusi"), the actual theme for essays ("memory, impermanence and the self"). This is the one place on the site that is intentionally *un*-stylised.
+- **Scope & fallback chain** for `<meta name="description">` (in `_includes/seo.html`):
+  1. hand-written `seo_description` (richest; use it wherever the templated line below is too thin — essays especially, since a template can't summarise prose).
+  2. **templated fallback for `_voyage` / `_subvoyage` only** — one place per gallery, so a plain `"<place> — travel photography by QSD"` is descriptive and unique. Subvoyages fold in the parent voyage's real title (`"<sub>, <parent> — travel photography by QSD"`). This beats the poetic excerpt for search and means every voyage/subvoyage is covered without hand-writing.
+  3. `description` → `excerpt` → `site.description` (the poetic display copy), for everything else — posts and pages get **no** template, so hand-write `seo_description` for any essay you want discoverable.
+- **Social cards are separate:** `og:description` / `twitter:description` keep using the poetic `description` / `excerpt`, so shares stay evocative. Only the search-engine `<meta name="description">` prefers `seo_description`.
+- **Don't** write one for a stub / `#TODO` page — a meta description must accurately describe content that actually exists.
+- **Coverage audit:** `npm run check:seo` (`scripts/check-seo-descriptions.py`) classifies every page by which source its `<meta name="description">` comes from — `authored` (frontmatter), `template` (voyage/subvoyage), `display` (poetic excerpt — weak), `gap` (generic `site.description`), or `stub` (skipped). It mirrors the precedence above, so it reports what actually ships. Exit 1 on any `gap`; `--strict` also fails on `display`-only pages. Run it after adding content to see where a hand-written `seo_description` is still owed.
+
 ### Conditional pairings (these are where things break)
 
 - **`gallery_name: <name>`** must resolve to two real directories:

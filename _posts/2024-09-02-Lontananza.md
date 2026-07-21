@@ -5,6 +5,7 @@ permalink: /posts/lontananza/
 redirect_from:
   - /posts/2024/lontananza/
 excerpt: "Memory's images, once they are fixed in words, are erased."
+seo_description: "A bilingual essay after Calvino's Invisible Cities — on memory, distance, and the things that vanish once named, drifting from Porto to Shanghai. Prose and photographs by QSD."
 tags:
   - 🍜Life
   - 💍Horcrux
