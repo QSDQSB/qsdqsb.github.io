@@ -881,7 +881,7 @@
 			// Reduced motion — collapse the crossfade to a near-instant swap
 			// (no animated opacity ramp). The image still appears; it just
 			// doesn't fade.
-			@media (prefers-reduced-motion: reduce) {
+			@include responsive-reduced-motion {
 				#viewer .slide .image,
 				#viewer .slide .caption .image_title {
 					transition-duration: 0.01ms;
@@ -945,7 +945,7 @@
 				animation: loading-bar-sweep 1.4s linear infinite;
 			}
 
-			@media (prefers-reduced-motion: reduce) {
+			@include responsive-reduced-motion {
 				#viewer .slide.loading .lqip-bg { animation: none; }
 				#viewer:has(.slide.loading) .loading-bar { animation: none; }
 				// Skip the focus-pull blur — keep a plain opacity crossfade only.
