@@ -3,40 +3,31 @@
    ========================================================================== */
 
 /* ==========================================================================
-   Cookie Utility Functions (Global)
+   Shared event-coalescing helper (Global)
    ========================================================================== */
 
 /**
- * Get a cookie value by name
- * @param {string} name - Cookie name
- * @returns {string|null} Cookie value or null if not found
+ * Coalesce rapid repeated calls into a single requestAnimationFrame flush.
+ * Returns a gated function: the first call schedules `fn` on the next
+ * frame; further calls before that frame are no-ops. `fn` runs with
+ * whatever arguments the *last* call before the flush provided.
+ *
+ * Shared by masthead-intent.js, slider.js and this file's own search-panel
+ * listener, which all repeated this same guard-flag/rAF/reset idiom.
  */
-function getCookie(name) {
-	var nameEQ = name + "=";
-	var ca = document.cookie.split(';');
-	for(var i = 0; i < ca.length; i++) {
-		var c = ca[i];
-		while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-		if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-	}
-	return null;
-}
-
-/**
- * Set a cookie with expiration
- * @param {string} name - Cookie name
- * @param {string} value - Cookie value
- * @param {number} days - Number of days until expiration
- */
-function setCookie(name, value, days) {
-	var expires = "";
-	if (days) {
-		var date = new Date();
-		date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-		expires = "; expires=" + date.toUTCString();
-	}
-	document.cookie = name + "=" + (value || "") + expires + "; path=/";
-}
+window.QSD = window.QSD || {};
+window.QSD.rafGate = function(fn) {
+	var scheduled = false;
+	return function() {
+		var args = arguments;
+		if (scheduled) return;
+		scheduled = true;
+		window.requestAnimationFrame(function() {
+			scheduled = false;
+			fn.apply(null, args);
+		});
+	};
+};
 
 document.addEventListener("DOMContentLoaded", function(){
    // Sticky footer
@@ -487,16 +478,12 @@ document.addEventListener("DOMContentLoaded", function(){
       });
     }
 
-    var searchPanelViewportRaf = null;
+    var gatedUpdateSearchPanelPosition = window.QSD.rafGate(updateSearchPanelPosition);
     var syncSearchPanelAfterViewportChange = function(event) {
       if (searchPanel.classList.contains("is--visible")) {
         var phase = event && event.detail ? event.detail.phase : "active";
         if (phase === "active") {
-          if (searchPanelViewportRaf) return;
-          searchPanelViewportRaf = window.requestAnimationFrame(function() {
-            searchPanelViewportRaf = null;
-            updateSearchPanelPosition();
-          });
+          gatedUpdateSearchPanelPosition();
           return;
         }
         updateSearchPanelPosition();
