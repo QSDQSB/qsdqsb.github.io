@@ -510,8 +510,7 @@ body.collection--posts .page__inner-wrap .page__content {
       padding: 0;
       border-radius: 0;
       background: none;
-      -webkit-backdrop-filter: none;
-      backdrop-filter: none;
+      @include backdrop-blur(none);
       box-shadow: none;
     }
 
@@ -519,8 +518,7 @@ body.collection--posts .page__inner-wrap .page__content {
       padding: 0;
       border-radius: 0;
       background: none;
-      -webkit-backdrop-filter: none;
-      backdrop-filter: none;
+      @include backdrop-blur(none);
       box-shadow: none;
     }
   }
