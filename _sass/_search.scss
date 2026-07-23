@@ -28,8 +28,7 @@
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  -webkit-backdrop-filter: blur($nav-action-blur);
-  backdrop-filter: blur($nav-action-blur);
+  @include backdrop-blur(blur($nav-action-blur));
   -webkit-transition:
     background-color 0.28s $cubic-bezier-smooth,
     border-color 0.28s $cubic-bezier-smooth,
@@ -160,8 +159,7 @@
     border-radius: $border-radius * 3;
     background: #121212AA;
     box-shadow: $shadow-floating;
-    -webkit-backdrop-filter: blur(25px);
-    backdrop-filter: blur(25px);
+    @include backdrop-blur(blur(25px));
     pointer-events: auto;
 
     @include responsive-up(wide) {
@@ -472,8 +470,7 @@
     padding-right: $search-panel-padding-x;
     z-index: 9999;
     background-color: #d0d0d020;
-    -webkit-backdrop-filter: blur(30px);
-    backdrop-filter: blur(30px);
+    @include backdrop-blur(blur(30px));
   }
 }
 
