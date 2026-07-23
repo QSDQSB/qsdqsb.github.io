@@ -1,0 +1,9 @@
+{%- comment -%}
+Resolve a header/overlay image reference to a full URL. Single source of truth
+for the "absolute URL passthrough / site-absolute path / images-relative path"
+logic that page__hero.html previously duplicated between its page-level and
+per-swiper-slide resolvers. Reads `base_path` from the including scope
+(page__hero.html assigns it once at the top). Output is whitespace-tight so it
+can be captured straight into a `url(...)`. Param: `image`.
+{%- endcomment -%}
+{%- if include.image contains "://" -%}{{ include.image }}{%- else -%}{%- assign _first_char = include.image | slice: 0, 1 -%}{%- if _first_char == "/" -%}{{ include.image | prepend: base_path }}{%- else -%}{{ include.image | prepend: "/images/" | prepend: base_path }}{%- endif -%}{%- endif -%}
