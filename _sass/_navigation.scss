@@ -185,8 +185,7 @@
   border-radius: 999px;
   background: rgba(10, 10, 12, 0.44);
   box-shadow: $shadow-soft;
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  backdrop-filter: blur(18px) saturate(140%);
+  @include backdrop-blur(blur(18px) saturate(140%));
   overflow: hidden;
   clip-path: inset(0 0 0 0 round 999px);
   transform-origin: left center;
@@ -281,8 +280,7 @@
     color: $nav-action-icon-color;
     cursor: pointer;
     border-radius: 999px;
-    -webkit-backdrop-filter: blur($nav-action-blur);
-    backdrop-filter: blur($nav-action-blur);
+    @include backdrop-blur(blur($nav-action-blur));
     overflow: hidden;
     isolation: isolate;
     transform: translateY(-50%);
@@ -429,8 +427,7 @@
     border-radius: $border-radius;
     background: rgba(10, 10, 12, 0.82);
     box-shadow: $shadow-soft;
-    -webkit-backdrop-filter: blur(18px);
-    backdrop-filter: blur(18px);
+    @include backdrop-blur(blur(18px));
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
