@@ -22,8 +22,7 @@ figure.highlight {
 
     color: $text-color;
     background: rgba(64, 64, 64, 0.25);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    @include backdrop-blur(blur(6px));
 
     opacity: 0;
     transform: translateY(-2px);
