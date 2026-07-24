@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const {
+  ACTIVATION_HANDLERS,
   buildActivationVeilInner,
   buildAtlasLegendMarkup,
   createAtlasPopupContent,
@@ -134,6 +135,17 @@ test('atlas palette stylesheet gives the tag list real spacing and isolated scro
   assert.match(mapStylesheet, /\.legend-palette-body\s*\{[\s\S]*overscroll-behavior:\s*contain;/);
   assert.match(mapStylesheet, /\.legend-group--palette\s*\{[\s\S]*display:\s*grid;/);
   assert.match(mapStylesheet, /\.legend-group--palette\s*\{[\s\S]*gap:\s*2px;/);
+});
+
+test('activating the map never re-traps page scroll (no scrollWheelZoom) but restores pan + keyboard', () => {
+  // The whole point of the click-to-activate veil is that plain wheel-scroll
+  // is never hijacked — not before activation, and not after it either.
+  assert.ok(!ACTIVATION_HANDLERS.includes('scrollWheelZoom'),
+    'scrollWheelZoom must stay disabled so the long voyage page is always scrollable');
+  // Pan, pinch and keyboard navigation are restored on activation.
+  assert.ok(ACTIVATION_HANDLERS.includes('dragging'));
+  assert.ok(ACTIVATION_HANDLERS.includes('touchZoom'));
+  assert.ok(ACTIVATION_HANDLERS.includes('keyboard'));
 });
 
 test('buildActivationVeilInner offers a quiet loading state and an armed click-to-explore CTA', () => {
