@@ -13,9 +13,12 @@
   overflow: hidden;
   position: relative;
   background-color: $obsidian-gray;
-  border-radius: $border-radius;
-  border: 2px solid $border-color;
-  box-shadow: $box-shadow;
+  // On-system framing: the borderless-glass language of the voyage cards — a
+  // fluid radius, a single hairline, and the shared soft-depth shadow — in
+  // place of the old hard 2px border + flat $box-shadow "widget" frame.
+  border-radius: clamp(0.6rem, 1.2vw, 1rem);
+  border: 1px solid rgba($lighter-gray, 0.09);
+  box-shadow: $shadow-soft;
 
   @include responsive-up(desktop) {
     min-height: 500px;
@@ -32,6 +35,37 @@
   @include responsive-down(phone) {
     min-height: 300px;
   }
+}
+
+// The atlas as a titled editorial section, sharing the voyage-card column.
+// Rendered inside `.container` by _layouts/gallery.html, so its heading and
+// caption sit in the same rhythm as the page's other "Other <place>" /
+// "Fancy a Markov Chain…?" section labels.
+.voyage-atlas {
+  margin: clamp(1.75rem, 4vw, 2.75rem) 0 0;
+}
+
+.voyage-atlas__title {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed $border-color;
+  font-family: $barlow-font-family;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: $text-color;
+
+  i {
+    color: $intriguing-word-color;
+    font-size: 0.9em;
+  }
+}
+
+// The heading owns the top rhythm; the map does the rest of the talking.
+.voyage-atlas .map-container {
+  margin: 0.9rem 0 0;
 }
 
 // Leaflet base overrides
@@ -369,6 +403,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.4rem;
     min-width: 4.5rem;
     padding: 0.45rem 0.9rem;
     border-radius: 999px;
@@ -744,6 +779,84 @@
   }
 }
 
+// Click-to-activate veil — the map rests behind it until the reader chooses to
+// explore, so plain page-scroll is never hijacked. The same surface carries
+// the quiet loading state ("Charting…") before it arms into the CTA.
+.map-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1100; // above Leaflet controls and the tag palette
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: rgba(12, 13, 14, 0.42); // Tier 3: near-black scrim over the tiles
+  @include backdrop-blur(blur(2px));
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+
+  &--loading {
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba($intriguing-word-color, 0.6);
+    outline-offset: -6px;
+  }
+}
+
+.map-veil__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  background: rgba(14, 14, 14, 0.58); // Tier 3: glass, matching the control bar
+  @include backdrop-blur(blur(14px));
+  border: 1px solid rgba($lighter-gray, 0.16);
+  box-shadow: $shadow-soft;
+  color: $text-color;
+  font-family: $barlow-font-family;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+
+  i {
+    color: $intriguing-word-color;
+  }
+}
+
+.map-veil:hover .map-veil__cta {
+  transform: translateY(-1px);
+  border-color: rgba($intriguing-word-color, 0.4);
+}
+
+.map-veil__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: $gray;
+  font-family: $barlow-font-family;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.map-veil__spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid $darker-gray;
+  border-top-color: $intriguing-word-color;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.map-container--active .map-veil {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 @include responsive-reduced-motion {
   .map-container .leaflet-control-zoom a,
   .map-container .leaflet-control-reset .leaflet-control-reset-button,
@@ -754,8 +867,14 @@
   .map-container .map-legend-palette .legend-item,
   .map-container .map-legend-palette .legend-item .legend-color,
   .map-container .popup-action,
-  .map-container .leaflet-popup .leaflet-popup-close-button {
+  .map-container .leaflet-popup .leaflet-popup-close-button,
+  .map-container .map-veil,
+  .map-container .map-veil__cta {
     transition: none !important;
+  }
+
+  .map-container .map-veil__spinner {
+    animation: none !important;
   }
 
   .map-container--booting .map-legend--atlas,

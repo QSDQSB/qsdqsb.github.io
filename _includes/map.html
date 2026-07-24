@@ -39,7 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% else %}
-<div class="notice notice--warning" style="padding: 1rem; border-left: 4px solid #FF6B6B; background: rgba(255, 107, 107, 0.05); margin: 1rem 0;">
-  <strong>⚠️ Map Error:</strong> No dataset specified. Pass an <code>include.dataset</code> param or set <code>map_dataset:</code> in the page front matter.
-</div>
+<p class="notice notice--warning">
+  <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+  <strong>Map unavailable.</strong> No dataset was specified — pass an <code>include.dataset</code> parameter or set <code>map_dataset:</code> in the page front matter.
+</p>
 {% endif %}

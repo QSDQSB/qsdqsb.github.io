@@ -92,7 +92,7 @@
         const button = L.DomUtil.create('a', 'leaflet-control-reset-button', container);
         button.href = '#';
         button.title = 'Reset view';
-        button.innerHTML = '⟲';
+        button.innerHTML = '<i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i>';
         button.setAttribute('role', 'button');
         button.setAttribute('aria-label', 'Reset map view');
 
@@ -134,7 +134,7 @@
         const button = L.DomUtil.create('a', 'leaflet-control-fullscreen-button', controlContainer);
         button.href = '#';
         button.title = 'Toggle fullscreen';
-        button.innerHTML = '⛶';
+        button.innerHTML = '<i class="fa-solid fa-expand" aria-hidden="true"></i>';
         button.setAttribute('role', 'button');
         button.setAttribute('aria-label', 'Toggle fullscreen mode');
 
@@ -144,7 +144,11 @@
         });
 
         this._onFullscreenChange = function() {
-          button.classList.toggle('leaflet-fullscreen-active', isCurrentlyFullscreen());
+          const active = isCurrentlyFullscreen();
+          button.classList.toggle('leaflet-fullscreen-active', active);
+          button.innerHTML = active
+            ? '<i class="fa-solid fa-compress" aria-hidden="true"></i>'
+            : '<i class="fa-solid fa-expand" aria-hidden="true"></i>';
         };
 
         document.addEventListener('fullscreenchange', this._onFullscreenChange);
@@ -202,6 +206,65 @@
     }
   }
 
+  // Click-to-activate veil. The map is inert until the reader chooses to
+  // explore it, so scrolling the page over the map never zooms it. The veil
+  // also doubles as the loading surface (a quiet "Charting…" state) before it
+  // arms into the "Click to explore" affordance.
+  function createActivationVeil(container) {
+    if (!container || container.querySelector('.map-veil')) return null;
+    const veil = document.createElement('div');
+    veil.className = 'map-veil map-veil--loading';
+    veil.setAttribute('aria-hidden', 'true');
+    veil.innerHTML = buildActivationVeilInner('loading');
+    container.appendChild(veil);
+    return veil;
+  }
+
+  function armActivationVeil(map, container) {
+    const veil = container ? container.querySelector('.map-veil') : null;
+    if (!veil) return;
+
+    veil.classList.remove('map-veil--loading');
+    veil.classList.add('map-veil--ready');
+    veil.innerHTML = buildActivationVeilInner('ready');
+    veil.setAttribute('role', 'button');
+    veil.setAttribute('tabindex', '0');
+    veil.setAttribute('aria-label', 'Explore the map');
+    veil.removeAttribute('aria-hidden');
+
+    if (typeof L !== 'undefined' && L.DomEvent) {
+      L.DomEvent.disableClickPropagation(veil);
+    }
+
+    const activate = () => activateMap(map, container);
+    veil.addEventListener('click', activate);
+    veil.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        activate();
+      }
+    });
+  }
+
+  function activateMap(map, container) {
+    if (!map || !container || container.classList.contains('map-container--active')) {
+      return;
+    }
+    container.classList.add('map-container--active');
+    ['dragging', 'scrollWheelZoom', 'doubleClickZoom', 'touchZoom', 'boxZoom', 'keyboard'].forEach((handler) => {
+      if (map[handler] && typeof map[handler].enable === 'function') {
+        map[handler].enable();
+      }
+    });
+  }
+
+  function buildActivationVeilInner(state) {
+    if (state === 'loading') {
+      return '<span class="map-veil__status"><span class="map-veil__spinner" aria-hidden="true"></span>Charting…</span>';
+    }
+    return '<span class="map-veil__cta"><i class="fa-solid fa-compass" aria-hidden="true"></i><span>Click to explore</span></span>';
+  }
+
   function init(container, options) {
     if (!container) {
       console.error('MapRenderer.init: No container provided');
@@ -229,10 +292,21 @@
       zoom: presetForInit.zoom !== undefined ? presetForInit.zoom : 2,
       minZoom: presetForInit.minZoom || 1,
       maxZoom: presetForInit.maxZoom || 18,
-      zoomControl: true,
+      // The map rests until the reader activates it (see the veil below), so
+      // plain page-scroll is never hijacked on a long voyage page. Every
+      // interaction handler starts disabled and is enabled on activation.
+      zoomControl: false,
       attributionControl: true,
-      scrollWheelZoom: true,
-      preferCanvas: true
+      scrollWheelZoom: false,
+      dragging: false,
+      doubleClickZoom: false,
+      touchZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      // SVG (not canvas) so the marker transitions in _map.scss actually take
+      // effect — hover, selection and tag-filter changes ease instead of
+      // snapping. Marker count per voyage is small, so SVG cost is negligible.
+      preferCanvas: false
     });
 
     L.tileLayer(TILE_LAYER.url, {
@@ -241,8 +315,17 @@
       className: 'map-tiles'
     }).addTo(mapInstance);
 
+    // FontAwesome control glyphs, matching the site's icon language.
+    L.control.zoom({
+      position: 'topleft',
+      zoomInText: '<i class="fa-solid fa-plus" aria-hidden="true"></i>',
+      zoomOutText: '<i class="fa-solid fa-minus" aria-hidden="true"></i>',
+      zoomInTitle: 'Zoom in',
+      zoomOutTitle: 'Zoom out'
+    }).addTo(mapInstance);
     createResetControl(mapInstance, viewportPreset).addTo(mapInstance);
     createFullscreenControl(container).addTo(mapInstance);
+    createActivationVeil(container);
 
     loadAndRenderGeoJSON(mapInstance, geojsonPath, container, viewportPreset);
   }
@@ -301,6 +384,7 @@
         }
 
         scheduleMapEntrance(container, atlasDataset);
+        armActivationVeil(map, container);
       })
       .catch((error) => {
         console.error('Failed to load GeoJSON:', error);
@@ -693,7 +777,7 @@
     return `
       <div class="map-legend map-legend--atlas map-legend--atlas-pill">
         <button type="button" class="legend-pill${drawerOpen ? ' is-active' : ''}" aria-controls="${escapeHtml(paletteId)}" aria-expanded="${drawerOpen ? 'true' : 'false'}" aria-haspopup="dialog">
-          Tags
+          <i class="fa-solid fa-tags" aria-hidden="true"></i><span>Tags</span>
         </button>
       </div>
       <div id="${escapeHtml(paletteId)}" class="map-legend-palette${drawerOpen ? ' is-open' : ''}"${drawerOpen ? '' : ' hidden'} tabindex="-1" role="dialog" aria-label="Browse voyage tags">
@@ -904,7 +988,7 @@
     container.innerHTML = `
       <div class="map-error">
         <div style="text-align: center;">
-          <div style="font-size: 24px; margin-bottom: 8px;">⚠️</div>
+          <i class="fa-solid fa-triangle-exclamation" style="font-size: 22px; margin-bottom: 8px; display: block;" aria-hidden="true"></i>
           <div>${escapeHtml(message)}</div>
         </div>
       </div>
@@ -929,6 +1013,7 @@
 
   return {
     init,
+    buildActivationVeilInner,
     buildAtlasLegendMarkup,
     createAtlasPopupContent,
     getMapBoundsPadding,
