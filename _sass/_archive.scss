@@ -340,7 +340,7 @@
   padding: 0.3rem 0.2rem;
   text-align: center;
   background-color: rgba(133, 102, 102, 0.3);
-  transition: all 0.5s cubic-bezier(.33,.11,.02,.99);
+  transition: $cubic-bezier-default-05s;
   @include backdrop-blur(blur(10px) brightness(0.85));
   text-shadow: rgba(14, 14, 14, 0.2) 0px 7px 14px, rgba(24, 24, 24, 0.25) 0px 5px 5px;
   overflow: hidden;
@@ -547,7 +547,7 @@
     opacity: 1;
   }
   &--reverse {
-    transition: all 1.5s cubic-bezier(.33,.11,.02,.99);
+    transition: all 1.5s $cubic-bezier-param;
     transition-delay: 0.1s;
     transform: rotate(123deg);
     &:hover {
