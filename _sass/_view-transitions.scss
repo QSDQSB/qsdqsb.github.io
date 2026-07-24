@@ -40,14 +40,14 @@
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation-duration: 0.3s;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-timing-function: $cubic-bezier-standard;
   }
 
   /* Main content transition */
   ::view-transition-old(main-content),
   ::view-transition-new(main-content) {
     animation-duration: 0.4s;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-timing-function: $cubic-bezier-standard;
   }
 
   /* Masthead transition - keep it stable */
@@ -61,14 +61,14 @@
   ::view-transition-old(page-title),
   ::view-transition-new(page-title) {
     animation-duration: 0.35s;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-timing-function: $cubic-bezier-standard;
   }
 
   /* Page content transition */
   ::view-transition-old(page-content),
   ::view-transition-new(page-content) {
     animation-duration: 0.4s;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-timing-function: $cubic-bezier-standard;
   }
 
   /* Fade out old content */
@@ -120,14 +120,14 @@
   ::view-transition-old(gallery-main),
   ::view-transition-new(gallery-main) {
     animation-duration: 0.5s;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-timing-function: $cubic-bezier-standard;
   }
 
   /* Archive/list page transitions */
   ::view-transition-old(archive-content),
   ::view-transition-new(archive-content) {
     animation-duration: 0.4s;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-timing-function: $cubic-bezier-standard;
   }
 }
 
