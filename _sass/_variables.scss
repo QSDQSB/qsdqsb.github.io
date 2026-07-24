@@ -113,6 +113,7 @@ $cubic-bezier-param: cubic-bezier(.33,.11,.02,.99);
 $cubic-bezier-default: all 1s $cubic-bezier-param;
 $cubic-bezier-default-05s: all 0.5s $cubic-bezier-param;
 $cubic-bezier-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+$cubic-bezier-standard: cubic-bezier(0.4, 0, 0.2, 1);
 $intro-transition: intro 0.3s both !default;
 $global-transition-time: 0.5s;
 $box-shadow-fancy:

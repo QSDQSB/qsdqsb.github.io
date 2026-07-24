@@ -1,3 +1,6 @@
+// Crossfade easing shared by the viewer's premium transition vocabulary (21 call sites below).
+$gallery-crossfade-ease: cubic-bezier(0.45, 0, 0.55, 1);
+
 .gallery_view {
 /*
 	Lens by HTML5 UP
@@ -320,8 +323,8 @@
 	// Explicit property list — `all` would interpolate any future property
 	// change (including ones we don't want animated) and can fight a
 	// concurrent View Transition in Safari.
-	transition: opacity 1s cubic-bezier(.33,.11,.02,.99),
-	            transform 1s cubic-bezier(.33,.11,.02,.99);
+	transition: opacity 1s $cubic-bezier-param,
+	            transform 1s $cubic-bezier-param;
 	margin-bottom: 0.5em;
 	h1, h2, h3, h4, h5, h6 {
 		font-family: "Barlow";
@@ -641,17 +644,17 @@
 			left: 0;
 			width: 100%;
 			height: 100%;
-			transition: opacity 0.5s cubic-bezier(0.45, 0, 0.55, 1), transform 0.5s cubic-bezier(0.45, 0, 0.55, 1), scale 0.5s cubic-bezier(0.45, 0, 0.55, 1), background-color 0.5s cubic-bezier(0.45, 0, 0.55, 1), filter 0.5s cubic-bezier(0.45, 0, 0.55, 1);
+			transition: opacity 0.5s $gallery-crossfade-ease, transform 0.5s $gallery-crossfade-ease, scale 0.5s $gallery-crossfade-ease, background-color 0.5s $gallery-crossfade-ease, filter 0.5s $gallery-crossfade-ease;
 			.nav-next, .nav-previous, .toggle-image-display {
 				opacity: 0.05;
-				transition: opacity 0.5s cubic-bezier(0.45, 0, 0.55, 1), transform 0.5s cubic-bezier(0.45, 0, 0.55, 1), scale 0.5s cubic-bezier(0.45, 0, 0.55, 1), background-color 0.5s cubic-bezier(0.45, 0, 0.55, 1);
+				transition: opacity 0.5s $gallery-crossfade-ease, transform 0.5s $gallery-crossfade-ease, scale 0.5s $gallery-crossfade-ease, background-color 0.5s $gallery-crossfade-ease;
 			}
 			.nav-next, .nav-previous {
 				transform: translateX(0em);
 			}
 			.leave_gallery {
 				opacity: 0.7;
-				transition: opacity 0.5s cubic-bezier(0.45, 0, 0.55, 1), transform 0.5s cubic-bezier(0.45, 0, 0.55, 1), scale 0.5s cubic-bezier(0.45, 0, 0.55, 1), background-color 0.5s cubic-bezier(0.45, 0, 0.55, 1), filter 0.5s cubic-bezier(0.45, 0, 0.55, 1);
+				transition: opacity 0.5s $gallery-crossfade-ease, transform 0.5s $gallery-crossfade-ease, scale 0.5s $gallery-crossfade-ease, background-color 0.5s $gallery-crossfade-ease, filter 0.5s $gallery-crossfade-ease;
 			}
 			&:hover {
 				.nav-next, .nav-previous, .toggle-image-display, .toggle, .leave_gallery {
@@ -716,10 +719,10 @@
 				// for rationale. The 0.5s delay is intentional: it lets the
 				// cursor pass over the button on its way elsewhere without
 				// triggering a flicker; on hover the delay drops to 0 below.
-				transition: opacity 0.5s cubic-bezier(0.45, 0, 0.55, 1),
-				            transform 0.5s cubic-bezier(0.45, 0, 0.55, 1),
-				            scale 0.5s cubic-bezier(0.45, 0, 0.55, 1),
-				            background-color 0.5s cubic-bezier(0.45, 0, 0.55, 1);
+				transition: opacity 0.5s $gallery-crossfade-ease,
+				            transform 0.5s $gallery-crossfade-ease,
+				            scale 0.5s $gallery-crossfade-ease,
+				            background-color 0.5s $gallery-crossfade-ease;
 				transition-delay: 0.5s;
 				@include backdrop-blur(blur(1px) saturate(135%) contrast(1.2));
 				background-color: rgba(253, 253, 253, 0.4);
@@ -780,8 +783,8 @@
 			#viewer .slide .caption .image_title {
 				// Same vocabulary as the image cross-fade — see the
 				// `.slide .image` rule for rationale on duration + easing.
-				transition: opacity 0.5s cubic-bezier(0.45, 0, 0.55, 1),
-				            transform 0.5s cubic-bezier(0.45, 0, 0.55, 1);
+				transition: opacity 0.5s $gallery-crossfade-ease,
+				            transform 0.5s $gallery-crossfade-ease;
 				cursor: default;
 				display: inline-block;
 				border-radius:10px;
@@ -821,7 +824,7 @@
 				z-index: 0;
 				pointer-events: none;
 				opacity: 0;
-				transition: opacity 350ms cubic-bezier(0.33, 0.11, 0.02, 0.99);
+				transition: opacity 350ms $cubic-bezier-param;
 			}
 			#viewer .slide.loading .lqip-bg {
 				opacity: 1;
@@ -843,7 +846,7 @@
 				height: 100%;
 				z-index: 1;
 				opacity: 0;
-				transition: opacity 0.5s cubic-bezier(0.45, 0, 0.55, 1);
+				transition: opacity 0.5s $gallery-crossfade-ease;
 
 				img {
 					display: block;
