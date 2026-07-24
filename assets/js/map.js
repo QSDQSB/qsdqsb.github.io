@@ -36,6 +36,10 @@
   const ATLAS_BOUNDS_PADDING = [64, 64];
   const TAG_ARCHIVE_PATH = '/voyage-by-tags/';
 
+  // Interaction handlers unlocked when the reader activates the map. The
+  // absence of scrollWheelZoom is deliberate — see activateMap().
+  const ACTIVATION_HANDLERS = ['dragging', 'doubleClickZoom', 'touchZoom', 'boxZoom', 'keyboard'];
+
   function getViewportPreset(datasetName, viewportData) {
     if (viewportData) {
       const preset = buildPresetFromViewportData(viewportData);
@@ -251,11 +255,26 @@
       return;
     }
     container.classList.add('map-container--active');
-    ['dragging', 'scrollWheelZoom', 'doubleClickZoom', 'touchZoom', 'boxZoom', 'keyboard'].forEach((handler) => {
+    // Enable pan/pinch/keyboard/double-click zoom — but NOT scrollWheelZoom.
+    // Even once activated, wheeling over the map scrolls the page rather than
+    // trapping it; zoom is via the +/- controls, double-click, or pinch. This
+    // keeps a long voyage page reliably scrollable end to end.
+    ACTIVATION_HANDLERS.forEach((handler) => {
       if (map[handler] && typeof map[handler].enable === 'function') {
         map[handler].enable();
       }
     });
+    // Enabling `keyboard` gives the container a tabindex, so move focus onto
+    // the now-navigable map. Otherwise a reader who activated it from the
+    // keyboard is stranded on the hidden veil. preventScroll stops the page
+    // from jumping to the map on focus.
+    if (typeof container.focus === 'function') {
+      try {
+        container.focus({ preventScroll: true });
+      } catch (error) {
+        container.focus();
+      }
+    }
   }
 
   function buildActivationVeilInner(state) {
@@ -1013,6 +1032,7 @@
 
   return {
     init,
+    ACTIVATION_HANDLERS,
     buildActivationVeilInner,
     buildAtlasLegendMarkup,
     createAtlasPopupContent,
