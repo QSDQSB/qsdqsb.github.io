@@ -74,7 +74,6 @@ export function init(body, viewer) {
   });
 }
 
-export const getViewer      = () => _viewer;
 export const getBody        = () => _body;
 export const setLastTrigger = el => { _lastTrigger = el; };
 
@@ -103,7 +102,7 @@ export function switchTo(index, noHide) {
   const newSlide = getSlide(index);
   if (!newSlide) { setState({ locked: false }); return; }
 
-  setState({ current: index, mode: 'viewer' });
+  setState({ current: index });
 
   // Move the thumbnail-rail selection (blue border) immediately — it should
   // track intent, not wait for the image to finish loading.
