@@ -3,9 +3,9 @@
 /**
  * Geocoding Preprocessing Script for Map Datasets
  *
- * Reads manual _data/maps/*.yml files, geocodes missing coordinates,
- * generates derived GeoJSON cache files in assets/maps/,
- * and builds the mega voyage atlas directly from _voyage frontmatter.
+ * Builds the global voyage atlas and per-parent subvoyage atlases directly
+ * from _voyage/_subvoyage frontmatter, geocoding missing coordinates and
+ * writing derived GeoJSON cache files to assets/maps/.
  *
  * Usage: node scripts/geocode-maps.js
  */
@@ -15,7 +15,6 @@ const path = require('path');
 const yaml = require('js-yaml');
 const https = require('https');
 
-const MAPS_DATA_DIR = path.join(__dirname, '../_data/maps');
 const MAPS_CACHE_DIR = path.join(__dirname, '../assets/maps');
 const VOYAGE_DIR = path.join(__dirname, '../_voyage');
 const SUBVOYAGE_DIR = path.join(__dirname, '../_subvoyage');
@@ -45,41 +44,6 @@ function loadGeocodeCache() {
 
 function saveGeocodeCache(cache) {
   fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2));
-}
-
-// tech-debt: only called by processDataset() below, which only runs for the
-// legacy _data/maps/*.yml pipeline — that directory doesn't exist in this
-// repo and no page sets map_dataset frontmatter, so this whole path is
-// currently dead. Near-duplicate of geocodeQuery() (used by the live voyage
-// atlas path). See the open tech-debt PR before deleting.
-async function geocodeLocation(cityName, countryName, cache) {
-  const cacheKey = `${cityName}|${countryName || ''}`.toLowerCase();
-
-  if (cache[cacheKey] !== undefined) {
-    return cache[cacheKey];
-  }
-
-  let query = cityName;
-  if (countryName) {
-    query += `, ${countryName}`;
-  }
-
-  try {
-    const result = await nominatimSearch(query);
-    if (result && result.lat && result.lon) {
-      const coords = { lat: parseFloat(result.lat), lng: parseFloat(result.lon) };
-      cache[cacheKey] = coords;
-      return coords;
-    }
-
-    console.warn(`⚠️  Could not geocode: "${query}"`);
-    cache[cacheKey] = null;
-    return null;
-  } catch (error) {
-    console.error(`❌ Geocoding error for "${query}":`, error.message);
-    cache[cacheKey] = null;
-    return null;
-  }
 }
 
 async function geocodeQuery(query, cache) {
@@ -156,97 +120,6 @@ function nominatimSearch(query) {
       }).on('error', reject);
     }, 1100);
   });
-}
-
-// tech-debt: legacy _data/maps/*.yml pipeline, currently unreachable — see
-// geocodeLocation() above and the open tech-debt PR.
-function datasetToGeoJSON(datasetName, dataset) {
-  const features = [];
-
-  if (!dataset.cities || !Array.isArray(dataset.cities)) {
-    console.warn(`⚠️  Dataset "${datasetName}" has no cities array`);
-    return { type: 'FeatureCollection', features: [] };
-  }
-
-  const categoryMap = {};
-  if (dataset.categories && Array.isArray(dataset.categories)) {
-    dataset.categories.forEach((cat) => {
-      categoryMap[cat.id] = cat;
-    });
-  }
-
-  dataset.cities.forEach((city, idx) => {
-    if (!city.name) {
-      console.warn(`⚠️  City at index ${idx} in "${datasetName}" missing required 'name'`);
-      return;
-    }
-
-    if (city.lat === undefined || city.lng === undefined) {
-      console.warn(`⚠️  City "${city.name}" in "${datasetName}" missing coordinates (should be auto-geocoded)`);
-      return;
-    }
-
-    const categoryInfo = categoryMap[city.category] || {};
-
-    features.push({
-      type: 'Feature',
-      properties: {
-        name: city.name,
-        country: city.country || null,
-        category: city.category || null,
-        categoryLabel: categoryInfo.label || null,
-        color: categoryInfo.color || '#FF6B6B',
-        href: city.href || null,
-        description: city.description || null,
-      },
-      geometry: {
-        type: 'Point',
-        coordinates: [city.lng, city.lat],
-      },
-    });
-  });
-
-  return {
-    type: 'FeatureCollection',
-    features,
-  };
-}
-
-// tech-debt: only called from main()'s legacy _data/maps/ branch, currently
-// unreachable — see the open tech-debt PR.
-async function processDataset(filePath, cache) {
-  const fileName = path.basename(filePath, '.yml');
-  console.log(`\n📍 Processing: ${fileName}`);
-
-  const fileContent = fs.readFileSync(filePath, 'utf8');
-  const dataset = yaml.load(fileContent);
-
-  if (!dataset) {
-    throw new Error(`Failed to parse YAML: ${filePath}`);
-  }
-
-  if (dataset.cities && Array.isArray(dataset.cities)) {
-    for (const city of dataset.cities) {
-      if (city.lat !== undefined && city.lng !== undefined) {
-        continue;
-      }
-
-      const coords = await geocodeLocation(city.name, city.country, cache);
-      if (coords) {
-        city.lat = coords.lat;
-        city.lng = coords.lng;
-        console.log(`  ✅ Geocoded: ${city.name} (${city.country || 'Unknown'}) → [${city.lat.toFixed(4)}, ${city.lng.toFixed(4)}]`);
-      } else {
-        console.warn(`  ⚠️  Failed to geocode: ${city.name}`);
-      }
-    }
-  }
-
-  const geojson = datasetToGeoJSON(fileName, dataset);
-  const outputPath = path.join(MAPS_CACHE_DIR, `${fileName}.geojson`);
-  fs.writeFileSync(outputPath, JSON.stringify(geojson, null, 2));
-  console.log(`  💾 Wrote: ${outputPath}`);
-  console.log(`  📊 Features: ${geojson.features.length}`);
 }
 
 function parseFrontMatter(markdown) {
@@ -580,31 +453,9 @@ async function processVoyageWithChildren(parentPage, cache, options = {}) {
 async function main() {
   console.log('🗺️  Map Geocoding Preprocessor');
   console.log('================================');
-  console.log(`Data dir: ${MAPS_DATA_DIR}`);
   console.log(`Cache dir: ${MAPS_CACHE_DIR}`);
 
   const cache = loadGeocodeCache();
-
-  // tech-debt: MAPS_DATA_DIR never exists in this repo and no page sets
-  // map_dataset frontmatter — this whole branch (and datasetToGeoJSON /
-  // processDataset / geocodeLocation above) is currently dead. Proposed for
-  // removal; see the open tech-debt PR before deleting.
-  if (!fs.existsSync(MAPS_DATA_DIR)) {
-    console.log('\n📂 No legacy _data/maps/ directory (parent voyages derive maps from subvoyage frontmatter)');
-  } else {
-    const mapFiles = fs.readdirSync(MAPS_DATA_DIR)
-      .filter((fileName) => fileName.endsWith('.yml'))
-      .map((fileName) => path.join(MAPS_DATA_DIR, fileName));
-
-    if (mapFiles.length === 0) {
-      console.log('\n📂 No legacy YAML map files (this is fine — parent voyages derive maps from subvoyage frontmatter)');
-    } else {
-      console.log(`\n📂 Found ${mapFiles.length} legacy YAML map dataset(s)\n`);
-      for (const filePath of mapFiles) {
-        await processDataset(filePath, cache);
-      }
-    }
-  }
 
   // Global voyage atlas (one feature per top-level voyage).
   const voyagePages = loadVoyagePages();
@@ -642,10 +493,8 @@ module.exports = {
   buildAtlasFeature,
   buildVoyageAtlasGeoJSON,
   buildVoyageWithChildrenGeoJSON,
-  datasetToGeoJSON,
   findPrefixCacheMatch,
   formatDateDisplay,
-  geocodeLocation,
   geocodeQuery,
   loadGeocodeCache,
   loadSubvoyagePages,
@@ -653,7 +502,6 @@ module.exports = {
   loadVoyageTagPalette,
   parseFrontMatter,
   pickViewportKeys,
-  processDataset,
   processVoyageAtlas,
   processVoyageWithChildren,
   resolveVoyageCoords,

@@ -45,8 +45,9 @@
 
 <!-- Leaflet + map renderer — only on pages that show a map.
      Gate matches _layouts/gallery.html: a map appears whenever the page
-     declares `map_dataset` (legacy YAML path) OR `subgalleries: true`
-     (new path — the layout auto-derives `voyage-<slug>` from children).
+     declares `map_dataset` (points at an existing generated dataset, e.g.
+     the global atlas) OR `subgalleries: true` (the layout auto-derives
+     `voyage-<slug>` from children).
      Skipping these on the other ~96% of pages saves ~180 KB of render-blocking JS+CSS. -->
 {% if page.map_dataset or page.subgalleries %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
