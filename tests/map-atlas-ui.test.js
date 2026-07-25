@@ -4,6 +4,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const {
+  ACTIVATION_HANDLERS,
+  buildActivationVeilInner,
   buildAtlasLegendMarkup,
   createAtlasPopupContent,
   getMapBoundsPadding,
@@ -27,7 +29,7 @@ test('buildAtlasLegendMarkup renders a quiet hero tags pill with a hidden floati
 
   assert.match(markup, /class="map-legend map-legend--atlas map-legend--atlas-pill"/);
   assert.match(markup, /class="legend-pill"/);
-  assert.match(markup, />\s*Tags\s*</);
+  assert.match(markup, /<i class="fa-solid fa-tags"[^>]*><\/i><span>Tags<\/span>/);
   assert.match(markup, /class="map-legend-palette"/);
   assert.match(markup, /aria-controls="voyage-tag-palette"/);
   assert.match(markup, /class="map-legend-palette" hidden/);
@@ -133,6 +135,46 @@ test('atlas palette stylesheet gives the tag list real spacing and isolated scro
   assert.match(mapStylesheet, /\.legend-palette-body\s*\{[\s\S]*overscroll-behavior:\s*contain;/);
   assert.match(mapStylesheet, /\.legend-group--palette\s*\{[\s\S]*display:\s*grid;/);
   assert.match(mapStylesheet, /\.legend-group--palette\s*\{[\s\S]*gap:\s*2px;/);
+});
+
+test('activating the map never re-traps page scroll (no scrollWheelZoom) but restores pan + keyboard', () => {
+  // The whole point of the click-to-activate veil is that plain wheel-scroll
+  // is never hijacked — not before activation, and not after it either.
+  assert.ok(!ACTIVATION_HANDLERS.includes('scrollWheelZoom'),
+    'scrollWheelZoom must stay disabled so the long voyage page is always scrollable');
+  // Pan, pinch and keyboard navigation are restored on activation.
+  assert.ok(ACTIVATION_HANDLERS.includes('dragging'));
+  assert.ok(ACTIVATION_HANDLERS.includes('touchZoom'));
+  assert.ok(ACTIVATION_HANDLERS.includes('keyboard'));
+});
+
+test('buildActivationVeilInner offers a quiet loading state and an armed click-to-explore CTA', () => {
+  const loading = buildActivationVeilInner('loading');
+  assert.match(loading, /class="map-veil__status"/);
+  assert.match(loading, /class="map-veil__spinner"/);
+  assert.match(loading, /Charting/);
+  assert.doesNotMatch(loading, /Click to explore/);
+
+  const ready = buildActivationVeilInner('ready');
+  assert.match(ready, /class="map-veil__cta"/);
+  assert.match(ready, /class="fa-solid fa-compass"/);
+  assert.match(ready, /<span>Click to explore<\/span>/);
+  assert.doesNotMatch(ready, /map-veil__spinner/);
+});
+
+test('atlas map frame drops the hard 2px widget border for the on-system glass card language', () => {
+  // The old widget frame was `border: 2px solid $border-color` — gone now.
+  assert.doesNotMatch(mapStylesheet, /border:\s*2px solid \$border-color/);
+  // Replaced by the borderless-glass card language: fluid radius, hairline,
+  // shared soft-depth shadow.
+  assert.match(mapStylesheet, /border-radius:\s*clamp\(0\.6rem, 1\.2vw, 1rem\);/);
+  assert.match(mapStylesheet, /box-shadow:\s*\$shadow-soft;/);
+});
+
+test('click-to-activate veil is styled and hides once the map is activated', () => {
+  assert.match(mapStylesheet, /\.map-veil\s*\{[\s\S]*?cursor:\s*pointer;/);
+  assert.match(mapStylesheet, /\.map-container--active\s+\.map-veil\s*\{[\s\S]*?pointer-events:\s*none;/);
+  assert.match(mapStylesheet, /\.map-veil__cta\s*\{/);
 });
 
 test('atlas polish no longer animates the leaflet map pane or control container', () => {

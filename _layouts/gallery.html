@@ -40,20 +40,25 @@ layout: compress
         <div id="{{ title | slugify }}" style="width: 0; height: 0" aria-hidden="true"></div>
         {% include archive-single.html %}
       {% endfor %}
+
+      {%- comment -%}
+        The atlas as an editorial section, inside `.container` so it shares the
+        voyage-card column exactly. Every voyage with `subgalleries: true` gets
+        an atlas auto-derived from its `_subvoyage/<slug>/*.md` children (one
+        feature per child, with tags + editorial popup); scripts/geocode-maps.js
+        writes the GeoJSON to `assets/maps/voyage-<slug>.geojson`. Falls back to
+        `page.map_dataset` for any non-children-driven dataset.
+      {%- endcomment -%}
+      {% assign auto_map_id = "voyage-" | append: voyage_name %}
+      {% assign map_dataset_id = page.map_dataset | default: auto_map_id %}
+      <section class="voyage-atlas unselectable-div" aria-labelledby="voyage-atlas-title">
+        <h5 id="voyage-atlas-title" class="voyage-atlas__title">
+          <i class="fa-solid fa-location-dot" aria-hidden="true"></i> The Atlas
+        </h5>
+        {% include map.html dataset=map_dataset_id %}
+      </section>
     </div>
   {% include scripts.html %}
-  </div>
-    
-  {% comment %}
-    Every voyage with subgalleries: true gets an atlas-style map auto-derived
-    from its `_subvoyage/<slug>/*.md` children (one feature per child, with
-    tags + editorial popup). The geocoder writes to `assets/maps/voyage-<slug>.geojson`.
-    Falls back to `page.map_dataset` for any non-children-driven dataset.
-  {% endcomment %}
-  {% assign auto_map_id = "voyage-" | append: voyage_name %}
-  {% assign map_dataset_id = page.map_dataset | default: auto_map_id %}
-  <div class="unselectable-div" style="padding: 1em;">
-    {% include map.html dataset=map_dataset_id %}
   </div>
   
   {% if site.tag_voyage.type and page.tags[0] %}
