@@ -32,5 +32,5 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://qsdqsb.github.io/sitemap.xml
-Sitemap: https://qsdqsb.github.io/feed.xml
+Sitemap: https://qsdqsb.com/sitemap.xml
+Sitemap: https://qsdqsb.com/feed.xml
