@@ -5,47 +5,81 @@ layout: default
 {% include base_path %}
 
 {% comment %}
-  Typographic editorial hero — motto eyebrow, a line-revealed wordmark, and a
-  typewriter identity line (reusing the site's .text-type-writer component to
-  cycle the persona excerpts one at a time). No photo / no opening scene here.
+  The Home is three full-screen, magnetically-snapping panels (CSS scroll-snap;
+  the snap container is <html.home-snap>, set in default.html so window scroll —
+  and therefore masthead-intent.js — keeps working):
+    1. Typographic hero (motto eyebrow, line-revealed wordmark, typewriter identity)
+    2. The destination index (four doors + hover-developed plate)
+    3. What's New (four most-recently-modified docs)
 {% endcomment %}
-<section class="home__hero" style="--hero-photo: url('{{ '/images/QSD_Night_5v2.jpg' | relative_url }}');">
-  <div class="home__hero-media" aria-hidden="true"></div>
-  <div class="home__hero-blobs" aria-hidden="true">
-    <span class="blob blob--1"></span>
-    <span class="blob blob--2"></span>
-    <span class="blob blob--3"></span>
-    <span class="blob blob--4"></span>
-  </div>
-  <div class="home__hero-veil" aria-hidden="true"></div>
-  <div class="home__hero-qsd" aria-hidden="true"></div>
-  <div class="home__hero-inner">
-    <p class="home__eyebrow" lang="la">Mors potius quam taedium</p>
-    <h1 class="home__wordmark" itemprop="headline">
-      <span class="ln"><span>QSD&rsquo;s</span></span>
-      <span class="ln"><span>House of</span></span>
-      <span class="ln"><span class="gold">Wonders</span></span>
-    </h1>
-    <div class="home__identity">
-      <span class="text-type-writer" style="--n-contents: 3; --type-writer-duration: 3.4s;" label="A procrastinator, a nihilist, a deconstructionist, an idiot.">
-        <span>
-          <span>A procrastinator, a nihilist, a deconstructionist, an idiot.</span>
-          <span>A voyager, a melancholic, an aesthete, an escapist.</span>
-          <span>A contrarian, a formalist, a self-saboteur, a cynic.</span>
-        </span>
-      </span>
-    </div>
-  </div>
-  <a class="home__scrollcue" href="#home-enter" aria-label="Scroll to enter"><span class="rule"></span>Scroll to enter</a>
-</section>
+<div id="main" role="main" class="home home--reel">
 
-<div id="main" role="main">
-  <div class="home" id="home-enter">
-    {{ content }}
-  </div>
+  <section class="home__panel home__hero" style="--hero-photo: url('{{ '/images/QSD_Night_5v2.jpg' | relative_url }}');">
+    <div class="home__hero-media" aria-hidden="true"></div>
+    <div class="home__hero-blobs" aria-hidden="true">
+      <span class="blob blob--1"></span>
+      <span class="blob blob--2"></span>
+      <span class="blob blob--3"></span>
+      <span class="blob blob--4"></span>
+    </div>
+    <div class="home__hero-veil" aria-hidden="true"></div>
+    {% comment %} The QSD monogram — a self-contained <qsd-mark> Web Component (shadow
+    DOM encapsulates its SVG + CSS + rAF morph; reusable anywhere, no iframe). It sizes
+    to this box and observes itself for scroll-pause + cursor tilt.
+    Right half on desktop; a quiet band at the bottom on small screens. {% endcomment %}
+    <qsd-mark class="home__hero-anim" aria-hidden="true"></qsd-mark>
+    <div class="home__hero-inner">
+      <p class="home__plate" aria-hidden="true">Welcome to</p>
+      <h1 class="home__wordmark" itemprop="headline">
+        <span class="ln"><span><span class="home__wm-qsd">QSD</span>&rsquo;s</span></span>
+        <span class="ln"><span>House of</span></span>
+        <span class="ln"><span class="gold">Wonders</span></span>
+      </h1>
+      {% comment %} The house motto — the wordmark's quiet closing line, in its ivory,
+      revealed with the same upward mask-slide (the inner span slides; see .home__motto).
+      The old typewriter identity triads now live on /about/. {% endcomment %}
+      <p class="home__motto" lang="la"><span>Mors potius quam taedium</span></p>
+    </div>
+    <span class="home__scroll-hint" aria-hidden="true"></span>
+    <span class="home__marks" aria-hidden="true"></span>
+  </section>
+
+  <section class="home__panel home__panel--index" id="home-enter">
+    {% include home/index.html %}
+    <span class="home__scroll-hint" aria-hidden="true"></span>
+    <span class="home__marks" aria-hidden="true"></span>
+  </section>
+
+  <section class="home__panel home__panel--new">
+    {% include home/whats-new.html %}
+    <span class="home__scroll-hint home__scroll-hint--up" aria-hidden="true"></span>
+    <span class="home__marks" aria-hidden="true"></span>
+  </section>
+
 </div>
 
+{% comment %} Defines the <qsd-mark> custom element used in the hero above. {% endcomment %}
+<script src="{{ '/assets/js/qsd-mark.js' | relative_url }}" defer></script>
+
 <script>
+  // Always enter the reel on the hero (panel N° I). The Home is a scroll-snap reel,
+  // and browsers restore the previous scroll offset on reload / back-forward — which
+  // dropped you onto Thresholds or Recent Accessions instead of the title. Take manual
+  // control of restoration while on Home, force the top, and hand restoration back to
+  // the browser when leaving so the rest of the site keeps its normal behaviour.
+  (function () {
+    if (!("scrollRestoration" in history)) return;
+    history.scrollRestoration = "manual";
+    var toTop = function () { window.scrollTo(0, 0); };
+    toTop();
+    window.addEventListener("load", toTop);
+    window.addEventListener("pageshow", function (e) { if (e.persisted) toTop(); });  // bfcache restore
+    window.addEventListener("pagehide", function () { history.scrollRestoration = "auto"; });
+  })();
+
+  // (The QSD monogram's scroll-pause + cursor-tilt now live inside the <qsd-mark>
+  // component itself — it observes its own box, so no host bridge is needed here.)
+
   // Scroll-reveal for the Home (no .page__content here, so the site-wide
   // scroll-animations.js does not run). IntersectionObserver-based; fails safe —
   // reduced-motion / no-JS keep everything statically visible, and a 6s timeout
@@ -67,16 +101,18 @@ layout: default
     window.setTimeout(function () { els.forEach(function (el) { el.classList.add("is-in"); }); }, 6000);
   })();
 
-  // Destination index: cross-develop the plate to the hovered door + set its number.
+  // Destination index: cross-develop the specimen plate to the hovered door. No revert —
+  // the plate holds on the last destination shown, and its href tracks whatever it shows.
   (function () {
     var doors = Array.prototype.slice.call(document.querySelectorAll(".home__doors .door"));
     var shots = Array.prototype.slice.call(document.querySelectorAll(".door-shot"));
     if (!doors.length || !shots.length) return;
-    var plateNo = document.getElementById("doorPlateNo");
+    var plateLink = document.getElementById("doorPlateLink");
     doors.forEach(function (door, i) {
       door.addEventListener("mouseenter", function () {
         shots.forEach(function (s, j) { s.classList.toggle("is-on", j === i); });
-        if (plateNo) plateNo.textContent = "N° " + ("0" + (i + 1)).slice(-2);
+        // the plate is clickable — send it wherever the door it's showing goes
+        if (plateLink) plateLink.setAttribute("href", door.getAttribute("href"));
       });
     });
   })();

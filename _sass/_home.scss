@@ -27,7 +27,10 @@ body.layout--home {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: clamp(5rem, 12vh, 8rem) clamp(1.4rem, 5vw, 4rem) clamp(4rem, 10vh, 7rem);
+  /* Vertical padding kept lean so the whole hero — copy + mark — reads as ONE
+     screen. The content is vertically centred, so this is breathing room, not
+     structure; over-padding was pushing the panel past 100svh on laptop heights. */
+  padding: clamp(2.75rem, 7vh, 5.5rem) clamp(1.4rem, 5vw, 4rem) clamp(2.25rem, 5.5vh, 4.5rem);
 }
 
 /* Hero background: a heavily darkened QSD night photo + slowly drifting dark
@@ -43,14 +46,16 @@ body.layout--home {
   content: "";
   position: absolute;
   inset: -8%;
-  background: linear-gradient(rgba(6, 6, 11, 0.5), rgba(6, 6, 11, 0.72)), var(--hero-photo) center / cover no-repeat;
+  background: linear-gradient(rgba(5, 5, 9, 0.28), rgba(5, 5, 9, 0.48)), var(--hero-photo) center / cover no-repeat;
   /* Frost the photo directly (GPU-composited) rather than re-blurring it every
-     frame through a backdrop-filter — smoother with the moving blobs behind. */
-  filter: brightness(0.52) saturate(0.9) blur(14px);
+     frame through a backdrop-filter — smoother with the moving blobs behind.
+     Kept bright with only a light frost, so the light-painted "QSD" in the photo
+     stays legible — the burning letters read through the glass. */
+  filter: brightness(0.88) saturate(0.98) blur(7px);
   transform: scale(1.04) translateZ(0);
   /* gradient mask — the photo reads through the centre and fades out at the edges */
-  -webkit-mask-image: radial-gradient(125% 115% at 50% 44%, #000 32%, rgba(0, 0, 0, 0.5) 64%, transparent 94%);
-          mask-image: radial-gradient(125% 115% at 50% 44%, #000 32%, rgba(0, 0, 0, 0.5) 64%, transparent 94%);
+  -webkit-mask-image: radial-gradient(95% 100% at 40% 46%, #000 20%, rgba(0, 0, 0, 0.5) 55%, transparent 82%);
+          mask-image: radial-gradient(95% 100% at 40% 46%, #000 20%, rgba(0, 0, 0, 0.5) 55%, transparent 82%);
   animation:
     home-bg-zoom 44s ease-in-out infinite alternate,
     home-darken 4.4s ease-out both;
@@ -125,28 +130,18 @@ body.layout--home {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(180deg, rgba(7, 7, 11, 0.42) 0%, rgba(7, 7, 11, 0.54) 55%, rgba(7, 7, 11, 0.72) 100%);
+  /* Weighted dark toward the bottom, where the mobile mark's band sits — it rests
+     on near-black rather than the sparkler's brightest trails. */
+  background: linear-gradient(180deg, rgba(7, 7, 11, 0.38) 0%, rgba(7, 7, 11, 0.52) 52%, rgba(7, 7, 11, 0.76) 100%);
 }
 
-/* The shiny "QSD" at the centre of the photo, revealed from time to time: the
-   same image masked tight to the centre and kept sharp (it sits above the frost),
-   screen-blended, pulsing in and out on a slow loop. */
-.home__hero-qsd {
-  position: absolute;
-  inset: -4%;
-  z-index: 1;
-  background: var(--hero-photo) center / cover no-repeat;
-  filter: brightness(1.12) contrast(1.04) saturate(1.02);
-  -webkit-mask-image: radial-gradient(56% 52% at 50% 44%, #000 0%, #000 18%, transparent 60%);
-          mask-image: radial-gradient(56% 52% at 50% 44%, #000 0%, #000 18%, transparent 60%);
-  mix-blend-mode: screen;
-  opacity: 0;
-  animation:
-    home-bg-zoom 44s ease-in-out infinite alternate,
-    home-qsd-pulse 14s ease-in-out 5s infinite;
-}
+/* (Removed the sharp "shiny QSD" centre-reveal layer — it drew crisp light-painted
+   letters through the typography and competed with both the wordmark and the mark.
+   The heavily-blurred base photo now carries the hero's atmosphere on its own.) */
 
-.home__hero-inner { position: relative; z-index: 2; width: 100%; max-width: 1180px; margin: 0 auto; }
+/* ONE shared measure across all three panels, so the N° I / II / III plate marks
+   land on a single left spine and the reel reads as one bound volume. */
+.home__hero-inner { position: relative; z-index: 2; width: 100%; max-width: 1080px; margin: 0 auto; }
 
 /* Gentle translucent scrim living directly behind the title copy — a soft
    radial that fades out so the white type always has a calm, readable ground
@@ -154,43 +149,133 @@ body.layout--home {
 .home__hero-inner::before {
   content: "";
   position: absolute;
-  inset: -16% -6% -16% -8%;
+  /* Generous, near-symmetric box so the radial reaches full transparency
+     BEFORE it meets any edge. A tighter box clipped the still-opaque gradient
+     and left a visible rectangular seam behind the title. */
+  inset: -50% -35%;
   z-index: -1;
-  background: radial-gradient(ellipse 60% 74% at 26% 50%, rgba(5, 5, 9, 0.6) 0%, rgba(5, 5, 9, 0.34) 45%, transparent 74%);
+  background: radial-gradient(56% 54% at 38% 50%, rgba(4, 4, 8, 0.8) 0%, rgba(4, 4, 8, 0.52) 40%, transparent 74%);
   pointer-events: none;
 }
 
-.home__eyebrow {
-  font-family: $barlow-font-family;
-  font-size: $type-size-6;
-  font-style: italic;
-  font-variant: small-caps;
-  letter-spacing: 0.34em;
-  color: $h2-color;
-  margin: 0 0 2.2rem;
-  padding-left: 0.3em;
+/* The QSD monogram — a self-contained <qsd-mark> Web Component (its SVG/CSS/JS live
+   in assets/js/qsd-mark.js, shadow-scoped). This rule only sizes/places the host box;
+   the mark sizes itself to it via container queries.
+   Desktop: it takes the right half, reading bright above the veil.
+   Mobile: the copy sits up top and the mark inscribes in a BAND at the BOTTOM — its
+   own object, not a watermark behind the title (which muddied the text). If there's
+   no vertical room (landscape / short), the band is dropped entirely. */
+.home__hero-anim {
+  display: flex;            // lay the host out before the component upgrades
+  align-items: center;
+  justify-content: center;
+  position: relative;       // mobile default: in-flow band at the bottom of the hero
+  order: 2;                 // last in the column flex → sits beneath the copy
+  z-index: 1;
+  width: 100%;
+  height: clamp(230px, 28vh, 270px);
+  flex: 0 0 auto;
+  pointer-events: none;     // never swallows the scroll-snap wheel or clicks
+  opacity: 0.9;             // its own clean field now, so it reads brighter
+}
+
+@include responsive-up(desktop) {
+  .home__hero-anim {
+    position: absolute;     // back to an overlay pinned to the right half
+    inset: 0 0 0 auto;      // right ~half of the stage
+    width: 47%;
+    height: 100%;
+    z-index: 2;             // above the veil — the mark reads bright and present
+    opacity: 1;
+    transform: translateY(2.5rem);   // settle onto the wordmark's optical centre
+  }
+  /* The copy keeps the SHARED measure (so N° I lines up with N° II / III) and
+     simply constrains its own width inside it, yielding the right to the mark.
+     62% clears the mark's visible glyph (the frame is wider than the mark, which is
+     centred in it) while staying wide enough that the wordmark's authored lines
+     never clip — `.ln` is overflow:hidden for the reveal, so it cuts, not wraps. */
+  .home__hero-inner > * { max-width: 62%; }
+  /* Re-proportion the wordmark to the narrower column so its longest authored line
+     fits without overflowing into the mark. NB: the base `.home__wordmark` rule (with the
+     larger 9.5rem cap) sits LATER in the source, so an equal-specificity override here
+     loses the cascade and the wordmark renders too big — the reveal mask then crops
+     "House of" / "Wonders". Scope to `.layout--home` so this cap actually wins. */
+  .layout--home .home__wordmark { font-size: clamp(3rem, 6.6vw, 6.6rem); }
+  /* The mark takes the right half — weight the veil's darkness to the right so it
+     rests on a clean near-black field instead of the sparkler's bright loops. */
+  .home__hero-veil {
+    background: linear-gradient(100deg, rgba(7, 7, 11, 0.3) 0%, rgba(7, 7, 11, 0.55) 40%, rgba(7, 7, 11, 0.9) 100%);
+  }
+}
+
+/* Mobile / tablet: push the copy to the top and let the mark's band sit at the
+   bottom (space-between splits the two flex children top/bottom). In landscape —
+   the classic "no vertical room" case — drop the mark's band entirely so the copy
+   owns the short screen. */
+@include responsive-down(desktop) {
+  .home__hero { justify-content: space-between; }
+  @include responsive-landscape {
+    .home__hero-anim { display: none; }
+  }
+}
+
+/* Authored-plate marginalia — a monospace label in aged-brass ink heading each plate:
+   Welcome To · Wonders · Recent Updates. The honest-mechanism apparatus of a cabinet
+   of wonders (a Wunderkammer), kept to a whisper. */
+.home__plate {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 0 0 1.5rem;
+  font-family: $monospace;
+  font-size: $type-size-8;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba($h2-color, 0.72);
   opacity: 0;
-  animation: home-rise 1.1s $cubic-bezier-smooth 0.3s forwards;
+  animation: home-rise 1.1s $cubic-bezier-smooth 0.15s forwards;
+}
+
+/* On narrow screens the longer labels (e.g. "RECENT UPDATES") can crowd the number —
+   let them wrap cleanly beneath it instead of breaking mid-word, and tighten the
+   tracking so they stay tidy. */
+@include responsive-down(tablet) {
+  .home__plate { flex-wrap: wrap; align-items: baseline; letter-spacing: 0.14em; row-gap: 0.2rem; }
 }
 
 .home__wordmark {
   font-family: $didot-family;
   font-weight: 600;
-  font-size: clamp(3.2rem, 11vw, 9.5rem);
+  /* Height-aware: at ≥~950px tall it stays at full presence (width-driven, capped
+     at 9.5rem); on shorter laptops the `16vh` term reins it in so the hero still
+     fits one screen. On narrow phones it rests at the 3.2rem floor regardless. */
+  font-size: clamp(3.2rem, min(11vw, 16vh), 9.5rem);
   line-height: 0.92;
   letter-spacing: -0.015em;
   margin: 0;
   text-wrap: balance;
 
-  .ln { display: block; overflow: hidden; }
+  /* nowrap: the line breaks are authored (three .ln spans). Never let a line
+     wrap internally — that would break "House&nbsp;of" onto two lines when the
+     column narrows (e.g. the desktop split beside the mark). */
+  .ln { display: block; overflow: hidden; white-space: nowrap; }
+  /* "QSD's" carries the Playfair initials, whose Q has a long descending tail. Give the
+     reveal-mask room for it (padding-bottom) AND leave a little clearance to the "House"
+     line below so the tail doesn't crowd it — the descriptive lines are Didot, so only
+     this line needs the extra breath. The margin keeps that gap slight, not loose. */
+  .ln:nth-child(1) { padding-bottom: 0.16em; margin-bottom: -0.02em; }
   .ln > span {
     display: block;
-    transform: translateY(105%);
+    transform: translateY(125%);   /* start clear of the (now taller) clip box so nothing peeks pre-reveal */
     animation: home-line-up 1.15s $cubic-bezier-smooth forwards;
   }
   .ln:nth-child(1) > span { animation-delay: 0.42s; }
   .ln:nth-child(2) > span { animation-delay: 0.54s; }
   .ln:nth-child(3) > span { animation-delay: 0.66s; }
+
+  /* The brand initials wear Playfair Display (its geometric weight makes them read as
+     a monogram); the descriptive words "'s House of Wonders" keep Didot's delicacy. */
+  .home__wm-qsd { font-family: $sans-serif; }
 
   .gold {
     background: linear-gradient(94deg, #f6efe0, #e6ce8f 42%, #c9a24b 56%, #f6efe0);
@@ -202,41 +287,105 @@ body.layout--home {
   }
 }
 
-/* Typewriter identity line — cycles the persona excerpts, one at a time
-   (reuses the site's .text-type-writer component). */
-.home__identity {
-  margin-top: 2.5rem;
-  opacity: 0;
-  animation: home-rise 1s $cubic-bezier-smooth 1.05s forwards;
-}
-.home__identity .text-type-writer {
-  font-family: $didot-family;
+/* The house motto — set beneath the wordmark as an inscribed crest line. This is the
+   wordmark's own ivory — so the two read as one typographic voice, the motto a quiet
+   subtitle rather than a separate mark. It reveals with the same upward mask-slide as
+   the wordmark lines (timed just after the last one), landing like a closing fourth
+   line of the title. `overflow:hidden` is the clip mask; the inner span does the slide. */
+.home__motto {
+  overflow: hidden;
+  margin: 1.5rem 0 0;
+  padding-bottom: 0.14em;              /* room so the italic descenders (p, q) clear the clip edge */
+  max-width: 40ch;
+  font-family: $didot-family;          /* Didot italic — matches the wordmark's descriptive words */
   font-style: italic;
-  font-size: clamp(1.05rem, 2vw, 1.5rem);
-  color: rgba($primary-color, 0.72);
+  font-size: clamp(1.15rem, 2.2vw, 1.7rem);
+  letter-spacing: 0.015em;
   line-height: 1.3;
-}
-.home__identity .text-type-writer > span { height: 1.5em; }
+  color: rgba($primary-color, 0.85);
+  filter: drop-shadow(0 3px 18px rgba(0, 0, 0, 0.5));   /* the wordmark's lift language, no glow */
 
-.home__scrollcue {
+  > span {
+    display: inline-block;
+    transform: translateY(115%);
+    animation: home-line-up 1.15s $cubic-bezier-smooth 0.85s forwards;
+  }
+}
+
+/* ===================== SCROLL CUE =====================
+   One quiet animated symbol per panel: a brass spark that falls down a hairline on
+   a constant loop, telling you the page continues. It echoes the site's
+   motion-as-cue language — the swiper carousels simply auto-loop rather than carry
+   a positional navigator — so the Home stays consistent instead of sprouting a
+   bespoke pager. The hero + index panels point down (more below); What's New, being
+   the last panel, uses `--up` (a rising spark) so it never gestures at a dead end.
+   Each cue lives inside its panel, so it scrolls with it. */
+.home__scroll-hint {
   position: absolute;
   z-index: 3;
-  left: clamp(1.4rem, 5vw, 4rem);
-  bottom: 2.4rem;
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  font-family: $barlow-font-family;
-  font-size: $type-size-8;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: rgba($primary-color, 0.4);
+  left: 50%;
+  margin-left: -0.5px;                 /* centre the 1px track without a transform (frees it for the entrance rise) */
+  bottom: 2.2rem;
+  width: 1px;
+  height: 46px;
+  overflow: hidden;                    /* clip the falling spark to the track */
+  background: linear-gradient(rgba($primary-color, 0) 0%, rgba($primary-color, 0.22) 100%);
   opacity: 0;
   animation: home-rise 1s ease 1.5s forwards;
+}
+.home__scroll-hint::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 3px;
+  height: 8px;
+  margin-left: -1.5px;
+  border-radius: 2px;
+  background: linear-gradient(rgba($h2-color, 0), $h2-color);
+  box-shadow: 0 0 7px rgba($h2-color, 0.7);
+  animation: home-scroll-fall 2s $cubic-bezier-smooth infinite;
+}
+/* Last panel: the same spark, risen — anchored to the top (clear of the footer),
+   track brighter at the top, comet head up, motion reversed. Reads as "back to the
+   top" instead of a false "more below". */
+.home__scroll-hint--up {
+  top: 2.2rem;
+  bottom: auto;
+  background: linear-gradient(rgba($primary-color, 0.22) 0%, rgba($primary-color, 0) 100%);
+}
+.home__scroll-hint--up::after {
+  background: linear-gradient($h2-color, rgba($h2-color, 0));
+  animation-direction: reverse;
+}
 
-  .rule { width: 3.4rem; height: 1px; background: rgba($primary-color, 0.4); position: relative; overflow: hidden; }
-  .rule::after { content: ""; position: absolute; inset: 0; background: $h2-color; transform: translateX(-100%); animation: home-sweep 2.6s ease-in-out infinite; }
-  &:hover { color: rgba($primary-color, 0.8); }
+/* ===================== REGISTRATION MARKS =====================
+   Faint corner crop-ticks framing each panel as a plate pulled for print — the
+   honest-mechanism apparatus of a specimen sheet, kept to a whisper. Eight
+   aged-brass hairlines (two per corner) painted on a single inset overlay. */
+.home__marks {
+  position: absolute;
+  inset: clamp(1.4rem, 3vw, 2.6rem);
+  z-index: 2;
+  pointer-events: none;
+  --mk: #{rgba($h2-color, 0.26)};
+  --mk-len: 15px;
+  background-image:
+    linear-gradient(var(--mk), var(--mk)), linear-gradient(var(--mk), var(--mk)),
+    linear-gradient(var(--mk), var(--mk)), linear-gradient(var(--mk), var(--mk)),
+    linear-gradient(var(--mk), var(--mk)), linear-gradient(var(--mk), var(--mk)),
+    linear-gradient(var(--mk), var(--mk)), linear-gradient(var(--mk), var(--mk));
+  background-repeat: no-repeat;
+  background-size:
+    var(--mk-len) 1px, 1px var(--mk-len),
+    var(--mk-len) 1px, 1px var(--mk-len),
+    var(--mk-len) 1px, 1px var(--mk-len),
+    var(--mk-len) 1px, 1px var(--mk-len);
+  background-position:
+    left top, left top,
+    right top, right top,
+    left bottom, left bottom,
+    right bottom, right bottom;
 }
 
 /* ============================ CONTENT SHELL ============================ */
@@ -247,16 +396,71 @@ body.layout--home {
   position: relative;
 }
 
+/* ============ Magnetic full-screen panels (native CSS scroll-snap) ============ */
+/* The snap container is <html.home-snap> (set in default.html), so window scroll —
+   and the masthead-intent.js listener bound to it — keeps driving the page. Panels
+   use `min-height` (not fixed height): on a short viewport a tall panel simply grows
+   and scrolls, with snapping re-engaging at its edges rather than clipping content. */
+html.home-snap { scroll-snap-type: y mandatory; }
+
+/* The reel is a full-bleed stack; the 1180px measure moves onto each panel's own
+   content (below) so the hero runs edge-to-edge. */
+.home--reel {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.home__panel {
+  min-height: 100svh;
+  scroll-snap-align: start;
+  position: relative;                  /* anchors each panel's absolute scroll cue */
+}
+
+/* index + What's New: centre their measured content in the viewport */
+.home__panel--index,
+.home__panel--new {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(2.5rem, 5vh, 4rem) clamp(1.4rem, 5vw, 4rem) clamp(1.75rem, 3.5vh, 2.75rem);
+}
+.home__panel--index > *,
+.home__panel--new > * {
+  width: 100%;
+  max-width: 1080px;      /* the shared measure — matches .home__hero-inner */
+  margin-left: auto;
+  margin-right: auto;
+}
+/* The absolute scroll cue is an overlay, not measured content — exempt it from
+   the width/centering rule above so it stays a 1px hairline. */
+.home__panel--index > .home__scroll-hint,
+.home__panel--new > .home__scroll-hint {
+  width: 1px;
+  max-width: none;
+  margin: 0 0 0 -0.5px;
+}
+/* registration-mark overlay is inset-positioned, not measured content */
+.home__panel--index > .home__marks,
+.home__panel--new > .home__marks {
+  width: auto;
+  max-width: none;
+  margin: 0;
+}
+/* the panel owns the vertical rhythm now — drop the sections' own block padding */
+.home__panel .home__index,
+.home__panel .home__whatsnew { padding: 0; }
+
 .home__section-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
-  margin-bottom: clamp(1.5rem, 4vw, 3rem);
+  margin-bottom: clamp(0.7rem, 1.8vw, 1.3rem);
 }
-.home__label { font-family: $barlow-font-family; font-size: $type-size-7; letter-spacing: 0.3em; text-transform: uppercase; color: $h2-color; }
-.home__note { font-family: $didot-family; font-style: italic; font-size: $type-size-6; color: rgba($primary-color, 0.4); }
+.home__section-head .home__plate { margin: 0; }   /* the plate mark heads the section here — no stacked gap */
+.home__note { font-family: $didot-family; font-style: italic; font-size: $type-size-6; color: rgba($primary-color, 0.58); }
 
 /* ---------------- The destination index ---------------- */
 .home__index { padding: clamp(4rem, 10vh, 9rem) 0 clamp(3.5rem, 8vh, 6rem); }
@@ -287,17 +491,17 @@ body.layout--home {
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: clamp(1rem, 2.4vw, 2rem);
-  padding: clamp(1.3rem, 3vw, 2.1rem) 0.2rem;
+  padding: clamp(0.85rem, 2.2vw, 1.5rem) 0.2rem;
   border-top: 1px solid rgba($primary-color, 0.1);
-  transition: padding-left 0.5s $cubic-bezier-smooth, opacity 0.45s;
+  transition: padding-left 0.55s $cubic-bezier-smooth, opacity 0.55s $cubic-bezier-smooth;
 }
 .home__doors li:last-child .door { border-bottom: 1px solid rgba($primary-color, 0.1); }
 
-.door__num { font-family: $barlow-font-family; font-size: $type-size-7; letter-spacing: 0.16em; color: rgba($primary-color, 0.38); font-variant-numeric: tabular-nums; transition: color 0.45s; }
+.door__num { font-family: $barlow-font-family; font-size: $type-size-7; letter-spacing: 0.16em; color: rgba($primary-color, 0.52); font-variant-numeric: tabular-nums; transition: color 0.5s $cubic-bezier-smooth; }
 .door__text { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
-.door__title { font-family: $didot-family; font-weight: 600; font-size: clamp(1.9rem, 4.4vw, 3.4rem); line-height: 1; letter-spacing: -0.01em; color: $primary-color; transition: color 0.45s; }
-.door__desc { font-family: $barlow-font-family; font-size: $type-size-7; color: rgba($primary-color, 0.5); transition: color 0.45s; }
-.door__arrow { font-family: $didot-family; font-size: 1.4rem; color: rgba($primary-color, 0.35); transform: translateX(-6px); opacity: 0; transition: transform 0.5s $cubic-bezier-smooth, opacity 0.45s, color 0.45s; }
+.door__title { font-family: $sans-serif; font-weight: 600; font-size: clamp(1.9rem, 4.4vw, 3.4rem); line-height: 1; letter-spacing: -0.01em; color: $primary-color; transition: color 0.5s $cubic-bezier-smooth; }
+.door__desc { font-family: $sans-serif; font-size: $type-size-7; color: rgba($primary-color, 0.64); transition: color 0.5s $cubic-bezier-smooth; }
+.door__arrow { font-family: $didot-family; font-size: 1.4rem; color: rgba($primary-color, 0.35); transform: translateX(-6px); opacity: 0; transition: transform 0.55s $cubic-bezier-smooth, opacity 0.5s $cubic-bezier-smooth, color 0.5s $cubic-bezier-smooth; }
 
 /* hover: dim the others, lift the active one — no underline, no link-blue */
 .home__doors:hover .door { opacity: 0.4; }
@@ -315,17 +519,29 @@ body.layout--home {
 /* Right-hand photographic plate — a floating, brass-keylined darkroom print that
    previews the hovered destination (contained in its own column, never overlaps). */
 .home__index-stage { position: relative; }
+/* The plate links to whichever door it's currently showing. Hard-reset the site's
+   global link styling so it stays a photographic plate, not a blue underlined link. */
+.door-plate__link,
+.door-plate__link:link,
+.door-plate__link:visited,
+.door-plate__link:hover,
+.door-plate__link:focus {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
 .door-plate { display: block; margin: 0; }
 
 .door-plate__frame {
   position: relative;
   aspect-ratio: 4 / 5;
-  border-radius: 3px;
+  border-radius: 0;                    /* hard-edged specimen print, not a soft card */
   overflow: hidden;
   background: #0b0b0f;
   box-shadow:
     0 42px 80px -34px rgba(0, 0, 0, 0.9),
-    0 0 0 1px rgba(201, 162, 75, 0.3),
+    0 0 0 1px rgba(201, 162, 75, 0.34),
     inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
@@ -334,9 +550,10 @@ body.layout--home {
   inset: 0;
   background-size: cover;
   background-position: center;
+  filter: contrast(1.12) saturate(1.04) brightness(0.92);   /* punch — a high-contrast specimen print */
   opacity: 0;
   transform: scale(1.06);
-  transition: opacity 0.8s ease, transform 1.6s $cubic-bezier-smooth;
+  transition: opacity 0.9s $cubic-bezier-smooth, transform 1.3s $cubic-bezier-smooth;
 }
 .door-shot.is-on { opacity: 1; transform: scale(1); z-index: 1; }
 
@@ -359,72 +576,111 @@ body.layout--home {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-.door-plate__meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 0.95rem;
-  font-family: $barlow-font-family;
-  font-size: $type-size-8;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: rgba($primary-color, 0.45);
-}
-.door-plate__no { color: $h2-color; font-variant-numeric: tabular-nums; }
-.door-plate__enter { display: inline-flex; align-items: center; gap: 0.45rem; }
-.door-plate__enter i { font-style: normal; font-size: 1.1em; color: rgba($primary-color, 0.7); }
+/* Registration crop-ticks inset at the plate corners — the specimen-sheet apparatus the
+   panels already wear, marking the print as a catalogued plate rather than a soft card. */
+.door-plate__crop {
+  position: absolute;
+  z-index: 4;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
 
-/* ---------------- What's New — editorial feature ---------------- */
+  &::before,
+  &::after { content: ""; position: absolute; background: rgba(201, 162, 75, 0.6); }
+  &::before { width: 12px; height: 1px; }
+  &::after { width: 1px; height: 12px; }
+}
+.door-plate__crop--tl { top: 9px; left: 9px; }
+.door-plate__crop--tl::before, .door-plate__crop--tl::after { top: 0; left: 0; }
+.door-plate__crop--tr { top: 9px; right: 9px; }
+.door-plate__crop--tr::before, .door-plate__crop--tr::after { top: 0; right: 0; }
+.door-plate__crop--bl { bottom: 9px; left: 9px; }
+.door-plate__crop--bl::before, .door-plate__crop--bl::after { bottom: 0; left: 0; }
+.door-plate__crop--br { bottom: 9px; right: 9px; }
+.door-plate__crop--br::before, .door-plate__crop--br::after { bottom: 0; right: 0; }
+
+/* ---------------- What's New — latest 4 across Posts / Portfolio / Voyage ---------------- */
 .home__whatsnew { padding: clamp(2rem, 5vh, 4rem) 0 clamp(2rem, 5vh, 4rem); }
 
-/* Hard-reset link styling on the What's New tiles (they are <a>): no link-blue,
-   no underline on hover/focus — same guard as the destination index. */
-.wn-card, .wn-card:link, .wn-card:visited, .wn-card:hover, .wn-card:focus, .wn-card:focus-visible,
-.wn-item, .wn-item:link, .wn-item:visited, .wn-item:hover, .wn-item:focus, .wn-item:focus-visible {
+/* Hard-reset link styling on the tiles (they are <a>): no link-blue, no underline. */
+.wn-card, .wn-card:link, .wn-card:visited, .wn-card:hover, .wn-card:focus, .wn-card:focus-visible {
   text-decoration: none;
   color: $primary-color;
 }
-.wn-grid { display: grid; grid-template-columns: 1.55fr 1fr; gap: 1rem; }
 
-%wn-tile {
-  position: relative; overflow: hidden; isolation: isolate;
-  border: 1px solid rgba($primary-color, 0.1);
-  border-radius: 16px;
-  display: flex; flex-direction: column; justify-content: flex-end;
-  text-decoration: none; color: $primary-color;
-  transition: transform 0.5s $cubic-bezier-smooth, border-color 0.5s;
-
-  .wn-media { position: absolute; inset: 0; z-index: -2; background-size: cover; background-position: center; background-image: var(--cover); transform: scale(1.03); transition: transform 1.1s $cubic-bezier-smooth; }
-  .wn-scrim { position: absolute; inset: 0; z-index: -1; }
-  &:hover { transform: translateY(-4px); border-color: rgba(201, 162, 75, 0.4); }
-  &:hover .wn-media { transform: scale(1.09); }
+.wn-grid {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 0.85rem;
 }
-.wn-tag { font-family: $barlow-font-family; font-size: $type-size-8; letter-spacing: 0.24em; text-transform: uppercase; color: $h2-color; margin-bottom: 0.5rem; }
-.wn-card h3, .wn-item h3 { font-family: $didot-family; font-weight: 600; line-height: 1.03; letter-spacing: -0.01em; margin: 0; color: $primary-color; transition: color 0.4s; }
-.wn-card:hover h3, .wn-item:hover h3 { color: #e6ce8f; }
 
 .wn-card {
-  @extend %wn-tile;
-  grid-row: span 2;
-  min-height: clamp(20rem, 42vh, 30rem);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba($primary-color, 0.1);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  transition: $cubic-bezier-default-05s;
+}
+.wn-media { position: absolute; inset: 0; z-index: -2; background-size: cover; background-position: center; background-image: var(--cover); background-color: #14121a; filter: brightness(0.86) saturate(0.92); transform: scale(1.03); transition: transform 1.1s $cubic-bezier-smooth; }
+.wn-scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(9, 9, 12, 0.28) 0%, rgba(9, 9, 12, 0.55) 45%, rgba(9, 9, 12, 0.9) 100%); }
+
+/* Hover mirrors `.card`: a scaled lift on a deep layered shadow — no colour
+   shift on the border or title. The whole card scales, so the photo grows
+   with it (the media layer needs no separate zoom). */
+.wn-card:hover, .wn-card:focus-within {
+  transform: scale(1.03) translateY(-0.25em);
+  box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
+              0 1px  6px  rgba(0, 0, 0, .20),
+              0 8px  8px  rgba(0, 0, 0, .25),
+              0 16px 16px rgba(0, 0, 0, .25),
+              8px 32px 32px rgba(0, 0, 0, .35),
+              8px 64px 64px rgba(0, 0, 0, .35);
+  z-index: 2;
+}
+
+.wn-body { position: relative; display: flex; flex-direction: column; }
+/* Type badge, quietened for the card — no pill, just a muted grey meta line
+   that recedes into the photo (design note: "fit into the background's
+   narrative"). The shared .type-badge pill still serves the search panel. */
+.wn-card .type-badge { align-self: flex-start; margin-bottom: 0.55rem; padding: 0; min-width: 0; min-height: 0; gap: 0.4rem; border: 0; background: none; color: rgba($primary-color, 0.6); }
+.wn-card .type-badge__label { font-weight: 400; }
+.wn-card h3 { font-family: $didot-family; font-weight: 600; font-size: 1.15rem; line-height: 1.03; letter-spacing: -0.01em; margin: 0; color: $primary-color; }
+.wn-ex { display: none; font-family: $sans-serif; color: rgba($primary-color, 0.72); margin: 0.5rem 0 0; max-width: 34ch; }
+
+/* 1 — feature (large, left, spans two rows) */
+.wn-card--1 {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  /* min only — the card grows to its content, so a lower floor never clips; it just
+     lets the panel condense to one screen on shorter viewports. */
+  min-height: clamp(12rem, 24vh, 19rem);
   padding: 1.8rem;
   .wn-scrim { background: linear-gradient(180deg, rgba(9, 9, 12, 0.05) 0%, rgba(9, 9, 12, 0.55) 55%, rgba(9, 9, 12, 0.9) 100%); }
   h3 { font-size: clamp(1.8rem, 3.4vw, 2.7rem); }
-  p { font-family: $barlow-font-family; color: rgba($primary-color, 0.7); margin: 0.5rem 0 0; max-width: 34ch; }
-}
-.wn-arrow { margin-top: 0.9rem; font-family: $barlow-font-family; font-size: $type-size-8; letter-spacing: 0.2em; text-transform: uppercase; color: rgba($primary-color, 0.55); display: inline-flex; gap: 0.5rem; transition: color 0.4s, gap 0.4s; }
-.wn-card:hover .wn-arrow { color: $h2-color; gap: 0.9rem; }
-
-.wn-side { display: grid; grid-template-rows: 1fr 1fr; gap: 1rem; }
-.wn-item {
-  @extend %wn-tile;
-  min-height: clamp(9rem, 19vh, 13.5rem);
-  padding: 1.3rem;
-  .wn-scrim { background: linear-gradient(180deg, rgba(9, 9, 12, 0.1), rgba(9, 9, 12, 0.82)); }
-  h3 { font-size: 1.15rem; }
+  .wn-ex { display: block; }
 }
 
-.home__foot { text-align: center; font-family: $didot-family; font-style: italic; font-size: $type-size-6; color: rgba($primary-color, 0.4); padding: clamp(2rem, 5vh, 4rem) 0 0; }
+/* 2 & 3 — stacked on the right */
+.wn-card--2 { grid-column: 2; grid-row: 1; }
+.wn-card--3 { grid-column: 2; grid-row: 2; }
+.wn-card--2, .wn-card--3 { min-height: clamp(6rem, 11vh, 9rem); padding: 1.3rem; }
+
+/* 4 — wide horizontal banner (3:1), spans the full width beneath */
+.wn-card--4 {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  aspect-ratio: 3 / 1;
+  padding: clamp(1.4rem, 3.5vw, 2.4rem) clamp(1.6rem, 4vw, 3rem);
+  justify-content: center;
+  .wn-scrim { background: linear-gradient(90deg, rgba(9, 9, 12, 0.9) 0%, rgba(9, 9, 12, 0.62) 42%, rgba(9, 9, 12, 0.12) 100%); }
+  .wn-body { max-width: 62%; }
+  h3 { font-size: clamp(1.4rem, 3vw, 2.2rem); }
+  .wn-ex { display: block; }
+}
 
 /* ============================ SCROLL REVEAL ============================ */
 /* Gated on `.home-reveal-ready` (added by the observer in home.html only when
@@ -451,14 +707,8 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
 /* On load the background settles back: the QSD photo is briefly glimpsed, then
    darkens and blurs into the frosted distance so the title takes over. */
 @keyframes home-darken {
-  from { filter: brightness(0.86) saturate(1) blur(4px); }
-  to { filter: brightness(0.52) saturate(0.9) blur(14px); }
-}
-/* Reveal the shiny QSD centre from time to time — kept gentle so it never
-   competes with the white title. */
-@keyframes home-qsd-pulse {
-  0%, 100% { opacity: 0.06; }
-  50% { opacity: 0.48; }
+  from { filter: brightness(1) saturate(1) blur(3px); }
+  to { filter: brightness(0.88) saturate(0.98) blur(7px); }
 }
 @keyframes home-bg-drift {
   from { transform: translate3d(-2%, 1%, 0) scale(1); opacity: 0.78; }
@@ -466,42 +716,48 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
 }
 @keyframes home-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes home-line-up { to { transform: translateY(0); } }
-@keyframes home-sheen { 0%, 100% { background-position: 0 0; } 50% { background-position: 100% 0; } }
-@keyframes home-sweep { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(100%); } }
+/* The scroll spark falls the length of the hairline, then repeats. */
+@keyframes home-scroll-fall {
+  0% { transform: translateY(-10px); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(46px); opacity: 0; }
+}
 
 /* ---------------- responsive ---------------- */
 @include responsive-down(tablet-wide) {
   .wn-grid { grid-template-columns: 1fr; }
-  .wn-card { grid-row: auto; min-height: 16rem; }
+  .wn-card--1, .wn-card--2, .wn-card--3, .wn-card--4 { grid-column: auto; grid-row: auto; }
+  .wn-card--1 { min-height: 16rem; }
+  .wn-card--2, .wn-card--3 { min-height: 12rem; }
+  .wn-card--4 { aspect-ratio: 16 / 9; }
+  .wn-card--4 .wn-body { max-width: 100%; }
 }
 @include responsive-down(tablet) {
+  /* On phones a stacked What's New is taller than one screen, so soften the
+     magnet to proximity — the hero + index still snap, the long panel scrolls free. */
+  html.home-snap { scroll-snap-type: y proximity; }
+
   .home__index-grid { grid-template-columns: 1fr; }
   .home__index-stage { display: none; }
   .home__doors:hover .door { opacity: 1; }
+}
 
-  /* The single-line typewriter clips long persona lines on narrow screens, so on
-     small viewports show the primary excerpt as a clean static wrapping line. */
-  .home__identity .text-type-writer { display: block; font-size: 1rem; }
-  .home__identity .text-type-writer > span { display: block; height: auto; overflow: visible; }
-  .home__identity .text-type-writer span span {
-    animation: none;
-    width: auto;
-    max-width: none;
-    white-space: normal;
-    word-break: normal;
-    height: auto;
-    box-shadow: none;
-  }
-  .home__identity .text-type-writer span span:not(:first-child) { display: none; }
+/* Auto-snapping is itself motion — let reduced-motion users scroll plainly. */
+@include responsive-reduced-motion {
+  html.home-snap { scroll-snap-type: none; }
 }
 
 @include responsive-reduced-motion {
-  .home__hero-media::before, .home__hero-media::after, .home__hero-veil, .home__hero-qsd,
+  .home__hero-media::before, .home__hero-media::after, .home__hero-veil,
   .home__hero-blobs .blob,
-  .home__eyebrow, .home__wordmark .ln > span, .home__wordmark .gold,
-  .home__identity, .home__identity .text-type-writer span span,
-  .home__scrollcue, .home__scrollcue .rule::after { animation: none !important; }
-  .home__wordmark .ln > span { transform: none; }
-  .home__eyebrow, .home__identity, .home__scrollcue { opacity: 1; }
-  .home__hero-qsd { opacity: 0.32; }
+  .home__motto > span, .home__wordmark .ln > span, .home__wordmark .gold,
+  .home__plate,
+  .home__scroll-hint, .home__scroll-hint::after { animation: none !important; }
+  .home__wordmark .ln > span, .home__motto > span { transform: none; }
+  .home__plate { opacity: 1; }
+  /* Scroll cue: no fall — a static spark resting at the end of its hairline. */
+  .home__scroll-hint { opacity: 1; }
+  .home__scroll-hint::after { top: auto; bottom: 0; opacity: 0.85; }
+  .home__scroll-hint--up::after { top: 0; bottom: auto; }
 }

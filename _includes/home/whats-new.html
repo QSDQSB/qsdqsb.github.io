@@ -1,30 +1,39 @@
-{% assign releases = site.data['new-release'] %}
-{% assign feat = releases[0] %}
+{% comment %}
+  What's New — the four most recently modified documents across Posts, Portfolio
+  and Voyage. jekyll-last-modified-at gives each doc a git-based `last_modified_at`,
+  but it is a Determinator object that Liquid's `sort` cannot order. So we encode a
+  fixed-width sortable timestamp + the doc's index into one token per doc, sort the
+  tokens as strings (14-digit prefix ⇒ chronological), reverse for newest-first, and
+  map back to the document. Pure Liquid — works under GitHub Pages safe mode.
+  Layout: 1 feature + 2 stacked + 1 wide (3:1).
+{% endcomment %}
+{% assign combined = site.posts | concat: site.portfolio | concat: site.voyage %}
+{% assign keyed = "" %}
+{% for d in combined %}{% assign k = d.last_modified_at | date: "%Y%m%d%H%M%S" %}{% assign keyed = keyed | append: k | append: "#" | append: forloop.index0 | append: "|" %}{% endfor %}
+{% assign ordered = keyed | split: "|" | sort | reverse %}
+
 <section class="home__whatsnew reveal">
   <div class="home__section-head">
-    <span class="home__label">What&rsquo;s New</span>
+    <p class="home__plate">Recent Updates</p>
     <span class="home__note" lang="zh">有哪些文件夹刚刚被新建了呢？</span>
   </div>
+
   <div class="wn-grid">
-    <a class="wn-card" href="{{ feat.url | relative_url }}" style="--cover: url('{{ feat.background_image | relative_url }}');">
-      <div class="wn-media"></div>
-      <div class="wn-scrim"></div>
-      <span class="wn-tag">{{ feat.type }}{% if feat.tag %} &middot; {{ feat.tag }}{% endif %}</span>
-      <h3>{{ feat.title }}</h3>
-      {% if feat.description and feat.description != "" %}<p>{{ feat.description }}</p>{% endif %}
-      <span class="wn-arrow">Enter the folder &rarr;</span>
-    </a>
-    <div class="wn-side">
-      {% for r in releases offset: 1 limit: 2 %}
-      <a class="wn-item" href="{{ r.url | relative_url }}" style="--cover: url('{{ r.background_image | relative_url }}');">
+    {% for token in ordered limit: 4 %}
+      {% assign idx = token | split: "#" | last | plus: 0 %}
+      {% assign doc = combined[idx] %}
+      {% assign img = doc.header.overlay_image %}
+      {% assign firstchar = img | slice: 0 %}
+      {% if firstchar == '/' %}{% assign cover = img %}{% else %}{% assign cover = img | prepend: '/images/' %}{% endif %}
+      <a class="wn-card wn-card--{{ forloop.index }}" href="{{ doc.url | relative_url }}"{% if img %} style="--cover: url('{{ cover | relative_url }}');"{% endif %}>
         <div class="wn-media"></div>
         <div class="wn-scrim"></div>
-        <span class="wn-tag">{{ r.type }}</span>
-        <h3>{{ r.title }}</h3>
+        <div class="wn-body">
+          {% include type-badge.html collection=doc.collection %}
+          <h3>{{ doc.title }}</h3>
+          {% if doc.excerpt and doc.excerpt != "" %}<p class="wn-ex">{{ doc.excerpt | strip_html | strip_newlines | truncatewords: 16 }}</p>{% endif %}
+        </div>
       </a>
-      {% endfor %}
-    </div>
+    {% endfor %}
   </div>
 </section>
-
-<p class="home__foot">Best enjoyed on a laptop &mdash; every picture here shot by QSD, or his beloved friends.</p>
