@@ -9,17 +9,16 @@ body.page--about {
   @include atmospheric-backdrop;
 }
 
-/* Taller, more immersive hero to echo Home's cinematic scale (still content-first,
-   so it keeps the dissolve-into-page treatment rather than filling the viewport). */
+/* Taller hero to echo Home's scale, but still content-first — keeps the
+   dissolve-into-page treatment rather than filling the viewport. */
 .page--about .page__hero--overlay {
   min-height: clamp(28rem, 76vh, 46rem);
   min-height: clamp(28rem, 76svh, 46rem);
 }
 
-/* #main defaults to the flex sidebar shell. With the author rail present About
-   uses that shell (the .page-no-right-sidebar wrapper shrinks safely via
-   min-width:0); with no sidebar, restore plain block flow so .about doesn't
-   overflow as a non-shrinking flex item (same fix as Home). */
+/* With the author rail present, About uses the flex sidebar shell (the
+   .page-no-right-sidebar wrapper shrinks via min-width:0); no sidebar → block
+   flow so .about doesn't overflow as a flex item (same fix as Home). */
 .page--about #main.no-left-sidebar {
   display: block;
 }
@@ -40,8 +39,7 @@ body.page--about {
   margin: 1.5rem 0 2rem;
 }
 
-/* --- coda asides (post-scriptum): quiet marginalia, replaces the old
-   "what should we do before publishing" scaffolding --- */
+/* --- coda asides (post-scriptum): quiet marginalia --- */
 .about__aside {
   font-family: $barlow-font-family;
   font-size: $type-size-6;

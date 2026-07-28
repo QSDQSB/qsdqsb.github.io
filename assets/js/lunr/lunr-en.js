@@ -9,11 +9,9 @@ var SEARCH_MAX_RENDERED_RESULTS = 30;
 var SEARCH_HAN_PATTERN = /[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/;
 var SEARCH_HAN_RUN_PATTERN = /[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]+/g;
 
-// The search index is expensive to build — a multi-second synchronous pass over
-// the whole-site store. Building it at load froze the main thread and, on the
-// Home, held back the door reveal, so the page looked half-broken for seconds.
-// Build it lazily instead: on first use, warmed during idle time so the first
-// real search is still instant while first paint / interactivity stay unblocked.
+// Building the index is a multi-second synchronous pass over the whole-site store;
+// at load it froze the main thread (and held back the Home's door reveal). Build it
+// lazily, on the first query, so first paint / interactivity stay unblocked.
 var idx = null;
 function buildSearchIndex() {
   if (idx) { return idx; }
@@ -49,13 +47,9 @@ function buildSearchIndex() {
   return idx;
 }
 
-// Deliberately NOT warmed at load or on idle: building the index is a multi-second
-// synchronous task, and the Home hero runs a continuous main-thread rAF morph the
-// whole time it is on screen — any background build would visibly stutter it. So
-// we build strictly on demand, at the first query (see buildSearchIndex() in
-// runSearch), which lands the one-off cost behind the open search overlay where
-// the morph isn't being watched. First search pays ~a beat; every search after is
-// instant.
+// Not warmed on idle: the Home hero runs a continuous main-thread rAF morph while
+// on screen, so a background build would stutter it. Build on first query instead —
+// the one-off cost lands behind the search overlay, out of the morph's view.
 
 function searchHasHanText(value) {
   return SEARCH_HAN_PATTERN.test(String(value || ""));
@@ -195,9 +189,8 @@ function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
       return;
     }
 
-    // First qualifying search builds the index (a one-off multi-second pass). Paint
-    // a status first, then build + re-run on a later tick so the message shows
-    // before the main thread is monopolised by the build.
+    // First query builds the index (one-off). Paint a status first, then build +
+    // re-run on a later tick so the message shows before the main thread blocks.
     if (!idx) {
       searchRenderStatus(resultdiv, '{{ site.data.ui-text[site.locale].search_indexing | default: "Preparing search…" }}');
       window.setTimeout(function () { buildSearchIndex(); runSearch(rawQuery); }, 32);
