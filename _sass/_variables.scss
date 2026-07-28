@@ -46,6 +46,7 @@ $text-color                 : $lighter-gray;
 $border-color               : $darker-gray;
 $default-tag-color          : #497472; // @keep — placeholder text parsed by Liquid at _page.scss:796, not a normal Sass reference
 $primary-color              : #E6EEE8;
+$h2-color                   : hsl(29, 65%, 70%); // brass heading + accent tone (Home / About / welcome-toast)
 $success-color              : #3c8287;
 $warning-color              : #db580c;
 $danger-color               : #a74f4c;
