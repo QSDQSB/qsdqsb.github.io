@@ -10,6 +10,5 @@ right_tarot_href: /posts/day-one
 right_tarot_wheel_of_fortune: true
 ---
 
-{% include home/index.html %}
-
-{% include home/whats-new.html %}
+{% comment %} The three home panels (hero · index · What's New) are composed
+directly in _layouts/home.html so each can be its own scroll-snap panel. {% endcomment %}

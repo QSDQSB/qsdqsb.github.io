@@ -1,0 +1,30 @@
+{% comment %}
+  First-visit welcome — a gentle, non-blocking advisory shown ONCE per visitor
+  (localStorage-gated, so returning visitors never see it again). No-JS shows nothing
+  and the site stays fully usable; reduced-motion gets a plain fade. The positioning
+  shell (.welcome-toast) is fixed + centred; the inner card carries the reveal.
+{% endcomment %}
+<div class="welcome-toast" id="welcomeToast" hidden>
+  <div class="welcome-toast__inner" role="status" aria-live="polite">
+    <span class="welcome-toast__icon" aria-hidden="true">🖥️</span>
+    <p class="welcome-toast__text">QSD and his friends welcome you to enjoy this site on a laptop — in particular <b>Chrome</b> and <b>Safari</b>.</p>
+    <button class="welcome-toast__close" type="button" aria-label="Dismiss this message">Got it</button>
+  </div>
+</div>
+<script>
+  (function () {
+    var KEY = "qsd:welcome-seen";
+    // First visit only: bail (and never show again) once the flag is set.
+    try { if (localStorage.getItem(KEY)) return; localStorage.setItem(KEY, "1"); } catch (e) {}
+    var el = document.getElementById("welcomeToast");
+    if (!el) return;
+    window.setTimeout(function () {
+      el.hidden = false;
+      requestAnimationFrame(function () { el.classList.add("is-in"); });
+    }, 700);
+    el.querySelector(".welcome-toast__close").addEventListener("click", function () {
+      el.classList.remove("is-in");
+      window.setTimeout(function () { el.hidden = true; }, 450);
+    });
+  })();
+</script>

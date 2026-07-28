@@ -1,0 +1,15 @@
+{% comment %}
+  Page-type badge — the same visual language the search results use
+  (assets/js/lunr/lunr-store.js › searchGetResultTypeMeta + _sass/_type-badge.scss).
+  Reuse anywhere a document's collection should read as Post / Voyage / Portfolio / Other.
+
+    {% include type-badge.html collection=doc.collection %}
+{% endcomment %}
+{% case include.collection %}
+  {% when 'posts' %}{% assign _tb_label = 'Post' %}{% assign _tb_class = 'post' %}{% assign _tb_icon = 'fa-solid fa-mug-hot' %}
+  {% when 'voyage' %}{% assign _tb_label = 'Voyage' %}{% assign _tb_class = 'voyage' %}{% assign _tb_icon = 'fa-solid fa-cable-car' %}
+  {% when 'subvoyage' %}{% assign _tb_label = 'Voyage' %}{% assign _tb_class = 'voyage' %}{% assign _tb_icon = 'fa-solid fa-cable-car' %}
+  {% when 'portfolio' %}{% assign _tb_label = 'Portfolio' %}{% assign _tb_class = 'portfolio' %}{% assign _tb_icon = 'fa-solid fa-helicopter' %}
+  {% else %}{% assign _tb_label = 'Other' %}{% assign _tb_class = 'other' %}{% assign _tb_icon = 'fa-solid fa-cat' %}
+{% endcase %}
+<span class="type-badge type-badge--{{ _tb_class }}"{% if include.on_media %} data-on-media="true"{% endif %} title="{{ _tb_label }}"><i class="{{ _tb_icon }}" aria-hidden="true"></i><span class="type-badge__label">{{ _tb_label }}</span></span>

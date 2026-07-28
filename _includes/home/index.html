@@ -1,48 +1,50 @@
 <section class="home__index" aria-label="Enter the house">
   <div class="home__section-head">
-    <span class="home__label">The House &mdash; four ways in</span>
-    <span class="home__note">Choose a door.</span>
+    <p class="home__plate">Wonders</p>
   </div>
+
+  {% comment %} The doors are the masthead's own nav (site.data.navigation.main) — one
+  shared source of truth, so adding/reordering a destination updates both places — with
+  CV deliberately kept off the landing (where_exp filter below). Each door's descriptor
+  and plate image are the linked page's own `excerpt` + `header.overlay_image`; `_pages`
+  are site.pages and the voyage index lives in the portfolio collection, so concat both
+  before the url lookup. {% endcomment %}
+  {% assign door_pages = site.pages | concat: site.portfolio %}
+  {% assign doors = site.data.navigation.main | where_exp: "link", "link.url != '/cv/'" %}
 
   <div class="home__index-grid">
     <ul class="home__doors">
-      <li><a class="door" href="{{ '/year-archive/' | relative_url }}">
-        <span class="door__num">01</span>
-        <span class="door__text"><span class="door__title">Posts</span><span class="door__desc">Words, essays, and epitaphs</span></span>
+      {% for link in doors %}
+      {% assign dp = door_pages | where: "url", link.url | first %}
+      <li><a class="door" href="{{ link.url | relative_url }}">
+        <span class="door__num">0{{ forloop.index }}</span>
+        <span class="door__text"><span class="door__title">{{ link.title }}</span><span class="door__desc">{{ dp.excerpt | strip_html | strip_newlines | strip }}</span></span>
         <span class="door__arrow" aria-hidden="true">&rarr;</span>
       </a></li>
-      <li><a class="door" href="{{ '/voyage/' | relative_url }}">
-        <span class="door__num">02</span>
-        <span class="door__text"><span class="door__title">Voyage</span><span class="door__desc">Photographs from the road</span></span>
-        <span class="door__arrow" aria-hidden="true">&rarr;</span>
-      </a></li>
-      <li><a class="door" href="{{ '/portfolio/' | relative_url }}">
-        <span class="door__num">03</span>
-        <span class="door__text"><span class="door__title">Portfolio</span><span class="door__desc">Selected things I&rsquo;ve made</span></span>
-        <span class="door__arrow" aria-hidden="true">&rarr;</span>
-      </a></li>
-      <li><a class="door" href="{{ '/cv/' | relative_url }}">
-        <span class="door__num">04</span>
-        <span class="door__text"><span class="door__title">CV</span><span class="door__desc">Formally, and in brief</span></span>
-        <span class="door__arrow" aria-hidden="true">&rarr;</span>
-      </a></li>
+      {% endfor %}
     </ul>
 
     <div class="home__index-stage" aria-hidden="true">
+      {% comment %} The plate mirrors whichever door is hovered, so clicking it goes
+      there too (JS keeps the href in sync). Kept aria-hidden + tabindex="-1": it is a
+      visual duplicate of the door list, which already exposes these destinations
+      accessibly — so it stays mouse-clickable without doubling up for screen readers. {% endcomment %}
+      <a class="door-plate__link" id="doorPlateLink" tabindex="-1" href="{{ doors.first.url | relative_url }}">
       <figure class="door-plate">
         <div class="door-plate__frame">
-          <div class="door-shot is-on" style="background-image:url('{{ '/images/Legotypewriter1-3v1.jpg' | relative_url }}');"></div>
-          <div class="door-shot" style="background-image:url('{{ '/images/cover/Prague-charles-bridge-dawn-2-3v1.jpg' | relative_url }}');"></div>
-          <div class="door-shot" style="background-image:url('{{ '/images/ZahaHadid1-3v1.jpg' | relative_url }}');"></div>
-          <div class="door-shot" style="background-image:url('{{ '/images/cover/qsd-emblem-palace-night-with-candle-vase-3v1.jpg' | relative_url }}');"></div>
+          {% for link in doors %}
+          {% assign dp = door_pages | where: "url", link.url | first %}
+          <div class="door-shot{% if forloop.first %} is-on{% endif %}" style="background-image:url('{% include home/overlay-src.html page=dp %}');"></div>
+          {% endfor %}
           <span class="door-plate__vignette"></span>
           <span class="door-plate__grain"></span>
+          <span class="door-plate__crop door-plate__crop--tl"></span>
+          <span class="door-plate__crop door-plate__crop--tr"></span>
+          <span class="door-plate__crop door-plate__crop--bl"></span>
+          <span class="door-plate__crop door-plate__crop--br"></span>
         </div>
-        <figcaption class="door-plate__meta">
-          <span class="door-plate__no" id="doorPlateNo">N&deg;&#8201;01</span>
-          <span class="door-plate__enter">Enter <i aria-hidden="true">&#8599;</i></span>
-        </figcaption>
       </figure>
+      </a>
     </div>
   </div>
 </section>
