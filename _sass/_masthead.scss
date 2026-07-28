@@ -283,6 +283,14 @@ html.is-resizing {
     color 0.35s $cubic-bezier-smooth;
 }
 
+/* Home already announces the site name as the hero wordmark, so the bar repeating
+   it — directly above an identical title, and jamming the pill on phones — is pure
+   duplication. Drop the name in the bar on Home; the logo mark still links home,
+   and every other page keeps its wordmark. */
+.layout--home .masthead__brand-name {
+  display: none;
+}
+
 @include responsive-down(compact) {
   .masthead {
     &__inner-wrap {
