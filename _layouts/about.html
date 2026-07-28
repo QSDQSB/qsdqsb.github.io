@@ -8,12 +8,9 @@ layout: default
   {% include page__hero.html %}
 {% endif %}
 
-{% comment %} The editorial About keeps its centred, single-column measure, but still
-honours `author_profile` from the metadata: when set, we render the shared left rail
-(sidebar.html → author-profile.html) and wrap the article in `.page-no-right-sidebar`
-so the existing flex shell positions the rail exactly as on a normal single page. With
-no sidebar the article falls back to plain block flow (see `.page--about #main` in
-_about.scss). {% endcomment %}
+{% comment %} Honour author_profile: when set, render the shared left rail
+(sidebar.html) and wrap the article as .page-no-right-sidebar so the flex shell
+positions it. No sidebar → block flow (see .page--about #main in _about.scss). {% endcomment %}
 {% assign has_left_sidebar = false %}
 {% if page.author_profile or layout.author_profile or page.sidebar %}
   {% assign has_left_sidebar = true %}

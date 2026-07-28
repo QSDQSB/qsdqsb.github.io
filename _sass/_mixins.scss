@@ -56,10 +56,8 @@
 /*
    Cinematic atmospheric backdrop
    ==========================================================================
-   Fixed full-viewport gradient mesh (brass / lapis / smoke-violet) plus a
-   film-grain overlay, so page content floats over depth instead of flat black.
-   Included on the body of the flagship Home + About pages. Apply to a `body`
-   selector — it paints via ::before (mesh) and ::after (grain).
+   Fixed gradient mesh + film-grain overlay on the body (Home + About), so
+   content floats over depth. Paints via ::before (mesh) and ::after (grain).
 */
 
 @mixin atmospheric-backdrop {

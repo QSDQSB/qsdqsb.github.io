@@ -27,15 +27,13 @@ body.layout--home {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* Vertical padding kept lean so the whole hero — copy + mark — reads as ONE
-     screen. The content is vertically centred, so this is breathing room, not
-     structure; over-padding was pushing the panel past 100svh on laptop heights. */
+  /* Lean vertical padding so the hero fits ONE screen — content is centred, so
+     this is breathing room, not structure (over-padding pushed past 100svh on laptops). */
   padding: clamp(2.75rem, 7vh, 5.5rem) clamp(1.4rem, 5vw, 4rem) clamp(2.25rem, 5.5vh, 4.5rem);
 }
 
-/* Hero background: a heavily darkened QSD night photo + slowly drifting dark
-   gradients, all pushed behind a glassmorphism veil so the backdrop reads
-   distant and frosted and the eye stays on the title. */
+/* Darkened QSD night photo + drifting gradients behind a glass veil, so the
+   backdrop reads distant and the eye stays on the title. */
 .home__hero-media {
   position: absolute;
   inset: 0;
@@ -47,10 +45,9 @@ body.layout--home {
   position: absolute;
   inset: -8%;
   background: linear-gradient(rgba(5, 5, 9, 0.28), rgba(5, 5, 9, 0.48)), var(--hero-photo) center / cover no-repeat;
-  /* Frost the photo directly (GPU-composited) rather than re-blurring it every
-     frame through a backdrop-filter — smoother with the moving blobs behind.
-     Kept bright with only a light frost, so the light-painted "QSD" in the photo
-     stays legible — the burning letters read through the glass. */
+  /* Frost the photo directly (GPU-composited) rather than re-blurring every frame
+     via backdrop-filter — smoother behind the moving blobs. Light frost keeps the
+     painted "QSD" in the photo legible. */
   filter: brightness(0.88) saturate(0.98) blur(7px);
   transform: scale(1.04) translateZ(0);
   /* gradient mask — the photo reads through the centre and fades out at the edges */
@@ -72,8 +69,7 @@ body.layout--home {
   mix-blend-mode: screen;
   animation: home-bg-drift 30s ease-in-out infinite alternate;
 }
-/* Slow glowing colour blobs drifting behind the glass — the veil frosts them into
-   soft moving light, adding vibrancy without pulling focus from the title. */
+/* Slow colour blobs drifting behind the glass — frosted into soft moving light. */
 .home__hero-blobs {
   position: absolute;
   inset: 0;
@@ -130,41 +126,27 @@ body.layout--home {
   position: absolute;
   inset: 0;
   z-index: 1;
-  /* Weighted dark toward the bottom, where the mobile mark's band sits — it rests
-     on near-black rather than the sparkler's brightest trails. */
+  /* Weighted dark toward the bottom, where the mobile mark's band sits. */
   background: linear-gradient(180deg, rgba(7, 7, 11, 0.38) 0%, rgba(7, 7, 11, 0.52) 52%, rgba(7, 7, 11, 0.76) 100%);
 }
 
-/* (Removed the sharp "shiny QSD" centre-reveal layer — it drew crisp light-painted
-   letters through the typography and competed with both the wordmark and the mark.
-   The heavily-blurred base photo now carries the hero's atmosphere on its own.) */
-
-/* ONE shared measure across all three panels, so the N° I / II / III plate marks
-   land on a single left spine and the reel reads as one bound volume. */
+/* One shared measure across all three panels, so the plate labels align on one spine. */
 .home__hero-inner { position: relative; z-index: 2; width: 100%; max-width: 1080px; margin: 0 auto; }
 
-/* Gentle translucent scrim living directly behind the title copy — a soft
-   radial that fades out so the white type always has a calm, readable ground
-   without darkening the whole hero. */
+/* Soft radial scrim behind the title copy — a calm ground for the white type. */
 .home__hero-inner::before {
   content: "";
   position: absolute;
-  /* Generous, near-symmetric box so the radial reaches full transparency
-     BEFORE it meets any edge. A tighter box clipped the still-opaque gradient
-     and left a visible rectangular seam behind the title. */
+  /* Generous box so the radial fades fully before any edge — a tighter box left
+     a visible rectangular seam behind the title. */
   inset: -50% -35%;
   z-index: -1;
   background: radial-gradient(56% 54% at 38% 50%, rgba(4, 4, 8, 0.8) 0%, rgba(4, 4, 8, 0.52) 40%, transparent 74%);
   pointer-events: none;
 }
 
-/* The QSD monogram — a self-contained <qsd-mark> Web Component (its SVG/CSS/JS live
-   in assets/js/qsd-mark.js, shadow-scoped). This rule only sizes/places the host box;
-   the mark sizes itself to it via container queries.
-   Desktop: it takes the right half, reading bright above the veil.
-   Mobile: the copy sits up top and the mark inscribes in a BAND at the BOTTOM — its
-   own object, not a watermark behind the title (which muddied the text). If there's
-   no vertical room (landscape / short), the band is dropped entirely. */
+/* The <qsd-mark> monogram (assets/js/qsd-mark.js); this rule only sizes/places the
+   host box. Desktop: right half. Mobile: a band at the bottom, dropped in landscape. */
 .home__hero-anim {
   display: flex;            // lay the host out before the component upgrades
   align-items: center;
@@ -189,29 +171,22 @@ body.layout--home {
     opacity: 1;
     transform: translateY(2.5rem);   // settle onto the wordmark's optical centre
   }
-  /* The copy keeps the SHARED measure (so N° I lines up with N° II / III) and
-     simply constrains its own width inside it, yielding the right to the mark.
-     62% clears the mark's visible glyph (the frame is wider than the mark, which is
-     centred in it) while staying wide enough that the wordmark's authored lines
-     never clip — `.ln` is overflow:hidden for the reveal, so it cuts, not wraps. */
+  /* Copy keeps the shared measure but constrains its width, yielding the right to
+     the mark. 62% clears the mark's glyph while keeping the wordmark's authored lines
+     from clipping (.ln is overflow:hidden — it cuts, not wraps). */
   .home__hero-inner > * { max-width: 62%; }
-  /* Re-proportion the wordmark to the narrower column so its longest authored line
-     fits without overflowing into the mark. NB: the base `.home__wordmark` rule (with the
-     larger 9.5rem cap) sits LATER in the source, so an equal-specificity override here
-     loses the cascade and the wordmark renders too big — the reveal mask then crops
-     "House of" / "Wonders". Scope to `.layout--home` so this cap actually wins. */
+  /* Re-proportion the wordmark to the narrower column. The base .home__wordmark
+     (9.5rem cap) sits LATER in source, so scope this cap to .layout--home or it loses
+     the cascade and the reveal mask crops "House of" / "Wonders". */
   .layout--home .home__wordmark { font-size: clamp(3rem, 6.6vw, 6.6rem); }
-  /* The mark takes the right half — weight the veil's darkness to the right so it
-     rests on a clean near-black field instead of the sparkler's bright loops. */
+  /* Weight the veil dark to the right so the mark rests on a clean near-black field. */
   .home__hero-veil {
     background: linear-gradient(100deg, rgba(7, 7, 11, 0.3) 0%, rgba(7, 7, 11, 0.55) 40%, rgba(7, 7, 11, 0.9) 100%);
   }
 }
 
-/* Mobile / tablet: push the copy to the top and let the mark's band sit at the
-   bottom (space-between splits the two flex children top/bottom). In landscape —
-   the classic "no vertical room" case — drop the mark's band entirely so the copy
-   owns the short screen. */
+/* Mobile/tablet: copy to the top, mark's band to the bottom (space-between).
+   Landscape has no vertical room, so drop the band. */
 @include responsive-down(desktop) {
   .home__hero { justify-content: space-between; }
   @include responsive-landscape {
@@ -219,9 +194,7 @@ body.layout--home {
   }
 }
 
-/* Authored-plate marginalia — a monospace label in aged-brass ink heading each plate:
-   Welcome To · Wonders · Recent Updates. The honest-mechanism apparatus of a cabinet
-   of wonders (a Wunderkammer), kept to a whisper. */
+/* The monospace brass label heading each panel: Welcome To · Wonders · Recent Updates. */
 .home__plate {
   display: flex;
   align-items: center;
@@ -236,9 +209,7 @@ body.layout--home {
   animation: home-rise 1.1s $cubic-bezier-smooth 0.15s forwards;
 }
 
-/* On narrow screens the longer labels (e.g. "RECENT UPDATES") can crowd the number —
-   let them wrap cleanly beneath it instead of breaking mid-word, and tighten the
-   tracking so they stay tidy. */
+/* Narrow screens: let long labels (e.g. "RECENT UPDATES") wrap beneath the number. */
 @include responsive-down(tablet) {
   .home__plate { flex-wrap: wrap; align-items: baseline; letter-spacing: 0.14em; row-gap: 0.2rem; }
 }
@@ -246,23 +217,19 @@ body.layout--home {
 .home__wordmark {
   font-family: $didot-family;
   font-weight: 600;
-  /* Height-aware: at ≥~950px tall it stays at full presence (width-driven, capped
-     at 9.5rem); on shorter laptops the `16vh` term reins it in so the hero still
-     fits one screen. On narrow phones it rests at the 3.2rem floor regardless. */
+  /* Height-aware: the 16vh term reins the wordmark in on short laptops so the hero
+     fits one screen; 3.2rem floor on phones. */
   font-size: clamp(3.2rem, min(11vw, 16vh), 9.5rem);
   line-height: 0.92;
   letter-spacing: -0.015em;
   margin: 0;
   text-wrap: balance;
 
-  /* nowrap: the line breaks are authored (three .ln spans). Never let a line
-     wrap internally — that would break "House&nbsp;of" onto two lines when the
-     column narrows (e.g. the desktop split beside the mark). */
+  /* nowrap: line breaks are authored (three .ln spans) — never wrap a line
+     internally (would break "House of" beside the mark). */
   .ln { display: block; overflow: hidden; white-space: nowrap; }
-  /* "QSD's" carries the Playfair initials, whose Q has a long descending tail. Give the
-     reveal-mask room for it (padding-bottom) AND leave a little clearance to the "House"
-     line below so the tail doesn't crowd it — the descriptive lines are Didot, so only
-     this line needs the extra breath. The margin keeps that gap slight, not loose. */
+  /* "QSD's" Playfair Q has a long descending tail — give the reveal mask room
+     (padding-bottom) and slight clearance to the "House" line below. */
   .ln:nth-child(1) { padding-bottom: 0.16em; margin-bottom: -0.02em; }
   .ln > span {
     display: block;
@@ -273,8 +240,7 @@ body.layout--home {
   .ln:nth-child(2) > span { animation-delay: 0.54s; }
   .ln:nth-child(3) > span { animation-delay: 0.66s; }
 
-  /* The brand initials wear Playfair Display (its geometric weight makes them read as
-     a monogram); the descriptive words "'s House of Wonders" keep Didot's delicacy. */
+  /* Playfair Display for the initials (reads as a monogram); Didot for the rest. */
   .home__wm-qsd { font-family: $sans-serif; }
 
   .gold {
@@ -287,11 +253,8 @@ body.layout--home {
   }
 }
 
-/* The house motto — set beneath the wordmark as an inscribed crest line. This is the
-   wordmark's own ivory — so the two read as one typographic voice, the motto a quiet
-   subtitle rather than a separate mark. It reveals with the same upward mask-slide as
-   the wordmark lines (timed just after the last one), landing like a closing fourth
-   line of the title. `overflow:hidden` is the clip mask; the inner span does the slide. */
+/* The house motto — the wordmark's own ivory, revealed with the same upward
+   mask-slide (overflow:hidden clips; the inner span slides). */
 .home__motto {
   overflow: hidden;
   margin: 1.5rem 0 0;
@@ -346,9 +309,8 @@ body.layout--home {
   box-shadow: 0 0 7px rgba($h2-color, 0.7);
   animation: home-scroll-fall 2s $cubic-bezier-smooth infinite;
 }
-/* Last panel: the same spark, risen — anchored to the top (clear of the footer),
-   track brighter at the top, comet head up, motion reversed. Reads as "back to the
-   top" instead of a false "more below". */
+/* Last panel: the same spark risen — anchored to the top, motion reversed. Reads
+   as "back to top" rather than a false "more below". */
 .home__scroll-hint--up {
   top: 2.2rem;
   bottom: auto;
@@ -360,9 +322,8 @@ body.layout--home {
 }
 
 /* ===================== REGISTRATION MARKS =====================
-   Faint corner crop-ticks framing each panel as a plate pulled for print — the
-   honest-mechanism apparatus of a specimen sheet, kept to a whisper. Eight
-   aged-brass hairlines (two per corner) painted on a single inset overlay. */
+   Faint corner crop-ticks framing each panel as a print plate — eight aged-brass
+   hairlines (two per corner) on a single inset overlay. */
 .home__marks {
   position: absolute;
   inset: clamp(1.4rem, 3vw, 2.6rem);
@@ -398,9 +359,8 @@ body.layout--home {
 
 /* ============ Magnetic full-screen panels (native CSS scroll-snap) ============ */
 /* The snap container is <html.home-snap> (set in default.html), so window scroll —
-   and the masthead-intent.js listener bound to it — keeps driving the page. Panels
-   use `min-height` (not fixed height): on a short viewport a tall panel simply grows
-   and scrolls, with snapping re-engaging at its edges rather than clipping content. */
+   and masthead-intent.js — keeps driving the page. Panels use min-height, so a tall
+   panel grows and scrolls, snapping at its edges rather than clipping. */
 html.home-snap { scroll-snap-type: y mandatory; }
 
 /* The reel is a full-bleed stack; the 1180px measure moves onto each panel's own
@@ -516,11 +476,9 @@ html.home-snap { scroll-snap-type: y mandatory; }
 .door:hover .door__arrow,
 .door:focus-visible .door__arrow { transform: translateX(0); opacity: 1; color: $h2-color; }
 
-/* Right-hand photographic plate — a floating, brass-keylined darkroom print that
-   previews the hovered destination (contained in its own column, never overlaps). */
+/* Photographic plate previewing the hovered destination — in its own column, never overlaps. */
 .home__index-stage { position: relative; }
-/* The plate links to whichever door it's currently showing. Hard-reset the site's
-   global link styling so it stays a photographic plate, not a blue underlined link. */
+/* Hard-reset link styling so the plate stays a photographic plate, not a blue link. */
 .door-plate__link,
 .door-plate__link:link,
 .door-plate__link:visited,
@@ -576,8 +534,7 @@ html.home-snap { scroll-snap-type: y mandatory; }
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Registration crop-ticks inset at the plate corners — the specimen-sheet apparatus the
-   panels already wear, marking the print as a catalogued plate rather than a soft card. */
+/* Registration crop-ticks at the plate corners — marks the print as a catalogued plate. */
 .door-plate__crop {
   position: absolute;
   z-index: 4;
@@ -628,9 +585,8 @@ html.home-snap { scroll-snap-type: y mandatory; }
 .wn-media { position: absolute; inset: 0; z-index: -2; background-size: cover; background-position: center; background-image: var(--cover); background-color: #14121a; filter: brightness(0.86) saturate(0.92); transform: scale(1.03); transition: transform 1.1s $cubic-bezier-smooth; }
 .wn-scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(9, 9, 12, 0.28) 0%, rgba(9, 9, 12, 0.55) 45%, rgba(9, 9, 12, 0.9) 100%); }
 
-/* Hover mirrors `.card`: a scaled lift on a deep layered shadow — no colour
-   shift on the border or title. The whole card scales, so the photo grows
-   with it (the media layer needs no separate zoom). */
+/* Hover mirrors .card: a scaled lift on a deep layered shadow. The whole card
+   scales, so the photo grows with it. */
 .wn-card:hover, .wn-card:focus-within {
   transform: scale(1.03) translateY(-0.25em);
   box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
@@ -704,8 +660,8 @@ html.home-reveal-ready .home__index.is-in .door { opacity: 1; transform: none; }
 html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: none; }
 
 @keyframes home-bg-zoom { from { transform: scale(1.02); } to { transform: scale(1.13); } }
-/* On load the background settles back: the QSD photo is briefly glimpsed, then
-   darkens and blurs into the frosted distance so the title takes over. */
+/* On load the background settles: the QSD photo is glimpsed, then darkens and
+   blurs into the distance. */
 @keyframes home-darken {
   from { filter: brightness(1) saturate(1) blur(3px); }
   to { filter: brightness(0.88) saturate(0.98) blur(7px); }

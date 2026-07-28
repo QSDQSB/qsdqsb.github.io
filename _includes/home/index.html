@@ -3,12 +3,10 @@
     <p class="home__plate">Wonders</p>
   </div>
 
-  {% comment %} The doors are the masthead's own nav (site.data.navigation.main) — one
-  shared source of truth, so adding/reordering a destination updates both places — with
-  CV deliberately kept off the landing (where_exp filter below). Each door's descriptor
-  and plate image are the linked page's own `excerpt` + `header.overlay_image`; `_pages`
-  are site.pages and the voyage index lives in the portfolio collection, so concat both
-  before the url lookup. {% endcomment %}
+  {% comment %} Doors are the masthead nav (site.data.navigation.main), so the two
+  stay in sync; CV is filtered off the landing. Each door's descriptor + plate image
+  come from the linked page's own excerpt + overlay_image — concat site.pages with
+  site.portfolio because the voyage index lives in the portfolio collection. {% endcomment %}
   {% assign door_pages = site.pages | concat: site.portfolio %}
   {% assign doors = site.data.navigation.main | where_exp: "link", "link.url != '/cv/'" %}
 
@@ -25,10 +23,9 @@
     </ul>
 
     <div class="home__index-stage" aria-hidden="true">
-      {% comment %} The plate mirrors whichever door is hovered, so clicking it goes
-      there too (JS keeps the href in sync). Kept aria-hidden + tabindex="-1": it is a
-      visual duplicate of the door list, which already exposes these destinations
-      accessibly — so it stays mouse-clickable without doubling up for screen readers. {% endcomment %}
+      {% comment %} The plate mirrors the hovered door and is clickable (JS syncs the
+      href). aria-hidden + tabindex="-1": a visual duplicate of the door list, hidden
+      from screen readers to avoid doubling the destinations. {% endcomment %}
       <a class="door-plate__link" id="doorPlateLink" tabindex="-1" href="{{ doors.first.url | relative_url }}">
       <figure class="door-plate">
         <div class="door-plate__frame">

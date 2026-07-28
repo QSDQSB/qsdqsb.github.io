@@ -1,8 +1,7 @@
 {%- comment -%}
-  Resolves a destination page's header.overlay_image to a usable URL, mirroring the
-  same rules as _includes/page__hero.html so the N° II plate reuses each page's own
-  hero image:  "http(s)://…" as-is · "/…" prepended with base only · otherwise
-  prepended with "/images/". Usage: {% include home/overlay-src.html page=door_posts %}
+  Resolves a page's header.overlay_image to a URL with the same rules as
+  page__hero.html: absolute as-is · root-relative via base · else under /images/.
+  Usage: {% include home/overlay-src.html page=dp %}
 {%- endcomment -%}
 {%- assign ov = include.page.header.overlay_image -%}
 {%- if ov contains "://" -%}{{ ov }}{%- else -%}{%- assign fc = ov | slice: 0, 1 -%}{%- if fc == "/" -%}{{ ov | relative_url }}{%- else -%}{{ ov | prepend: "/images/" | relative_url }}{%- endif -%}{%- endif -%}

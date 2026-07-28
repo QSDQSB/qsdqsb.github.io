@@ -1,11 +1,8 @@
 {% comment %}
-  What's New — the four most recently modified documents across Posts, Portfolio
-  and Voyage. jekyll-last-modified-at gives each doc a git-based `last_modified_at`,
-  but it is a Determinator object that Liquid's `sort` cannot order. So we encode a
-  fixed-width sortable timestamp + the doc's index into one token per doc, sort the
-  tokens as strings (14-digit prefix ⇒ chronological), reverse for newest-first, and
-  map back to the document. Pure Liquid — works under GitHub Pages safe mode.
-  Layout: 1 feature + 2 stacked + 1 wide (3:1).
+  Four most-recently-modified docs across Posts, Portfolio, Voyage. `last_modified_at`
+  is a Determinator that Liquid's `sort` can't order, so we encode "timestamp#index"
+  tokens, string-sort (14-digit prefix ⇒ chronological), reverse, and map back.
+  Pure Liquid — works under GitHub Pages safe mode.
 {% endcomment %}
 {% assign combined = site.posts | concat: site.portfolio | concat: site.voyage %}
 {% assign keyed = "" %}

@@ -1,9 +1,5 @@
-{% comment %}
-  First-visit welcome — a gentle, non-blocking advisory shown ONCE per visitor
-  (localStorage-gated, so returning visitors never see it again). No-JS shows nothing
-  and the site stays fully usable; reduced-motion gets a plain fade. The positioning
-  shell (.welcome-toast) is fixed + centred; the inner card carries the reveal.
-{% endcomment %}
+{% comment %} First-visit-only advisory, shown once (localStorage-gated). No-JS
+shows nothing; the site stays usable. {% endcomment %}
 <div class="welcome-toast" id="welcomeToast" hidden>
   <div class="welcome-toast__inner" role="status" aria-live="polite">
     <span class="welcome-toast__icon" aria-hidden="true">🖥️</span>
@@ -14,7 +10,7 @@
 <script>
   (function () {
     var KEY = "qsd:welcome-seen";
-    // First visit only: bail (and never show again) once the flag is set.
+    // Show once: bail if already seen, else mark seen.
     try { if (localStorage.getItem(KEY)) return; localStorage.setItem(KEY, "1"); } catch (e) {}
     var el = document.getElementById("welcomeToast");
     if (!el) return;
