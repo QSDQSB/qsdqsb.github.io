@@ -7,3 +7,5 @@ main:
     url: /voyage/
   - title: "CV"
     url: /cv/
+  - title: "About"
+    url: /about/

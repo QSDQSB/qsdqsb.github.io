@@ -54,6 +54,41 @@
 
 
 /*
+   Cinematic atmospheric backdrop
+   ==========================================================================
+   Fixed gradient mesh + film-grain overlay on the body (Home + About), so
+   content floats over depth. Paints via ::before (mesh) and ::after (grain).
+*/
+
+@mixin atmospheric-backdrop {
+  background-color: #08080c;
+
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(58% 48% at 74% 20%, rgba(198, 162, 74, 0.10), transparent 60%),
+      radial-gradient(66% 66% at 16% 88%, rgba(74, 107, 138, 0.10), transparent 70%),
+      radial-gradient(52% 52% at 50% 55%, rgba(107, 92, 134, 0.07), transparent 72%),
+      linear-gradient(180deg, #08080c 0%, #0b0a10 55%, #08080c 100%);
+  }
+
+  &::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/*
    Backdrop blur (paired standard + -webkit- prefixed fallback)
    ========================================================================== */
 

@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
   const body = document.body;
+  // Opt-out: the develop-in opening scene is a Home-only signature. Pages that
+  // set `no-opening-scene` (e.g. /about/) keep their overlay hero but never run
+  // the cinematic intro, so their content isn't dimmed on every visit.
+  if (body.classList.contains("no-opening-scene")) return;
   const hasOverlayHero = body.classList.contains("has-overlay-hero");
   const overlayHero = document.querySelector(".page__hero--overlay");
   if (!hasOverlayHero || !overlayHero) return;

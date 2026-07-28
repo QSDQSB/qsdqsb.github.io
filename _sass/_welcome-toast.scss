@@ -1,0 +1,86 @@
+/* ==========================================================================
+   WELCOME TOAST — first-visit, once-only advisory (localStorage-gated in
+   _includes/welcome-toast.html). A non-blocking glass card pinned to the bottom
+   of the viewport, shown site-wide to first-time visitors only.
+   ========================================================================== */
+.welcome-toast {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(1rem, 4vh, 2.25rem);
+  z-index: 900;                      /* above content; the search modal (higher) still wins */
+  width: min(92vw, 33rem);
+  transform: translateX(-50%);       /* positioning only — the reveal lives on the inner card */
+  pointer-events: none;              /* only the visible card should intercept clicks */
+
+  &[hidden] { display: none; }
+}
+
+.welcome-toast__inner {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.8rem 0.9rem 0.8rem 1.15rem;
+  border-radius: 0.7rem;
+  border: 1px solid rgba($h2-color, 0.28);
+  background: rgba(12, 12, 16, 0.82);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+          backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: $shadow-floating;
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition: opacity 0.6s $cubic-bezier-smooth, transform 0.6s $cubic-bezier-smooth;
+}
+.welcome-toast.is-in .welcome-toast__inner { opacity: 1; transform: translateY(0); }
+
+.welcome-toast__icon { flex: none; font-size: 1.3rem; line-height: 1; }
+
+.welcome-toast__text {
+  margin: 0;
+  font-family: $barlow-font-family;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: rgba($primary-color, 0.86);
+
+  b { color: $h2-color; font-weight: 600; }
+}
+
+.welcome-toast__close {
+  flex: none;
+  margin-left: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  font-family: $barlow-font-family;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba($primary-color, 0.72);
+  background: transparent;
+  border: 1px solid rgba($primary-color, 0.24);
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: color 0.3s, border-color 0.3s, background 0.3s;
+
+  &:hover,
+  &:focus-visible {
+    color: $h2-color;
+    border-color: rgba($h2-color, 0.5);
+    background: rgba($h2-color, 0.08);
+  }
+}
+
+@include responsive-down(mobile) {
+  .welcome-toast {
+    left: 0.9rem;
+    right: 0.9rem;
+    width: auto;
+    transform: none;
+  }
+  .welcome-toast__inner { flex-wrap: wrap; gap: 0.55rem 0.9rem; }
+  .welcome-toast__text { flex: 1 1 100%; }
+  .welcome-toast__close { margin-left: auto; }
+}
+
+@include responsive-reduced-motion {
+  .welcome-toast__inner,
+  .welcome-toast.is-in .welcome-toast__inner { transition: opacity 0.4s; transform: none; }
+}

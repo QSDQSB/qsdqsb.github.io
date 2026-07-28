@@ -1,0 +1,36 @@
+{% comment %}
+  Four most-recently-modified docs across Posts, Portfolio, Voyage. `last_modified_at`
+  is a Determinator that Liquid's `sort` can't order, so we encode "timestamp#index"
+  tokens, string-sort (14-digit prefix ⇒ chronological), reverse, and map back.
+  Pure Liquid — works under GitHub Pages safe mode.
+{% endcomment %}
+{% assign combined = site.posts | concat: site.portfolio | concat: site.voyage %}
+{% assign keyed = "" %}
+{% for d in combined %}{% assign k = d.last_modified_at | date: "%Y%m%d%H%M%S" %}{% assign keyed = keyed | append: k | append: "#" | append: forloop.index0 | append: "|" %}{% endfor %}
+{% assign ordered = keyed | split: "|" | sort | reverse %}
+
+<section class="home__whatsnew reveal">
+  <div class="home__section-head">
+    <p class="home__plate">Recent Updates</p>
+    <span class="home__note" lang="zh">有哪些文件夹刚刚被新建了呢？</span>
+  </div>
+
+  <div class="wn-grid">
+    {% for token in ordered limit: 4 %}
+      {% assign idx = token | split: "#" | last | plus: 0 %}
+      {% assign doc = combined[idx] %}
+      {% assign img = doc.header.overlay_image %}
+      {% assign firstchar = img | slice: 0 %}
+      {% if firstchar == '/' %}{% assign cover = img %}{% else %}{% assign cover = img | prepend: '/images/' %}{% endif %}
+      <a class="wn-card wn-card--{{ forloop.index }}" href="{{ doc.url | relative_url }}"{% if img %} style="--cover: url('{{ cover | relative_url }}');"{% endif %}>
+        <div class="wn-media"></div>
+        <div class="wn-scrim"></div>
+        <div class="wn-body">
+          {% include type-badge.html collection=doc.collection %}
+          <h3>{{ doc.title }}</h3>
+          {% if doc.excerpt and doc.excerpt != "" %}<p class="wn-ex">{{ doc.excerpt | strip_html | strip_newlines | truncatewords: 16 }}</p>{% endif %}
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</section>

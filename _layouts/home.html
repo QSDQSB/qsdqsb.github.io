@@ -1,0 +1,102 @@
+---
+layout: default
+---
+
+{% include base_path %}
+
+{% comment %} Three scroll-snap panels (hero · index · What's New). The snap
+container is <html.home-snap> (set in default.html) so window scroll — and
+masthead-intent.js — keeps working. {% endcomment %}
+<div id="main" role="main" class="home home--reel">
+
+  <section class="home__panel home__hero" style="--hero-photo: url('{{ '/images/QSD_Night_5v2.jpg' | relative_url }}');">
+    <div class="home__hero-media" aria-hidden="true"></div>
+    <div class="home__hero-blobs" aria-hidden="true">
+      <span class="blob blob--1"></span>
+      <span class="blob blob--2"></span>
+      <span class="blob blob--3"></span>
+      <span class="blob blob--4"></span>
+    </div>
+    <div class="home__hero-veil" aria-hidden="true"></div>
+    {% comment %} The QSD monogram — self-contained <qsd-mark> web component (see
+    qsd-mark.js). Right half on desktop, a band at the bottom on small screens. {% endcomment %}
+    <qsd-mark class="home__hero-anim" aria-hidden="true"></qsd-mark>
+    <div class="home__hero-inner">
+      <p class="home__plate" aria-hidden="true">Welcome to</p>
+      <h1 class="home__wordmark" itemprop="headline">
+        <span class="ln"><span><span class="home__wm-qsd">QSD</span>&rsquo;s</span></span>
+        <span class="ln"><span>House of</span></span>
+        <span class="ln"><span class="gold">Wonders</span></span>
+      </h1>
+      <p class="home__motto" lang="la"><span>Mors potius quam taedium</span></p>
+    </div>
+    <span class="home__scroll-hint" aria-hidden="true"></span>
+    <span class="home__marks" aria-hidden="true"></span>
+  </section>
+
+  <section class="home__panel home__panel--index" id="home-enter">
+    {% include home/index.html %}
+    <span class="home__scroll-hint" aria-hidden="true"></span>
+    <span class="home__marks" aria-hidden="true"></span>
+  </section>
+
+  <section class="home__panel home__panel--new">
+    {% include home/whats-new.html %}
+    <span class="home__scroll-hint home__scroll-hint--up" aria-hidden="true"></span>
+    <span class="home__marks" aria-hidden="true"></span>
+  </section>
+
+</div>
+
+<script src="{{ '/assets/js/qsd-mark.js' | relative_url }}" defer></script>
+
+<script>
+  // Always enter on the hero: browsers restore the prior scroll offset on
+  // reload / back-forward, which would drop you onto a lower panel. Force the
+  // top while on Home, then hand restoration back when leaving.
+  (function () {
+    if (!("scrollRestoration" in history)) return;
+    history.scrollRestoration = "manual";
+    var toTop = function () { window.scrollTo(0, 0); };
+    toTop();
+    window.addEventListener("load", toTop);
+    window.addEventListener("pageshow", function (e) { if (e.persisted) toTop(); });  // bfcache restore
+    window.addEventListener("pagehide", function () { history.scrollRestoration = "auto"; });
+  })();
+
+  // Scroll-reveal for the Home (site-wide scroll-animations.js only runs on
+  // .page__content, absent here). Fails safe: reduced-motion / no-JS show
+  // everything, and a 6s timeout guarantees nothing stays hidden.
+  (function () {
+    var els = Array.prototype.slice.call(document.querySelectorAll(".home .reveal, .home__index"));
+    if (!els.length) return;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || !("IntersectionObserver" in window)) {
+      els.forEach(function (el) { el.classList.add("is-in"); });
+      return;
+    }
+    document.documentElement.classList.add("home-reveal-ready");
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } });
+    }, { rootMargin: "0px 0px -10% 0px", threshold: 0.12 });
+    els.forEach(function (el) { if (el.getBoundingClientRect().top < vh) el.classList.add("is-in"); else io.observe(el); });
+    window.setTimeout(function () { els.forEach(function (el) { el.classList.add("is-in"); }); }, 6000);
+  })();
+
+  // Index: develop the plate to the hovered door. No revert — it holds on the
+  // last shown, and its href tracks whatever it shows.
+  (function () {
+    var doors = Array.prototype.slice.call(document.querySelectorAll(".home__doors .door"));
+    var shots = Array.prototype.slice.call(document.querySelectorAll(".door-shot"));
+    if (!doors.length || !shots.length) return;
+    var plateLink = document.getElementById("doorPlateLink");
+    doors.forEach(function (door, i) {
+      door.addEventListener("mouseenter", function () {
+        shots.forEach(function (s, j) { s.classList.toggle("is-on", j === i); });
+        // the plate is clickable — send it wherever the door it's showing goes
+        if (plateLink) plateLink.setAttribute("href", door.getAttribute("href"));
+      });
+    });
+  })();
+</script>

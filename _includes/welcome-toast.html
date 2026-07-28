@@ -1,0 +1,26 @@
+{% comment %} First-visit-only advisory, shown once (localStorage-gated). No-JS
+shows nothing; the site stays usable. {% endcomment %}
+<div class="welcome-toast" id="welcomeToast" hidden>
+  <div class="welcome-toast__inner" role="status" aria-live="polite">
+    <span class="welcome-toast__icon" aria-hidden="true">🖥️</span>
+    <p class="welcome-toast__text">QSD and his friends welcome you to enjoy this site on a laptop — in particular <b>Chrome</b> and <b>Safari</b>.</p>
+    <button class="welcome-toast__close" type="button" aria-label="Dismiss this message">Got it</button>
+  </div>
+</div>
+<script>
+  (function () {
+    var KEY = "qsd:welcome-seen";
+    // Show once: bail if already seen, else mark seen.
+    try { if (localStorage.getItem(KEY)) return; localStorage.setItem(KEY, "1"); } catch (e) {}
+    var el = document.getElementById("welcomeToast");
+    if (!el) return;
+    window.setTimeout(function () {
+      el.hidden = false;
+      requestAnimationFrame(function () { el.classList.add("is-in"); });
+    }, 700);
+    el.querySelector(".welcome-toast__close").addEventListener("click", function () {
+      el.classList.remove("is-in");
+      window.setTimeout(function () { el.hidden = true; }, 450);
+    });
+  })();
+</script>

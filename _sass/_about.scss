@@ -1,0 +1,51 @@
+/* ==========================================================================
+   ABOUT — editorial self-intro page at `/about/`
+   The relocated scrapbook: clustered self-intro, coda asides, banner + logo.
+   Scoped under `.page--about` (set via about.md `body_class`).
+   ========================================================================== */
+
+/* Shared cinematic depth with Home — fixed gradient-mesh + grain backdrop. */
+body.page--about {
+  @include atmospheric-backdrop;
+}
+
+/* Taller hero to echo Home's scale, but still content-first — keeps the
+   dissolve-into-page treatment rather than filling the viewport. */
+.page--about .page__hero--overlay {
+  min-height: clamp(28rem, 76vh, 46rem);
+  min-height: clamp(28rem, 76svh, 46rem);
+}
+
+/* With the author rail present, About uses the flex sidebar shell (the
+   .page-no-right-sidebar wrapper shrinks via min-width:0); no sidebar → block
+   flow so .about doesn't overflow as a flex item (same fix as Home). */
+.page--about #main.no-left-sidebar {
+  display: block;
+}
+
+.about {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.2rem 4rem;
+}
+
+/* --- self-deprecating label row above the self-intro list --- */
+.about__labels {
+  font-family: $barlow-font-family;
+  font-size: $type-size-7;
+  text-align: center;
+  line-height: 2.1;
+  color: rgba($primary-color, 0.6);
+  margin: 1.5rem 0 2rem;
+}
+
+/* --- coda asides (post-scriptum): quiet marginalia --- */
+.about__aside {
+  font-family: $barlow-font-family;
+  font-size: $type-size-6;
+  line-height: 1.55;
+  color: rgba($primary-color, 0.72);
+  border-left: 2px solid $border-color;
+  padding: 0.15rem 0 0.15rem 1rem;
+  margin: 1rem 0;
+}
