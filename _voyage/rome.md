@@ -1,6 +1,7 @@
 ---
 title: Rome
 excerpt: "Where laurels dissolve into the inscriptions of obelisks"
+seo_description: "Photography from Rome, Italy — St Peter's Basilica and the Vatican Museums, Castel Sant'Angelo, the Trevi Fountain, Palatine Hill and the Vittoriano. Shot by QSD."
 subgalleries: true
 date: 2025-05-28
 tags:

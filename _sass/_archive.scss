@@ -33,7 +33,7 @@
     text-decoration: none;
     opacity: 0.6;
     font-size: smaller;
-    color: $foursquare-color;
+    color: #0072b1;
   }
   &:hover {
     a {
@@ -230,7 +230,7 @@
       margin: 0;
       // Touch devices have no hover state, so the excerpt would never
       // surface. Show it by default on coarse pointers / no-hover devices.
-      @media (hover: none), (pointer: coarse) {
+      @include responsive-coarse-pointer {
         opacity: 1;
       }
     }
@@ -259,7 +259,7 @@
     right: 1rem;
     opacity: 0;
     // Touch devices: surface the date by default (no hover state).
-    @media (hover: none), (pointer: coarse) {
+    @include responsive-coarse-pointer {
       opacity: 1;
     }
   }
@@ -317,8 +317,7 @@
               0 8px  8px  rgba(0, 0, 0, .25),
               0 16px 16px rgba(0, 0, 0, .25);
   transition: $cubic-bezier-default;
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
+  @include backdrop-blur(blur(5px));
   &:hover {
     box-shadow: $box-shadow-fancy;
     height: 7.5rem;
@@ -341,9 +340,8 @@
   padding: 0.3rem 0.2rem;
   text-align: center;
   background-color: rgba(133, 102, 102, 0.3);
-  transition: all 0.5s cubic-bezier(.33,.11,.02,.99);
-  -webkit-backdrop-filter: blur(10px) brightness(0.85);
-  backdrop-filter: blur(10px) brightness(0.85);
+  transition: $cubic-bezier-default-05s;
+  @include backdrop-blur(blur(10px) brightness(0.85));
   text-shadow: rgba(14, 14, 14, 0.2) 0px 7px 14px, rgba(24, 24, 24, 0.25) 0px 5px 5px;
   overflow: hidden;
   p {
@@ -433,7 +431,7 @@
   width: max(75%, 20em);
   margin: 0 auto;
   max-width: 40rem;
-  border: 1px solid $intriguing-word-border-color;
+  border: 1px solid #7e7058;
   position: relative;
   padding: 1rem 2.5rem;
   border-radius: 1rem;
@@ -521,8 +519,7 @@
   padding: 8px;
   opacity: 0;
   border-radius: $border-radius;
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  @include backdrop-blur(blur(8px));
   background: rgba(4, 4, 4, 0.23);
   border: 1px solid rgba(245, 202, 179, 0.2);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.4),
@@ -550,7 +547,7 @@
     opacity: 1;
   }
   &--reverse {
-    transition: all 1.5s cubic-bezier(.33,.11,.02,.99);
+    transition: all 1.5s $cubic-bezier-param;
     transition-delay: 0.1s;
     transform: rotate(123deg);
     &:hover {
@@ -571,7 +568,7 @@
     transform: none;
   }
   .floating_tarot_card {
-    background: $rose-gold-gradient-translucent;
+    background: linear-gradient(195deg,#FAC39EBB 0%, #FBD0B7BB 25%, #FBD6C4BB 65%, #DF989FAA 100%);
   }
 }
 @keyframes oscillate {

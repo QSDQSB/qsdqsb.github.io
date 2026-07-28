@@ -8,6 +8,7 @@ for_agents/
 .playwright-cli
 .sass-cache/
 .claude/settings.local.json
+.claude/worktrees/
 
 # Generated gallery thumbnails — produced by scripts/generate-gallery-assets.mjs.
 # CI generates a fresh set on every push; locally, `npm run build|serve` runs
