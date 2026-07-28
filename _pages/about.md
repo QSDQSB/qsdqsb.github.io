@@ -5,10 +5,6 @@ title: "Hi! Meet QSD😵‍💫!"
 author_profile: true
 body_class: no-opening-scene page--about
 excerpt: "A procrastinator, a nihilist, a deconstructionist, an idiot. "
-excerpts:
-- A procrastinator, a nihilist, a deconstructionist, an idiot.
-- A voyager, a melancholic, an aesthete, an escapist .
-- A contrarian, a formalist, a self-saboteur, a cynic.
 toc: true
 toc_sticky: true
 ticker-tape: true
@@ -46,50 +42,33 @@ header:
 <br><i><span style="color: #FCFCFC; font-variant: small-caps;">Attempt #8</span> vom 27.10.2025</i>
 </a>
 
-<h2 id="a-bizarre-self-intro">A Bizarre Self-Intro…?</h2>
+<h2 id="a-bizarre-self-intro">A procrastinator, a nihilist, a deconstructionist, an idiot.</h2>
 
 <p class="about__labels">🌃 <span lang="zh">第五届熬夜锦标赛全球总亚军</span> · 😅 <span lang="zh">流汗黄豆常在心间</span> · 🐟 <span lang="zh">摸鱼王</span> · ⌚️ <span lang="zh">时间管理废物</span> · 🚦 <span lang="zh">选恐晚期</span> · 🤤 <span lang="zh">热衷无所事事</span></p>
 
-<div class="about__clusters">
-  <section class="about__cluster">
-    <h3>Who</h3>
-    <ul>
-      <li>🤖 QSDQSB</li>
-      <li>🔬 '24 Maths &amp; Stats at Oxford</li>
-      <li>🦃 From <a href="https://www.queens.ox.ac.uk">The Queen's College</a>, whose crest wears three turkeys</li>
-      <li>🧙‍♂️ 𝕽𝖆𝖛𝖊𝖓𝖈𝖑𝖆𝖜 🦅</li>
-      <li>🕶 S.H.I.E.L.D. agent</li>
-      <li>🪷 Geographically Hangzhounese, spiritually Shanghainese</li>
-    </ul>
-  </section>
-  <section class="about__cluster">
-    <h3>Makes</h3>
-    <ul>
-      <li>📷 Photography rookie</li>
-      <li>🎸 Amateur composer — 🎹 piano lapsed, 🎻 "learning" violin, 🎺 so-called <span lang="zh">网易音乐人</span></li>
-      <li>🧱 Lego <a href="https://www.lego.com/en-gb/product/the-shield-helicarrier-76042">76042</a> + <a href="https://www.lego.com/en-gb/product/hogwarts-castle-71043">71043</a> + <a href="https://www.lego.com/en-gb/product/typewriter-21327">21327</a> (⚠️ nothing to do with Keble)</li>
-      <li>👾 Emoji crusher, as this page attests</li>
-    </ul>
-  </section>
-  <section class="about__cluster">
-    <h3>Watches &amp; Plays</h3>
-    <ul>
-      <li>📺 <a href="https://www.imdb.com/title/tt0086831/">Yes, Prime Minister</a> · <a href="https://www.imdb.com/title/tt2575988/">Silicon Valley</a> · <a href="https://www.imdb.com/title/tt3032476/">Better Call Saul</a></li>
-      <li>👸🏼 <a href="https://www.imdb.com/title/tt5363918/">Disenchantment</a> · <a href="https://www.imdb.com/title/tt0475784/">Westworld S1–2</a> · <a href="https://www.imdb.com/title/tt0944947/">Game of Thrones S1–4</a></li>
-      <li>🎮 Civilization VI — and sucks at it :(</li>
-    </ul>
-  </section>
-  <section class="about__cluster">
-    <h3>Running Jokes</h3>
-    <ul>
-      <li><a href="posts/2022/03/coffee-counter">☕️</a> Americano addict (click the bean — it might do something)</li>
-      <li>🎨 <span class="macaron" lang="zh">马卡龙色系yyds</span> · 🐱 <span class="macaron" lang="zh">骨灰级猫猫粉</span></li>
-      <li>🐟 enjoys <i><span lang="zh">摸鱼</span></i> every single day</li>
-      <li>🏃 <span lang="zh">努力减肥中(但愿)</span></li>
-      <li>📱 WeChat $\times\times\times\times\times\times$ — reasonably guessable from this site</li>
-    </ul>
-  </section>
-</div>
+- 🤖QSDQSB
+- 🔬24' Maths&Stats at Ox
+- 🦃From [The Queen's College](https://www.queens.ox.ac.uk), whose logo consists of three turkeys
+- [☕️](posts/2022/03/coffee-counter)Americano addict
+  - ⬆️Might trigger something if you click the coffee emoji
+- 📷Photography rookie
+- 🎸Amateur music composer
+  - 🎹This guy really used to know piano, but not anymore
+  - 🎻Proudly self-claim to be learning violin
+  - 🎺So-called <span lang="zh">网易音乐人</span>
+- 📱WeChat $\times\times\times\times\times\times$; <span class="barlow">Would argue reasonably straightforward to guess based on this site.</span>
+- 🎮Civilization VI! But suck at it :(
+- 🧱Lego [76042](https://www.lego.com/en-gb/product/the-shield-helicarrier-76042)+[71043](https://www.lego.com/en-gb/product/hogwarts-castle-71043)+[21327](https://www.lego.com/en-gb/product/typewriter-21327)
+- ⚠️The previous red brick has nothing to do with Keble College.
+- 🧙‍♂️𝕽𝖆𝖛𝖊𝖓𝖈𝖑𝖆𝖜🦅
+- 🕶S.H.I.E.L.D. agent
+- 📺<span class="barlow">[💷YPM](https://www.imdb.com/title/tt0086831/)! [💻Silicon Valley](https://www.imdb.com/title/tt2575988/)! [🧑‍💼Better Call Saul](https://www.imdb.com/title/tt3032476/)! [👸🏼Disenchantment](https://www.imdb.com/title/tt5363918/)! [🤖Westworld S1-2](https://www.imdb.com/title/tt0475784/)! [🐉Game of Thrones S1-4](https://www.imdb.com/title/tt0944947/)!</span>
+- 👾Emoji crusher(as you can see from this page)
+- 🎨<span class="macaron" lang="zh">马卡龙色系yyds</span>
+- 🐱<span class="macaron" lang="zh">骨灰级猫猫粉</span>
+- 🐟enjoy *<span lang="zh">摸鱼</span>* every day
+- 🏃<span lang="zh">努力减肥中(但愿)</span>
+- 🪷Geographically Hangzhounese, spiritually Shanghainese
 
 <div class="notice--olive-green">‼️ Every picture on this website is shot by QSD himself, or his beloved friends.</div>
 
