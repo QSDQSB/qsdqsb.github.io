@@ -9,35 +9,53 @@ var SEARCH_MAX_RENDERED_RESULTS = 30;
 var SEARCH_HAN_PATTERN = /[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/;
 var SEARCH_HAN_RUN_PATTERN = /[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]+/g;
 
-var idx = lunr(function () {
-  this.field('title', { boost: 16 })
-  this.field('search_keywords', { boost: 14 })
-  this.field('tags', { boost: 11 })
-  this.field('excerpt', { boost: 8 })
-  this.field('categories', { boost: 6 })
-  this.field('content_excerpt', { boost: 4 })
-  this.field('cjk_terms', { boost: 14 })
-  this.ref('id')
+// The search index is expensive to build — a multi-second synchronous pass over
+// the whole-site store. Building it at load froze the main thread and, on the
+// Home, held back the door reveal, so the page looked half-broken for seconds.
+// Build it lazily instead: on first use, warmed during idle time so the first
+// real search is still instant while first paint / interactivity stay unblocked.
+var idx = null;
+function buildSearchIndex() {
+  if (idx) { return idx; }
+  idx = lunr(function () {
+    this.field('title', { boost: 16 })
+    this.field('search_keywords', { boost: 14 })
+    this.field('tags', { boost: 11 })
+    this.field('excerpt', { boost: 8 })
+    this.field('categories', { boost: 6 })
+    this.field('content_excerpt', { boost: 4 })
+    this.field('cjk_terms', { boost: 14 })
+    this.ref('id')
 
-  this.pipeline.remove(lunr.trimmer)
+    this.pipeline.remove(lunr.trimmer)
 
-  for (var item in store) {
-    var rawTags = store[item].tags;
-    var indexTags = Array.isArray(rawTags)
-      ? rawTags.map(function(t) { return String(t || '').replace(/^[^\p{L}]+/u, ''); }).join(' ')
-      : String(rawTags || '').replace(/^[^\p{L}]+/u, '');
-    this.add({
-      title: store[item].title,
-      excerpt: store[item].excerpt,
-      content_excerpt: store[item].content_excerpt,
-      categories: store[item].categories,
-      tags: indexTags,
-      search_keywords: store[item].search_keywords,
-      cjk_terms: store[item].cjk_terms,
-      id: item
-    })
-  }
-});
+    for (var item in store) {
+      var rawTags = store[item].tags;
+      var indexTags = Array.isArray(rawTags)
+        ? rawTags.map(function(t) { return String(t || '').replace(/^[^\p{L}]+/u, ''); }).join(' ')
+        : String(rawTags || '').replace(/^[^\p{L}]+/u, '');
+      this.add({
+        title: store[item].title,
+        excerpt: store[item].excerpt,
+        content_excerpt: store[item].content_excerpt,
+        categories: store[item].categories,
+        tags: indexTags,
+        search_keywords: store[item].search_keywords,
+        cjk_terms: store[item].cjk_terms,
+        id: item
+      })
+    }
+  });
+  return idx;
+}
+
+// Deliberately NOT warmed at load or on idle: building the index is a multi-second
+// synchronous task, and the Home hero runs a continuous main-thread rAF morph the
+// whole time it is on screen — any background build would visibly stutter it. So
+// we build strictly on demand, at the first query (see buildSearchIndex() in
+// runSearch), which lands the one-off cost behind the open search overlay where
+// the morph isn't being watched. First search pays ~a beat; every search after is
+// instant.
 
 function searchHasHanText(value) {
   return SEARCH_HAN_PATTERN.test(String(value || ""));
@@ -177,13 +195,22 @@ function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
       return;
     }
 
+    // First qualifying search builds the index (a one-off multi-second pass). Paint
+    // a status first, then build + re-run on a later tick so the message shows
+    // before the main thread is monopolised by the build.
+    if (!idx) {
+      searchRenderStatus(resultdiv, '{{ site.data.ui-text[site.locale].search_indexing | default: "Preparing search…" }}');
+      window.setTimeout(function () { buildSearchIndex(); runSearch(rawQuery); }, 32);
+      return;
+    }
+
     var latinTerms = normalizedQuery
       .split(lunr.tokenizer.separator)
       .map(function(term) { return term.trim(); })
       .filter(Boolean);
     var cjkTerms = searchBuildCjkQueryTerms(normalizedQuery);
     var result =
-      idx.query(function (q) {
+      buildSearchIndex().query(function (q) {
         latinTerms.forEach(function (term) {
           if (!term || searchHasHanText(term)) return;
           q.term(term, { boost: 100 })
