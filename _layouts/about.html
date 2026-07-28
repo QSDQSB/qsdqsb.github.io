@@ -1,0 +1,34 @@
+---
+layout: default
+---
+
+{% include base_path %}
+
+{% if page.header.overlay_color or page.header.overlay_image or page.header.image %}
+  {% include page__hero.html %}
+{% endif %}
+
+{% comment %} Honour author_profile: when set, render the shared left rail
+(sidebar.html) and wrap the article as .page-no-right-sidebar so the flex shell
+positions it. No sidebar → block flow (see .page--about #main in _about.scss). {% endcomment %}
+{% assign has_left_sidebar = false %}
+{% if page.author_profile or layout.author_profile or page.sidebar %}
+  {% assign has_left_sidebar = true %}
+{% endif %}
+
+<div id="main" role="main" class="{% if has_left_sidebar %}has-left-sidebar{% else %}no-left-sidebar{% endif %} no-right-toc">
+  {% if has_left_sidebar %}
+    {% include sidebar.html %}
+  {% endif %}
+
+  <div class="page-no-right-sidebar">
+    <article class="about" itemscope itemtype="http://schema.org/AboutPage">
+      {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+      {% if page.excerpt %}<meta itemprop="description" content="{{ page.excerpt | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+
+      <section class="about__body page__content" itemprop="text">
+        {{ content }}
+      </section>
+    </article>
+  </div>
+</div>
