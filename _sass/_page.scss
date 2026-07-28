@@ -493,6 +493,9 @@ body.collection--posts .page__inner-wrap .page__content {
   }
 }
 
+// tech-debt: styles the page__hero.html swiper branch, which no content file
+// currently activates (`page.swipers` is never set) — see issue-proposal PR
+// "propose-retire-swiper-hero-path" before extending this.
 .page-overlay-swiper--hero {
   .swiper-slide {
     height: auto;

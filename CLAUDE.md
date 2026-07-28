@@ -369,7 +369,7 @@ Active when `has-overlay-hero` is on the body (set from page overlay/swiper cond
 - **Swiper path** — `div.swiper.page-overlay-swiper.page-overlay-swiper--hero` with slide-level `.page__hero--overlay.page__hero--overlay-home`.
 - **Non-swiper path** — `.page__hero--overlay` with the same core copy/media shell.
 
-Both paths share spacing rhythm and title/excerpt hierarchy. **Maintaining parity is intentional** — divergence between them is a regression unless explicitly approved.
+Both paths share spacing rhythm and title/excerpt hierarchy. **Maintaining parity is intentional** — divergence between them is a regression unless explicitly approved. **Currently, the swiper path is unreachable in production** — no content file sets `page.swipers`, `_layouts/splash.html` (its natural host) isn't used by any page, and the Swiper vendor library/`slider.js` aren't loaded anywhere live; a tech-debt proposal PR (`propose-retire-swiper-hero-path`) covers retiring or re-wiring it before treating the two paths as equally maintained.
 
 Excerpt reveal / opening scene is runtime-driven by `assets/js/overlay-opening-scene.js`, which:
 - Toggles `overlay-opening-*` body classes.
