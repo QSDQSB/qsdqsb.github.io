@@ -1,6 +1,7 @@
 ---
 title: "The Unreachable Bridge"
 date: 2026-07-09
+updated: 2026-07-27
 permalink: /posts/shihuqiao/
 redirect_from:
   - /posts/2026/shihuqiao/
@@ -13,6 +14,7 @@ tags:
 header:
   overlay_image: cover/dengxinxiang-bw-sky-3v1.jpg
   overlay_filter: 0.35
+  caption: "*Le città invisibili*, Italo Calvino."
 body_class: nocturne
 prose_justify: true
 toc: true

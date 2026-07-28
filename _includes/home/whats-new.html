@@ -1,12 +1,11 @@
 {% comment %}
-  Four most-recently-modified docs across Posts, Portfolio, Voyage. `last_modified_at`
-  is a Determinator that Liquid's `sort` can't order, so we encode "timestamp#index"
-  tokens, string-sort (14-digit prefix ⇒ chronological), reverse, and map back.
-  Pure Liquid — works under GitHub Pages safe mode.
+  Four most-recently-touched docs across Posts, Portfolio, Voyage.
+  Sort key: frontmatter `updated` if present, else `date`.
+  Index is zero-padded to 3 digits so the string-sort tiebreaker is stable.
 {% endcomment %}
 {% assign combined = site.posts | concat: site.portfolio | concat: site.voyage %}
 {% assign keyed = "" %}
-{% for d in combined %}{% assign k = d.last_modified_at | date: "%Y%m%d%H%M%S" %}{% assign keyed = keyed | append: k | append: "#" | append: forloop.index0 | append: "|" %}{% endfor %}
+{% for d in combined %}{% assign k = d.updated | default: d.date | date: "%Y%m%d%H%M%S" %}{% assign raw_idx = forloop.index0 | prepend: "000" %}{% assign pad_idx = raw_idx | slice: -3, 3 %}{% assign keyed = keyed | append: k | append: "#" | append: pad_idx | append: "|" %}{% endfor %}
 {% assign ordered = keyed | split: "|" | sort | reverse %}
 
 <section class="home__whatsnew reveal">
