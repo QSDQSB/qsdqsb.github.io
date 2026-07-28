@@ -16,10 +16,11 @@ body.page--about {
   min-height: clamp(28rem, 76svh, 46rem);
 }
 
-/* #main defaults to the flex sidebar shell; About has no sidebar, so restore
-   normal block flow — otherwise .about becomes a non-shrinking flex item and
-   overflows the viewport horizontally (same fix as Home). */
-.page--about #main {
+/* #main defaults to the flex sidebar shell. With the author rail present About
+   uses that shell (the .page-no-right-sidebar wrapper shrinks safely via
+   min-width:0); with no sidebar, restore plain block flow so .about doesn't
+   overflow as a non-shrinking flex item (same fix as Home). */
+.page--about #main.no-left-sidebar {
   display: block;
 }
 
@@ -29,7 +30,7 @@ body.page--about {
   padding: 1.5rem 1.2rem 4rem;
 }
 
-/* --- self-deprecating label row above the clusters --- */
+/* --- self-deprecating label row above the self-intro list --- */
 .about__labels {
   font-family: $barlow-font-family;
   font-size: $type-size-7;
@@ -37,50 +38,6 @@ body.page--about {
   line-height: 2.1;
   color: rgba($primary-color, 0.6);
   margin: 1.5rem 0 2rem;
-}
-
-/* --- the self-intro, grouped into scannable clusters --- */
-.about__clusters {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin: 1.5rem 0 2.5rem;
-
-  @include responsive-down(mobile) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.about__cluster {
-  background: rgba($primary-color, 0.035);
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  padding: 1.15rem 1.3rem 1.35rem;
-
-  h3 {
-    font-family: $barlow-font-family;
-    font-size: $type-size-8;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba($primary-color, 0.7);
-    margin: 0 0 0.85rem;
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.45rem;
-  }
-
-  li {
-    font-family: $barlow-font-family;
-    font-size: $type-size-6;
-    line-height: 1.4;
-    color: rgba($primary-color, 0.85);
-  }
 }
 
 /* --- coda asides (post-scriptum): quiet marginalia, replaces the old
