@@ -21,12 +21,12 @@ var store = [
           {%- endfor -%}
         {%- endfor -%}
       {%- endcapture -%}
-      {%- capture display_excerpt -%}{{ doc.description | default: doc.excerpt | markdownify | strip_html | strip_newlines }}{%- endcapture -%}
+      {%- capture display_excerpt -%}{{ doc.description | default: doc.excerpt | markdownify | strip_html }}{%- endcapture -%}
       {%- capture content_excerpt -%}
         {%- if site.search_full_content == true -%}
-          {{ searchable_content | markdownify | strip_html | strip_newlines }}
+          {{ searchable_content | markdownify | strip_html }}
         {%- else -%}
-          {{ searchable_content | markdownify | strip_html | strip_newlines | truncatewords: 50 }}
+          {{ searchable_content | markdownify | strip_html | truncatewords: 50 }}
         {%- endif -%}
       {%- endcapture -%}
       {%- if doc.header.teaser -%}
@@ -70,7 +70,7 @@ var store = [
   {%- endfor -%}
   {%- for doc in site.pages -%}
     {%- unless doc.search == false or doc.url != "/" and doc.url != "/publications/" and doc.url != "/portfolio/" and doc.url != "/talks/" and doc.url != "/cv/" -%}
-    {%- capture display_excerpt -%}{{ doc.description | default: doc.excerpt | markdownify | strip_html | strip_newlines }}{%- endcapture -%}
+    {%- capture display_excerpt -%}{{ doc.description | default: doc.excerpt | markdownify | strip_html }}{%- endcapture -%}
     {%- if doc.layout == "archive" -%}
       {%- assign content_excerpt = "" -%}
     {%- else -%}
@@ -86,9 +86,9 @@ var store = [
       {%- endcapture -%}
       {%- capture content_excerpt -%}
         {%- if site.search_full_content == true -%}
-          {{ searchable_content | markdownify | strip_html | strip_newlines }}
+          {{ searchable_content | markdownify | strip_html }}
         {%- else -%}
-          {{ searchable_content | markdownify | strip_html | strip_newlines | truncatewords: 50 }}
+          {{ searchable_content | markdownify | strip_html | truncatewords: 50 }}
         {%- endif -%}
       {%- endcapture -%}
     {%- endif -%}
@@ -211,9 +211,29 @@ function searchGetResultTypeMeta(collection) {
   return { label: "Other", className: "other", iconClass: "fa-solid fa-cat" };
 }
 
+function searchDecodeEntities(text) {
+  var el = document.createElement('textarea');
+  el.innerHTML = String(text || '');
+  return el.value;
+}
+
+function searchNormalizeStoreText(text) {
+  var decoded = searchDecodeEntities(text);
+  decoded = decoded.replace(/<!--[\s\S]*?-->/g, '');
+  decoded = decoded.replace(/<[^>]+>/g, ' ');
+  return decoded.replace(/\s+/g, ' ').trim();
+}
+
 for (var searchStoreIndex = 0; searchStoreIndex < store.length; searchStoreIndex++) {
   var searchEntry = store[searchStoreIndex];
   if (!searchEntry) continue;
+
+  if (searchEntry.excerpt) {
+    searchEntry.excerpt = searchNormalizeStoreText(searchEntry.excerpt);
+  }
+  if (searchEntry.content_excerpt) {
+    searchEntry.content_excerpt = searchNormalizeStoreText(searchEntry.content_excerpt);
+  }
 
   var normalizedKeywords = searchNormalizeKeywords(searchEntry.search_keywords);
   searchEntry.search_keywords = normalizedKeywords;
