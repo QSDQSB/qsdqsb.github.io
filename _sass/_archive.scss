@@ -270,6 +270,13 @@
     font-family: $tag-font-family;
     font-size: $type-code-size;
     padding: 0;
+    // Touch/mobile: with the excerpt already dropped, this meta line
+    // ("less than 1 minute read") is the only dangling text and crowds the
+    // compact cover — drop it on touch too, leaving image + title + date.
+    // Desktop keeps it.
+    @include responsive-coarse-pointer {
+      display: none;
+    }
   }
 
 }
