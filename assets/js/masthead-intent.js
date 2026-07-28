@@ -19,9 +19,6 @@ document.addEventListener("DOMContentLoaded", function () {
   let scrollActivityUntil = 0;
   let hideTimer = null;
   let autoFadeTimer = null;
-  let rafId = null;
-  let viewportSyncRaf = null;
-  let overflowSyncRaf = null;
   let pendingViewportPhase = null;
   let lastTopIntentAt = 0;
   let navState = "collapsed";
@@ -238,38 +235,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
   syncScrollState();
 
+  const flushViewportState = window.QSD.rafGate(function () {
+    const phase = pendingViewportPhase || "active";
+    pendingViewportPhase = null;
+
+    syncGreedyToggle();
+
+    if (phase !== "settled") {
+      return;
+    }
+
+    scheduleAutoFadeIfEligible();
+  });
+
   const syncViewportState = function (event) {
     const detail = event && event.detail ? event.detail : {};
     const nextPhase = detail.phase || "active";
     pendingViewportPhase = nextPhase === "settled" ? "settled" : (pendingViewportPhase || nextPhase);
+    flushViewportState();
+  };
 
-    if (viewportSyncRaf) return;
-    viewportSyncRaf = window.requestAnimationFrame(function () {
-      viewportSyncRaf = null;
-      const phase = pendingViewportPhase || "active";
-      pendingViewportPhase = null;
+  const syncOverflowState = window.QSD.rafGate(function () {
+    syncGreedyToggle();
 
-      syncGreedyToggle();
-
-      if (phase !== "settled") {
-        return;
-      }
-
+    if (navState === "collapsed") {
       scheduleAutoFadeIfEligible();
-    });
-  };
-
-  const syncOverflowState = function () {
-    if (overflowSyncRaf) return;
-    overflowSyncRaf = window.requestAnimationFrame(function () {
-      overflowSyncRaf = null;
-      syncGreedyToggle();
-
-      if (navState === "collapsed") {
-        scheduleAutoFadeIfEligible();
-      }
-    });
-  };
+    }
+  });
 
   const onOverlayOpeningState = function (event) {
     if (prefersReducedMotion) return;
@@ -293,13 +285,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  window.addEventListener("scroll", function () {
-    if (rafId) return;
-    rafId = window.requestAnimationFrame(function () {
-      syncScrollState();
-      rafId = null;
-    });
-  }, { passive: true });
+  window.addEventListener("scroll", window.QSD.rafGate(syncScrollState), { passive: true });
   window.addEventListener("qsd:viewport-change", syncViewportState, { passive: true });
   window.addEventListener("qsd:nav-overflow-updated", syncOverflowState, { passive: true });
   window.addEventListener("qsd:overlay-opening", onOverlayOpeningState, { passive: true });

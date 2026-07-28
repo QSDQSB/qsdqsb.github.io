@@ -1,0 +1,533 @@
+/* ==========================================================================
+   JIANFEI TREATISE — post-scoped, deadpan Computer-Modern academic treatment
+
+   A mock-academic "treatise" reading of the weight-loss diary: rigorous LaTeX /
+   Computer-Modern typography applied, straight-faced, to a trivial subject.
+   Opt in per post with `body_class: jianfei-treatise`.
+
+   Principles (from QSD's steer):
+   - Verbatim text only — the "paper" feel comes from type + structure, never
+     from added words. No invented labels, titles, or tags.
+   - No callout boxes — the existing `.notice--info` definitions become quiet
+     academic asides, not coloured boxes.
+   - Colour only where it carries meaning, and only two warm accents: the weight
+     descent (and the definition rules) in oxblood, its −6 kg payoff gilded in
+     antique gold; unrecorded attempts muted. Otherwise near-monochrome CM on the
+     dark ground. The emoji keep their own colour.
+
+   Motion lives in assets/js/jianfei-treatise.js (adds `.jf-in` to each exhibit to
+   stagger its day-cards, and scrubs the figure). It bails under prefers-reduced-motion;
+   the SCSS below also nulls its transitions via the responsive-reduced-motion mixin, so the piece
+   inherits the dual guard.
+   ========================================================================== */
+
+// Antique gold — the treatise's second warm accent (the −6 kg payoff + gilded
+// cross-refs), paired with $danger-color oxblood. Kept local: it's used only in
+// this component, so it stays here rather than in the shared _variables.scss.
+// (Previously borrowed the site's $jf-gold brand token, which master removed.)
+$jf-gold: #e0a432;
+
+body.jianfei-treatise {
+
+  /* ---- treatise body: Computer Modern, justified, LaTeX paragraph rhythm ---- */
+  .page__content {
+    font-family: $cmu-serif-family;
+    line-height: 1.55;
+    letter-spacing: 0;
+    text-align: justify;
+    hyphens: auto;
+
+    // fold the post's ad-hoc face classes into the single CM voice — including
+    // `.barlow`, which the post uses on a whole body paragraph (Attempt #3's
+    // "genesis…") and a few inline terms; a sans island breaks the CM illusion.
+    .didot, .cmu-serif, .sans-serif, .barlow { font-family: $cmu-serif-family; }
+
+    // LaTeX paragraphs — indented first line, minimal inter-paragraph gap
+    > p { text-indent: 1.5em; margin: 0.45em 0; }
+    > p:first-of-type,
+    > h1 + p, > h2 + p, > h3 + p, > h4 + p, > h5 + p, > h6 + p,
+    > hr + p, > blockquote + p { text-indent: 0; }
+
+    p, li, dl { font-size: 1.06em; }
+
+    // gilded cross-references (the \ref-style "COMMITMENT #2025-1" link + PDF refs) —
+    // keeps the palette to two warm accents instead of the site's default lapis link.
+    a { color: $jf-gold; text-decoration-color: rgba($jf-gold, 0.45); }
+
+    /* section headings = the verbatim "Attempt #N: From …" H2s.
+       scroll-margin-top so a TOC jump lands the heading below the floating masthead
+       (the site's offset was mistakenly on the TOC link, i.e. the wrong element). */
+    h2 {
+      font-family: $cmu-serif-family;
+      font-weight: 700;
+      text-align: left;
+      color: $primary-color;
+      font-size: $type-size-3;
+      letter-spacing: 0.01em;
+      margin: 3.2rem 0 1.1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid rgba($primary-color, 0.16);
+      scroll-margin-top: 5rem;
+    }
+
+    /* subsection headings — "Daily Diet Record", "Weight Record", "Ongoing!…".
+       color !important normalises the post's inline `whitesmoke` (#F5F5F5) on the
+       "Ongoing" h3 to the site's ivory token, so the piece uses one white, not two. */
+    h3 {
+      font-family: $cmu-serif-family;
+      font-weight: 700;
+      text-align: left;
+      font-size: $type-size-5;
+      color: rgba($primary-color, 0.9) !important;
+      margin: 1.8rem 0 0.6rem;
+      border-bottom: 0;
+      scroll-margin-top: 5rem;
+    }
+
+    /* the intro fenced block (Chinese framing note) → academic epigraph */
+    .highlighter-rouge, pre.highlight, > pre {
+      background: transparent;
+      border: 0;
+      border-left: 2px solid rgba($primary-color, 0.18);
+      border-radius: 0;
+      margin: 0 0 2.4rem;
+      padding: 0.2rem 0 0.2rem 1.3rem;
+      box-shadow: none;
+      code, pre { white-space: pre-wrap; }
+      code {
+        font-family: $cmu-serif-family;
+        font-style: italic;
+        font-size: 1.02em;
+        color: rgba($text-color, 0.82);
+        background: transparent;
+        line-height: 1.6;
+      }
+    }
+
+    /* illuminated opening "abstract" — JS replaces the intro code block with this,
+       each line led by its emoji as a versal. No-JS falls back to the styled block above. */
+    .jf-abstract { max-width: 40rem; margin: 0 0 2.6rem; }
+    .jf-abs-line {
+      display: grid;
+      grid-template-columns: 2.4rem 1fr;
+      gap: 0.9rem;
+      align-items: baseline;
+      margin: 0.62rem 0;
+      text-indent: 0;
+      text-align: left;
+      line-height: 1.6;
+      color: rgba($text-color, 0.84);
+    }
+    .jf-em { font-size: 1.6rem; line-height: 1; text-align: center; }
+
+    /* horizontal rule between the documented era and the older attempts */
+    hr {
+      border: 0;
+      height: 1px;
+      background: rgba($primary-color, 0.14);
+      margin: 2.6rem auto;
+      width: 40%;
+    }
+  }
+
+  /* ---- the "Commitment" instrument (existing <section> wrappers) ----
+     No box. A formal-document treatment set into the running text: a heavier
+     top rule and a lighter bottom rule (booktabs \toprule / \bottomrule), the
+     centred title sitting under its own hairline \midrule — no side borders, no
+     fill. Reads as a printed contract clause, not a UI card. */
+  .page__content .translucent_border,
+  .page__content .paragraph-center-wrapper {
+    font-family: $cmu-serif-family;
+    background: transparent;
+    border: 0;
+    border-top: 2px solid rgba($primary-color, 0.5);
+    border-bottom: 1px solid rgba($primary-color, 0.24);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 1.15rem 0 1.4rem;
+    margin: 2.4rem 0 1.4rem;
+    text-align: justify;
+
+    // instrument title — the "Commitment 2025#2" H1s. Framed between the section's
+    // \toprule and its own \midrule as a formal document-header band.
+    h1 {
+      font-family: $cmu-serif-family;
+      font-weight: 700;
+      font-size: $type-size-4;
+      text-align: center;
+      letter-spacing: 0.04em;
+      color: $primary-color !important; // normalise the inline `whitesmoke` to the ivory token
+      // !important: the post authors these titles with inline border styling; match
+      // the approach used for .notice--info below and override it to the \midrule.
+      border-bottom: 1px solid rgba($primary-color, 0.28) !important;
+      padding-bottom: 0.8rem;
+      margin: 0.2rem auto 1.2rem;
+    }
+    // "Commitments" run-in label (existing <h6>)
+    h6 {
+      font-family: $cmu-serif-family;
+      font-style: italic;
+      font-weight: 700;
+      color: rgba($primary-color, 0.85);
+      text-align: left;
+      margin: 1.2rem 0 0.3rem;
+      font-size: 1.02em;
+    }
+    p { margin: 0.5rem 0; }
+
+    /* enumerated commitments → LaTeX enumerate  (1) (2) (3) */
+    ol {
+      list-style: none;
+      counter-reset: jf-clause;
+      padding-left: 0;
+      margin: 0.5rem 0 1rem;
+      > li {
+        counter-increment: jf-clause;
+        position: relative;
+        padding: 0.32rem 0 0.32rem 2.5rem;
+        text-align: justify;
+        &::before {
+          content: "(" counter(jf-clause) ")";
+          position: absolute;
+          left: 0;
+          top: 0.32rem;
+          font-family: $cmu-serif-family;
+          color: rgba($primary-color, 0.75);
+          width: 2rem;
+        }
+      }
+    }
+    /* dash-item commitments (the <ul> attempts) */
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0.5rem 0 1rem;
+      > li {
+        position: relative;
+        padding: 0.3rem 0 0.3rem 1.6rem;
+        text-align: justify;
+        &::before {
+          content: "\2014"; // em dash
+          position: absolute;
+          left: 0.2rem;
+          top: 0.3rem;
+          color: rgba($primary-color, 0.55);
+        }
+      }
+    }
+
+    /* right-aligned italic signature blocks (existing .text-right) */
+    .text-right {
+      text-align: right;
+      font-style: italic;
+      h3, h6 { font-family: $cmu-serif-family; font-weight: 400; font-style: italic; text-align: right; border: 0; margin: 0.2rem 0 0; }
+    }
+    .text-center, .center-wrapper { text-align: center; }
+  }
+
+  /* ---- definitions: no box. Quiet academic aside (override inline bg) ---- */
+  .page__content .notice--info {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    border-left: 1px solid rgba($danger-color, 0.85) !important; // a semantic rule wants to be seen
+    border-radius: 0 !important;
+    max-width: none;
+    margin: 1.1rem 0 !important;
+    padding: 0.25rem 0 0.25rem 1.1rem;
+    text-align: left;
+    font-family: $cmu-serif-family;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 1em !important;
+    color: rgba($text-color, 0.78);
+    line-height: 1.6;
+    .macaron, .barlow { font-family: $cmu-serif-family; font-style: italic; }
+  }
+
+  /* ---- blockquote (the #3 "principles") — academic quotation ---- */
+  .page__content blockquote {
+    font-family: $cmu-serif-family;
+    font-style: italic;
+    color: rgba($text-color, 0.82);
+    ul > li::before { color: rgba($primary-color, 0.5); }
+  }
+
+  /* ---- legend table (emoji → dish) — quiet academic table ---- */
+  .page__content table {
+    font-family: $barlow-font-family;
+    font-size: 0.82em;
+    border-color: rgba($primary-color, 0.14);
+  }
+
+  /* ---- unrecorded attempts (#1, #2 "TO BE UPDATED!") — a "record pending"
+     plate: muted italic set over a thin ruled blank, like a form field left
+     to be filled in. Verbatim text; the rule carries the meaning. ---- */
+  .jf-unrecorded {
+    display: inline-block;
+    font-style: italic;
+    text-indent: 0 !important;
+    font-family: $cmu-serif-family;
+    // the italic + ruled blank carry the "muted / pending" read; keep the text itself
+    // above the ~3:1 floor rather than compounding a low alpha with opacity.
+    color: rgba($text-color, 0.62);
+    letter-spacing: 0.05em;
+    padding-bottom: 0.14rem;
+    border-bottom: 1px solid rgba($text-color, 0.22);
+  }
+
+  /* ---- the sole "Ongoing" attempt: its 💨 gusts drift, still in motion.
+     JS wraps each gust glyph in `.jf-gust`; animation lives in the .js block
+     below and bails under reduced motion. ---- */
+  .jf-gust { display: inline-block; will-change: transform; }
+
+  /* ---- optional: hero title in the treatise face ---- */
+  .page__hero-copy .page__title { font-family: $cmu-serif-family; }
+
+  /* =========================================================================
+     Weight figure (§ Attempt #3) — a LaTeX-plot, self-drawing; oxblood descent,
+     antique-gold −6 kg payoff
+     ========================================================================= */
+  .jf-fig { display: block; width: 100%; margin: 1.6rem 0 0.6rem; }
+  /* No frame: the plot's own L-shaped axes carry the structure (pgfplots-style). */
+  .jf-fig-frame {
+    display: block;
+    width: 100%;
+    border: 0;
+    padding: 0.4rem 0 0.2rem;
+    background: transparent;
+  }
+  .jf-plot { width: 100%; height: auto; display: block; overflow: visible; }
+  .jf-grid { stroke: rgba($primary-color, 0.09); stroke-width: 1; }
+  .jf-axis { stroke: rgba($primary-color, 0.42); stroke-width: 1; } // above the 3:1 graphical floor
+  .jf-yl, .jf-xl, .jf-axt, .jf-ayt {
+    fill: rgba($text-color, 0.55);
+    font-family: $cmu-serif-family;
+    font-size: 12px;
+  }
+  .jf-yl { text-anchor: end; }
+  .jf-xl, .jf-axt, .jf-ayt { text-anchor: middle; }
+  .jf-a0 { stop-color: $danger-color; stop-opacity: 0.22; }
+  .jf-a1 { stop-color: $danger-color; stop-opacity: 0; }
+  .jf-area { opacity: 1; }
+  .jf-line {
+    fill: none;
+    // the descent stays oxblood — warmed a hair toward gold for presence on the
+    // dark ground; only the payoff below is gilded.
+    stroke: mix($jf-gold, $danger-color, 18%);
+    stroke-width: 1.8;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .jf-pt { fill: mix($jf-gold, $danger-color, 18%); }
+  // the endpoint marker + label are the gilded landing (antique gold = brass-aged geo gold)
+  .jf-pt-e { fill: mix($danger-color, $jf-gold, 15%); }
+  .jf-el {
+    font-family: $cmu-serif-family;
+    font-size: 13px;
+    fill: rgba($text-color, 0.9);
+  }
+  .jf-el-s { text-anchor: start; }
+  .jf-el-e { text-anchor: end; fill: mix($danger-color, $jf-gold, 15%); }
+  /* the payoff: a dashed oxblood reference line at the start weight + a right-edge
+     dimension bracket measuring the total −6.0 kg descent, called out in antique gold */
+  // visible enough to read as the reference the gold bracket measures from
+  .jf-base { stroke: rgba($danger-color, 0.5); stroke-width: 1; stroke-dasharray: 3 3; }
+  // the −6 kg payoff is the one gilded focal accent — the oxblood descent lands on it
+  .jf-dim { stroke: rgba(mix($danger-color, $jf-gold, 15%), 0.72); stroke-width: 1; }
+  .jf-dim-l {
+    font-family: $cmu-serif-family;
+    font-size: 13px;
+    fill: mix($danger-color, $jf-gold, 15%);
+    text-anchor: middle;
+  }
+
+  /* =========================================================================
+     Diet exhibit — one responsive grid of day-cards at every width (built by JS).
+     The date leads (a calendar's natural key); the meals read per card; the
+     attempt day-index is a quiet corner mark; weekends carry a warm oxblood tint.
+     ========================================================================= */
+  .jf-days {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+    gap: 0.5rem;
+    margin: 0.9rem 0 0.5rem;
+  }
+  .jf-day {
+    position: relative;
+    background: rgba($primary-color, 0.022);
+    border: 1px solid rgba($primary-color, 0.08);
+    padding: 0.55rem 0.65rem 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    transition:
+      border-color ($global-transition-time / 2) ease,
+      background-color ($global-transition-time / 2) ease,
+      transform ($global-transition-time / 2) ease;
+  }
+  .jf-day.wknd { background: rgba($danger-color, 0.05); } // warm oxblood tint marks the weekend
+  .jf-day:hover {
+    border-color: rgba($danger-color, 0.42);
+    background: rgba($primary-color, 0.05);
+    transform: translateY(-2px);
+  }
+  .jf-day-h { display: flex; align-items: baseline; gap: 0.4rem; }
+  .jf-day-date { font-family: $cmu-serif-family; font-size: 0.98rem; color: $primary-color; white-space: nowrap; }
+  .jf-day-dow {
+    font-family: $barlow-font-family;
+    font-size: 0.56rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba($text-color, 0.55);
+  }
+  .jf-day.wknd .jf-day-dow { color: rgba($danger-color, 0.95); }
+  .jf-day-n {
+    position: absolute;
+    top: 0.42rem;
+    right: 0.55rem;
+    font-family: $barlow-font-family;
+    font-size: 0.52rem;
+    color: rgba($text-color, 0.32);
+  }
+  .jf-day-meals {
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+    border-top: 1px solid rgba($primary-color, 0.07);
+    padding-top: 0.4rem;
+  }
+  .jf-day-meal { display: flex; align-items: center; gap: 0.45rem; line-height: 1.1; }
+  .jf-day-mt {
+    font-family: $barlow-font-family;
+    font-size: 0.54rem;
+    letter-spacing: 0.08em;
+    color: rgba($text-color, 0.55);
+    width: 0.7rem;
+    flex: none;
+  }
+  .jf-day-mg { font-size: 0.98rem; }
+
+  /* Once JS builds the exhibit (which is aria-hidden), keep the original <table>
+     in the accessibility tree — visually hidden, not display:none — so screen
+     readers still get the real, header-associated diet data. No-JS keeps it visible.
+     Reuses the site's existing sr-only utility. */
+  .jf-source-hidden { @extend .visually-hidden; }
+}
+
+/* JS-enabled + not reduced-motion: reveal-on-scroll for treatise elements */
+.js body.jianfei-treatise {
+  // Day-cards deal in with a light stagger as their exhibit scrolls into view.
+  .jf-exhibit.jf-in .jf-day {
+    animation: jf-day-in 0.5s $cubic-bezier-smooth both;
+    animation-delay: calc(var(--i, 0) * 0.018s);
+  }
+
+  // Opening abstract: the four lines rise in sequence on load, each emoji versal
+  // illuminating (scaling in) as its line arrives.
+  .jf-abs-line { opacity: 0; animation: jf-abs-rise 0.7s $cubic-bezier-smooth both; animation-delay: var(--jf-d, 0s); }
+  .jf-abs-line:nth-child(1) { --jf-d: 0.15s; }
+  .jf-abs-line:nth-child(2) { --jf-d: 0.30s; }
+  .jf-abs-line:nth-child(3) { --jf-d: 0.45s; }
+  .jf-abs-line:nth-child(4) { --jf-d: 0.60s; }
+  .jf-em { display: inline-block; transform-origin: center bottom; animation: jf-abs-illumine 0.66s $cubic-bezier-smooth both; animation-delay: var(--jf-d, 0s); }
+
+  // Signature figure: JS scrubs the line's stroke-dashoffset to scroll position
+  // (no transition, so the pen tracks the scroll frame-for-frame); the area fills
+  // with progress (--jf-p), and the points + endpoint labels land once fully drawn.
+  .jf-area { opacity: var(--jf-p, 1); }
+  .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { opacity: 0; transition: opacity $global-transition-time ease; }
+  .jf-plot.jf-drawn .jf-pt,
+  .jf-plot.jf-drawn .jf-el,
+  .jf-plot.jf-drawn .jf-base,
+  .jf-plot.jf-drawn .jf-dim,
+  .jf-plot.jf-drawn .jf-dim-l { opacity: 1; }
+
+  // The "Ongoing" line's gusts drift gently — the one campaign still running.
+  .jf-gust { animation: jf-gust-drift 2.6s $cubic-bezier-smooth infinite; }
+}
+
+@keyframes jf-abs-rise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+@keyframes jf-abs-illumine { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+@keyframes jf-gust-drift {
+  0% { transform: translateX(0); opacity: 0.85; }
+  50% { transform: translateX(3px); opacity: 1; }
+  100% { transform: translateX(0); opacity: 0.85; }
+}
+@keyframes jf-day-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* Treatise reading measure — override the site's 50rem post cap with a tighter
+   monograph measure. At the 20px desktop root the 50rem cap computes to ~1000px
+   (~90-100 justified chars/line), which loosens the justification the whole
+   Computer-Modern conceit relies on; ~38rem (~760px, ~72 chars/line) sits in the
+   justified-serif sweet spot. Matches the site rule's specificity (0,3,1) and wins
+   by later import order. */
+body.jianfei-treatise .page__inner-wrap .page__content { max-width: 38rem; }
+
+/* Mobile: ragged-right prose; legible figure labels + line. The day-card grid is
+   already responsive (auto-fill), so it needs no width switch here. */
+body.jianfei-treatise {
+  @include responsive-down(mobile) {
+    .page__content .translucent_border,
+    .page__content .paragraph-center-wrapper { padding: 1.1rem 1.1rem; }
+    .page__content > p { text-indent: 0; }
+
+    // ragged-right on the narrow column: justified CM tears rivers at ~330px, so
+    // drop justification for prose, commitments, and the enumerated clauses.
+    .page__content,
+    .page__content .translucent_border,
+    .page__content .paragraph-center-wrapper,
+    .page__content .translucent_border ol > li,
+    .page__content .translucent_border ul > li,
+    .page__content .paragraph-center-wrapper ol > li,
+    .page__content .paragraph-center-wrapper ul > li { text-align: left; }
+
+    // the weight figure's SVG scales to ~0.45x on a phone column, so bump the label
+    // type in viewBox units and thicken the line to keep the axes, the descent, and
+    // the −6 kg payoff readable.
+    .jf-yl, .jf-xl, .jf-axt, .jf-ayt { font-size: 22px; }
+    .jf-el, .jf-dim-l { font-size: 26px; }
+    .jf-line { stroke-width: 2.6; }
+  }
+}
+
+/* Reduced motion — everything to final state (dual guard with the JS bail) */
+@include responsive-reduced-motion {
+  .js body.jianfei-treatise {
+    .jf-line { transition: none !important; stroke-dashoffset: 0 !important; }
+    .jf-area, .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { opacity: 1 !important; transition: none !important; }
+    .jf-abs-line, .jf-em { animation: none !important; opacity: 1 !important; transform: none !important; }
+    .jf-gust { animation: none !important; transform: none !important; }
+    .jf-day { animation: none !important; opacity: 1 !important; transform: none !important; transition: none !important; }
+  }
+}
+
+/* Ultra-wide screens: a true monograph margin.
+   At normal widths the piece is simply the site's centred 50rem post measure with the
+   definitions as quiet inline asides — no reserved gutter, no empty band (that was the
+   old defect: a gutter carved into the already-narrow column stacked a second void on
+   top of the TOC reservation). Only once the viewport is wide enough that the centred
+   column has genuine right-margin room beside it — and safely clear of the TOC — do the
+   two definition asides float out into that margin as printed sidenotes. */
+body.jianfei-treatise {
+  @include responsive-up(112rem) {
+    .page__content { position: relative; }
+
+    // NB: must be `.page__content .notice--info` — the base aside rule is
+    // `body.jianfei-treatise .page__content .notice--info !important` (0,3,1); the
+    // earlier `.notice--info` (0,2,1) lost, so the margin pull + font-size never
+    // applied and the note never left the column. Match specificity, win by order.
+    .page__content .notice--info {
+      float: right;
+      clear: right;
+      width: 11rem;
+      margin: 0.35rem -12.5rem 1rem 1.4rem !important;
+      padding: 0.1rem 0 0.1rem 0.9rem !important;
+      border-left: 1px solid rgba($danger-color, 0.85) !important;
+      font-size: 0.76em !important;
+      line-height: 1.5;
+      color: rgba($text-color, 0.7);
+      text-align: left;
+    }
+  }
+}

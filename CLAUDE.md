@@ -8,7 +8,7 @@ A heavily customised Jekyll site (forked from Minimal Mistakes / Academic Pages)
 
 ```
 _config.yml          Jekyll config — collections, defaults, plugins, site vars
-_layouts/            Page layouts (10 — see "Layouts & Gallery System" below)
+_layouts/            Page layouts (9 — see "Layouts & Gallery System" below)
 _includes/           50+ partials — masthead, gallery, map, hero, sidebar…
 _sass/               SCSS partials — _variables.scss is the token authority
 assets/js/           Custom JS (_main.js → main.min.js) + vendor (jQuery, Three.js, Swiper)
@@ -211,6 +211,20 @@ Enforced on touched files only — no global retrofit of untouched legacy files.
 | `_voyage` | `title`, `date`, `header` | exactly one of: `gallery_name` OR `subgalleries: true`; optional `map:` viewport block (only for `subgalleries:true` voyages); `map_dataset:` only as a legacy escape hatch (see below) |
 | `_subvoyage` | `title`, `date`, `header` | `gallery_name` (typically required for gallery routing); optional `map:` block to pin / refine the marker on the parent's auto-derived atlas |
 
+### `seo_description` — search metadata, never displayed (all collections)
+
+Optional cross-collection key. It feeds **only** the `<meta name="description">` tag (`_includes/seo.html`) that search engines read for result snippets. No layout renders it, so it is deliberately decoupled from the page's visible copy.
+
+- **Why it exists:** `excerpt` / `description` are the site's *display* voice — poetic, atmospheric, often oblique ("Where whispers dance on liquid streets"). That reads well on the page but tells Google nothing about *what the page is*. `seo_description` carries the plain, content-descriptive summary instead.
+- **Voice:** factual and concrete, ~150–160 chars, no QSD irony. Name the actual subject so specific long-tail queries can match — real place names for voyages ("Seceda, Alpe di Siusi"), the actual theme for essays ("memory, impermanence and the self"). This is the one place on the site that is intentionally *un*-stylised.
+- **Scope & fallback chain** for `<meta name="description">` (in `_includes/seo.html`):
+  1. hand-written `seo_description` (richest; use it wherever the templated line below is too thin — essays especially, since a template can't summarise prose).
+  2. **templated fallback for `_voyage` / `_subvoyage` only** — one place per gallery, so a plain `"<place> — travel photography by QSD"` is descriptive and unique. Subvoyages fold in the parent voyage's real title (`"<sub>, <parent> — travel photography by QSD"`). This beats the poetic excerpt for search and means every voyage/subvoyage is covered without hand-writing.
+  3. `description` → `excerpt` → `site.description` (the poetic display copy), for everything else — posts and pages get **no** template, so hand-write `seo_description` for any essay you want discoverable.
+- **Social cards are separate:** `og:description` / `twitter:description` keep using the poetic `description` / `excerpt`, so shares stay evocative. Only the search-engine `<meta name="description">` prefers `seo_description`.
+- **Don't** write one for a stub / `#TODO` page — a meta description must accurately describe content that actually exists.
+- **Coverage audit:** `npm run check:seo` (`scripts/check-seo-descriptions.py`) classifies every page by which source its `<meta name="description">` comes from — `authored` (frontmatter), `template` (voyage/subvoyage), `display` (poetic excerpt — weak), `gap` (generic `site.description`), or `stub` (skipped). It mirrors the precedence above, so it reports what actually ships. Exit 1 on any `gap`; `--strict` also fails on `display`-only pages. Run it after adding content to see where a hand-written `seo_description` is still owed.
+
 ### Conditional pairings (these are where things break)
 
 - **`gallery_name: <name>`** must resolve to two real directories:
@@ -232,7 +246,7 @@ Enforced on touched files only — no global retrofit of untouched legacy files.
   - `map: { query: "..." }` — override the title-based geocode query
   - `map: { exclude: true }` — omit this child from the parent's map
   - Default when nothing is set: geocode by `"<title>, <parent voyage title>"`. Atmospheric titles (Portraits, Twilight, Flow…) typically fail to geocode and are gracefully skipped with a build warning.
-- **`map_dataset: <name>`** — legacy hand-curated path, still supported. Must match `_data/maps/<name>.yml`. Use for any voyage that needs a manual marker list and does NOT have `subgalleries:true`. (If the parent has `subgalleries:true` and you also set `map_dataset:`, the dataset wins via `page.map_dataset | default: auto_map_id` in the layout, but you almost never want this.)
+- **`map_dataset: <name>`** — legacy hand-curated path, still supported. Must match `_data/maps/<name>.yml`. Use for any voyage that needs a manual marker list and does NOT have `subgalleries:true`. (If the parent has `subgalleries:true` and you also set `map_dataset:`, the dataset wins via `page.map_dataset | default: auto_map_id` in the layout, but you almost never want this.) **Currently unused by any content** — a tech-debt PR proposes retiring the whole `_data/maps/` pipeline (`map.js`'s default-marker renderer, `scripts/geocode-maps.js`'s legacy branch, this frontmatter path); see that PR before adding new usage or deleting the code.
 - **`tags`** should resolve to entries in `_data/tag_colours.yml`. Missing entries don't break rendering, but the tag will display without its accent colour.
 
 ### Voyage frontmatter cheatsheet
@@ -322,7 +336,7 @@ When adding a new voyage, the `voyage-scaffolder` agent (under `.claude/agents/`
 
 ## Layouts & Gallery System
 
-10 layouts. The two with the most behaviour are `gallery.html` and the page hero overlay.
+9 layouts. The two with the most behaviour are `gallery.html` and the page hero overlay.
 
 ### `gallery.html` — two execution modes
 
@@ -370,7 +384,7 @@ Reduced-motion users (`prefers-reduced-motion`) bypass the animated opening flow
 - `single.html` — post/page view with sidebar + TOC.
 - `splash.html` — hero/landing.
 - `archive.html`, `archive-taxonomy.html` — tag/category archives.
-- `talk.html`, `search.html`, `multiverse.html`, `compress.html` — specialised.
+- `search.html`, `compress.html` — specialised.
 
 ### When editing layouts
 

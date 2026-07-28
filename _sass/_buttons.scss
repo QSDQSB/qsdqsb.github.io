@@ -118,9 +118,9 @@
   /* social buttons */
 
   $social:
-  (facebook, $facebook-color),
-  (twitter, $twitter-color),
-  (google-plus, $google-plus-color),
+  (facebook, #3b5998),
+  (twitter, #55acee),
+  (google-plus, #dd4b39),
   (linkedin, $linkedin-color);
 
   @each $socialnetwork, $color in $social {

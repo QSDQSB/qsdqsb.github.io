@@ -32,6 +32,7 @@
     "watch:js": "onchange \"assets/js/**/*.js\" -e \"assets/js/main.min.js\" -- npm run build:js",
     "build:js": "npm run uglify",
     "check:responsive-policy": "bash scripts/check-responsive-policy.sh",
+    "check:seo": "python3 scripts/check-seo-descriptions.py",
     "geocode": "node scripts/geocode-maps.js",
     "generate:gallery": "node scripts/generate-gallery-assets.mjs",
     "generate:gallery:lqip": "node scripts/generate-gallery-assets.mjs --lqip-only",

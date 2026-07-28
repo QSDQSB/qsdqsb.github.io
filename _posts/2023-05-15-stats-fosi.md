@@ -1,7 +1,9 @@
 ---
 title: "FOSI.fojo"
 date: 2023-05-15
-permalink: /posts/stats/fosi
+permalink: /posts/fosi/
+redirect_from:
+  - /posts/stats/fosi/
 excerpt: "SB2.1 Foundations of Statistical Inference"
 tags:
   - 🏦卷！

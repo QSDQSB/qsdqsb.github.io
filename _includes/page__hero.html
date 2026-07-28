@@ -36,6 +36,7 @@
 <div class="swiper page-overlay-swiper page-overlay-swiper--hero" style='background-color: transparent; width: 100%;'>
   <div class="swiper-wrapper">
     {% for swiper_content in page.swipers %}
+      {% assign overlay_img_path = "" %}
       {% if swiper_content.overlay_image %}
         {% if swiper_content.overlay_image contains "://" %}
           {% capture overlay_img_path %}{{ swiper_content.overlay_image }}{% endcapture %}
@@ -50,7 +51,9 @@
       {% endif %}
       <div class="swiper-slide">
         <div class="page__hero--overlay page__hero--overlay-home">
-          <div class="page__hero-media" style="background-image: {% if overlay_filter %}linear-gradient({{ overlay_filter }}, {{ overlay_filter }}), {% endif %}url('{{ overlay_img_path }}');"></div>
+          {% if overlay_img_path %}
+            <div class="page__hero-media" style="background-image: {% if overlay_filter %}linear-gradient({{ overlay_filter }}, {{ overlay_filter }}), {% endif %}url('{{ overlay_img_path }}');"></div>
+          {% endif %}
           <div class="wrapper">
             <div class="page__hero-copy">
               <h1 class="page__title" itemprop="headline" data-swiper-parallax="-210" data-swiper-parallax-duration="900">

@@ -1,7 +1,9 @@
 ---
 title: "Falling for a Mirage"
 date: 2025-12-01
-permalink: /posts/2025/enchanted-by-a-mirage
+permalink: /posts/enchanted-by-a-mirage/
+redirect_from:
+  - /posts/2025/enchanted-by-a-mirage/
 excerpt: "For he mistook a reflection for the soul, and drowned in its shimmer."
 
 tags:

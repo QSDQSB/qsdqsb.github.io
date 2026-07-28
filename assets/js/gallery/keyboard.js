@@ -4,24 +4,7 @@
  */
 
 import { next, previous, up, down, toggle, changeBgSize } from './renderer.js';
-
-// Backspace navigates to the parent voyage page, anchored to the gallery title.
-function goToParent() {
-  const segs = window.location.pathname.split('/').filter(Boolean);
-  if (segs.length > 1) {
-    segs.pop();
-    const base  = '/' + segs.join('/') + '/';
-    const title = document.querySelector('#header h1')?.textContent?.trim() || '';
-    if (title) {
-      const slug = title.toLowerCase().replace(/[^a-z0-9À-ÿ]+/g, '-').replace(/^-+|-+$/g, '');
-      window.location.href = base + '#' + slug;
-    } else {
-      window.location.href = base;
-    }
-  } else {
-    window.location.href = '/';
-  }
-}
+import { goToParent } from './url-sync.js';
 
 const KEYS = {
    8: () => goToParent(),     // Backspace — leave gallery

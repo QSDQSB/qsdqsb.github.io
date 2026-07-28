@@ -1,10 +1,12 @@
 ---
 title: "GPT-4o Talks bull**it 🌈💨"
 date: 2025-04-22
-permalink: /posts/2025/gpt4o-talks-shit
+permalink: /posts/gpt4o-talks-shit/
+redirect_from:
+  - /posts/2025/gpt4o-talks-shit/
 excerpt: "The majestic capability of deifying any pile of sh1t, presented by ___His Holiness___ **GPT4o**"
 left_tarot_card: 'the-fool'
-left_tarot_href: /posts/2022/03/argue-with-idiots
+left_tarot_href: /posts/argue-with-idiots/
 tags:
   - 🧼QSD's Philosophy
   - 😻Happy Moments
@@ -20,7 +22,7 @@ header:
 Prompt
 {: .barlow .text-center}
 
-*「以下内容是一个作者为他个人博客题写的扉页，用于阐述该博客的目的。请简要赏析主旨，以此推断作者的哲学导向与人生观: { <a href="/posts/day-one" target="_blank">Day one of this site</a>中的内容 }。*
+*「以下内容是一个作者为他个人博客题写的扉页，用于阐述该博客的目的。请简要赏析主旨，以此推断作者的哲学导向与人生观: { <a href="/posts/day-one/" target="_blank">Day one of this site</a>中的内容 }。*
  {: .notice--info}
 
 ```bash

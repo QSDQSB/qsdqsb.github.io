@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function () {
   let pageOverlaySwiper = null;
   let pageOverlayInitTimer = null;
   let pageOverlayRetryTimer = null;
-  let viewportUpdateRaf = null;
   let pendingViewportPhase = null;
 
   // Swiper config for new-release voyage galleries
@@ -123,32 +122,30 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  const flushSwiperViewportUpdate = window.QSD.rafGate(function () {
+    const queuedPhase = pendingViewportPhase || "active";
+    pendingViewportPhase = null;
+
+    if (queuedPhase !== "settled") return;
+
+    if (newReleaseSwiper && !newReleaseSwiper.destroyed) {
+      newReleaseSwiper.update();
+      newReleaseSwiper.updateSlides();
+    }
+
+    if (pageOverlaySwiper && !pageOverlaySwiper.destroyed) {
+      pageOverlaySwiper.update();
+      pageOverlaySwiper.updateSlides();
+    } else {
+      initPageOverlaySwiper();
+    }
+  });
+
   const scheduleSwiperViewportUpdate = function (event) {
     const detail = event && event.detail ? event.detail : {};
     const phase = detail.phase || "active";
     pendingViewportPhase = phase === "settled" ? "settled" : (pendingViewportPhase || phase);
-
-    if (viewportUpdateRaf) return;
-
-    viewportUpdateRaf = window.requestAnimationFrame(function () {
-      viewportUpdateRaf = null;
-      const queuedPhase = pendingViewportPhase || "active";
-      pendingViewportPhase = null;
-
-      if (queuedPhase !== "settled") return;
-
-      if (newReleaseSwiper && !newReleaseSwiper.destroyed) {
-        newReleaseSwiper.update();
-        newReleaseSwiper.updateSlides();
-      }
-
-      if (pageOverlaySwiper && !pageOverlaySwiper.destroyed) {
-        pageOverlaySwiper.update();
-        pageOverlaySwiper.updateSlides();
-      } else {
-        initPageOverlaySwiper();
-      }
-    });
+    flushSwiperViewportUpdate();
   };
   
   // Initialize page overlay swiper

@@ -5,6 +5,7 @@ title: "Hi! Meet QSD😵‍💫!"
 author_profile: true
 body_class: no-opening-scene page--about
 excerpt: "A procrastinator, a nihilist, a deconstructionist, an idiot. "
+seo_description: "QSD's personal literary blog and travel-photography journal — bilingual English/Chinese essays on memory and impermanence, plus photo galleries from across Europe."
 toc: true
 toc_sticky: true
 ticker-tape: true
@@ -32,12 +33,12 @@ header:
     <span>🤷‍♂️ Who the hell is QSD ???</span>
     <span>🫵🏻 Maybe you are QSD !</span>
     <span>🥂 Welcome to QSB's House of Wonders !</span>
-    <span>🪦 The foundation of this site: <a href="/posts/day-one" target="_blank"><i>Day One · The Epitaph .</i></a></span>
+    <span>🪦 The foundation of this site: <a href="/posts/day-one/" target="_blank"><i>Day One · The Epitaph .</i></a></span>
     <span>🍭 Do you know QSD were once known as QXD ?</span>
   </span>
 </span></h1>
 
-<a href="/posts/2022/03/jianfei-diary" target="_blank" class="notice--pinky background-color-peach-pink-animated hover-scale" style="display: block; text-decoration: none; color: inherit; border-radius: 0.5em;">
+<a href="/posts/jianfei-diary/" target="_blank" class="notice--pinky background-color-peach-pink-animated hover-scale" style="display: block; text-decoration: none; color: inherit; border-radius: 0.5em;">
 ➡️➡️➡️  <span class="sans-serif"><b lang="zh">QSD减肥进行时</b> 🏃‍♂️💨💨... !</span>
 <br><i><span style="color: #FCFCFC; font-variant: small-caps;">Attempt #8</span> vom 27.10.2025</i>
 </a>

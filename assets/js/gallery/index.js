@@ -15,7 +15,7 @@ import {
   toggle,
   changeBgSize,
 } from './renderer.js';
-import { init as initUrlSync, getInitialIndex, enableHashPush } from './url-sync.js';
+import { init as initUrlSync, getInitialIndex, enableHashPush, goToParent } from './url-sync.js';
 import { init as initKeyboard } from './keyboard.js';
 import { init as initTouch }    from './touch.js';
 import { init as initA11y }     from './a11y.js';
@@ -149,7 +149,7 @@ function _bindEvents(thumbnailsEl, viewer, galleryMain) {
 
   // Leave gallery (viewer + main — both get the class).
   document.querySelectorAll('.leave_gallery').forEach(el =>
-    el.addEventListener('click', _goToParent));
+    el.addEventListener('click', goToParent));
 
   // Panel toggle (viewer + main — both get the class).
   document.querySelectorAll('.toggle').forEach(el => {
@@ -179,25 +179,6 @@ function _initLazyLoad(thumbnailsEl) {
       img.addEventListener('load', () => markLoaded(img), { once: true });
     }
   });
-}
-
-// ─── Leave-gallery navigation ─────────────────────────────────────────────────
-
-function _goToParent() {
-  const segs = window.location.pathname.split('/').filter(Boolean);
-  if (segs.length > 1) {
-    segs.pop();
-    const base  = '/' + segs.join('/') + '/';
-    const title = document.querySelector('#header h1')?.textContent?.trim() || '';
-    if (title) {
-      const slug = title.toLowerCase().replace(/[^a-z0-9À-ÿ]+/g, '-').replace(/^-+|-+$/g, '');
-      window.location.href = base + '#' + slug;
-    } else {
-      window.location.href = base;
-    }
-  } else {
-    window.location.href = '/';
-  }
 }
 
 // ─── Run ──────────────────────────────────────────────────────────────────────

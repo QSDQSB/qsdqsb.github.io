@@ -1,7 +1,9 @@
 ---
 title: "How Many Javas"
 date: 2022-03-02
-permalink: /posts/2022/03/coffee-counter
+permalink: /posts/coffee-counter/
+redirect_from:
+  - /posts/2022/03/coffee-counter/
 excerpt: "A faithful counter of QSD's coffee consumption since Feb 2, 2021."
 tags:
   - 🐮Ox

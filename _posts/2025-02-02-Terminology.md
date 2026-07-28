@@ -1,7 +1,9 @@
 ---
 title: "Terminology, by QSD."
 date: 2025-02-02
-permalink: /posts/2025/terminology
+permalink: /posts/terminology/
+redirect_from:
+  - /posts/2025/terminology/
 excerpt: "Intepretation and misintepretation of this world."
 tags:
   - 🧼QSD's Philosophy
