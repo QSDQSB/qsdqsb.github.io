@@ -6,22 +6,18 @@
        used by gallery.html for parent voyages with `subgalleries: true`, where
        the dataset is the derived `voyage-<slug>` GeoJSON written by
        scripts/geocode-maps.js)
-    2. page.map_dataset (legacy frontmatter path — manual YAML in `_data/maps/`)
+    2. page.map_dataset — frontmatter fallback for pages that include this
+       partial with no `dataset` param, e.g. `_portfolio/voyage.html` (the
+       global atlas at `/voyage/`), which sets `map_dataset: voyage-atlas`.
 
-  Viewport comes from `site.data.maps[<id>].viewport` when a YAML dataset of
-  that name exists; otherwise the renderer auto-fits to feature bounds (fine
-  for derived parent-voyage atlases, which have no YAML).
-
-  tech-debt: path 2 (page.map_dataset) is currently dead — no _voyage/_pages
-  file sets map_dataset, and _data/maps/ doesn't exist in this repo. Proposed
-  for removal alongside the matching dead branches in map.js and
-  scripts/geocode-maps.js; see the open tech-debt PR before deleting.
+  Both paths point at a GeoJSON written by scripts/geocode-maps.js; the
+  renderer auto-fits to feature bounds (or an explicit `map:` viewport
+  frontmatter block baked into the GeoJSON's `properties.viewport`).
 {%- endcomment -%}
 
 {% assign map_dataset_id = include.dataset | default: page.map_dataset %}
 {% if map_dataset_id %}
-{% assign map_data = site.data.maps[map_dataset_id] %}
-<div id="map-container-{{ map_dataset_id }}" class="map-container" data-dataset="{{ map_dataset_id }}" data-geojson="/assets/maps/{{ map_dataset_id }}.geojson"{% if map_data.viewport %} data-viewport='{{ map_data.viewport | jsonify }}'{% endif %}>
+<div id="map-container-{{ map_dataset_id }}" class="map-container" data-dataset="{{ map_dataset_id }}" data-geojson="/assets/maps/{{ map_dataset_id }}.geojson">
 </div>
 
 <script>
