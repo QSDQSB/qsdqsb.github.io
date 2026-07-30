@@ -15,6 +15,12 @@ body.layout--home {
   display: block;
   position: relative;
   z-index: 1;
+  /* The reel is full-bleed. Base `#main` (ID selector) applies 1rem side padding,
+     which out-specifies `.home--reel`'s `padding: 0` (class) and boxes the hero in
+     1rem gutters (the "not full width" on phones). Zero it here at matching
+     specificity so every panel runs edge-to-edge as intended. */
+  padding-left: 0;
+  padding-right: 0;
 }
 
 /* ============================ HERO ============================ */
@@ -187,7 +193,13 @@ body.layout--home {
 /* Mobile/tablet: copy to the top, mark's band to the bottom (space-between).
    Landscape has no vertical room, so drop the band. */
 @include responsive-down(desktop) {
-  .home__hero { justify-content: space-between; }
+  /* Copy is top-aligned here (space-between), so it must clear the fixed nav pill,
+     otherwise the "Welcome to" eyebrow collides with the masthead. Reserve the
+     pill's height plus a breathing gap (desktop centres the copy, so it's clear). */
+  .home__hero {
+    justify-content: space-between;
+    padding-top: clamp(4.6rem, calc(7vh + 1.4rem), 6rem);
+  }
   @include responsive-landscape {
     .home__hero-anim { display: none; }
   }
@@ -683,8 +695,14 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
 @include responsive-down(tablet-wide) {
   .wn-grid { grid-template-columns: 1fr; }
   .wn-card--1, .wn-card--2, .wn-card--3, .wn-card--4 { grid-column: auto; grid-row: auto; }
-  .wn-card--1 { min-height: 16rem; }
-  .wn-card--2, .wn-card--3 { min-height: 12rem; }
+  /* Stacked single-column, the cards carry their own weight — drop the excerpts
+     (feature + banner) so each reads as a compact cover: badge + title only,
+     matching the touch treatment on the archive/voyage cards. Match the
+     `.wn-card--N .wn-ex` show-rules' specificity so this reliably wins. */
+  .wn-card--1 .wn-ex,
+  .wn-card--4 .wn-ex { display: none; }
+  .wn-card--1 { min-height: 13rem; }
+  .wn-card--2, .wn-card--3 { min-height: 10rem; }
   .wn-card--4 { aspect-ratio: 16 / 9; }
   .wn-card--4 .wn-body { max-width: 100%; }
 }
