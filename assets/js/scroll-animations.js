@@ -41,8 +41,10 @@
     if (el.matches && el.matches('script, style, noscript, .bilingual-switch')) return false;
     // Skip hidden language panels until they become active
     if (el.hidden || el.getAttribute('aria-hidden') === 'true') return false;
-    // Skip empty wrappers that often exist in markdown
-    if (!el.textContent || el.textContent.trim().length === 0) return false;
+    // Skip empty wrappers that often exist in markdown — except image
+    // figures (`.article-image`), which legitimately have no text.
+    const isImageFigure = el.matches && el.matches('.article-image');
+    if (!isImageFigure && (!el.textContent || el.textContent.trim().length === 0)) return false;
     return true;
   }
 
