@@ -363,6 +363,9 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
 
 // slider
 
+// tech-debt: styles _includes/new_release.html, which is dead (unreferenced
+// by any layout — superseded by _includes/home/whats-new.html). See
+// issue-proposal PR "propose-retire-swiper-hero-path".
 .new-release-slider-container {
   width: 100%;
   max-width: 80rem;

@@ -31,6 +31,14 @@
 {% endif %}
 
 
+{% comment %}
+  tech-debt: no content file sets `page.swipers` today, so this whole branch is
+  currently unreachable — and even if it were reached, nothing loads Swiper for
+  it (assets/js/slider.js and swiper-bundle.min.js were only ever loaded by
+  the now-dead _includes/new_release.html). See issue-proposal PR
+  "propose-retire-swiper-hero-path" before adding a swipers: page or deleting
+  this branch — it's a product decision, not a mechanical cleanup.
+{% endcomment %}
 {% if page.swipers %}
 
 <div class="swiper page-overlay-swiper page-overlay-swiper--hero" style='background-color: transparent; width: 100%;'>

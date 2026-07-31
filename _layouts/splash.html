@@ -1,6 +1,16 @@
 ---
 layout: default
 ---
+{% comment %}
+  tech-debt: no page in _pages/_posts/_voyage/_subvoyage sets `layout: splash`,
+  and it isn't a collection default in _config.yml — this layout is currently
+  unused. It's also drifted: the stray <!DOCTYPE html> below would double up
+  with the one `layout: default` already emits (the same class of bug fixed
+  elsewhere in nested-<body>/duplicate-stylesheet cleanups), which is further
+  evidence nobody has exercised this path in a while. See issue-proposal PR
+  "propose-retire-swiper-hero-path" — this layout is the natural home for the
+  page__hero swiper path discussed there.
+{% endcomment %}
 <!DOCTYPE html>
 
 {% include base_path %}

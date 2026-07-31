@@ -1,4 +1,11 @@
 // Customize swiper for different layouts.
+// tech-debt: this file is not currently loaded by any layout/include (its one
+// <script> tag lived in the now-dead _includes/new_release.html). The
+// newReleaseSwiper block below is doubly dead — `.new-release-swiper` only
+// ever existed in that same removed include. pageOverlaySwiper targets
+// `.page-overlay-swiper`, the swiper branch of page__hero.html, which no
+// content file currently activates via `swipers:` frontmatter either. See
+// issue-proposal PR "propose-retire-swiper-hero-path" before relying on this.
 document.addEventListener("DOMContentLoaded", function () {
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let newReleaseSwiper = null;
