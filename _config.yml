@@ -21,7 +21,9 @@ future                   : false
 toc                      : true
 read_more                : "disabled" # if enabled, adds "Read more" links to excerpts
 comments:
-  provider               : # false (default), "disqus", "discourse", "facebook", "google-plus", "staticman", "custom"
+  provider               : # false (default), "disqus", "discourse", "facebook", "staticman", "custom"
+                            # ("google-plus" provider partial was removed — Google+ was permanently
+                            # discontinued in 2019, so that branch could never render anything again)
   disqus:
     shortname            :
   discourse:
@@ -75,7 +77,11 @@ social:
 
 # Analytics
 analytics:
-  provider               :  "google-universal" # false (default), "google", "google-universal", "custom"
+  provider               :  false # (default), "custom" — "google" (classic ga.js) and "google-universal"
+                                   # (analytics.js) provider partials were removed: both are permanently
+                                   # defunct (classic deprecated ~2012; Universal Analytics sunset by
+                                   # Google July 2023, stops processing all data). tracking_id below was
+                                   # blank anyway, so this was a live no-op script tag on every page load.
   google:
     tracking_id          :
 
