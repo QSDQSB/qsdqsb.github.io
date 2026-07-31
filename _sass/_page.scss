@@ -4,9 +4,15 @@
 
 
 #main {
-  display: flex;
-  align-items: flex-start;
-  gap: $responsive-single-shell-gap;
+  // Single-column block flow is the baseline (mobile + tablet). Below the
+  // left-rail breakpoint there is no sidebar to sit beside the article, so the
+  // shell must NOT be a flex container: a `width:auto`/`100%` flex child is
+  // sized from its own content in Safari (collapses toward min-content), which
+  // strands the article in a narrow left column with a dead gutter on the right
+  // — the same WebKit flex-child collapse noted in _archive.scss. The flex
+  // rail-shell is engaged only from the width where the rail actually renders,
+  // so on phones/tablets the article is a plain block and always fills.
+  display: block;
   @include clearfix;
   // margin-top: 1rem;
   margin-left: 0;
@@ -16,6 +22,12 @@
   animation: intro 0.3s both;
   // animation-delay: 0.15s;
   container-type: inline-size;
+
+  @include responsive-up($responsive-single-left-rail-compact-breakpoint) {
+    display: flex;
+    align-items: flex-start;
+    gap: $responsive-single-shell-gap;
+  }
 }
 
 #main > .page,

@@ -16,9 +16,11 @@ body.page--about {
   min-height: clamp(28rem, 76svh, 46rem);
 }
 
-/* With the author rail present, About uses the flex sidebar shell (the
-   .page-no-right-sidebar wrapper shrinks via min-width:0); no sidebar → block
-   flow so .about doesn't overflow as a flex item (same fix as Home). */
+/* `#main` is single-column block flow below the left-rail breakpoint and only
+   becomes the flex sidebar shell at/above it (see _page.scss). When About has
+   no author rail there is never a second column, so pin it to block flow at
+   every width — otherwise the shell would engage a flex row with a lone child
+   and strand the article as a collapsed flex item on wide screens. */
 .page--about #main.no-left-sidebar {
   display: block;
 }
