@@ -368,17 +368,16 @@
         if (atlasDataset) {
           renderAtlasMap(map, geojson, container);
         } else {
-          // tech-debt: every generated dataset now carries kind: 'voyage-atlas'
-          // (see scripts/geocode-maps.js), so this branch — and
-          // renderDefaultMarkers/createDefaultPopupContent/renderDefaultLegend/
-          // toggleCategoryFilter below — is currently unreachable. Retiring it
-          // is proposed but not yet decided; see the open tech-debt PR.
-          renderDefaultMarkers(map, geojson);
-          renderDefaultLegend(map, geojson, container);
+          // Every dataset scripts/geocode-maps.js generates carries
+          // kind: 'voyage-atlas'; a non-atlas GeoJSON here means malformed
+          // input, not a supported alternate format.
+          console.error('MapRenderer: non-atlas GeoJSON dataset — nothing to render', geojson);
+          showError(container, 'Map data is in an unsupported format.');
+          return;
         }
 
         // Effective viewport precedence:
-        //   1. viewportPreset (legacy YAML or explicit include override)
+        //   1. viewportPreset (explicit include override)
         //   2. geojson.properties.viewport (new home for parent-voyage
         //      curated viewport, written by scripts/geocode-maps.js from
         //      the parent's `map: { center, zoom, minZoom, maxZoom }`)
@@ -419,164 +418,6 @@
 
     return Array.isArray(geojson.features) && geojson.features.some((feature) => {
       return Array.isArray(feature?.properties?.tags);
-    });
-  }
-
-  function renderDefaultMarkers(map, geojson) {
-    if (!geojson.features || geojson.features.length === 0) {
-      showError(map.getContainer(), 'No cities found in dataset');
-      return;
-    }
-
-    const markerGroup = L.featureGroup();
-
-    geojson.features.forEach((feature) => {
-      const { properties, geometry } = feature;
-      if (!geometry || !Array.isArray(geometry.coordinates) || geometry.coordinates.length < 2) {
-        console.warn('MapRenderer: Skipping feature with missing coordinates', properties?.name);
-        return;
-      }
-      const [lng, lat] = geometry.coordinates;
-      const markerColor = properties.color || '#FF6B6B';
-      const marker = L.circleMarker([lat, lng], {
-        radius: 8,
-        fillColor: markerColor,
-        color: '#ffffff',
-        weight: 2,
-        opacity: 0.9,
-        fillOpacity: 0.75,
-        className: `marker-${properties.category || 'default'}`
-      });
-
-      marker.bindPopup(createDefaultPopupContent(properties), {
-        closeButton: false,
-        maxWidth: 280,
-        minWidth: 180,
-        className: 'map-popup'
-      });
-
-      marker.bindTooltip(properties.name, {
-        permanent: false,
-        direction: 'top',
-        offset: [0, -10],
-        className: 'map-tooltip'
-      });
-
-      marker.on('mouseover', function() {
-        this.setStyle({ weight: 3, fillOpacity: 0.9 });
-        this.openPopup();
-      });
-
-      marker.on('mouseout', function() {
-        this.setStyle({ weight: 2, fillOpacity: 0.75 });
-        this.closePopup();
-      });
-
-      marker.on('click', function() {
-        this.openPopup();
-      });
-
-      marker.on('popupopen', function() {
-        if (this._popupListenersAttached) return;
-        this._popupListenersAttached = true;
-
-        const popup = this.getPopup();
-        const content = popup && popup.getElement();
-        if (!content) return;
-
-        const description = content.querySelector('.popup-description');
-        if (description) {
-          content.addEventListener('mouseenter', function() {
-            description.style.display = 'block';
-          });
-          content.addEventListener('mouseleave', function() {
-            description.style.display = 'none';
-          });
-        }
-
-        if (properties.href) {
-          content.style.cursor = 'pointer';
-          content.addEventListener('click', function(e) {
-            if (e.target.closest('.leaflet-popup-close-button') || e.target.tagName === 'A') {
-              return;
-            }
-            window.location.href = properties.href;
-          });
-        }
-      });
-
-      markerGroup.addLayer(marker);
-    });
-
-    markerGroup.addTo(map);
-    map._markerGroup = markerGroup;
-  }
-
-  function createDefaultPopupContent(properties) {
-    const { name, description } = properties;
-
-    let html = '<div class="popup-content">';
-    html += `<div class="popup-title">${escapeHtml(name)}</div>`;
-
-    if (description) {
-      html += `<div class="popup-description" style="display: none;">${escapeHtml(description)}</div>`;
-    }
-
-    html += '</div>';
-    return html;
-  }
-
-  function renderDefaultLegend(map, geojson, container) {
-    const categoriesMap = {};
-
-    geojson.features.forEach((feature) => {
-      const { category, categoryLabel, color } = feature.properties;
-      if (category && !categoriesMap[category]) {
-        categoriesMap[category] = {
-          label: categoryLabel || category,
-          color: color || '#FF6B6B'
-        };
-      }
-    });
-
-    const categories = Object.entries(categoriesMap);
-    if (categories.length === 0) {
-      return;
-    }
-
-    const legendHtml = `
-      <div class="map-legend">
-        <div class="legend-title">Categories</div>
-        ${categories.map(([catId, catData]) => `
-          <button type="button" class="legend-item active" data-category="${escapeHtml(catId)}">
-            <div class="legend-color" style="background-color: ${escapeHtml(catData.color)};"></div>
-            <span class="legend-label">${escapeHtml(catData.label)}</span>
-          </button>
-        `).join('')}
-      </div>
-    `;
-
-    container.insertAdjacentHTML('beforeend', legendHtml);
-    const legendItems = container.querySelectorAll('.legend-item[data-category]');
-    legendItems.forEach((item) => {
-      item.addEventListener('click', function() {
-        toggleCategoryFilter(map, this.dataset.category, this);
-      });
-    });
-  }
-
-  function toggleCategoryFilter(map, category, legendItem) {
-    const markerGroup = map._markerGroup;
-    if (!markerGroup) return;
-
-    const isActive = legendItem.classList.toggle('active');
-    legendItem.classList.toggle('inactive', !isActive);
-
-    markerGroup.eachLayer((marker) => {
-      const markerCategory = marker.options.className && marker.options.className.replace('marker-', '');
-      if (markerCategory === category) {
-        isActive ? marker.setOpacity(1) : marker.setOpacity(0.2);
-      }
     });
   }
 

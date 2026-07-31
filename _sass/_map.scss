@@ -229,9 +229,8 @@
         font-family: $barlow-font-family;
       }
 
-      // tech-debt: hover-reveal variant, only ever populated by the dead
-      // createDefaultPopupContent() in map.js — see the open tech-debt PR.
-      // .popup-description--static (below) is the one atlas mode actually uses.
+      // Shared font-size/font-family; .popup-description--static (below)
+      // overrides color/line-height/font-style for the atlas popup body.
       .popup-description {
         font-size: 12px;
         color: $gray;
@@ -287,85 +286,6 @@
 
 .map-container .leaflet-interactive {
   transition: opacity 0.2s ease-out, fill-opacity 0.2s ease-out, stroke-opacity 0.2s ease-out, fill 0.2s ease-out, stroke 0.2s ease-out, stroke-width 0.2s ease-out;
-}
-
-// tech-debt: default map legend (category filter) — only rendered by the
-// dead renderDefaultLegend() in map.js, currently unreachable. The nested
-// `.map-legend` override in the compact-viewport block below is the same
-// dead selector; `.map-legend--atlas-pill` / `.map-legend-palette` are live
-// and unrelated. See the open tech-debt PR before deleting.
-.map-legend {
-  position: absolute;
-  bottom: 30px;
-  left: 10px;
-  background-color: rgba($background-color, 0.95);
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 1px solid $border-color;
-  box-shadow: $box-shadow;
-  z-index: 1000;
-  max-width: 250px;
-
-  .legend-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: $lighter-gray;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 10px;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    font-size: $type-code-size;
-    color: $text-color;
-    cursor: pointer;
-    transition: color 0.1s ease;
-    background: transparent;
-    border: 0;
-    text-align: left;
-    padding: 0;
-    margin-bottom: 8px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    &:hover {
-      color: $lighter-gray;
-    }
-
-    .legend-color {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-right: 10px;
-      flex-shrink: 0;
-      border: 1px solid $border-color;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .legend-label {
-      flex: 1;
-      min-width: 0;
-      font-family: $barlow-font-family;
-    }
-
-    &.active .legend-color {
-      transform: scale(1.3);
-      box-shadow: 0 0 8px rgba($lighter-gray, 0.2);
-    }
-
-    &.inactive {
-      opacity: 0.5;
-
-      .legend-color {
-        opacity: 0.4;
-      }
-    }
-  }
 }
 
 // Atlas pill toggle
@@ -598,27 +518,6 @@
 
 // Responsive legend
 @include responsive-down(compact) {
-  .map-legend {
-    max-width: 200px;
-    padding: 10px 12px;
-    font-size: 11px;
-
-    .legend-title {
-      font-size: 12px;
-      margin-bottom: 8px;
-    }
-
-    .legend-item {
-      font-size: 11px;
-
-      .legend-color {
-        width: 10px;
-        height: 10px;
-        margin-right: 8px;
-      }
-    }
-  }
-
   .map-legend--atlas-pill {
     top: 12px;
     right: 12px;
