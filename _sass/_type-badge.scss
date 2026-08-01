@@ -7,22 +7,8 @@
    ========================================================================== */
 
 .type-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.32rem;
-  padding: 0.14rem 0.5rem;
-  min-height: 1.32rem;
-  min-width: 2rem;
-  border: 1px solid rgba($primary-color, 0.18);
-  border-radius: 999px;
-  background-color: rgba($primary-color, 0.07);
-  color: mix(#fff, $primary-color, 22%);
+  @include type-badge-shell;
   font-family: $barlow-font-family;
-  font-size: $type-size-8;
-  line-height: 1.3;
-  white-space: nowrap;
-  letter-spacing: 0.015em;
 
   i { font-size: 0.72rem; }
 }
@@ -30,27 +16,19 @@
 .type-badge__label { font-weight: 500; }
 
 .type-badge--post {
-  border-color: rgba($warning-color, 0.46);
-  background-color: rgba($warning-color, 0.14);
-  color: mix(#fff, $warning-color, 20%);
+  @include type-badge-variant(rgba($warning-color, 0.46), rgba($warning-color, 0.14), mix(#fff, $warning-color, 20%));
 }
 
 .type-badge--voyage {
-  border-color: rgba($success-color, 0.48);
-  background-color: rgba($success-color, 0.14);
-  color: mix(#fff, $success-color, 20%);
+  @include type-badge-variant(rgba($success-color, 0.48), rgba($success-color, 0.14), mix(#fff, $success-color, 20%));
 }
 
 .type-badge--portfolio {
-  border-color: rgba($link-color, 0.42);
-  background-color: rgba($link-color, 0.15);
-  color: mix(#fff, $link-color, 18%);
+  @include type-badge-variant(rgba($link-color, 0.42), rgba($link-color, 0.15), mix(#fff, $link-color, 18%));
 }
 
 .type-badge--other {
-  border-color: rgba($primary-color, 0.22);
-  background-color: rgba($primary-color, 0.1);
-  color: mix(#fff, $text-color, 18%);
+  @include type-badge-variant(rgba($primary-color, 0.22), rgba($primary-color, 0.1), mix(#fff, $text-color, 18%));
 }
 
 /* Over a photo (card covers): the flat translucent fills wash out, so lift the
