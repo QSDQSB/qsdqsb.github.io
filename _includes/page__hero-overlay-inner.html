@@ -1,0 +1,39 @@
+{%- comment -%}
+Shared inner shell for the overlay hero. Rendered identically by BOTH the
+swiper and non-swiper paths in page__hero.html so the two cannot drift — the
+parity CLAUDE.md ("Page hero overlay") flags as intentional. The caller
+resolves every value and passes it in; this partial owns only the markup.
+
+Optional params are nil when absent (never an empty string — an empty capture
+is truthy in Liquid), so a plain truthiness test gates each element.
+
+Params:
+  overlay_img_path  full media URL, or nil to omit the media layer
+  overlay_filter    e.g. "rgba(0, 0, 0, 0.25)", or nil for no gradient
+  title             page/slide title (already markdownified, <p> stripped)
+  excerpt           lead copy, or nil to omit the lead
+  caption           hero caption, or nil to omit
+  cta_url           truthy to emit the CTA button
+  cta_path          resolved CTA href
+  cta_label         CTA label
+  parallax          true → emit the Swiper parallax data-attributes
+{%- endcomment -%}
+{% if include.overlay_img_path %}
+  <div class="page__hero-media" style="background-image: {% if include.overlay_filter %}linear-gradient({{ include.overlay_filter }}, {{ include.overlay_filter }}), {% endif %}url('{{ include.overlay_img_path }}');"></div>
+{% endif %}
+<div class="wrapper">
+  <div class="page__hero-copy">
+    <h1 class="page__title" itemprop="headline"{% if include.parallax %} data-swiper-parallax="-210" data-swiper-parallax-duration="900"{% endif %}>
+      <span class="page__title-text">{% if paginator %}{{ site.title }}{% unless paginator.page == 1 %} {{ site.data.ui-text[site.locale].page | default: "Page" }} {{ paginator.page }}{% endunless %}{% else %}{{ include.title }}{% endif %}</span>
+    </h1>
+    {% if include.excerpt %}
+      <p class="page__lead"{% if include.parallax %} data-swiper-parallax="-180" data-swiper-parallax-duration="800"{% endif %}><span class="page__lead-inner">{{ include.excerpt }}</span></p>
+    {% endif %}
+    {% if include.cta_url %}
+      <p><a href="{{ include.cta_path }}" class="btn btn--light-outline btn--large">{{ include.cta_label }}</a></p>
+    {% endif %}
+  </div>
+</div>
+{% if include.caption %}
+  <span class="page__hero-caption">{{ include.caption }}</span>
+{% endif %}
