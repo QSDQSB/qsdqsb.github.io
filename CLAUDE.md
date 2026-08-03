@@ -11,7 +11,7 @@ _config.yml          Jekyll config — collections, defaults, plugins, site vars
 _layouts/            Page layouts (9 — see "Layouts & Gallery System" below)
 _includes/           50+ partials — masthead, gallery, map, hero, sidebar…
 _sass/               SCSS partials — _variables.scss is the token authority
-assets/js/           Custom JS (_main.js → main.min.js) + vendor (jQuery, Three.js, Swiper)
+assets/js/           Custom JS (_main.js → main.min.js) + vendored search (Lunr)
 _posts/              Blog posts
 _pages/              Static pages (about, cv, portfolio…)
 _voyage/             Travel voyage collection
@@ -364,12 +364,9 @@ Gallery viewer keyboard: Backspace=parent, Shift=cover/contain toggle, Esc=fulls
 
 ### Page hero overlay (`_includes/page__hero.html`)
 
-Active when `has-overlay-hero` is on the body (set from page overlay/swiper conditions). Two render paths:
+Active when `has-overlay-hero` is on the body (set from `page.header.overlay_color` / `overlay_image`). Renders `.page__hero--overlay` with the core copy/media shell (title, excerpt, CTA, caption).
 
-- **Swiper path** — `div.swiper.page-overlay-swiper.page-overlay-swiper--hero` with slide-level `.page__hero--overlay.page__hero--overlay-home`.
-- **Non-swiper path** — `.page__hero--overlay` with the same core copy/media shell.
-
-Both paths share spacing rhythm and title/excerpt hierarchy. **Maintaining parity is intentional** — divergence between them is a regression unless explicitly approved.
+(A `page.swipers`-driven multi-slide variant of this hero existed historically — `about.md` was its only user — but was dropped when the page was rebuilt as a single hero; the branch and its Swiper.js dependency were removed as dead code since no content set `swipers:` anymore.)
 
 Excerpt reveal / opening scene is runtime-driven by `assets/js/overlay-opening-scene.js`, which:
 - Toggles `overlay-opening-*` body classes.
