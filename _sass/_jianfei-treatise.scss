@@ -48,7 +48,7 @@ body.jianfei-treatise {
     > h1 + p, > h2 + p, > h3 + p, > h4 + p, > h5 + p, > h6 + p,
     > hr + p, > blockquote + p { text-indent: 0; }
 
-    p, li, dl { font-size: 1.06em; }
+    p, li, dl { font-size: 1.06rem; }
 
     // gilded cross-references (the \ref-style "COMMITMENT #2025-1" link + PDF refs) —
     // keeps the palette to two warm accents instead of the site's default lapis link.

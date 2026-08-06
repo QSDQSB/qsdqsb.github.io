@@ -19,16 +19,18 @@ $global-font-family         : $sans-serif;
 $caption-font-family        : "Roboto", "PT Serif", Georgia, Times, serif;
 $tag-font-family            : "Barlow", $sans-serif-narrow;
 
-/* type scale */
-$type-size-1                : 2.2em;  // ~39.056px // @keep — part of the shared $type-size-1..8 scale
-$type-size-2                : 1.7em;  // ~31.248px
-$type-size-3                : 1.5em;  // ~25.008px
-$type-size-4                : 1.3em;   // ~20px
-$type-size-5                : 1.2em;      // ~16px
-$type-size-6                : 1.1em;   // ~12px
-$type-size-7                : 1.0em; // ~11px
-$type-size-8                : 0.9em;  // ~10px
-$type-code-size             : 0.85em;
+/* type scale — rem-based (root-relative), so sizes never compound through
+   nesting. Root font-size is 16px on mobile / 18px from tablet up (see
+   _reset.scss); a rem value is that multiple of it (1.5rem → 27px at 18px). */
+$type-size-1                : 2.2rem; // @keep — part of the shared $type-size-1..8 scale
+$type-size-2                : 1.7rem;
+$type-size-3                : 1.5rem;
+$type-size-4                : 1.3rem;
+$type-size-5                : 1.2rem;
+$type-size-6                : 1.1rem;
+$type-size-7                : 1.0rem;
+$type-size-8                : 0.9rem;
+$type-code-size             : 0.85rem;
 
 /*
    Colors

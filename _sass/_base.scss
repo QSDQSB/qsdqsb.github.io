@@ -458,7 +458,7 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
 }
 
 .release-card__title {
-  font-size: $type-code-size - 0.2em;
+  font-size: $type-code-size - 0.2rem;
   line-height: 1.1;
   @include responsive-up(tablet) {
     font-size: $type-code-size;
@@ -470,7 +470,7 @@ b, i, strong, em, blockquote, p, q, span, figure, img, h1, h2, header, input, a,
 }
 
 .release-card__description {
-  font-size: $type-code-size - 0.2em;
+  font-size: $type-code-size - 0.2rem;
   color: $text-color;
   font-family: $barlow-font-family;
   font-style: italic;
