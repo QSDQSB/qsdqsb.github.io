@@ -502,7 +502,10 @@ a.reversefootnote {
   > span {
   display:grid;
   overflow: hidden;
-  height: $type-size-4;
+  // One-line viewport for the scrolling typewriter: must track THIS element's
+  // own font-size (it lives inside an <h1>), so it stays em — not the rem
+  // $type-size-4 token, which would size the window to the root, not the h1.
+  height: 1.3em;
   }
 }
 
