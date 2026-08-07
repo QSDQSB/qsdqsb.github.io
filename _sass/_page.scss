@@ -505,37 +505,6 @@ body.collection--posts .page__inner-wrap .page__content {
   }
 }
 
-.page-overlay-swiper--hero {
-  .swiper-slide {
-    height: auto;
-  }
-
-  .page__hero--overlay-home {
-    .page__title,
-    .page__lead,
-    .page__meta,
-    .btn {
-      position: relative;
-    }
-
-    .page__title {
-      padding: 0;
-      border-radius: 0;
-      background: none;
-      @include backdrop-blur(none);
-      box-shadow: none;
-    }
-
-    .page__lead {
-      padding: 0;
-      border-radius: 0;
-      background: none;
-      @include backdrop-blur(none);
-      box-shadow: none;
-    }
-  }
-}
-
 @include responsive-down(tablet) {
   .page__hero--overlay {
     aspect-ratio: unquote("4 / 3");
@@ -621,20 +590,10 @@ html.is-resizing {
   .page__hero .wrapper,
   .page__hero .page__title,
   .page__hero .page__lead,
-  .page__hero .page__meta,
-  .page-overlay-swiper--hero .swiper-slide {
+  .page__hero .page__meta {
     transition-duration: $resize-runtime-transition-duration !important;
     animation-duration: $resize-runtime-transition-duration !important;
     animation-delay: 0s !important;
-  }
-}
-
-.swiper .page__hero {
-  animation: none;
-  animation-delay: unset;
-  &--overlay {
-    animation: none;
-    animation-delay: none;
   }
 }
 

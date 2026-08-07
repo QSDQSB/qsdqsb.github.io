@@ -12,8 +12,8 @@
  * frame; further calls before that frame are no-ops. `fn` runs with
  * whatever arguments the *last* call before the flush provided.
  *
- * Shared by masthead-intent.js, slider.js and this file's own search-panel
- * listener, which all repeated this same guard-flag/rAF/reset idiom.
+ * Shared by masthead-intent.js and this file's own search-panel listener,
+ * which both repeated this same guard-flag/rAF/reset idiom.
  */
 window.QSD = window.QSD || {};
 window.QSD.rafGate = function(fn) {
