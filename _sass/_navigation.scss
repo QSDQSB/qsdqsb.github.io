@@ -660,7 +660,7 @@
 .toc__menu {
   transition: all 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
   list-style: none;
-  font-size: $type-code-size - 0.05em;
+  font-size: $type-code-size - 0.05rem;
   font-weight: 400;
   font-family: $tag-font-family;
   a {
@@ -691,7 +691,7 @@
 
   li ul li ul li ul li ul li ul > li a {
     padding-left: 3rem;
-    font-size: $type-code-size - 0.25em;
+    font-size: $type-code-size - 0.25rem;
   }
 
   /* hide sub sub links on small screens*/
