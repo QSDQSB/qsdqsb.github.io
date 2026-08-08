@@ -75,7 +75,7 @@ Convenience slash commands: `/build`, `/serve`, `/geocode`, `/responsive-audit`,
 
 **Rule:** Never hand-edit `main.min.js`. Edit `_main.js`, then run `npm run build:js`.
 
-**Thumbnails are not tracked.** Every variant (1×/2× JPEG, 1×/2× WebP) plus per-image LQIP+dimensions YAML is produced from `gallery/**` by `scripts/generate-gallery-assets.mjs` and gitignored. CI regenerates the full set on every push to `master` via `.github/workflows/deploy.yml` (~7-8 minutes on a fresh runner). Locally the same script runs as a prerequisite of `npm run build|serve`; subsequent local runs are near-instant due to mtime checks. AVIF is intentionally skipped — see the script header for rationale.
+**Thumbnails are not tracked.** Every variant (1×/2× JPEG, 1×/2× WebP) plus per-image LQIP+dimensions YAML is produced from `gallery/**` by `scripts/generate-gallery-assets.mjs` and gitignored. The hosting build (Cloudflare Pages) regenerates the full set on every deploy, running the generator before `jekyll build`. Locally the same script runs as a prerequisite of `npm run build|serve`; subsequent local runs are near-instant due to mtime checks. AVIF is intentionally skipped — see the script header for rationale.
 
 ## Commit Style
 
