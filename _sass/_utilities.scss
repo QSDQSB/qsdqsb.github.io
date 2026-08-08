@@ -540,6 +540,35 @@ a.reversefootnote {
   100% {transform:translateY(calc(-100%*var(--n-contents)))}
 }
 
+// Mobile: the width-typing is a single-line, desktop-width idiom — long strings
+// clip off a phone's edge. Swap it for a wrap-friendly vertical cross-fade of the
+// same lines. It reuses --n-contents + type-writer-moving (the N-scalable
+// step-scroll) and adds a per-beat fade to soften each swap, so this lives purely
+// on the class: every current and future .text-type-writer is mobile-safe, no
+// markup change. (The per-beat fade is N-independent; a pure opacity crossfade
+// would need a 1/N keyframe, which can't scale to a runtime line count.)
+@include responsive-down(tablet) {
+  .text-type-writer > span { height: 3.8em; }          // ~3-line window (was 1.3em)
+  .text-type-writer span span {
+    width: auto;                                        // drop the left-to-right type reveal…
+    max-width: 100%;
+    height: 3.8em;                                      // uniform slots so the step-scroll aligns
+    white-space: normal;                                // …and let long lines wrap instead of clip
+    word-break: normal;
+    overflow-wrap: anywhere;
+    place-content: center;                              // centre the line vertically in its slot
+    text-align: center;                                 // …and horizontally (keeps text + links inline)
+    animation:
+      type-writer-moving calc(var(--type-writer-duration) * 2 * var(--n-contents)) steps(var(--n-contents)) infinite,
+      type-writer-mobile-fade calc(var(--type-writer-duration) * 2) ease-in-out infinite;
+  }
+}
+
+@keyframes type-writer-mobile-fade {                    // fade each swapped line in/out within its beat
+  0%, 100% { opacity: 0; }
+  15%, 85% { opacity: 1; }
+}
+
 .svg-with-drop-shadow {
   filter: drop-shadow(3px 3px 5px #0a0a0a57 );
   transition: all ease-in-out 0.3s;
