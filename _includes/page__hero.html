@@ -31,64 +31,6 @@
 {% endif %}
 
 
-{% if page.swipers %}
-
-<div class="swiper page-overlay-swiper page-overlay-swiper--hero" style='background-color: transparent; width: 100%;'>
-  <div class="swiper-wrapper">
-    {% for swiper_content in page.swipers %}
-      {% assign overlay_img_path = "" %}
-      {% if swiper_content.overlay_image %}
-        {% if swiper_content.overlay_image contains "://" %}
-          {% capture overlay_img_path %}{{ swiper_content.overlay_image }}{% endcapture %}
-        {% else %}
-          {% assign first_char = swiper_content.overlay_image | slice: 0, 1 %}
-          {% if first_char == "/" %}
-            {% capture overlay_img_path %}{{ swiper_content.overlay_image | prepend: base_path }}{% endcapture %}
-          {% else %}
-            {% capture overlay_img_path %}{{ swiper_content.overlay_image | prepend: "/images/" | prepend: base_path }}{% endcapture %}
-          {% endif %}
-        {% endif %}
-      {% endif %}
-      <div class="swiper-slide">
-        <div class="page__hero--overlay page__hero--overlay-home">
-          {% if overlay_img_path %}
-            <div class="page__hero-media" style="background-image: {% if overlay_filter %}linear-gradient({{ overlay_filter }}, {{ overlay_filter }}), {% endif %}url('{{ overlay_img_path }}');"></div>
-          {% endif %}
-          <div class="wrapper">
-            <div class="page__hero-copy">
-              <h1 class="page__title" itemprop="headline" data-swiper-parallax="-210" data-swiper-parallax-duration="900">
-                <span class="page__title-text">
-                  {% if paginator %}
-                    {{ site.title }}{% unless paginator.page == 1 %} {{ site.data.ui-text[site.locale].page | default: "Page" }} {{ paginator.page }}{% endunless %}
-                  {% else %}
-                    {{ swiper_content.title | default: page.title | markdownify | remove: "<p>" | remove: "</p>" }}
-                  {% endif %}
-                </span>
-              </h1>
-
-              {% if swiper_content.excerpt or page.excerpt %}
-                {% if swiper_content.excerpt %}
-                  {% assign excerpt = swiper_content.excerpt | remove: "<p>" | remove: "</p>" %}
-                {% else %}
-                  {% assign excerpt = page.excerpt | markdownify | remove: "<p>" | remove: "</p>" %}
-                {% endif %}
-                <p class="page__lead" data-swiper-parallax="-180" data-swiper-parallax-duration="800"><span class="page__lead-inner">{{ excerpt }}</span></p>
-              {% endif %}
-              {% if page.header.cta_url %}
-                <p><a href="{{ cta_path }}" class="btn btn--light-outline btn--large">{{ page.header.cta_label | default: site.data.ui-text[site.locale].more_label | default: "Learn More" }}</a></p>
-              {% endif %}
-            </div>
-          </div>
-          {% if page.header.caption %}
-            <span class="page__hero-caption">{{ page.header.caption | markdownify | remove: "<p>" | remove: "</p>" }}</span>
-          {% endif %}
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-</div>
-
-{% else %}
 <div class="page__hero{% if page.header.overlay_color or page.header.overlay_image %}--overlay{% endif %}"
   style="{% if page.header.overlay_color %}background-color: {{ page.header.overlay_color | default: 'transparent' }};{% endif %}"
 >
@@ -122,5 +64,3 @@
     <span class="page__hero-caption">{{ page.header.caption | markdownify | remove: "<p>" | remove: "</p>" }}</span>
   {% endif %}
 </div>
-
-{% endif %}
