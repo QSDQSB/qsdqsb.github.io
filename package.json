@@ -42,7 +42,6 @@
     "serve:fast": "npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll serve"
   },
   "dependencies": {
-    "js-yaml": "^4.1.0",
-    "swiper": "^11.2.6"
+    "js-yaml": "^4.1.0"
   }
 }
