@@ -12,8 +12,8 @@
  * frame; further calls before that frame are no-ops. `fn` runs with
  * whatever arguments the *last* call before the flush provided.
  *
- * Shared by masthead-intent.js, slider.js and this file's own search-panel
- * listener, which all repeated this same guard-flag/rAF/reset idiom.
+ * Shared by masthead-intent.js and this file's own search-panel listener,
+ * which both repeated this same guard-flag/rAF/reset idiom.
  */
 window.QSD = window.QSD || {};
 window.QSD.rafGate = function(fn) {
@@ -539,3 +539,31 @@ document.documentElement.style.scrollBehavior = 'smooth';
 setTimeout(() => {
   document.documentElement.style.scrollBehavior = 'auto';
 }, 1000);
+
+/* Random-jump tarot links (random voyage / random in-page anchor) — one
+   shared handler driven by data attributes, instead of each Liquid partial
+   (random_voyage.html, random_voyage_anchor.html) carrying its own
+   duplicated inline <script>. */
+document.querySelectorAll('[data-random-jump]').forEach(function(link) {
+  var targets;
+  try {
+    targets = JSON.parse(link.getAttribute('data-random-jump-targets') || '[]');
+  } catch (e) {
+    targets = [];
+  }
+  if (!targets.length) return;
+
+  link.addEventListener('click', function(event) {
+    event.preventDefault();
+    var pick = targets[Math.floor(Math.random() * targets.length)];
+
+    if (link.getAttribute('data-random-jump-mode') === 'scroll') {
+      var target = document.querySelector(pick);
+      if (!target) return;
+      var top = target.getBoundingClientRect().top + window.scrollY - 50;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    } else {
+      window.location.href = pick;
+    }
+  });
+});

@@ -68,16 +68,8 @@ function boot() {
 
   // ── 5. Loading-class lifecycle (mirrors legacy gallery.js) ──────────────────
   window.addEventListener('load', () => {
-    body.classList.remove('is-loading-0');
     setTimeout(() => body.classList.remove('is-loading-1'), 100);
     setTimeout(() => body.classList.remove('is-loading-2'), 100 + Math.max(750 - 150, 0));
-  });
-
-  let _resizeTimer;
-  window.addEventListener('resize', () => {
-    body.classList.add('is-loading-0');
-    clearTimeout(_resizeTimer);
-    _resizeTimer = setTimeout(() => body.classList.remove('is-loading-0'), 100);
   });
 
   // ── 6. Thumbnail lazy loading (IntersectionObserver) ───────────────────────
