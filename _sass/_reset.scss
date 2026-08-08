@@ -7,15 +7,17 @@
 html {
   /* apply a natural box layout model to all elements */
   box-sizing: border-box;
-  font-size: 18px;
+  // Editorial baseline: 16px on mobile, 18px from tablet up. Pairs with the
+  // rem-based $type-size-* scale, so this one step scales every text size on the
+  // site together — and nothing compounds. (20px desktop step intentionally
+  // dropped: 1.125rem body copy at 20px root read too large on laptops.)
+  font-size: 16px;
+  @include responsive-up(tablet) { font-size: 18px; } // ≥768px
   /*background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
     background-size: 400% 400%;
     animation: gradient 20s ease infinite;
 */
   background-color: $background-color;
-  @include responsive-up(tablet) {
-    font-size: 20px;
-  }
 
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;

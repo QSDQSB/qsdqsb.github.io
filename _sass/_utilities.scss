@@ -502,7 +502,10 @@ a.reversefootnote {
   > span {
   display:grid;
   overflow: hidden;
-  height: $type-size-4;
+  // One-line viewport for the scrolling typewriter: must track THIS element's
+  // own font-size (it lives inside an <h1>), so it stays em — not the rem
+  // $type-size-4 token, which would size the window to the root, not the h1.
+  height: 1.3em;
   }
 }
 
@@ -535,6 +538,51 @@ a.reversefootnote {
 
 @keyframes type-writer-moving {
   100% {transform:translateY(calc(-100%*var(--n-contents)))}
+}
+
+// Mobile: the width-typing is a single-line, desktop-width idiom — long strings
+// clip off a phone's edge. Swap it for a wrap-friendly vertical cross-fade of the
+// same lines. It reuses --n-contents + type-writer-moving (the N-scalable
+// step-scroll) and adds a per-beat fade to soften each swap, so this lives purely
+// on the class: every current and future .text-type-writer is mobile-safe, no
+// markup change. (The per-beat fade is N-independent; a pure opacity crossfade
+// would need a 1/N keyframe, which can't scale to a runtime line count.)
+@include responsive-down(tablet) {
+  .text-type-writer { --tw-beat: 4.5s; }               // fade cadence (desktop's typing pace is too slow for a fade)
+  .text-type-writer > span { height: 3.8em; }          // ~3-line window (was 1.3em)
+  .text-type-writer span span {
+    width: auto;                                        // drop the left-to-right type reveal…
+    max-width: 100%;
+    height: 3.8em;                                      // uniform slots so the step-scroll aligns
+    white-space: normal;                                // …and let long lines wrap instead of clip
+    word-break: normal;
+    overflow-wrap: anywhere;
+    place-content: center;                              // centre the line vertically in its slot
+    text-align: center;                                 // …and horizontally (keeps text + links inline)
+    animation:
+      type-writer-moving calc(var(--tw-beat) * var(--n-contents)) steps(var(--n-contents)) infinite,
+      type-writer-mobile-fade var(--tw-beat) ease-in-out infinite;
+  }
+}
+
+@keyframes type-writer-mobile-fade {                    // fade each swapped line in/out within its beat
+  0%, 100% { opacity: 0; }
+  15%, 85% { opacity: 1; }
+}
+
+// Respect prefers-reduced-motion (site rule): no typing, no scroll, no fade —
+// show just the first line, static and wrapped. Applies at every width, so it
+// also closes the pre-existing gap on the desktop typing effect.
+@include responsive-reduced-motion {
+  .text-type-writer > span { height: auto; }
+  .text-type-writer span span {
+    animation: none;
+    width: auto;                                        // undo the typing start-state (width: 0)
+    opacity: 1;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .text-type-writer span span:not(:first-child) { display: none; }
 }
 
 .svg-with-drop-shadow {
