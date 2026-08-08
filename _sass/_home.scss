@@ -650,13 +650,9 @@ html.home-snap { scroll-snap-type: y mandatory; }
 }
 
 /* ============================ INTRIGUING WORD ============================ */
-.home__intriguing-word { margin-top: clamp(2rem, 4vh, 3.5rem); }
-
-.home__note--link {
-  text-decoration: none;
-  color: rgba($primary-color, 0.42);
-  transition: color 0.4s $cubic-bezier-smooth;
-  &:hover { color: $intriguing-word-color; }
+.home__intriguing-word {
+  margin-top: clamp(2rem, 4vh, 3.5rem);
+  .word_card:hover, .word_card:focus-within { transform: scale(1.02); }
 }
 
 /* ============================ SCROLL REVEAL ============================ */

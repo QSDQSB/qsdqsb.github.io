@@ -56,3 +56,23 @@
 - title: "Crepuscolo"
   language: 'it'
   description: '(It.) - twilight. The soft glowing light at twilight when the sun is just below the horizon. (Figurative) Something fading, uncertain, or <span class="to-emphasise">hazy</span>; a period of decline or approaching end.'
+
+- title: "Quippe vetor fatis."
+  language: 'la'
+  description: '(Latin, Ovid) — "For I am <span class="to-emphasise">forbidden</span> by the fates." Cassandra''s lament in the Metamorphoses — the curse of seeing what is to come and being <span class="to-emphasise">powerless</span> to change it.'
+
+- title: "Mono no aware"
+  language: 'ja'
+  description: '(Jpn.) — "<span class="to-emphasise" lang="ja">物の哀れ</span>". The bittersweet awareness of <span class="to-emphasise">impermanence</span>; a gentle sadness at the passing of things. Not grief, but the quiet ache of knowing that beauty is inseparable from its transience.'
+
+- title: "Sehnsucht"
+  language: 'de'
+  description: '(De.) — an intense, inconsolable <span class="to-emphasise">longing</span> for something distant, vague, or unattainable — a place never visited, a self never realised. The ache that remains when <span class="to-emphasise">desire</span> outlives its object.'
+
+- title: "Sfumato"
+  language: 'it'
+  description: '(It.) — literally "<span class="to-emphasise">vanished</span>". Leonardo''s painting technique of soft, hazy transitions without hard edges. (Figurative) The blurred threshold between what is <span class="to-emphasise">real</span> and what dissolves.'
+
+- title: "Lacrimae rerum"
+  language: 'la'
+  description: '(Latin, Virgil) — "The <span class="to-emphasise">tears</span> of things." From the Aeneid: there is a sadness woven into the nature of all <span class="to-emphasise">mortal</span> things — not personal grief, but the recognition that impermanence itself is worthy of mourning.'
