@@ -548,6 +548,7 @@ a.reversefootnote {
 // markup change. (The per-beat fade is N-independent; a pure opacity crossfade
 // would need a 1/N keyframe, which can't scale to a runtime line count.)
 @include responsive-down(tablet) {
+  .text-type-writer { --tw-beat: 4.5s; }               // fade cadence (desktop's typing pace is too slow for a fade)
   .text-type-writer > span { height: 3.8em; }          // ~3-line window (was 1.3em)
   .text-type-writer span span {
     width: auto;                                        // drop the left-to-right type reveal…
@@ -559,14 +560,29 @@ a.reversefootnote {
     place-content: center;                              // centre the line vertically in its slot
     text-align: center;                                 // …and horizontally (keeps text + links inline)
     animation:
-      type-writer-moving calc(var(--type-writer-duration) * 2 * var(--n-contents)) steps(var(--n-contents)) infinite,
-      type-writer-mobile-fade calc(var(--type-writer-duration) * 2) ease-in-out infinite;
+      type-writer-moving calc(var(--tw-beat) * var(--n-contents)) steps(var(--n-contents)) infinite,
+      type-writer-mobile-fade var(--tw-beat) ease-in-out infinite;
   }
 }
 
 @keyframes type-writer-mobile-fade {                    // fade each swapped line in/out within its beat
   0%, 100% { opacity: 0; }
   15%, 85% { opacity: 1; }
+}
+
+// Respect prefers-reduced-motion (site rule): no typing, no scroll, no fade —
+// show just the first line, static and wrapped. Applies at every width, so it
+// also closes the pre-existing gap on the desktop typing effect.
+@include responsive-reduced-motion {
+  .text-type-writer > span { height: auto; }
+  .text-type-writer span span {
+    animation: none;
+    width: auto;                                        // undo the typing start-state (width: 0)
+    opacity: 1;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .text-type-writer span span:not(:first-child) { display: none; }
 }
 
 .svg-with-drop-shadow {
