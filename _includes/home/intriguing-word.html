@@ -1,0 +1,44 @@
+{% comment %}
+  A single intriguing word rendered as a lexicon entry below the What's New
+  grid on the home page. Client-side JS picks a random word per visit from
+  the embedded JSON array; the build-time Liquid render is a no-JS fallback.
+{% endcomment %}
+{% assign words = site.data.words %}
+
+<section class="home__lexicon reveal" aria-label="A word that intrigues QSD">
+  <div class="home__section-head">
+    <p class="home__plate">A Word</p>
+    <a class="home__note home__note--link" href="{{ '/posts/terminology/' | relative_url }}">See all &rarr;</a>
+  </div>
+
+  {% assign fallback = words | sample %}
+  <a class="lexicon-entry" id="homeLexicon" href="{{ '/posts/terminology/' | relative_url }}">
+    <hr class="lexicon-entry__rule" aria-hidden="true">
+    <div class="lexicon-entry__body">
+      <h3 class="lexicon-entry__word" id="lexWord" lang="{{ fallback.language | default: 'en' }}" translate="no">{{ fallback.title }}</h3>
+      <span class="lexicon-entry__lang" id="lexLang">{{ fallback.language | default: 'en' }}</span>
+      <p class="lexicon-entry__def" id="lexDef">{{ fallback.description | strip_html }}</p>
+    </div>
+    <hr class="lexicon-entry__rule" aria-hidden="true">
+    <span class="lexicon-entry__colophon" aria-hidden="true">intrigues qsd</span>
+  </a>
+</section>
+
+<script>
+(function () {
+  var words = {{ words | jsonify }};
+  if (!words || !words.length) return;
+  var w = words[Math.floor(Math.random() * words.length)];
+  var el = document.getElementById('lexWord');
+  var lang = document.getElementById('lexLang');
+  var def = document.getElementById('lexDef');
+  if (!el) return;
+  el.textContent = w.title;
+  el.setAttribute('lang', w.language || 'en');
+  lang.textContent = w.language || 'en';
+  // Strip HTML tags from the description (they contain <span> emphasis markup)
+  var tmp = document.createElement('div');
+  tmp.innerHTML = w.description;
+  def.textContent = tmp.textContent || tmp.innerText || '';
+})();
+</script>
