@@ -289,9 +289,9 @@ body.layout--home {
 /* ===================== SCROLL CUE =====================
    One quiet animated symbol per panel: a brass spark that falls down a hairline on
    a constant loop, telling you the page continues. It echoes the site's
-   motion-as-cue language — the swiper carousels simply auto-loop rather than carry
-   a positional navigator — so the Home stays consistent instead of sprouting a
-   bespoke pager. The hero + index panels point down (more below); What's New, being
+   motion-as-cue language — panels auto-advance rather than carry a positional
+   navigator — so the Home stays consistent instead of sprouting a bespoke pager.
+   The hero + index panels point down (more below); What's New, being
    the last panel, uses `--up` (a rising spark) so it never gestures at a dead end.
    Each cue lives inside its panel, so it scrolls with it. */
 .home__scroll-hint {
