@@ -18,9 +18,9 @@ $responsive-breakpoints: (
   ultra: 96rem         // 1536px
 ) !default;
 
-$responsive-left-rail-breakpoint: ultra !default;
+$responsive-left-rail-breakpoint: 72rem !default;  // 1152px — the archive/about author rail appears here (was ultra/1536px, which hid it on normal laptops); matches the single-page rail below.
 $responsive-single-left-rail-compact-breakpoint: 72rem !default;
-$responsive-single-left-rail-full-breakpoint: $responsive-left-rail-breakpoint !default;
+$responsive-single-left-rail-full-breakpoint: ultra !default;  // decoupled from the rail breakpoint above so single pages keep their compact(11rem)→full(13rem) growth at ultra.
 $responsive-single-dual-rail-min-width: 82rem !default;
 $responsive-single-left-rail-width-compact: 11rem !default;
 $responsive-single-left-rail-width-full: 13rem !default;
