@@ -42,14 +42,13 @@ description: Audit Jekyll layout/include/frontmatter contracts and verify existi
 
 ## Quick Reference: Page Overlay Hero (Current State)
 - Current behavior snapshot:
-  - Overlay hero is active when `has-overlay-hero` is present on `<body>` (set from page overlay/swiper conditions in layout).
-  - Swiper path renders `div.swiper.page-overlay-swiper.page-overlay-swiper--hero` with slide-level `.page__hero--overlay.page__hero--overlay-home`.
-  - Non-swiper path renders `.page__hero--overlay` with the same core copy/media shell.
+  - Overlay hero is active when `has-overlay-hero` is present on `<body>` (set from `page.header.overlay_color`/`overlay_image` in layout).
+  - Renders `.page__hero--overlay` with the core copy/media shell (title, excerpt, CTA, caption).
   - Excerpt reveal/opening scene is runtime-driven by `overlay-opening-scene.js` via `overlay-opening-*` body classes.
+  - A `page.swipers`-driven multi-slide path (Swiper.js) existed historically (`about.md` was its only user) and was removed as dead code once no content set `swipers:` — don't reintroduce a parallel render path without a live content need.
 - Concise design-choice rationale:
   - Premium readability over heavy effects: stable title/excerpt hierarchy on overlay image.
   - Token-first spacing and motion controls in shared variables.
-  - Swiper/non-swiper parity is intentional (including title/excerpt spacing rhythm).
   - Reduced-motion users bypass animated opening flow.
 - Essential components map:
   - `_includes/page__hero.html`
