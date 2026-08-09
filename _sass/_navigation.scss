@@ -272,41 +272,11 @@
     width: $nav-action-size;
     height: $nav-action-size;
     padding: 0;
-    border: 1px solid $nav-action-border-color;
-    outline: none;
-    -webkit-appearance: none;
-    appearance: none;
-    background-color: $nav-action-surface;
-    color: $nav-action-icon-color;
-    cursor: pointer;
-    border-radius: 999px;
-    @include backdrop-blur(blur($nav-action-blur));
-    overflow: hidden;
-    isolation: isolate;
     transform: translateY(-50%);
-    transition:
-      background-color 0.28s $cubic-bezier-smooth,
-      border-color 0.28s $cubic-bezier-smooth,
-      box-shadow 0.28s $cubic-bezier-smooth,
-      transform 0.32s $nav-shell-ease,
-      opacity $nav-content-fade-duration $nav-shell-ease;
     display: none;
     align-items: center;
     justify-content: center;
-
-    &::before {
-      content: "";
-      position: absolute;
-      inset: -65%;
-      z-index: 0;
-      background: $nav-action-sweep-gradient;
-      opacity: 0;
-      pointer-events: none;
-      transform: translate3d(-36%, 0, 0) rotate(12deg);
-      transition:
-        opacity 0.24s $cubic-bezier-smooth,
-        transform $nav-action-sweep-duration $cubic-bezier-smooth;
-    }
+    @include nav-action-shell(0.32s $nav-shell-ease);
 
     .navicon {
       position: relative;
@@ -340,22 +310,16 @@
     &:focus-visible {
       background-color: $nav-action-surface-hover;
       border-color: $nav-action-border-color-hover;
-      box-shadow:
-        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
-        0 12px 20px rgba(0, 0, 0, 0.2);
+      @include nav-action-hover-shadow;
       transform: translateY(-50%) translateY($nav-action-hover-lift) scale($nav-action-hover-scale);
 
       &::before {
-        opacity: 1;
-        transform: translate3d(34%, 0, 0) rotate(12deg);
+        @include nav-action-sweep-in;
       }
     }
 
     &:focus-visible {
-      box-shadow:
-        0 0 0 1px $nav-action-focus-ring-color,
-        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
-        0 12px 20px rgba(0, 0, 0, 0.2);
+      @include nav-action-focus-shadow;
     }
 
     &:active {
@@ -544,10 +508,7 @@
 @include responsive-reduced-motion {
   .greedy-nav {
     > .greedy-nav__toggle {
-      transition:
-        background-color 0.2s linear,
-        border-color 0.2s linear,
-        opacity 0.2s linear;
+      @include nav-action-reduced-motion-transition;
 
       &:hover,
       &:focus-visible,

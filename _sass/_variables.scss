@@ -144,18 +144,18 @@ $nav-brand-logo-shell-size-mobile: $nav-brand-mark-size-mobile + (0.32rem * 2);
 $nav-brand-text-max-width: 26rem;
 $nav-action-size: 1.82rem;
 $nav-action-size-mobile: 1.36rem;
-$nav-action-border-color: rgba(255, 255, 255, 0.12);
+$nav-action-border-color: rgba(255, 255, 255, 0.12); // @keep — consumed by the `nav-action-shell` mixin (_mixins.scss), itself used at 2 callsites (search toggle + greedy-nav toggle)
 $nav-action-border-color-hover: rgba(255, 255, 255, 0.24);
-$nav-action-focus-ring-color: rgba(255, 255, 255, 0.3);
-$nav-action-surface: rgba(255, 255, 255, 0.07);
+$nav-action-focus-ring-color: rgba(255, 255, 255, 0.3); // @keep — consumed by the `nav-action-focus-shadow` mixin, used at 2 callsites
+$nav-action-surface: rgba(255, 255, 255, 0.07); // @keep — consumed by the `nav-action-shell` mixin, used at 2 callsites
 $nav-action-surface-hover: rgba(255, 255, 255, 0.16);
 $nav-action-surface-active: rgba(255, 255, 255, 0.2);
-$nav-action-icon-color: #fff;
+$nav-action-icon-color: #fff; // @keep — consumed by the `nav-action-shell` mixin, used at 2 callsites
 $nav-action-hover-lift: -1px;
 $nav-action-hover-scale: 1.035;
-$nav-action-sweep-gradient: linear-gradient(110deg, rgba(255, 255, 255, 0) 14%, rgba(255, 255, 255, 0.24) 48%, rgba(255, 255, 255, 0) 82%);
-$nav-action-sweep-duration: 0.38s;
-$nav-action-blur: 12px;
+$nav-action-sweep-gradient: linear-gradient(110deg, rgba(255, 255, 255, 0) 14%, rgba(255, 255, 255, 0.24) 48%, rgba(255, 255, 255, 0) 82%); // @keep — consumed by the `nav-action-shell` mixin, used at 2 callsites
+$nav-action-sweep-duration: 0.38s; // @keep — consumed by the `nav-action-shell` mixin, used at 2 callsites
+$nav-action-blur: 12px; // @keep — consumed by the `nav-action-shell` mixin, used at 2 callsites
 $nav-overflow-icon-width: 1.32rem;
 $nav-overflow-icon-height: 0.18rem;
 $nav-overflow-icon-width-mobile: 0.84rem;
