@@ -1,6 +1,6 @@
 ---
 name: frontmatter-contract-enforcer
-description: Validate Jekyll frontmatter against this site's collection contracts. Use whenever editing or creating markdown in `_posts/`, `_pages/`, `_voyage/`, or `_subvoyage/`, whenever the user mentions adding a post, page, voyage, or subvoyage, and whenever frontmatter keys like `gallery_name`, `map_dataset`, `subgalleries`, `map`, or `permalink` are being touched. Catches missing required keys and conditional pairings that break rendering silently.
+description: Validate Jekyll frontmatter against this site's collection contracts. Use whenever editing or creating markdown in `_posts/`, `_pages/`, `_voyage/`, or `_subvoyage/`, whenever the user mentions adding a post, page, voyage, or subvoyage, and whenever frontmatter keys like `gallery_name`, `subgalleries`, `map`, or `permalink` are being touched. Catches missing required keys and conditional pairings that break rendering silently.
 ---
 
 # Frontmatter Contract Enforcer
@@ -12,8 +12,8 @@ Jekyll won't refuse to render a page with a missing `header` or a `gallery_name`
 | Collection | Required | Strongly expected / conditional |
 |---|---|---|
 | `_posts` | `title`, `date` | `permalink`, `tags`, `header` |
-| `_pages` | `title` | `layout` (non-default), `permalink` (routable), `map_dataset` (manual-YAML map pages) |
-| `_voyage` | `title`, `date`, `header` | exactly one of: `gallery_name` OR `subgalleries: true`; optional `map:` viewport (only with `subgalleries:true`); `map_dataset:` only as a legacy escape hatch |
+| `_pages` | `title` | `layout` (non-default), `permalink` (routable) |
+| `_voyage` | `title`, `date`, `header` | exactly one of: `gallery_name` OR `subgalleries: true`; optional `map:` viewport (only with `subgalleries:true`) |
 | `_subvoyage` | `title`, `date`, `header` | `gallery_name` (typically required for gallery routing); optional `map:` block to pin / refine the parent's auto-derived map marker |
 
 ## Conditional pairings (these are where things break)
@@ -23,7 +23,7 @@ Jekyll won't refuse to render a page with a missing `header` or a `gallery_name`
   - `images/thumbnails/gallery/<name>/` (thumbnails — often the missing one)
 - **`subgalleries: true`** does two things:
   1. Puts the voyage in enumerator mode (sub-voyage card list, no image viewer). Parent voyage basename must align with `_subvoyage/<basename>/` so the enumerator can discover children — matched by path substring.
-  2. Auto-derives an atlas-style map at `assets/maps/voyage-<basename>.geojson`, one feature per child of `_subvoyage/<basename>/*.md`. No `map_dataset:` needed.
+  2. Auto-derives an atlas-style map at `assets/maps/voyage-<basename>.geojson`, one feature per child of `_subvoyage/<basename>/*.md`.
 - **`map:` on a parent voyage with `subgalleries:true`** — optional viewport override:
   ```yaml
   map:
@@ -38,8 +38,9 @@ Jekyll won't refuse to render a page with a missing `header` or a `gallery_name`
   - `map: { query: "..." }` — override the title-based geocode query
   - `map: { exclude: true }` — omit this child from the parent's map
   - Default when nothing is set: geocode by `"<sub-voyage title>, <parent voyage title>"`. Atmospheric titles (Portraits, Twilight, Flow, Streetscape…) typically fail to geocode and are gracefully skipped with a build warning. Suggest adding `map:` if the file is silently absent from the map.
-- **`map_dataset: <name>`** — legacy hand-curated path. Must match `_data/maps/<name>.yml`. Only use for voyages without `subgalleries:true` that need a manual marker list. Flag any voyage with BOTH `subgalleries:true` AND `map_dataset:` — the dataset wins via Liquid `default:` precedence in the layout, but that's almost never intended; the parent should use the auto-derive instead.
 - **`tags`** should resolve to entries in `_data/tag_colours.yml`. Missing entries don't break rendering, but the tag will display without its accent colour. Warn and offer to add the mapping.
+
+The old hand-curated `_data/maps/*.yml` pipeline is retired (the directory doesn't exist) — don't validate `map_dataset` against it. Within these four collections `map_dataset` is a no-op today (no `_posts`/`_pages`/`_voyage`/`_subvoyage` file sets it, and `_layouts/gallery.html` no longer honours an override even on a `subgalleries:true` voyage) — flag it if you see it here. It does still work outside this skill's scope: `_portfolio/voyage.html` uses `map_dataset: voyage-atlas` directly to load the global atlas.
 
 ## Workflow
 
