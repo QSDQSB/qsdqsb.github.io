@@ -8,45 +8,28 @@ excerpt: "Intepretation and misintepretation of this world."
 tags:
   - 🧼QSD's Philosophy
   - 😻Happy Moments
-  - 🗒TODO
 header:
   overlay_image: Legotypewriter1-3v1.jpg
   overlay_filter: 0.4
 ---
 
-## TERMINOLOGIES
-{: .barlow}
+{%- assign sorted_words = site.data.words | sort: "title" -%}
+{%- assign current_letter = "" -%}
 
-#TODO
+{%- for word in sorted_words -%}
+  {%- assign first_letter = word.title | slice: 0 | upcase -%}
+  {%- if first_letter != current_letter -%}
+    {%- if current_letter != "" -%}
+</div>
+    {%- endif -%}
+    {%- assign current_letter = first_letter -%}
 
-<!-- 
-### Wands
-{: .barlow}
-
-### Pentacles
-{: .barlow}
-
-### Cups
-{: .barlow}
-
-### Swords
-{: .barlow} 
-
-#### 谷歌街景感 / Google Street View Vibe
-{: .barlow}
--->
-
-## List of Intriguing Words
-{: .barlow}
-
+<div class="codex-letter" aria-hidden="true">{{ current_letter }}</div>
 <div class="card_grid_view">
-  {% assign intriguing_words = site.data.words %}
-  <!-- Randomly reshuffle -->
-  {% assign intriguing_words = intriguing_words | sample: intriguing_words.size %}
-    {% for sample_word in intriguing_words %}
-    <div class="word_card">
-        <h1 lang="{{ sample_word.language | default: 'en' }}" translate="no">{{ sample_word.title }}</h1>
-        <p>{{ sample_word.description }}</p>
-    </div>
-    {% endfor %}
+  {%- endif -%}
+  <div class="word_card">
+    <h1 lang="{{ word.language | default: 'en' }}" translate="no">{{ word.title }}</h1>
+    <p>{{ word.description }}</p>
+  </div>
+{%- endfor -%}
 </div>
