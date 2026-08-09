@@ -18,7 +18,7 @@ Ask the user for these if not provided:
 7. **Map**:
    - **For a parent voyage with `subgalleries: true`** — a map is auto-derived from the children; no opt-in needed. Optionally ask for an initial viewport (center/zoom) if the user wants to override the default fitBounds — e.g. when a tight city-scale view reads better than the auto-fit cluster.
    - **For a sub-voyage** — optionally ask for explicit `map.lat`/`map.lng` if the title isn't a recognisable place (Nominatim will be asked `"<title>, <parent title>"` by default). Atmospheric titles ("Twilight", "Portraits", "Flow", etc.) won't geocode — those need explicit coords, a `map.query` override, or `map.exclude: true`.
-   - **For a non-subgalleries voyage that needs a hand-curated marker list** — the legacy `map_dataset: <name>` path is still available; the user provides a `_data/maps/<name>.yml`.
+   - **For a non-subgalleries voyage** — there's no per-voyage manual marker list any more. `map_dataset:` only makes sense as an explicit pointer at an *existing* GeoJSON (in practice just `voyage-atlas`, the global cross-voyage atlas that `_portfolio/voyage.html` uses); it can't scaffold a bespoke dataset. Don't offer it as a marker-list option here.
 
 ## What to verify before writing
 
@@ -27,7 +27,7 @@ Ask the user for these if not provided:
 3. **Tags resolve.** For each tag, grep `_data/tag_colours.yml`. If any are missing, list them and offer to scaffold the colour entries.
 4. **Parent voyage exists** (sub-voyages) — verify `_voyage/<parent>.md` exists with `subgalleries: true`. If not, the enumerator won't find this child AND the parent's auto-derived map won't include this sub-voyage.
 5. **Naming alignment** — for sub-voyages, confirm `_subvoyage/<parent>/` is the destination folder (path-substring discovery requires this).
-6. **Map dataset resolves** (only if `map_dataset:` is being used as a legacy escape hatch) — verify `_data/maps/<dataset>.yml` exists.
+6. **Map dataset resolves** (only if `map_dataset:` is set explicitly) — verify `assets/maps/<dataset>.geojson` exists (i.e. it's `voyage-atlas` or a real `voyage-<slug>`, not an invented name).
 
 ## Output the file
 
@@ -68,9 +68,8 @@ date: YYYY-MM-DD
 gallery_name: <name>             # gallery viewer mode
 tags:
   - tag1
-# map_dataset: <name>            # legacy hand-curated map (rare, only if
-                                 # this voyage really wants a manual marker
-                                 # list in `_data/maps/<name>.yml`).
+# map_dataset: voyage-atlas       # rare — explicitly points at the global
+                                 # cross-voyage atlas instead of no map at all.
 header:
   overlay_image: /images/...
 ---

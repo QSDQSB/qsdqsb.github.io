@@ -12,8 +12,8 @@ Jekyll won't refuse to render a page with a missing `header` or a `gallery_name`
 | Collection | Required | Strongly expected / conditional |
 |---|---|---|
 | `_posts` | `title`, `date` | `permalink`, `tags`, `header` |
-| `_pages` | `title` | `layout` (non-default), `permalink` (routable), `map_dataset` (manual-YAML map pages) |
-| `_voyage` | `title`, `date`, `header` | exactly one of: `gallery_name` OR `subgalleries: true`; optional `map:` viewport (only with `subgalleries:true`); `map_dataset:` only as a legacy escape hatch |
+| `_pages` | `title` | `layout` (non-default), `permalink` (routable), `map_dataset` (points at an existing GeoJSON dataset) |
+| `_voyage` | `title`, `date`, `header` | exactly one of: `gallery_name` OR `subgalleries: true`; optional `map:` viewport (only with `subgalleries:true`); `map_dataset:` to override the auto-derived dataset id |
 | `_subvoyage` | `title`, `date`, `header` | `gallery_name` (typically required for gallery routing); optional `map:` block to pin / refine the parent's auto-derived map marker |
 
 ## Conditional pairings (these are where things break)
@@ -38,7 +38,7 @@ Jekyll won't refuse to render a page with a missing `header` or a `gallery_name`
   - `map: { query: "..." }` — override the title-based geocode query
   - `map: { exclude: true }` — omit this child from the parent's map
   - Default when nothing is set: geocode by `"<sub-voyage title>, <parent voyage title>"`. Atmospheric titles (Portraits, Twilight, Flow, Streetscape…) typically fail to geocode and are gracefully skipped with a build warning. Suggest adding `map:` if the file is silently absent from the map.
-- **`map_dataset: <name>`** — legacy hand-curated path. Must match `_data/maps/<name>.yml`. Only use for voyages without `subgalleries:true` that need a manual marker list. Flag any voyage with BOTH `subgalleries:true` AND `map_dataset:` — the dataset wins via Liquid `default:` precedence in the layout, but that's almost never intended; the parent should use the auto-derive instead.
+- **`map_dataset: <name>`** — points `_includes/map.html` at `assets/maps/<name>.geojson` directly (must already exist as either the global `voyage-atlas` dataset or a per-parent `voyage-<slug>` dataset — there's no hand-authored YAML source any more). `_portfolio/voyage.html` is the live example: it sets `map_dataset: voyage-atlas` to render the cross-voyage atlas. Flag any voyage with BOTH `subgalleries:true` AND `map_dataset:` — the dataset wins via Liquid `default:` precedence in the layout, but that's almost never intended; the parent should use the auto-derive instead.
 - **`tags`** should resolve to entries in `_data/tag_colours.yml`. Missing entries don't break rendering, but the tag will display without its accent colour. Warn and offer to add the mapping.
 
 ## Workflow
