@@ -38,7 +38,7 @@ Deterministic scenarios for current gate families.
 
 ### Scenario G (Map cache mismatch)
 - Any of:
-  - `map_dataset: <name>` referenced, missing `assets/maps/<name>.geojson` after preprocess (legacy hand-curated path).
+  - `map_dataset: <name>` referenced (e.g. `_portfolio/voyage.html`) where `<name>` isn't `voyage-atlas` or an existing `voyage-<slug>` — nothing generates any other dataset name anymore.
   - `_voyage/<slug>.md` has `subgalleries: true` but `assets/maps/voyage-<slug>.geojson` is missing after preprocess (auto-derived parent atlas).
   - `_subvoyage/<slug>/*.md` added without geocodable title and no explicit `map: { lat, lng }` / `map: { query }` / `map: { exclude: true }`, leading to silent absence from the parent's atlas.
 - Expected: `DATA-001` warning (Stage 1), blocking (Stage 2).

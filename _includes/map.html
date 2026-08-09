@@ -6,33 +6,32 @@
        used by gallery.html for parent voyages with `subgalleries: true`, where
        the dataset is the derived `voyage-<slug>` GeoJSON written by
        scripts/geocode-maps.js)
-    2. page.map_dataset (legacy frontmatter path — manual YAML in `_data/maps/`)
+    2. page.map_dataset — used directly by `_portfolio/voyage.html`
+       (`map_dataset: voyage-atlas`) to load the always-generated global atlas.
 
-  Viewport comes from `site.data.maps[<id>].viewport` when a YAML dataset of
-  that name exists; otherwise the renderer auto-fits to feature bounds (fine
-  for derived parent-voyage atlases, which have no YAML).
+  Either way, the id must match a real file scripts/geocode-maps.js produces:
+  `voyage-atlas` or `voyage-<slug>`. There is no longer a hand-curated YAML
+  path — `_data/maps/` doesn't exist in this repo, so any `map_dataset` value
+  other than one of those two generated ids will 404.
 
-  tech-debt: path 2 (page.map_dataset) is currently dead — no _voyage/_pages
-  file sets map_dataset, and _data/maps/ doesn't exist in this repo. Proposed
-  for removal alongside the matching dead branches in map.js and
-  scripts/geocode-maps.js; see the open tech-debt PR before deleting.
+  Viewport comes from `geojson.properties.viewport` (embedded by
+  scripts/geocode-maps.js from the parent voyage's `map:` frontmatter block)
+  or the renderer auto-fits to feature bounds — see map.js's effectivePreset
+  precedence.
 {%- endcomment -%}
 
 {% assign map_dataset_id = include.dataset | default: page.map_dataset %}
 {% if map_dataset_id %}
-{% assign map_data = site.data.maps[map_dataset_id] %}
-<div id="map-container-{{ map_dataset_id }}" class="map-container" data-dataset="{{ map_dataset_id }}" data-geojson="/assets/maps/{{ map_dataset_id }}.geojson"{% if map_data.viewport %} data-viewport='{{ map_data.viewport | jsonify }}'{% endif %}>
+<div id="map-container-{{ map_dataset_id }}" class="map-container" data-dataset="{{ map_dataset_id }}" data-geojson="/assets/maps/{{ map_dataset_id }}.geojson">
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const container = document.getElementById('map-container-{{ map_dataset_id }}');
   if (!container) return;
-  const datasetName = container.dataset.dataset;
   const geojsonPath = container.dataset.geojson;
-  const viewportData = container.dataset.viewport ? JSON.parse(container.dataset.viewport) : null;
   if (typeof window.MapRenderer !== 'undefined') {
-    window.MapRenderer.init(container, { geojsonPath: geojsonPath, datasetName: datasetName, viewport: viewportData });
+    window.MapRenderer.init(container, { geojsonPath: geojsonPath });
   } else {
     console.warn('MapRenderer not yet loaded. Ensure Leaflet and map.js are included.');
   }

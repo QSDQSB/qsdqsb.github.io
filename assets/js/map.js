@@ -40,22 +40,10 @@
   // absence of scrollWheelZoom is deliberate — see activateMap().
   const ACTIVATION_HANDLERS = ['dragging', 'doubleClickZoom', 'touchZoom', 'boxZoom', 'keyboard'];
 
-  function getViewportPreset(datasetName, viewportData) {
+  function getViewportPreset(viewportData) {
     if (viewportData) {
       const preset = buildPresetFromViewportData(viewportData);
       if (preset) return preset;
-    }
-
-    if (VIEWPORT_PRESETS[`city:${datasetName}`]) {
-      return VIEWPORT_PRESETS[`city:${datasetName}`];
-    }
-
-    if (VIEWPORT_PRESETS[`country:${datasetName}`]) {
-      return VIEWPORT_PRESETS[`country:${datasetName}`];
-    }
-
-    if (VIEWPORT_PRESETS[`continent:${datasetName}`]) {
-      return VIEWPORT_PRESETS[`continent:${datasetName}`];
     }
 
     // No user-supplied viewport — leave the preset null so the load step
@@ -298,13 +286,13 @@
     container.classList.add('map-container--booting');
     container.classList.remove('map-container--ready');
 
-    const { geojsonPath, datasetName, viewport } = options || {};
+    const { geojsonPath, viewport } = options || {};
     if (!geojsonPath) {
       showError(container, 'GeoJSON path not provided');
       return;
     }
 
-    const viewportPreset = getViewportPreset(datasetName, viewport);
+    const viewportPreset = getViewportPreset(viewport);
     const presetForInit = viewportPreset || VIEWPORT_PRESETS.world;
     const mapInstance = L.map(container, {
       center: presetForInit.center || [20, 0],
@@ -412,13 +400,7 @@
   }
 
   function isAtlasDataset(geojson) {
-    if (geojson && geojson.properties && geojson.properties.kind === 'voyage-atlas') {
-      return true;
-    }
-
-    return Array.isArray(geojson.features) && geojson.features.some((feature) => {
-      return Array.isArray(feature?.properties?.tags);
-    });
+    return !!(geojson && geojson.properties && geojson.properties.kind === 'voyage-atlas');
   }
 
   function renderAtlasMap(map, geojson, container) {
