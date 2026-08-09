@@ -477,6 +477,16 @@ a.word_card--link {
     overflow-wrap: break-word;
     hyphens: auto;
   }
+  .word_card__origin {
+    display: block;
+    font-family: $barlow-font-family;
+    font-size: $type-size-7;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba($intriguing-word-color, 0.5);
+    margin: -0.2em 0 0.6em;
+  }
   p {
     color: $intriguing-word-color; // hsl(40, 70%, 85%);
     padding-bottom: 1rem;
