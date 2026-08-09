@@ -28,7 +28,8 @@ Required keys:
 Conditional keys:
 - `layout` for non-default pages
 - `permalink` for routable pages
-- `map_dataset` if page includes map module
+
+`map_dataset` has no effect in `_pages` or `_voyage` — `_layouts/gallery.html` no longer reads it, and there's no other layout wired to `_includes/map.html`'s `page.map_dataset` fallback. The one live user, `_portfolio/voyage.html`, is a one-off page under its own `_portfolio` collection, not `_pages` or `_voyage`.
 
 ### `_voyage`
 Required keys:
@@ -38,10 +39,7 @@ Required keys:
 
 At least one of:
 - `gallery_name` (gallery-backed voyage)
-- `subgalleries: true` (subvoyage enumerator mode)
-
-Optional map linkage:
-- `map_dataset`
+- `subgalleries: true` (subvoyage enumerator mode, also auto-derives an atlas)
 
 ### `_subvoyage`
 Required keys:
