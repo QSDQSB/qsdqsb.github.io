@@ -44,10 +44,11 @@
 {% endif %}
 
 <!-- Leaflet + map renderer — only on pages that show a map.
-     Gate matches _layouts/gallery.html: a map appears whenever the page
-     declares `map_dataset` (legacy YAML path) OR `subgalleries: true`
-     (new path — the layout auto-derives `voyage-<slug>` from children).
-     Skipping these on the other ~96% of pages saves ~180 KB of render-blocking JS+CSS. -->
+     Gate matches _includes/map.html: a map appears whenever the page
+     declares `subgalleries: true` (gallery.html auto-derives `voyage-<slug>`)
+     OR `map_dataset` (used directly by _portfolio/voyage.html for the global
+     atlas). Skipping these on the other ~96% of pages saves ~180 KB of
+     render-blocking JS+CSS. -->
 {% if page.map_dataset or page.subgalleries %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="

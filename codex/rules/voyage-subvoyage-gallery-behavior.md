@@ -23,7 +23,7 @@ The `gallery` layout has two mutually exclusive branches:
 | --- | --- | --- | --- |
 | `subgalleries` | `_voyage` frontmatter (default false in `_config.yml`) | Conditional | `true` selects enumerator mode and disables gallery thumbnail/viewer rendering for that page. |
 | `gallery_name` | `_voyage` or `_subvoyage` frontmatter | Required for gallery viewer mode | Used to resolve `gallery/<gallery_name>/` and `images/thumbnails/gallery/<gallery_name>/` assets. |
-| `map_dataset` | `_voyage`/`_subvoyage` frontmatter | Optional | If present, includes `_includes/map.html` map block on gallery-layout pages. |
+| `subgalleries: true` also auto-includes a map | `_voyage` frontmatter | N/A (implied by `subgalleries`) | Always renders `_includes/map.html` with the auto-derived `voyage-<basename>` dataset — `map_dataset` frontmatter has no effect here; unset for `_voyage`/`_subvoyage`. |
 | `tags` | frontmatter | Optional but recommended | If `site.tag_voyage.type` and first tag exist, renders voyage tag taxonomy block. |
 | `title` | frontmatter | Required | Shown in page header; also used by random-anchor include (`slugify(title)` for in-page anchors). |
 | `subtitle` | frontmatter | Optional | Displayed under title in gallery viewer header when set. |
@@ -99,7 +99,7 @@ From `assets/js/gallery.js`:
 | 1. Parent enumerator voyage | `_voyage` page with `subgalleries: true` | Renders subvoyage cards via `archive-single.html`; no thumbnail viewer section. |
 | 2. Direct voyage gallery | `_voyage` page with `gallery_name` and no `subgalleries: true` | Renders thumbnail grid + viewer runtime with gallery images/thumbnails. |
 | 3. Subvoyage gallery page | `_subvoyage` page with `gallery_name: parent/child` | Renders gallery viewer plus sibling subvoyage panel (`Other <parent>`), sampled up to 3. |
-| 4. Map-enabled gallery layout | Any gallery-layout page with `map_dataset` | Includes map block after main content region. |
+| 4. Map-enabled gallery layout | `_voyage` page with `subgalleries: true` | Includes map block (auto-derived `voyage-<basename>` dataset) after main content region. |
 | 5. Tag block rendering | `site.tag_voyage.type` enabled and `page.tags[0]` present | Renders voyage taxonomy chip list with voyage tag path. |
 | 6. Random recommendation rail | Gallery viewer mode | Renders 4 random recommendations; if sampled voyage has `subgalleries: true`, one subvoyage is sampled instead. |
 | 7. Missing `gallery_name` in viewer mode | `subgalleries` false/missing and no `gallery_name` | Gallery shell renders but thumbnail/image population is empty; treat as contract violation. |
