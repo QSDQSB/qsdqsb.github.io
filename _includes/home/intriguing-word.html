@@ -13,6 +13,7 @@
   <div class="word_card_container">
     <a class="word_card" href="{{ '/posts/terminology/' | relative_url }}" style="text-decoration:none; cursor:pointer;">
       <h1 id="homeWordTitle" lang="{{ fallback.language | default: 'en' }}" translate="no">{{ fallback.title }}</h1>
+      {% if fallback.origin %}<span class="word_card__origin" id="homeWordOrigin">{{ fallback.origin }}</span>{% endif %}
       <p id="homeWordDef">{{ fallback.description }}</p>
     </a>
   </div>
@@ -28,6 +29,8 @@
   if (!title) return;
   title.textContent = w.title;
   title.setAttribute('lang', w.language || 'en');
+  var origin = document.getElementById('homeWordOrigin');
+  if (origin) origin.textContent = w.origin || '';
   def.innerHTML = w.description;
 })();
 </script>

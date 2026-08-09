@@ -32,6 +32,7 @@ header:
   {%- endif -%}
   <a class="word_card word_card--link" href="#{{ first_letter }}">
     <h1 lang="{{ word.language | default: 'en' }}" translate="no">{{ word.title }}</h1>
+    {%- if word.origin -%}<span class="word_card__origin">{{ word.origin }}</span>{%- endif -%}
     <p>{{ word.description }}</p>
   </a>
 {%- endfor -%}
