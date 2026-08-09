@@ -649,6 +649,12 @@ html.home-snap { scroll-snap-type: y mandatory; }
   .wn-ex { display: block; }
 }
 
+/* ============================ INTRIGUING WORD ============================ */
+.home__intriguing-word {
+  margin-top: clamp(2rem, 4vh, 3.5rem);
+  .word_card:hover, .word_card:focus-within { transform: scale(1.02); }
+}
+
 /* ============================ SCROLL REVEAL ============================ */
 /* Gated on `.home-reveal-ready` (added by the observer in home.html only when
    motion is allowed + JS runs) — reduced-motion / no-JS keep everything visible. */

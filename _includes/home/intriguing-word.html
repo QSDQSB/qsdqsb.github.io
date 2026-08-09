@@ -1,0 +1,36 @@
+{% comment %}
+  Intriguing word on the home page — reuses the existing .word_card layout.
+  Client-side JS picks a random word per visit; Liquid renders a fallback.
+{% endcomment %}
+{% assign words = site.data.words %}
+{% assign fallback = words | sample %}
+
+<section class="home__intriguing-word reveal" aria-label="A word that intrigues QSD">
+  <div class="home__section-head">
+    <p class="home__plate">A Word</p>
+  </div>
+
+  <div class="word_card_container">
+    <a class="word_card" href="{{ '/posts/terminology/' | relative_url }}" style="text-decoration:none; cursor:pointer;">
+      <h1 id="homeWordTitle" lang="{{ fallback.language | default: 'en' }}" translate="no">{{ fallback.title }}</h1>
+      {% if fallback.origin %}<span class="word_card__origin" id="homeWordOrigin">{{ fallback.origin }}</span>{% endif %}
+      <p id="homeWordDef">{{ fallback.description }}</p>
+    </a>
+  </div>
+</section>
+
+<script>
+(function () {
+  var words = {{ words | jsonify }};
+  if (!words || !words.length) return;
+  var w = words[Math.floor(Math.random() * words.length)];
+  var title = document.getElementById('homeWordTitle');
+  var def = document.getElementById('homeWordDef');
+  if (!title) return;
+  title.textContent = w.title;
+  title.setAttribute('lang', w.language || 'en');
+  var origin = document.getElementById('homeWordOrigin');
+  if (origin) origin.textContent = w.origin || '';
+  def.innerHTML = w.description;
+})();
+</script>
