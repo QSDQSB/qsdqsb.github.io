@@ -26,12 +26,6 @@ case "$file" in
 esac
 
 case "$file" in
-  *_data/maps/*.yml|*_data/maps/*.yaml)
-    echo "⚠️  Map dataset edited — run \`npm run geocode\` before building so assets/maps/ stays in sync."
-    ;;
-esac
-
-case "$file" in
   *gallery/*/*)
     echo "💡 Gallery image edited/added — run \`bundle exec rake generate_thumbnails\` if this is a new file."
     ;;
