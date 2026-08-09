@@ -18,7 +18,7 @@
   description: 'Weariness of life. A state of deep <span class="to-emphasise">existential exhaustion</span> in which one has lost the desire to continue living or striving.'
 
 - title: "Thanatos"
-  origin: 'Greek'
+  origin: 'Greek · Psychoanalysis'
   description: 'The primordial <span class="to-emphasise">death instinct</span> that impels the soul towards stillness and <span class="to-emphasise">oblivion</span>.'
 
 - title: "Untergangssehnsucht"
@@ -43,7 +43,7 @@
 
 - title: "Alea iacta est."
   language: 'la'
-  origin: 'Latin'
+  origin: 'Latin · History'
   description: 'The die has been cast. The moment of <span class="to-emphasise">irrevocable</span> decision when <span class="to-emphasise">fate</span> is set in motion; by Julius Caesar as he led his army across the Rubicon river, and thereby beginning the civil war.'
 
 - title: "Verschlimmbessern"
@@ -65,7 +65,7 @@
   description: 'παλίμψηστος — scraped again. A manuscript whose earlier text has been erased and <span class="to-emphasise">overwritten</span>; (Figurative) things layered with traces of the past, where earlier meanings or histories <span class="to-emphasise">persist</span> beneath the surface of the present.'
 
 - title: "Chimera"
-  origin: 'Greek'
+  origin: 'Greek · Mythology'
   description: 'Χίμαιρα — a mythical creature made up of lion, goat, and serpent; (Figurative) a fanciful illusion that is wildly imaginative but ultimately unattainable or impossible.'
 
 - title: "Crepuscolo"
@@ -75,7 +75,7 @@
 
 - title: "Quippe vetor fatis."
   language: 'la'
-  origin: 'Latin'
+  origin: 'Latin · Ovid'
   description: '"For I am <span class="to-emphasise">forbidden</span> by the fates." Cassandra''s lament in the Metamorphoses — the curse of seeing what is to come and being <span class="to-emphasise">powerless</span> to change it.'
 
 - title: "Mono no aware"
@@ -95,5 +95,5 @@
 
 - title: "Lacrimae rerum"
   language: 'la'
-  origin: 'Latin'
+  origin: 'Latin · Virgil'
   description: '"The <span class="to-emphasise">tears</span> of things." From the Aeneid: there is a sadness woven into the nature of all <span class="to-emphasise">mortal</span> things — not personal grief, but the recognition that impermanence itself is worthy of mourning.'
