@@ -98,6 +98,76 @@
 }
 
 /*
+   Nav action button (shared shell)
+   ==========================================================================
+   The pill-shaped icon-button chrome — border/surface/backdrop-blur, the
+   diagonal sweep highlight, and the hover/focus-visible/active state values
+   — was duplicated verbatim between `.search__toggle` (_search.scss) and
+   `.greedy-nav__toggle` (_navigation.scss). Only positioning (in-flow vs.
+   absolutely-centered-then-translated) and the transform-transition timing
+   differ between the two, so those stay at the callsite.
+*/
+
+@mixin nav-action-shell($transform-transition: 0.28s $cubic-bezier-smooth) {
+  border: 1px solid $nav-action-border-color;
+  border-radius: 999px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  color: $nav-action-icon-color;
+  background-color: $nav-action-surface;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  @include backdrop-blur(blur($nav-action-blur));
+  transition:
+    background-color 0.28s $cubic-bezier-smooth,
+    border-color 0.28s $cubic-bezier-smooth,
+    box-shadow 0.28s $cubic-bezier-smooth,
+    transform $transform-transition,
+    opacity $nav-content-fade-duration $nav-shell-ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -65%;
+    z-index: 0;
+    background: $nav-action-sweep-gradient;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(-36%, 0, 0) rotate(12deg);
+    transition:
+      opacity 0.24s $cubic-bezier-smooth,
+      transform $nav-action-sweep-duration $cubic-bezier-smooth;
+  }
+}
+
+@mixin nav-action-sweep-in {
+  opacity: 1;
+  transform: translate3d(34%, 0, 0) rotate(12deg);
+}
+
+@mixin nav-action-hover-shadow {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 12px 20px rgba(0, 0, 0, 0.2);
+}
+
+@mixin nav-action-focus-shadow {
+  box-shadow:
+    0 0 0 1px $nav-action-focus-ring-color,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 12px 20px rgba(0, 0, 0, 0.2);
+}
+
+@mixin nav-action-reduced-motion-transition {
+  transition:
+    background-color 0.2s linear,
+    border-color 0.2s linear,
+    opacity 0.2s linear;
+}
+
+/*
    Type-badge pill (shared shell)
    ==========================================================================
    The "Post / Voyage / Portfolio / Other" pill shell, duplicated verbatim
