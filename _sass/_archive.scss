@@ -412,14 +412,28 @@
 }
 
 
-.codex-letter {
+h2.codex-letter {
   font-family: $didot-family;
   font-size: 2.4rem;
   font-weight: 400;
   color: rgba($intriguing-word-color, 0.15);
   line-height: 1;
   margin: 2rem 0 0.3rem 0.5rem;
+  padding: 0;
+  border: none;
   &:first-of-type { margin-top: 0; }
+}
+
+.codex-letter__word {
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 300;
+}
+
+a.word_card--link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 }
 
 .page__intriguing-word-wrapper {
