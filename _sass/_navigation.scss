@@ -71,15 +71,15 @@
     color: inherit;
   }
 
-  /* next/previous buttons */
+  /* next/previous buttons — two equal doors filling the colophon measure:
+     same width (flex halves), same height (stretch), flush with the column. */
   &--pager {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     text-decoration: none;
-    padding: 1em 1.25em;
-    max-width: 45%;
-    flex: 1;
-    min-width: 20%;
+    padding: 0;
+    flex: 1 1 0;
+    min-width: 0;
     transition: $cubic-bezier-default-05s;
     font-family: $tag-font-family;
     font-size: $type-size-5;
@@ -105,6 +105,9 @@
       transform: translateX(3px);
     }
     .title {
+      flex: 1;
+      display: flex;
+      align-items: center;
       border: 1px solid $border-color;
       border-radius: 1em;
       background: hsl(278, 3%, 14%);
@@ -119,14 +122,14 @@
     }
 
     &--left {
-      justify-content: flex-start;
       text-align: left;
       flex-direction: row;
+      .title { justify-content: flex-start; }
     }
     &--right {
-      justify-content: flex-end;
       text-align: right;
       flex-direction: row;
+      .title { justify-content: flex-end; }
     }
   }
 
@@ -135,6 +138,7 @@
 .pagination--pager--left::before {
   content: "";
   display: inline-block;
+  align-self: center;
   width: 1em;
   height: 1em;
   background: currentColor;
@@ -150,6 +154,7 @@
 .pagination--pager--right::after {
   content: "";
   display: inline-block;
+  align-self: center;
   width: 1em;
   height: 1em;
   background: currentColor;
