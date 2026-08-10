@@ -57,11 +57,26 @@
 }
 
 .subscribe-slip__heading {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
   margin: 0 0 0.45rem;
   font-family: $didot-family;
   font-weight: 400;
   font-size: $type-size-4;
   color: $intriguing-word-color;
+}
+
+/* The stroke-hexagon monogram, recoloured to the heading brass via mask —
+   the source SVG mixes a filled path with embedded raster letterforms, so
+   fill/stroke overrides can't tint it; masking a brass box can. */
+.subscribe-slip__mark {
+  flex: none;
+  width: 1.5em;
+  height: 1.5em;
+  background-color: $intriguing-word-color;
+  -webkit-mask: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg") no-repeat center / contain;
+          mask: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg") no-repeat center / contain;
 }
 
 .subscribe-slip__invite {
