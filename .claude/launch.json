@@ -8,6 +8,12 @@
       "port": 4000
     },
     {
+      "name": "jekyll-4100",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["-c", "RUBYOPT='-E utf-8:utf-8' /usr/local/opt/ruby/bin/bundle exec jekyll serve --port 4100 --skip-initial-build --config _config.yml,_config_dev.yml"],
+      "port": 4100
+    },
+    {
       "name": "prototypes",
       "runtimeExecutable": "/bin/bash",
       "runtimeArgs": ["-c", "cd /Users/apple/Documents/GitHub/qsdqsb.github.io/design/opening-scene && exec python3 -m http.server 8137"],
@@ -15,5 +21,3 @@
     }
   ]
 }
-</content>
-</invoke>
