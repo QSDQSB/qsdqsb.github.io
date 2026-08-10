@@ -2,6 +2,31 @@
 
 <!-- start custom head snippets -->
 
+<!-- Motion kill-switch for automated renderers. Headless agents (LLM tooling,
+     Playwright/Puppeteer via navigator.webdriver), crawlers (Googlebot,
+     Lighthouse) and `?motion=off` get every entrance animation collapsed to
+     its final state — the opening scene, scroll reveals, the subscribe slip —
+     so screenshots and indexed renders see the finished page, never a black
+     dim frame or opacity-0 content. `?motion=on` forces the cinematic path
+     (for deliberately testing animations under automation). Runs before first
+     paint; consumed by _sass/_motion-off.scss and the animation scripts via
+     `window.QSD_MOTION_OFF`. -->
+<script>
+  (function () {
+    var force = /[?&]motion=(on|off)\b/.exec(window.location.search);
+    if (force && force[1] === "on") return;
+    var ua = navigator.userAgent || "";
+    if (
+      (force && force[1] === "off") ||
+      navigator.webdriver === true ||
+      /bot|crawl|spider|slurp|headless|prerender|lighthouse|phantom/i.test(ua)
+    ) {
+      document.documentElement.classList.add("motion-off");
+      window.QSD_MOTION_OFF = true;
+    }
+  })();
+</script>
+
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="mask-icon" href="{{ base_path }}/images/safari-pinned-tab.svg" color="#000000">
 <meta name="theme-color" content="#f0f0f0">
