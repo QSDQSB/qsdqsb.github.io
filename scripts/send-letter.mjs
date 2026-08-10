@@ -28,11 +28,29 @@
  * (https://qsdqsb.com), RESEND_SEND_DELAY_MS (700).
  */
 
-import { readFileSync, writeFileSync, mkdtempSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdtempSync, existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
-import { join, basename } from "node:path";
+import { join, basename, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { renderLetterHtml, renderLetterText } from "./letter-template.mjs";
+
+// Repo-level secrets: load KEY=VALUE lines from a gitignored .env at the repo
+// root (next to package.json), without overriding anything already exported.
+// Keeps RESEND_API_KEY out of shell profiles and out of git in one move.
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
+const envFile = join(repoRoot, ".env");
+if (existsSync(envFile)) {
+  for (const line of readFileSync(envFile, "utf8").split(/\r?\n/)) {
+    const kv = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
+    if (!kv || line.trim().startsWith("#")) continue;
+    let v = kv[2];
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+      v = v.slice(1, -1);
+    }
+    if (!(kv[1] in process.env)) process.env[kv[1]] = v;
+  }
+}
 
 const SITE_URL = (process.env.SITE_URL || "https://qsdqsb.com").replace(/\/$/, "");
 const FROM = process.env.LETTERS_FROM || "QSD <scripta@qsdqsb.com>";
@@ -169,7 +187,8 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 console.log(`Letter: “${title}”`);
 console.log(`Link:   ${url}`);
-console.log(`From:   ${FROM}\n`);
+console.log(`From:   ${FROM}`);
+console.log(`Key:    RESEND_API_KEY ${process.env.RESEND_API_KEY ? "set" : "MISSING"}\n`);
 
 if (optSendTest) {
   if (!process.env.RESEND_API_KEY) fail("RESEND_API_KEY is not set");
