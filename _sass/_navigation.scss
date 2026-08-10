@@ -62,6 +62,10 @@
   align-items: stretch;
   gap: 1rem;
   flex-wrap: wrap;
+  /* Post-colophon measure — the two doors sit inside the same 40rem column
+     as the word card and subscribe slip, not at the viewport's far edges. */
+  max-width: 40rem;
+  margin: 3rem auto 0;
   a {
     text-decoration: none;
     color: inherit;

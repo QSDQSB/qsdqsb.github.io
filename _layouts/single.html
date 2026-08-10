@@ -73,9 +73,8 @@ layout: default
         {% include page__dates.html %}
         {% if page.share %}{% include social-share.html %}{% endif %}
       </footer>
-      {% include post_pagination.html %}
     {% if page.intriguing-word %}
-      <hr>
+      <hr class="page__ending-rule">
       <div class="page__intriguing-word-wrapper">
         <h4 class="barlow"><i class="fa-solid fa-dice"></i> A Random Word</h4>
         {% include word-card.html %}
@@ -84,6 +83,7 @@ layout: default
     {% if page.collection == "posts" and page.subscribe != false %}
       {% include subscribe.html %}
     {% endif %}
+      {% include post_pagination.html %}
     {% if site.comments.provider and page.comments %}
       {% include comments.html %}
     {% endif %}
