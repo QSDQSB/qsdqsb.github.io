@@ -1,0 +1,29 @@
+/* ==========================================================================
+   MOTION OFF — automated-renderer kill-switch.
+
+   `html.motion-off` is stamped before first paint by the inline sniffer in
+   _includes/head/custom.html (headless automation, crawlers, `?motion=off`).
+   Everything animated must land on its FINAL state instantly so screenshots
+   and search-engine renders never capture a dim frame or opacity-0 content.
+
+   The JS side (`window.QSD_MOTION_OFF`) makes the animation scripts take
+   their existing reduced-motion skip paths; this file is the CSS backstop
+   for anything styled to move.
+   ========================================================================== */
+
+html.motion-off {
+  scroll-behavior: auto;
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Scroll-reveal initial states must not hide content. */
+  .reveal-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

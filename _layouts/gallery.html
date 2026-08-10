@@ -66,6 +66,9 @@ layout: compress
   {% include tag-list.html %}
   </div>
   {% endif %}
+  {% if page.subscribe != false %}
+    {% include subscribe.html %}
+  {% endif %}
   <footer class="page__meta">
     {% include page__dates.html %}
   </footer>
@@ -180,6 +183,9 @@ layout: compress
                   </div>
                 {% endif %}
             </div>
+            {% if page.subscribe != false %}
+              {% include subscribe.html %}
+            {% endif %}
             <footer class="page__meta">
               {% include page__dates.html %}
             </footer>

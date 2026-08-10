@@ -81,6 +81,9 @@ layout: default
         {% include word-card.html %}
       </div>
     {% endif %}
+    {% if page.collection == "posts" and page.subscribe != false %}
+      {% include subscribe.html %}
+    {% endif %}
     {% if site.comments.provider and page.comments %}
       {% include comments.html %}
     {% endif %}

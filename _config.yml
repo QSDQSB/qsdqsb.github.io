@@ -135,6 +135,9 @@ exclude:
   - tmp
   - vendor
   - codex
+  - functions        # Cloudflare Pages Functions — served by CF, not Jekyll
+  - wrangler.toml    # Cloudflare Pages config — not site content
+  - for_agents       # local-only agent scratch space (gitignored) — raw Liquid inside breaks builds
 keep_files:
   - .git
   - .svn
