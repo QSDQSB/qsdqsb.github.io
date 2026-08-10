@@ -71,14 +71,15 @@
     color: inherit;
   }
 
-  /* next/previous buttons — two equal doors filling the colophon measure:
-     same width (flex halves), same height (stretch), flush with the column. */
+  /* next/previous buttons — content-sized doors anchored to the colophon
+     column's edges; the shared row keeps their heights equal. */
   &--pager {
     display: flex;
     align-items: stretch;
     text-decoration: none;
     padding: 0;
-    flex: 1 1 0;
+    flex: 0 1 auto;
+    max-width: calc(50% - 0.5rem); /* half the measure minus the row gap */
     min-width: 0;
     transition: $cubic-bezier-default-05s;
     font-family: $tag-font-family;
