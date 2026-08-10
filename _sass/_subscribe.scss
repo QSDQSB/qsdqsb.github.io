@@ -178,31 +178,29 @@
   display: none;
 }
 
-/* ---------- folded summary row ---------- */
+/* ---------- folded state: an ornamental rule, not a UI element ----------
+   Two hairlines meeting at the monogram — the card dissolves into the page.
+   Hovering the rule peeks the card open (it folds back if the pointer leaves
+   without engaging); clicking or keyboard-focusing commits the expansion. */
 .subscribe-slip__summary {
-  @extend %subscribe-slip-glass;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.9rem;
   width: 100%;
-  padding: 0.55rem 1.1rem;
+  padding: 0;
+  background: none;
+  border: none;
   cursor: pointer;
-  text-align: left;
   color: inherit;
   max-height: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  border-width: 0;
   opacity: 0;
   overflow: hidden;
   pointer-events: none;
-  transition: max-height 0.8s $cubic-bezier-smooth, padding 0.8s $cubic-bezier-smooth, opacity 0.55s ease 0.15s;
+  transition: max-height 0.8s $cubic-bezier-smooth, opacity 0.55s ease 0.15s;
 }
 .subscribe-slip.is-folded .subscribe-slip__summary {
-  max-height: 3.6rem;
-  padding-top: 0.55rem;
-  padding-bottom: 0.55rem;
-  border-width: 1px;
+  max-height: 2.6rem;
+  padding: 0.7rem 0;
   opacity: 1;
   pointer-events: auto;
 }
@@ -211,26 +209,29 @@
   outline-offset: 4px;
 }
 
-.subscribe-slip__summary-label {
-  font-family: $barlow-font-family;
-  font-weight: 500;
-  font-size: 0.72rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba($intriguing-word-color, 0.85);
+.subscribe-slip__summary-line {
+  flex: 1;
+  height: 1px;
+  background: rgba($intriguing-word-color, 0.28);
+  transition: background 0.4s ease;
 }
-.subscribe-slip__summary-plus {
-  margin-left: auto;
-  font-family: $barlow-font-family;
-  font-weight: 300;
-  font-size: $type-size-7;
-  line-height: 1;
-  color: rgba($intriguing-word-color, 0.7);
-  transition: transform 0.4s $cubic-bezier-smooth;
+.subscribe-slip__summary-mark {
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  background-color: rgba($intriguing-word-color, 0.65);
+  -webkit-mask: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg") no-repeat center / contain;
+          mask: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg") no-repeat center / contain;
+  transition: background-color 0.4s ease, transform 0.4s $cubic-bezier-smooth;
 }
-.subscribe-slip__summary:hover .subscribe-slip__summary-plus {
+.subscribe-slip__summary:hover .subscribe-slip__summary-mark,
+.subscribe-slip__summary:focus-visible .subscribe-slip__summary-mark {
+  background-color: $intriguing-word-color;
   transform: scale(1.15);
-  color: $intriguing-word-color;
+}
+.subscribe-slip__summary:hover .subscribe-slip__summary-line,
+.subscribe-slip__summary:focus-visible .subscribe-slip__summary-line {
+  background: rgba($intriguing-word-color, 0.45);
 }
 
 /* ---------- context tweaks ---------- */

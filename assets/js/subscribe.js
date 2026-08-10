@@ -1,10 +1,12 @@
 /* Subscribe slip — behaviour for _includes/subscribe.html.
  *
  * Lifecycle: reveal on viewport entry (IntersectionObserver) → 10 s dwell →
- * fold into the one-line summary. Hovering pauses the dwell clock; focusing
- * or typing in the field cancels it (never fold mid-interaction); a deliberate
- * unfold is permanent. After a successful subscription the slip folds itself
- * and future visits start folded (localStorage).
+ * fold into an ornamental rule (two hairlines meeting at the monogram).
+ * Hovering the rule PEEKS the card open — it folds back if the pointer
+ * leaves without engaging. Clicking the rule, or keyboard-focusing into the
+ * card, COMMITS the expansion (never re-folds). Hovering the still-open card
+ * pauses the dwell clock; typing cancels it. After a successful subscription
+ * the card folds itself to the rule, and future visits start folded.
  */
 (function () {
   "use strict";
@@ -15,7 +17,6 @@
 
   var MSG_INVALID = "That address doesn’t look right.";
   var MSG_FAILED = "That didn’t go through. Try once more.";
-  var SUMMARY_DONE = "Subscribed";
 
   // Automated renderers (window.QSD_MOTION_OFF — see head/custom.html) get the
   // slip fully expanded and static: no reveal animation, no dwell auto-fold.
@@ -34,10 +35,11 @@
     this.remaining = DWELL_MS;
     this.timer = null;
     this.startedAt = 0;
-    this.cancelled = false;
+    this.cancelled = false; // dwell clock permanently stopped
+    this.peeking = false;   // expanded by hover/focus, may fold back
+    this.sticky = false;    // expansion committed by click/engagement
 
     this.summary = root.querySelector(".subscribe-slip__summary");
-    this.summaryLabel = root.querySelector("[data-summary-label]");
     this.form = root.querySelector(".subscribe-slip__form");
     this.input = root.querySelector(".subscribe-slip__input");
     this.send = root.querySelector(".subscribe-slip__send");
@@ -55,9 +57,8 @@
     }
 
     if (storageGet(DONE_KEY)) {
-      // Already subscribed on this browser — start folded, quietly.
+      // Already subscribed on this browser — start as the quiet rule.
       this.cancelled = true;
-      this.summaryLabel.textContent = SUMMARY_DONE;
       this.root.classList.add("is-in");
       this.fold(true);
     }
@@ -66,15 +67,39 @@
   Slip.prototype.bind = function () {
     var self = this;
 
-    this.summary.addEventListener("click", function () { self.unfold(); });
+    this.summary.addEventListener("click", function () { self.engage(true); });
 
-    this.root.addEventListener("pointerenter", function () { self.pause(); });
-    this.root.addEventListener("pointerleave", function () { self.resume(); });
-    this.root.addEventListener("focusin", function () { self.cancelDwell(); });
-    this.input.addEventListener("input", function () { self.cancelDwell(); });
+    this.root.addEventListener("pointerenter", function () {
+      if (self.root.classList.contains("is-folded")) self.peek();
+      else self.pause();
+    });
+    this.root.addEventListener("pointerleave", function () {
+      if (self.peeking && !self.sticky) self.refold();
+      else self.resume();
+    });
+
+    this.root.addEventListener("focusin", function (event) {
+      self.cancelDwell();
+      if (event.target === self.summary) {
+        if (self.root.classList.contains("is-folded")) self.peek();
+      } else if (self.peeking) {
+        self.engage(false); // tabbed/clicked into the card — commit
+      }
+    });
+    this.root.addEventListener("focusout", function (event) {
+      if (!self.root.contains(event.relatedTarget) && self.peeking && !self.sticky) {
+        self.refold();
+      }
+    });
+
+    this.input.addEventListener("input", function () {
+      self.cancelDwell();
+      if (self.peeking) self.engage(false);
+    });
 
     this.form.addEventListener("submit", function (event) {
       event.preventDefault();
+      self.engage(false);
       self.submit();
     });
   };
@@ -101,7 +126,7 @@
   };
 
   Slip.prototype.resume = function () {
-    if (this.cancelled || this.root.classList.contains("is-folded")) return;
+    if (this.cancelled || this.sticky || this.root.classList.contains("is-folded")) return;
     if (this.remaining <= 0) { this.fold(); return; }
     this.startClock();
   };
@@ -111,37 +136,48 @@
     if (this.timer) { window.clearTimeout(this.timer); this.timer = null; }
   };
 
-  /* ---------- fold / unfold ---------- */
+  /* ---------- fold / peek / engage ---------- */
 
   Slip.prototype.fold = function (instant) {
     var self = this;
     if (this.timer) { window.clearTimeout(this.timer); this.timer = null; }
+    this.peeking = false;
+    this.sticky = false;
     this.summary.hidden = false;
     this.summary.setAttribute("aria-expanded", "false");
     if (instant || reduced) {
       this.root.classList.add("is-folded");
       return;
     }
-    // Unhide first, force a layout pass, then flip the class so the summary
-    // row animates open while the body folds shut.
+    // Unhide first, force a layout pass, then flip the class so the rule
+    // animates in while the body folds shut.
     void this.summary.offsetHeight;
     window.requestAnimationFrame(function () {
       self.root.classList.add("is-folded");
     });
   };
 
-  Slip.prototype.unfold = function () {
-    var self = this;
-    this.cancelDwell(); // a deliberate open is never re-folded
+  Slip.prototype.peek = function () {
+    this.peeking = true;
     this.root.classList.remove("is-folded");
     this.summary.setAttribute("aria-expanded", "true");
-    // Keep keyboard users oriented: the summary is about to disappear.
-    if (!this.root.classList.contains("is-done")) {
+  };
+
+  Slip.prototype.refold = function () {
+    this.peeking = false;
+    this.root.classList.add("is-folded");
+    this.summary.setAttribute("aria-expanded", "false");
+  };
+
+  Slip.prototype.engage = function (focusInput) {
+    this.cancelDwell();
+    this.peeking = false;
+    this.sticky = true;
+    this.root.classList.remove("is-folded");
+    this.summary.setAttribute("aria-expanded", "true");
+    if (focusInput && !this.root.classList.contains("is-done")) {
       this.input.focus({ preventScroll: true });
     }
-    var hide = function () { self.summary.hidden = true; };
-    if (reduced) { hide(); return; }
-    window.setTimeout(hide, 850); // just past the fold transition
   };
 
   /* ---------- submission ---------- */
@@ -196,7 +232,6 @@
     var self = this;
     this.root.classList.add("is-done");
     this.okNote.hidden = false;
-    this.summaryLabel.textContent = SUMMARY_DONE;
     storageSet(DONE_KEY, String(Date.now()));
     window.setTimeout(function () { self.fold(); }, FOLD_AFTER_SUCCESS_MS);
   };
@@ -215,7 +250,9 @@
   var slips = [];
   roots.forEach(function (el) { slips.push(new Slip(el)); });
 
-  var pending = slips.filter(function (slip) { return !slip.root.classList.contains("is-in"); });
+  var pending = slips.filter(function (slip) {
+    return !slip.root.classList.contains("is-in");
+  });
   if (!pending.length) return;
 
   if (!("IntersectionObserver" in window)) {
