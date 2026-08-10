@@ -24,7 +24,7 @@
  *   `npx wrangler login` done once — the script reads subscribers via
  *   `wrangler d1 execute qsdqsb-subscribers --remote` (no extra tokens).
  *
- * Env knobs: LETTERS_FROM ("QSD <letters@qsdqsb.com>"), SITE_URL
+ * Env knobs: LETTERS_FROM ("QSD <scripta@qsdqsb.com>" — scripta manent), SITE_URL
  * (https://qsdqsb.com), RESEND_SEND_DELAY_MS (700).
  */
 
@@ -35,7 +35,7 @@ import { join, basename } from "node:path";
 import { renderLetterHtml, renderLetterText } from "./letter-template.mjs";
 
 const SITE_URL = (process.env.SITE_URL || "https://qsdqsb.com").replace(/\/$/, "");
-const FROM = process.env.LETTERS_FROM || "QSD <letters@qsdqsb.com>";
+const FROM = process.env.LETTERS_FROM || "QSD <scripta@qsdqsb.com>";
 const D1_NAME = "qsdqsb-subscribers";
 const SEND_DELAY_MS = Number(process.env.RESEND_SEND_DELAY_MS || 700);
 
