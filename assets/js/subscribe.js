@@ -19,7 +19,7 @@
   // under a stationary cursor mid-animation fires spurious enter/leave
   // events and the rule trembles between states.
   var PEEK_MIN_OPEN_MS = 900;
-  var PEEK_REFOLD_GRACE_MS = 350;
+  var PEEK_REFOLD_GRACE_MS = 2000; // unhurried retreat — the card lingers before folding back
   var DONE_KEY = "qsd-subscribe-done";
 
   var MSG_INVALID = "That address doesn’t look right.";
