@@ -13,6 +13,13 @@
 
   var DWELL_MS = 10000;
   var FOLD_AFTER_SUCCESS_MS = 2800;
+  // Hysteresis for hover-peek: the expansion always completes (min-open
+  // latch covering the 0.8 s transition) and the refold waits out a grace
+  // period, cancelled if the pointer returns. Without this, the box moving
+  // under a stationary cursor mid-animation fires spurious enter/leave
+  // events and the rule trembles between states.
+  var PEEK_MIN_OPEN_MS = 900;
+  var PEEK_REFOLD_GRACE_MS = 350;
   var DONE_KEY = "qsd-subscribe-done";
 
   var MSG_INVALID = "That address doesn’t look right.";
@@ -38,6 +45,9 @@
     this.cancelled = false; // dwell clock permanently stopped
     this.peeking = false;   // expanded by hover/focus, may fold back
     this.sticky = false;    // expansion committed by click/engagement
+    this.hovering = false;  // pointer currently inside the slip
+    this.peekedAt = 0;      // when the current peek began (min-open latch)
+    this.refoldTimer = null;
 
     this.summary = root.querySelector(".subscribe-slip__summary");
     this.form = root.querySelector(".subscribe-slip__form");
@@ -70,11 +80,14 @@
     this.summary.addEventListener("click", function () { self.engage(true); });
 
     this.root.addEventListener("pointerenter", function () {
+      self.hovering = true;
+      self.cancelRefold(); // pointer came back — the rule stays open
       if (self.root.classList.contains("is-folded")) self.peek();
-      else self.pause();
+      else if (!self.peeking) self.pause();
     });
     this.root.addEventListener("pointerleave", function () {
-      if (self.peeking && !self.sticky) self.refold();
+      self.hovering = false;
+      if (self.peeking && !self.sticky) self.scheduleRefold();
       else self.resume();
     });
 
@@ -88,7 +101,7 @@
     });
     this.root.addEventListener("focusout", function (event) {
       if (!self.root.contains(event.relatedTarget) && self.peeking && !self.sticky) {
-        self.refold();
+        self.scheduleRefold();
       }
     });
 
@@ -141,6 +154,7 @@
   Slip.prototype.fold = function (instant) {
     var self = this;
     if (this.timer) { window.clearTimeout(this.timer); this.timer = null; }
+    this.cancelRefold();
     this.peeking = false;
     this.sticky = false;
     this.summary.hidden = false;
@@ -158,12 +172,36 @@
   };
 
   Slip.prototype.peek = function () {
+    this.cancelRefold();
+    if (this.peeking) return;
     this.peeking = true;
+    this.peekedAt = Date.now();
     this.root.classList.remove("is-folded");
     this.summary.setAttribute("aria-expanded", "true");
   };
 
+  Slip.prototype.scheduleRefold = function () {
+    var self = this;
+    this.cancelRefold();
+    // Never refold before the expansion has fully played out, and always
+    // give the pointer a grace window to come back.
+    var latch = this.peekedAt + PEEK_MIN_OPEN_MS - Date.now();
+    var wait = Math.max(PEEK_REFOLD_GRACE_MS, latch);
+    this.refoldTimer = window.setTimeout(function () {
+      self.refoldTimer = null;
+      if (self.peeking && !self.sticky && !self.hovering) self.refold();
+    }, wait);
+  };
+
+  Slip.prototype.cancelRefold = function () {
+    if (this.refoldTimer) {
+      window.clearTimeout(this.refoldTimer);
+      this.refoldTimer = null;
+    }
+  };
+
   Slip.prototype.refold = function () {
+    this.cancelRefold();
     this.peeking = false;
     this.root.classList.add("is-folded");
     this.summary.setAttribute("aria-expanded", "false");
@@ -171,6 +209,7 @@
 
   Slip.prototype.engage = function (focusInput) {
     this.cancelDwell();
+    this.cancelRefold();
     this.peeking = false;
     this.sticky = true;
     this.root.classList.remove("is-folded");
