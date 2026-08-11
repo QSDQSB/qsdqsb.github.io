@@ -41,13 +41,14 @@
   visibility: hidden; /* clipped content must not stay focusable */
 }
 
-/* Shared glass surface — same family as .welcome-toast__inner */
+/* Shared glass surface — same family as .welcome-toast__inner;
+   radius matches .word_card (1rem) since they share the colophon column. */
 %subscribe-slip-glass {
   border: 1px solid rgba($h2-color, 0.26);
   background: rgba(12, 12, 16, 0.82);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
           backdrop-filter: blur(14px) saturate(1.2);
-  border-radius: 0.7rem;
+  border-radius: 1rem;
   box-shadow: $shadow-soft;
 }
 
