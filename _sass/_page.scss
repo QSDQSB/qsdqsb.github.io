@@ -697,6 +697,13 @@ html.is-resizing {
   font-size: $type-size-7;
   text-transform: uppercase;
 }
+
+/* Post-colophon rule — the divider before the ending stack shares the same
+   40rem measure instead of spanning the whole content column. */
+.page__ending-rule {
+  max-width: 40rem;
+  margin: 3rem auto 0;
+}
 // Create an inline class for section wrapper. All contents should be centered
 
 .paragraph-center-wrapper {

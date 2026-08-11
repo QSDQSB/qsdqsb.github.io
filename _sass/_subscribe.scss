@@ -1,0 +1,295 @@
+/* ==========================================================================
+   SUBSCRIBE SLIP — glass card email subscription, shown after post endings
+   (below the intriguing-word card) and after gallery tag lists.
+
+   Lifecycle (driven by assets/js/subscribe.js):
+     .is-in     — revealed on viewport entry (fade + rise)
+     .is-folded — after a 10 s dwell it folds into the one-line summary row;
+                  clicking the row unfolds it again
+     .is-done   — successful subscription; form is replaced by the note
+   ========================================================================== */
+
+.subscribe-slip {
+  max-width: 40rem; /* share the word-card column so post endings stay one spine */
+  margin: 3rem auto 0;
+  clear: both; /* theme grids float cards (susy) — drop below them, never beside */
+  opacity: 0;
+  transform: translateY(0.65rem);
+  transition: opacity 0.9s $cubic-bezier-smooth, transform 0.9s $cubic-bezier-smooth;
+
+  &.is-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Fold/unfold via the grid-rows trick — animatable height without measuring. */
+.subscribe-slip__body {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.8s $cubic-bezier-smooth, opacity 0.55s ease;
+}
+.subscribe-slip__inner {
+  overflow: hidden;
+  min-height: 0;
+}
+.subscribe-slip.is-folded .subscribe-slip__body {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+.subscribe-slip.is-folded .subscribe-slip__inner {
+  visibility: hidden; /* clipped content must not stay focusable */
+}
+
+/* Shared glass surface — same family as .welcome-toast__inner;
+   radius matches .word_card (1rem) since they share the colophon column. */
+%subscribe-slip-glass {
+  border: 1px solid rgba($h2-color, 0.26);
+  background: rgba(12, 12, 16, 0.82);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+          backdrop-filter: blur(14px) saturate(1.2);
+  border-radius: 1rem;
+  box-shadow: $shadow-soft;
+}
+
+.subscribe-slip__card {
+  @extend %subscribe-slip-glass;
+  padding: 1.35rem 1.5rem 1.2rem;
+}
+
+.subscribe-slip__heading {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0 0 0.45rem;
+  font-family: $didot-family;
+  font-weight: 400;
+  font-size: $type-size-4;
+  color: $intriguing-word-color;
+}
+
+/* The stroke-hexagon monogram, recoloured to the heading brass via mask —
+   the source SVG mixes a filled path with embedded raster letterforms, so
+   fill/stroke overrides can't tint it; masking a brass box can. */
+.subscribe-slip__mark {
+  flex: none;
+  width: 1.5em;
+  height: 1.5em;
+  background-color: $intriguing-word-color;
+  -webkit-mask: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg") no-repeat center / contain;
+          mask: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg") no-repeat center / contain;
+}
+
+.subscribe-slip__invite {
+  margin: 0;
+  font-family: $barlow-font-family;
+  font-weight: 300;
+  font-size: $type-size-8;
+  line-height: 1.5;
+  color: rgba($text-color, 0.72);
+}
+
+.subscribe-slip__form {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 1.35rem 0 0;
+  padding: 0.2rem 0.3rem 0.2rem 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Honeypot — visually gone, still present for bots that fill every field. */
+.subscribe-slip__hp {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.subscribe-slip__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 0.45rem 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: $text-color;
+  font-family: $barlow-font-family;
+  font-weight: 300;
+  font-size: $type-size-8;
+
+  &::placeholder {
+    color: rgba($text-color, 0.35);
+    font-style: italic;
+  }
+  &:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+  }
+}
+
+.subscribe-slip__send {
+  flex: none;
+  margin: 0;
+  padding: 0.42rem 0.95rem;
+  border: 1px solid rgba($intriguing-word-color, 0.35);
+  border-radius: 0.4rem;
+  background: none;
+  cursor: pointer;
+  font-family: $barlow-font-family;
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba($intriguing-word-color, 0.9);
+  transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+
+  &:hover,
+  &:focus-visible {
+    outline: none;
+    color: $h2-color;
+    border-color: rgba($h2-color, 0.6);
+    background: rgba($h2-color, 0.08);
+  }
+  &[disabled] {
+    opacity: 0.55;
+    cursor: default;
+  }
+}
+
+.subscribe-slip__note {
+  margin: 1.1rem 0 0;
+  font-family: $didot-family;
+  font-style: italic;
+  font-size: $type-size-7;
+
+  &--ok { color: $intriguing-word-color; }
+  &--err { color: rgba($danger-color, 0.95); }
+}
+.subscribe-slip.is-done .subscribe-slip__form,
+.subscribe-slip.is-done .subscribe-slip__privacy {
+  display: none;
+}
+
+/* ---------- folded state: an ornamental rule, not a UI element ----------
+   Two hairlines meeting at the monogram — the card dissolves into the page.
+   Hovering the rule peeks the card open (it folds back if the pointer leaves
+   without engaging); clicking or keyboard-focusing commits the expansion. */
+.subscribe-slip__summary {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: max-height 0.8s $cubic-bezier-smooth, opacity 0.55s ease 0.15s;
+}
+.subscribe-slip.is-folded .subscribe-slip__summary {
+  max-height: 2.6rem;
+  padding: 0.7rem 0;
+  opacity: 1;
+  pointer-events: auto;
+}
+.subscribe-slip__summary:focus-visible {
+  outline: 1px solid rgba($intriguing-word-color, 0.6);
+  outline-offset: 4px;
+}
+
+.subscribe-slip__summary-line {
+  flex: 1;
+  height: 1px;
+  background: rgba($intriguing-word-color, 0.28);
+  transition: background 0.4s ease;
+}
+.subscribe-slip__summary-mark {
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  background-color: rgba($intriguing-word-color, 0.65);
+  -webkit-mask: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg") no-repeat center / contain;
+          mask: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg") no-repeat center / contain;
+  transition: background-color 0.4s ease, transform 0.4s $cubic-bezier-smooth;
+}
+.subscribe-slip__summary:hover .subscribe-slip__summary-mark,
+.subscribe-slip__summary:focus-visible .subscribe-slip__summary-mark {
+  background-color: $intriguing-word-color;
+  transform: scale(1.15);
+}
+.subscribe-slip__summary:hover .subscribe-slip__summary-line,
+.subscribe-slip__summary:focus-visible .subscribe-slip__summary-line {
+  background: rgba($intriguing-word-color, 0.45);
+}
+
+/* ---------- context tweaks ---------- */
+/* Gallery viewer pages set their own dense type context; keep the slip aligned
+   with the archive blocks that precede it there. */
+.gallery-viewer .subscribe-slip {
+  margin-top: 2.2rem;
+}
+
+/* Gallery pages centre paragraphs/headings globally (`.gallery_view p` etc.) —
+   double up the class so the slip keeps its own composition in any context. */
+.subscribe-slip .subscribe-slip__heading,
+.subscribe-slip .subscribe-slip__invite,
+.subscribe-slip .subscribe-slip__note {
+  text-align: left;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Discreet legal pointer — transparency at the point of collection. */
+.subscribe-slip .subscribe-slip__privacy {
+  margin: 0.7rem 0 0;
+  text-align: right;
+  font-family: $barlow-font-family;
+  font-weight: 300;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+
+  a {
+    color: rgba($text-color, 0.38);
+    text-decoration: none;
+    border-bottom: 1px solid rgba($text-color, 0.2);
+    transition: color 0.3s ease, border-color 0.3s ease;
+
+    &:hover,
+    &:focus-visible {
+      color: rgba($intriguing-word-color, 0.85);
+      border-bottom-color: rgba($intriguing-word-color, 0.5);
+    }
+  }
+}
+
+@include responsive-down(mobile) {
+  .subscribe-slip__card { padding: 1.1rem 1.15rem 1rem; }
+  .subscribe-slip__input { font-size: 0.85rem; }
+  .subscribe-slip__send { padding: 0.4rem 0.7rem; letter-spacing: 0.14em; }
+}
+
+@include responsive-reduced-motion {
+  .subscribe-slip,
+  .subscribe-slip.is-in {
+    transform: none;
+    transition: opacity 0.4s ease;
+  }
+  .subscribe-slip__body,
+  .subscribe-slip__summary,
+  .subscribe-slip__summary-plus {
+    transition: none;
+  }
+}

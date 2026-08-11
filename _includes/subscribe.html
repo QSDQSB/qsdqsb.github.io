@@ -1,0 +1,42 @@
+{% comment %}
+  Subscribe slip — glass-card email subscription.
+
+  Placement: posts (_layouts/single.html, after the intriguing-word block) and
+  galleries (_layouts/gallery.html, directly after the tag list in both modes).
+  Opt out per page with `subscribe: false` in frontmatter.
+
+  Behaviour: assets/js/subscribe.js — reveals on viewport entry, folds itself
+  into the one-line summary after a 10 s dwell, unfolds on click.
+  Backend: functions/api/subscribe.js (Cloudflare Pages Function + D1).
+  Without JS the form still posts to /api/subscribe and gets an HTML reply.
+{% endcomment %}
+<aside class="subscribe-slip" data-subscribe-slip aria-label="Subscribe for updates">
+  <button class="subscribe-slip__summary" type="button" aria-expanded="false" aria-label="Subscribe for updates" hidden>
+    <span class="subscribe-slip__summary-line" aria-hidden="true"></span>
+    <span class="subscribe-slip__summary-mark" aria-hidden="true"></span>
+    <span class="subscribe-slip__summary-line" aria-hidden="true"></span>
+  </button>
+  <div class="subscribe-slip__body">
+    <div class="subscribe-slip__inner">
+      <div class="subscribe-slip__card">
+        <h4 class="subscribe-slip__heading">
+          <span class="subscribe-slip__mark" aria-hidden="true"></span>
+          Subscribe for updates
+        </h4>
+        <p class="subscribe-slip__invite">QSD will email you when there is a new post or voyage. Nothing else, and not often.</p>
+        <form class="subscribe-slip__form" method="post" action="/api/subscribe" novalidate>
+          <label class="subscribe-slip__hp" aria-hidden="true">Leave this field empty
+            <input type="text" name="website" tabindex="-1" autocomplete="off">
+          </label>
+          <input class="subscribe-slip__input" type="email" name="email"
+                 placeholder="your email address" aria-label="Email address"
+                 autocomplete="email" required>
+          <button class="subscribe-slip__send" type="submit">Subscribe</button>
+        </form>
+        <p class="subscribe-slip__note subscribe-slip__note--ok" hidden>Subscribed. You’ll hear when something new is published.</p>
+        <p class="subscribe-slip__note subscribe-slip__note--err" role="alert" hidden></p>
+        <p class="subscribe-slip__privacy"><a href="/terms/#email-subscription">Privacy</a></p>
+      </div>
+    </div>
+  </div>
+</aside>

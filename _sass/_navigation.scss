@@ -62,20 +62,25 @@
   align-items: stretch;
   gap: 1rem;
   flex-wrap: wrap;
+  /* Post-colophon measure — the two doors sit inside the same 40rem column
+     as the word card and subscribe slip, not at the viewport's far edges. */
+  max-width: 40rem;
+  margin: 3rem auto 0;
   a {
     text-decoration: none;
     color: inherit;
   }
 
-  /* next/previous buttons */
+  /* next/previous buttons — content-sized doors anchored to the colophon
+     column's edges; the shared row keeps their heights equal. */
   &--pager {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     text-decoration: none;
-    padding: 1em 1.25em;
-    max-width: 45%;
-    flex: 1;
-    min-width: 20%;
+    padding: 0;
+    flex: 0 1 auto;
+    max-width: calc(50% - 0.5rem); /* half the measure minus the row gap */
+    min-width: 0;
     transition: $cubic-bezier-default-05s;
     font-family: $tag-font-family;
     font-size: $type-size-5;
@@ -101,6 +106,9 @@
       transform: translateX(3px);
     }
     .title {
+      flex: 1;
+      display: flex;
+      align-items: center;
       border: 1px solid $border-color;
       border-radius: 1em;
       background: hsl(278, 3%, 14%);
@@ -115,14 +123,14 @@
     }
 
     &--left {
-      justify-content: flex-start;
       text-align: left;
       flex-direction: row;
+      .title { justify-content: flex-start; }
     }
     &--right {
-      justify-content: flex-end;
       text-align: right;
       flex-direction: row;
+      .title { justify-content: flex-end; }
     }
   }
 
@@ -131,6 +139,7 @@
 .pagination--pager--left::before {
   content: "";
   display: inline-block;
+  align-self: center;
   width: 1em;
   height: 1em;
   background: currentColor;
@@ -146,6 +155,7 @@
 .pagination--pager--right::after {
   content: "";
   display: inline-block;
+  align-self: center;
   width: 1em;
   height: 1em;
   background: currentColor;

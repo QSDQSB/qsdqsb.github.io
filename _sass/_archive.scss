@@ -438,10 +438,23 @@ a.word_card--link {
 
 .page__intriguing-word-wrapper {
   display: block;
-  margin: 1rem auto;
+  margin: 3rem auto 0; /* post-colophon beat — matches slip and pagination */
   color: $intriguing-word-color;
 
   text-align: center;
+}
+
+/* Inside the colophon column the card fills the shared 40rem measure exactly,
+   so its edges register with the subscribe slip below. In-prose word cards
+   (embedded in post content) keep their own free-width behaviour. */
+.page__intriguing-word-wrapper .word_card_container {
+  width: 100%;
+  max-width: 40rem;
+  padding-left: 0;
+  padding-right: 0;
+}
+.page__intriguing-word-wrapper .word_card {
+  width: 100%;
 }
 .page__intriguing-word-wrapper h4 {
   color: $intriguing-word-color;
