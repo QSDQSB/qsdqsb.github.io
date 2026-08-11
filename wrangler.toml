@@ -1,0 +1,25 @@
+# Cloudflare Pages configuration.
+#
+# Declares the D1 binding used by functions/api/{subscribe,unsubscribe}.js in
+# the repo instead of as dashboard state, so a fresh deploy carries it.
+#
+# IMPORTANT: `name` must exactly match the Cloudflare Pages *project name*
+# (dashboard → Workers & Pages → the project). If the project is renamed,
+# update this line or the deploy will reject the config file.
+
+name = "qsdqsb-house-of-wonders"
+pages_build_output_dir = "_site"
+compatibility_date = "2026-08-01"
+
+[[d1_databases]]
+binding = "SUBSCRIBERS"
+database_name = "qsdqsb-subscribers"
+database_id = "fb15afec-dd84-4cad-9373-63444343fa05"
+
+# Preview deployments (PR builds) get the same binding explicitly, so the
+# subscription form is end-to-end testable on a PR before it ever merges.
+[env.preview]
+[[env.preview.d1_databases]]
+binding = "SUBSCRIBERS"
+database_name = "qsdqsb-subscribers"
+database_id = "fb15afec-dd84-4cad-9373-63444343fa05"
