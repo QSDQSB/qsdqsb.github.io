@@ -33,7 +33,14 @@ import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join, basename, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { renderLetterHtml, renderLetterText } from "./letter-template.mjs";
+import {
+  renderLetterHtml,
+  renderLetterText,
+  renderWelcomeHtml,
+  renderWelcomeText,
+  LOGO_CID,
+  WELCOME_SUBJECT,
+} from "./letter-template.mjs";
 
 // Repo-level secrets: load KEY=VALUE lines from a gitignored .env at the repo
 // root (next to package.json), without overriding anything already exported.
@@ -57,6 +64,11 @@ const FROM = process.env.LETTERS_FROM || "QSD <scripta@qsdqsb.com>";
 const D1_NAME = "qsdqsb-subscribers";
 const SEND_DELAY_MS = Number(process.env.RESEND_SEND_DELAY_MS || 700);
 
+// The brass hexagon crest travels inline (Content-ID), not as a remote URL —
+// see letter-template.mjs. Read it once, base64, and attach it to every send.
+const LOGO_PATH = join(repoRoot, "images", "email", "qsd-hexagon.png");
+const LOGO_B64 = existsSync(LOGO_PATH) ? readFileSync(LOGO_PATH).toString("base64") : null;
+
 /* ---------- CLI ---------- */
 
 const args = process.argv.slice(2);
@@ -79,6 +91,7 @@ function fail(msg) {
   process.exit(1);
 }
 
+const optWelcome = takeFlag("--welcome");
 const optSend = takeFlag("--send");
 const optYes = takeFlag("--yes");
 const optSendTest = takeOption("--send-test");
@@ -88,8 +101,13 @@ const optUrl = takeOption("--url");
 const optSubject = takeOption("--subject");
 const postPath = args.find((a) => !a.startsWith("--")) || null;
 
-if (!postPath && !(optTitle && optUrl)) {
-  fail("usage: node scripts/send-letter.mjs <post.md> [--send-test addr | --send --yes] [--title/--excerpt/--url/--subject overrides]");
+if (optWelcome) {
+  // The welcome is a one-shot confirmation, not a broadcast: preview it, or
+  // send exactly one with --send-test. Bulk-mailing every subscriber a fresh
+  // "welcome" would be nonsense, so --send is refused here.
+  if (optSend) fail("--welcome is the confirmation email — preview it, or send one with --send-test <addr>. It is never bulk-sent.");
+} else if (!postPath && !(optTitle && optUrl)) {
+  fail("usage: node scripts/send-letter.mjs <post.md> [--send-test addr | --send --yes] [--title/--excerpt/--url/--subject overrides]\n   or: node scripts/send-letter.mjs --welcome [--send-test addr]");
 }
 
 /* ---------- frontmatter (minimal: quoted/plain scalars only) ---------- */
@@ -111,23 +129,42 @@ function parseFrontmatter(file) {
   return out;
 }
 
-let fm = {};
-if (postPath) fm = parseFrontmatter(postPath);
-
-const title = optTitle || fm.title || fail("post has no title: — pass --title");
-const excerpt = optExcerpt ?? (fm.seo_description || fm.excerpt || fm.description || "");
-let url = optUrl;
-if (!url) {
-  if (fm.permalink) url = SITE_URL + fm.permalink;
-  else fail("post has no permalink: — pass --url (voyage/subvoyage routes are config-derived)");
-}
-const subject = optSubject || title;
-const dateLine = fm.date
-  ? new Date(fm.date).toLocaleDateString("en-GB", { month: "long", year: "numeric" })
-  : "";
-
-const letter = { title, excerpt, url, dateLine };
 const unsubscribeUrlFor = (token) => `${SITE_URL}/api/unsubscribe?token=${token}`;
+
+// Both email kinds resolve to the same trio: a subject, an HTML renderer and
+// a text renderer that each take THIS recipient's unsubscribe URL. Everything
+// downstream (preview, --send-test, bulk send) is kind-agnostic from here.
+let subject;
+let renderHtml;
+let renderText;
+let headerLines;
+
+if (optWelcome) {
+  subject = optSubject || WELCOME_SUBJECT;
+  renderHtml = (unsub) => renderWelcomeHtml({ siteUrl: SITE_URL }, unsub);
+  renderText = (unsub) => renderWelcomeText({ siteUrl: SITE_URL }, unsub);
+  headerLines = ["Welcome email", `House:  ${SITE_URL}`];
+} else {
+  let fm = {};
+  if (postPath) fm = parseFrontmatter(postPath);
+
+  const title = optTitle || fm.title || fail("post has no title: — pass --title");
+  const excerpt = optExcerpt ?? (fm.seo_description || fm.excerpt || fm.description || "");
+  let url = optUrl;
+  if (!url) {
+    if (fm.permalink) url = SITE_URL + fm.permalink;
+    else fail("post has no permalink: — pass --url (voyage/subvoyage routes are config-derived)");
+  }
+  subject = optSubject || title;
+  const dateLine = fm.date
+    ? new Date(fm.date).toLocaleDateString("en-GB", { month: "long", year: "numeric" })
+    : "";
+
+  const letter = { title, excerpt, url, dateLine };
+  renderHtml = (unsub) => renderLetterHtml(letter, unsub);
+  renderText = (unsub) => renderLetterText(letter, unsub);
+  headerLines = [`Letter: “${title}”`, `Link:   ${url}`];
+}
 
 /* ---------- subscribers via wrangler d1 ---------- */
 
@@ -163,8 +200,11 @@ async function resendSend(to, token) {
       from: FROM,
       to: [to],
       subject: subject,
-      html: renderLetterHtml(letter, unsub),
-      text: renderLetterText(letter, unsub),
+      html: renderHtml(unsub),
+      text: renderText(unsub),
+      attachments: LOGO_B64
+        ? [{ filename: "qsd-hexagon.png", content: LOGO_B64, content_id: LOGO_CID }]
+        : undefined,
       headers: {
         // One-click unsubscribe (RFC 8058): mailbox providers surface their
         // own Unsubscribe button and POST to this recipient's personal URL.
@@ -185,15 +225,15 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /* ---------- modes ---------- */
 
-console.log(`Letter: “${title}”`);
-console.log(`Link:   ${url}`);
+for (const line of headerLines) console.log(line);
 console.log(`From:   ${FROM}`);
+console.log(`Crest:  ${LOGO_B64 ? "inline (cid:" + LOGO_CID + ")" : "MISSING — images/email/qsd-hexagon.png not found"}`);
 console.log(`Key:    RESEND_API_KEY ${process.env.RESEND_API_KEY ? "set" : "MISSING"}\n`);
 
 if (optSendTest) {
   if (!process.env.RESEND_API_KEY) fail("RESEND_API_KEY is not set");
   const r = await resendSend(optSendTest, "00000000-0000-4000-8000-000000000000");
-  console.log(`✓ test letter sent to ${optSendTest} (id ${r.id})`);
+  console.log(`✓ test ${optWelcome ? "welcome" : "letter"} sent to ${optSendTest} (id ${r.id})`);
   console.log("  (its unsubscribe link uses a dummy token and will report “Nothing to do.”)");
 } else if (optSend) {
   if (!process.env.RESEND_API_KEY) fail("RESEND_API_KEY is not set");
@@ -223,14 +263,16 @@ if (optSendTest) {
   }
 } else {
   const dir = mkdtempSync(join(tmpdir(), "qsd-letter-"));
-  const stem = postPath ? basename(postPath).replace(/\.md$/, "") : "letter";
+  const stem = optWelcome ? "welcome" : postPath ? basename(postPath).replace(/\.md$/, "") : "letter";
   const htmlPath = join(dir, `${stem}.preview.html`);
   const textPath = join(dir, `${stem}.preview.txt`);
   const previewUnsub = unsubscribeUrlFor("«personal-token-per-recipient»");
-  writeFileSync(htmlPath, renderLetterHtml(letter, previewUnsub));
-  writeFileSync(textPath, renderLetterText(letter, previewUnsub));
+  writeFileSync(htmlPath, renderHtml(previewUnsub));
+  writeFileSync(textPath, renderText(previewUnsub));
   console.log("Preview only — nothing sent.");
   console.log(`  HTML: ${htmlPath}`);
   console.log(`  Text: ${textPath}`);
-  console.log("\nNext: --send-test you@example.com, then --send --yes.");
+  console.log(optWelcome
+    ? "\nNext: --welcome --send-test you@example.com."
+    : "\nNext: --send-test you@example.com, then --send --yes.");
 }
