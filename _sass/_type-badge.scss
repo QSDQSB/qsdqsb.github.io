@@ -35,8 +35,7 @@
    pill onto a darker glass backing and brighten the label for contrast. */
 .type-badge[data-on-media] {
   background-color: rgba(9, 9, 12, 0.55);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  @include backdrop-blur(blur(6px));
   color: mix(#fff, $primary-color, 55%);
   box-shadow: 0 2px 10px -4px rgba(0, 0, 0, 0.8);
 

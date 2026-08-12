@@ -23,9 +23,7 @@
   padding: 0.8rem 0.9rem 0.8rem 1.15rem;
   border-radius: 0.7rem;
   border: 1px solid rgba($h2-color, 0.28);
-  background: rgba(12, 12, 16, 0.82);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
-          backdrop-filter: blur(14px) saturate(1.2);
+  @include dark-glass-fill;
   box-shadow: $shadow-floating;
   opacity: 0;
   transform: translateY(1.25rem);
