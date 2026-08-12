@@ -49,7 +49,9 @@
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
           backdrop-filter: blur(14px) saturate(1.2);
   border-radius: 1rem;
-  box-shadow: $shadow-soft;
+  /* A whisper of a lit top-edge — glass caught from above, in the brass family
+     so the card gains presence without breaking rank with the word card. */
+  box-shadow: $shadow-soft, inset 0 1px 0 rgba($intriguing-word-color, 0.08);
 }
 
 .subscribe-slip__card {
@@ -140,24 +142,26 @@
   flex: none;
   margin: 0;
   padding: 0.42rem 0.95rem;
-  border: 1px solid rgba($intriguing-word-color, 0.35);
+  /* The primary action carries a low brass fill at rest so the eye lands on it
+     — the one lifted element in an otherwise restrained card. */
+  border: 1px solid rgba($intriguing-word-color, 0.5);
   border-radius: 0.4rem;
-  background: none;
+  background: rgba($intriguing-word-color, 0.1);
   cursor: pointer;
   font-family: $barlow-font-family;
   font-weight: 500;
   font-size: 0.72rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba($intriguing-word-color, 0.9);
+  color: $intriguing-word-color;
   transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
 
   &:hover,
   &:focus-visible {
     outline: none;
     color: $h2-color;
-    border-color: rgba($h2-color, 0.6);
-    background: rgba($h2-color, 0.08);
+    border-color: rgba($h2-color, 0.65);
+    background: rgba($h2-color, 0.14);
   }
   &[disabled] {
     opacity: 0.55;
@@ -288,8 +292,7 @@
     transition: opacity 0.4s ease;
   }
   .subscribe-slip__body,
-  .subscribe-slip__summary,
-  .subscribe-slip__summary-plus {
+  .subscribe-slip__summary {
     transition: none;
   }
 }

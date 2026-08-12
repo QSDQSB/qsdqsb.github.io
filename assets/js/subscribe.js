@@ -1,23 +1,24 @@
 /* Subscribe slip — behaviour for _includes/subscribe.html.
  *
- * Lifecycle: reveal on viewport entry (IntersectionObserver) → 10 s dwell →
- * fold into an ornamental rule (two hairlines meeting at the monogram).
- * Hovering the rule PEEKS the card open — it folds back if the pointer
- * leaves without engaging. Clicking the rule, or keyboard-focusing into the
- * card, COMMITS the expansion (never re-folds). Hovering the still-open card
- * pauses the dwell clock; typing cancels it. After a successful subscription
- * the card folds itself to the rule, and future visits start folded.
+ * Lifecycle: reveal on viewport entry (IntersectionObserver) and then STAY
+ * open. The card no longer folds itself on a timer — a reader at the end of a
+ * post keeps the whole invitation in view. It becomes the ornamental rule (two
+ * hairlines meeting at the monogram) only in two cases: after a successful
+ * subscription, and on any later visit from a browser that has already
+ * subscribed. In that folded state, hovering PEEKS the card open (folding back
+ * if the pointer leaves without engaging); a click or keyboard focus COMMITS
+ * the expansion (never re-folds). A browser that already subscribed peeks to a
+ * quiet acknowledgement, not a fresh form.
  */
 (function () {
   "use strict";
 
-  var DWELL_MS = 10000;
   var FOLD_AFTER_SUCCESS_MS = 2800;
-  // Hysteresis for hover-peek: the expansion always completes (min-open
+  // Hysteresis for the hover-peek: the expansion always completes (a min-open
   // latch covering the 0.8 s transition) and the refold waits out a grace
   // period, cancelled if the pointer returns. Without this, the box moving
-  // under a stationary cursor mid-animation fires spurious enter/leave
-  // events and the rule trembles between states.
+  // under a stationary cursor mid-animation fires spurious enter/leave events
+  // and the rule trembles between states.
   var PEEK_MIN_OPEN_MS = 900;
   var PEEK_REFOLD_GRACE_MS = 2000; // unhurried retreat — the card lingers before folding back
   var DONE_KEY = "qsd-subscribe-done";
@@ -26,7 +27,7 @@
   var MSG_FAILED = "That didn’t go through. Try once more.";
 
   // Automated renderers (window.QSD_MOTION_OFF — see head/custom.html) get the
-  // slip fully expanded and static: no reveal animation, no dwell auto-fold.
+  // slip fully expanded and static: no reveal animation.
   var motionOff = window.QSD_MOTION_OFF === true;
   var reduced = motionOff || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -39,10 +40,6 @@
 
   function Slip(root) {
     this.root = root;
-    this.remaining = DWELL_MS;
-    this.timer = null;
-    this.startedAt = 0;
-    this.cancelled = false; // dwell clock permanently stopped
     this.peeking = false;   // expanded by hover/focus, may fold back
     this.sticky = false;    // expansion committed by click/engagement
     this.hovering = false;  // pointer currently inside the slip
@@ -61,15 +58,15 @@
 
     if (motionOff) {
       // Deterministic render for screenshots/crawlers: visible, expanded, still.
-      this.cancelled = true;
       this.root.classList.add("is-in");
       return;
     }
 
     if (storageGet(DONE_KEY)) {
-      // Already subscribed on this browser — start as the quiet rule.
-      this.cancelled = true;
-      this.root.classList.add("is-in");
+      // Already subscribed on this browser — rest as the quiet rule, and mark
+      // the card done so a peek reveals the acknowledgement, not a fresh form.
+      this.root.classList.add("is-in", "is-done");
+      this.okNote.hidden = false;
       this.fold(true);
     }
   }
@@ -83,16 +80,13 @@
       self.hovering = true;
       self.cancelRefold(); // pointer came back — the rule stays open
       if (self.root.classList.contains("is-folded")) self.peek();
-      else if (!self.peeking) self.pause();
     });
     this.root.addEventListener("pointerleave", function () {
       self.hovering = false;
       if (self.peeking && !self.sticky) self.scheduleRefold();
-      else self.resume();
     });
 
     this.root.addEventListener("focusin", function (event) {
-      self.cancelDwell();
       if (event.target === self.summary) {
         if (self.root.classList.contains("is-folded")) self.peek();
       } else if (self.peeking) {
@@ -106,7 +100,6 @@
     });
 
     this.input.addEventListener("input", function () {
-      self.cancelDwell();
       if (self.peeking) self.engage(false);
     });
 
@@ -117,43 +110,16 @@
     });
   };
 
-  /* ---------- dwell clock ---------- */
+  /* ---------- reveal ---------- */
 
   Slip.prototype.reveal = function () {
     this.root.classList.add("is-in");
-    this.startClock();
-  };
-
-  Slip.prototype.startClock = function () {
-    if (this.cancelled || this.timer) return;
-    var self = this;
-    this.startedAt = Date.now();
-    this.timer = window.setTimeout(function () { self.fold(); }, this.remaining);
-  };
-
-  Slip.prototype.pause = function () {
-    if (!this.timer) return;
-    window.clearTimeout(this.timer);
-    this.timer = null;
-    this.remaining = Math.max(0, this.remaining - (Date.now() - this.startedAt));
-  };
-
-  Slip.prototype.resume = function () {
-    if (this.cancelled || this.sticky || this.root.classList.contains("is-folded")) return;
-    if (this.remaining <= 0) { this.fold(); return; }
-    this.startClock();
-  };
-
-  Slip.prototype.cancelDwell = function () {
-    this.cancelled = true;
-    if (this.timer) { window.clearTimeout(this.timer); this.timer = null; }
   };
 
   /* ---------- fold / peek / engage ---------- */
 
   Slip.prototype.fold = function (instant) {
     var self = this;
-    if (this.timer) { window.clearTimeout(this.timer); this.timer = null; }
     this.cancelRefold();
     this.peeking = false;
     this.sticky = false;
@@ -183,8 +149,8 @@
   Slip.prototype.scheduleRefold = function () {
     var self = this;
     this.cancelRefold();
-    // Never refold before the expansion has fully played out, and always
-    // give the pointer a grace window to come back.
+    // Never refold before the expansion has fully played out, and always give
+    // the pointer a grace window to come back.
     var latch = this.peekedAt + PEEK_MIN_OPEN_MS - Date.now();
     var wait = Math.max(PEEK_REFOLD_GRACE_MS, latch);
     this.refoldTimer = window.setTimeout(function () {
@@ -208,7 +174,6 @@
   };
 
   Slip.prototype.engage = function (focusInput) {
-    this.cancelDwell();
     this.cancelRefold();
     this.peeking = false;
     this.sticky = true;
@@ -226,7 +191,6 @@
     var email = (this.input.value || "").trim();
     this.okNote.hidden = true;
     this.errNote.hidden = true;
-    this.cancelDwell();
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       this.errNote.textContent = MSG_INVALID;
@@ -272,6 +236,7 @@
     this.root.classList.add("is-done");
     this.okNote.hidden = false;
     storageSet(DONE_KEY, String(Date.now()));
+    // The card has done its job — retire it to the quiet rule after a beat.
     window.setTimeout(function () { self.fold(); }, FOLD_AFTER_SUCCESS_MS);
   };
 
