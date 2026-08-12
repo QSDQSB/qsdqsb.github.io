@@ -98,6 +98,22 @@
 }
 
 /*
+   Dark glass surface fill
+   ==========================================================================
+   The near-black frosted fill — background + blur/saturate — was hand-copied
+   identically between `%subscribe-slip-glass` (_subscribe.scss) and
+   `.welcome-toast__inner` (_welcome-toast.scss), each also hand-writing the
+   -webkit-/standard backdrop-filter pair instead of using the mixin above.
+   Border, radius and box-shadow stay at the callsite — they differ between
+   the two (component-specific knobs), only the fill itself is shared.
+*/
+
+@mixin dark-glass-fill {
+  background: rgba(12, 12, 16, 0.82);
+  @include backdrop-blur(blur(14px) saturate(1.2));
+}
+
+/*
    Nav action button (shared shell)
    ==========================================================================
    The pill-shaped icon-button chrome — border/surface/backdrop-blur, the
