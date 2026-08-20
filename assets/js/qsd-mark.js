@@ -37,7 +37,10 @@
   var G_LAST_MOVE = -1e9;            // performance.now() of the last host pointer msg
   var G_TILT   = { x:0, y:0 };       // eased 3D tilt (deg)
 
-  var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // True for reduced-motion readers AND automated renderers (the kill-switch). The
+  // monogram loops forever through a dissolve/dark beat, so without this a crawler
+  // could screenshot a half-drawn or blank mark; RM paints the finished mark once.
+  var RM = window.QSD.motionOff();
 
   // ---------- parse the compound path into subpaths of [x,y] points ----------
   function parse(d){

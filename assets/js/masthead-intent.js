@@ -5,7 +5,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const nav = masthead.querySelector(".greedy-nav");
   const navToggle = masthead.querySelector(".greedy-nav__toggle");
   const hiddenLinks = masthead.querySelector(".hidden-links");
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Also true for automated renderers (the kill-switch), so a crawler screenshot
+  // gets the static masthead rather than a mid-scroll hide. See window.QSD.motionOff.
+  const prefersReducedMotion = window.QSD.motionOff();
   const SCROLL_INTENT_TRIGGER = 22;
   const MIN_SCROLL_DELTA = 0.1;
   const SCROLL_ACTIVITY_WINDOW_MS = 260;
