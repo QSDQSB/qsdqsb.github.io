@@ -20,7 +20,9 @@
   if (!content) return;
 
   document.documentElement.classList.add("js");
-  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // True for reduced-motion readers AND automated renderers (the kill-switch), so
+  // a crawler render of the treatise lands on its final state. See window.QSD.motionOff.
+  var reduce = window.QSD.motionOff();
   var SEG = (window.Intl && Intl.Segmenter) ? new Intl.Segmenter() : null; // one instance, reused
 
   var MONTHS = { Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5, Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11 };

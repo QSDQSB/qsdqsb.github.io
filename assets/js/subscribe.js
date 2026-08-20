@@ -29,7 +29,7 @@
   // Automated renderers (window.QSD_MOTION_OFF — see head/custom.html) get the
   // slip fully expanded and static: no reveal animation.
   var motionOff = window.QSD_MOTION_OFF === true;
-  var reduced = motionOff || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var reduced = window.QSD.motionOff();
 
   function storageGet(key) {
     try { return window.localStorage.getItem(key); } catch (_) { return null; }
