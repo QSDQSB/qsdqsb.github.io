@@ -37,7 +37,12 @@
   var G_LAST_MOVE = -1e9;            // performance.now() of the last host pointer msg
   var G_TILT   = { x:0, y:0 };       // eased 3D tilt (deg)
 
-  var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Suppress motion for reduced-motion users AND automated renderers
+  // (window.QSD_MOTION_OFF, set in head/custom.html before any deferred script).
+  // This component loads before main.min.js, so it reads the global inline
+  // rather than via window.QSD.reducedMotion().
+  var RM = window.QSD_MOTION_OFF === true ||
+    (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   // ---------- parse the compound path into subpaths of [x,y] points ----------
   function parse(d){

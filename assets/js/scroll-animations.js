@@ -15,11 +15,7 @@
 
   // Automated renderers (window.QSD_MOTION_OFF — see head/custom.html) bail
   // out like reduced-motion users: no reveal classes, content stays visible.
-  const reduceMotion =
-    window.QSD_MOTION_OFF === true ||
-    (window.matchMedia &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  if (reduceMotion) return;
+  if (window.QSD.reducedMotion()) return;
 
   const pageContent = document.querySelector('.page__content');
   if (!pageContent) return;

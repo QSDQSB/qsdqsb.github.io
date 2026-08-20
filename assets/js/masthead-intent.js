@@ -5,7 +5,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const nav = masthead.querySelector(".greedy-nav");
   const navToggle = masthead.querySelector(".greedy-nav__toggle");
   const hiddenLinks = masthead.querySelector(".hidden-links");
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Automated renderers (window.QSD_MOTION_OFF) share the reduced-motion path:
+  // the nav settles to its static expanded end-state, never mid-collapse.
+  const prefersReducedMotion = window.QSD.reducedMotion();
   const SCROLL_INTENT_TRIGGER = 22;
   const MIN_SCROLL_DELTA = 0.1;
   const SCROLL_ACTIVITY_WINDOW_MS = 260;

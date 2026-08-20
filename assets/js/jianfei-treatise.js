@@ -9,7 +9,8 @@
      2. mutes the "TO BE UPDATED!" (unrecorded) attempts;
      3. draws the weight figure on scroll-in and gently reveals the two exhibits.
 
-   All motion bails under prefers-reduced-motion (paired with the SCSS guard in
+   All motion bails under prefers-reduced-motion or the QSD_MOTION_OFF
+   automated-renderer kill-switch (paired with the SCSS guard in
    _sass/_jianfei-treatise.scss). Companion styles: `.jf-*` classes there.
    ========================================================================== */
 (function () {
@@ -20,7 +21,9 @@
   if (!content) return;
 
   document.documentElement.classList.add("js");
-  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Honours prefers-reduced-motion AND the window.QSD_MOTION_OFF kill-switch
+  // (automated renderers get the finished, static treatise — no scroll morph).
+  var reduce = window.QSD.reducedMotion();
   var SEG = (window.Intl && Intl.Segmenter) ? new Intl.Segmenter() : null; // one instance, reused
 
   var MONTHS = { Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5, Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11 };

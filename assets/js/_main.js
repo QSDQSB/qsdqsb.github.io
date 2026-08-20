@@ -29,6 +29,23 @@ window.QSD.rafGate = function(fn) {
 	};
 };
 
+/**
+ * Should entrance motion be suppressed? True when either the user asked for
+ * reduced motion, or the automated-renderer kill-switch (`window.QSD_MOTION_OFF`,
+ * set in head/custom.html for webdriver/bots/`?motion=off`) is on. Both cases
+ * want the finished, static end-state — no dim frame, no opacity-0 content.
+ *
+ * The single source of truth for the "suppress motion" decision. Every animation
+ * module that loads after main.min.js should call this instead of re-deriving the
+ * `QSD_MOTION_OFF || matchMedia(...)` idiom. (qsd-mark.js is the one exception —
+ * it runs before this file, so it reads window.QSD_MOTION_OFF inline.)
+ */
+window.QSD.reducedMotion = function() {
+	return window.QSD_MOTION_OFF === true ||
+		(window.matchMedia &&
+			window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+};
+
 document.addEventListener("DOMContentLoaded", function(){
    // Sticky footer
   var bumpIt = function() {

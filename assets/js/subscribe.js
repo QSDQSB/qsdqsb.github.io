@@ -27,9 +27,10 @@
   var MSG_FAILED = "That didn’t go through. Try once more.";
 
   // Automated renderers (window.QSD_MOTION_OFF — see head/custom.html) get the
-  // slip fully expanded and static: no reveal animation.
+  // slip fully expanded and static: no reveal animation. `motionOff` is kept
+  // distinct below because a couple of branches key off the kill-switch alone.
   var motionOff = window.QSD_MOTION_OFF === true;
-  var reduced = motionOff || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var reduced = window.QSD.reducedMotion();
 
   function storageGet(key) {
     try { return window.localStorage.getItem(key); } catch (_) { return null; }
