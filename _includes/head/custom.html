@@ -25,6 +25,21 @@
       window.QSD_MOTION_OFF = true;
     }
   })();
+
+  // Shared motion gate. One definition every animation module reuses instead of
+  // re-deriving the same matchMedia/kill-switch test (they load deferred or as
+  // modules, all after this synchronous head script, so window.QSD is ready).
+  //   prefersReducedMotion() — the reader asked the OS to reduce motion.
+  //   motionOff()            — reduce motion, OR the kill-switch above flagged an
+  //                            automated renderer; either way animations must land
+  //                            on their final state, never a mid-flight frame.
+  window.QSD = window.QSD || {};
+  window.QSD.prefersReducedMotion = function () {
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  };
+  window.QSD.motionOff = function () {
+    return window.QSD_MOTION_OFF === true || window.QSD.prefersReducedMotion();
+  };
 </script>
 
 <link rel="icon" href="/favicon.ico" sizes="any">
