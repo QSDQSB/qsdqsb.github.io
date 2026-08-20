@@ -13,12 +13,9 @@
 
   if (!('IntersectionObserver' in window)) return;
 
-  // Automated renderers (window.QSD_MOTION_OFF — see head/custom.html) bail
-  // out like reduced-motion users: no reveal classes, content stays visible.
-  const reduceMotion =
-    window.QSD_MOTION_OFF === true ||
-    (window.matchMedia &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  // Reduced-motion readers and automated renderers (the kill-switch) both bail
+  // out: no reveal classes, content stays visible. See window.QSD.motionOff.
+  const reduceMotion = window.QSD.motionOff();
   if (reduceMotion) return;
 
   const pageContent = document.querySelector('.page__content');

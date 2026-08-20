@@ -8,11 +8,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const overlayHero = document.querySelector(".page__hero--overlay");
   if (!hasOverlayHero || !overlayHero) return;
 
-  // Automated renderers (window.QSD_MOTION_OFF — see head/custom.html) share
-  // the reduced-motion path: excerpt visible, scene complete, no dim frame.
-  const prefersReducedMotion =
-    window.QSD_MOTION_OFF === true ||
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Reduced-motion readers and automated renderers (the kill-switch) share this
+  // path: excerpt visible, scene complete, no dim frame. See window.QSD.motionOff.
+  const prefersReducedMotion = window.QSD.motionOff();
   const OPENING_HOLD_MS = 3000;
   const DIM_FADE_MS = 1000;
   const EXCERPT_REVEAL_DELAY_MS = 1500;
