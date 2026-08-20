@@ -12,7 +12,13 @@ layout: compress
 </head>
 
 {% if page.subgalleries %}
-  <body>
+  {% assign body_class = "" %}
+{% else %}
+  {% assign body_class = "is-loading-1 is-loading-2 gallery-viewer" %}
+{% endif %}
+<body{% if body_class != "" %} class="{{ body_class }}"{% endif %}>
+
+{% if page.subgalleries %}
   <!-- Enumerate sub-galleries with single view -->
   {% include_cached masthead.html %}
   {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
@@ -71,23 +77,21 @@ layout: compress
     {% include page__dates.html %}
   </footer>
   {% include presented-by-qsd.html %}
-  </body>
   {% include random_voyage_anchor.html posts = subs %}
-{% else %} 
+{% else %}
 <!-- Display gallery -->
 {% include_cached gallery-svg-preloads.html %}
 <noscript><link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
 
-<div id="gallery_main">
+<div id="gallery_main" role="main">
         <div class="gallery_view">
-          <body class="is-loading-1 is-loading-2 gallery-viewer">
             <header id="header">
-              
+
               {% if page.title %}
                 <h1>{{ page.title | markdownify | remove: "<p>" | remove: "</p>" }}</h1>
               {% endif %}
               {% if page.subtitle %}
-                <h4>{{ page.subtitle | markdownify | remove: "<p>" | remove: "</p>" }}</h4>
+                <h2>{{ page.subtitle | markdownify | remove: "<p>" | remove: "</p>" }}</h2>
               {% endif %}
               {% if page.description or page.excerpt %}
                 <p>{{ page.description | default: page.excerpt | markdownify }}</p>
@@ -146,7 +150,7 @@ layout: compress
                   {% assign default_logo = "fa-chess-rook" %}
                 {% endif %}
                 <div class="archive">
-                    <h5 class="barlow"><i class="fa-solid {{ default_logo }}"></i> Other {{ parent_name | capitalize }}</h5>
+                    <h2 class="barlow"><i class="fa-solid {{ default_logo }}"></i> Other {{ parent_name | capitalize }}</h2>
                   {% for post in related_posts %}
                     {% include archive-single.html %}
                   {% endfor %}
@@ -154,7 +158,7 @@ layout: compress
               {% endif %}
             {% endif %}
             <div class="archive">
-              <h5 class="barlow"><i class="fa-solid fa-shuffle"></i> Fancy a Markov Chain...?</h5>
+              <h2 class="barlow"><i class="fa-solid fa-shuffle"></i> Fancy a Markov Chain...?</h2>
                 {% assign random_posts = site.voyage | where_exp: "post", "post.path != page.path" %}
                 {% assign random_posts = random_posts | sample: 4 %}
                 {% assign updated_random_posts = "" | split: "" %}
@@ -189,10 +193,11 @@ layout: compress
             </footer>
             {% include scripts.html %}
             <script type="module" src="{{ '/assets/js/gallery/index.js' | relative_url }}"></script>
-          </body>
         </div>
 </div>
 
 {% endif %}
 
 {% include tarots.html %}
+</body>
+</html>
