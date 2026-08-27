@@ -45,9 +45,7 @@
    radius matches .word_card (1rem) since they share the colophon column. */
 %subscribe-slip-glass {
   border: 1px solid rgba($h2-color, 0.26);
-  background: rgba(12, 12, 16, 0.82);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
-          backdrop-filter: blur(14px) saturate(1.2);
+  @include dark-glass-fill;
   border-radius: 1rem;
   /* A whisper of a lit top-edge — glass caught from above, in the brass family
      so the card gains presence without breaking rank with the word card. */
