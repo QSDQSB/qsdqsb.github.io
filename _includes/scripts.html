@@ -9,9 +9,6 @@
 <script src="{{ base_path }}/assets/js/subscribe.js" defer></script>
 {% if page.jianfei_treatise %}<script src="{{ base_path }}/assets/js/jianfei-treatise.js" defer></script>{% endif %}
 
-{% include analytics.html %}
-{% include /comments-providers/scripts.html %}
-
 {% if site.search == true or page.layout == "search" %}
   {%- assign search_provider = site.search_provider | default: "lunr" -%}
   {%- case search_provider -%}
