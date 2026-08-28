@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A heavily customised Jekyll site (forked from Minimal Mistakes / Academic Pages) serving as QSD's personal blog, travel gallery, and portfolio. Hosted on GitHub Pages at `qsdqsb.github.io`.
+A heavily customised Jekyll site (forked from Minimal Mistakes / Academic Pages) serving as QSD's personal blog, travel gallery, and portfolio. Hosted on **Cloudflare Pages** at `qsdqsb.com`.
 
 ## Repo Map
 
