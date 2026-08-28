@@ -111,10 +111,39 @@ $border-radius: 10px;
 $box-shadow: 0 1px 1px rgba(50, 50, 50, 0.25);
 $navicon-width: 1.5rem;
 $navicon-height: 0.25rem;
-$global-transition: all 0.3s ease-in-out;
+// Motion tokens list their animatable properties explicitly — never `all`.
+// `all` makes font-size/box geometry animatable, and Safari re-resolves styles
+// after first paint (page zoom / text proportion, root font-size step, vw
+// settling), so armed geometry transitions play out as visible size ramps on
+// load. Same rationale as the gallery viewer's explicit lists (_gallery_view.scss).
+// The seven properties below are the union every consumer's interactive states
+// actually change; intended geometry animations (card aspect-ratio, tag-grid
+// height, navicon morph, underline sweep) are declared per-selector instead.
+$global-transition:
+  color 0.3s ease-in-out,
+  background-color 0.3s ease-in-out,
+  border-color 0.3s ease-in-out,
+  box-shadow 0.3s ease-in-out,
+  opacity 0.3s ease-in-out,
+  transform 0.3s ease-in-out,
+  scale 0.3s ease-in-out;
 $cubic-bezier-param: cubic-bezier(.33,.11,.02,.99);
-$cubic-bezier-default: all 1s $cubic-bezier-param;
-$cubic-bezier-default-05s: all 0.5s $cubic-bezier-param;
+$cubic-bezier-default:
+  color 1s $cubic-bezier-param,
+  background-color 1s $cubic-bezier-param,
+  border-color 1s $cubic-bezier-param,
+  box-shadow 1s $cubic-bezier-param,
+  opacity 1s $cubic-bezier-param,
+  transform 1s $cubic-bezier-param,
+  scale 1s $cubic-bezier-param;
+$cubic-bezier-default-05s:
+  color 0.5s $cubic-bezier-param,
+  background-color 0.5s $cubic-bezier-param,
+  border-color 0.5s $cubic-bezier-param,
+  box-shadow 0.5s $cubic-bezier-param,
+  opacity 0.5s $cubic-bezier-param,
+  transform 0.5s $cubic-bezier-param,
+  scale 0.5s $cubic-bezier-param;
 $cubic-bezier-smooth: cubic-bezier(0.22, 1, 0.36, 1);
 $cubic-bezier-standard: cubic-bezier(0.4, 0, 0.2, 1);
 $intro-transition: intro 0.3s both !default;

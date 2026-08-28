@@ -629,7 +629,7 @@
 }
 
 .toc__menu {
-  transition: all 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
+  transition: opacity 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
   list-style: none;
   font-size: $type-code-size - 0.05rem;
   font-weight: 400;

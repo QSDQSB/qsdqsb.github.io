@@ -11,7 +11,9 @@
     font-weight: 500;
     border-left: 3px solid $primary-color;
     padding-left: calc(1em - 3px);
-    transition: all 0.3s $cubic-bezier-standard;
+    transition: color 0.3s $cubic-bezier-standard, background-color 0.3s $cubic-bezier-standard,
+                border-left-width 0.3s $cubic-bezier-standard, padding-left 0.3s $cubic-bezier-standard,
+                box-shadow 0.3s $cubic-bezier-standard;
     position: relative;
     z-index: 1; /* Above progress indicator */
     
@@ -26,7 +28,9 @@
   
   /* Regular TOC links - align hover with focus/active style */
   a {
-    transition: all 0.3s $cubic-bezier-standard;
+    transition: color 0.3s $cubic-bezier-standard, background-color 0.3s $cubic-bezier-standard,
+                border-left-width 0.3s $cubic-bezier-standard, padding-left 0.3s $cubic-bezier-standard,
+                box-shadow 0.3s $cubic-bezier-standard;
     position: relative;
     
     &:hover,

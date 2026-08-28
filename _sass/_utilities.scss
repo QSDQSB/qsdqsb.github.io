@@ -264,8 +264,11 @@ body:hover .visually-hidden button {
   height: $navicon-height;
   background: currentColor;
   margin: auto;
-  -webkit-transition: 0.28s $cubic-bezier-smooth;
-  transition: 0.28s $cubic-bezier-smooth;
+  // hamburger→X morph: transform + bar positions; unqualified shorthand meant `all`
+  -webkit-transition: transform 0.28s $cubic-bezier-smooth, background-color 0.28s $cubic-bezier-smooth,
+              top 0.28s $cubic-bezier-smooth, bottom 0.28s $cubic-bezier-smooth;
+  transition: transform 0.28s $cubic-bezier-smooth, background-color 0.28s $cubic-bezier-smooth,
+              top 0.28s $cubic-bezier-smooth, bottom 0.28s $cubic-bezier-smooth;
 
   &:before,
   &:after {
@@ -275,8 +278,10 @@ body:hover .visually-hidden button {
     width: $navicon-width;
     height: $navicon-height;
     background: currentColor;
-    -webkit-transition: 0.28s $cubic-bezier-smooth;
-    transition: 0.28s $cubic-bezier-smooth;
+    -webkit-transition: transform 0.28s $cubic-bezier-smooth, background-color 0.28s $cubic-bezier-smooth,
+                top 0.28s $cubic-bezier-smooth, bottom 0.28s $cubic-bezier-smooth;
+    transition: transform 0.28s $cubic-bezier-smooth, background-color 0.28s $cubic-bezier-smooth,
+                top 0.28s $cubic-bezier-smooth, bottom 0.28s $cubic-bezier-smooth;
   }
 
   &:before {
@@ -587,7 +592,7 @@ a.reversefootnote {
 
 .svg-with-drop-shadow {
   filter: drop-shadow(3px 3px 5px #0a0a0a57 );
-  transition: all ease-in-out 0.3s;
+  transition: filter ease-in-out 0.3s;
   &:hover {
     filter: drop-shadow(5px 5px 10px #0a0a0ab5);
   }
@@ -711,7 +716,7 @@ a.reversefootnote {
     margin-bottom: 1.5rem;
     padding: 0.5em 1em;
     border-radius: $border-radius;
-    transition: ease-in-out 0.3s;
+    transition: background-color ease-in-out 0.3s;
     &:focus, &:hover, &:active {
       background-color: $code-background-color;
     }
