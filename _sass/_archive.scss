@@ -133,7 +133,9 @@
   background-position: center;
   background-image: linear-gradient(rgba(12,12,12,var(--bg-filter-opacity)),rgba(0,0,0,var(--bg-filter-opacity))), var(--bg-img);
 	position: relative;
-  transition: $cubic-bezier-default;
+  // aspect-ratio: hover 3.5→3.3 is intended motion; a ratio is immune to the
+  // Safari load-time re-resolution that bans geometry from the shared tokens.
+  transition: $cubic-bezier-default, aspect-ratio 1s $cubic-bezier-param;
   text-decoration: none;
 
   // Bottom-up gradient scrim — engineered contrast under the title /
@@ -325,7 +327,8 @@
   box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
               0 8px  8px  rgba(0, 0, 0, .25),
               0 16px 16px rgba(0, 0, 0, .25);
-  transition: $cubic-bezier-default;
+  // height: the hover 5rem→7.5rem expansion is intended motion.
+  transition: $cubic-bezier-default, height 1s $cubic-bezier-param;
   @include backdrop-blur(blur(5px));
   &:hover {
     box-shadow: $box-shadow-fancy;
@@ -515,7 +518,6 @@ a.word_card--link {
   p .to-emphasise {
     position: relative;
     &::after {
-      transition: inherit;
       content: '';
       position: absolute;
       bottom: 0;
@@ -523,7 +525,7 @@ a.word_card--link {
       width: 0;
       height: 1px;
       background-color: hsl(40, 90%, 90%);
-      transition: width $cubic-bezier-default;
+      transition: width 1s $cubic-bezier-param;
     }
   }
   &::before {
@@ -607,7 +609,7 @@ a.word_card--link {
     opacity: 1;
   }
   &--reverse {
-    transition: all 1.5s $cubic-bezier-param;
+    transition: transform 1.5s $cubic-bezier-param, opacity 1.5s $cubic-bezier-param;
     transition-delay: 0.1s;
     transform: rotate(123deg);
     &:hover {
