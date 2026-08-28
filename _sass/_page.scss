@@ -74,7 +74,7 @@
     margin: 0.5em auto;
     align-self: center;
     border-radius: 1em;
-    transition: all 0.5s cubic-bezier(.33,.11,.12,.99);
+    transition: scale 0.5s cubic-bezier(.33,.11,.12,.99), box-shadow 0.5s cubic-bezier(.33,.11,.12,.99);
     box-shadow: 0 4px 4px rgba(0, 0, 0, .35),
         0 1px 6px rgba(0, 0, 0, .20);
     &:hover {
@@ -201,7 +201,10 @@ body.has-overlay-hero {
       clear: both;
     }
   }
-  transition: all $global-transition-time cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  // Overshoot easing must never cover geometry: with `all` it made every late
+  // layout settle enlarge past target then shrink back (worst on Safari zoom).
+  transition: transform $global-transition-time cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              opacity $global-transition-time cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* ==========================================================================
