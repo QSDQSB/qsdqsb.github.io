@@ -235,8 +235,11 @@ html.is-resizing {
   align-items: center;
   gap: $nav-brand-gap-expanded;
   min-width: 0;
+  // Sass arithmetic, not CSS calc(): Ruby Sass emits calc($var…) literally,
+  // the browser drops the invalid declaration, and transition-property falls
+  // back to `all` — re-arming the load-time size-ramp bug on this element.
   transition:
-    gap calc($global-transition-time * 3) $nav-shell-ease;
+    gap ($global-transition-time * 3) $nav-shell-ease;
 }
 
 .masthead__brand-logo,
@@ -277,8 +280,10 @@ html.is-resizing {
   line-height: 1;
   white-space: nowrap;
   opacity: 1;
+  // Sass arithmetic, not CSS calc() — same dropped-declaration hazard as
+  // .masthead__brand-group above.
   transition:
-    max-width calc($global-transition-time * 3) $nav-shell-ease,
+    max-width ($global-transition-time * 3) $nav-shell-ease,
     opacity $nav-content-fade-duration $nav-shell-ease,
     color 0.35s $cubic-bezier-smooth;
 }
