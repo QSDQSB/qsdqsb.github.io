@@ -10,7 +10,25 @@ masthead-intent.js — keeps working. {% endcomment %}
 <div id="main" role="main" class="home home--reel">
 
   <section class="home__panel home__hero" style="--hero-photo: url('{{ '/images/QSD_Night_5v2.jpg' | relative_url }}');">
-    <div class="home__hero-media" aria-hidden="true"></div>
+    <div class="home__hero-media" aria-hidden="true">
+      {%- comment -%} Depth parallax (Lontananza): spring-motion variant of the
+        page-hero effect. The wrapper re-applies the frost recipe (blur, mask,
+        slow zoom) so the glass reads unchanged; hero-depth-parallax.js fills
+        it with the leaning canvas. Empty and invisible until the JS goes
+        live, so every fallback path keeps today's static frost. {%- endcomment -%}
+      {%- assign home_depth = site.static_files | where: "path", "/images/depth/QSD_Night_5v2.jpg.depth.jpg" | first -%}
+      {%- if home_depth -%}
+      <div class="home__hero-depth"
+        data-depth-map="{{ '/images/depth/QSD_Night_5v2.jpg.depth.jpg' | relative_url }}"
+        data-depth-photo="{{ '/images/QSD_Night_5v2.jpg' | relative_url }}"
+        data-depth-motion="spring"
+        data-depth-amp="55"
+        data-depth-focus="75"
+        data-depth-glow="65"
+        data-depth-veil="0.28 0.48"
+        data-depth-dpr="1"></div>
+      {%- endif -%}
+    </div>
     <div class="home__hero-blobs" aria-hidden="true">
       <span class="blob blob--1"></span>
       <span class="blob blob--2"></span>
