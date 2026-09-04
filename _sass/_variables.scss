@@ -7,11 +7,11 @@
    ========================================================================== */
 
 /* system typefaces */
-$sans-serif                 : "Playfair Display", "Didot", apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
+$sans-serif                 : "Playfair Display", apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
 $monospace                  : "Monaco", Consolas, "Lucida Console", monospace;
 $didot-family              : "Didot", "CMU Serif", "Playfair Display", "Songti SC", "STSong", serif;
 /* sans serif typefaces */
-$cmu-serif-family           : "CMU Serif", "Didot", "Playfair Display", serif;
+$cmu-serif-family           : "CMU Serif", "Playfair Display", "Songti SC", "STSong", serif;
 $sans-serif-narrow          : "Roboto", $sans-serif;
 $barlow-font-family         : "Barlow", $sans-serif-narrow;
 
