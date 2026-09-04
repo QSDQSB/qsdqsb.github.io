@@ -319,14 +319,14 @@ body.layout--home {
   margin: 1.5rem 0 0;
   padding-bottom: 0.14em;              /* room so the italic descenders (p, q) clear the clip edge */
   max-width: 40ch;
-  font-family: $didot-family;          /* Didot italic — matches the wordmark's descriptive words */
+  font-family: $cmu-serif-family;          /* Didot italic — matches the wordmark's descriptive words */
   font-style: italic;
   font-size: clamp(1.15rem, 2.2vw, 1.7rem);
   letter-spacing: 0.015em;
   line-height: 1.3;
   color: rgba($primary-color, 0.85);
   filter: drop-shadow(0 3px 18px rgba(0, 0, 0, 0.5));   /* the wordmark's lift language, no glow */
-
+  font-weight: 600;
   > span {
     display: inline-block;
     transform: translateY(115%);
