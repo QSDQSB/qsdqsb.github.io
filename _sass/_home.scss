@@ -63,6 +63,54 @@ body.layout--home {
     home-bg-zoom 44s ease-in-out infinite alternate,
     home-darken 4.4s ease-out both;
 }
+/* Depth-parallax layer (hero-depth-parallax.js, spring variant). Replicates
+   the ::before frost recipe — same inset, mask, filter and slow zoom — so the
+   moving photograph wears the identical glass. Invisible until the canvas
+   goes live (`.depth-live`); every fallback path keeps the static ::before. */
+.home__hero-depth {
+  position: absolute;
+  inset: -8%;
+  transform: scale(1.04);
+  filter: brightness(0.88) saturate(0.98) blur(7px);
+  -webkit-mask-image: radial-gradient(95% 100% at 40% 46%, #000 20%, rgba(0, 0, 0, 0.5) 55%, transparent 82%);
+          mask-image: radial-gradient(95% 100% at 40% 46%, #000 20%, rgba(0, 0, 0, 0.5) 55%, transparent 82%);
+  animation:
+    home-bg-zoom 44s ease-in-out infinite alternate,
+    home-darken 4.4s ease-out both;
+  pointer-events: none;
+
+  canvas.hero-depth-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity ($global-transition-time * 2) $cubic-bezier-smooth;
+
+    &.is-live {
+      opacity: 1;
+    }
+  }
+
+  /* The darkening the static ::before folds into its background stack is
+     applied IN-SHADER when the canvas is live (data-depth-veil), keyed by
+     luminance — shadows keep these exact values, the neon burns through. */
+}
+
+/* Once the canvas is live the static photo below would only double-paint —
+   drop the image layers and let the depth wrapper carry the frost. */
+.home__hero-media:has(.home__hero-depth.depth-live)::before {
+  background-image: none;
+}
+
+/* With the canvas live, the veil opens a soft window over the sign so its
+   light escapes — everywhere else it keeps full weight. The slight ambient
+   lift inside the window reads as the sign's own spill. */
+.home__hero:has(.home__hero-depth.depth-live) .home__hero-veil {
+  -webkit-mask-image: radial-gradient(48% 42% at 56% 52%, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.72) 55%, #000 78%);
+          mask-image: radial-gradient(48% 42% at 56% 52%, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.72) 55%, #000 78%);
+}
+
 .home__hero-media::after {
   content: "";
   position: absolute;
@@ -729,6 +777,7 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
 
 @include responsive-reduced-motion {
   .home__hero-media::before, .home__hero-media::after, .home__hero-veil,
+  .home__hero-depth,
   .home__hero-blobs .blob,
   .home__motto > span, .home__wordmark .ln > span, .home__wordmark .gold,
   .home__plate,
