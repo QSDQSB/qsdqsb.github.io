@@ -129,11 +129,12 @@
 </style>
 
 <header>
-  <h1>Lontananza — depth bake-off · round 2</h1>
-  <p>Round 1 verdict: v1's soft edges warp gracefully where sharp edges tear (no inpainting
-     behind occlusions). Round 2 tests the hybrid — v2-large structure with Gaussian-softened
-     edges (σ2 / σ4) — and adds a daylight hero, since night light-writing is the hardest case,
-     not the typical one. Toggle “depth” to see the maps; amp runs hot on purpose.</p>
+  <h1>Lontananza — depth bake-off · round 3</h1>
+  <p>The architecture fix, found by headless iteration: pin the focus on the compositional
+     subject (maps are now normalised so the subject sits at depth 0.5) and cut vertical
+     parallax to 35% — buildings stay rigid while water, sky and foreground sweep around
+     them. Each daylight hero: today's production behaviour vs the new recipe. The night
+     hero keeps its user-approved v1 look as the reference anchor.</p>
 </header>
 
 <div id="panels"></div>
@@ -148,38 +149,32 @@
 (function () {
   'use strict';
 
-  /* maps: [label, token, suffix] — site build derives paths from name+suffix */
+  /* maps: [label, token, suffix, focus, ampY] — site build derives paths from name+suffix */
   var HEROES = [
-    {
-      name: 'QSD_Night_4v1',
-      label: 'About hero — sparkler light-writing',
-      photo: '__P4__',
-      maps: [
-        ['v1-small · current', '__D4_V1__', ''],
-        ['v2-large · sharp', '__D4_V2L__', 'v2l'],
-        ['v2-large · soft σ2', '__D4_SOFT__', 'v2l-soft'],
-        ['v2-large · soft σ4', '__D4_SOFTER__', 'v2l-softer']
-      ]
-    },
-    {
-      name: 'QSD_Night_5v2',
-      label: 'Home hero — night figure',
-      photo: '__P5__',
-      maps: [
-        ['v1-small · current', '__D5_V1__', ''],
-        ['v2-large · sharp', '__D5_V2L__', 'v2l'],
-        ['v2-large · soft σ2', '__D5_SOFT__', 'v2l-soft'],
-        ['v2-large · soft σ4', '__D5_SOFTER__', 'v2l-softer']
-      ]
-    },
     {
       name: 'cover/venice-3v1',
       label: 'Venice — daylight architecture',
       photo: '__PV__',
       maps: [
-        ['v1-small · current', '__DV_V1__', ''],
-        ['v2-large · sharp', '__DV_V2L__', 'v2l'],
-        ['v2-large · soft σ2', '__DV_SOFT__', 'v2l-soft']
+        ['production today · v1 · f75 · ay100', '__DV_V1__', '', 0.75, 1],
+        ['RECIPE · v2l-centred · f50 · ay35', '__DV_V2LC__', 'v2lc', 0.5, 0.35]
+      ]
+    },
+    {
+      name: 'cover/prague-wide-mount-3v1',
+      label: 'Prague — vista from the hill',
+      photo: '__PP__',
+      maps: [
+        ['production today · v1 · f75 · ay100', '__DP_V1__', '', 0.75, 1],
+        ['RECIPE · v2l-centred · f50 · ay35', '__DP_V2LC__', 'v2lc', 0.5, 0.35]
+      ]
+    },
+    {
+      name: 'QSD_Night_5v2',
+      label: 'Home hero — night, kept as-is (reference anchor)',
+      photo: '__P5__',
+      maps: [
+        ['v1-small · current · f75 · ay100', '__D5_V1__', '', 0.75, 1]
       ]
     }
   ];
@@ -197,10 +192,10 @@
   var FRAG = [
     'precision mediump float; varying vec2 vUv;',
     'uniform sampler2D uPhoto; uniform sampler2D uDepth;',
-    'uniform vec2 uTilt; uniform vec2 uCover; uniform float uAmp; uniform float uFocus; uniform float uShow;',
+    'uniform vec2 uTilt; uniform vec2 uCover; uniform float uAmp; uniform float uFocus; uniform float uShow; uniform float uAY;',
     'void main(){',
     '  vec2 uv = (vUv-0.5)*uCover*0.94+0.5;',
-    '  vec2 off = uTilt*uAmp*uCover;',
+    '  vec2 off = uTilt*uAmp*uCover*vec2(1.0, uAY);',
     '  float d = texture2D(uDepth, uv).r;',
     '  vec2 p = uv+off*(d-uFocus); d = texture2D(uDepth,p).r;',
     '  p = uv+off*(d-uFocus); d = texture2D(uDepth,p).r;',
@@ -230,7 +225,7 @@
   gl.enableVertexAttribArray(aPos);
   gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
   var U = {};
-  ['uPhoto', 'uDepth', 'uTilt', 'uCover', 'uAmp', 'uFocus', 'uShow'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+  ['uPhoto', 'uDepth', 'uTilt', 'uCover', 'uAmp', 'uFocus', 'uShow', 'uAY'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
 
   function loadTex(src, onload) {
     var t = gl.createTexture();
@@ -268,7 +263,7 @@
       wrap.appendChild(stage);
       block.appendChild(wrap);
 
-      var p = { ctx: c2d.getContext('2d'), c2d: c2d, stage: stage, aspect: 3, loaded: 0, visible: true };
+      var p = { ctx: c2d.getContext('2d'), c2d: c2d, stage: stage, aspect: 3, loaded: 0, visible: true, focus: m[3], ay: m[4] };
       p.texPhoto = loadTex(hero.photo, function (img) {
         p.aspect = img.naturalWidth / img.naturalHeight;
         stage.style.aspectRatio = p.aspect;
@@ -381,7 +376,8 @@
         gl.uniform2f(U.uTilt, tilt.x, tilt.y);
         gl.uniform2f(U.uCover, cx, cy);
         gl.uniform1f(U.uAmp, amp);
-        gl.uniform1f(U.uFocus, 0.75);
+        gl.uniform1f(U.uFocus, p.focus);
+        gl.uniform1f(U.uAY, p.ay);
         gl.uniform1f(U.uShow, show);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
         p.ctx.drawImage(glCanvas, 0, 0, w, h, 0, 0, w, h);
