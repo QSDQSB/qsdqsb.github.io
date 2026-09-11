@@ -59,7 +59,6 @@
     color: var(--gold);
     margin: 0 0 0.35rem;
   }
-  .panel .tag small { color: var(--ink-dim); letter-spacing: 0.08em; margin-left: 0.6rem; text-transform: none; }
   .stage {
     position: relative;
     width: 100%;
@@ -130,10 +129,11 @@
 </style>
 
 <header>
-  <h1>Lontananza — depth bake-off</h1>
-  <p>Same shader, same motion, different depth models. Move the pointer (or enable tilt
-     on iPhone — works on the pages.dev copy, not inside the claude.ai artifact frame).
-     Toggle “depth” to see the raw maps. Amp is deliberately hot so differences shout.</p>
+  <h1>Lontananza — depth bake-off · round 2</h1>
+  <p>Round 1 verdict: v1's soft edges warp gracefully where sharp edges tear (no inpainting
+     behind occlusions). Round 2 tests the hybrid — v2-large structure with Gaussian-softened
+     edges (σ2 / σ4) — and adds a daylight hero, since night light-writing is the hardest case,
+     not the typical one. Toggle “depth” to see the maps; amp runs hot on purpose.</p>
 </header>
 
 <div id="panels"></div>
@@ -148,15 +148,17 @@
 (function () {
   'use strict';
 
+  /* maps: [label, token, suffix] — site build derives paths from name+suffix */
   var HEROES = [
     {
       name: 'QSD_Night_4v1',
       label: 'About hero — sparkler light-writing',
       photo: '__P4__',
       maps: [
-        ['v1-small · current', '__D4_V1__'],
-        ['v2-base · 14s', '__D4_V2B__'],
-        ['v2-large · 33s', '__D4_V2L__']
+        ['v1-small · current', '__D4_V1__', ''],
+        ['v2-large · sharp', '__D4_V2L__', 'v2l'],
+        ['v2-large · soft σ2', '__D4_SOFT__', 'v2l-soft'],
+        ['v2-large · soft σ4', '__D4_SOFTER__', 'v2l-softer']
       ]
     },
     {
@@ -164,19 +166,29 @@
       label: 'Home hero — night figure',
       photo: '__P5__',
       maps: [
-        ['v1-small · current', '__D5_V1__'],
-        ['v2-base · 13s', '__D5_V2B__'],
-        ['v2-large · 16s', '__D5_V2L__']
+        ['v1-small · current', '__D5_V1__', ''],
+        ['v2-large · sharp', '__D5_V2L__', 'v2l'],
+        ['v2-large · soft σ2', '__D5_SOFT__', 'v2l-soft'],
+        ['v2-large · soft σ4', '__D5_SOFTER__', 'v2l-softer']
+      ]
+    },
+    {
+      name: 'cover/venice-3v1',
+      label: 'Venice — daylight architecture',
+      photo: '__PV__',
+      maps: [
+        ['v1-small · current', '__DV_V1__', ''],
+        ['v2-large · sharp', '__DV_V2L__', 'v2l'],
+        ['v2-large · soft σ2', '__DV_SOFT__', 'v2l-soft']
       ]
     }
   ];
-  // Site build: placeholders stay literal (no data: prefix) — derive real paths.
   HEROES.forEach(function (h) {
     if (h.photo.indexOf('data:') !== 0) {
       h.photo = '/images/' + h.name + '.jpg';
-      h.maps[0][1] = '/images/depth/' + h.name + '.jpg.depth.jpg';
-      h.maps[1][1] = '/images/depth/' + h.name + '.jpg.depth.v2b.jpg';
-      h.maps[2][1] = '/images/depth/' + h.name + '.jpg.depth.v2l.jpg';
+      h.maps.forEach(function (m) {
+        m[1] = '/images/depth/' + h.name + '.jpg.depth' + (m[2] ? '.' + m[2] : '') + '.jpg';
+      });
     }
   });
 
@@ -188,7 +200,7 @@
     'uniform vec2 uTilt; uniform vec2 uCover; uniform float uAmp; uniform float uFocus; uniform float uShow;',
     'void main(){',
     '  vec2 uv = (vUv-0.5)*uCover*0.94+0.5;',
-    '  vec2 off = uTilt*uAmp*uCover;', // even screen-space parallax
+    '  vec2 off = uTilt*uAmp*uCover;',
     '  float d = texture2D(uDepth, uv).r;',
     '  vec2 p = uv+off*(d-uFocus); d = texture2D(uDepth,p).r;',
     '  p = uv+off*(d-uFocus); d = texture2D(uDepth,p).r;',
@@ -200,99 +212,103 @@
     '}'
   ].join('\n');
 
+  /* ONE shared WebGL context; panels are 2D canvases blitted from it each
+     frame — a dozen live WebGL contexts would trip mobile context limits. */
+  var glCanvas = document.createElement('canvas');
+  var gl = glCanvas.getContext('webgl', { antialias: false, alpha: false });
+  if (!gl) { document.getElementById('panels').textContent = 'no webgl'; return; }
+  function sh(t, s) { var o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); return o; }
+  var prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT));
+  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  var aPos = gl.getAttribLocation(prog, 'aPos');
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+  var U = {};
+  ['uPhoto', 'uDepth', 'uTilt', 'uCover', 'uAmp', 'uFocus', 'uShow'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+
+  function loadTex(src, onload) {
+    var t = gl.createTexture();
+    var img = new Image();
+    img.onload = function () {
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      onload(img);
+    };
+    img.src = src;
+    return t;
+  }
+
   var AMP_EL = document.getElementById('amp');
   var SHOW_EL = document.getElementById('show-depth');
-  var target = { x: 0, y: 0 };
-  var tilt = { x: 0, y: 0 };
-  var lastInput = -1e9;
+  var DPR = Math.min(window.devicePixelRatio || 1, 1.5);
   var panels = [];
-
-  function makePanel(container, hero, mapLabel, mapSrc) {
-    var wrap = document.createElement('div');
-    wrap.className = 'panel';
-    wrap.innerHTML = '<span class="tag">' + mapLabel + '</span>';
-    var stage = document.createElement('div');
-    stage.className = 'stage';
-    var canvas = document.createElement('canvas');
-    stage.appendChild(canvas);
-    wrap.appendChild(stage);
-    container.appendChild(wrap);
-
-    var gl = canvas.getContext('webgl', { antialias: false, alpha: false });
-    if (!gl) { stage.textContent = 'no webgl'; return; }
-    function sh(t, s) { var o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); return o; }
-    var prog = gl.createProgram();
-    gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT));
-    gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
-    gl.linkProgram(prog);
-    gl.useProgram(prog);
-    var buf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-    var aPos = gl.getAttribLocation(prog, 'aPos');
-    gl.enableVertexAttribArray(aPos);
-    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
-    var U = {};
-    ['uPhoto', 'uDepth', 'uTilt', 'uCover', 'uAmp', 'uFocus', 'uShow'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
-    gl.uniform1i(U.uPhoto, 0);
-    gl.uniform1i(U.uDepth, 1);
-
-    var p = { gl: gl, U: U, canvas: canvas, stage: stage, aspect: 3, loaded: 0, visible: true };
-    function tex(unit, src) {
-      var t = gl.createTexture();
-      var img = new Image();
-      img.onload = function () {
-        if (unit === 0) {
-          p.aspect = img.naturalWidth / img.naturalHeight;
-          stage.style.aspectRatio = p.aspect;
-          resizePanel(p);
-        }
-        gl.activeTexture(gl.TEXTURE0 + unit);
-        gl.bindTexture(gl.TEXTURE_2D, t);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        p.loaded += 1;
-      };
-      img.onerror = function () { wrap.querySelector('.tag').textContent = mapLabel + ' — load failed'; };
-      img.src = src;
-    }
-    tex(0, hero.photo);
-    tex(1, mapSrc);
-    panels.push(p);
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (es) { p.visible = es[0].isIntersecting; }).observe(stage);
-    }
-  }
-
-  function resizePanel(p) {
-    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    var w = p.stage.clientWidth;
-    if (!w) return;
-    var h = Math.round(w / p.aspect);
-    p.canvas.width = Math.round(w * dpr);
-    p.canvas.height = Math.round(h * dpr);
-  }
-  window.addEventListener('resize', function () { panels.forEach(resizePanel); });
 
   HEROES.forEach(function (hero) {
     var block = document.createElement('section');
     block.className = 'hero-block';
     block.innerHTML = '<h2>' + hero.label + '</h2>';
-    hero.maps.forEach(function (m) { makePanel(block, hero, m[0], m[1]); });
+    hero.maps.forEach(function (m) {
+      var wrap = document.createElement('div');
+      wrap.className = 'panel';
+      wrap.innerHTML = '<span class="tag">' + m[0] + '</span>';
+      var stage = document.createElement('div');
+      stage.className = 'stage';
+      var c2d = document.createElement('canvas');
+      stage.appendChild(c2d);
+      wrap.appendChild(stage);
+      block.appendChild(wrap);
+
+      var p = { ctx: c2d.getContext('2d'), c2d: c2d, stage: stage, aspect: 3, loaded: 0, visible: true };
+      p.texPhoto = loadTex(hero.photo, function (img) {
+        p.aspect = img.naturalWidth / img.naturalHeight;
+        stage.style.aspectRatio = p.aspect;
+        p.loaded += 1;
+      });
+      p.texDepth = loadTex(m[1], function () { p.loaded += 1; });
+      panels.push(p);
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (es) { p.visible = es[0].isIntersecting; }).observe(stage);
+      }
+    });
     document.getElementById('panels').appendChild(block);
   });
 
-  /* shared input: pointer */
+  function sizePanels() {
+    var maxW = 0, maxH = 0;
+    panels.forEach(function (p) {
+      var w = Math.round(p.stage.clientWidth * DPR);
+      var h = Math.round(w / p.aspect);
+      if (p.c2d.width !== w || p.c2d.height !== h) { p.c2d.width = w; p.c2d.height = h; }
+      maxW = Math.max(maxW, w);
+      maxH = Math.max(maxH, h);
+    });
+    if (maxW && (glCanvas.width !== maxW || glCanvas.height !== maxH)) {
+      glCanvas.width = maxW;
+      glCanvas.height = maxH;
+    }
+  }
+  window.addEventListener('resize', sizePanels);
+
+  /* shared input: pointer + gyro */
+  var target = { x: 0, y: 0 };
+  var tilt = { x: 0, y: 0 };
+  var lastInput = -1e9;
   document.addEventListener('pointermove', function (e) {
     target.x = Math.max(-0.5, Math.min(0.5, e.clientX / window.innerWidth - 0.5));
     target.y = Math.max(-0.5, Math.min(0.5, e.clientY / window.innerHeight - 0.5));
     lastInput = performance.now();
   }, { passive: true });
 
-  /* shared input: gyro (compact adapter — baseline drift + flip guard) */
   var base = null, lastRaw = null, lastEvT = 0;
   function screenAngle() {
     if (screen.orientation && typeof screen.orientation.angle === 'number') return screen.orientation.angle;
@@ -335,6 +351,7 @@
     window.addEventListener('deviceorientation', onOrient);
   }
 
+  var sized = false;
   function draw(t) {
     var s = t * 0.001;
     if (performance.now() - lastInput > 2500) {
@@ -345,22 +362,31 @@
     tilt.y += (target.y - tilt.y) * 0.06;
     var amp = (parseFloat(AMP_EL.value) / 100) * 0.05;
     var show = SHOW_EL.checked ? 1 : 0;
-    panels.forEach(function (p) {
-      if (!p.visible || p.loaded < 2) return;
-      var gl = p.gl;
-      var cw = p.canvas.width, ch = p.canvas.height;
-      if (!cw || !ch) return;
-      gl.viewport(0, 0, cw, ch);
-      var canvasAspect = cw / ch;
-      var cx = 1, cy = 1;
-      if (canvasAspect < p.aspect) { cx = canvasAspect / p.aspect; } else { cy = p.aspect / canvasAspect; }
-      gl.uniform2f(p.U.uTilt, tilt.x, tilt.y);
-      gl.uniform2f(p.U.uCover, cx, cy);
-      gl.uniform1f(p.U.uAmp, amp);
-      gl.uniform1f(p.U.uFocus, 0.75);
-      gl.uniform1f(p.U.uShow, show);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-    });
+    if (!sized && panels.every(function (p) { return p.loaded === 2; })) { sizePanels(); sized = true; }
+    if (sized) {
+      panels.forEach(function (p) {
+        if (!p.visible || p.loaded < 2) return;
+        var w = p.c2d.width, h = p.c2d.height;
+        if (!w || !h) return;
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, p.texPhoto);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, p.texDepth);
+        gl.uniform1i(U.uPhoto, 0);
+        gl.uniform1i(U.uDepth, 1);
+        gl.viewport(0, glCanvas.height - h, w, h); // pin to the presented top-left
+        var canvasAspect = w / h;
+        var cx = 1, cy = 1;
+        if (canvasAspect < p.aspect) { cx = canvasAspect / p.aspect; } else { cy = p.aspect / canvasAspect; }
+        gl.uniform2f(U.uTilt, tilt.x, tilt.y);
+        gl.uniform2f(U.uCover, cx, cy);
+        gl.uniform1f(U.uAmp, amp);
+        gl.uniform1f(U.uFocus, 0.75);
+        gl.uniform1f(U.uShow, show);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        p.ctx.drawImage(glCanvas, 0, 0, w, h, 0, 0, w, h);
+      });
+    }
     requestAnimationFrame(draw);
   }
   requestAnimationFrame(draw);
