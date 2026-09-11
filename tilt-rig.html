@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Lontananza Tilt Rig</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital@1&display=swap">
+</head>
+<body>
+<style>
+  :root {
+    --ground: #0b0b12;
+    --ink: #ece7dd;
+    --ink-dim: rgba(236, 231, 221, 0.62);
+    --gold: #c9a35c;
+    --violet: #8d80a3;
+    --hairline: rgba(236, 231, 221, 0.14);
+    --glass: rgba(11, 11, 18, 0.62);
+    --mono: "SF Mono", SFMono-Regular, ui-monospace, Menlo, Consolas, monospace;
+  }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: Barlow, "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* ---- stage ---- */
+  #stage {
+    position: fixed;
+    inset: 0;
+    touch-action: none;
+    overflow: hidden;
+    background: var(--ground);
+  }
+  #still {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  #gl {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 900ms cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  #gl.is-live { opacity: 1; }
+
+  /* ---- top chrome ---- */
+  #topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: calc(0.9rem + env(safe-area-inset-top)) 1.1rem 0;
+    pointer-events: none;
+  }
+  #wordmark {
+    font-family: "Playfair Display", Didot, Georgia, serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6);
+  }
+  #wordmark small {
+    display: block;
+    font-family: Barlow, sans-serif;
+    font-style: normal;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-top: 0.2rem;
+  }
+  #state {
+    pointer-events: none;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.38rem 0.65rem;
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    color: var(--violet);
+    white-space: nowrap;
+  }
+  #state.live { color: var(--gold); border-color: rgba(201, 163, 92, 0.45); }
+
+  /* ---- debug readout ---- */
+  #debug {
+    position: fixed;
+    left: 1.1rem;
+    top: calc(4.6rem + env(safe-area-inset-top));
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    line-height: 1.75;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-dim);
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--hairline);
+    border-radius: 0.5rem;
+    padding: 0.55rem 0.8rem;
+    min-width: 11.5rem;
+  }
+  #debug b { color: var(--ink); font-weight: 500; float: right; margin-left: 1rem; }
+  #debug .warn b { color: var(--gold); }
+
+  /* ---- tilt dot (input proof, independent of WebGL) ---- */
+  #dot-ring {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 124px;
+    height: 124px;
+    margin: -62px 0 0 -62px;
+    border: 1px solid var(--hairline);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 3;
+  }
+  #dot {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    background: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(201, 163, 92, 0.8);
+    pointer-events: none;
+    z-index: 3;
+  }
+  #hint {
+    position: fixed;
+    left: 50%;
+    bottom: calc(3.6rem + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-dim);
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    padding: 0.45rem 0.9rem;
+    white-space: nowrap;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  /* ---- enable overlay ---- */
+  #enable {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.9rem;
+    background: rgba(11, 11, 18, 0.35);
+    z-index: 5;
+  }
+  #enable.show { display: flex; }
+  #enable button {
+    font-family: Barlow, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ground);
+    background: var(--gold);
+    border: 0;
+    border-radius: 999px;
+    padding: 0.85rem 1.8rem;
+    cursor: pointer;
+  }
+  #enable p {
+    margin: 0;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-dim);
+    max-width: 16rem;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  /* ---- tuning drawer ---- */
+  #drawer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--hairline);
+    padding: 0 1.1rem calc(0.9rem + env(safe-area-inset-bottom));
+    transform: translateY(calc(100% - 2.4rem));
+    transition: transform 420ms cubic-bezier(0.33, 1, 0.68, 1);
+    z-index: 4;
+  }
+  #drawer.open { transform: translateY(0); }
+  #drawer-handle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 2.4rem;
+    background: none;
+    border: 0;
+    color: var(--ink-dim);
+    font-family: Barlow, sans-serif;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 0;
+  }
+  #drawer-handle:focus-visible, #enable button:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  #drawer-handle .chev { transition: transform 420ms cubic-bezier(0.33, 1, 0.68, 1); }
+  #drawer.open .chev { transform: rotate(180deg); }
+
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 1.4rem;
+    padding-top: 0.35rem;
+  }
+  .ctl { display: flex; flex-direction: column; gap: 0.3rem; }
+  .ctl label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .ctl label output {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+    color: var(--gold);
+  }
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 1.4rem;
+    background: transparent;
+    margin: 0;
+  }
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 2px;
+    background: var(--hairline);
+    border-radius: 1px;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 1.05rem;
+    height: 1.05rem;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 3px solid var(--ground);
+    margin-top: calc((2px - 1.05rem) / 2);
+  }
+  input[type="range"]::-moz-range-track {
+    height: 2px;
+    background: var(--hairline);
+    border-radius: 1px;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 3px solid var(--ground);
+  }
+  input[type="range"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+
+  .seg, .checks { display: flex; gap: 0.4rem; align-items: center; }
+  .seg button {
+    flex: 1;
+    font-family: Barlow, sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    background: none;
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    padding: 0.42rem 0;
+    cursor: pointer;
+  }
+  .seg button.on { color: var(--ground); background: var(--gold); border-color: var(--gold); }
+  .checks label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    cursor: pointer;
+  }
+  .checks input { accent-color: var(--gold); width: 0.9rem; height: 0.9rem; }
+  #c-reset {
+    margin-left: auto;
+    font-family: Barlow, sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    background: none;
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    padding: 0.42rem 0.9rem;
+    cursor: pointer;
+  }
+
+  @media (min-width: 40rem) {
+    .controls { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 46rem; margin: 0 auto; }
+    #drawer { padding-left: 1.6rem; padding-right: 1.6rem; }
+  }
+</style>
+
+<div id="stage">
+  <img id="still" src="/images/QSD_Night_5v2.jpg" alt="Night street, neon signs — test photograph">
+  <canvas id="gl"></canvas>
+</div>
+
+<div id="dot-ring" aria-hidden="true"></div>
+<div id="dot" aria-hidden="true"></div>
+<div id="hint">Rotate the phone to lean the photo — tilt it, don’t wave it</div>
+
+<div id="topbar">
+  <div id="wordmark">Lontananza<small>tilt rig · 01</small></div>
+  <div id="state">waiting</div>
+</div>
+
+<div id="debug" aria-live="off">
+  <div>β pitch <b id="d-beta">—</b></div>
+  <div>γ roll <b id="d-gamma">—</b></div>
+  <div>β span <b id="d-bspan">—</b></div>
+  <div>γ span <b id="d-gspan">—</b></div>
+  <div>Δx / Δy <b id="d-delta">—</b></div>
+  <div>target <b id="d-target">—</b></div>
+  <div>rate <b id="d-rate">—</b></div>
+  <div>screen <b id="d-orient">—</b></div>
+  <div class="warn">guards <b id="d-guard">0</b></div>
+  <div>origin <b id="d-origin">—</b></div>
+  <div>framed <b id="d-framed">—</b></div>
+  <div>tex <b id="d-tex">0/2</b></div>
+  <div>frames <b id="d-frames">0</b></div>
+  <div>tilt <b id="d-tilt">—</b></div>
+  <div class="warn">err <b id="d-err">—</b></div>
+</div>
+
+<div id="enable">
+  <button id="enable-btn" type="button">Enable tilt</button>
+  <p>iOS asks once for motion &amp; orientation access. Tap allow — a denial sticks until website data is cleared.</p>
+</div>
+
+<div id="drawer">
+  <button id="drawer-handle" type="button" aria-expanded="false">
+    <span>Tune</span><span class="chev">▲</span>
+  </button>
+  <div class="controls">
+    <div class="ctl">
+      <label for="c-amp">Amp <output id="o-amp">55</output></label>
+      <input type="range" id="c-amp" min="0" max="200" step="1" value="55">
+    </div>
+    <div class="ctl">
+      <label for="c-range">Range ° <output id="o-range">14</output></label>
+      <input type="range" id="c-range" min="4" max="30" step="1" value="14">
+    </div>
+    <div class="ctl">
+      <label for="c-focus">Focus <output id="o-focus">75</output></label>
+      <input type="range" id="c-focus" min="0" max="100" step="1" value="75">
+    </div>
+    <div class="ctl">
+      <label for="c-tau">Recenter s <output id="o-tau">7</output></label>
+      <input type="range" id="c-tau" min="2" max="20" step="1" value="7">
+    </div>
+    <div class="ctl">
+      <label id="l-motion">Motion</label>
+      <div class="seg" role="group" aria-labelledby="l-motion">
+        <button id="m-smooth" type="button" class="on">Smooth</button>
+        <button id="m-spring" type="button">Spring</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <label id="l-invert">Invert</label>
+      <div class="checks" aria-labelledby="l-invert">
+        <label><input type="checkbox" id="c-invx">X</label>
+        <label><input type="checkbox" id="c-invy">Y</label>
+        <button id="c-reset" type="button">Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ================= settings (persisted) ================= */
+  var S = { amp: 55, range: 14, focus: 75, tau: 7, spring: false, invx: false, invy: false };
+  try {
+    var saved = JSON.parse(localStorage.getItem('lontananza-rig') || 'null');
+    if (saved) for (var k in S) if (k in saved) S[k] = saved[k];
+  } catch (e) {}
+  function persist() {
+    try { localStorage.setItem('lontananza-rig', JSON.stringify(S)); } catch (e) {}
+  }
+
+  /* ================= shader (verbatim from hero-depth-parallax.js) ================= */
+  var VERT = [
+    'attribute vec2 aPos;',
+    'varying vec2 vUv;',
+    'void main() {',
+    '  vUv = aPos * 0.5 + 0.5;',
+    '  vUv.y = 1.0 - vUv.y;',
+    '  gl_Position = vec4(aPos, 0.0, 1.0);',
+    '}'
+  ].join('\n');
+
+  var FRAG = [
+    'precision mediump float;',
+    'varying vec2 vUv;',
+    'uniform sampler2D uPhoto;',
+    'uniform sampler2D uDepth;',
+    'uniform vec2 uTilt;',
+    'uniform vec2 uCover;',
+    'uniform float uAmp;',
+    'uniform float uFocus;',
+    'uniform float uZoom;',
+    'uniform float uGlow;',
+    'uniform vec2 uVeil;',
+    'uniform vec4 uFilter;',
+    'void main() {',
+    '  vec2 uv = (vUv - 0.5) * uCover * 0.94 + 0.5;',
+    '  vec2 off = uTilt * uAmp;',
+    '  float d = texture2D(uDepth, uv).r;',
+    '  vec2 p = uv + off * (d - uFocus);',
+    '  d = texture2D(uDepth, p).r;',
+    '  p = uv + off * (d - uFocus);',
+    '  d = texture2D(uDepth, p).r;',
+    '  p = uv + off * (d - uFocus);',
+    '  d = texture2D(uDepth, p).r;',
+    '  p = uv + off * (d - uFocus);',
+    '  vec3 lp = texture2D(uPhoto, p).rgb;',
+    '  float luma = dot(lp, vec3(0.299, 0.587, 0.114));',
+    '  p += off * (luma - 0.5) * d * d * 0.3;',
+    '  p += (p - 0.5) * (uZoom * (d - uFocus));',
+    '  vec3 c = texture2D(uPhoto, p).rgb;',
+    '  float cl = dot(c, vec3(0.299, 0.587, 0.114));',
+    '  c *= 1.0 + uGlow * smoothstep(0.4, 0.88, cl);',
+    '  float veil = mix(uVeil.x, uVeil.y, vUv.y);',
+    '  veil *= 1.0 - 0.78 * smoothstep(0.35, 0.85, cl);',
+    '  c = mix(c, vec3(0.0196, 0.0196, 0.0353), veil);',
+    '  gl_FragColor = vec4(mix(c, uFilter.rgb, uFilter.a), 1.0);',
+    '}'
+  ].join('\n');
+
+  var GLOW = 0.5 * 1.5;   // the night photo's neon lift, fixed for the rig
+  var DPR_CAP = 1.5;
+
+  /* ================= GL setup ================= */
+  var stage = document.getElementById('stage');
+  var canvas = document.getElementById('gl');
+  var gl = canvas.getContext('webgl', { antialias: false, alpha: false });
+  var stateEl = document.getElementById('state');
+
+  function setState(txt, live) {
+    stateEl.textContent = txt;
+    stateEl.classList.toggle('live', !!live);
+  }
+  if (!gl) { setState('no webgl'); return; }
+
+  function compile(type, src) {
+    var s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) return null;
+    return s;
+  }
+  var vs = compile(gl.VERTEX_SHADER, VERT);
+  var fsh = compile(gl.FRAGMENT_SHADER, FRAG);
+  if (!vs || !fsh) { setState('shader error'); return; }
+  var prog = gl.createProgram();
+  gl.attachShader(prog, vs);
+  gl.attachShader(prog, fsh);
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { setState('shader error'); return; }
+  gl.useProgram(prog);
+
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  var aPos = gl.getAttribLocation(prog, 'aPos');
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+  var U = {};
+  ['uPhoto', 'uDepth', 'uTilt', 'uCover', 'uAmp', 'uFocus', 'uZoom', 'uGlow', 'uVeil', 'uFilter']
+    .forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+  gl.uniform4f(U.uFilter, 0, 0, 0, 0);
+  gl.uniform2f(U.uVeil, 0, 0);
+  gl.uniform1i(U.uPhoto, 0);
+  gl.uniform1i(U.uDepth, 1);
+
+  var imgAspect = 1;
+  var cover = [1, 1];
+  var errEl = document.getElementById('d-err');
+  var texEl = document.getElementById('d-tex');
+  var texCount = 0;
+  function fail(msg) { errEl.textContent = msg; } // sticky — never overwritten by state pill
+  function loadTexture(unit, src, isPhoto, done) {
+    var tex = gl.createTexture();
+    var img = new Image();
+    img.onload = function () {
+      if (isPhoto) imgAspect = img.naturalWidth / img.naturalHeight;
+      try {
+        gl.getError(); // flush any stale error flag so the check below is ours
+        gl.activeTexture(gl.TEXTURE0 + unit);
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        var glErr = gl.getError();
+        if (glErr) { fail('gl ' + glErr + ' on ' + (isPhoto ? 'photo' : 'depth')); return; }
+      } catch (ex) {
+        fail('tex throw: ' + (isPhoto ? 'photo' : 'depth'));
+        return;
+      }
+      texCount += 1;
+      texEl.textContent = texCount + '/2';
+      done();
+    };
+    img.onerror = function () { fail('img load: ' + (isPhoto ? 'photo' : 'depth')); };
+    img.src = src;
+  }
+
+  function resize() {
+    var dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
+    var w = stage.clientWidth;
+    var h = stage.clientHeight;
+    if (!w || !h) return;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    var canvasAspect = w / h;
+    if (canvasAspect < imgAspect) {
+      cover[0] = canvasAspect / imgAspect;
+      cover[1] = 1;
+    } else {
+      cover[0] = 1;
+      cover[1] = imgAspect / canvasAspect;
+    }
+  }
+  window.addEventListener('resize', resize);
+
+  /* ================= input state ================= */
+  var target = { x: 0, y: 0 };
+  var tilt = { x: 0, y: 0 };
+  var vel = { x: 0, y: 0 };
+  var lastInput = -1e9;
+  var inputMode = 'idle'; // idle | pointer | gyro
+
+  /* pointer / touch-drag — desktop check + manual fallback */
+  document.addEventListener('pointermove', function (e) {
+    if (inputMode === 'gyro') return; // gyro owns the target once live
+    var w = stage.clientWidth, h = stage.clientHeight;
+    if (!w || !h) return;
+    target.x = Math.max(-0.5, Math.min(0.5, (e.clientX - w / 2) / w));
+    target.y = Math.max(-0.5, Math.min(0.5, (e.clientY - h / 2) / h));
+    lastInput = performance.now();
+    if (inputMode === 'idle') { inputMode = 'pointer'; setState('pointer', true); }
+  }, { passive: true });
+
+  /* ================= gyro adapter ================= */
+  var base = null;        // slow-drifting baseline (deg, screen space)
+  var lastRaw = null;     // previous remapped sample, for the flip guard
+  var lastEvT = 0;
+  var guardCount = 0;
+  var evTimes = [];
+  var span = { b0: Infinity, b1: -Infinity, g0: Infinity, g1: -Infinity };
+  var dbg = {
+    beta: document.getElementById('d-beta'),
+    gamma: document.getElementById('d-gamma'),
+    delta: document.getElementById('d-delta'),
+    target: document.getElementById('d-target'),
+    rate: document.getElementById('d-rate'),
+    orient: document.getElementById('d-orient'),
+    guard: document.getElementById('d-guard')
+  };
+
+  function screenAngle() {
+    if (screen.orientation && typeof screen.orientation.angle === 'number') return screen.orientation.angle;
+    if (typeof window.orientation === 'number') return (window.orientation + 360) % 360;
+    return 0;
+  }
+
+  function onOrient(e) {
+    if (e.beta == null || e.gamma == null) return;
+    var now = performance.now();
+    var a = screenAngle();
+
+    // device frame → screen frame
+    var x, y;
+    switch (a) {
+      case 90: x = e.beta; y = -e.gamma; break;
+      case 180: x = -e.gamma; y = -e.beta; break;
+      case 270: x = -e.beta; y = e.gamma; break;
+      default: x = e.gamma; y = e.beta;
+    }
+
+    if (base === null) {
+      base = { x: x, y: y };
+      lastRaw = { x: x, y: y };
+      lastEvT = now;
+      inputMode = 'gyro';
+      setState('gyro live', true);
+    }
+
+    // flip guard: a discontinuous jump (gamma wrap near vertical) shifts the
+    // baseline by the same jump, so the target never sees it
+    var jx = x - lastRaw.x, jy = y - lastRaw.y;
+    if (Math.abs(jx) > 25 || Math.abs(jy) > 25) {
+      base.x += jx;
+      base.y += jy;
+      guardCount += 1;
+      dbg.guard.textContent = String(guardCount);
+    }
+    lastRaw.x = x; lastRaw.y = y;
+
+    // slow re-centering: baseline drifts toward the current posture
+    var dt = Math.min((now - lastEvT) / 1000, 0.2);
+    lastEvT = now;
+    var kk = 1 - Math.exp(-dt / S.tau);
+    base.x += (x - base.x) * kk;
+    base.y += (y - base.y) * kk;
+
+    var dx = x - base.x, dy = y - base.y;
+    var sx = S.invx ? -1 : 1, sy = S.invy ? -1 : 1;
+    target.x = Math.max(-0.5, Math.min(0.5, sx * dx / (S.range * 2)));
+    target.y = Math.max(-0.5, Math.min(0.5, sy * dy / (S.range * 2)));
+    lastInput = now;
+
+    evTimes.push(now);
+    if (e.beta < span.b0) span.b0 = e.beta;
+    if (e.beta > span.b1) span.b1 = e.beta;
+    if (e.gamma < span.g0) span.g0 = e.gamma;
+    if (e.gamma > span.g1) span.g1 = e.gamma;
+    dbg.beta.textContent = e.beta.toFixed(1) + '°';
+    dbg.gamma.textContent = e.gamma.toFixed(1) + '°';
+    dbg.delta.textContent = dx.toFixed(1) + ' / ' + dy.toFixed(1);
+    dbg.orient.textContent = a + '°';
+  }
+
+  function attachGyro() {
+    window.addEventListener('deviceorientation', onOrient);
+    setState('listening…');
+    setTimeout(function () {
+      if (inputMode !== 'gyro') setState(inputMode === 'pointer' ? 'pointer' : 'no sensor', inputMode === 'pointer');
+    }, 3000);
+  }
+
+  var enable = document.getElementById('enable');
+  var enableBtn = document.getElementById('enable-btn');
+  var enableMsg = enable.querySelector('p');
+
+  // context readouts: which origin owns the permission, and whether we're framed
+  document.getElementById('d-origin').textContent = location.hostname;
+  var framed;
+  try { framed = window.self === window.top ? 'no' : 'yes'; } catch (e) { framed = 'yes (x-origin)'; }
+  document.getElementById('d-framed').textContent = framed;
+
+  var needsPermission = typeof DeviceOrientationEvent !== 'undefined' &&
+    typeof DeviceOrientationEvent.requestPermission === 'function';
+  function requestGyro() {
+    DeviceOrientationEvent.requestPermission().then(function (r) {
+      if (r === 'granted') {
+        enable.classList.remove('show');
+        attachGyro();
+      } else {
+        setState('denied: ' + r);
+        enableBtn.textContent = 'Retry';
+        enableMsg.textContent = 'iOS returned "' + r + '". If NO system dialog appeared just now, ' +
+          'this embedding context blocks motion access — open the link directly in Safari. ' +
+          'If you tapped Don’t Allow earlier, it sticks until website data for “' +
+          location.hostname + '” is cleared.';
+      }
+    }).catch(function (ex) {
+      setState('denied: api');
+      enableBtn.textContent = 'Retry';
+      enableMsg.textContent = 'requestPermission threw ' + (ex && ex.name ? ex.name : 'an error') +
+        ' — the webview/iframe hosting this page does not support the motion permission flow. ' +
+        'Open the link directly in Safari.';
+    });
+  }
+  if (needsPermission) {
+    enable.classList.add('show');
+    setState('tap to enable');
+    enableBtn.addEventListener('click', requestGyro);
+  } else if (typeof DeviceOrientationEvent !== 'undefined') {
+    attachGyro();
+  } else {
+    setState('no sensor api');
+  }
+
+  /* ================= debug: rate + target + render state, on a 250ms tick ================= */
+  var frames = 0;
+  var framesEl = document.getElementById('d-frames');
+  var tiltEl = document.getElementById('d-tilt');
+  setInterval(function () {
+    var now = performance.now();
+    while (evTimes.length && evTimes[0] < now - 1000) evTimes.shift();
+    dbg.rate.textContent = evTimes.length ? evTimes.length + ' Hz' : '—';
+    dbg.target.textContent = target.x.toFixed(2) + ' / ' + target.y.toFixed(2);
+    framesEl.textContent = String(frames);
+    tiltEl.textContent = tilt.x.toFixed(2) + ' / ' + tilt.y.toFixed(2);
+    if (span.b1 > span.b0) {
+      document.getElementById('d-bspan').textContent = (span.b1 - span.b0).toFixed(1) + '°';
+      document.getElementById('d-gspan').textContent = (span.g1 - span.g0).toFixed(1) + '°';
+    }
+  }, 250);
+
+  /* tilt dot — its own rAF loop, no WebGL involved: proves the input chain alone */
+  var dot = document.getElementById('dot');
+  (function dotLoop() {
+    dot.style.transform = 'translate(' + (target.x * 120).toFixed(1) + 'px,' + (target.y * 120).toFixed(1) + 'px)';
+    requestAnimationFrame(dotLoop);
+  })();
+
+  /* ================= render loop (motion models verbatim) ================= */
+  var lastT = 0;
+  var selfTestUntil = 0;
+  var selfTestDone = false;
+  function draw(t) {
+    frames += 1;
+    var dt = Math.min((t - lastT) / 1000 || 0.016, 1 / 30);
+    lastT = t;
+
+    var s = t * 0.001;
+    var nowP = performance.now();
+    if (nowP < selfTestUntil) {
+      // scripted sweep on load: proves the render chain with no sensor at all
+      var ph = 1 - (selfTestUntil - nowP) / 2600;
+      target.x = 0.45 * Math.sin(ph * Math.PI * 2);
+      target.y = 0.3 * Math.sin(ph * Math.PI * 4);
+    } else {
+      if (!selfTestDone && selfTestUntil) {
+        selfTestDone = true;
+        target.x = 0; target.y = 0;
+        setState(inputMode === 'gyro' ? 'gyro live' : (inputMode === 'pointer' ? 'pointer' : stateEl.textContent), inputMode !== 'idle');
+      }
+      if (nowP - lastInput > 2500) {
+        if (inputMode !== 'idle') { inputMode = 'idle'; setState('idle breath'); }
+        target.x = 0.34 * Math.sin(s * 0.19);
+        target.y = 0.22 * Math.sin(s * 0.13 + 1.3);
+      }
+    }
+
+    var zoom = 0;
+    if (S.spring) {
+      zoom = 0.011 * Math.sin(s * 0.09) + 0.007 * Math.sin(s * 0.053 + 1.2)
+        + (vel.x * vel.x + vel.y * vel.y) * 0.0004;
+      vel.x += (42 * (target.x - tilt.x) - 5.2 * vel.x) * dt;
+      vel.y += (42 * (target.y - tilt.y) - 5.2 * vel.y) * dt;
+      tilt.x += vel.x * dt;
+      tilt.y += vel.y * dt;
+    } else {
+      tilt.x += (target.x - tilt.x) * 0.04;
+      tilt.y += (target.y - tilt.y) * 0.04;
+    }
+
+    gl.uniform2f(U.uTilt, tilt.x, tilt.y);
+    gl.uniform2f(U.uCover, cover[0], cover[1]);
+    gl.uniform1f(U.uAmp, (S.amp / 100) * 0.05);
+    gl.uniform1f(U.uFocus, S.focus / 100);
+    gl.uniform1f(U.uZoom, zoom);
+    gl.uniform1f(U.uGlow, GLOW * (1 + 0.08 * Math.sin(s * 0.9)));
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    requestAnimationFrame(draw);
+  }
+
+  var loaded = 0;
+  function onTex() {
+    loaded += 1;
+    if (loaded === 2) {
+      resize();
+      selfTestUntil = performance.now() + 2600;
+      setState('self test', true);
+      requestAnimationFrame(draw);
+      requestAnimationFrame(function () { canvas.classList.add('is-live'); });
+    }
+  }
+  loadTexture(0, document.getElementById('still').src, true, onTex);
+  loadTexture(1, '/images/depth/QSD_Night_5v2.jpg.depth.jpg', false, onTex);
+
+  /* ================= controls ================= */
+  function bindRange(id, key, outId) {
+    var el = document.getElementById(id);
+    var out = document.getElementById(outId);
+    el.value = S[key];
+    out.textContent = S[key];
+    el.addEventListener('input', function () {
+      S[key] = parseFloat(el.value);
+      out.textContent = el.value;
+      persist();
+    });
+  }
+  bindRange('c-amp', 'amp', 'o-amp');
+  bindRange('c-range', 'range', 'o-range');
+  bindRange('c-focus', 'focus', 'o-focus');
+  bindRange('c-tau', 'tau', 'o-tau');
+
+  var mSmooth = document.getElementById('m-smooth');
+  var mSpring = document.getElementById('m-spring');
+  function setMotion(spring) {
+    S.spring = spring;
+    mSmooth.classList.toggle('on', !spring);
+    mSpring.classList.toggle('on', spring);
+    persist();
+  }
+  mSmooth.addEventListener('click', function () { setMotion(false); });
+  mSpring.addEventListener('click', function () { setMotion(true); });
+  setMotion(S.spring);
+
+  function bindCheck(id, key) {
+    var el = document.getElementById(id);
+    el.checked = S[key];
+    el.addEventListener('change', function () { S[key] = el.checked; persist(); });
+  }
+  bindCheck('c-invx', 'invx');
+  bindCheck('c-invy', 'invy');
+
+  document.getElementById('c-reset').addEventListener('click', function () {
+    try { localStorage.removeItem('lontananza-rig'); } catch (e) {}
+    location.reload();
+  });
+
+  var drawer = document.getElementById('drawer');
+  var handle = document.getElementById('drawer-handle');
+  handle.addEventListener('click', function () {
+    var open = drawer.classList.toggle('open');
+    handle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+})();
+</script>
+
+</body>
+</html>
