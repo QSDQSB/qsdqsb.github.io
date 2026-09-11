@@ -354,7 +354,7 @@
 </style>
 
 <div id="stage">
-  <img id="still" src="/images/QSD_Night_5v2.jpg" alt="Night street, neon signs — test photograph">
+  <img id="still" alt="Test photograph">
   <canvas id="gl"></canvas>
 </div>
 
@@ -426,6 +426,7 @@
       <div class="checks" aria-labelledby="l-invert">
         <label><input type="checkbox" id="c-invx">X</label>
         <label><input type="checkbox" id="c-invy">Y</label>
+        <label><input type="checkbox" id="c-even">Even</label>
         <button id="c-report" type="button">Copy report</button>
         <button id="c-reset" type="button">Reset</button>
       </div>
@@ -437,8 +438,25 @@
 (function () {
   'use strict';
 
+  /* ================= sources — ?img=<name>&depth=<suffix> on the site build;
+     the artifact build ships fixed data URIs and ignores the params ========= */
+  var PHOTO_SRC = '__PHOTO__';
+  var DEPTH_SRC = '__DEPTH__';
+  var srcLabel = 'embedded';
+  try {
+    if (PHOTO_SRC.indexOf('data:') !== 0) {
+      var qp = new URLSearchParams(location.search);
+      var imgName = qp.get('img') || 'QSD_Night_5v2';
+      var dsfx = qp.get('depth');
+      PHOTO_SRC = '/images/' + imgName + '.jpg';
+      DEPTH_SRC = '/images/depth/' + imgName + '.jpg.depth' + (dsfx ? '.' + dsfx : '') + '.jpg';
+      srcLabel = imgName + (dsfx ? ' · depth:' + dsfx : '');
+    }
+  } catch (e) {}
+  document.getElementById('still').src = PHOTO_SRC;
+
   /* ================= settings (persisted) ================= */
-  var S = { amp: 55, range: 14, focus: 75, tau: 7, spring: false, invx: false, invy: false };
+  var S = { amp: 55, range: 14, focus: 75, tau: 7, spring: false, invx: false, invy: false, even: true };
   try {
     var saved = JSON.parse(localStorage.getItem('lontananza-rig') || 'null');
     if (saved) for (var k in S) if (k in saved) S[k] = saved[k];
@@ -471,9 +489,13 @@
     'uniform float uGlow;',
     'uniform vec2 uVeil;',
     'uniform vec4 uFilter;',
+    'uniform float uEven;',
     'void main() {',
     '  vec2 uv = (vUv - 0.5) * uCover * 0.94 + 0.5;',
-    '  vec2 off = uTilt * uAmp;',
+    // uEven=1 scales the offset by the cover factor so parallax is uniform in
+    // SCREEN space — without it a portrait crop of a panorama amplifies the
+    // horizontal axis by the crop ratio (why vertical feels dead on phones)
+    '  vec2 off = uTilt * uAmp * mix(vec2(1.0), uCover, uEven);',
     '  float d = texture2D(uDepth, uv).r;',
     '  vec2 p = uv + off * (d - uFocus);',
     '  d = texture2D(uDepth, p).r;',
@@ -536,7 +558,7 @@
   gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
   var U = {};
-  ['uPhoto', 'uDepth', 'uTilt', 'uCover', 'uAmp', 'uFocus', 'uZoom', 'uGlow', 'uVeil', 'uFilter']
+  ['uPhoto', 'uDepth', 'uTilt', 'uCover', 'uAmp', 'uFocus', 'uZoom', 'uGlow', 'uVeil', 'uFilter', 'uEven']
     .forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
   gl.uniform4f(U.uFilter, 0, 0, 0, 0);
   gl.uniform2f(U.uVeil, 0, 0);
@@ -853,6 +875,7 @@
     gl.uniform1f(U.uAmp, (S.amp / 100) * 0.05);
     gl.uniform1f(U.uFocus, S.focus / 100);
     gl.uniform1f(U.uZoom, zoom);
+    gl.uniform1f(U.uEven, S.even ? 1 : 0);
     gl.uniform1f(U.uGlow, GLOW * (1 + 0.08 * Math.sin(s * 0.9)));
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     requestAnimationFrame(draw);
@@ -869,8 +892,8 @@
       requestAnimationFrame(function () { canvas.classList.add('is-live'); });
     }
   }
-  loadTexture(0, document.getElementById('still').src, true, onTex);
-  loadTexture(1, '/images/depth/QSD_Night_5v2.jpg.depth.jpg', false, onTex);
+  loadTexture(0, PHOTO_SRC, true, onTex);
+  loadTexture(1, DEPTH_SRC, false, onTex);
 
   /* ================= controls ================= */
   function bindRange(id, key, outId) {
@@ -908,6 +931,7 @@
   }
   bindCheck('c-invx', 'invx');
   bindCheck('c-invy', 'invy');
+  bindCheck('c-even', 'even');
 
   document.getElementById('c-reset').addEventListener('click', function () {
     try { localStorage.removeItem('lontananza-rig'); } catch (e) {}
@@ -918,6 +942,7 @@
     var rep = {
       time: new Date().toISOString(),
       ua: navigator.userAgent,
+      src: srcLabel,
       origin: location.hostname,
       framed: framed,
       perm: permState,

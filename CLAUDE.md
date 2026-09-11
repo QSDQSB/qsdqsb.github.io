@@ -70,7 +70,12 @@ npm run build:js
 # frontmatter for header.overlay_image and writes one neural depth map per
 # image to images/depth/<mirrored-path>.depth.jpg (~25 KB each, tracked in
 # git). CI never runs the model; visitors download only the finished JPEG.
-# Incremental (mtime); --only <substring> filters; --force regenerates.
+# Incremental (mtime); --only <substring> filters; --force regenerates;
+# --model v1-small|v2-small|v2-base|v2-large picks the Depth Anything variant
+# (default v2-base); --suffix <tag> writes <name>.depth.<tag>.jpg benchmark
+# variants that the hero include never loads (the tilt rig reads them via
+# ?depth=<tag>). scripts/generate-depth-pro.py is the Apple Depth Pro
+# challenger (Python, single image, same output conventions) for bake-offs.
 npm run generate:depth
 
 # Tests
