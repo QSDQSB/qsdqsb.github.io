@@ -332,8 +332,8 @@
     cursor: pointer;
   }
   .checks input { accent-color: var(--gold); width: 0.9rem; height: 0.9rem; }
-  #c-reset {
-    margin-left: auto;
+  #c-report { margin-left: auto; }
+  #c-report, #c-reset {
     font-family: Barlow, sans-serif;
     font-size: 0.6rem;
     font-weight: 600;
@@ -379,6 +379,9 @@
   <div class="warn">guards <b id="d-guard">0</b></div>
   <div>origin <b id="d-origin">—</b></div>
   <div>framed <b id="d-framed">—</b></div>
+  <div>perm <b id="d-perm">—</b></div>
+  <div>events <b id="d-events">0</b> </div>
+  <div>null ev <b id="d-nullev">0</b></div>
   <div>tex <b id="d-tex">0/2</b></div>
   <div>frames <b id="d-frames">0</b></div>
   <div>tilt <b id="d-tilt">—</b></div>
@@ -423,6 +426,7 @@
       <div class="checks" aria-labelledby="l-invert">
         <label><input type="checkbox" id="c-invx">X</label>
         <label><input type="checkbox" id="c-invy">Y</label>
+        <button id="c-report" type="button">Copy report</button>
         <button id="c-reset" type="button">Reset</button>
       </div>
     </div>
@@ -617,6 +621,16 @@
   var guardCount = 0;
   var evTimes = [];
   var span = { b0: Infinity, b1: -Infinity, g0: Infinity, g1: -Infinity };
+  var rlog = [];
+  function logEv(s) {
+    rlog.push((performance.now() / 1000).toFixed(1) + 's ' + s);
+    if (rlog.length > 40) rlog.shift();
+  }
+  var permState = 'unknown';
+  var permEl = document.getElementById('d-perm');
+  var evCount = 0, nullEvCount = 0;
+  var evCountEl = document.getElementById('d-events');
+  var nullEvEl = document.getElementById('d-nullev');
   var dbg = {
     beta: document.getElementById('d-beta'),
     gamma: document.getElementById('d-gamma'),
@@ -634,7 +648,14 @@
   }
 
   function onOrient(e) {
-    if (e.beta == null || e.gamma == null) return;
+    evCount += 1;
+    evCountEl.textContent = String(evCount);
+    if (e.beta == null || e.gamma == null) {
+      nullEvCount += 1;
+      nullEvEl.textContent = String(nullEvCount);
+      if (nullEvCount <= 3) logEv('orientation event with null values');
+      return;
+    }
     var now = performance.now();
     var a = screenAngle();
 
@@ -653,6 +674,7 @@
       lastEvT = now;
       inputMode = 'gyro';
       setState('gyro live', true);
+      logEv('first real orientation event (beta ' + e.beta.toFixed(1) + ', gamma ' + e.gamma.toFixed(1) + ')');
     }
 
     // flip guard: a discontinuous jump (gamma wrap near vertical) shifts the
@@ -691,10 +713,14 @@
   }
 
   function attachGyro() {
+    logEv('listener attached');
     window.addEventListener('deviceorientation', onOrient);
     setState('listening…');
     setTimeout(function () {
-      if (inputMode !== 'gyro') setState(inputMode === 'pointer' ? 'pointer' : 'no sensor', inputMode === 'pointer');
+      if (inputMode !== 'gyro') {
+        logEv('no usable orientation events within 3s (events: ' + evCount + ', null: ' + nullEvCount + ')');
+        setState(inputMode === 'pointer' ? 'pointer' : 'no sensor', inputMode === 'pointer');
+      }
     }, 3000);
   }
 
@@ -711,33 +737,48 @@
   var needsPermission = typeof DeviceOrientationEvent !== 'undefined' &&
     typeof DeviceOrientationEvent.requestPermission === 'function';
   function requestGyro() {
+    logEv('requestPermission called');
     DeviceOrientationEvent.requestPermission().then(function (r) {
+      logEv('requestPermission -> ' + r);
+      permState = r;
+      permEl.textContent = r;
       if (r === 'granted') {
         enable.classList.remove('show');
         attachGyro();
       } else {
         setState('denied: ' + r);
         enableBtn.textContent = 'Retry';
-        enableMsg.textContent = 'iOS returned "' + r + '". If NO system dialog appeared just now, ' +
-          'this embedding context blocks motion access — open the link directly in Safari. ' +
-          'If you tapped Don’t Allow earlier, it sticks until website data for “' +
-          location.hostname + '” is cleared.';
+        enableMsg.textContent = 'iOS returned "' + r + '". If NO system dialog appeared just now: ' +
+          'check Settings → Safari → Privacy & Security → “Motion & Orientation Access” (must be ON, ' +
+          'if the toggle exists on your iOS version). If you tapped Don’t Allow earlier, it sticks ' +
+          'until website data for “' + location.hostname + '” is cleared.';
       }
     }).catch(function (ex) {
+      logEv('requestPermission threw ' + (ex && ex.name ? ex.name : 'error'));
+      permState = 'api-error';
+      permEl.textContent = 'api-error';
       setState('denied: api');
       enableBtn.textContent = 'Retry';
       enableMsg.textContent = 'requestPermission threw ' + (ex && ex.name ? ex.name : 'an error') +
-        ' — the webview/iframe hosting this page does not support the motion permission flow. ' +
-        'Open the link directly in Safari.';
+        ' — this context does not support the motion permission flow.';
     });
   }
   if (needsPermission) {
+    permState = 'required, not yet requested';
+    permEl.textContent = 'required';
+    logEv('requestPermission API present — waiting for tap');
     enable.classList.add('show');
     setState('tap to enable');
     enableBtn.addEventListener('click', requestGyro);
   } else if (typeof DeviceOrientationEvent !== 'undefined') {
+    permState = 'not required';
+    permEl.textContent = 'not req';
+    logEv('no permission API — attaching directly');
     attachGyro();
   } else {
+    permState = 'no API';
+    permEl.textContent = 'no API';
+    logEv('DeviceOrientationEvent missing entirely');
     setState('no sensor api');
   }
 
@@ -871,6 +912,45 @@
   document.getElementById('c-reset').addEventListener('click', function () {
     try { localStorage.removeItem('lontananza-rig'); } catch (e) {}
     location.reload();
+  });
+
+  document.getElementById('c-report').addEventListener('click', function () {
+    var rep = {
+      time: new Date().toISOString(),
+      ua: navigator.userAgent,
+      origin: location.hostname,
+      framed: framed,
+      perm: permState,
+      state: stateEl.textContent,
+      inputMode: inputMode,
+      events: evCount,
+      nullEvents: nullEvCount,
+      rateHz: evTimes.length,
+      span: span.b1 > span.b0
+        ? { beta: +(span.b1 - span.b0).toFixed(1), gamma: +(span.g1 - span.g0).toFixed(1) }
+        : null,
+      guards: guardCount,
+      tex: texCount,
+      frames: frames,
+      tilt: { x: +tilt.x.toFixed(3), y: +tilt.y.toFixed(3) },
+      target: { x: +target.x.toFixed(3), y: +target.y.toFixed(3) },
+      screenAngle: screenAngle(),
+      dpr: window.devicePixelRatio,
+      err: errEl.textContent,
+      settings: S,
+      log: rlog
+    };
+    var txt = JSON.stringify(rep, null, 1);
+    var btn = document.getElementById('c-report');
+    function fallback() { window.prompt('Copy this report:', txt); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy report'; }, 1500);
+      }, fallback);
+    } else {
+      fallback();
+    }
   });
 
   var drawer = document.getElementById('drawer');
