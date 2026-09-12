@@ -7,6 +7,7 @@ tags:
   - 🛤️Retrace
 header:
   overlay_image: cover/barcelona_3v1.jpg
+  depth_centred: true
 ---
 Unfortunately, QSD didn't have much chance to capture the magnificance of Gaudi's legacy. One day he shall return to Barcelona, and hopefully *adiós* satisfactorily$^{*}$.
 

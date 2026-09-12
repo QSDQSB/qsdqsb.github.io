@@ -13,6 +13,7 @@ tags:
 share: false
 header:
   overlay_image: Argue-with-idiot-3v1.jpg
+  depth_centred: true
   overlay_filter: 0.1
   caption: "Bella Italia, Oxford, 25/11/2021"
 ---

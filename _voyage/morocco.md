@@ -8,4 +8,5 @@ tags:
   - 🌊Coastal
 header:
   overlay_image: cover/morocco-sahara-3v1.jpg
+  depth_centred: true
 ---

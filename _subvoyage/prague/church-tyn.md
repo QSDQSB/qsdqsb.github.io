@@ -7,4 +7,5 @@ tags:
   - 🏰Baroque
 header:
   overlay_image: cover/prague/church-tyn-3v1.jpg
+  depth_centred: true
 ---

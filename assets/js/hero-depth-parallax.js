@@ -15,8 +15,18 @@
  * the static hero exactly as it ships today.
  *
  * Per-element knobs (0–100 prototyping scale, from frontmatter or layout):
- *   data-depth-amp    lean amplitude          (default 60)
- *   data-depth-focus  depth value kept pinned (default 75 — near field)
+ *   data-depth-amp    lean amplitude          (default 60; centred: 90)
+ *   data-depth-focus  depth value kept pinned (default 75 — near field;
+ *                     centred: 50, where subject-centred maps pin the subject)
+ *   data-depth-ay     vertical amplitude as % of horizontal (default 100;
+ *                     centred: 35 — buildings tolerate no vertical stretch)
+ *   data-depth-centred present on heroes whose depth map went through the
+ *                     subject-centred recipe (v2-large → σ2 soften →
+ *                     centre-median → 0.5). Switches the defaults above and
+ *                     scales the offset by the cover factor so parallax is
+ *                     uniform in SCREEN space (portrait crops of panoramas
+ *                     otherwise amplify the horizontal axis by the crop
+ *                     ratio). Absent → today's behaviour, bit for bit.
  *   data-depth-motion "smooth" | "spring"     (default smooth)
  *   data-depth-dpr    device-pixel-ratio cap  (default 2; home uses 1 — the
  *                     7px frost makes retina resolution pure waste)
@@ -45,6 +55,7 @@
     'uniform sampler2D uDepth;',
     'uniform vec2 uTilt;',
     'uniform vec2 uCover;',
+    'uniform vec2 uAxis;',
     'uniform float uAmp;',
     'uniform float uFocus;',
     'uniform float uZoom;',
@@ -53,7 +64,7 @@
     'uniform vec4 uFilter;',
     'void main() {',
     '  vec2 uv = (vUv - 0.5) * uCover * 0.94 + 0.5;',
-    '  vec2 off = uTilt * uAmp;',
+    '  vec2 off = uTilt * uAmp * uAxis;',
     '  float d = texture2D(uDepth, uv).r;',
     '  vec2 p = uv + off * (d - uFocus);',
     '  d = texture2D(uDepth, p).r;',
@@ -90,10 +101,15 @@
     const depthSrc = media.getAttribute('data-depth-map');
     if (!photoSrc || !depthSrc) return;
 
+    // Subject-centred heroes (recipe maps) switch the parameter defaults and
+    // enable cover-scaled, vertically-damped offsets; explicit attrs still win.
+    const CENTRED = media.hasAttribute('data-depth-centred');
     const ampRaw = parseFloat(media.getAttribute('data-depth-amp') || '');
-    const AMP = ((ampRaw >= 0 && ampRaw <= 100 ? ampRaw : 60) / 100) * 0.05;
+    const AMP = ((ampRaw >= 0 && ampRaw <= 200 ? ampRaw : (CENTRED ? 90 : 60)) / 100) * 0.05;
     const focusRaw = parseFloat(media.getAttribute('data-depth-focus') || '');
-    const FOCUS = (focusRaw >= 0 && focusRaw <= 100 ? focusRaw : 75) / 100;
+    const FOCUS = (focusRaw >= 0 && focusRaw <= 100 ? focusRaw : (CENTRED ? 50 : 75)) / 100;
+    const ayRaw = parseFloat(media.getAttribute('data-depth-ay') || '');
+    const AY = (ayRaw >= 0 && ayRaw <= 200 ? ayRaw : (CENTRED ? 35 : 100)) / 100;
     const spring = media.getAttribute('data-depth-motion') === 'spring';
     const dprCap = parseFloat(media.getAttribute('data-depth-dpr') || '') || 2;
     const glowRaw = parseFloat(media.getAttribute('data-depth-glow') || '');
@@ -146,7 +162,7 @@
     gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
     const U = {};
-    ['uPhoto', 'uDepth', 'uTilt', 'uCover', 'uAmp', 'uFocus', 'uZoom', 'uGlow', 'uVeil', 'uFilter'].forEach(function (n) {
+    ['uPhoto', 'uDepth', 'uTilt', 'uCover', 'uAxis', 'uAmp', 'uFocus', 'uZoom', 'uGlow', 'uVeil', 'uFilter'].forEach(function (n) {
       U[n] = gl.getUniformLocation(prog, n);
     });
     gl.uniform4f(U.uFilter, filterRGBA[0], filterRGBA[1], filterRGBA[2], filterRGBA[3]);
@@ -278,6 +294,13 @@
 
       gl.uniform2f(U.uTilt, tilt.x, tilt.y);
       gl.uniform2f(U.uCover, cover[0], cover[1]);
+      // Centred mode scales by cover (uniform screen-space parallax across
+      // viewport crops) and damps the vertical axis; legacy mode is identity.
+      if (CENTRED) {
+        gl.uniform2f(U.uAxis, cover[0], cover[1] * AY);
+      } else {
+        gl.uniform2f(U.uAxis, 1, AY);
+      }
       gl.uniform1f(U.uAmp, AMP);
       gl.uniform1f(U.uFocus, FOCUS);
       gl.uniform1f(U.uZoom, zoom);

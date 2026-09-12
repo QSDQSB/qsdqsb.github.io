@@ -11,6 +11,7 @@ tags:
   - 😻Happy Moments
 header:
   overlay_image: kyoto-blend-filter-coffee-3v1.jpg
+  depth_centred: true
   overlay_filter: 0.3
   caption: "Blend Coffee, Kyoto"
 ---

@@ -7,4 +7,5 @@ tags:
   - 🏰Baroque
 header:
   overlay_image: cover/prague/prague-streetscape-mala-strana-3v1.jpg
+  depth_centred: true
 ---

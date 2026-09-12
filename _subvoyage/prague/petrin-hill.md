@@ -7,5 +7,6 @@ tags:
   - 🥾Hiking
 header:
   overlay_image: cover/prague/petrin-river-view-3v1.jpg
+  depth_centred: true
 ---
 Lense was somehow problematic - thus 1/3 of the frames are not sharp :/

@@ -8,4 +8,5 @@ tags:
   - 🌊Coastal
 header:
   overlay_image: cover/mont-st-michel-twilight-3v1.jpg
+  depth_centred: true
 ---

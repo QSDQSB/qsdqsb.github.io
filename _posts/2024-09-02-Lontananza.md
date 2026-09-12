@@ -14,6 +14,7 @@ left_tarot_card: "queen-of-swords"
 left_tarot_href: /posts/war-declaration-to-boredom/
 header:
   overlay_image: Lontananza_3v1.jpg
+  depth_centred: true
   overlay_filter: 0.25
   caption: "*Le città invisibili*, Italo Calvino."
 ---
