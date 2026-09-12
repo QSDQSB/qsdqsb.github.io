@@ -9,6 +9,11 @@
       "Bash(node scripts/geocode-maps.js)",
       "Bash(bash scripts/check-responsive-policy.sh)",
       "Bash(python3 scripts/check-single-use-variables.py *)",
+      "Bash(python3 scripts/check-house-style.py *)",
+      "Bash(python3 scripts/check-important-ratchet.py *)",
+      "Bash(python3 scripts/check-js-sync.py *)",
+      "Bash(python3 scripts/check-seo-descriptions.py *)",
+      "Bash(bash scripts/hooks/*.sh)",
       "Bash(git status *)",
       "Bash(git diff *)",
       "Bash(git log *)",
@@ -79,6 +84,10 @@
           {
             "type": "command",
             "command": "bash scripts/hooks/stop-variables-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash scripts/hooks/stop-house-guards.sh"
           }
         ]
       }
