@@ -30,6 +30,44 @@ All of the following must be true:
 
 If any of those fails, the value belongs inline.
 
+## Token families that *are* legitimately shared
+
+Use these, extend them when adding to a scale, but don't fragment them with
+parallel one-offs:
+
+- **Type scale** — `$type-size-1` … `$type-size-8` (largest to smallest).
+  Rem-based; root steps 16px mobile / 18px ≥768px.
+- **Breakpoints** — `$small`, `$medium`, `$medium-wide`, `$large`, `$x-large`
+  (rem-based). Used via `_sass/_responsive-policy.scss` mixins only — raw
+  `@media` / `@container` / `@include breakpoint(...)` elsewhere is a
+  violation, enforced by `scripts/check-responsive-policy.sh`.
+- **Sidebar widths** — `$right-sidebar-width-narrow` / `$right-sidebar-width` /
+  `$right-sidebar-width-wide`.
+- **Motion** — `$global-transition`, `$global-transition-time`,
+  `$cubic-bezier-default`, `$cubic-bezier-smooth`, `$intro-transition`.
+- **Surfaces & text** — `$primary-color`, `$text-color`, `$border-color`,
+  `$body-color`, `$background-color`.
+- **Shadows** — `$box-shadow`, `$shadow-soft`, `$shadow-floating`,
+  `$box-shadow-fancy`.
+- **Radius** — `$border-radius`.
+
+Prefer arithmetic over a new token when the value is a multiple of an existing
+one: `$global-transition-time * 2`, not a new variable.
+
+## The `// @keep` opt-out
+
+`scripts/check-single-use-variables.py` flags variables used in fewer than two
+places. To scaffold a token ahead of its second use (e.g. building a
+multi-component feature), mark the definition line:
+
+```scss
+$shared-future-radius: 0.42rem; // @keep — used by upcoming card + tile components
+```
+
+The check skips `// @keep` entries. Use sparingly — every `@keep` is a promise
+that the second callsite is coming. A Stop hook blocks the turn if a
+newly-added variable is single-use and unmarked.
+
 ## Anti-patterns to flag
 
 - **Single-use variables.** Used in exactly one selector in one file. Inline them.

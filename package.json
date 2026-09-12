@@ -41,7 +41,12 @@
     "build": "npm run generate:gallery && npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll build",
     "serve": "npm run generate:gallery && npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll serve",
     "build:fast": "npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll build",
-    "serve:fast": "npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll serve"
+    "serve:fast": "npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll serve",
+    "check:house-style": "python3 scripts/check-house-style.py",
+    "check:important": "python3 scripts/check-important-ratchet.py",
+    "check:js-sync": "python3 scripts/check-js-sync.py",
+    "check:frontmatter": "node scripts/check-frontmatter.js",
+    "check:gallery": "node scripts/check-gallery-integrity.js"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"
