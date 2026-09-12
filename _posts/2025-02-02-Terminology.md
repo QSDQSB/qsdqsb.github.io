@@ -13,6 +13,7 @@ tags:
   - 😻Happy Moments
 header:
   overlay_image: Legotypewriter1-3v1.jpg
+  depth_centred: true
   overlay_filter: 0.4
 ---
 

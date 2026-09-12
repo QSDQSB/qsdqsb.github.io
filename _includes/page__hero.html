@@ -50,7 +50,7 @@
         {% capture depth_path %}/images/depth{{ depth_key }}.depth.jpg{% endcapture %}
         {% assign depth_file = site.static_files | where: "path", depth_path | first %}
       {% endunless %}
-      <div class="page__hero-media" style="background-image: {% if overlay_filter %}linear-gradient({{ overlay_filter }}, {{ overlay_filter }}), {% endif %}url('{{ overlay_img_path }}');"{% if depth_file %} data-depth-map="{{ depth_path | prepend: base_path }}" data-depth-photo="{{ overlay_img_path }}"{% if overlay_filter %} data-depth-filter="{{ overlay_filter }}"{% endif %}{% if page.header.depth_amp %} data-depth-amp="{{ page.header.depth_amp }}"{% endif %}{% if page.header.depth_focus %} data-depth-focus="{{ page.header.depth_focus }}"{% endif %}{% endif %}></div>
+      <div class="page__hero-media" style="background-image: {% if overlay_filter %}linear-gradient({{ overlay_filter }}, {{ overlay_filter }}), {% endif %}url('{{ overlay_img_path }}');"{% if depth_file %} data-depth-map="{{ depth_path | prepend: base_path }}" data-depth-photo="{{ overlay_img_path }}"{% if overlay_filter %} data-depth-filter="{{ overlay_filter }}"{% endif %}{% if page.header.depth_amp %} data-depth-amp="{{ page.header.depth_amp }}"{% endif %}{% if page.header.depth_focus %} data-depth-focus="{{ page.header.depth_focus }}"{% endif %}{% if page.header.depth_ay %} data-depth-ay="{{ page.header.depth_ay }}"{% endif %}{% if page.header.depth_centred %} data-depth-centred="1"{% endif %}{% endif %}></div>
     {% endif %}
     <div class="wrapper">
       <div class="page__hero-copy">

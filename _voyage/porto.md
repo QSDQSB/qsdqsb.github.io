@@ -8,4 +8,5 @@ tags:
   - 🌊Coastal
 header:
   overlay_image: cover/porto-luis-i-bridge-3v1.jpg
+  depth_centred: true
 ---

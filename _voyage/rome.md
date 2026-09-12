@@ -20,4 +20,5 @@ map:
   maxZoom: 20
 header:
   overlay_image: cover/rome-piazza-venezia-3v1.jpg
+  depth_centred: true
 ---

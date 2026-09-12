@@ -14,4 +14,5 @@ map:
   lng: 12.0854
 header:
   overlay_image: cover/dolomites/Incantato-3v1.jpg
+  depth_centred: true
 ---

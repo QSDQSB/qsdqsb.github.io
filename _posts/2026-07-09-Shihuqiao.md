@@ -13,6 +13,7 @@ tags:
   - 💍Horcrux
 header:
   overlay_image: cover/dengxinxiang-bw-sky-3v1.jpg
+  depth_centred: true
   overlay_filter: 0.35
   caption: "*Le città invisibili*, Italo Calvino."
 body_class: nocturne

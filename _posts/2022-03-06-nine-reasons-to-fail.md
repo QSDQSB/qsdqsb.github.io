@@ -9,6 +9,7 @@ tags:
   - 🍜Life
 header:
   overlay_image: SeizeTheDay-3v1.jpg
+  depth_centred: true
   overlay_filter: 0.2
   caption: "Boars Hill, Oxford, 12/3/2021"
 ---

@@ -70,7 +70,12 @@ npm run build:js
 # frontmatter for header.overlay_image and writes one neural depth map per
 # image to images/depth/<mirrored-path>.depth.jpg (~25 KB each, tracked in
 # git). CI never runs the model; visitors download only the finished JPEG.
-# Incremental (mtime); --only <substring> filters; --force regenerates.
+# Incremental (mtime); --only <substring> filters; --force regenerates;
+# --model v1-small|v2-small|v2-base|v2-large picks the Depth Anything variant
+# (default v2-base); --suffix <tag> writes <name>.depth.<tag>.jpg benchmark
+# variants that the hero include never loads (the tilt rig reads them via
+# ?depth=<tag>). scripts/generate-depth-pro.py is the Apple Depth Pro
+# challenger (Python, single image, same output conventions) for bake-offs.
 npm run generate:depth
 
 # Tests
@@ -373,9 +378,28 @@ Active when `has-overlay-hero` is on the body (set from `page.header.overlay_col
 header:
   overlay_image: cover/venice-3v1.jpg
   depth_parallax: false   # opt out entirely (default: on when a depth map exists)
-  depth_amp: 60           # lean amplitude, default 60
-  depth_focus: 75         # depth value that stays pinned, default 75 (near field)
+  depth_centred: true     # hero uses a SUBJECT-CENTRED depth map (see below) —
+                          # switches defaults to amp 90 / focus 50 / ay 35 and
+                          # scales the offset by the cover factor so parallax is
+                          # uniform in screen space across viewport crops
+  depth_amp: 60           # lean amplitude, default 60 (centred: 90)
+  depth_focus: 75         # depth value that stays pinned, default 75 (centred: 50)
+  depth_ay: 100           # vertical amplitude as % of horizontal (centred: 35 —
+                          # architecture tolerates no vertical stretch)
 ```
+
+**Two depth-map families** (found via on-device + headless bake-offs, PR #68):
+night heroes keep the original V1-small maps — their soft edges warp as
+dreamy flow, which suits organic night scenes and is the user-approved look.
+Daylight/twilight heroes use the **subject-centred recipe**: Depth Anything
+V2-large → σ2 soften → centre-weighted-median-to-0.5 remap (far-slope
+guarded), regenerated via
+`node scripts/run-depth-onnx.mjs <model.onnx> --batch jobs.json --blur 2 --centre`
+(ONNX weights from the Depth-Anything-ONNX GitHub releases — no Hugging Face
+needed). Pages carrying such maps set `depth_centred: true`; without the key
+the runtime behaves exactly as before, so the two families coexist.
+`scripts/depth-render-harness.html` + `scripts/shoot-depth-configs.mjs` are
+the headless Playwright loop for tuning parallax parameters offline.
 
 The home hero (`_layouts/home.html`) runs a second variant of the same module: a `.home__hero-depth` wrapper re-applies the glass frost recipe (blur, radial mask, slow zoom) over the canvas and uses `data-depth-motion="spring"` — underdamped spring motion (overshoot + settle) instead of the smooth damped lean, amp 90, dpr capped at 1 (retina is wasted under 7px blur). Its photo is hardcoded in the layout, so the generator lists it in `EXTRA_SOURCES`.
 

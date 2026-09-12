@@ -7,4 +7,5 @@ tags:
   - 🏛️Historic
 header:
   overlay_image: cover/beijing-summer-palace-3v1.jpg
+  depth_centred: true
 ---
