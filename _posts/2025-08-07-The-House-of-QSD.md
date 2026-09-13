@@ -12,6 +12,7 @@ tags:
   - 💍Horcrux
 header:
   overlay_image: cover/posts/qsd-house-sigil-baroque-interior-wall-3v1.jpg
+  depth_centred: true
   overlay_filter: 0.25
 ---
 

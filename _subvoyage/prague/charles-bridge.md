@@ -8,4 +8,5 @@ tags:
   - 🌉Bridges
 header:
   overlay_image: cover/prague/charles-bridge-3v1.jpg
+  depth_centred: true
 ---

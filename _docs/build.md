@@ -34,7 +34,12 @@ npm run build:js
 # frontmatter for header.overlay_image and writes one neural depth map per
 # image to images/depth/<mirrored-path>.depth.jpg (~25 KB each, tracked in
 # git). CI never runs the model; visitors download only the finished JPEG.
-# Incremental (mtime); --only <substring> filters; --force regenerates.
+# Incremental (mtime); --only <substring> filters; --force regenerates;
+# --model v1-small|v2-small|v2-base|v2-large picks the Depth Anything variant
+# (default v2-base); --suffix <tag> writes benchmark variants the hero include
+# never loads. Daylight heroes use the subject-centred recipe instead, via
+# scripts/run-depth-onnx.mjs --batch --blur 2 --centre — see
+# _docs/layouts.md "Two depth-map families".
 npm run generate:depth
 
 # Tests

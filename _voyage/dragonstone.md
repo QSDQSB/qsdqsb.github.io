@@ -10,4 +10,5 @@ map:
   query: "Gaztelugatxe, Bakio, Spain"
 header:
   overlay_image: cover/dragonstone-3v1.jpg
+  depth_centred: true
 ---

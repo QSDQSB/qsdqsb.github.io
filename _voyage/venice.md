@@ -9,4 +9,5 @@ tags:
   - 🍝Italy
 header:
   overlay_image: cover/venice-3v1.jpg
+  depth_centred: true
 ---

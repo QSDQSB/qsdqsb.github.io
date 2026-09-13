@@ -23,4 +23,5 @@ left_tarot_card: king-of-cups
 left_tarot_href: "/voyage/prague/#twilight"
 header:
   overlay_image: cover/dolomites-sunrise-3v1.jpg
+  depth_centred: true
 ---

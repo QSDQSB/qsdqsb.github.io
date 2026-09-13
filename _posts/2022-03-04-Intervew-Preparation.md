@@ -14,6 +14,7 @@ tags:
   - 🔖Notes
 header:
   overlay_image: OxfordSJC1-3v1.jpg
+  depth_centred: true
   overlay_filter: 0.25
   caption: "St John's College, Oxford, 16/10/2021"
 ---

@@ -7,4 +7,5 @@ tags:
   - 🌆Metropolis
 header:
   overlay_image: cover/japan/Tokyo-3v1.jpg
+  depth_centred: true
 ---

@@ -15,4 +15,5 @@ map:
   lng: 12.35
 header:
   overlay_image: cover/dolomites/Sesto-3v1.jpg
+  depth_centred: true
 ---

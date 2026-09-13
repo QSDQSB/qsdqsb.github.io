@@ -11,6 +11,7 @@ tags:
   - 🧼QSD's Philosophy
 header:
   overlay_image: Xiaolan1-3v1.jpg
+  depth_centred: true
   overlay_filter: 0.15
   caption: "St Aldates, Oxford, 7/11/2021"
 ---

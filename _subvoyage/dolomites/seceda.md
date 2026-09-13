@@ -13,4 +13,5 @@ tags:
   - 🥾Hiking
 header:
   overlay_image: cover/dolomites/Seceda-3v1.jpg
+  depth_centred: true
 ---

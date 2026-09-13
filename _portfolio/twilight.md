@@ -6,6 +6,7 @@ date: 2022-02-26
 excerpt: "The Sunset of Romanticism"
 header:
   overlay_image: Twilight2-5v2.jpg
+  depth_centred: true
 ---
 
 We live in a twilight world,  

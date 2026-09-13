@@ -6,6 +6,7 @@ permalink: /portfolio/cat
 date: 2021-01-23
 header:
   overlay_image: Cat2-3v1.jpg
+  depth_centred: true
   overlay_filter: 0.25
 ---
 

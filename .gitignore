@@ -22,3 +22,6 @@ _data/gallery_meta/
 design/
 # local secrets — loaded by scripts/send-letter.mjs, never committed
 .env
+
+# Python bytecode cache — scripts/*.py are run directly, never packaged
+__pycache__/

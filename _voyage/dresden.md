@@ -7,4 +7,5 @@ tags:
   - 🏰Baroque
 header:
   overlay_image: cover/dresden-3v1.jpg
+  depth_centred: true
 ---

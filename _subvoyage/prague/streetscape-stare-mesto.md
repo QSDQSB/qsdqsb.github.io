@@ -8,4 +8,5 @@ tags:
   - 🏰Baroque
 header:
   overlay_image: cover/prague/tram-rain-3v1.jpg
+  depth_centred: true
 ---

@@ -9,4 +9,5 @@ tags:
   - 🥾Hiking
 header:
   overlay_image: cover/wengen-3v1.jpg
+  depth_centred: true
 ---

@@ -9,6 +9,7 @@ comments: false
 toc: false
 header:
   overlay_image: cover/dolomites-sunrise-3v1.jpg
+  depth_centred: true
   overlay_filter: 0.35
 ---
 

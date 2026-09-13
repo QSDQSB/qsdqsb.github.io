@@ -7,4 +7,5 @@ tags:
   - 🏞️QSD's Favourite
 header:
   overlay_image: cover/rome/st-peters-basilica-3v1.jpg
+  depth_centred: true
 ---

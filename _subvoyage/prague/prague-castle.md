@@ -8,4 +8,5 @@ tags:
   - 🏞️QSD's Favourite
 header:
   overlay_image: cover/prague/castle-3v1.jpg
+  depth_centred: true
 ---

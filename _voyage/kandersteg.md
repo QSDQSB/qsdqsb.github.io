@@ -10,4 +10,5 @@ tags:
   - 🛥️Lake
 header:
   overlay_image: cover/kandersteg-3v1.jpg
+  depth_centred: true
 ---

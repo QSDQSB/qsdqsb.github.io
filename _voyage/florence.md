@@ -8,4 +8,5 @@ tags:
   - 🏛️Historic
 header:
   overlay_image: cover/florence-3v1.jpg
+  depth_centred: true
 ---

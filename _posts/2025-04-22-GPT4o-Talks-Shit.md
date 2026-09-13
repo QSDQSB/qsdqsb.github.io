@@ -12,6 +12,7 @@ tags:
   - 😻Happy Moments
 header:
   overlay_image: Cat2-3v1.jpg
+  depth_centred: true
   overlay_filter: 0.5
 ---
 ## RAAAAAAAAINBOW赏析

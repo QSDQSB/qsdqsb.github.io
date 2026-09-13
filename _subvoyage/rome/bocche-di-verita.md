@@ -8,6 +8,7 @@ map:
   lng: 12.4814
 header:
   overlay_image: cover/rome/mouths-of-truths-3v1.jpg
+  depth_centred: true
 ---
 
 As Nietzsche wrote, “We have art so that we shall not die of the truth.”

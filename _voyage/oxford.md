@@ -7,4 +7,5 @@ tags:
   - 🏛️Historic
 header:
   overlay_image: cover/oxford-sunset-cover-3v1.jpg
+  depth_centred: true
 ---
