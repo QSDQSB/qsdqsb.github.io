@@ -18,19 +18,47 @@ For nested `gallery_name: parent/child`:
 - All siblings live under `_subvoyage/parent/` so the enumerator's path-substring match finds them.
 - The related-panel surfaces up to 3 random siblings; orphans don't crash anything but they confuse the runtime sampling.
 
-## Workflow
+## Workflow — run the checker, don't hand-verify
 
-1. List every `gallery_name` value in the touched frontmatter.
-2. For each value, check both directories exist and that filenames match between them. The thumbnail directory missing files for some images is the most common failure — it usually means the thumbnail generator wasn't run.
-3. For nested values:
-   - Confirm the parent voyage file exists with the expected basename.
-   - List siblings actually present under `_subvoyage/<parent>/` and confirm they all use the `parent/<sibling>` form.
-4. Flag orphans, missing thumbnails, filename mismatches, and parent/child naming drift.
+Comparing two directory listings by eye is exactly the task a human or a model
+does badly and a script does perfectly. **Run the script; your job is
+interpretation and remediation.**
+
+```bash
+node scripts/check-gallery-integrity.js           # full audit
+node scripts/check-gallery-integrity.js --json    # machine-readable
+node scripts/check-gallery-integrity.js --strict  # orphans become errors too
+```
+
+`npm run check:gallery` is the same thing.
+
+Three finding levels, and the distinction matters:
+
+- **error** — a referenced gallery is missing or empty. The page renders a
+  broken grid. Content bug; fix the frontmatter or add the images.
+- **warn** — thumbnails absent or not matching. Thumbnails are gitignored and
+  regenerated on every deploy, so this almost always means "run
+  `npm run generate:gallery`", not "the content is wrong".
+- **orphan** — a gallery directory no voyage points at. Dead weight shipped on
+  every deploy. Often the real signal is the *opposite* of what it looks like:
+  images exist and the sub-voyage simply forgot its `gallery_name`. Check that
+  before deleting anything.
+
+Pair this with `node scripts/check-frontmatter.js`, which validates the
+per-page contract (required keys, `map:` shapes, parent/child placement). The
+two converge: a directory reported orphaned here often shows up there as a
+sub-voyage warning about a missing `gallery_name`.
+
+## Then
+
+1. Confirm each finding against the real files before acting.
+2. **Never delete images to satisfy an orphan finding** without confirming with
+   the user — an orphan is far more often a missing reference than a dead
+   directory.
+3. If a finding is wrong, fix the script rather than working around it.
 
 ## Output
 
-For each `gallery_name` value, report:
-- `RESOLVED` or `MISSING: <expected path>`.
-- Filename mismatch count if any (e.g. "3 full images without matching thumbnails").
-- For nested galleries: sibling count and any orphans.
-- Remediation — usually `bundle exec rake generate_thumbnails` or a folder rename.
+Report the script's findings grouped by level, each with the concrete
+remediation: which key to add, which generator to run, or which folder to
+rename. Never report a PASS you did not get from the script.

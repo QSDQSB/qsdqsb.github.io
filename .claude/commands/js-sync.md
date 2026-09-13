@@ -1,5 +1,8 @@
-Check JS source/artifact sync:
+Check that `assets/js/main.min.js` is rebuilt from its sources.
 
-1. Compare `assets/js/_main.js` modification time against `assets/js/main.min.js`.
-2. If `_main.js` is newer or has uncommitted changes not reflected in `main.min.js`, run `npm run build:js`.
+1. Run `npm run check:js-sync`.
+2. If it reports the bundle stale, run `npm run build:js`, then re-run the check.
 3. Report whether the artifact is now in sync.
+
+Never hand-edit `main.min.js` — it is generated from `assets/js/_main.js`
+plus the plugins listed in the `uglify` script.
