@@ -1,0 +1,11 @@
+# Authored layer for gallery/barcelona — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+photos:
+  dscf0965:
+    caption: Bateries antiaèries i barraques del Carmel, Can Baró, Barcelona
+  dscf1055:
+    caption: Avinguda de la Catedral, Old Town, Barcelona
+  dscf1070:
+    caption: Calle Doctor Aiguader, Barcelona, Catalonia
+  dscf1085:
+    caption: Passeig Marítim de la Barceloneta - Oriol Bohigas i Guardiola, Old Town, Barcelona

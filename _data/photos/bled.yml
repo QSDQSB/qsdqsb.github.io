@@ -1,0 +1,39 @@
+# Authored layer for gallery/bled — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+photos:
+  dscf4443:
+    caption: Pot okoli jezera, Slovenia
+  dscf4479:
+    caption: Cesta svobode, Slovenia
+  dscf4481:
+    caption: Cesta svobode, Slovenia
+  dscf4495:
+    caption: Pot okoli jezera, Slovenia
+  dscf4519:
+    caption: Pot okoli jezera, Slovenia
+  dscf4533:
+    caption: Grajska Cesta, Slovenia
+  dscf4562:
+    caption: Cesta svobode, Slovenia
+  dscf4610:
+    caption: Pot okoli jezera, Slovenia
+  dscf4625:
+    caption: Mlinska cesta, Slovenia
+  dscf4664:
+    caption: Mlinska cesta, Slovenia
+  dscf4672:
+    caption: Cesta v Megre, Slovenia
+  dscf4684:
+    caption: Ulica padlih Borcev, Slovenia
+  dscf4685:
+    caption: Mestni trg - Brajda, Slovenia
+  dscf4691:
+    caption: Soca Valley, Slovenia
+  dscf4703:
+    caption: Soca Valley, Slovenia
+  dscf4707:
+    caption: Soca Valley, Slovenia
+  dscf4724:
+    caption: Road 206, Slovenia
+  dscf4753:
+    caption: Cigaletova ulica, Ljubljana, Slovenia

@@ -1,0 +1,21 @@
+# Authored layer for gallery/dolomites/siusi — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+photos:
+  dscf0608:
+    caption: Troi Paian, Urtijëi - St. Ulrich in Gröden - Ortisei, South Tyrol
+  dscf0634:
+    caption: Kastelruth - Castelrotto, South Tyrol, Italy
+  dscf7698:
+    caption: Streda J. Skasa, Urtijëi - St. Ulrich in Gröden - Ortisei, South Tyrol
+  dscf7749:
+    caption: Sureghes - Überwasser - Oltretorrente, Kastelruth - Castelrotto, South Tyrol
+  dscf7849:
+    caption: Kastelruth - Castelrotto, South Tyrol, Italy
+  dscf7851:
+    caption: Kastelruth - Castelrotto, South Tyrol, Italy
+  dscf7910:
+    caption: Compatsch, Kastelruth - Castelrotto, South Tyrol
+  dscf7954:
+    caption: Kastelruth - Castelrotto, South Tyrol, Italy
+  dscf7960:
+    caption: Kastelruth - Castelrotto, South Tyrol, Italy

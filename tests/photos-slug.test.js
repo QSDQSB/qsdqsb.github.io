@@ -1,0 +1,46 @@
+'use strict';
+
+const test = require('node:test');
+const assert = require('node:assert');
+
+const lib = () => import('../scripts/photos/lib/slug.mjs');
+
+test('frame number becomes the slug, whatever follows it', async () => {
+  const { slugFor, frameFromName } = await lib();
+  assert.strictEqual(slugFor('DSCF1797_East_Smithfield,_London__XF90mm_f4.3_1:2000s_ISO320.jpg'), 'dscf1797');
+  assert.strictEqual(slugFor('DSCF1797.JPG'), 'dscf1797');
+  assert.strictEqual(slugFor('DSCF0153,_St._Ulrich_in_Gröden__XF16-55mm_f8.6_1:160s_ISO320.jpg'), 'dscf0153');
+  assert.strictEqual(frameFromName('IMG_0042.HEIC'), 'IMG0042');
+  assert.strictEqual(frameFromName('holiday snap.png'), null);
+  assert.strictEqual(slugFor('Holiday Snap (final).png'), 'holiday-snap-final');
+});
+
+test('legacy filename convention parses place and exposure', async () => {
+  const { parseLegacyName } = await lib();
+  const p = parseLegacyName('DSCF1797_East_Smithfield,_London__XF90mm_f4.3_1:2000s_ISO320.jpg');
+  assert.deepStrictEqual(p, { frame: 'DSCF1797', place: 'East Smithfield, London', lens: 'XF 90mm', focal: 90, aperture: 4.3, shutter: '1/2000', iso: 320 });
+
+  // No place segment at all.
+  const q = parseLegacyName('DSCF4258_90mm_f5.6_1:1250s_ISO320.JPG');
+  assert.strictEqual(q.place, null);
+  assert.strictEqual(q.shutter, '1/1250');
+
+  // Colon typed as underscore, long exposure, zoom lens without a single focal.
+  assert.strictEqual(parseLegacyName('DSCF1719_Jardins,_Porto__XF90mm_f7.4_1_180s_ISO800.jpg').shutter, '1/180');
+  const r = parseLegacyName('DSCF8646_Aeussere_Dorfstrasse,_Switzerland__XF16-55mm_f3.0_8.0s_ISO1600.jpg');
+  assert.strictEqual(r.shutter, '8.0');
+  assert.strictEqual(r.focal, null);
+  assert.strictEqual(r.lens, 'XF 16-55mm');
+
+  // A plain camera file has no place and no exposure.
+  const s = parseLegacyName('IMG_0042.HEIC');
+  assert.strictEqual(s.place, null);
+  assert.strictEqual(s.aperture, null);
+});
+
+test('slug collisions get a numeric suffix and a warning', async () => {
+  const { assignSlugs } = await lib();
+  const { slugs, warnings } = assignSlugs(['DSCF0001.jpg', 'DSCF0001_again.jpg', 'x.png']);
+  assert.deepStrictEqual(slugs.map(s => s.slug), ['dscf0001', 'dscf0001-2', 'x']);
+  assert.strictEqual(warnings.length, 1);
+});
