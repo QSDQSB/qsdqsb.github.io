@@ -781,7 +781,7 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
   .home__hero-blobs .blob,
   .home__motto > span, .home__wordmark .ln > span, .home__wordmark .gold,
   .home__plate,
-  .home__scroll-hint, .home__scroll-hint::after { animation: none !important; }
+  .home__scroll-hint, .home__scroll-hint::after { animation: none !important; } // @keep — reduced-motion kill switch
   .home__wordmark .ln > span, .home__motto > span { transform: none; }
   .home__plate { opacity: 1; }
   /* Scroll cue: no fall — a static spark resting at the end of its hairline. */

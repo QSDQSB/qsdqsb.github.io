@@ -84,6 +84,6 @@ body.nocturne {
 
 @include responsive-reduced-motion {
   body.nocturne .nocturne-final {
-    filter: none !important;
+    filter: none !important; // @keep — reduced-motion kill switch
   }
 }

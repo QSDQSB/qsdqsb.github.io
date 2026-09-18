@@ -17,13 +17,13 @@ html.motion-off {
   *,
   *::before,
   *::after {
-    animation: none !important;
-    transition: none !important;
+    animation: none !important; // @keep — motion-off kill switch, must beat every animation
+    transition: none !important; // @keep — motion-off kill switch, must beat every transition
   }
 
   /* Scroll-reveal initial states must not hide content. */
   .reveal-on-scroll {
-    opacity: 1 !important;
-    transform: none !important;
+    opacity: 1 !important; // @keep — motion-off kill switch, reveal must land
+    transform: none !important; // @keep — motion-off kill switch, reveal must land
   }
 }

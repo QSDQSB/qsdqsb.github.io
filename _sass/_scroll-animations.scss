@@ -21,9 +21,9 @@
 
 @include responsive-reduced-motion {
   .reveal-on-scroll {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
+    opacity: 1 !important; // @keep — reduced-motion kill switch
+    transform: none !important; // @keep — reduced-motion kill switch
+    transition: none !important; // @keep — reduced-motion kill switch
   }
 }
 

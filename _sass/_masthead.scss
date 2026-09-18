@@ -183,9 +183,9 @@ html.is-resizing {
     .search__toggle,
     .greedy-nav__toggle,
     .hidden-links {
-      transition-duration: $resize-runtime-transition-duration !important;
-      animation-duration: $resize-runtime-transition-duration !important;
-      animation-delay: 0s !important;
+      transition-duration: $resize-runtime-transition-duration !important; // @keep — is-resizing clamp, must beat every transition
+      animation-duration: $resize-runtime-transition-duration !important; // @keep — is-resizing clamp, must beat every animation
+      animation-delay: 0s !important; // @keep — is-resizing clamp, must beat every animation
     }
   }
 }

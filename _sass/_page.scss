@@ -617,9 +617,9 @@ html.is-resizing {
   .page__hero .page__title,
   .page__hero .page__lead,
   .page__hero .page__meta {
-    transition-duration: $resize-runtime-transition-duration !important;
-    animation-duration: $resize-runtime-transition-duration !important;
-    animation-delay: 0s !important;
+    transition-duration: $resize-runtime-transition-duration !important; // @keep — is-resizing clamp, must beat every transition
+    animation-duration: $resize-runtime-transition-duration !important; // @keep — is-resizing clamp, must beat every animation
+    animation-delay: 0s !important; // @keep — is-resizing clamp, must beat every animation
   }
 }
 
@@ -978,19 +978,4 @@ tradingview-widget-container {
       width: 30%;
     }
   }
-}
-
-.qsd_logo_stroke_display {
-  min-width: 120px;
-  min-height: 120px;
-  max-width: 50%;
-  max-height: 50%;
-  height: 6em;
-  aspect-ratio: 1 !important;
-  mask-image: url("/images/QSDLogos/QSD_logo_stroke_path.svg");
-  mask-repeat: no-repeat;
-	mask-position: center;
-	mask-size: contain;
-  background: conic-gradient(from 210deg, rgba(197, 187, 184, 1.000) 0.000deg, rgba(197, 187, 184, 1.000) 24.000deg, rgba(184, 181, 184, 1.000) 24.000deg, rgba(184, 181, 184, 1.000) 48.000deg, rgba(169, 175, 183, 1.000) 48.000deg, rgba(169, 175, 183, 1.000) 72.000deg, rgba(154, 168, 181, 1.000) 72.000deg, rgba(154, 168, 181, 1.000) 96.000deg, rgba(139, 161, 179, 1.000) 96.000deg, rgba(139, 161, 179, 1.000) 120.000deg, rgba(125, 152, 175, 1.000) 120.000deg, rgba(125, 152, 175, 1.000) 144.000deg, rgba(112, 144, 171, 1.000) 144.000deg, rgba(112, 144, 171, 1.000) 168.000deg, rgba(101, 135, 166, 1.000) 168.000deg, rgba(101, 135, 166, 1.000) 192.000deg, rgba(92, 126, 161, 1.000) 192.000deg, rgba(92, 126, 161, 1.000) 216.000deg, rgba(85, 117, 155, 1.000) 216.000deg, rgba(85, 117, 155, 1.000) 240.000deg, rgba(81, 108, 148, 1.000) 240.000deg, rgba(81, 108, 148, 1.000) 264.000deg, rgba(79, 99, 141, 1.000) 264.000deg, rgba(79, 99, 141, 1.000) 288.000deg, rgba(80, 90, 133, 1.000) 288.000deg, rgba(80, 90, 133, 1.000) 312.000deg, rgba(84, 83, 125, 1.000) 312.000deg, rgba(84, 83, 125, 1.000) 336.000deg, rgba(91, 75, 116, 1.000) 336.000deg 360.000deg);
-  opacity: 0.6;
 }
