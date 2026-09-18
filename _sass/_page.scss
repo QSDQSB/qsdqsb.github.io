@@ -142,7 +142,10 @@ body.has-overlay-hero {
     padding-right: $right-sidebar-width;
   }
 
-  @include span(12 of 12);
+  width: 100%;
+  float: left;
+  margin-left: 0;
+  margin-right: 0;
 
 
   .page__inner-wrap {
@@ -806,7 +809,11 @@ tradingview-widget-container {
    ========================================================================== */
 
 .page__comments {
-  @include full();
+  clear: both;
+  width: 100%;
+  float: left;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .page__comments-title {
