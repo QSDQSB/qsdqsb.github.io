@@ -1,0 +1,23 @@
+# Authored layer for gallery/above-the-cloud — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+photos:
+  dscf0559:
+    caption: Altyn-Tagh, Xinjiang, China
+  dscf0567:
+    caption: Dunhuang City, Gansu, China
+  dscf0949:
+    caption: North Sea, North Atlantic Ocean, England
+  dscf0962:
+    caption: Honor Oak, London, UK
+  dscf3631:
+    caption: Daxing District, Beijing, China
+  dscf3659:
+    caption: Sudogodsky District, Vladimir Oblast, Russia
+  dscf4237:
+    caption: Заволжское сельское поселение, Yaroslavsky District, Russia
+  dscf5863:
+    caption: Kitzsteinhorn, Kaprun, Austria
+  dscf5865:
+    caption: Sorafurcia Geiselsberg, South Tyrol, Italy
+  dscf5874:
+    caption: Sorafurcia Geiselsberg, South Tyrol, Italy

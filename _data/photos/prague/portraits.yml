@@ -1,0 +1,3 @@
+# Authored layer for gallery/prague/portraits — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+photos: {}

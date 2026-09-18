@@ -1,0 +1,61 @@
+name: Photos · process originals
+
+# Renders public tiers + manifests from the private originals bucket.
+# Fired by the R2 notification Worker after an upload (repository_dispatch),
+# by hand from the Actions tab, and nightly as a backstop.
+# Secrets: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, CF_PAGES_DEPLOY_HOOK.
+# See _docs/photos-pipeline.md.
+
+on:
+  repository_dispatch:
+    types: [photos-uploaded]
+  workflow_dispatch:
+    inputs:
+      gallery:
+        description: "Only this gallery (e.g. london or prague/twilight); blank = all"
+        required: false
+        default: ""
+      force:
+        description: "Re-render every tier even when unchanged"
+        type: boolean
+        default: false
+  schedule:
+    - cron: "17 3 * * *"
+
+concurrency:
+  group: photos-process
+  cancel-in-progress: false
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-audit --no-fund
+
+      - name: Process originals → tiers + manifests
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          CF_PAGES_DEPLOY_HOOK: ${{ secrets.CF_PAGES_DEPLOY_HOOK }}
+          PHOTOS_ORIGINALS_BUCKET: ${{ vars.PHOTOS_ORIGINALS_BUCKET || 'qsdqsb-originals' }}
+          PHOTOS_PUBLIC_BUCKET: ${{ vars.PHOTOS_PUBLIC_BUCKET || 'qsdqsb-photos' }}
+          PHOTOS_GALLERIES: ${{ toJSON(github.event.client_payload.galleries) }}
+          INPUT_GALLERY: ${{ github.event.inputs.gallery }}
+          INPUT_FORCE: ${{ github.event.inputs.force }}
+        run: |
+          set -euo pipefail
+          extra=()
+          [ -n "${INPUT_GALLERY}" ] && extra+=(--gallery "${INPUT_GALLERY}")
+          [ "${INPUT_FORCE}" = "true" ] && extra+=(--force)
+          node scripts/photos/process.mjs --concurrency 2 "${extra[@]}"

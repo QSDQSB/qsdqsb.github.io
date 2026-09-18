@@ -1,0 +1,45 @@
+# Authored layer for gallery/kandersteg — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+photos:
+  dscf8201:
+    caption: Aeussere Dorfstrasse, Switzerland
+  dscf8207:
+    caption: Aeussere Dorfstrasse, Switzerland
+  dscf8213:
+    caption: Aeussere Dorfstrasse, Switzerland
+  dscf8254:
+    caption: Aeussere Dorfstrasse, Switzerland
+  dscf8261:
+    caption: Bundesrat Adolf Ogi-Strasse, Switzerland
+  dscf8266:
+    caption: Oeschistrasse, Switzerland
+  dscf8277:
+    caption: Oeschistrasse, Switzerland
+  dscf8351:
+    caption: Oeschinensee, Switzerland
+  dscf8385:
+    caption: Oeschinensee, Switzerland
+  dscf8388:
+    caption: Oeschinensee, Switzerland
+  dscf8452:
+    caption: Fründenschnur, Switzerland
+  dscf8466:
+    caption: Fründenschnur, Switzerland
+  dscf8500:
+    caption: Fründenschnur, Switzerland
+  dscf8581:
+    caption: Fründenschnur, Switzerland
+  dscf8604:
+    caption: Fründenschnur, Switzerland
+  dscf8616:
+    caption: Fründenschnur, Switzerland
+  dscf8617:
+    caption: Fründenschnur, Switzerland
+  dscf8630:
+    caption: Fründenschnur, Switzerland
+  dscf8646:
+    caption: Aeussere Dorfstrasse, Switzerland
+  dscf8653:
+    caption: Aeussere Dorfstrasse, Switzerland
+  dscf8664:
+    caption: Bahnhofstrasse, Spiez, Switzerland
