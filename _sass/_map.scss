@@ -86,9 +86,11 @@
   }
 }
 
-// Tile loading fix — prevent light rectangles during zoom
-.leaflet-container {
-  background-color: $background-color !important;
+// Tile loading fix — prevent light rectangles during zoom. leaflet.css loads
+// after main.css and sets `.leaflet-container { background: #ddd }` (0,1,0);
+// the two classes share one element, so this outranks it.
+.map-container.leaflet-container {
+  background-color: $background-color;
 }
 
 // Controls (zoom, reset, fullscreen)
@@ -186,20 +188,24 @@
   margin: 0;
 }
 
-.map-container .leaflet-control-attribution {
-  background-color: rgba($background-color, 0.92) !important;
-  color: $darker-gray !important;
-  font-size: 9px !important;
+// leaflet.css sets the attribution background from
+// `.leaflet-container .leaflet-control-attribution` (0,2,0) and loads after
+// main.css, so this needs (0,3,0); its colour, padding and link rules are
+// (0,1,0) and (0,1,1) and lose to that anyway.
+.map-container.leaflet-container .leaflet-control-attribution {
+  background-color: rgba($background-color, 0.92);
+  color: $darker-gray;
+  font-size: 9px;
   border: none;
   box-shadow: none;
-  padding: 2px 4px !important;
+  padding: 2px 4px;
 
   a {
-    color: mix(#000, $gray, 40%) !important;
+    color: mix(#000, $gray, 40%);
     text-decoration: none;
 
     &:hover {
-      color: $gray !important;
+      color: $gray;
     }
   }
 }
@@ -246,23 +252,25 @@
     border: 1px solid $border-color;
   }
 
+  // leaflet.css styles this from `.leaflet-container a.leaflet-popup-close-button`
+  // (0,2,1) and its :hover (0,3,1); at (0,3,0) and (0,4,0) these outrank both.
   .leaflet-popup-close-button {
-    top: 10px !important;
-    right: 10px !important;
-    color: rgba($lighter-gray, 0.38) !important;
-    font-size: 16px !important;
-    font-weight: 300 !important;
-    line-height: 1 !important;
+    top: 10px;
+    right: 10px;
+    color: rgba($lighter-gray, 0.38);
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1;
     width: 18px;
     height: 18px;
-    display: flex !important;
+    display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     transition: color 0.15s ease, background 0.15s ease;
 
     &:hover {
-      color: $lighter-gray !important;
+      color: $lighter-gray;
       background: rgba($lighter-gray, 0.08);
     }
   }
@@ -361,9 +369,10 @@
   }
 }
 
-// Atlas tag palette panel
+// Atlas tag palette panel. Nothing sets display on the panel, so the UA's
+// [hidden] rule would do; this just keeps the intent visible.
 .map-legend-palette[hidden] {
-  display: none !important;
+  display: none;
 }
 
 .map-legend-palette {
@@ -747,11 +756,11 @@
   .map-container .leaflet-popup .leaflet-popup-close-button,
   .map-container .map-veil,
   .map-container .map-veil__cta {
-    transition: none !important;
+    transition: none !important; // @keep — reduced-motion kill switch
   }
 
   .map-container .map-veil__spinner {
-    animation: none !important;
+    animation: none !important; // @keep — reduced-motion kill switch
   }
 
   .map-container--booting .map-legend--atlas,
