@@ -111,8 +111,8 @@
     ::view-transition-group(*),
     ::view-transition-old(*),
     ::view-transition-new(*) {
-      animation-duration: 0.01ms !important;
-      animation-delay: 0.01ms !important;
+      animation-duration: 0.01ms !important; // @keep — reduced-motion kill switch
+      animation-delay: 0.01ms !important; // @keep — reduced-motion kill switch
     }
   }
 

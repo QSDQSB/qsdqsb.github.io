@@ -409,7 +409,7 @@
 /* Algolia search */
 
 .ais-search-box {
-  max-width: 100% !important;
+  max-width: 100% !important; // @keep — Algolia InstantSearch ships its own width
   margin-bottom: 2em;
 }
 

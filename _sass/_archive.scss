@@ -21,7 +21,7 @@
 }
 
 .archive__subtitle {
-  font-style: normal !important;
+  font-style: normal;
   margin: 1em 0 0;
   padding-bottom: 0.2em;
   font-family: $barlow-font-family;
@@ -567,7 +567,7 @@ a.word_card--link {
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: cover;
-  aspect-ratio: 300/525 !important;
+  aspect-ratio: 300/525;
   transform-style: preserve-3d;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
