@@ -1,0 +1,19 @@
+# Authored layer for gallery/prague/church-tyn — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+photos:
+  dscf3228:
+    caption: Prašná brána, náměstí Republiky, Prague
+  dscf3363:
+    caption: Melantrichova, CESKÁ Old Town, Prague
+  dscf4253:
+    caption: Charles Bridge, Old Town, Prague
+  dscf4456:
+    caption: Prašná brána, náměstí Republiky, Prague
+  dscf4886:
+    caption: Petrin Observation Tower, Lesser Town, Prague
+  dscf4992:
+    caption: Petrin Observation Tower, Lesser Town, Prague
+  dscf5272:
+    caption: Malostranské náměstí, Lesser Town, Prague
+  dscf5408:
+    caption: Prague Castle, Lesser Town, Prague

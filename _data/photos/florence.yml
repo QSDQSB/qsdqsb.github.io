@@ -1,0 +1,9 @@
+# Authored layer for gallery/florence — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+photos:
+  dscf2732:
+    caption: Viale Giuseppe Poggi, San Niccolò, Florence
+  dscf2758:
+    caption: Crai, Piazza San Lorenzo, Florence
+  dscf2809:
+    caption: Boboli Gardens, Giardino delle Camelie, Florence

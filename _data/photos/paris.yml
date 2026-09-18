@@ -1,0 +1,11 @@
+# Authored layer for gallery/paris — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+photos:
+  dscf0865:
+    caption: Rue Jean Mermoz, 8th Arrondissement of Paris, Paris
+  dscf2921:
+    caption: Quartier de Grenelle, Paris, France
+  dscf9892:
+    caption: Boulevard Haussmann, Paris, France
+  dscf9905:
+    caption: Impasse Sandrié, 9th Arrondissement, Paris

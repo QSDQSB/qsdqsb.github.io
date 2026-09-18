@@ -1,0 +1,13 @@
+# Authored layer for gallery/rome/bocche-di-verita — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+photos:
+  dscf0998:
+    caption: Largo Enrico Berlinguer, Municipio Roma I, Rome
+  dscf1309:
+    caption: Stradone dei Giardini, Vatican City, Vatican City
+  dscf1999:
+    caption: Via della Conciliazione, Municipio Roma I, Rome
+  dscf2019:
+    caption: Castle of the Holy Angel, Lungotevere Vaticano, Rome
+  dscf2406:
+    caption: Spanish Square, Municipio Roma I, Rome

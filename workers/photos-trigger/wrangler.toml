@@ -1,0 +1,23 @@
+# Worker that turns R2 upload events into a GitHub workflow run.
+#
+#   originals bucket ──(event notification)──▶ queue photos-uploads ──▶ this Worker
+#   ──▶ POST /repos/<repo>/dispatches {event_type: photos-uploaded, galleries}
+#
+# Deploy from this directory:  npx wrangler deploy
+# Secret:                      npx wrangler secret put GITHUB_TOKEN
+# Full setup order in _docs/photos-pipeline.md → Cloudflare setup.
+
+name = "qsdqsb-photos-trigger"
+main = "src/index.mjs"
+compatibility_date = "2026-08-01"
+
+[vars]
+GITHUB_REPO = "QSDQSB/qsdqsb.github.io"
+
+# Batches: an rclone push lands dozens of files in seconds. The consumer
+# waits up to 60 s and collapses everything it saw into one dispatch.
+[[queues.consumers]]
+queue = "photos-uploads"
+max_batch_size = 100
+max_batch_timeout = 60
+max_retries = 3
