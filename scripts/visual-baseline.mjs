@@ -197,13 +197,17 @@ async function settle(page, startedAt) {
   await page.evaluate(async () => {
     if (document.fonts && document.fonts.ready) await document.fonts.ready;
     // Walk the page so IntersectionObserver reveals and lazy images fire.
+    // `behavior: 'instant'` — the site sets an inline smooth scroll-behavior,
+    // and a scroll still gliding back to the top when the shot starts fires
+    // late scroll events (the masthead's is-scrolled toggle) mid-capture.
     const step = Math.max(200, window.innerHeight / 2);
     const total = document.documentElement.scrollHeight;
     for (let y = 0; y <= total; y += step) {
-      window.scrollTo(0, y);
+      window.scrollTo({ top: y, behavior: 'instant' });
       await new Promise((r) => setTimeout(r, 40));
     }
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    while (window.scrollY > 0) await new Promise((r) => setTimeout(r, 20));
     await Promise.all(Array.from(document.images, (img) => img.decode().catch(() => {})));
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
   });
