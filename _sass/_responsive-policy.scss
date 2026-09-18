@@ -98,18 +98,31 @@ $responsive-single-min-content-width: 46rem !default;
 // Shared shell policy:
 // 1. Content uses full width by default.
 // 2. Left author/sidebar rail is enabled only from the left-rail breakpoint.
+//
+// The rail widths are the float grid Susy used to emit for a 12-column layout
+// with 1/4-column gutters placed after each column: a span of n columns is
+// (n + (n - 1) / 4) / 14.75 of the container, one gutter is 0.25 / 14.75.
+// Written out as literals so the compiled CSS is unchanged now that Susy is
+// gone; a fresh layout here should reach for CSS Grid, not these numbers.
 @mixin responsive-shell-content-base {
-  @include span(12 of 12);
+  width: 100%;
+  float: left;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 @mixin responsive-shell-content-with-left-rail {
   @include responsive-up($responsive-left-rail-breakpoint) {
-    @include span(10 of 12 last);
+    width: 83.0508474576%; // 10 of 12, last: no trailing gutter
+    float: right;
+    margin-right: 0;
   }
 }
 
 @mixin responsive-shell-left-rail {
   @include responsive-up($responsive-left-rail-breakpoint) {
-    @include span(2 of 12);
+    width: 15.2542372881%; // 2 of 12
+    float: left;
+    margin-right: 1.6949152542%; // one gutter
   }
 }

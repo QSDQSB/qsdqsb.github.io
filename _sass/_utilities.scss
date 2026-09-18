@@ -147,7 +147,7 @@ body:hover .visually-hidden button {
 .cf { clear: both; }
 
 .wrapper {
-  @include container();
+  @include container;
 }
 
 
@@ -193,9 +193,6 @@ body:hover .visually-hidden button {
 /* file page content container */
 
 .full {
-  // @include responsive-up(desktop){
-  //   margin-right: -1 * span(2.5 of 12) !important;
-  // }
   width: 100%;
   margin: 0 auto;
 }
