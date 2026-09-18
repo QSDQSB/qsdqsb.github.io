@@ -12,19 +12,27 @@
 
 @mixin notice($notice-color) {
   text-align: center;
-  margin: 1em auto !important;  /* override*/
+  margin: 1em auto;
   padding: 1em 1em;
   font-family: 'Barlow', sans-serif;
   font-weight: 200;
-  font-size: $type-size-7 !important;
+  font-size: $type-size-7;
   text-indent: initial; /* override*/
   background-color: mix(rgba(255,255,255,0.2),$notice-color, 0.5);
   max-width: 90%;
 
   border-radius: $border-radius;
   h4 {
-    margin-top: 0 !important; /* override*/
+    margin-top: 0;
     margin-bottom: 0.75em;
+  }
+
+  /* Kramdown's `{: .notice}` lands on a <p>, and inside .page__content the
+     theme's `p` rules (0,1,1) outrank a bare class. Restate the contested
+     values from (0,2,0) rather than shouting them. */
+  @at-root .page__content #{&} {
+    margin: 1em auto;
+    font-size: $type-size-7;
   }
 
   @at-root .page__content #{&} h4 {
@@ -35,7 +43,7 @@
 
   p {
     &:last-child {
-      margin-bottom: 0 !important; /* override*/
+      margin-bottom: 0;
     }
   }
   a {
