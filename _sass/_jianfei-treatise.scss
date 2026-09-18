@@ -78,7 +78,7 @@ body.jianfei-treatise {
       font-weight: 700;
       text-align: left;
       font-size: $type-size-5;
-      color: rgba($primary-color, 0.9) !important;
+      color: rgba($primary-color, 0.9) !important; // @keep — the post's inline `color: whitesmoke`
       margin: 1.8rem 0 0.6rem;
       border-bottom: 0;
       scroll-margin-top: 5rem;
@@ -156,10 +156,8 @@ body.jianfei-treatise {
       font-size: $type-size-4;
       text-align: center;
       letter-spacing: 0.04em;
-      color: $primary-color !important; // normalise the inline `whitesmoke` to the ivory token
-      // !important: the post authors these titles with inline border styling; match
-      // the approach used for .notice--info below and override it to the \midrule.
-      border-bottom: 1px solid rgba($primary-color, 0.28) !important;
+      color: $primary-color !important; // @keep — the post's inline `color: whitesmoke`, normalised to the ivory token
+      border-bottom: 1px solid rgba($primary-color, 0.28) !important; // @keep — the post's inline `border: none`, overridden to the \midrule
       padding-bottom: 0.8rem;
       margin: 0.2rem auto 1.2rem;
     }
@@ -225,21 +223,25 @@ body.jianfei-treatise {
     .text-center, .center-wrapper { text-align: center; }
   }
 
-  /* ---- definitions: no box. Quiet academic aside (override inline bg) ---- */
+  /* ---- definitions: no box. Quiet academic aside. The post authors these
+     asides with an inline `background-color` and `border` shorthand, which
+     only !important can reach. They are also <p>s, so the paragraph rules
+     above (`.page__content > p`, (0,3,2)) outrank this (0,3,1) selector for
+     margin and font-size. ---- */
   .page__content .notice--info {
-    background: transparent !important;
-    box-shadow: none !important;
-    border: 0 !important;
-    border-left: 1px solid rgba($danger-color, 0.85) !important; // a semantic rule wants to be seen
-    border-radius: 0 !important;
+    background: transparent !important; // @keep — the post's inline `background-color`
+    box-shadow: none;
+    border: 0 !important; // @keep — the post's inline `border` shorthand
+    border-left: 1px solid rgba($danger-color, 0.85) !important; // @keep — the post's inline `border` shorthand; a semantic rule wants to be seen
+    border-radius: 0;
     max-width: none;
-    margin: 1.1rem 0 !important;
+    margin: 1.1rem 0 !important; // @keep — specificity dependency, see body.jianfei-treatise .page__content > p
     padding: 0.25rem 0 0.25rem 1.1rem;
     text-align: left;
     font-family: $cmu-serif-family;
     font-weight: 400;
     font-style: italic;
-    font-size: 1em !important;
+    font-size: 1em !important; // @keep — specificity dependency, see body.jianfei-treatise .page__content p
     color: rgba($text-color, 0.78);
     line-height: 1.6;
     .macaron, .barlow { font-family: $cmu-serif-family; font-style: italic; }
@@ -266,7 +268,7 @@ body.jianfei-treatise {
   .jf-unrecorded {
     display: inline-block;
     font-style: italic;
-    text-indent: 0 !important;
+    text-indent: 0 !important; // @keep — specificity dependency, see body.jianfei-treatise .page__content > p
     font-family: $cmu-serif-family;
     // the italic + ruled blank carry the "muted / pending" read; keep the text itself
     // above the ~3:1 floor rather than compounding a low alpha with opacity.
@@ -494,11 +496,11 @@ body.jianfei-treatise {
 /* Reduced motion — everything to final state (dual guard with the JS bail) */
 @include responsive-reduced-motion {
   .js body.jianfei-treatise {
-    .jf-line { transition: none !important; stroke-dashoffset: 0 !important; }
-    .jf-area, .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { opacity: 1 !important; transition: none !important; }
-    .jf-abs-line, .jf-em { animation: none !important; opacity: 1 !important; transform: none !important; }
-    .jf-gust { animation: none !important; transform: none !important; }
-    .jf-day { animation: none !important; opacity: 1 !important; transform: none !important; transition: none !important; }
+    .jf-line { transition: none !important; stroke-dashoffset: 0 !important; } // @keep — reduced-motion kill switch
+    .jf-area, .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { opacity: 1 !important; transition: none !important; } // @keep — reduced-motion kill switch
+    .jf-abs-line, .jf-em { animation: none !important; opacity: 1 !important; transform: none !important; } // @keep — reduced-motion kill switch
+    .jf-gust { animation: none !important; transform: none !important; } // @keep — reduced-motion kill switch
+    .jf-day { animation: none !important; opacity: 1 !important; transform: none !important; transition: none !important; } // @keep — reduced-motion kill switch
   }
 }
 
@@ -513,18 +515,18 @@ body.jianfei-treatise {
   @include responsive-up(112rem) {
     .page__content { position: relative; }
 
-    // NB: must be `.page__content .notice--info` — the base aside rule is
-    // `body.jianfei-treatise .page__content .notice--info !important` (0,3,1); the
-    // earlier `.notice--info` (0,2,1) lost, so the margin pull + font-size never
-    // applied and the note never left the column. Match specificity, win by order.
+    // NB: must be `.page__content .notice--info` — the base aside rule above is
+    // `body.jianfei-treatise .page__content .notice--info` (0,3,1); an earlier
+    // `.notice--info` (0,2,1) lost, so the margin pull + font-size never applied
+    // and the note never left the column. Match specificity, win by order.
     .page__content .notice--info {
       float: right;
       clear: right;
       width: 11rem;
-      margin: 0.35rem -12.5rem 1rem 1.4rem !important;
-      padding: 0.1rem 0 0.1rem 0.9rem !important;
-      border-left: 1px solid rgba($danger-color, 0.85) !important;
-      font-size: 0.76em !important;
+      margin: 0.35rem -12.5rem 1rem 1.4rem !important; // @keep — specificity dependency, see body.jianfei-treatise .page__content > p
+      padding: 0.1rem 0 0.1rem 0.9rem;
+      border-left: 1px solid rgba($danger-color, 0.85) !important; // @keep — the post's inline `border` shorthand
+      font-size: 0.76em !important; // @keep — specificity dependency, see body.jianfei-treatise .page__content p
       line-height: 1.5;
       color: rgba($text-color, 0.7);
       text-align: left;
