@@ -22,3 +22,7 @@ _data/gallery_meta/
 design/
 # local secrets — loaded by scripts/send-letter.mjs, never committed
 .env
+
+# Visual regression harness — only the baseline is tracked.
+tests/visual/current/
+tests/visual/diff/

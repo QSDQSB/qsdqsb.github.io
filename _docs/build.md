@@ -55,6 +55,24 @@ python3 scripts/check-single-use-variables.py --all
 Most of these also run automatically via hooks — see the Guards section in
 CLAUDE.md.
 
+## Visual regression
+
+```bash
+npm run build:fast          # the harness serves _site/ itself; build first
+npm run visual:capture      # (re)write tests/visual/baseline/*.png
+npm run visual:diff         # render again, pixel-diff, exit 1 on any delta
+```
+
+`scripts/visual-baseline.mjs` shoots a fixed page set (home, a TOC post, the
+Jianfei treatise, `/voyage/`, `/voyage/prague/`, `/voyage-by-tags/`, about,
+portfolio, 404, and the search overlay) at 1440×900 and 390×844, full page,
+with `?motion=off` so animations land on their final frame. Map tiles are
+blanked before the shot — they come from the network and would drift the
+diff. Baselines are committed; `current/` and `diff/` are gitignored. Runs
+against the pre-installed Chromium (`CHROMIUM_PATH` overrides). Re-capture
+only after a change that is *meant* to be visible, and commit the new PNGs
+with it.
+
 ## Rake shim
 
 `bundle exec rake generate_thumbnails`, `bundle exec rake build`, and
