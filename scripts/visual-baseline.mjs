@@ -80,11 +80,18 @@ const ABS_TOLERANCE = 40;       // or this many pixels, whichever is larger
 const PIXELMATCH_THRESHOLD = 0.1;
 const SETTLE_MS = 7000; // longest page-side timer (Home reveal fallback) + margin
 
-/** The page set. `setup` runs after load for pages reached by interaction. */
+/**
+ * The page set. `setup` runs after load for pages reached by interaction.
+ * post-bilingual covers the language switch's [hidden] panels; post-notices
+ * covers kramdown `{: .notice}` paragraphs, where `.page__content p` outranks
+ * the notice class — neither is reachable from the other pages.
+ */
 const PAGES = [
   { id: 'home', url: '/' },
   { id: 'post-toc', url: '/posts/shihuqiao/' },
   { id: 'post-jianfei', url: '/posts/jianfei-diary/' },
+  { id: 'post-bilingual', url: '/posts/defined-by-archive/' },
+  { id: 'post-notices', url: '/posts/leetcode-july-challenge/' },
   { id: 'voyage', url: '/voyage/' },
   { id: 'voyage-prague', url: '/voyage/prague/' },
   { id: 'voyage-by-tags', url: '/voyage-by-tags/' },

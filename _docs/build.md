@@ -64,8 +64,9 @@ npm run visual:diff         # render again, pixel-diff, exit 1 on any delta
 ```
 
 `scripts/visual-baseline.mjs` shoots a fixed page set (home, a TOC post, the
-Jianfei treatise, `/voyage/`, `/voyage/prague/`, `/voyage-by-tags/`, about,
-portfolio, 404, and the search overlay) at 1440×900 and 390×844, full page,
+Jianfei treatise, a bilingual post, a post with `{: .notice}` paragraphs,
+`/voyage/`, `/voyage/prague/`, `/voyage-by-tags/`, about, portfolio, 404,
+and the search overlay) at 1440×900 and 390×844, full page,
 with `?motion=off` so animations land on their final frame. Map tiles are
 blanked before the shot — they come from the network and would drift the
 diff. Baselines are committed; `current/` and `diff/` are gitignored. Runs
