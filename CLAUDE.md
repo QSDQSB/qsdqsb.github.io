@@ -174,7 +174,7 @@ Mechanical checks, all scoped to **changes vs `HEAD`** — never the existing ba
 | `check-single-use-variables.py` | — | Single-use entries in `_variables.scss` |
 | `check-house-style.py` | `check:house-style` | Generic-AI register in prose and code |
 | `check-js-sync.py` | `check:js-sync` | `main.min.js` shipping stale |
-| `check-important-ratchet.py` | `check:important` | Net `!important` growth |
+| `check-important-ratchet.py` | `check:important` | Net growth of *unmarked* `!important` — a justified one carries `// @keep — <reason>` on its line and is counted separately |
 | `check-responsive-policy.sh` | `check:responsive-policy` | Raw breakpoints outside `_responsive-policy.scss` |
 | `check-seo-descriptions.py` | `check:seo` | Pages with no real meta description |
 

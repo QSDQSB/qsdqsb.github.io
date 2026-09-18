@@ -48,7 +48,7 @@ npm run check:responsive-policy   # raw @media / breakpoint usage outside _respo
 npm run check:seo                 # meta-description coverage per page
 npm run check:house-style         # generic-AI register in prose + code
 npm run check:js-sync             # main.min.js rebuilt from its sources?
-npm run check:important           # !important count vs HEAD (ratchet)
+npm run check:important           # unmarked !important count vs HEAD (ratchet); `--list` prints them
 python3 scripts/check-single-use-variables.py --all
 ```
 
