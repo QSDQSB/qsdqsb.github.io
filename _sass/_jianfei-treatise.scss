@@ -70,15 +70,13 @@ body.jianfei-treatise {
       scroll-margin-top: 5rem;
     }
 
-    /* subsection headings — "Daily Diet Record", "Weight Record", "Ongoing!…".
-       color !important normalises the post's inline `whitesmoke` (#F5F5F5) on the
-       "Ongoing" h3 to the site's ivory token, so the piece uses one white, not two. */
+    /* subsection headings — "Daily Diet Record", "Weight Record", "Ongoing!…". */
     h3 {
       font-family: $cmu-serif-family;
       font-weight: 700;
       text-align: left;
       font-size: $type-size-5;
-      color: rgba($primary-color, 0.9) !important; // @keep — the post's inline `color: whitesmoke`
+      color: rgba($primary-color, 0.9);
       margin: 1.8rem 0 0.6rem;
       border-bottom: 0;
       scroll-margin-top: 5rem;
@@ -156,8 +154,8 @@ body.jianfei-treatise {
       font-size: $type-size-4;
       text-align: center;
       letter-spacing: 0.04em;
-      color: $primary-color !important; // @keep — the post's inline `color: whitesmoke`, normalised to the ivory token
-      border-bottom: 1px solid rgba($primary-color, 0.28) !important; // @keep — the post's inline `border: none`, overridden to the \midrule
+      color: $primary-color;
+      border-bottom: 1px solid rgba($primary-color, 0.28); // the \midrule
       padding-bottom: 0.8rem;
       margin: 0.2rem auto 1.2rem;
     }
@@ -223,25 +221,23 @@ body.jianfei-treatise {
     .text-center, .center-wrapper { text-align: center; }
   }
 
-  /* ---- definitions: no box. Quiet academic aside. The post authors these
-     asides with an inline `background-color` and `border` shorthand, which
-     only !important can reach. They are also <p>s, so the paragraph rules
-     above (`.page__content > p`, (0,3,2)) outrank this (0,3,1) selector for
-     margin and font-size. ---- */
-  .page__content .notice--info {
-    background: transparent !important; // @keep — the post's inline `background-color`
+  /* ---- definitions: no box. Quiet academic aside. The asides are <p>s, so
+     this selector matches the paragraph rules above (`.page__content p`,
+     (0,3,2)) and wins by order for margin and font-size. ---- */
+  .page__content p.notice--info {
+    background: transparent;
     box-shadow: none;
-    border: 0 !important; // @keep — the post's inline `border` shorthand
-    border-left: 1px solid rgba($danger-color, 0.85) !important; // @keep — the post's inline `border` shorthand; a semantic rule wants to be seen
+    border: 0;
+    border-left: 1px solid rgba($danger-color, 0.85); // a semantic rule wants to be seen
     border-radius: 0;
     max-width: none;
-    margin: 1.1rem 0 !important; // @keep — specificity dependency, see body.jianfei-treatise .page__content > p
+    margin: 1.1rem 0;
     padding: 0.25rem 0 0.25rem 1.1rem;
     text-align: left;
     font-family: $cmu-serif-family;
     font-weight: 400;
     font-style: italic;
-    font-size: 1em !important; // @keep — specificity dependency, see body.jianfei-treatise .page__content p
+    font-size: 1em;
     color: rgba($text-color, 0.78);
     line-height: 1.6;
     .macaron, .barlow { font-family: $cmu-serif-family; font-style: italic; }
@@ -265,10 +261,10 @@ body.jianfei-treatise {
   /* ---- unrecorded attempts (#1, #2 "TO BE UPDATED!") — a "record pending"
      plate: muted italic set over a thin ruled blank, like a form field left
      to be filled in. Verbatim text; the rule carries the meaning. ---- */
-  .jf-unrecorded {
+  .page__content p.jf-unrecorded { // (0,3,2): matches the `> p` indent rule, wins by order
     display: inline-block;
     font-style: italic;
-    text-indent: 0 !important; // @keep — specificity dependency, see body.jianfei-treatise .page__content > p
+    text-indent: 0;
     font-family: $cmu-serif-family;
     // the italic + ruled blank carry the "muted / pending" read; keep the text itself
     // above the ~3:1 floor rather than compounding a low alpha with opacity.
@@ -515,18 +511,18 @@ body.jianfei-treatise {
   @include responsive-up(112rem) {
     .page__content { position: relative; }
 
-    // NB: must be `.page__content .notice--info` — the base aside rule above is
-    // `body.jianfei-treatise .page__content .notice--info` (0,3,1); an earlier
-    // `.notice--info` (0,2,1) lost, so the margin pull + font-size never applied
-    // and the note never left the column. Match specificity, win by order.
-    .page__content .notice--info {
+    // NB: must match the base aside selector above (`.page__content
+    // p.notice--info`, (0,3,2)) — an earlier `.notice--info` (0,2,1) lost, so
+    // the margin pull + font-size never applied and the note never left the
+    // column. Same specificity, later in the file, wins by order.
+    .page__content p.notice--info {
       float: right;
       clear: right;
       width: 11rem;
-      margin: 0.35rem -12.5rem 1rem 1.4rem !important; // @keep — specificity dependency, see body.jianfei-treatise .page__content > p
+      margin: 0.35rem -12.5rem 1rem 1.4rem;
       padding: 0.1rem 0 0.1rem 0.9rem;
-      border-left: 1px solid rgba($danger-color, 0.85) !important; // @keep — the post's inline `border` shorthand
-      font-size: 0.76em !important; // @keep — specificity dependency, see body.jianfei-treatise .page__content p
+      border-left: 1px solid rgba($danger-color, 0.85);
+      font-size: 0.76em;
       line-height: 1.5;
       color: rgba($text-color, 0.7);
       text-align: left;
