@@ -165,6 +165,8 @@
     transform $transform-transition,
     opacity $nav-content-fade-duration $nav-shell-ease;
 
+  html.motion-off & { transition: none; }
+
   &::before {
     content: "";
     position: absolute;
@@ -177,6 +179,8 @@
     transition:
       opacity 0.24s $cubic-bezier-smooth,
       transform $nav-action-sweep-duration $cubic-bezier-smooth;
+
+    html.motion-off & { transition: none; }
   }
 }
 

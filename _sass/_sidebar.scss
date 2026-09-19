@@ -50,6 +50,7 @@
     padding-right: 0;
     opacity: 0.8;
     transition: $cubic-bezier-default;
+    html.motion-off & { transition: none; }
 
     &:hover {
       opacity: 1;
@@ -80,6 +81,7 @@
     margin-right: 0;
     opacity: 0.8;
     transition: $cubic-bezier-default;
+    html.motion-off & { transition: none; }
 
     &:hover {
       opacity: 1;
