@@ -98,6 +98,8 @@ npm test
 
 **Rule:** Never hand-edit `main.min.js`. Edit `_main.js`, then run `npm run build:js`.
 
+**Visual changes are verified by pixel diff, not by eye.** `npm run visual:build && npm run visual:diff` against the committed baseline before committing anything under `_sass/`, `_layouts/` or `_includes/`; re-capture only for a change that is meant to be visible, and commit the new PNGs with it.
+
 **Thumbnails are not tracked** — regenerated from `gallery/**` on every deploy and as a prerequisite of `build`/`serve`.
 
 → `_docs/build.md` for the full pipeline, the `generate:depth` authoring step, the rake shim, and all check commands.
@@ -110,11 +112,12 @@ npm test
 
 This site has historical drift the wrong way — the latter half of `_variables.scss` holds many single-use entries (`$nav-action-sweep-duration`, `$search-panel-offset-y`…). Don't add to that pile.
 
-Three rules that bite silently:
+Four rules that bite silently:
 
 1. **`_sass/_responsive-policy.scss` owns all breakpoint mixins.** Raw `@media`, `@container`, or `@include breakpoint(...)` anywhere else is a violation.
 2. **Removing a token means tracing it across all of `_sass/**`** — not just touched files. Incomplete traces are where janitor mistakes come from.
 3. **A cleanup replacement drifting ≥20% relative or ≥0.25rem absolute** is a major delta and needs explicit user confirmation. Pure inlining doesn't.
+4. **No `!important`.** A rule that loses a fight names its elements more precisely; a state (hover, `html.motion-off`, reduced motion) is declared beside the rule it counters, at the same specificity or more; third-party CSS is outranked by one more class; inline styles stay out of content. The motion kill switches are guaranteed by `npm run visual:audit`, not by shouting. The ratchet refuses any increase.
 
 `_sass/vendor/**` is exempt from all of the above.
 
@@ -174,7 +177,7 @@ Mechanical checks, all scoped to **changes vs `HEAD`** — never the existing ba
 | `check-single-use-variables.py` | — | Single-use entries in `_variables.scss` |
 | `check-house-style.py` | `check:house-style` | Generic-AI register in prose and code |
 | `check-js-sync.py` | `check:js-sync` | `main.min.js` shipping stale |
-| `check-important-ratchet.py` | `check:important` | Net growth of *unmarked* `!important` — a justified one carries `// @keep — <reason>` on its line and is counted separately |
+| `check-important-ratchet.py` | `check:important` | Any `!important` growth — the stylesheet uses none (the few left in `_gallery_view.scss` go with its rebuild) |
 | `check-responsive-policy.sh` | `check:responsive-policy` | Raw breakpoints outside `_responsive-policy.scss` |
 | `check-seo-descriptions.py` | `check:seo` | Pages with no real meta description |
 

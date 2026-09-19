@@ -48,7 +48,7 @@ npm run check:responsive-policy   # raw @media / breakpoint usage outside _respo
 npm run check:seo                 # meta-description coverage per page
 npm run check:house-style         # generic-AI register in prose + code
 npm run check:js-sync             # main.min.js rebuilt from its sources?
-npm run check:important           # unmarked !important count vs HEAD (ratchet); `--list` prints them
+npm run check:important           # !important count vs HEAD (ratchet, the stylesheet uses none); `--list`
 python3 scripts/check-single-use-variables.py --all
 ```
 
@@ -58,21 +58,36 @@ CLAUDE.md.
 ## Visual regression
 
 ```bash
-npm run build:fast          # the harness serves _site/ itself; build first
+npm run visual:build        # seeded Jekyll build of _site/ (see below)
 npm run visual:capture      # (re)write tests/visual/baseline/*.png
 npm run visual:diff         # render again, pixel-diff, exit 1 on any delta
+npm run visual:audit        # under motion-off, nothing may still animate
 ```
 
 `scripts/visual-baseline.mjs` shoots a fixed page set (home, a TOC post, the
 Jianfei treatise, a bilingual post, a post with `{: .notice}` paragraphs,
 `/voyage/`, `/voyage/prague/`, `/voyage-by-tags/`, about, portfolio, 404,
 and the search overlay) at 1440×900 and 390×844, full page,
-with `?motion=off` so animations land on their final frame. Map tiles are
-blanked before the shot — they come from the network and would drift the
-diff. Baselines are committed; `current/` and `diff/` are gitignored. Runs
-against the pre-installed Chromium (`CHROMIUM_PATH` overrides). Re-capture
-only after a change that is *meant* to be visible, and commit the new PNGs
-with it.
+with `?motion=off` so animations land on their final frame; the motion-heavy
+pages are shot a second time with the OS reduced-motion preference on. Map
+tiles are blanked before the shot — they come from the network and would
+drift the diff. Baselines are committed; `current/` and `diff/` are
+gitignored. Runs against the pre-installed Chromium (`CHROMIUM_PATH`
+overrides). Re-capture only after a change that is *meant* to be visible,
+and commit the new PNGs with it.
+
+Use `visual:build`, not `build:fast`, before a diff: several layouts pick
+content with Liquid's `sample` (the QSD logo, related and random posts, the
+word card), so an ordinary build never matches the previous one.
+`visual:build` seeds Ruby's PRNG first.
+
+`visual:audit` is the behavioural half. It loads every page under motion-off
+and lists each element whose computed style still carries a running
+animation or a live transition; the list must be empty. That is the
+guarantee the motion kill switches used to make with `!important`: the
+universal `html.motion-off *` floor is (0,1,1), and any motion rule written
+with more specificity owns a `html.motion-off` counterpart beside it in its
+component file. Add one, run the audit.
 
 ## Rake shim
 
