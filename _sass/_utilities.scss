@@ -31,27 +31,27 @@
 .screen-reader-text,
 .screen-reader-text span,
 .screen-reader-shortcut {
-  position: absolute !important; // @keep — visually-hidden utility
+  position: absolute;
   clip: rect(1px, 1px, 1px, 1px);
-  height: 1px !important; // @keep — visually-hidden utility
-  width: 1px !important; // @keep — visually-hidden utility
-  border: 0 !important; // @keep — visually-hidden utility
+  height: 1px;
+  width: 1px;
+  border: 0;
   overflow: hidden;
 }
 
 body:hover .visually-hidden a,
 body:hover .visually-hidden input,
 body:hover .visually-hidden button {
-  display: none !important; // @keep — visually-hidden utility
+  display: none;
 }
 
 /* screen readers */
 
 .screen-reader-text:focus,
 .screen-reader-shortcut:focus  {
-  clip: auto !important; // @keep — screen-reader focus reveal
-  height: auto !important; // @keep — screen-reader focus reveal
-  width: auto !important; // @keep — screen-reader focus reveal
+  clip: auto;
+  height: auto;
+  width: auto;
   display: block;
   font-size: 1em;
   font-weight: bold;
