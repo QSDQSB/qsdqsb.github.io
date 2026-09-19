@@ -9,6 +9,15 @@
    The JS side (`window.QSD_MOTION_OFF`) makes the animation scripts take
    their existing reduced-motion skip paths; this file is the CSS backstop
    for anything styled to move.
+
+   It is a floor, not a shout. The universal rule below is (0,1,1) — (0,1,2)
+   for pseudo-elements — which covers every plainly-selected transition and
+   animation. A motion rule written with more specificity than that owns its
+   own `html.motion-off` counterpart next to it in its component file, the
+   same way it would own a hover or a reduced-motion state. Nothing here
+   uses !important, so a stray rule cannot be silenced by accident either:
+   `npm run visual:audit` loads the page set under motion-off and fails on
+   anything still moving.
    ========================================================================== */
 
 html.motion-off {
@@ -17,13 +26,7 @@ html.motion-off {
   *,
   *::before,
   *::after {
-    animation: none !important; // @keep — motion-off kill switch, must beat every animation
-    transition: none !important; // @keep — motion-off kill switch, must beat every transition
-  }
-
-  /* Scroll-reveal initial states must not hide content. */
-  .reveal-on-scroll {
-    opacity: 1 !important; // @keep — motion-off kill switch, reveal must land
-    transform: none !important; // @keep — motion-off kill switch, reveal must land
+    animation: none;
+    transition: none;
   }
 }

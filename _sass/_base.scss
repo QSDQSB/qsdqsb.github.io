@@ -42,22 +42,6 @@ a {
   border-radius: $border-radius;
 }
 
-#background-gradient{
-  color:rgba(255, 255, 255, .1);
-  background: linear-gradient(to right, 120deg, rgba(76, 217, 105,0.05), rgba(52, 170, 220,0.08),     rgba(88, 86, 217,0.02), rgba(255, 45, 83,0.03),       rgba(255, 45, 83,0.02), rgba(88, 86, 217,0.04),       rgba(52, 170, 220,0.03), rgba(76, 217, 105,0.05));
-  background-size: 400%;
-  animation:sTransition 10s linear infinite;
-}
-
-@keyframes sTransition{
-  0%{
-    background-position:0%;
-  }
-  
-  100%{
-    background-position:400%;
-  }
-}
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0.5em 0 0.5em;

@@ -20,6 +20,7 @@
   padding-left: 1rem;
   padding-right: 1rem;
   animation: intro 0.3s both;
+  html.motion-off & { animation: none; }
   // animation-delay: 0.15s;
   container-type: inline-size;
 
@@ -580,6 +581,7 @@ body.overlay-opening-enabled .page__hero--overlay .page__lead-inner {
     clip-path $global-transition-time $cubic-bezier-smooth,
     transform $global-transition-time $cubic-bezier-smooth;
   will-change: opacity, clip-path, transform;
+  html.motion-off & { transition: none; }
 }
 
 body.overlay-opening-enabled:not(.overlay-opening-excerpt-visible) .page__hero--overlay .page__lead-inner {
@@ -617,9 +619,12 @@ html.is-resizing {
   .page__hero .page__title,
   .page__hero .page__lead,
   .page__hero .page__meta {
-    transition-duration: $resize-runtime-transition-duration !important; // @keep — is-resizing clamp, must beat every transition
-    animation-duration: $resize-runtime-transition-duration !important; // @keep — is-resizing clamp, must beat every animation
-    animation-delay: 0s !important; // @keep — is-resizing clamp, must beat every animation
+    // (0,2,2)+ against durations declared at (0,2,0) or less — the shorthands
+    // on .masthead__menu, .greedy-nav and .page__hero; the state rules above
+    // only set delays, which these clamp too.
+    transition-duration: $resize-runtime-transition-duration;
+    animation-duration: $resize-runtime-transition-duration;
+    animation-delay: 0s;
   }
 }
 

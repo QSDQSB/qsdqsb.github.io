@@ -294,6 +294,7 @@ body.layout--home {
     display: block;
     transform: translateY(125%);   /* start clear of the (now taller) clip box so nothing peeks pre-reveal */
     animation: home-line-up 1.15s $cubic-bezier-smooth forwards;
+    html.motion-off & { animation: none; }
   }
   .ln:nth-child(1) > span { animation-delay: 0.42s; }
   .ln:nth-child(2) > span { animation-delay: 0.54s; }
@@ -717,6 +718,9 @@ html.home-reveal-ready .reveal.is-in { opacity: 1; transform: none; }
 /* stagger the door rows once the index reveals */
 html.home-reveal-ready .home__doors .door { opacity: 0; transform: translateY(20px); transition: opacity 0.7s $cubic-bezier-smooth, transform 0.8s $cubic-bezier-smooth, padding-left 0.5s $cubic-bezier-smooth; }
 html.home-reveal-ready .home__index.is-in .door { opacity: 1; transform: none; }
+/* Motion off (automated renderers): the observer may still arm; nothing glides. */
+html.motion-off.home-reveal-ready .reveal,
+html.motion-off.home-reveal-ready .home__doors .door { transition: none; }
 .home__doors li:nth-child(1) .door { transition-delay: 0.05s; }
 .home__doors li:nth-child(2) .door { transition-delay: 0.13s; }
 .home__doors li:nth-child(3) .door { transition-delay: 0.21s; }
@@ -781,7 +785,7 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
   .home__hero-blobs .blob,
   .home__motto > span, .home__wordmark .ln > span, .home__wordmark .gold,
   .home__plate,
-  .home__scroll-hint, .home__scroll-hint::after { animation: none !important; } // @keep — reduced-motion kill switch
+  .home__scroll-hint, .home__scroll-hint::after { animation: none; } // each selector matches its animating rule; later, so it wins
   .home__wordmark .ln > span, .home__motto > span { transform: none; }
   .home__plate { opacity: 1; }
   /* Scroll cue: no fall — a static spark resting at the end of its hairline. */

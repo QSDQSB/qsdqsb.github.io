@@ -743,25 +743,39 @@
   pointer-events: none;
 }
 
-@include responsive-reduced-motion {
+// Every selector here matches (or outranks) the rule that gives the element
+// its motion, and the block sits after them all, so it wins by order. The
+// motion-off block below reuses the list.
+@mixin map-motion-still {
   .map-container .leaflet-control-zoom a,
   .map-container .leaflet-control-reset .leaflet-control-reset-button,
   .map-container .leaflet-control-fullscreen .leaflet-control-fullscreen-button,
   .map-container .leaflet-interactive,
   .map-container .map-legend--atlas,
+  .map-container .map-legend--atlas .legend-pill,
   .map-container .map-legend-palette,
+  .map-container .map-legend-palette .legend-palette-close,
   .map-container .map-legend-palette .legend-item,
   .map-container .map-legend-palette .legend-item .legend-color,
   .map-container .popup-action,
   .map-container .leaflet-popup .leaflet-popup-close-button,
   .map-container .map-veil,
   .map-container .map-veil__cta {
-    transition: none !important; // @keep — reduced-motion kill switch
+    transition: none;
   }
 
   .map-container .map-veil__spinner {
-    animation: none !important; // @keep — reduced-motion kill switch
+    animation: none;
   }
+}
+
+/* Motion off (automated renderers). */
+html.motion-off {
+  @include map-motion-still;
+}
+
+@include responsive-reduced-motion {
+  @include map-motion-still;
 
   .map-container--booting .map-legend--atlas,
   .map-container--booting .map-legend-palette {

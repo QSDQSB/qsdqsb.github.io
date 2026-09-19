@@ -445,6 +445,13 @@ body.jianfei-treatise {
   .jf-gust { animation: jf-gust-drift 2.6s $cubic-bezier-smooth infinite; }
 }
 
+/* Motion off (automated renderers): every gesture above lands at once. Each
+   selector outranks the one that set it moving. */
+html.motion-off.js body.jianfei-treatise {
+  .jf-exhibit.jf-in .jf-day, .jf-abs-line, .jf-em, .jf-gust { animation: none; }
+  .jf-day, .jf-line, .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { transition: none; }
+}
+
 @keyframes jf-abs-rise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
 @keyframes jf-abs-illumine { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
 @keyframes jf-gust-drift {
@@ -489,14 +496,16 @@ body.jianfei-treatise {
   }
 }
 
-/* Reduced motion — everything to final state (dual guard with the JS bail) */
+/* Reduced motion — everything to final state (dual guard with the JS bail).
+   Same selectors as the reveal block above, later in the file, so they win by
+   order; the dealt-in day-card needs its full (0,5,1) selector to do so. */
 @include responsive-reduced-motion {
   .js body.jianfei-treatise {
-    .jf-line { transition: none !important; stroke-dashoffset: 0 !important; } // @keep — reduced-motion kill switch
-    .jf-area, .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { opacity: 1 !important; transition: none !important; } // @keep — reduced-motion kill switch
-    .jf-abs-line, .jf-em { animation: none !important; opacity: 1 !important; transform: none !important; } // @keep — reduced-motion kill switch
-    .jf-gust { animation: none !important; transform: none !important; } // @keep — reduced-motion kill switch
-    .jf-day { animation: none !important; opacity: 1 !important; transform: none !important; transition: none !important; } // @keep — reduced-motion kill switch
+    .jf-line { transition: none; stroke-dashoffset: 0; }
+    .jf-area, .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { opacity: 1; transition: none; }
+    .jf-abs-line, .jf-em { animation: none; opacity: 1; transform: none; }
+    .jf-gust { animation: none; transform: none; }
+    .jf-day, .jf-exhibit.jf-in .jf-day { animation: none; opacity: 1; transform: none; transition: none; }
   }
 }
 

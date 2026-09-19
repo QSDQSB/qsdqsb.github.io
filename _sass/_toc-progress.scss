@@ -165,6 +165,12 @@
   animation: toc-pulse 2s ease-in-out infinite;
 }
 
+/* Motion off (automated renderers): no pulse, no glide. */
+html.motion-off .toc__menu a.toc-active {
+  animation: none;
+  transition: none;
+}
+
 /* Respect reduced motion preference */
 @include responsive-reduced-motion {
   .toc-progress-indicator {

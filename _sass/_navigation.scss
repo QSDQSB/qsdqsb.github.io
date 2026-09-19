@@ -391,6 +391,7 @@
   }
 
   .hidden-links {
+    html.motion-off & { transition: none; }
     position: absolute;
     top: 100%;
     right: 0;

@@ -527,6 +527,7 @@ a.reversefootnote {
   content:" ";
   display:inline-block;
 }
+html.motion-off .text-type-writer span span { animation: none; }
 
 @keyframes type-writer-complete-typing{
   30%,100% {width:100%}
