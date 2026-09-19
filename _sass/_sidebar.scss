@@ -50,6 +50,7 @@
     padding-right: 0;
     opacity: 0.8;
     transition: $cubic-bezier-default;
+    html.motion-off & { transition: none; }
 
     &:hover {
       opacity: 1;
@@ -80,6 +81,7 @@
     margin-right: 0;
     opacity: 0.8;
     transition: $cubic-bezier-default;
+    html.motion-off & { transition: none; }
 
     &:hover {
       opacity: 1;
@@ -221,7 +223,7 @@
 }
 
 .author__name {
-  font-family: $sans-serif !important;
+  font-family: $sans-serif;
   display: none;
   margin: 0;
   @include responsive-up(desktop) {
@@ -232,6 +234,7 @@
   }
 }
 .sidebar .author__name {
+  font-family: $sans-serif; // outranks `.sidebar h3`, which sets $sans-serif-narrow
   font-size: $type-size-4;
 }
 

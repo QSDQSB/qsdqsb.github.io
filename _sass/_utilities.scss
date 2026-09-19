@@ -31,27 +31,27 @@
 .screen-reader-text,
 .screen-reader-text span,
 .screen-reader-shortcut {
-  position: absolute !important;
+  position: absolute;
   clip: rect(1px, 1px, 1px, 1px);
-  height: 1px !important;
-  width: 1px !important;
-  border: 0 !important;
+  height: 1px;
+  width: 1px;
+  border: 0;
   overflow: hidden;
 }
 
 body:hover .visually-hidden a,
 body:hover .visually-hidden input,
 body:hover .visually-hidden button {
-  display: none !important;
+  display: none;
 }
 
 /* screen readers */
 
 .screen-reader-text:focus,
 .screen-reader-shortcut:focus  {
-  clip: auto !important;
-  height: auto !important;
-  width: auto !important;
+  clip: auto;
+  height: auto;
+  width: auto;
   display: block;
   font-size: 1em;
   font-weight: bold;
@@ -147,7 +147,7 @@ body:hover .visually-hidden button {
 .cf { clear: both; }
 
 .wrapper {
-  @include container();
+  @include container;
 }
 
 
@@ -193,9 +193,6 @@ body:hover .visually-hidden button {
 /* file page content container */
 
 .full {
-  // @include responsive-up(desktop){
-  //   margin-right: -1 * span(2.5 of 12) !important;
-  // }
   width: 100%;
   margin: 0 auto;
 }
@@ -239,7 +236,7 @@ body:hover .visually-hidden button {
     color: #ff88d1;
   }
   .fa-business-time {
-    color: #32506d !important;
+    color: #32506d;
   }
   .fa-lastfm,
   .fa-lastfm-square {
@@ -530,6 +527,7 @@ a.reversefootnote {
   content:" ";
   display:inline-block;
 }
+html.motion-off .text-type-writer span span { animation: none; }
 
 @keyframes type-writer-complete-typing{
   30%,100% {width:100%}
