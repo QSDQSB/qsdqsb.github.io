@@ -53,7 +53,8 @@
     "check:gallery": "node scripts/check-gallery-integrity.js",
     "visual:build": "RUBYOPT=\"-E utf-8:utf-8\" bundle exec ruby -e 'srand(7); load Gem.bin_path(\"jekyll\", \"jekyll\")' -- build",
     "visual:capture": "node scripts/visual-baseline.mjs capture",
-    "visual:diff": "node scripts/visual-baseline.mjs diff"
+    "visual:diff": "node scripts/visual-baseline.mjs diff",
+    "visual:audit": "node scripts/visual-baseline.mjs audit"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"
