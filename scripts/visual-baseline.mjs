@@ -6,6 +6,7 @@
  *   npm run visual:build       # seeded Jekyll build of _site/ (see below)
  *   npm run visual:capture     # (re)write tests/visual/baseline/*.png
  *   npm run visual:diff        # render again, compare, exit 1 on any delta
+ *   npm run visual:audit       # assert nothing animates under motion-off
  *
  * Capture and diff expect a built site in `_site/` and serve it themselves
  * on a free localhost port. Build it with `visual:build`, not `build:fast`:
@@ -37,6 +38,17 @@
  * Leaflet itself is served from the local `leaflet` package instead of
  * unpkg (same version, same bytes, so the SRI hashes still pass); sandboxed
  * runners often cannot reach the CDN, and without it the map never mounts.
+ *
+ * Profiles. Every page is shot at desktop and mobile. Pages flagged
+ * `motion: true` are also shot with the OS reduced-motion preference on
+ * (desktop-reduced, mobile-reduced), so the `prefers-reduced-motion`
+ * rules — the site's kill switches — are pixel-checked too.
+ *
+ * Audit. `audit` loads each page under motion-off and lists every element
+ * whose computed style still has a running animation or a live transition.
+ * The kill switches exist so that list is empty; the command exits 1 when
+ * it is not. It is the behavioural test behind the pixel one: a screenshot
+ * proves the final frame, the audit proves nothing is still moving.
  *
  * Tolerance. pixelmatch runs with anti-aliasing detection on, and a page
  * still passes if the remaining delta is at most DIFF_TOLERANCE of its
@@ -87,13 +99,13 @@ const SETTLE_MS = 7000; // longest page-side timer (Home reveal fallback) + marg
  * the notice class — neither is reachable from the other pages.
  */
 const PAGES = [
-  { id: 'home', url: '/' },
-  { id: 'post-toc', url: '/posts/shihuqiao/' },
-  { id: 'post-jianfei', url: '/posts/jianfei-diary/' },
+  { id: 'home', url: '/', motion: true },
+  { id: 'post-toc', url: '/posts/shihuqiao/', motion: true },
+  { id: 'post-jianfei', url: '/posts/jianfei-diary/', motion: true },
   { id: 'post-bilingual', url: '/posts/defined-by-archive/' },
   { id: 'post-notices', url: '/posts/leetcode-july-challenge/' },
-  { id: 'voyage', url: '/voyage/' },
-  { id: 'voyage-prague', url: '/voyage/prague/' },
+  { id: 'voyage', url: '/voyage/', motion: true },
+  { id: 'voyage-prague', url: '/voyage/prague/', motion: true },
   { id: 'voyage-by-tags', url: '/voyage-by-tags/' },
   { id: 'about', url: '/about/' },
   { id: 'portfolio', url: '/portfolio/' },
@@ -117,14 +129,13 @@ const PAGES = [
   },
 ];
 
+const DESKTOP = { viewport: { width: 1440, height: 900 } };
+const MOBILE = { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
 const VIEWPORTS = {
-  desktop: { viewport: { width: 1440, height: 900 } },
-  mobile: {
-    viewport: { width: 390, height: 844 },
-    isMobile: true,
-    hasTouch: true,
-    deviceScaleFactor: 1,
-  },
+  desktop: DESKTOP,
+  mobile: MOBILE,
+  'desktop-reduced': { ...DESKTOP, reducedMotion: 'reduce', motionOnly: true },
+  'mobile-reduced': { ...MOBILE, reducedMotion: 'reduce', motionOnly: true },
 };
 
 const MIME = {
@@ -240,13 +251,14 @@ async function settle(page, startedAt) {
   await page.waitForTimeout(300);
 }
 
-async function shoot(browser, baseUrl, pageDef, viewportName, outDir) {
+async function openPage(browser, viewportName) {
+  const { motionOnly, ...options } = VIEWPORTS[viewportName];
   const context = await browser.newContext({
-    ...VIEWPORTS[viewportName],
+    reducedMotion: 'no-preference',
+    ...options,
     colorScheme: 'dark',
     locale: 'en-GB',
     timezoneId: 'UTC',
-    reducedMotion: 'no-preference',
   });
   await context.addInitScript(() => {
     try { localStorage.setItem('qsd:welcome-seen', '1'); } catch (e) { /* storage blocked */ }
@@ -268,6 +280,11 @@ async function shoot(browser, baseUrl, pageDef, viewportName, outDir) {
     });
   });
   const page = await context.newPage();
+  return { context, page };
+}
+
+async function shoot(browser, baseUrl, pageDef, viewportName, outDir) {
+  const { context, page } = await openPage(browser, viewportName);
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   try {
@@ -280,6 +297,35 @@ async function shoot(browser, baseUrl, pageDef, viewportName, outDir) {
     const file = path.join(outDir, `${pageDef.id}--${viewportName}.png`);
     await page.screenshot({ path: file, fullPage: true, animations: 'disabled' });
     return { file, errors };
+  } finally {
+    await context.close();
+  }
+}
+
+/** Elements still moving under motion-off. Empty is the only passing answer. */
+async function audit(browser, baseUrl, pageDef, viewportName) {
+  const { context, page } = await openPage(browser, viewportName);
+  try {
+    await page.goto(`${baseUrl}${pageDef.url}?motion=off`, { waitUntil: 'load', timeout: 60000 });
+    await page.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
+    await page.waitForTimeout(2500);
+    return await page.evaluate(() => {
+      const label = (el, pseudo) => {
+        const cls = typeof el.className === 'string' ? el.className.trim().split(/\s+/).filter(Boolean).map((c) => `.${c}`).join('') : '';
+        return `${el.tagName.toLowerCase()}${el.id ? `#${el.id}` : ''}${cls}${pseudo}`;
+      };
+      const moving = [];
+      for (const el of document.querySelectorAll('*')) {
+        for (const pseudo of ['', '::before', '::after']) {
+          const cs = getComputedStyle(el, pseudo || null);
+          if (pseudo && cs.content === 'none') continue;
+          if (cs.animationName && cs.animationName !== 'none') moving.push(`${label(el, pseudo)} — animation ${cs.animationName}`);
+          const durations = (cs.transitionDuration || '').split(',').map(parseFloat);
+          if (durations.some((d) => d > 0)) moving.push(`${label(el, pseudo)} — transition ${cs.transitionProperty} ${cs.transitionDuration}`);
+        }
+      }
+      return [...new Set(moving)];
+    });
   } finally {
     await context.close();
   }
@@ -322,8 +368,8 @@ function compare(id, viewportName) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  if (!['capture', 'diff'].includes(args.command)) {
-    console.error('Usage: visual-baseline.mjs <capture|diff> [--only ids] [--viewport desktop|mobile] [--site dir]');
+  if (!['capture', 'diff', 'audit'].includes(args.command)) {
+    console.error('Usage: visual-baseline.mjs <capture|diff|audit> [--only ids] [--viewport name] [--site dir]');
     return 2;
   }
   const siteDir = path.resolve(ROOT, args.site);
@@ -341,6 +387,7 @@ async function main() {
     console.error(`Unknown viewport. Known: ${Object.keys(VIEWPORTS).join(', ')}`);
     return 2;
   }
+  const viewportsFor = (pageDef) => viewports.filter((v) => pageDef.motion || !VIEWPORTS[v].motionOnly);
 
   const outDir = args.command === 'capture' ? BASELINE_DIR : CURRENT_DIR;
   fs.mkdirSync(outDir, { recursive: true });
@@ -357,8 +404,20 @@ async function main() {
 
   let failures = 0;
   try {
+    if (args.command === 'audit') {
+      for (const pageDef of pages) {
+        for (const viewportName of (args.viewport ? viewports : ['desktop', 'mobile'])) {
+          const moving = await audit(browser, baseUrl, pageDef, viewportName);
+          if (moving.length) failures += 1;
+          console.log(`${moving.length ? 'FAIL    ' : 'ok      '}  ${pageDef.id}--${viewportName}  ${moving.length} still moving`);
+          for (const m of moving.slice(0, 20)) console.log(`            ${m}`);
+        }
+      }
+      console.log(failures ? `\n${failures} page(s) still animate under motion-off.` : '\nMotion-off audit clean.');
+      return failures ? 1 : 0;
+    }
     for (const pageDef of pages) {
-      for (const viewportName of viewports) {
+      for (const viewportName of viewportsFor(pageDef)) {
         const { file, errors } = await shoot(browser, baseUrl, pageDef, viewportName, outDir);
         const label = path.basename(file);
         if (errors.length) console.log(`          ${label}: ${errors.length} page error(s) — ${errors[0]}`);
