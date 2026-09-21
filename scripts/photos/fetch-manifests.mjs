@@ -31,15 +31,28 @@ const require = createRequire(import.meta.url);
 const { referencedGalleries } = require('../check-gallery-integrity.js');
 
 const args = parseArgs(process.argv.slice(2));
-const TIMEOUT_MS = 10000;
+// Per-request and whole-run ceilings. Galleries are fetched in parallel, so
+// an unreachable or slow host costs the build seconds, never minutes.
+const TIMEOUT_MS = 5000;
+const BUDGET_MS = 30000;
+const PARALLEL = 8;
 
-async function fetchMachine(gallery, local) {
+async function fetchMachine(gallery, local, signal) {
   if (local) return local.getJson(`${gallery}/${MANIFEST_FILE}`);
   const url = `${env.publicBase}/${gallery}/${MANIFEST_FILE}`;
-  const r = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const r = await fetch(url, { signal: AbortSignal.any([signal, AbortSignal.timeout(TIMEOUT_MS)]) });
   if (r.status === 404) return null;
   if (!r.ok) throw new Error(`${r.status} from ${url}`);
   return r.json();
+}
+
+/** Run `fn` over `items` with at most `limit` in flight; results keep input order. */
+async function mapLimited(items, limit, fn) {
+  const out = new Array(items.length); let next = 0;
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, async () => {
+    for (let i = next++; i < items.length; i = next++) out[i] = await fn(items[i], i);
+  }));
+  return out;
 }
 
 function readAuthored(gallery) {
@@ -57,22 +70,32 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
   const index = { generated: new Date().toISOString(), base: env.publicBase, galleries: {} };
   let unreachable = 0;
 
-  for (const gallery of names) {
+  // One budget for the whole run: when it expires, every fetch still in
+  // flight aborts and those galleries fall back like any unreachable one.
+  const budget = new AbortController();
+  const budgetTimer = setTimeout(() => budget.abort(new Error(`fetch budget of ${BUDGET_MS} ms exhausted`)), BUDGET_MS);
+  const fetched = await mapLimited(names, PARALLEL, async (gallery) => {
+    try { return { machine: await fetchMachine(gallery, local, budget.signal), error: null }; }
+    catch (e) { return { machine: null, error: e.cause?.message || e.message }; }
+  });
+  clearTimeout(budgetTimer);
+
+  names.forEach((gallery, i) => {
     const out = path.join(PATHS.mergedDir, `${galleryKey(gallery)}.json`);
     const { doc, problems } = readAuthored(gallery);
-    let machine = null, note = null;
-    try { machine = await fetchMachine(gallery, local); }
-    catch (e) {
+    const { machine, error } = fetched[i];
+    let note = null;
+    if (error) {
       unreachable++;
-      if (fs.existsSync(out)) { note = `bucket unreachable (${e.message}); kept the previous merge`; index.galleries[gallery] = { ...summary(JSON.parse(fs.readFileSync(out, 'utf8'))), note }; continue; }
-      note = `bucket unreachable (${e.message}); no previous merge`;
+      if (fs.existsSync(out)) { note = `bucket unreachable (${error}); kept the previous merge`; index.galleries[gallery] = { ...summary(JSON.parse(fs.readFileSync(out, 'utf8'))), note }; return; }
+      note = `bucket unreachable (${error}); no previous merge`;
     }
     const merged = mergeManifest(gallery, machine, doc, env.publicBase);
     merged.warnings.push(...problems);
     if (note) merged.warnings.push(note);
     fs.writeFileSync(out, JSON.stringify(merged, null, 2) + '\n');
     index.galleries[gallery] = summary(merged);
-  }
+  });
   fs.writeFileSync(path.join(PATHS.mergedDir, '_index.json'), JSON.stringify(index, null, 2) + '\n');
   return { index, unreachable };
 }
