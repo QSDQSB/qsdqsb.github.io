@@ -268,6 +268,7 @@
     text-decoration: none;
     border-bottom: 1px solid rgba($text-color, 0.2);
     transition: color 0.3s ease, border-color 0.3s ease;
+    html.motion-off & { transition: none; }
 
     &:hover,
     &:focus-visible {

@@ -13,9 +13,9 @@ for_agents/
 # Generated gallery thumbnails — produced by scripts/generate-gallery-assets.mjs.
 # CI generates a fresh set on every push; locally, `npm run build|serve` runs
 # the same script as a prerequisite. No thumbnail format is tracked in git.
-images/thumbnails/gallery/**/*.jpg
-images/thumbnails/gallery/**/*.jpeg
-images/thumbnails/gallery/**/*.webp
+images/thumbnails/gallery/**/*.[jJ][pP][gG]
+images/thumbnails/gallery/**/*.[jJ][pP][eE][gG]
+images/thumbnails/gallery/**/*.[wW][eE][bB][pP]
 _data/gallery_meta/
 
 # Photo pipeline (see _docs/photos-pipeline.md). Local originals are never
@@ -30,3 +30,10 @@ _data/gallery_meta/
 design/
 # local secrets — loaded by scripts/send-letter.mjs, never committed
 .env
+
+# Python bytecode from importing a scripts/check-*.py module
+__pycache__/
+
+# Visual regression harness — only the baseline is tracked.
+tests/visual/current/
+tests/visual/diff/

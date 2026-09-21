@@ -24,7 +24,7 @@
 }
 
 [data-bilingual].is-bilingual-enhanced > [data-bilingual-lang][hidden] {
-  display: none !important;
+  display: none;
 }
 
 [data-bilingual].is-bilingual-enhanced > [data-bilingual-lang]:not([hidden]) > :first-child {
