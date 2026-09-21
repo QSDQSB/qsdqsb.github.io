@@ -67,8 +67,6 @@ $link-color-hover           : #cbf5dd;
    Breakpoints
    ========================================================================== */
 
-@include breakpoint-set("to ems", true);
-
 $small: 37.5rem !default;        // 600px // @keep — shared breakpoint scale, fans out via _responsive-policy.scss
 $medium: 48rem !default;         // 768px // @keep — shared breakpoint scale, fans out via _responsive-policy.scss
 $medium-wide: 56.25rem !default; // 900px // @keep — shared breakpoint scale, fans out via _responsive-policy.scss
@@ -83,23 +81,6 @@ $x-large: 80rem !default;        // 1280px
 $right-sidebar-width-narrow: 11.25rem !default; // @keep — part of the shared sidebar-width family
 $right-sidebar-width: 15rem !default;
 
-
-$susy: (
-  columns: 12,
-  column-width: 1rem,
-  gutters: 1/4,
-  math: fluid,
-  output: float,
-  gutter-position: after,
-  container: 80rem,
-  global-box-sizing: border-box,
-  // debug: (
-  //   image: show,
-  //   color: blue,
-  //   output: overlay,
-  //   toggle: top right,
-  // ),
-);
 
 
 /*

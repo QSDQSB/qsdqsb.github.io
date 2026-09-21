@@ -106,16 +106,6 @@
     }
   }
 
-  /* Respect user's motion preferences */
-  @include responsive-reduced-motion {
-    ::view-transition-group(*),
-    ::view-transition-old(*),
-    ::view-transition-new(*) {
-      animation-duration: 0.01ms !important;
-      animation-delay: 0.01ms !important;
-    }
-  }
-
   /* Smooth transitions for gallery pages */
   ::view-transition-old(gallery-main),
   ::view-transition-new(gallery-main) {
@@ -128,6 +118,30 @@
   ::view-transition-new(archive-content) {
     animation-duration: 0.4s;
     animation-timing-function: $cubic-bezier-standard;
+  }
+
+  /* Respect user's motion preferences. A `(*)` argument has zero specificity
+     and would lose to the named rules above, so the names are spelt out;
+     this block sits last so it wins by order. */
+  @include responsive-reduced-motion {
+    ::view-transition-group(*),
+    ::view-transition-old(root),
+    ::view-transition-new(root),
+    ::view-transition-old(main-content),
+    ::view-transition-new(main-content),
+    ::view-transition-old(masthead),
+    ::view-transition-new(masthead),
+    ::view-transition-old(page-title),
+    ::view-transition-new(page-title),
+    ::view-transition-old(page-content),
+    ::view-transition-new(page-content),
+    ::view-transition-old(archive-content),
+    ::view-transition-new(archive-content),
+    ::view-transition-old(gallery-main),
+    ::view-transition-new(gallery-main) {
+      animation-duration: 0.01ms;
+      animation-delay: 0.01ms;
+    }
   }
 }
 

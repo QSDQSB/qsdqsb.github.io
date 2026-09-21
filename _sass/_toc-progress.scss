@@ -2,12 +2,13 @@
    TOC SCROLL SPY AND PROGRESS INDICATOR
    ========================================================================== */
 
-/* Active TOC link styling */
+/* Active TOC link styling. Every selector below is (0,2,1) or more, so it
+   outranks the plain `.toc__menu a` / `.sidebar a` colour rules without help. */
 .toc__menu {
   a.toc-active,
   li.toc-active > a {
-    color: $primary-color !important;
-    background: rgba($primary-color, 0.12) !important;
+    color: $primary-color;
+    background: rgba($primary-color, 0.12);
     font-weight: 500;
     border-left: 3px solid $primary-color;
     padding-left: calc(1em - 3px);
@@ -19,8 +20,8 @@
     
     &:hover,
     &:focus {
-      background: rgba($primary-color, 0.18) !important;
-      color: $primary-color !important;
+      background: rgba($primary-color, 0.18);
+      color: $primary-color;
       text-decoration: none;
       outline: none;
     }
@@ -35,8 +36,8 @@
     
     &:hover,
     &:focus {
-      color: $primary-color !important;
-      background: rgba($primary-color, 0.08) !important;
+      color: $primary-color;
+      background: rgba($primary-color, 0.08);
       text-decoration: none;
       outline: none;
       border-left: 2px solid rgba($primary-color, 0.5);
@@ -45,8 +46,8 @@
     
     /* Focus visible for keyboard navigation */
     &:focus-visible {
-      color: $primary-color !important;
-      background: rgba($primary-color, 0.12) !important;
+      color: $primary-color;
+      background: rgba($primary-color, 0.12);
       border-left: 3px solid $primary-color;
       padding-left: calc(1em - 3px);
       box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
@@ -56,8 +57,8 @@
   /* Nested active items */
   li.toc-active {
     > a {
-      color: $primary-color !important;
-      background: rgba($primary-color, 0.12) !important;
+      color: $primary-color;
+      background: rgba($primary-color, 0.12);
     }
     
     /* Ensure nested items also get proper styling */
@@ -67,10 +68,6 @@
     }
   }
   
-  /* Override default border-bottom for active items */
-  a.toc-active {
-    border-bottom: 1px solid darken($border-color, 0.5) !important;
-  }
 }
 
 /* Progress Indicator */
@@ -166,6 +163,12 @@
 
 .toc__menu a.toc-active {
   animation: toc-pulse 2s ease-in-out infinite;
+}
+
+/* Motion off (automated renderers): no pulse, no glide. */
+html.motion-off .toc__menu a.toc-active {
+  animation: none;
+  transition: none;
 }
 
 /* Respect reduced motion preference */

@@ -19,11 +19,19 @@
   }
 }
 
+/* Motion off (automated renderers): the reveal lands, it never hides. */
+html.motion-off.js.scroll-reveal-ready .reveal-on-scroll {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
 @include responsive-reduced-motion {
-  .reveal-on-scroll {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
+  /* Same (0,3,0) as the hiding rule above; later in the file, so it wins. */
+  .js.scroll-reveal-ready .reveal-on-scroll {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 

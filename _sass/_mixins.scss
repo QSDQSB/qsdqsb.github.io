@@ -52,6 +52,28 @@
   }
 }
 
+/*
+   Page container
+   ==========================================================================
+   The centred, max-width shell for .wrapper and .breadcrumbs. This is what
+   Susy's `container()` emitted under the old 12-column config (container:
+   80rem, output: float) — kept verbatim so the layout does not move now that
+   the grid library is gone. The width is the widest breakpoint: content never
+   runs past the point where the layout stops responding.
+*/
+
+@mixin container {
+  max-width: $x-large;
+  margin-left: auto;
+  margin-right: auto;
+
+  &:after {
+    content: " ";
+    display: block;
+    clear: both;
+  }
+}
+
 
 /*
    Cinematic atmospheric backdrop
@@ -143,6 +165,8 @@
     transform $transform-transition,
     opacity $nav-content-fade-duration $nav-shell-ease;
 
+  html.motion-off & { transition: none; }
+
   &::before {
     content: "";
     position: absolute;
@@ -155,6 +179,8 @@
     transition:
       opacity 0.24s $cubic-bezier-smooth,
       transform $nav-action-sweep-duration $cubic-bezier-smooth;
+
+    html.motion-off & { transition: none; }
   }
 }
 
