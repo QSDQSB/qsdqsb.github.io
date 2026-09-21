@@ -137,6 +137,8 @@ exclude:
   - codex
   - functions        # Cloudflare Pages Functions — served by CF, not Jekyll
   - wrangler.toml    # Cloudflare Pages config — not site content
+  - workers          # Cloudflare Workers source (photos-trigger) — deployed by wrangler, not site content
+  - tests            # node tests + the visual baseline PNGs (~100 MB) — never part of the deploy
   - for_agents       # local-only agent scratch space (gitignored) — raw Liquid inside breaks builds
 keep_files:
   - .git
