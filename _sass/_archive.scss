@@ -13,12 +13,15 @@
 
 #main.no-sidebar .archive {
   @include responsive-up($responsive-left-rail-breakpoint) {
-    @include span(12 of 12);
+    width: 100%;
+    float: left;
+    margin-left: 0;
+    margin-right: 0;
   }
 }
 
 .archive__subtitle {
-  font-style: normal !important;
+  font-style: normal;
   margin: 1em 0 0;
   padding-bottom: 0.2em;
   font-family: $barlow-font-family;
@@ -390,6 +393,7 @@
   }
 
   .list__item {
+    html.motion-off & { transition: none; }
     border-radius: $border-radius * 2;
     border: 2px solid rgba(188, 188, 188, 0.2);
     box-shadow: $shadow-soft;
@@ -526,6 +530,7 @@ a.word_card--link {
       height: 1px;
       background-color: hsl(40, 90%, 90%);
       transition: width 1s $cubic-bezier-param;
+      html.motion-off & { transition: none; }
     }
   }
   &::before {
@@ -564,7 +569,7 @@ a.word_card--link {
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: cover;
-  aspect-ratio: 300/525 !important;
+  aspect-ratio: 300/525;
   transform-style: preserve-3d;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;

@@ -133,6 +133,7 @@
   }
 
   .search-input {
+    html.motion-off & { transition: none; }
     display: block;
     width: 100%;
     margin-bottom: 0;
@@ -404,30 +405,4 @@
     background-color: #d0d0d020;
     @include backdrop-blur(blur(30px));
   }
-}
-
-/* Algolia search */
-
-.ais-search-box {
-  max-width: 100% !important;
-  margin-bottom: 2em;
-}
-
-.archive__item-title .ais-Highlight {
-  color: $primary-color;
-  font-style: normal;
-  text-decoration: underline;
-}
-
-.archive__item-excerpt .ais-Highlight {
-  color: $primary-color;
-  font-style: normal;
-  font-weight: bold;
-}
-
-$form-background-color: mix(#000, $background-color, 15%) !default;
-
-
-.ais-search-box .ais-search-box--input {
-  background-color: $form-background-color;
 }

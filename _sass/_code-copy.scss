@@ -8,6 +8,7 @@ figure.highlight {
   position: relative;
 
   .code-copy-btn {
+    html.motion-off & { transition: none; }
     position: absolute;
     top: 0.55rem;
     right: 0.55rem;
