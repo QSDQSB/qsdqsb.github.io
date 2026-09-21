@@ -70,15 +70,13 @@ body.jianfei-treatise {
       scroll-margin-top: 5rem;
     }
 
-    /* subsection headings — "Daily Diet Record", "Weight Record", "Ongoing!…".
-       color !important normalises the post's inline `whitesmoke` (#F5F5F5) on the
-       "Ongoing" h3 to the site's ivory token, so the piece uses one white, not two. */
+    /* subsection headings — "Daily Diet Record", "Weight Record", "Ongoing!…". */
     h3 {
       font-family: $cmu-serif-family;
       font-weight: 700;
       text-align: left;
       font-size: $type-size-5;
-      color: rgba($primary-color, 0.9) !important;
+      color: rgba($primary-color, 0.9);
       margin: 1.8rem 0 0.6rem;
       border-bottom: 0;
       scroll-margin-top: 5rem;
@@ -156,10 +154,8 @@ body.jianfei-treatise {
       font-size: $type-size-4;
       text-align: center;
       letter-spacing: 0.04em;
-      color: $primary-color !important; // normalise the inline `whitesmoke` to the ivory token
-      // !important: the post authors these titles with inline border styling; match
-      // the approach used for .notice--info below and override it to the \midrule.
-      border-bottom: 1px solid rgba($primary-color, 0.28) !important;
+      color: $primary-color;
+      border-bottom: 1px solid rgba($primary-color, 0.28); // the \midrule
       padding-bottom: 0.8rem;
       margin: 0.2rem auto 1.2rem;
     }
@@ -225,21 +221,23 @@ body.jianfei-treatise {
     .text-center, .center-wrapper { text-align: center; }
   }
 
-  /* ---- definitions: no box. Quiet academic aside (override inline bg) ---- */
-  .page__content .notice--info {
-    background: transparent !important;
-    box-shadow: none !important;
-    border: 0 !important;
-    border-left: 1px solid rgba($danger-color, 0.85) !important; // a semantic rule wants to be seen
-    border-radius: 0 !important;
+  /* ---- definitions: no box. Quiet academic aside. The asides are <p>s, so
+     this selector matches the paragraph rules above (`.page__content p`,
+     (0,3,2)) and wins by order for margin and font-size. ---- */
+  .page__content p.notice--info {
+    background: transparent;
+    box-shadow: none;
+    border: 0;
+    border-left: 1px solid rgba($danger-color, 0.85); // a semantic rule wants to be seen
+    border-radius: 0;
     max-width: none;
-    margin: 1.1rem 0 !important;
+    margin: 1.1rem 0;
     padding: 0.25rem 0 0.25rem 1.1rem;
     text-align: left;
     font-family: $cmu-serif-family;
     font-weight: 400;
     font-style: italic;
-    font-size: 1em !important;
+    font-size: 1em;
     color: rgba($text-color, 0.78);
     line-height: 1.6;
     .macaron, .barlow { font-family: $cmu-serif-family; font-style: italic; }
@@ -263,10 +261,10 @@ body.jianfei-treatise {
   /* ---- unrecorded attempts (#1, #2 "TO BE UPDATED!") — a "record pending"
      plate: muted italic set over a thin ruled blank, like a form field left
      to be filled in. Verbatim text; the rule carries the meaning. ---- */
-  .jf-unrecorded {
+  .page__content p.jf-unrecorded { // (0,3,2): matches the `> p` indent rule, wins by order
     display: inline-block;
     font-style: italic;
-    text-indent: 0 !important;
+    text-indent: 0;
     font-family: $cmu-serif-family;
     // the italic + ruled blank carry the "muted / pending" read; keep the text itself
     // above the ~3:1 floor rather than compounding a low alpha with opacity.
@@ -447,6 +445,13 @@ body.jianfei-treatise {
   .jf-gust { animation: jf-gust-drift 2.6s $cubic-bezier-smooth infinite; }
 }
 
+/* Motion off (automated renderers): every gesture above lands at once. Each
+   selector outranks the one that set it moving. */
+html.motion-off.js body.jianfei-treatise {
+  .jf-exhibit.jf-in .jf-day, .jf-abs-line, .jf-em, .jf-gust { animation: none; }
+  .jf-day, .jf-line, .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { transition: none; }
+}
+
 @keyframes jf-abs-rise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
 @keyframes jf-abs-illumine { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
 @keyframes jf-gust-drift {
@@ -491,14 +496,16 @@ body.jianfei-treatise {
   }
 }
 
-/* Reduced motion — everything to final state (dual guard with the JS bail) */
+/* Reduced motion — everything to final state (dual guard with the JS bail).
+   Same selectors as the reveal block above, later in the file, so they win by
+   order; the dealt-in day-card needs its full (0,5,1) selector to do so. */
 @include responsive-reduced-motion {
   .js body.jianfei-treatise {
-    .jf-line { transition: none !important; stroke-dashoffset: 0 !important; }
-    .jf-area, .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { opacity: 1 !important; transition: none !important; }
-    .jf-abs-line, .jf-em { animation: none !important; opacity: 1 !important; transform: none !important; }
-    .jf-gust { animation: none !important; transform: none !important; }
-    .jf-day { animation: none !important; opacity: 1 !important; transform: none !important; transition: none !important; }
+    .jf-line { transition: none; stroke-dashoffset: 0; }
+    .jf-area, .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { opacity: 1; transition: none; }
+    .jf-abs-line, .jf-em { animation: none; opacity: 1; transform: none; }
+    .jf-gust { animation: none; transform: none; }
+    .jf-day, .jf-exhibit.jf-in .jf-day { animation: none; opacity: 1; transform: none; transition: none; }
   }
 }
 
@@ -513,18 +520,18 @@ body.jianfei-treatise {
   @include responsive-up(112rem) {
     .page__content { position: relative; }
 
-    // NB: must be `.page__content .notice--info` — the base aside rule is
-    // `body.jianfei-treatise .page__content .notice--info !important` (0,3,1); the
-    // earlier `.notice--info` (0,2,1) lost, so the margin pull + font-size never
-    // applied and the note never left the column. Match specificity, win by order.
-    .page__content .notice--info {
+    // NB: must match the base aside selector above (`.page__content
+    // p.notice--info`, (0,3,2)) — an earlier `.notice--info` (0,2,1) lost, so
+    // the margin pull + font-size never applied and the note never left the
+    // column. Same specificity, later in the file, wins by order.
+    .page__content p.notice--info {
       float: right;
       clear: right;
       width: 11rem;
-      margin: 0.35rem -12.5rem 1rem 1.4rem !important;
-      padding: 0.1rem 0 0.1rem 0.9rem !important;
-      border-left: 1px solid rgba($danger-color, 0.85) !important;
-      font-size: 0.76em !important;
+      margin: 0.35rem -12.5rem 1rem 1.4rem;
+      padding: 0.1rem 0 0.1rem 0.9rem;
+      border-left: 1px solid rgba($danger-color, 0.85);
+      font-size: 0.76em;
       line-height: 1.5;
       color: rgba($text-color, 0.7);
       text-align: left;

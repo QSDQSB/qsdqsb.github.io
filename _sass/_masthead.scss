@@ -183,9 +183,12 @@ html.is-resizing {
     .search__toggle,
     .greedy-nav__toggle,
     .hidden-links {
-      transition-duration: $resize-runtime-transition-duration !important;
-      animation-duration: $resize-runtime-transition-duration !important;
-      animation-delay: 0s !important;
+      // (0,2,2)+ against durations declared at (0,2,0) or less — the shorthands
+      // on .masthead__menu, .greedy-nav and .page__hero; the state rules above
+      // only set delays, which these clamp too.
+      transition-duration: $resize-runtime-transition-duration;
+      animation-duration: $resize-runtime-transition-duration;
+      animation-delay: 0s;
     }
   }
 }

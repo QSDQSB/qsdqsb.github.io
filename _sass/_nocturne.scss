@@ -82,8 +82,17 @@ body.nocturne {
   }
 }
 
+/* Motion off (automated renderers): no held breath, no developing print. */
+html.motion-off.js.scroll-reveal-ready body.nocturne {
+  .nocturne-silence.reveal-on-scroll,
+  .nocturne-final.reveal-on-scroll {
+    transition: none;
+  }
+}
+
 @include responsive-reduced-motion {
-  body.nocturne .nocturne-final {
-    filter: none !important;
+  /* Same (0,4,1) as the develop-from-darkness rule above; later, so it wins. */
+  .js.scroll-reveal-ready body.nocturne .nocturne-final.reveal-on-scroll {
+    filter: none;
   }
 }

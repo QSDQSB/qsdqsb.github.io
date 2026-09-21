@@ -349,7 +349,7 @@
 
   > .greedy-nav__toggle.hidden,
   > .greedy-nav__toggle.greedy-nav__toggle--inactive {
-    display: none !important;
+    display: none;
   }
 
   .visible-links {
@@ -391,6 +391,7 @@
   }
 
   .hidden-links {
+    html.motion-off & { transition: none; }
     position: absolute;
     top: 100%;
     right: 0;
@@ -641,7 +642,7 @@
     border-radius: $border-radius / 2;
     padding: 0.5em 1em;
     line-height: 1;
-    border-bottom: 1px solid darken($border-color, 0.5) !important;
+    border-bottom: 1px solid darken($border-color, 0.5);
   }
 
   li ul > li a {
