@@ -1,0 +1,15 @@
+# Authored layer for gallery/beijing — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+photos:
+  dscf3267:
+    caption: Beihai Park, Shichahai Subdistrict, Beijing
+  dscf3369:
+    caption: Shichahai River, Xicheng District, China
+  dscf3422:
+    caption: Summer Palace, Haidian District, Beijing
+  dscf3461:
+    caption: Summer Palace, Haidian District, Beijing
+  dscf3462:
+    caption: Summer Palace, Haidian District, Beijing
+  dscf3572:
+    caption: Daxing International Airport, Beijing, China

@@ -1,0 +1,13 @@
+# Authored layer for gallery/singapore — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+photos:
+  dscf3966:
+    caption: Marina Bay, Downtown Core, Singapore
+  dscf4035:
+    caption: Marina Bay, Downtown Core, Singapore
+  dscf4082:
+    caption: Marina Bay, Downtown Core, Singapore
+  dscf4108:
+    caption: Marina Bay, Downtown Core, Singapore
+  dscf4171:
+    caption: Outram, Singapore, Singapore

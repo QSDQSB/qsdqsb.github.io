@@ -25,9 +25,12 @@ _pages/              Static pages (about, cv, portfolio…)
 _voyage/             Travel voyage collection
 _subvoyage/          Nested sub-voyages
 _data/               YAML data: navigation, UI text, maps, tag colours, gallery SVGs
-gallery/             Full-size gallery images
+gallery/             Full-size gallery images (legacy; leaves git after the R2 cutover)
+photos/              Local originals, gitignored → R2 via `npm run photos:push` → _docs/photos-pipeline.md
+_data/photos/        Authored photo layer: captions, order, stories (committed)
 images/              Site images + thumbnails (images/thumbnails/gallery/…)
-scripts/             Build scripts (geocode-maps.js) + check-*.py|sh guards + hooks/
+scripts/             Build scripts (geocode-maps.js, photos/*) + check-*.py|sh guards + hooks/
+workers/             Cloudflare Workers (photos-trigger: R2 upload → processing workflow)
 tests/               Node-test files (`node --test tests/*.test.js` via `npm test`)
 _docs/               Reference docs — layouts.md, build.md
 for_agents/          Prior implementation notes + execution plans (gitignored — local only)
@@ -102,7 +105,9 @@ npm test
 
 **Thumbnails are not tracked** — regenerated from `gallery/**` on every deploy and as a prerequisite of `build`/`serve`.
 
-→ `_docs/build.md` for the full pipeline, the `generate:depth` authoring step, the rake shim, and all check commands.
+**Photographs live in R2, not git.** `photos/` is the local mirror, `_data/photos/*.yml` the captions, and `_data/photo_manifests/` the build-time merge. Never commit image bytes or anything under `_data/photo_manifests/`.
+
+→ `_docs/build.md` for the full pipeline, the `generate:depth` authoring step, the rake shim, and all check commands. → `_docs/photos-pipeline.md` for the photo pipeline, its commands, and the Cloudflare setup.
 
 ---
 

@@ -1,0 +1,35 @@
+# Authored layer for gallery/cornwall — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+photos:
+  dscf1148:
+    caption: The Valley, Penzance, UK
+  dscf1357:
+    caption: St. Nicholas Chapel, St. Ives, UK
+  dscf1361:
+    caption: Porthmeor Road, St. Ives, UK
+  dscf1364:
+    caption: Porthmeor Road, St. Ives, UK
+  dscf1422:
+    caption: Tidal Causeway, Marazion, UK
+  dscf1559:
+    caption: Bedford Road, Cornwall, UK
+  dscf1686:
+    caption: The Valley, Porthcurno, UK
+  dscf1706:
+    caption: The Cornish Way, Sennen Cove, UK
+  dscf1724:
+    caption: Porthcurno Beach, Penzance, UK
+  dscf1732:
+    caption: Porthcurno Beach, Penzance, UK
+  dscf1859:
+    caption: The Cornish Way, Sennen Cove, UK
+  dscf1910:
+    caption: Primrose Valley Road Overbridge, St. Ives, UK
+  dscf1940:
+    caption: Minack Theatre, Penzance, UK
+  dscf2170:
+    caption: First and Last House, Sennen Cove, UK
+  dscf2192:
+    caption: The Cornish Way, Sennen Cove, Cornwall
+  dscf2233:
+    caption: Stone Chair Lane, Sennen Cove, UK
