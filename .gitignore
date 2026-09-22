@@ -18,6 +18,14 @@ images/thumbnails/gallery/**/*.[jJ][pP][eE][gG]
 images/thumbnails/gallery/**/*.[wW][eE][bB][pP]
 _data/gallery_meta/
 
+# Photo pipeline (see _docs/photos-pipeline.md). Local originals are never
+# committed; they go to R2 with `npm run photos:push`. The merged manifests
+# are rebuilt from the bucket on every build. `gallery/` stays tracked until
+# the bootstrap has been verified live — removing it is a separate, local step.
+/photos/
+/_data/photo_manifests/
+/.photos-local/
+
 .playwright-mcp
 design/
 # local secrets — loaded by scripts/send-letter.mjs, never committed

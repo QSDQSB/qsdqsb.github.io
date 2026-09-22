@@ -1,0 +1,23 @@
+# Authored layer for gallery/rome/palatine-hill — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+photos:
+  dscf0986:
+    caption: Largo Enrico Berlinguer, Municipio Roma I, Rome
+  dscf0987:
+    caption: Largo Enrico Berlinguer, Municipio Roma I, Rome
+  dscf1007:
+    caption: Roman Forum, Via Bucimazza, Rome
+  dscf1016:
+    caption: Roman Forum, Via Sacra, Rome
+  dscf1186:
+    caption: Palatino, Piazza di SantAnastasia, Rome
+  dscf1191:
+    caption: Via di S. Gregorio, Municipio Roma I, Rome
+  dscf1659:
+    caption: Monument to Vittorio Emanuele II, Via di San Marco, Rome
+  dscf1669:
+    caption: Monument to Vittorio Emanuele II, Via di San Marco, Rome
+  dscf1682:
+    caption: Monument to Vittorio Emanuele II, Via di San Marco, Rome
+  dscf1689:
+    caption: Monument to Vittorio Emanuele II, Via di San Marco, Rome
