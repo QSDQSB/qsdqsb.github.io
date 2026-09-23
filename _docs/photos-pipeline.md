@@ -84,6 +84,8 @@ and no GPS ever reaches the public bucket.
 | Command | Does | Touches R2 |
 |---|---|---|
 | `npm run photos:push [-- --gallery x] [--dry-run]` | rclone copy of the diff from `photos/` to the originals bucket. Adds and updates only; every original it replaces moves to `trash/<date>/` first. | write |
+| `npm run photos:pull [-- --gallery x] [--dry-run]` | The reverse of push: fetches originals `photos/` lacks from the bucket. Never overwrites a local file; skips `trash/`. | read |
+| `npm run photos:import -- --from <dir> [--gallery x] [--dry-run] [--replace-originals]` | Copies camera files from a staging folder (`<dir>/<gallery>/…`) into `photos/`, under the names `photos/` already uses. Replaces compressed copies only. | none |
 | `npm run photos:plan [-- --gallery x]` | Reports new, changed, orphaned files; refuses orphans still named in YAML. | read |
 | `npm run photos:prune -- --gallery x [--yes]` | Moves that gallery's orphans to `trash/<date>/…` in the originals bucket. Asks you to type the gallery name. | write |
 | `npm run photos:process [-- --gallery x] [--force] [--dry-run] [--local dir] [--no-avif]` | The processor. Runs in Actions; runs locally against a directory with `--local`. | read + write |
@@ -159,10 +161,18 @@ the photo uncaptioned. The edit hook shape-checks the file on every save
 
 ### Re-collect a voyage
 
-Replacing a compressed copy with the camera file, or adding frames to a
+Replacing compressed copies with camera files, or adding frames to a
 voyage that already has some:
 
-1. Drop the camera files into `photos/<voyage>/`, replacing the old ones.
+1. Export the camera files into a staging folder laid out like `photos/`,
+   one folder per voyage (`~/Desktop/voyage originals/cornwall/DSCF1422.JPG`),
+   then `npm run photos:import -- --from "~/Desktop/voyage originals" --dry-run`
+   and, if the plan reads right, the same without `--dry-run`. Import copies
+   each file over its compressed copy under the name `photos/` already
+   uses (so the camera's `.JPG` lands as the bootstrap's `.jpg`), adds
+   frames it has never seen, refuses to overwrite a file that is already an
+   original (`--replace-originals` for a re-export), and never changes the
+   staging folder. A re-run copies nothing.
 2. `npm run photos:recollect -- --gallery <voyage>` and read the report:
    - **matched**: frames the gallery already had; the count says how many
      are now originals and how many still carry the bootstrap stamp.
@@ -182,6 +192,43 @@ voyage that already has some:
    once the report is clean.
 4. If anything vanished: `npm run photos:plan -- --gallery <voyage>`, then
    `npm run photos:prune -- --gallery <voyage>`.
+5. `npm run photos:captions -- --gallery <voyage>` gives any new frame an
+   empty caption to fill in.
+
+### A short session
+
+Re-collection does not need a whole voyage at once. Three photos of one
+voyage is a complete unit of work:
+
+1. Put the three camera files in the staging folder, `photos:import`.
+2. `photos:recollect -- --gallery <voyage> --push`. The push is the
+   backup: from that moment the original is in the bucket, and the
+   compressed copy it replaced sits in `trash/` for 30 days.
+3. Stop. The rest of the voyage stays on its compressed copies, live and
+   captioned; `photos:status` and the dashboard show the split.
+
+Every step is idempotent, so the next session starts wherever this one
+stopped. Anything imported but not yet pushed is only on this machine (and
+in your camera library); `photos:status` lists it as *not pushed yet*.
+
+### Restore photos/ on another machine
+
+The bucket holds every pushed original, so a new machine (or this one,
+after losing `photos/`) gets the collection back with:
+
+```bash
+git clone https://github.com/QSDQSB/qsdqsb.github.io && cd qsdqsb.github.io && npm ci
+brew install rclone && rclone config     # the r2 remote, same token as before
+npm run photos:pull -- --dry-run         # what would come down
+npm run photos:pull                      # every original photos/ lacks
+npm run photos:status                    # should read no orphans, nothing pending
+```
+
+Pull never overwrites a local file and leaves `trash/` and the processor's
+private manifests in the bucket. The stamp comes down with each file, so
+the restored tree knows which frames are still compressed. Anything that was
+only on the lost machine (imported, never pushed) is not in the bucket;
+that is what the camera library is for.
 
 ### Remove a photo
 
@@ -318,7 +365,7 @@ and everything else is either in git or rebuilt from the originals.
 
 | Thing | Primary | Copy | Lost if |
 |---|---|---|---|
-| Camera originals | your camera library / cards | `photos/` locally, then the originals bucket after `photos:push` | library, `photos/` and the bucket all go at once |
+| Camera originals | your camera library / cards | `photos/` locally, then the originals bucket after `photos:push` (back down with `photos:pull`) | library, `photos/` and the bucket all go at once |
 | Compressed copies | `gallery/` in git history | `photos/`, the bucket | never, while git history keeps them |
 | Captions, order, stories | `_data/photos/*.yml` in git | GitHub | never, once committed and pushed |
 | Tiers, public manifests | rebuilt by the processor | — | nothing: `gh workflow run photos-process.yml -f force=true` |
