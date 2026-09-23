@@ -153,7 +153,6 @@ $nav-brand-logo-shell-size: $nav-brand-mark-size + (0.34rem * 2);
 $nav-brand-logo-shell-size-mobile: $nav-brand-mark-size-mobile + (0.32rem * 2);
 $nav-brand-text-max-width: 26rem;
 $nav-action-size: 1.82rem;
-$nav-action-size-mobile: 1.36rem;
 $nav-action-border-color: rgba(255, 255, 255, 0.12); // @keep — consumed by the `nav-action-shell` mixin (_mixins.scss), itself used at 2 callsites (search toggle + greedy-nav toggle)
 $nav-action-border-color-hover: rgba(255, 255, 255, 0.24);
 $nav-action-focus-ring-color: rgba(255, 255, 255, 0.3); // @keep — consumed by the `nav-action-focus-shadow` mixin, used at 2 callsites
@@ -168,8 +167,6 @@ $nav-action-sweep-duration: 0.38s; // @keep — consumed by the `nav-action-shel
 $nav-action-blur: 12px; // @keep — consumed by the `nav-action-shell` mixin, used at 2 callsites
 $nav-overflow-icon-width: 1.32rem;
 $nav-overflow-icon-height: 0.18rem;
-$nav-overflow-icon-width-mobile: 0.84rem;
-$nav-overflow-icon-height-mobile: 0.12rem;
 $nav-shell-ease: cubic-bezier(0.18, 1, 0.32, 1);
 $nav-content-delay: 0.24s;
 $nav-content-fade-duration: 0.72s;

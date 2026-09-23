@@ -14,7 +14,13 @@
   {% if page.collection == 'voyage' or page.collection == 'subvoyage' %}
     {% assign _title_core = page.title | append: " — Travel Photography" %}
   {% endif %}
-  {% assign seo_title = _title_core | append: " " | append: site.title_separator | append: " " | append: site.title %}
+  {% comment %} A page titled after the site itself (Home) takes the name once —
+     not "QSD's House of Wonders · QSD's House of Wonders". {% endcomment %}
+  {% if page.title == site.title %}
+    {% assign seo_title = _title_core %}
+  {% else %}
+    {% assign seo_title = _title_core | append: " " | append: site.title_separator | append: " " | append: site.title %}
+  {% endif %}
 {% endif %}
 
 {% if seo_title %}

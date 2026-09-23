@@ -476,46 +476,6 @@
   }
 }
 
-@include responsive-down(tablet) {
-  .greedy-nav {
-    &.greedy-nav--has-overflow {
-      padding-right: 1.86rem;
-    }
-
-    > .greedy-nav__toggle {
-      right: 0.14rem;
-      width: $nav-action-size-mobile;
-      height: $nav-action-size-mobile;
-
-      .navicon {
-        width: $nav-overflow-icon-width-mobile;
-        height: $nav-overflow-icon-height-mobile;
-
-        &:before,
-        &:after {
-          width: $nav-overflow-icon-width-mobile;
-          height: $nav-overflow-icon-height-mobile;
-        }
-
-        &:before {
-          top: (-2 * $nav-overflow-icon-height-mobile);
-        }
-
-        &:after {
-          bottom: (-2 * $nav-overflow-icon-height-mobile);
-        }
-      }
-
-      &.close .navicon {
-        &:before,
-        &:after {
-          width: $nav-overflow-icon-width-mobile;
-        }
-      }
-    }
-  }
-}
-
 @include responsive-reduced-motion {
   .greedy-nav {
     > .greedy-nav__toggle {

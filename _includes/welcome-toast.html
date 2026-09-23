@@ -10,6 +10,9 @@ shows nothing; the site stays usable. {% endcomment %}
 <script>
   (function () {
     var KEY = "qsd:welcome-seen";
+    // The advice is for phones and tablets — a reader already on a laptop (a fine
+    // pointer that hovers, desktop width) never needs it, and doesn't spend the once.
+    if (window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 1024px)").matches) return;
     // Show once: bail if already seen, else mark seen.
     try { if (localStorage.getItem(KEY)) return; localStorage.setItem(KEY, "1"); } catch (e) {}
     var el = document.getElementById("welcomeToast");
