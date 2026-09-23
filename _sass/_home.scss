@@ -220,7 +220,8 @@ body.layout--home {
     inset: 0 0 0 auto;      // right ~half of the stage
     width: 47%;
     height: 100%;
-    z-index: 2;             // above the veil — the mark reads bright and present
+    z-index: 3;             // above the veil, and above the copy: .home__hero-inner's box spans the whole
+                            // column and would otherwise cover the right half, swallowing clicks on the mark
     opacity: 1;
     transform: translateY(2.5rem);   // settle onto the wordmark's optical centre
   }
@@ -419,8 +420,10 @@ body.layout--home {
 
 /* ============ Magnetic full-screen panels (native CSS scroll-snap) ============ */
 /* The snap container is <html.home-snap> (set in default.html), so window scroll —
-   and masthead-intent.js — keeps driving the page. Panels use min-height, so a tall
-   panel grows and scrolls, snapping at its edges rather than clipping. */
+   and masthead-intent.js — keeps driving the page. Every panel is exactly one
+   screen, so the magnet never meets a panel it can't hold: content taller than
+   the screen scrolls inside its panel (.home__panel-body) instead of stretching
+   it. Reading down a long panel is free; at its top, the page takes over again. */
 html.home-snap { scroll-snap-type: y mandatory; }
 
 /* The reel is a full-bleed stack; the 1180px measure moves onto each panel's own
@@ -437,35 +440,34 @@ html.home-snap { scroll-snap-type: y mandatory; }
   position: relative;                  /* anchors each panel's absolute scroll cue */
 }
 
-/* index + What's New: centre their measured content in the viewport */
+/* index + What's New: one screen each; the body inside scrolls when its content
+   is taller, so the panel's corner marks and scroll cue stay put on the screen. */
 .home__panel--index,
 .home__panel--new {
+  height: 100vh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   padding: clamp(2.5rem, 5vh, 4rem) clamp(1.4rem, 5vw, 4rem) clamp(1.75rem, 3.5vh, 2.75rem);
 }
-.home__panel--index > *,
-.home__panel--new > * {
+.home__panel-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: rgba($primary-color, 0.22) transparent;
+}
+/* Centred while it fits; once it doesn't, the auto margins fall to zero and the
+   content starts at the top rather than being clipped above it. */
+.home__panel-body > :first-child { margin-top: auto; }
+.home__panel-body > :last-child { margin-bottom: auto; }
+.home__panel-body > * {
   width: 100%;
   max-width: 1080px;      /* the shared measure — matches .home__hero-inner */
   margin-left: auto;
   margin-right: auto;
-}
-/* The absolute scroll cue is an overlay, not measured content — exempt it from
-   the width/centering rule above so it stays a 1px hairline. */
-.home__panel--index > .home__scroll-hint,
-.home__panel--new > .home__scroll-hint {
-  width: 1px;
-  max-width: none;
-  margin: 0 0 0 -0.5px;
-}
-/* registration-mark overlay is inset-positioned, not measured content */
-.home__panel--index > .home__marks,
-.home__panel--new > .home__marks {
-  width: auto;
-  max-width: none;
-  margin: 0;
 }
 /* the panel owns the vertical rhythm now — drop the sections' own block padding */
 .home__panel .home__index,
@@ -765,10 +767,6 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
   .wn-card--4 .wn-body { max-width: 100%; }
 }
 @include responsive-down(tablet) {
-  /* On phones a stacked What's New is taller than one screen, so soften the
-     magnet to proximity — the hero + index still snap, the long panel scrolls free. */
-  html.home-snap { scroll-snap-type: y proximity; }
-
   .home__index-grid { grid-template-columns: 1fr; }
   .home__index-stage { display: none; }
   .home__doors:hover .door { opacity: 1; }

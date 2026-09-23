@@ -53,17 +53,6 @@
   }
 }
 
-@include responsive-down(tablet) {
-  .search__toggle {
-    height: $nav-action-size-mobile;
-    width: $nav-action-size-mobile;
-
-    i {
-      font-size: 0.9rem;
-    }
-  }
-}
-
 @include responsive-reduced-motion {
   .search__toggle {
     @include nav-action-reduced-motion-transition;

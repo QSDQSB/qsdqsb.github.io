@@ -4,9 +4,10 @@ layout: default
 
 {% include base_path %}
 
-{% comment %} Three scroll-snap panels (hero · index · What's New). The snap
-container is <html.home-snap> (set in default.html) so window scroll — and
-masthead-intent.js — keeps working. {% endcomment %}
+{% comment %} Three scroll-snap panels (hero · index · What's New), each exactly one
+screen. The snap container is <html.home-snap> (set in default.html) so window
+scroll — and masthead-intent.js — keeps working; a panel whose content is taller
+than the screen scrolls it inside its .home__panel-body. {% endcomment %}
 <div id="main" role="main" class="home home--reel">
 
   <section class="home__panel home__hero" style="--hero-photo: url('{{ '/images/QSD_Night_5v2.jpg' | relative_url }}');">
@@ -36,9 +37,31 @@ masthead-intent.js — keeps working. {% endcomment %}
       <span class="blob blob--4"></span>
     </div>
     <div class="home__hero-veil" aria-hidden="true"></div>
-    {% comment %} The QSD monogram — self-contained <qsd-mark> web component (see
-    qsd-mark.js). Right half on desktop, a band at the bottom on small screens. {% endcomment %}
-    <qsd-mark class="home__hero-anim" aria-hidden="true"></qsd-mark>
+    {% comment %} The hero mark: one of the self-contained QSD animations, drawn at
+    random on each visit — the <qsd-mark> monogram or the <qsd-bubbles> glass cell.
+    Right half on desktop, a band at the bottom on small screens. The slot below is
+    replaced by the chosen element before first paint, and only its script loads.
+    Under QSD.motionOff() (reduced motion, crawlers, visual baselines) the monogram
+    is always chosen, so renders stay stable. ?mark=qsd-bubbles pins one to test. {% endcomment %}
+    <span class="home__hero-anim" id="heroMark" aria-hidden="true"
+      data-marks='[["qsd-mark","{{ '/assets/js/qsd-mark.js' | relative_url }}"],["qsd-bubbles","{{ '/assets/js/qsd-bubbles.js' | relative_url }}"]]'></span>
+    <script>
+      (function () {
+        var slot = document.getElementById("heroMark");
+        if (!slot) return;
+        var marks = JSON.parse(slot.getAttribute("data-marks"));
+        var ask = /[?&]mark=([\w-]+)/.exec(location.search), pick = null;
+        if (ask) marks.forEach(function (m) { if (m[0] === ask[1] || m[0] === "qsd-" + ask[1]) pick = m; });
+        if (!pick) pick = window.QSD && window.QSD.motionOff() ? marks[0] : marks[Math.floor(Math.random() * marks.length)];
+        var mark = document.createElement(pick[0]);
+        mark.className = slot.className;
+        mark.setAttribute("aria-hidden", "true");
+        slot.parentNode.replaceChild(mark, slot);
+        var s = document.createElement("script");
+        s.src = pick[1]; s.defer = true;
+        document.body.appendChild(s);
+      })();
+    </script>
     <div class="home__hero-inner">
       <p class="home__plate" aria-hidden="true">Welcome to</p>
       <h1 class="home__wordmark" itemprop="headline">
@@ -53,21 +76,24 @@ masthead-intent.js — keeps working. {% endcomment %}
   </section>
 
   <section class="home__panel home__panel--index" id="home-enter">
-    {% include home/index.html %}
+    <div class="home__panel-body">
+      {% include home/index.html %}
+    </div>
     <span class="home__scroll-hint" aria-hidden="true"></span>
     <span class="home__marks" aria-hidden="true"></span>
   </section>
 
   <section class="home__panel home__panel--new">
-    {% include home/whats-new.html %}
-    {% include home/intriguing-word.html %}
+    <div class="home__panel-body">
+      {% include home/whats-new.html %}
+      {% include home/intriguing-word.html %}
+    </div>
     <span class="home__scroll-hint home__scroll-hint--up" aria-hidden="true"></span>
     <span class="home__marks" aria-hidden="true"></span>
   </section>
 
 </div>
 
-<script src="{{ '/assets/js/qsd-mark.js' | relative_url }}" defer></script>
 
 <script>
   // Always enter on the hero: browsers restore the prior scroll offset on
