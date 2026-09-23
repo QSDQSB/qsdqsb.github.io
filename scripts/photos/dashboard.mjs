@@ -11,6 +11,10 @@
  * "Re-collected" counts an original as soon as it is in photos/, before it
  * is pushed; the bar still shows where each photograph is on its way live.
  *
+ * Above the numbers, a strip of pipeline checks (lib/setup-checks.mjs) shows
+ * which links of the Cloudflare chain are wired up: rclone remote, bucket,
+ * custom domain, GitHub secrets, Worker, last processing run.
+ *
  * Bars are drawn to one scale across galleries, so a long bar is a big
  * voyage. Problems are the same ones photos:status fails on.
  *
@@ -26,6 +30,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { PATHS, parseArgs } from './lib/config.mjs';
 import { collect } from './status.mjs';
+import { setupChecks } from './lib/setup-checks.mjs';
 
 const STAGES = [
   ['original', 'original, live'],
@@ -60,7 +65,7 @@ function bar(stages, scale) {
 }
 
 /** Pure: rows + context → HTML. */
-export function renderDashboard(rows, { generated = new Date().toISOString(), bucketNote = null, unreachable = 0, base = 'https://img.qsdqsb.com' } = {}) {
+export function renderDashboard(rows, { generated = new Date().toISOString(), bucketNote = null, unreachable = 0, base = 'https://img.qsdqsb.com', setup = [] } = {}) {
   const t = totals(rows);
   const max = Math.max(1, ...rows.map(r => Object.values(r.stages).reduce((a, b) => a + b, 0)));
   const kpi = (label, value, of, cls = '') => `<div class="kpi ${cls}"><b>${value}</b>${of != null ? `<span class="of">/${of}</span>` : ''}<small>${label}</small></div>`;
@@ -84,6 +89,9 @@ export function renderDashboard(rows, { generated = new Date().toISOString(), bu
   const problemList = rows.filter(r => r.problems.length).map(r =>
     `<li><b>${esc(r.gallery)}</b> ${r.problems.map(esc).join(' · ')}</li>`).join('');
 
+  const pipeline = setup.length ? `<section class="pipeline" aria-label="pipeline readiness">${setup.map(c =>
+    `<span class="chk ${c.state}" title="${esc(c.detail)}"><i></i>${esc(c.label)}<small>${esc(c.detail)}</small></span>`).join('')}</section>` : '';
+
   const overall = { original: t.original, compressed: t.compressed, awaiting: t.awaiting, localOnly: t.localOnly };
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -99,6 +107,10 @@ h1{font:600 22px/1 "Playfair Display",Didot,Georgia,serif;margin:0;letter-spacin
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:10px}
 .kpi{background:var(--panel);padding:8px 10px}.kpi b{font-size:20px;font-weight:600}.kpi .of{color:var(--dim)}.kpi small{display:block;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;font-size:10px;margin-top:2px}
 .kpi.bad b{color:var(--bad)}
+.pipeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:10px}
+.chk{background:var(--panel);padding:6px 10px;font-size:12px}.chk i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;background:var(--localOnly)}
+.chk small{display:block;color:var(--dim);font-size:10px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chk.ok i{background:var(--original)}.chk.fail i{background:var(--bad)}.chk.fail small{color:var(--bad)}
 .overall{display:flex;height:10px;margin:0 0 6px}.overall i,.bar i{display:block;min-width:2px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--dim);font-size:11px;margin-bottom:14px}.legend span::before{content:"";display:inline-block;width:9px;height:9px;margin-right:5px;vertical-align:-1px;background:var(--c)}
 .s-original{background:var(--original)}.s-compressed{background:var(--compressed)}.s-awaiting{background:var(--awaiting)}.s-localOnly{background:var(--localOnly)}
@@ -114,6 +126,7 @@ tr.done th::after{content:" ✓";color:var(--original)}
 details{margin-top:14px}summary{cursor:pointer;color:var(--dim);font-size:12px}ul{margin:8px 0 0;padding-left:18px;color:var(--dim)}li b{color:var(--ink);font-weight:500}
 </style></head><body><main>
 <header><h1>Photo migration</h1><span class="meta">${esc(generated.slice(0, 16).replace('T', ' '))} UTC · ${esc(base)}${bucketNote ? ` · bucket not read: ${esc(bucketNote)}` : ''}${unreachable ? ` · ${unreachable} manifest(s) unreachable` : ''}</span></header>
+${pipeline}
 <section class="kpis">
 ${kpi('originals re-collected', t.recollected, t.photos)}
 ${kpi('originals live', t.original, t.photos)}
@@ -140,12 +153,16 @@ ${problemList ? `<details${t.problems <= 12 ? ' open' : ''}><summary>${t.problem
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const { env } = await import('./lib/config.mjs');
-  const { rows, bucketNote, unreachable } = await collect({ offline: !!args.offline, fetch: !args['no-fetch'] });
+  const [{ rows, bucketNote, unreachable }, setup] = await Promise.all([
+    collect({ offline: !!args.offline, fetch: !args['no-fetch'] }),
+    setupChecks({ offline: !!args.offline }),
+  ]);
   const out = path.resolve(typeof args.out === 'string' ? args.out : path.join(PATHS.localStore, 'dashboard.html'));
   fs.mkdirSync(path.dirname(out), { recursive: true });
-  fs.writeFileSync(out, renderDashboard(rows, { bucketNote, unreachable, base: env.publicBase }));
+  fs.writeFileSync(out, renderDashboard(rows, { bucketNote, unreachable, base: env.publicBase, setup }));
   const t = totals(rows);
   console.log(`${path.relative(process.cwd(), out)}: ${t.recollected}/${t.photos} originals re-collected, ${t.original} live, ${t.problems} problem(s)`);
+  console.log(`pipeline: ${setup.map(c => `${c.state === 'ok' ? '✓' : c.state === 'fail' ? '✗' : '·'} ${c.id}`).join('  ')}`);
   if (args.open) spawnSync('open', [out]);
   return 0;
 }

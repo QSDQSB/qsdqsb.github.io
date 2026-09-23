@@ -107,3 +107,17 @@ test('dashboard totals add up stage by stage and escape gallery names', async ()
   assert.ok(!html.includes('<odd>') && html.includes('&lt;odd&gt;'));
   assert.match(html, /<title>Photo migration<\/title>/);
 });
+
+test('pipeline checks read gh answers, and the dashboard draws one pill per check', async () => {
+  const { missingSecrets, workflowCheck } = await import('../scripts/photos/lib/setup-checks.mjs');
+  const { renderDashboard } = await import('../scripts/photos/dashboard.mjs');
+  assert.deepStrictEqual(missingSecrets('[{"name":"R2_ACCOUNT_ID"},{"name":"CLAUDE_CODE_OAUTH_TOKEN"}]'), ['R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'CF_PAGES_DEPLOY_HOOK']);
+  assert.deepStrictEqual(missingSecrets('not json').length, 4);
+  assert.deepStrictEqual(workflowCheck('[]'), { state: 'todo', detail: 'never run' });
+  assert.strictEqual(workflowCheck('[{"status":"completed","conclusion":"failure","createdAt":"2026-09-24T10:00:00Z","event":"workflow_dispatch"}]').state, 'fail');
+  assert.strictEqual(workflowCheck('[{"status":"in_progress","conclusion":"","createdAt":"2026-09-24T10:00:00Z","event":"repository_dispatch"}]').state, 'ok');
+  const html = renderDashboard([], { setup: [{ id: 'rclone', label: 'rclone remote r2:', state: 'ok', detail: 'configured' }, { id: 'bucket', label: 'qsdqsb-originals', state: 'fail', detail: '<denied>' }] });
+  assert.match(html, /class="chk ok"/);
+  assert.match(html, /class="chk fail"/);
+  assert.ok(html.includes('&lt;denied&gt;') && !html.includes('<denied>'));
+});
