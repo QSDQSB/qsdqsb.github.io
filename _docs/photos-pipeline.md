@@ -83,12 +83,19 @@ and no GPS ever reaches the public bucket.
 
 | Command | Does | Touches R2 |
 |---|---|---|
-| `npm run photos:push [-- --gallery x] [--dry-run]` | rclone copy of the diff from `photos/` to the originals bucket. Adds and updates only. | write |
+| `npm run photos:push [-- --gallery x] [--dry-run]` | rclone copy of the diff from `photos/` to the originals bucket. Adds and updates only; every original it replaces moves to `trash/<date>/` first. | write |
+| `npm run photos:pull [-- --gallery x] [--dry-run]` | The reverse of push: fetches originals `photos/` lacks from the bucket. Never overwrites a local file; skips `trash/`. | read |
+| `npm run photos:import [-- --dry-run] [--move] [--from <dir>]` | The gateway: sorts every file in the Desktop inbox into its voyage by frame number or by picture, verifies it, copies it into `photos/` (`--move` then removes it from the inbox). Files that match nothing stay and are listed. `--discard "<file>"` moves one to the Trash. | none |
 | `npm run photos:plan [-- --gallery x]` | Reports new, changed, orphaned files; refuses orphans still named in YAML. | read |
 | `npm run photos:prune -- --gallery x [--yes]` | Moves that gallery's orphans to `trash/<date>/…` in the originals bucket. Asks you to type the gallery name. | write |
 | `npm run photos:process [-- --gallery x] [--force] [--dry-run] [--local dir] [--no-avif]` | The processor. Runs in Actions; runs locally against a directory with `--local`. | read + write |
 | `npm run photos:fetch [-- --local dir] [--strict]` | Pre-build merge into `_data/photo_manifests/`. Never fails a build. | read (HTTP, public) |
 | `npm run photos:bootstrap [-- --gallery x] [--dry-run] [--yaml-only] [--force]` | One-time: `gallery/` → `photos/` with frame-number names and injected EXIF; writes YAML skeletons. | none |
+| `npm run photos:status [-- --gallery x] [--offline] [--no-fetch] [--json]` | One row per gallery: local, bucket, pending, processed, compressed, captioned, unlisted, orphans, last processed, formats. Exits 1 on anything out of place. | read |
+| `npm run photos:dashboard [-- --serve] [--open]` | The migration on one page: pipeline readiness, the Desktop inbox (and its non-matches), stage per photo per gallery. `--serve` keeps it live at `http://127.0.0.1:4460`, rebuilt when the inbox, `photos/` or the captions change. | read |
+| `npm run photos:captions -- --gallery x [--dry-run]` | Appends an empty `caption:` entry for every slug the YAML lacks, in capture-time order. Never rewrites what is there. | none |
+| `npm run photos:recollect -- --gallery x [--rename] [--allow-drop] [--push] [--offline]` | The check before pushing re-collected files: matched, new, renamed, vanishing. Refuses while captioned work would vanish. | read (+ write with `--push`) |
+| `npm run photos:trash -- list [--gallery x]` / `restore <key\|prefix/> [--dry-run] [--bucket-only]` | Shows `trash/` with prune and expiry dates; moves an object back and copies it into `photos/` if missing there. | read / write |
 
 ### Removing a photograph, the explicit way
 
@@ -99,56 +106,224 @@ and no GPS ever reaches the public bucket.
 5. The processor's next run drops its public tiers and manifest entry.
 
 Trash expires after 30 days by an R2 lifecycle rule (set up below). Until
-then, moving the object back out of `trash/` restores it on the next run.
+then, `npm run photos:trash -- restore <key>` moves it back and the next
+processor run renders it again.
+
+## Day-to-day
+
+### Read the status report
+
+```bash
+npm run photos:status              # every gallery; refreshes _data/photo_manifests/ first
+npm run photos:status -- --gallery prague
+npm run photos:status -- --offline # no rclone: bucket columns show –
+```
+
+A clean report ends `no problems` and exits 0. Under each gallery, `✗` lines
+are problems and `·` lines are notes. The problems:
+
+| Problem | Meaning | Fix |
+|---|---|---|
+| orphan(s) in the bucket, not in photos/ | an original you removed locally is still in the bucket | `photos:plan`, then `photos:prune` |
+| orphan(s) still named in the YAML | as above, and a caption or pin still points at it | delete the slug from the YAML, or put the file back |
+| not processed yet | the bucket (or, offline, `photos/`) holds originals the manifest lacks | wait for the workflow, or `gh workflow run photos-process.yml -f gallery=<x>` |
+| no photograph exists for it anywhere | a voyage's `gallery_name` points at nothing | add the photos, or fix the frontmatter |
+| YAML entries that match no photo | a typo in a slug, or a photo since removed | correct or delete the entry |
+
+Notes (not failures): files not pushed yet, sub-gallery slug collisions, a
+gallery no voyage names yet.
+
+### Add a voyage
+
+1. `mkdir photos/<voyage>` (or `photos/<parent>/<child>`), drop the camera files in.
+2. `npm run photos:push -- --gallery <voyage>`.
+3. Create `_voyage/<voyage>.md` with `gallery_name: <voyage>` (the `voyage-scaffolder` agent writes it).
+4. `npm run photos:captions -- --gallery <voyage>` and fill in the blanks.
+5. Commit and push. `npm run photos:status -- --gallery <voyage>` should read clean once the workflow has run.
+
+### Caption a voyage
+
+`npm run photos:captions -- --gallery <voyage>` appends every slug the YAML
+does not mention yet, in capture-time order, each with an empty `caption:`:
+
+```yaml
+photos:
+  dscf1797:
+    caption: East Smithfield, London     # already written: untouched
+  dscf1802:
+    caption:                             # new: fill in, or leave blank
+```
+
+Existing entries, comments, and other keys stay byte for byte; the result
+is re-parsed and validated before it is written. A blank `caption:` shows
+the photo uncaptioned. The edit hook shape-checks the file on every save
+(`photos:fetch -- --strict --shape <file>`).
+
+### Re-collect a voyage
+
+Replacing compressed copies with camera files, or adding frames to a
+voyage that already has some:
+
+1. Export camera files from iCloud Photos into the inbox,
+   `~/Desktop/voyage originals` (`PHOTOS_INBOX`), in any folders or none;
+   folder names are hints, not trusted. `npm run photos:import -- --dry-run`,
+   then `npm run photos:import -- --move`. For each file the gateway:
+   - **matches by name**: galleries holding the same frame number,
+     confirmed by picture, since frame numbers repeat across years;
+   - **else by picture**: the closest of every published photograph by
+     fingerprint (48×48 greyscale, correlation ≥ 0.95; true pairs score
+     ≥ 0.99, different frames of one beach ≤ 0.76). A match is imported
+     under the published frame's name, so a typo in an old name (the old
+     `DSCF3921` was really frame 3951) keeps its slug and captions;
+   - **verifies** it: decodes whole, carries camera make and capture time,
+     no bootstrap stamp, same aspect ratio as the published copy;
+   - **copies** it over its compressed copy (or adds a new frame when the
+     file sits in a voyage's folder and nothing published matches), and with
+     `--move` removes it from the inbox once the copy is byte-identical.
+   Files that match nothing, fail a check, or duplicate another staged file
+   stay in the inbox, are listed in the output and on the dashboard, and
+   leave only when you say so (`--discard`, to the Trash).
+
+   Round one runs the bulk of the exports through this. Round two sweeps
+   the non-matches one by one: a wrong export is discarded; an unpublished
+   frame worth keeping is moved into its voyage's folder in the inbox and
+   imported as a new frame.
+2. `npm run photos:recollect -- --gallery <voyage>` and read the report:
+   - **matched**: frames the gallery already had; the count says how many
+     are now originals and how many still carry the bootstrap stamp.
+   - **new**: frames the gallery did not have.
+   - **renamed**: same frame, different name from the bucket's. The Fuji
+     writes `DSCF1797.JPG`; the bootstrap wrote `DSCF1797.jpg`. R2 keys are
+     case-sensitive, so pushing both leaves the site showing the old copy
+     beside the new one as `dscf1797-2`. Re-run with `--rename` to give the
+     local file the bucket's name: same key, same slug, same captions. A
+     real format change (`.tif` for `.jpg`) is not renamed; push it and prune
+     the old file straight after.
+   - **vanishing**: frames the gallery had and `photos/` no longer does.
+     Any with a caption, story, featured or hidden flag, or a pinned place
+     block the push until their files are back, their YAML entries are
+     removed, or you pass `--allow-drop`.
+3. `npm run photos:recollect -- --gallery <voyage> --rename --push` pushes
+   once the report is clean.
+4. If anything vanished: `npm run photos:plan -- --gallery <voyage>`, then
+   `npm run photos:prune -- --gallery <voyage>`.
+5. `npm run photos:captions -- --gallery <voyage>` gives any new frame an
+   empty caption to fill in.
+
+### A short session
+
+Re-collection does not need a whole voyage at once. Three photos of one
+voyage is a complete unit of work:
+
+1. Put the three camera files in the staging folder, `photos:import`.
+2. `photos:recollect -- --gallery <voyage> --push`. The push is the
+   backup: from that moment the original is in the bucket, and the
+   compressed copy it replaced sits in `trash/` for 30 days.
+3. Stop. The rest of the voyage stays on its compressed copies, live and
+   captioned; `photos:status` and the dashboard show the split.
+
+Every step is idempotent, so the next session starts wherever this one
+stopped. Anything imported but not yet pushed is only on this machine (and
+in your camera library); `photos:status` lists it as *not pushed yet*.
+
+### Restore photos/ on another machine
+
+The bucket holds every pushed original, so a new machine (or this one,
+after losing `photos/`) gets the collection back with:
+
+```bash
+git clone https://github.com/QSDQSB/qsdqsb.github.io && cd qsdqsb.github.io && npm ci
+brew install rclone && rclone config     # the r2 remote, same token as before
+npm run photos:pull -- --dry-run         # what would come down
+npm run photos:pull                      # every original photos/ lacks
+npm run photos:status                    # should read no orphans, nothing pending
+```
+
+Pull never overwrites a local file and leaves `trash/` and the processor's
+private manifests in the bucket. The stamp comes down with each file, so
+the restored tree knows which frames are still compressed. Anything that was
+only on the lost machine (imported, never pushed) is not in the bucket;
+that is what the camera library is for.
+
+### Remove a photo
+
+Hide it (`hidden: true` in the YAML) if it might come back. To remove it for
+good, follow *Removing a photograph, the explicit way* above.
+
+### Restore from trash
+
+```bash
+npm run photos:trash -- list                                  # grouped by prune date, with expiry
+npm run photos:trash -- restore trash/2026-09-23/london/DSCF1797.jpg
+npm run photos:trash -- restore trash/2026-09-23/london/      # everything pruned from london that day
+```
+
+A restore refuses to overwrite an original already back in place, and
+copies the file into `photos/` when it is missing there, so the next
+`photos:plan` does not flag it as an orphan again (`--bucket-only` skips
+that). The upload event re-runs the processor.
 
 ## Cloudflare setup (once)
 
-All in the Cloudflare dashboard or with `wrangler`, logged in as the account owner.
+Everything that has a CLI goes through `wrangler` (logged in once with
+`npx wrangler@4 login`); three things only the dashboards can make; one
+script stores every credential without printing it.
 
-1. **Buckets.** Create `qsdqsb-originals` (keep private) and `qsdqsb-photos`.
-   On `qsdqsb-photos` → Settings → Custom Domains, connect `img.qsdqsb.com`.
-   Add CORS on `qsdqsb-photos` allowing `GET` from `https://qsdqsb.com`
-   and `http://localhost:4000` (only the manifest fetch needs it; images do not).
-2. **Lifecycle rule** on `qsdqsb-originals`: prefix `trash/`, delete objects
-   after 30 days.
-3. **API token.** R2 → Manage API tokens → create one with Object Read & Write
-   on both buckets. Note the Access Key ID, Secret Access Key, and your
-   Account ID.
-4. **Queue + notification.** From `workers/photos-trigger/`:
-   ```bash
-   npx wrangler queues create photos-uploads
-   npx wrangler r2 bucket notification create qsdqsb-originals --event-type object-create --queue photos-uploads
-   npx wrangler r2 bucket notification create qsdqsb-originals --event-type object-delete --queue photos-uploads
-   ```
-5. **GitHub token for the Worker.** GitHub → Settings → Developer settings →
-   Fine-grained tokens: this repository only, permission *Contents: Read and
-   write* (what `repository_dispatch` requires). Then:
-   ```bash
-   npx wrangler secret put GITHUB_TOKEN     # paste the token
-   npx wrangler deploy
-   ```
-6. **Deploy hook.** Cloudflare Pages → the site project → Settings → Builds →
-   Deploy hooks → create one; copy its URL.
-7. **GitHub secrets** on this repository (Settings → Secrets → Actions):
-   `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`,
-   `CF_PAGES_DEPLOY_HOOK`. Optional repository *variables*
-   `PHOTOS_ORIGINALS_BUCKET` / `PHOTOS_PUBLIC_BUCKET` if the names differ.
-8. **Pages build.** Nothing to add: the build fetches manifests over plain
-   HTTPS from `img.qsdqsb.com`. If the base ever changes, set
-   `PHOTOS_PUBLIC_BASE` in the Pages environment and in `.env` locally.
+**1. With wrangler** (from `workers/photos-trigger/`; `<zone-id>` is on the
+`qsdqsb.com` overview page in the Cloudflare dashboard):
+
+```bash
+npx wrangler@4 r2 bucket create qsdqsb-originals
+npx wrangler@4 r2 bucket create qsdqsb-photos
+npx wrangler@4 r2 bucket domain add qsdqsb-photos --domain img.qsdqsb.com --zone-id <zone-id> --min-tls 1.2 -y
+npx wrangler@4 r2 bucket lifecycle add qsdqsb-originals trash-30d trash/ --expire-days 30 -y
+npx wrangler@4 r2 bucket cors set qsdqsb-photos --file cors.json -y   # GET from qsdqsb.com and localhost:4000
+npx wrangler@4 queues create photos-uploads
+npx wrangler@4 r2 bucket notification create qsdqsb-originals --event-type object-create object-delete --queue photos-uploads
+npx wrangler@4 deploy
+```
+
+CORS only matters once the browser fetches a manifest itself; the build
+reads manifests from Node, which ignores CORS.
+
+**2. In the dashboards** (no CLI or API covers these):
+
+| What | Where | Scope |
+|---|---|---|
+| R2 API token | Cloudflare → R2 → Manage API tokens → Create | Object Read & Write, `qsdqsb-originals` and `qsdqsb-photos` only. Copy the Access Key ID and Secret Access Key. |
+| Pages deploy hook | Cloudflare → Workers & Pages → the site → Settings → Builds → Deploy hooks | Branch `master`. Copy the URL. |
+| GitHub token for the Worker | GitHub → Settings → Developer settings → Fine-grained tokens | This repository only; *Contents: Read and write* (what `repository_dispatch` needs). |
+
+**3. Store them**, in your own terminal (hidden prompts; Enter skips one):
+
+```bash
+bash scripts/photos/setup-secrets.sh <account-id>   # account id: npx wrangler@4 whoami
+```
+
+It configures the `r2` rclone remote on this machine, sets the four GitHub
+secrets (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`,
+`CF_PAGES_DEPLOY_HOOK`), and puts the GitHub token into the Worker as
+`GITHUB_TOKEN`. Optional repository *variables* `PHOTOS_ORIGINALS_BUCKET` /
+`PHOTOS_PUBLIC_BUCKET` only if the bucket names ever change.
+
+**4. Check.** `npm run photos:dashboard -- --open`: the pipeline strip at
+the top goes green link by link (rclone remote, bucket, `img.qsdqsb.com`,
+secrets, Worker, last processing run). The Pages build needs nothing: it
+fetches manifests over plain HTTPS from `img.qsdqsb.com`; if that base ever
+changes, set `PHOTOS_PUBLIC_BASE` in the Pages environment and in `.env`.
 
 ## Local setup (each machine)
 
 ```bash
 brew install rclone          # or the platform equivalent
-rclone config                # new remote: name r2, type s3, provider Cloudflare,
-                             # access key + secret from step 3, endpoint
-                             # https://<account-id>.r2.cloudflarestorage.com, acl private
+bash scripts/photos/setup-secrets.sh <account-id>   # answers only the R2 key prompts on a second machine
 gh auth login                # only needed to trigger the workflow by hand
 ```
 
-`.env` may set `PHOTOS_RCLONE_REMOTE` (default `r2`), the bucket names, and
-`PHOTOS_PUBLIC_BASE`.
+`.env` at the repo root may set `PHOTOS_RCLONE_REMOTE` (default `r2`), the
+bucket names, `PHOTOS_PUBLIC_BASE`, and `PHOTOS_DIR` (default `photos`, for
+originals kept on an external drive). Every photo script loads it; variables
+already set in the shell win.
 
 ## Bootstrap order (the local session)
 
@@ -171,27 +346,93 @@ untouched. The cutover happens locally, in this order, verifying each step:
    `img.qsdqsb.com`: `git rm -r --cached gallery && echo 'gallery/' >> .gitignore`,
    retire `scripts/generate-gallery-assets.mjs` and the `generate:gallery`
    script, commit.
-6. Re-collect originals voyage by voyage: replace `photos/<g>/<FRAME>.jpg`
-   with the camera file, `photos:push`, done. Same slug, same captions.
+6. Re-collect originals voyage by voyage (see *Re-collecting the originals*).
 7. Later, separately: rewrite git history to drop the 600 MB from every clone.
 
-## Adding a voyage after the cutover
+## Re-collecting the originals (transitional)
 
-1. `mkdir photos/<voyage>` (or `photos/<parent>/<child>`), drop the camera files in.
-2. `npm run photos:push -- --gallery <voyage>`.
-3. Create `_voyage/<voyage>.md` with `gallery_name: <voyage>` as today.
-4. Optionally `_data/photos/<voyage>.yml` with captions. Not required for the
-   photographs to show.
-5. Commit and push. The processing workflow has already run by the time the
-   site builds; if not, the nightly run or the next deploy catches up.
+The bootstrap's files are the site's old compressed copies: no capture
+time, no camera, no GPS, exposure recovered from the old file names. Until
+a voyage is re-collected its photos sort by frame number and carry no
+location. Re-collection runs voyage by voyage over weeks, through
+*Day-to-day → Re-collect a voyage*.
+
+**How a compressed copy is marked.** The bootstrap writes
+`qsdqsb bootstrap: compressed copy` into every copy's EXIF `Software` tag
+(`BOOTSTRAP_STAMP` in `lib/config.mjs`). The mark travels with the bytes:
+local file → originals bucket → the processor, which records
+`"compressed": true` on that photo's manifest entry. A camera file never
+carries it, so dropping the original in its place clears the mark with no
+list to update. Metadata alone could not do this: one of the 577 copies
+(`prague/charles-bridge/DSCF4235.jpg`) kept its capture time. A re-run of
+the bootstrap never overwrites an unstamped file, so it cannot undo a
+re-collection.
+
+**Tracking it.** `photos:status` has a `compressed` column;
+`npm run photos:dashboard -- --open` draws every photo in one of four
+stages: original and live, compressed and live, pushed and awaiting
+render, local only. A gallery is re-collected when its bar is all
+verdigris and it carries a ✓.
+
+**Retiring it.** When every gallery reads `compressed 0`, remove the
+scaffolding: `BOOTSTRAP_STAMP`, the processor's `compressed` flag,
+`isCompressedCopy` in `lib/inventory.mjs`, the `compressed` column and
+stage counts in `photos:status`, `photos:dashboard`, the "still the
+compressed copy" count in `photos:recollect`, the
+`photos/**/.bootstrap-map.json` files, `scripts/photos/bootstrap.mjs` with
+its `photos:bootstrap` script and `lib/exif-write.mjs` (if nothing else uses
+it), and this section.
+
+## Backups: where each thing lives
+
+Nothing in the migration's progress needs backing up on its own: which
+photos are re-collected is written into the files themselves (the stamp),
+and everything else is either in git or rebuilt from the originals.
+
+| Thing | Primary | Copy | Lost if |
+|---|---|---|---|
+| Camera originals | your camera library / cards | `photos/` locally, then the originals bucket after `photos:push` (back down with `photos:pull`) | library, `photos/` and the bucket all go at once |
+| Compressed copies | `gallery/` in git history | `photos/`, the bucket | never, while git history keeps them |
+| Captions, order, stories | `_data/photos/*.yml` in git | GitHub | never, once committed and pushed |
+| Tiers, public manifests | rebuilt by the processor | — | nothing: `gh workflow run photos-process.yml -f force=true` |
+| GPS, full EXIF (`.private.json`) | rebuilt by the processor from originals | — | nothing |
+| Merged manifests | rebuilt every build | — | nothing |
+
+What protects the originals bucket:
+
+- **Removals** go through `plan` → `prune` → `trash/<date>/`, 30 days.
+- **Replacements**: R2 keeps no object versions, so `photos:push` runs
+  rclone with `--backup-dir trash/<date>/`: an original a push overwrites
+  (a compressed copy replaced by its camera file, or a mistake) is moved to
+  trash first and restorable with `photos:trash` for 30 days. Two
+  overwrites of the same file on one day keep only the later backup.
+- **Nothing syncs deletions**: push is `rclone copy`, never `sync`.
+
+The gap is between dropping camera files into `photos/` and pushing them.
+`photos/` sits inside the repo, gitignored, so `git clean -fdx` or deleting
+the clone removes it. Push soon after each re-collection, and keep the
+camera library itself until the voyage reads re-collected on the dashboard.
+A second, independent copy of the originals (Time Machine or an external
+drive holding `photos/`) is cheap insurance: the bucket is one provider, one
+account, one set of credentials.
 
 ## Guards and tests
 
 - `npm test` covers slug parsing, the manifest merge, and an end-to-end
   processor run over a filesystem store with generated images, including the
   assertion that no EXIF reaches a public tier.
+- `npm test` also covers the bootstrap stamp becoming `compressed: true`,
+  push moving replaced originals to trash, `photos:status` row building,
+  stage counts and orphan classification, the dashboard's totals and
+  escaping, the captions scaffold (text-level append, capture-time
+  order, idempotence), the re-collection comparison and `--rename`, and
+  trash list/restore. The recollect and trash CLI tests run real rclone
+  against a local-directory remote, and skip when rclone is not installed.
 - `npm run photos:fetch` validates authored YAML shape and reports unmatched
   slugs; `--strict` makes that a non-zero exit for CI.
+- Editing `_data/photos/**.yml` in a Claude Code session runs
+  `photos:fetch -- --strict --shape <file>` through the edit hook: shape
+  only, no network.
 - `scripts/check-gallery-integrity.js` keeps validating `gallery_name`
   against `gallery/` until the cutover; after it, the integrity check should
   read `_data/photo_manifests/_index.json` instead. That change belongs to
