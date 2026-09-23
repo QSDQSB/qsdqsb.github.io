@@ -41,7 +41,7 @@ key_id=$(ask "R2 Access Key ID (Enter to skip)")
 if [ -n "$key_id" ]; then
   secret=$(ask "R2 Secret Access Key")
   rclone config create r2 s3 provider=Cloudflare access_key_id="$key_id" secret_access_key="$secret" \
-    endpoint="https://${account}.r2.cloudflarestorage.com" acl=private --non-interactive >/dev/null
+    endpoint="https://${account}.r2.cloudflarestorage.com" acl=private no_check_bucket=true --non-interactive >/dev/null
   echo "  rclone remote r2: configured"
   printf '%s' "$account" | gh secret set R2_ACCOUNT_ID
   printf '%s' "$key_id"  | gh secret set R2_ACCESS_KEY_ID
