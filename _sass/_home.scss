@@ -214,6 +214,12 @@ body.layout--home {
   opacity: 0.9;             // its own clean field now, so it reads brighter
 }
 
+/* <qsd-bubbles> blurs the hero through its glass cell. An ancestor below full
+   opacity is a backdrop root and would cut the glass off from the page behind,
+   so its host stays opaque. Only the cell itself takes the pointer (inside the
+   component); the rest of the box still lets the scroll-snap wheel through. */
+qsd-bubbles.home__hero-anim { opacity: 1; }
+
 @include responsive-up(desktop) {
   .home__hero-anim {
     position: absolute;     // back to an overlay pinned to the right half
