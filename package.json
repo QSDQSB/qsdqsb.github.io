@@ -1,10 +1,10 @@
 {
   "name": "qsdqsb-github-blog",
   "version": "0.9.7",
-  "description": "QSD'S personal version of Minimal Mistake Jekyll theme.",
+  "description": "QSD's House of Wonders — blog, travel gallery, and portfolio at qsdqsb.com.",
   "repository": {
     "type": "git",
-    "url": "git://github.com/qsdqsb/qsdqsb.github.io"
+    "url": "git+https://github.com/QSDQSB/qsdqsb.github.io.git"
   },
   "keywords": [
     "jekyll",
@@ -14,9 +14,9 @@
   "author": "QSD",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/qsdqsb/qsdqsb.github.io/issues"
+    "url": "https://github.com/QSDQSB/qsdqsb.github.io/issues"
   },
-  "homepage": "https://qsdqsb.github.io/qsdqsb.github.io/",
+  "homepage": "https://qsdqsb.com",
   "engines": {
     "node": ">= 18.0.0"
   },
