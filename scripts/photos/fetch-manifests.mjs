@@ -17,6 +17,10 @@
  * non-zero exit for CI.
  *
  * Usage: npm run photos:fetch [-- --local <dir>] [--strict] [--quiet]
+ *        npm run photos:fetch -- --shape _data/photos/<gallery>.yml [--strict]
+ *
+ * `--shape <file>` checks one authored YAML file's shape and nothing else:
+ * no network, no merge, nothing written. The edit hook runs it.
  */
 
 import fs from 'node:fs';
@@ -101,7 +105,21 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
 }
 const summary = (m) => ({ key: m.key, count: m.count, unlisted: m.unlisted, processed: !!m.generated, warnings: m.warnings });
 
+/** Shape-check one authored file. Returns its problems; an empty list means it would merge cleanly. */
+export function checkShape(file) {
+  const rel = path.relative(PATHS.authoredDir, path.resolve(file));
+  if (rel.startsWith('..') || !rel.endsWith('.yml')) return [`${file}: not a YAML file under _data/photos/`];
+  const gallery = rel.slice(0, -'.yml'.length).split(path.sep).join('/');
+  return readAuthored(gallery).problems;
+}
+
 async function main() {
+  if (args.shape) {
+    const problems = checkShape(String(args.shape));
+    for (const p of problems) console.log(p);
+    if (!problems.length) console.log(`OK ${args.shape}`);
+    return args.strict && problems.length ? 1 : 0;
+  }
   const local = args.local ? new FsStore(path.join(typeof args.local === 'string' ? args.local : PATHS.localStore, 'public')) : null;
   const { index, unreachable } = await fetchAll({ local });
   const rows = Object.entries(index.galleries);
