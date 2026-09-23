@@ -250,47 +250,58 @@ that). The upload event re-runs the processor.
 
 ## Cloudflare setup (once)
 
-All in the Cloudflare dashboard or with `wrangler`, logged in as the account owner.
+Everything that has a CLI goes through `wrangler` (logged in once with
+`npx wrangler@4 login`); three things only the dashboards can make; one
+script stores every credential without printing it.
 
-1. **Buckets.** Create `qsdqsb-originals` (keep private) and `qsdqsb-photos`.
-   On `qsdqsb-photos` → Settings → Custom Domains, connect `img.qsdqsb.com`.
-   Add CORS on `qsdqsb-photos` allowing `GET` from `https://qsdqsb.com`
-   and `http://localhost:4000` (only the manifest fetch needs it; images do not).
-2. **Lifecycle rule** on `qsdqsb-originals`: prefix `trash/`, delete objects
-   after 30 days.
-3. **API token.** R2 → Manage API tokens → create one with Object Read & Write
-   on both buckets. Note the Access Key ID, Secret Access Key, and your
-   Account ID.
-4. **Queue + notification.** From `workers/photos-trigger/`:
-   ```bash
-   npx wrangler queues create photos-uploads
-   npx wrangler r2 bucket notification create qsdqsb-originals --event-type object-create --queue photos-uploads
-   npx wrangler r2 bucket notification create qsdqsb-originals --event-type object-delete --queue photos-uploads
-   ```
-5. **GitHub token for the Worker.** GitHub → Settings → Developer settings →
-   Fine-grained tokens: this repository only, permission *Contents: Read and
-   write* (what `repository_dispatch` requires). Then:
-   ```bash
-   npx wrangler secret put GITHUB_TOKEN     # paste the token
-   npx wrangler deploy
-   ```
-6. **Deploy hook.** Cloudflare Pages → the site project → Settings → Builds →
-   Deploy hooks → create one; copy its URL.
-7. **GitHub secrets** on this repository (Settings → Secrets → Actions):
-   `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`,
-   `CF_PAGES_DEPLOY_HOOK`. Optional repository *variables*
-   `PHOTOS_ORIGINALS_BUCKET` / `PHOTOS_PUBLIC_BUCKET` if the names differ.
-8. **Pages build.** Nothing to add: the build fetches manifests over plain
-   HTTPS from `img.qsdqsb.com`. If the base ever changes, set
-   `PHOTOS_PUBLIC_BASE` in the Pages environment and in `.env` locally.
+**1. With wrangler** (from `workers/photos-trigger/`; `<zone-id>` is on the
+`qsdqsb.com` overview page in the Cloudflare dashboard):
+
+```bash
+npx wrangler@4 r2 bucket create qsdqsb-originals
+npx wrangler@4 r2 bucket create qsdqsb-photos
+npx wrangler@4 r2 bucket domain add qsdqsb-photos --domain img.qsdqsb.com --zone-id <zone-id> --min-tls 1.2 -y
+npx wrangler@4 r2 bucket lifecycle add qsdqsb-originals trash-30d trash/ --expire-days 30 -y
+npx wrangler@4 r2 bucket cors set qsdqsb-photos --file cors.json -y   # GET from qsdqsb.com and localhost:4000
+npx wrangler@4 queues create photos-uploads
+npx wrangler@4 r2 bucket notification create qsdqsb-originals --event-type object-create object-delete --queue photos-uploads
+npx wrangler@4 deploy
+```
+
+CORS only matters once the browser fetches a manifest itself; the build
+reads manifests from Node, which ignores CORS.
+
+**2. In the dashboards** (no CLI or API covers these):
+
+| What | Where | Scope |
+|---|---|---|
+| R2 API token | Cloudflare → R2 → Manage API tokens → Create | Object Read & Write, `qsdqsb-originals` and `qsdqsb-photos` only. Copy the Access Key ID and Secret Access Key. |
+| Pages deploy hook | Cloudflare → Workers & Pages → the site → Settings → Builds → Deploy hooks | Branch `master`. Copy the URL. |
+| GitHub token for the Worker | GitHub → Settings → Developer settings → Fine-grained tokens | This repository only; *Contents: Read and write* (what `repository_dispatch` needs). |
+
+**3. Store them**, in your own terminal (hidden prompts; Enter skips one):
+
+```bash
+bash scripts/photos/setup-secrets.sh <account-id>   # account id: npx wrangler@4 whoami
+```
+
+It configures the `r2` rclone remote on this machine, sets the four GitHub
+secrets (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`,
+`CF_PAGES_DEPLOY_HOOK`), and puts the GitHub token into the Worker as
+`GITHUB_TOKEN`. Optional repository *variables* `PHOTOS_ORIGINALS_BUCKET` /
+`PHOTOS_PUBLIC_BUCKET` only if the bucket names ever change.
+
+**4. Check.** `npm run photos:dashboard -- --open`: the pipeline strip at
+the top goes green link by link (rclone remote, bucket, `img.qsdqsb.com`,
+secrets, Worker, last processing run). The Pages build needs nothing: it
+fetches manifests over plain HTTPS from `img.qsdqsb.com`; if that base ever
+changes, set `PHOTOS_PUBLIC_BASE` in the Pages environment and in `.env`.
 
 ## Local setup (each machine)
 
 ```bash
 brew install rclone          # or the platform equivalent
-rclone config                # new remote: name r2, type s3, provider Cloudflare,
-                             # access key + secret from step 3, endpoint
-                             # https://<account-id>.r2.cloudflarestorage.com, acl private
+bash scripts/photos/setup-secrets.sh <account-id>   # answers only the R2 key prompts on a second machine
 gh auth login                # only needed to trigger the workflow by hand
 ```
 
