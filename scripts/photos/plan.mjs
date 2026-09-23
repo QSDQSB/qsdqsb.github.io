@@ -51,7 +51,7 @@ export function referencedSlugs(gallery) {
   } catch { return new Set(); }
 }
 
-export function diff(local, remote, sub = '') {
+export function diff(local, remote, sub = '', refsFor = referencedSlugs) {
   const inScope = (k) => !sub || k === sub || k.startsWith(`${sub}/`);
   const report = new Map();
   const bucket = (g) => { if (!report.has(g)) report.set(g, { new: [], changed: [], orphan: [], referenced: [] }); return report.get(g); };
@@ -61,18 +61,22 @@ export function diff(local, remote, sub = '') {
     if (!r) bucket(g).new.push(key);
     else if (r.size !== l.size || (r.md5 && r.md5 !== l.md5())) bucket(g).changed.push(key);
   }
+  // Slugs a local file still provides: an orphan carrying one of these has
+  // been superseded (DSCF1797.jpg replaced by DSCF1797.tif), so the YAML
+  // naming that slug does not make it a referenced orphan.
+  const provided = new Set([...local.keys()].map(k => `${path.posix.dirname(k)}/${slugFor(path.posix.basename(k))}`));
   for (const key of remote.keys()) {
     if (!inScope(key) || local.has(key)) continue;
     if (key.startsWith('trash/') || key.split('/').some(s => s.startsWith('.')) || !ORIGINAL_RE.test(key)) continue;
-    const g = path.posix.dirname(key);
-    const refs = referencedSlugs(g);
-    (refs.has(slugFor(path.posix.basename(key))) ? bucket(g).referenced : bucket(g).orphan).push(key);
+    const g = path.posix.dirname(key), slug = slugFor(path.posix.basename(key));
+    const refs = refsFor(g);
+    (refs.has(slug) && !provided.has(`${g}/${slug}`) ? bucket(g).referenced : bucket(g).orphan).push(key);
   }
   return report;
 }
 
-export function remoteFiles(sub = '') {
-  const base = `${env.rcloneRemote}:${env.originalsBucket}${sub ? `/${sub}` : ''}`;
+export function remoteFiles(sub = '', bucket = `${env.rcloneRemote}:${env.originalsBucket}`) {
+  const base = `${bucket}${sub ? `/${sub}` : ''}`;
   const out = new Map();
   for (const f of lsjson(base, { hash: true })) {
     const key = sub ? `${sub}/${f.Path}` : f.Path;

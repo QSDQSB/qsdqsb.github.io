@@ -31,7 +31,7 @@ test('processor renders tiers, skips unchanged, garbage-collects, and keeps EXIF
   const originals = path.join(store, 'originals', 'demo', 'nested');
   fs.mkdirSync(originals, { recursive: true });
   fs.writeFileSync(path.join(originals, 'DSCF0001.jpg'), await makeJpeg(1600, 900, '#204060', { aperture: 2.8, shutter: '1/125', iso: 200, focal: 35, lens: 'XF 35mm', taken: '2024-05-01T09:00:00+01:00' }));
-  fs.writeFileSync(path.join(originals, 'DSCF0002_old_name,_Place__XF90mm_f2.0_1:270s_ISO800.jpg'), await makeJpeg(600, 900, '#603020'));
+  fs.writeFileSync(path.join(originals, 'DSCF0002_old_name,_Place__XF90mm_f2.0_1:270s_ISO800.jpg'), await makeJpeg(600, 900, '#603020', { software: 'qsdqsb bootstrap: compressed copy' }));
   fs.writeFileSync(path.join(originals, '.hidden.jpg'), await makeJpeg(50, 50, '#000'));
 
   let out = run(store);
@@ -50,6 +50,8 @@ test('processor renders tiers, skips unchanged, garbage-collects, and keeps EXIF
   assert.ok(fs.existsSync(path.join(pub, 'dscf0001', '1280.webp')));
   assert.ok(!fs.existsSync(path.join(pub, 'dscf0001', '1920.webp')));
   assert.ok(!('gps' in p1), 'public manifest must not carry GPS');
+  assert.ok(!('compressed' in p1), 'an unstamped original carries no compressed flag');
+  assert.strictEqual(manifest.photos[1].compressed, true, 'the bootstrap stamp becomes compressed: true');
 
   const priv = JSON.parse(fs.readFileSync(path.join(store, 'originals', 'demo', 'nested', '.private.json'), 'utf8'));
   assert.ok(priv.photos.dscf0001, 'private manifest records every photo');

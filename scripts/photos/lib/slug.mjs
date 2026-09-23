@@ -67,6 +67,19 @@ export function parseLegacyName(filename) {
     iso: isoTok ? Number(isoTok.slice(3)) : null,
   };
 }
+/**
+ * The legacy names stored the aperture as an APEX value (Av = 2·log2 N),
+ * not an f-number: `f7.6` is f/14, `f8` is f/16, `f3` is f/2.8. Every
+ * re-collected original confirms it. Convert, and snap to the camera's own
+ * third-stop scale (Fujifilm writes 3.6 and 6.4 where others write 3.5 and 6.3).
+ */
+const THIRD_STOPS = [1, 1.1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.5, 2.8, 3.2, 3.6, 4, 4.5, 5, 5.6, 6.4, 7.1, 8, 9, 10, 11, 13, 14, 16, 18, 20, 22, 25, 29, 32];
+export function fNumberFromLegacy(av) {
+  if (typeof av !== 'number' || !Number.isFinite(av)) return null;
+  const n = 2 ** (av / 2);
+  return THIRD_STOPS.reduce((best, s) => Math.abs(Math.log2(s / n)) < Math.abs(Math.log2(best / n)) ? s : best);
+}
+
 function looksLikeExposure(p) { return /^(f\d|ISO\d|\d+:\d+s$|\d+mm$)/i.test(p); }
 
 /** Assign unique slugs to a list of filenames; a collision gets `-2`, `-3`… and a warning entry. */

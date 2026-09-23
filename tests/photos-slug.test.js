@@ -38,6 +38,15 @@ test('legacy filename convention parses place and exposure', async () => {
   assert.strictEqual(s.aperture, null);
 });
 
+test('legacy apertures are APEX values, converted to the camera\'s third-stop f-numbers', async () => {
+  const { fNumberFromLegacy } = await import('../scripts/photos/lib/slug.mjs');
+  // Pairs observed between legacy names and the re-collected Fujifilm originals.
+  for (const [av, n] of [[7.6, 14], [8, 16], [5.4, 6.4], [3, 2.8], [4.3, 4.5], [5.7, 7.1], [6.6, 10], [6.3, 9], [7.4, 13], [4.6, 5], [5, 5.6], [6, 8], [2, 2]]) {
+    assert.strictEqual(fNumberFromLegacy(av), n, `f${av} → f/${n}`);
+  }
+  assert.strictEqual(fNumberFromLegacy(null), null);
+});
+
 test('slug collisions get a numeric suffix and a warning', async () => {
   const { assignSlugs } = await lib();
   const { slugs, warnings } = assignSlugs(['DSCF0001.jpg', 'DSCF0001_again.jpg', 'x.png']);

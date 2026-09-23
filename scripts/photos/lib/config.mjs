@@ -21,8 +21,12 @@ import { fileURLToPath } from 'node:url';
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 
+// `.env` at the repo root, when present, fills whatever the shell left unset.
+// Variables already in the environment win, so CI secrets are never shadowed.
+try { process.loadEnvFile?.(path.join(ROOT, '.env')); } catch { /* no .env */ }
+
 export const PATHS = {
-  photosDir:     path.join(ROOT, 'photos'),               // local originals, gitignored
+  photosDir:     path.resolve(ROOT, process.env.PHOTOS_DIR || 'photos'), // local originals, gitignored
   legacyGallery: path.join(ROOT, 'gallery'),              // today's compressed tree, bootstrap source
   authoredDir:   path.join(ROOT, '_data', 'photos'),      // captions, order, stories (committed)
   mergedDir:     path.join(ROOT, '_data', 'photo_manifests'), // machine + authored merge (gitignored)
@@ -45,6 +49,12 @@ export const FORMATS = {
   avif: { quality: 55, maxSize: 1920, effort: 4 },
 };
 
+// Written into the EXIF Software tag of every compressed copy the bootstrap
+// made from gallery/. A camera file never carries it, so replacing a copy
+// with its original clears the mark by itself. Transitional: retire with
+// bootstrap.mjs once no gallery holds a compressed copy.
+export const BOOTSTRAP_STAMP = 'qsdqsb bootstrap: compressed copy';
+
 export const ORIGINAL_RE = /\.(jpe?g|png|tiff?|webp|heic)$/i;
 export const IGNORED_PREFIXES = ['trash/', '.'];
 export const PRIVATE_FILE = '.private.json';
@@ -61,6 +71,8 @@ export const env = {
   rcloneRemote:    process.env.PHOTOS_RCLONE_REMOTE || 'r2',
   deployHook:      process.env.CF_PAGES_DEPLOY_HOOK || '',
   avif:            process.env.PHOTOS_AVIF !== '0',
+  // Staging folder camera originals are exported into before photos:import.
+  inbox:           process.env.PHOTOS_INBOX || '~/Desktop/voyage originals',
 };
 
 /** `prague/petrin-hill` → `prague_petrin-hill`, the key Liquid reads from `site.data`. */

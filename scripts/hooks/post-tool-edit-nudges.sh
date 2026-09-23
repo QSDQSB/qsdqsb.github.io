@@ -74,6 +74,17 @@ case "$file" in
     ;;
 esac
 
+# --- Authored photo layer --------------------------------------------------
+# Captions, order, stories. Shape only (unknown keys, uppercase slugs, a
+# non-list order, YAML that does not parse); no network, nothing written.
+# Unmatched slugs need the bucket and are photos:status's job.
+case "$file" in
+  *_data/photos/*.yml)
+    node scripts/photos/fetch-manifests.mjs --strict --shape "$file" 2>&1 \
+      | grep -v '^OK' | sed 's/^/[photos] /'
+    ;;
+esac
+
 # --- The lexicon itself -----------------------------------------------------
 # Editing the word list is exactly when a false positive gets introduced, so
 # re-run both probes right then rather than waiting to discover it in use.

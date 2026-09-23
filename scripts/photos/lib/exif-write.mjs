@@ -26,7 +26,7 @@ function shutterRational(s) {
 
 /**
  * @param {Buffer} jpeg
- * @param {{aperture?:number, shutter?:string, iso?:number, focal?:number, lens?:string, taken?:string, description?:string, camera?:string}} f
+ * @param {{aperture?:number, shutter?:string, iso?:number, focal?:number, lens?:string, taken?:string, description?:string, camera?:string, software?:string}} f
  * @returns {Buffer} a new JPEG buffer
  */
 export function injectExif(jpeg, f) {
@@ -34,6 +34,7 @@ export function injectExif(jpeg, f) {
   const zeroth = {}, exif = {};
   if (f.camera) { const [make, ...model] = f.camera.split(' '); zeroth[piexif.ImageIFD.Make] = make; if (model.length) zeroth[piexif.ImageIFD.Model] = model.join(' '); }
   if (f.description) zeroth[piexif.ImageIFD.ImageDescription] = f.description;
+  if (f.software) zeroth[piexif.ImageIFD.Software] = f.software;
   if (typeof f.aperture === 'number') exif[piexif.ExifIFD.FNumber] = rational(f.aperture, 10);
   const sh = shutterRational(f.shutter); if (sh) exif[piexif.ExifIFD.ExposureTime] = sh;
   if (typeof f.iso === 'number') exif[piexif.ExifIFD.ISOSpeedRatings] = f.iso;
