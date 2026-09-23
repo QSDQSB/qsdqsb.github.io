@@ -16,7 +16,7 @@
     {
       "name": "prototypes",
       "runtimeExecutable": "/bin/bash",
-      "runtimeArgs": ["-c", "cd /Users/apple/Documents/GitHub/qsdqsb.github.io/design/opening-scene && exec python3 -m http.server 8137"],
+      "runtimeArgs": ["-c", "cd design/opening-scene && exec python3 -m http.server 8137"],
       "port": 8137
     }
   ]
