@@ -73,6 +73,7 @@ export async function readExif(buffer) {
     exposureBias: typeof x.ExposureBiasValue === 'number' ? +x.ExposureBiasValue.toFixed(2) : null,
     iso:         typeof iso === 'number' ? iso : null,
     orientation: typeof x.Orientation === 'number' ? x.Orientation : 1,
+    software:    typeof x.Software === 'string' ? x.Software.trim() : null,
     gps,
     raw: Object.fromEntries(Object.entries(x).filter(([k]) => !k.startsWith('GPS'))),
   };
