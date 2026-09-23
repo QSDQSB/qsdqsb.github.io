@@ -6,13 +6,18 @@
  * For every gallery/<g>/<legacy name>.jpg:
  *   - photos/<g>/<FRAME>.jpg        bytes copied unchanged, except that the
  *                                   exposure encoded in the legacy filename
- *                                   is written into real EXIF (lossless)
+ *                                   is written into real EXIF (lossless), and
+ *                                   EXIF Software is set to BOOTSTRAP_STAMP so
+ *                                   every later step can tell this compressed
+ *                                   copy from the camera original
  *   - _data/photos/<g>.yml          caption per slug from the legacy place
  *                                   text (created only when absent, unless --force)
  *   - photos/<g>/.bootstrap-map.json  legacy name ↔ new name, for tracing
  *
  * Re-collected originals later overwrite photos/<g>/<FRAME>.jpg with the
- * camera file; the slug and the YAML survive.
+ * camera file; the slug and the YAML survive. A re-run never overwrites a
+ * file in photos/ that lacks the stamp: that is an original, already
+ * re-collected.
  *
  * Usage: npm run photos:bootstrap [-- --gallery london] [--dry-run] [--force] [--no-exif] [--yaml-only]
  *
@@ -23,9 +28,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import yaml from 'js-yaml';
-import { PATHS, ORIGINAL_RE, parseArgs } from './lib/config.mjs';
+import { PATHS, ORIGINAL_RE, BOOTSTRAP_STAMP, parseArgs } from './lib/config.mjs';
 import { parseLegacyName, slugFor } from './lib/slug.mjs';
 import { injectExif } from './lib/exif-write.mjs';
+import { readHeadExif, isCompressedCopy } from './lib/inventory.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 const DRY = !!args['dry-run'];
@@ -43,10 +49,10 @@ function galleries(root) {
   return out;
 }
 
-function main() {
+async function main() {
   if (!fs.existsSync(PATHS.legacyGallery)) { console.error(`no ${PATHS.legacyGallery}; nothing to bootstrap`); return 2; }
   const filter = args.gallery ? String(args.gallery).replace(/^\/+|\/+$/g, '') : null;
-  let files = 0, captions = 0, exifs = 0, yamls = 0;
+  let files = 0, captions = 0, exifs = 0, yamls = 0, kept = 0;
 
   for (const { gallery, files: names } of galleries(PATHS.legacyGallery)) {
     if (filter && gallery !== filter && !gallery.startsWith(`${filter}/`)) continue;
@@ -66,11 +72,15 @@ function main() {
       files++;
       if (DRY || YAML_ONLY) continue;
 
+      // The case-insensitive lookup also catches a camera DSCF1797.JPG sitting where DSCF1797.jpg would go.
+      const existing = fs.existsSync(destDir) && fs.readdirSync(destDir).find(f => f.toLowerCase() === dest.toLowerCase());
+      if (existing && !isCompressedCopy(await readHeadExif(path.join(destDir, existing)).catch(() => null))) {
+        console.log(`  ${gallery}/${existing}: kept, already an original`); kept++; continue;
+      }
       fs.mkdirSync(destDir, { recursive: true });
       let buf = fs.readFileSync(path.join(PATHS.legacyGallery, ...gallery.split('/'), name));
-      const hasExposure = legacy.aperture || legacy.shutter || legacy.iso || legacy.lens;
-      if (hasExposure && ext === '.jpg' && !args['no-exif']) {
-        try { buf = injectExif(buf, { aperture: legacy.aperture, shutter: legacy.shutter, iso: legacy.iso, focal: legacy.focal, lens: legacy.lens }); exifs++; }
+      if (ext === '.jpg' && !args['no-exif']) {
+        try { buf = injectExif(buf, { aperture: legacy.aperture, shutter: legacy.shutter, iso: legacy.iso, focal: legacy.focal, lens: legacy.lens, software: BOOTSTRAP_STAMP }); exifs++; }
         catch (e) { console.log(`  ${gallery}/${name}: EXIF not written (${e.message})`); }
       }
       fs.writeFileSync(path.join(destDir, dest), buf);
@@ -88,9 +98,9 @@ function main() {
       yamls++;
     }
   }
-  console.log(`\n${DRY ? 'would write' : 'wrote'} ${YAML_ONLY ? `${captions} caption(s) for ${files} file(s), ${yamls} YAML file(s)` : `${files} file(s), ${exifs} with injected EXIF, ${captions} caption(s), ${yamls} YAML file(s)`}.`);
+  console.log(`\n${DRY ? 'would write' : 'wrote'} ${YAML_ONLY ? `${captions} caption(s) for ${files} file(s), ${yamls} YAML file(s)` : `${files - kept} file(s), ${exifs} stamped with EXIF, ${kept} original(s) left alone, ${captions} caption(s), ${yamls} YAML file(s)`}.`);
   if (!DRY && !YAML_ONLY) console.log('Next: `npm run photos:push`, then watch the processing workflow.');
   return 0;
 }
 
-process.exit(main());
+main().then(c => process.exit(c), e => { console.error(e); process.exit(2); });

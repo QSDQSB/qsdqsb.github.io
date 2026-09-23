@@ -23,7 +23,7 @@
  */
 
 import path from 'node:path';
-import { env, PATHS, ORIGINAL_RE, IGNORED_PREFIXES, MANIFEST_FILE, PRIVATE_FILE, MANIFEST_VERSION, FORMATS, parseArgs } from './lib/config.mjs';
+import { env, PATHS, ORIGINAL_RE, IGNORED_PREFIXES, MANIFEST_FILE, PRIVATE_FILE, MANIFEST_VERSION, FORMATS, BOOTSTRAP_STAMP, parseArgs } from './lib/config.mjs';
 import { storesFrom } from './lib/store.mjs';
 import { readExif } from './lib/exif.mjs';
 import { assignSlugs } from './lib/slug.mjs';
@@ -109,6 +109,7 @@ async function processGallery(gallery, files, { originals, pub }) {
           taken: exif.taken, camera: exif.camera, lens: exif.lens, focal: exif.focal, focal35: exif.focal35,
           aperture: exif.aperture, shutter: exif.shutter, iso: exif.iso, exposureBias: exif.exposureBias,
           thumbhash: facts.thumbhash, tint: facts.tint, sizes, formats, processed: new Date().toISOString(),
+          ...(exif.software === BOOTSTRAP_STAMP ? { compressed: true } : {}),
         });
         priv.photos[slug] = { file, version, gps: exif.gps, exif: exif.raw };
         changed++;

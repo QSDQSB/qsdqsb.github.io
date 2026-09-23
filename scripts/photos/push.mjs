@@ -4,6 +4,12 @@
  *
  * Only adds and updates, never deletes (see prune.mjs for removals). rclone
  * compares checksums, so a re-run over an unchanged tree transfers nothing.
+ *
+ * An update is a deletion in disguise, and R2 keeps no object versions, so
+ * every original a push replaces is first moved to trash/<date>/<gallery>/
+ * (rclone --backup-dir, server-side). It stays restorable for 30 days with
+ * `photos:trash -- restore`, the same as a pruned file. A second overwrite
+ * of the same file on the same day replaces that day's backup.
  * Uploads land in the bucket, the R2 event notification wakes the Worker,
  * the Worker starts the processing workflow. Nothing else to do locally.
  *
@@ -29,7 +35,10 @@ function main() {
   if (!fs.existsSync(local)) { console.error(`nothing to push: ${local} does not exist`); return 2; }
   const remote = `${env.rcloneRemote}:${env.originalsBucket}/${sub}`.replace(/\/$/, '');
 
-  const status = run(['copy', local, remote, '--checksum', '--progress', '--transfers', '4', ...EXCLUDES], { dryRun: !!args['dry-run'] });
+  const date = new Date().toISOString().slice(0, 10);
+  const backup = `${env.rcloneRemote}:${env.originalsBucket}/trash/${date}${sub ? `/${sub}` : ''}`;
+  const status = run(['copy', local, remote, '--checksum', '--progress', '--transfers', '4', ...EXCLUDES,
+    '--exclude', '/trash/**', '--backup-dir', backup], { dryRun: !!args['dry-run'] });
   if (status !== 0) return status;
 
   console.log(args['dry-run']
