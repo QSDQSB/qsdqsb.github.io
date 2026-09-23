@@ -14,7 +14,7 @@
  *
  * Merged (repo, _data/photo_manifests/<key>.json, gitignored, what Liquid reads)
  *   { gallery, key, base, title, count, photos: [ machine ∪ authored, ordered ] ,
- *     warnings: [ … ] }
+ *     inventory: [ every processed photo, hidden included ], warnings: [ … ] }
  */
 
 import { MANIFEST_VERSION, galleryKey } from './config.mjs';
@@ -83,10 +83,16 @@ export function mergeManifest(gallery, machine, authored, base) {
     a.order || [],
   );
   const unlisted = m.photos.filter(p => !aPhotos[p.slug]).length;
+  // Every processed photo, hidden ones included, for the management scripts
+  // (photos:status, photos:recollect) that compare the bucket with the YAML.
+  const inventory = sortPhotos(m.photos).map(p => ({
+    slug: p.slug, file: p.file, taken: p.taken || null, camera: p.camera || null, compressed: !!p.compressed,
+    formats: p.formats || Object.keys(p.sizes || {}), processed: p.processed || null,
+  }));
 
   return {
     gallery, key: galleryKey(gallery), base: `${base}/${gallery}`,
-    title: a.title || null, generated: m.generated, count: photos.length, unlisted, photos, warnings,
+    title: a.title || null, generated: m.generated, count: photos.length, unlisted, photos, inventory, warnings,
   };
 }
 

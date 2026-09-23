@@ -36,6 +36,7 @@ test('merge overlays authored fields, drops hidden, warns on unknown slugs', asy
   assert.strictEqual(m.photos[0].featured, true);
   assert.strictEqual(m.photos[0].url, 'https://img.example.com/london/dscf0003');
   assert.strictEqual('hidden' in m.photos[0], false);
+  assert.deepStrictEqual(m.inventory.map(p => p.slug), ['dscf0001', 'dscf0003', 'dscf0002'], 'inventory keeps hidden photos, in capture order');
   assert.ok(m.warnings.some(w => w.includes('dscf7777')));
   assert.ok(m.warnings.some(w => w.includes('dscf9999')));
   assert.strictEqual(m.unlisted, 1); // dscf0002 has no authored entry
