@@ -214,19 +214,14 @@ body.layout--home {
   opacity: 0.9;             // its own clean field now, so it reads brighter
 }
 
-/* <qsd-bubbles> blurs the hero through its glass cell. An ancestor below full
-   opacity is a backdrop root and would cut the glass off from the page behind,
-   so its host stays opaque. Only the cell itself takes the pointer (inside the
-   component); the rest of the box still lets the scroll-snap wheel through. */
-qsd-bubbles.home__hero-anim { opacity: 1; }
-
 @include responsive-up(desktop) {
   .home__hero-anim {
     position: absolute;     // back to an overlay pinned to the right half
     inset: 0 0 0 auto;      // right ~half of the stage
     width: 47%;
     height: 100%;
-    z-index: 2;             // above the veil — the mark reads bright and present
+    z-index: 3;             // above the veil, and above the copy: .home__hero-inner's box spans the whole
+                            // column and would otherwise cover the right half, swallowing clicks on the mark
     opacity: 1;
     transform: translateY(2.5rem);   // settle onto the wordmark's optical centre
   }
