@@ -6,8 +6,11 @@
    to give it a push.
    Self-contained like <qsd-mark>: Shadow DOM, sizes itself to its host box,
    pauses off-screen, and under window.QSD.motionOff() paints the word once and
-   holds it. Only transforms move per frame; every glyph and its glow are drawn
-   once. Usage: <qsd-bubbles></qsd-bubbles> (size it via CSS on the element). */
+   holds it. Per frame: six transforms, and (at 30 fps) one outline for the
+   membrane. Every glyph and its glow are drawn once. The glass is a tinted fill,
+   not a backdrop blur: the hero behind is already frosted and never stops
+   moving, so a live blur there would be re-computed every frame for nothing.
+   Usage: <qsd-bubbles></qsd-bubbles> (size it via CSS on the element). */
 (function () {
   "use strict";
   if (!window.customElements || customElements.get("qsd-bubbles")) return;
@@ -86,16 +89,10 @@
   // they resolve inside the shadow tree in every engine.
   var CSS =
     ":host{display:flex;align-items:center;justify-content:center}" +
-    ".stage{position:relative;flex:0 0 auto;pointer-events:auto;touch-action:pan-y}" +
-    /* each layer fades in on its own: a parent below full opacity would cut the
-       glass off from the page behind it (a backdrop root) for the whole fade */
-    ".case-shadow,.case-glass,.case-rim,.field{opacity:0;transition:opacity 1.1s cubic-bezier(.16,1,.3,1)}" +
-    ".is-in .case-shadow,.is-in .case-glass,.is-in .case-rim,.is-in .field{opacity:1}" +
+    ".stage{position:relative;flex:0 0 auto;pointer-events:auto;touch-action:pan-y;opacity:0;transition:opacity 1.1s cubic-bezier(.16,1,.3,1)}" +
+    ".stage.is-in{opacity:1}" +
     ".case-shadow{position:absolute;inset:14% 3% -12%;border-radius:50%;pointer-events:none;" +
       "background:radial-gradient(closest-side,rgba(0,0,0,.26),rgba(0,0,0,.1) 60%,transparent)}" +
-    ".case-glass{position:absolute;inset:-10%;pointer-events:none;" +
-      "-webkit-backdrop-filter:blur(6px) saturate(1.15) brightness(.97);backdrop-filter:blur(6px) saturate(1.15) brightness(.97);" +
-      "background:linear-gradient(155deg,rgba(255,246,230,.045),rgba(255,246,230,.008) 45%,rgba(120,104,140,.035))}" +
     ".case-rim{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}" +
     ".field{position:absolute;inset:0}" +
     ".body{position:absolute;left:0;top:0;will-change:transform;contain:layout style}" +
@@ -158,10 +155,10 @@
       this._booted = true;
       var host = this, root = this.attachShadow({ mode: "open" });
       root.innerHTML = "<style>" + CSS + "</style>" + DEFS +
-        '<div class="stage"><div class="case-shadow"></div><div class="case-glass"></div>' +
+        '<div class="stage"><div class="case-shadow"></div>' +
         '<svg class="case-rim" aria-hidden="true"></svg><div class="field"></div></div>';
       var stage = root.querySelector(".stage"), field = root.querySelector(".field");
-      var glass = root.querySelector(".case-glass"), rimSvg = root.querySelector(".case-rim");
+      var rimSvg = root.querySelector(".case-rim");
       var RM = window.QSD && window.QSD.motionOff ? window.QSD.motionOff()
              : !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
 
@@ -247,7 +244,7 @@
       var harmonics = [[2, 0.021], [3, 0.025], [4, 0.014], [5, 0.01], [7, 0.005]].map(function (h) {
         return { k: h[0], a: h[1] * (0.6 + rnd() * 0.8), ph: rnd() * 6.283, w: (rnd() < 0.5 ? -1 : 1) * (0.22 + rnd() * 0.4) };
       });
-      var bumps = [], clock = 0, NEXP = 3.6, SEGS = 64, CX = 0, CY = 0, SX = 1, SY = 1, GLASS_PAD = 0.1;
+      var bumps = [], clock = 0, NEXP = 3.6, SEGS = 64, CX = 0, CY = 0, SX = 1, SY = 1;
       function caseR(phi) {
         var c = Math.abs(Math.cos(phi)), sn = Math.abs(Math.sin(phi)), i;
         var r = Math.pow(Math.pow(c, NEXP) + Math.pow(sn, NEXP), -1 / NEXP), f = 1 + 0.008 * Math.sin(clock * 0.9);
@@ -280,11 +277,14 @@
         }
         return d + "Z";
       }
-      // Rim layers are built once; per frame only the one outline's `d` changes.
+      // The case is one outline used three ways — tinted glass, bevel, lit edge —
+      // built once; per frame only that outline's `d` changes.
       rimSvg.innerHTML = '<defs>' +
+        '<linearGradient id="caseFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6e6" stop-opacity=".07"/><stop offset=".45" stop-color="#fff6e6" stop-opacity=".015"/><stop offset="1" stop-color="#78688c" stop-opacity=".06"/></linearGradient>' +
         '<linearGradient id="caseEdge" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6e6" stop-opacity=".5"/><stop offset=".45" stop-color="#fff6e6" stop-opacity=".06"/><stop offset="1" stop-color="#e4b181" stop-opacity=".32"/></linearGradient>' +
         '<linearGradient id="caseBevel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6e6" stop-opacity=".1"/><stop offset=".5" stop-color="#fff6e6" stop-opacity="0"/><stop offset="1" stop-color="#e4b181" stop-opacity=".06"/></linearGradient>' +
         '<path id="caseShape"/><clipPath id="caseClip"><use href="#caseShape"/></clipPath></defs>' +
+        '<use href="#caseShape" fill="url(#caseFill)"/>' +
         '<use href="#caseShape" fill="none" stroke="url(#caseBevel)" stroke-width="10" clip-path="url(#caseClip)"/>' +
         '<use href="#caseShape" fill="none" stroke="url(#caseEdge)" stroke-width="1.3"/>' +
         '<path class="case-sheen" fill="none" stroke="#fff6e6" stroke-opacity=".3" stroke-width="2.2" stroke-linecap="round"/>';
@@ -300,8 +300,6 @@
           pts.push([CX + SX * R * Math.cos(phi), CY + SY * R * Math.sin(phi)]);
         }
         shapePath.setAttribute("d", closedD(pts, 0, 0));
-        // the glass overhangs the stage so a bulge never runs out of backdrop
-        glass.style.clipPath = "path('" + closedD(pts, W * GLASS_PAD, H * GLASS_PAD) + "')";
         sheen.setAttribute("d", openD(pts.slice(Math.round(SEGS * 0.57), Math.round(SEGS * 0.69)).map(function (p) {
           return [CX + (p[0] - CX) * 0.955, CY + (p[1] - CY) * 0.93];   // just inside the upper-left edge
         })));
