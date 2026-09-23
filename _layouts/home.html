@@ -4,9 +4,10 @@ layout: default
 
 {% include base_path %}
 
-{% comment %} Three scroll-snap panels (hero · index · What's New). The snap
-container is <html.home-snap> (set in default.html) so window scroll — and
-masthead-intent.js — keeps working. {% endcomment %}
+{% comment %} Three scroll-snap panels (hero · index · What's New), each exactly one
+screen. The snap container is <html.home-snap> (set in default.html) so window
+scroll — and masthead-intent.js — keeps working; a panel whose content is taller
+than the screen scrolls it inside its .home__panel-body. {% endcomment %}
 <div id="main" role="main" class="home home--reel">
 
   <section class="home__panel home__hero" style="--hero-photo: url('{{ '/images/QSD_Night_5v2.jpg' | relative_url }}');">
@@ -75,14 +76,18 @@ masthead-intent.js — keeps working. {% endcomment %}
   </section>
 
   <section class="home__panel home__panel--index" id="home-enter">
-    {% include home/index.html %}
+    <div class="home__panel-body">
+      {% include home/index.html %}
+    </div>
     <span class="home__scroll-hint" aria-hidden="true"></span>
     <span class="home__marks" aria-hidden="true"></span>
   </section>
 
   <section class="home__panel home__panel--new">
-    {% include home/whats-new.html %}
-    {% include home/intriguing-word.html %}
+    <div class="home__panel-body">
+      {% include home/whats-new.html %}
+      {% include home/intriguing-word.html %}
+    </div>
     <span class="home__scroll-hint home__scroll-hint--up" aria-hidden="true"></span>
     <span class="home__marks" aria-hidden="true"></span>
   </section>
