@@ -30,6 +30,7 @@
  */
 
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -61,7 +62,11 @@ export function compareRecollection({ local, baseline, baselineHasSizes = false,
     matched: matched.map(f => f.slug),
     original: matched.filter(f => !f.compressed).map(f => f.slug),
     compressed: matched.filter(f => f.compressed).map(f => f.slug),
-    unchanged: baselineHasSizes ? matched.filter(f => base.get(f.slug)?.size === f.size).map(f => f.slug) : [],
+    // Same size is not same bytes: a re-stamped copy keeps its length. Compare checksums when both sides have one.
+    unchanged: baselineHasSizes ? matched.filter(f => {
+      const b = base.get(f.slug);
+      return b?.size === f.size && (!b.md5 || !f.md5 || b.md5 === f.md5);
+    }).map(f => f.slug) : [],
     new: local.filter(f => !existing.has(f.slug)).map(f => ({ slug: f.slug, file: f.file, compressed: f.compressed })),
     renamed: matched.filter(f => base.get(f.slug) && base.get(f.slug).file !== f.file)
       .map(f => ({ slug: f.slug, local: f.file, bucket: base.get(f.slug).file, safe: sameFormat(f.file, base.get(f.slug).file) })),
@@ -126,7 +131,10 @@ async function main() {
   const { dir, files, warnings } = localGallery(gallery);
   if (!files.length) { console.error(`nothing in ${path.relative(process.cwd(), dir)}/ to compare.`); return 2; }
   const local = [];
-  for (const f of files) local.push({ ...f, compressed: isCompressedCopy(await readHeadExif(f.abs).catch(() => null)) });
+  for (const f of files) local.push({
+    ...f, compressed: isCompressedCopy(await readHeadExif(f.abs).catch(() => null)),
+    md5: crypto.createHash('md5').update(fs.readFileSync(f.abs)).digest('hex'),
+  });
 
   let baseline = [], source, hasSizes = false;
   const { bucket, why } = args.offline ? { bucket: null, why: '--offline' } : originalsBucket();
