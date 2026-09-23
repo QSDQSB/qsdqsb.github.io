@@ -21,16 +21,25 @@
  * Transitional, like the `compressed` column it visualises: retire it with
  * the rest of the re-collection scaffolding.
  *
+ * A Desktop inbox panel shows the staging folder (PHOTOS_INBOX) as
+ * photos:import sees it: verified files waiting, files already imported,
+ * and every non-match with its reason and the discard command, so nothing
+ * leaves the Desktop without the owner seeing why.
+ *
  * Usage: npm run photos:dashboard [-- --offline] [--no-fetch] [--out <file>] [--open]
+ *        npm run photos:dashboard -- --serve [--port 4460]     live, rebuilt on change
  *   writes .photos-local/dashboard.html (gitignored) unless --out says otherwise
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { PATHS, parseArgs } from './lib/config.mjs';
+import { PATHS, env, parseArgs } from './lib/config.mjs';
 import { collect } from './status.mjs';
+import http from 'node:http';
+import os from 'node:os';
 import { setupChecks } from './lib/setup-checks.mjs';
+import { planImport, NON_MATCH } from './import.mjs';
 
 const STAGES = [
   ['original', 'original, live'],
@@ -65,7 +74,40 @@ function bar(stages, scale) {
 }
 
 /** Pure: rows + context → HTML. */
-export function renderDashboard(rows, { generated = new Date().toISOString(), bucketNote = null, unreachable = 0, base = 'https://img.qsdqsb.com', setup = [] } = {}) {
+/**
+ * The Desktop staging folder, as photos:import would treat it right now:
+ * verified files waiting, files already imported, and the files that match
+ * nothing, with why.
+ */
+export async function inboxSnapshot(dir) {
+  const abs = path.resolve(String(dir).replace(/^~(?=$|\/)/, os.homedir()));
+  if (!fs.existsSync(abs)) return { dir: abs, exists: false, files: [] };
+  const plan = await planImport(abs);
+  return { dir: abs, exists: true, files: plan.map(s => ({ rel: s.rel, action: s.action, gallery: s.gallery, why: s.why || null, placed: s.placed || null })) };
+}
+
+function inboxSection(inbox) {
+  if (!inbox) return '';
+  if (!inbox.exists) return `<section class="inbox"><h2>Desktop inbox</h2><p class="dim">${esc(inbox.dir)} does not exist.</p></section>`;
+  const f = inbox.files;
+  const waiting = f.filter(x => x.action === 'add' || x.action === 'replace');
+  const done = f.filter(x => x.action === 'same');
+  const bad = f.filter(x => NON_MATCH.has(x.action));
+  const verdict = (x) => ({ refuse: 'refused', unplaced: 'no match', duplicate: 'duplicate' }[x.action]);
+  const rows = bad.map(x => `<li><b title="${esc(x.rel)}">${esc(x.rel)}</b><span class="verdict">${esc(verdict(x))}</span><small>${esc(x.why)}</small></li>`).join('');
+  return `<section class="inbox"><h2>Desktop inbox <span class="dim">${esc(inbox.dir)}</span></h2>
+<div class="kpis">
+<div class="kpi"><b>${waiting.length}</b><small>verified, waiting to import</small></div>
+<div class="kpi"><b>${done.length}</b><small>already in photos/, can move</small></div>
+<div class="kpi ${bad.length ? 'bad' : ''}"><b>${bad.length}</b><small>non-matches to decide</small></div>
+</div>
+${waiting.length ? `<p class="dim">Import: <code>npm run photos:import -- --move</code> (${[...new Set(waiting.map(x => x.gallery))].join(', ')})</p>` : ''}
+${bad.length ? `<ul class="nonmatch">${rows}</ul>
+<p class="dim note">Nothing here leaves the Desktop until you decide. To add one to a voyage anyway, move it into that voyage's folder in the inbox. To discard one: <code>npm run photos:import -- --discard "&lt;file&gt;"</code>, which moves it to the Trash.</p>` : ''}
+</section>`;
+}
+
+export function renderDashboard(rows, { generated = new Date().toISOString(), bucketNote = null, unreachable = 0, base = 'https://img.qsdqsb.com', setup = [], inbox = null, live = false } = {}) {
   const t = totals(rows);
   const max = Math.max(1, ...rows.map(r => Object.values(r.stages).reduce((a, b) => a + b, 0)));
   const kpi = (label, value, of, cls = '') => `<div class="kpi ${cls}"><b>${value}</b>${of != null ? `<span class="of">/${of}</span>` : ''}<small>${label}</small></div>`;
@@ -94,7 +136,12 @@ export function renderDashboard(rows, { generated = new Date().toISOString(), bu
 
   const overall = { original: t.original, compressed: t.compressed, awaiting: t.awaiting, localOnly: t.localOnly };
   return `<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${live ? `
+<script>
+// Live mode: ask the local server which snapshot it holds; reload when it changes.
+const shown = ${JSON.stringify(generated)};
+setInterval(() => fetch('/version', { cache: 'no-store' }).then(r => r.text()).then(v => { if (v && v !== shown) location.reload(); }).catch(() => {}), 5000);
+</script>` : ''}
 <title>Photo migration</title>
 <style>
 :root{--bg:#0e0e10;--panel:#16161a;--line:#26262c;--ink:#ece6da;--dim:#8a8479;--original:#5f9384;--compressed:#b89a5a;--awaiting:#4f6a93;--localOnly:#5a5363;--bad:#a44848}
@@ -110,6 +157,12 @@ h1{font:600 22px/1 "Playfair Display",Didot,Georgia,serif;margin:0;letter-spacin
 .pipeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:10px}
 .chk{background:var(--panel);padding:6px 10px;font-size:12px}.chk i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;background:var(--localOnly)}
 .chk small{display:block;color:var(--dim);font-size:10px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inbox{margin:0 0 14px}.inbox h2{font:600 13px/1 "Barlow",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px}.inbox h2 .dim{text-transform:none;letter-spacing:0;font-weight:400;margin-left:6px}
+.inbox .kpis{margin-bottom:8px}.nonmatch{list-style:none;margin:0;padding:0;border:1px solid var(--line);background:var(--panel)}
+.nonmatch li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 14px;padding:5px 10px;border-bottom:1px solid var(--line);font-size:12px}
+.nonmatch li:last-child{border-bottom:0}.nonmatch b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nonmatch .verdict{color:var(--bad)}.nonmatch small{grid-column:1/-1;color:var(--dim);font-size:11px}.note{font-size:12px;margin:6px 0 0}.nonmatch code,.inbox code{font-size:11px;color:var(--ink)}
+.live{color:var(--original)}
 .chk.ok i{background:var(--original)}.chk.fail i{background:var(--bad)}.chk.fail small{color:var(--bad)}
 .overall{display:flex;height:10px;margin:0 0 6px}.overall i,.bar i{display:block;min-width:2px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--dim);font-size:11px;margin-bottom:14px}.legend span::before{content:"";display:inline-block;width:9px;height:9px;margin-right:5px;vertical-align:-1px;background:var(--c)}
@@ -125,8 +178,9 @@ tr.bad th::before{content:"";display:inline-block;width:3px;height:11px;backgrou
 tr.done th::after{content:" ✓";color:var(--original)}
 details{margin-top:14px}summary{cursor:pointer;color:var(--dim);font-size:12px}ul{margin:8px 0 0;padding-left:18px;color:var(--dim)}li b{color:var(--ink);font-weight:500}
 </style></head><body><main>
-<header><h1>Photo migration</h1><span class="meta">${esc(generated.slice(0, 16).replace('T', ' '))} UTC · ${esc(base)}${bucketNote ? ` · bucket not read: ${esc(bucketNote)}` : ''}${unreachable ? ` · ${unreachable} manifest(s) unreachable` : ''}</span></header>
+<header><h1>Photo migration</h1><span class="meta">${live ? '<span class="live">● live</span> · ' : ''}${esc(generated.slice(0, 16).replace('T', ' '))} UTC · ${esc(base)}${bucketNote ? ` · bucket not read: ${esc(bucketNote)}` : ''}${unreachable ? ` · ${unreachable} manifest(s) unreachable` : ''}</span></header>
 ${pipeline}
+${inboxSection(inbox)}
 <section class="kpis">
 ${kpi('originals re-collected', t.recollected, t.photos)}
 ${kpi('originals live', t.original, t.photos)}
@@ -150,21 +204,64 @@ ${problemList ? `<details${t.problems <= 12 ? ' open' : ''}><summary>${t.problem
 `;
 }
 
-async function main() {
-  const args = parseArgs(process.argv.slice(2));
-  const { env } = await import('./lib/config.mjs');
-  const [{ rows, bucketNote, unreachable }, setup] = await Promise.all([
+/** Everything the page shows, read fresh. */
+async function snapshot(args) {
+  const [{ rows, bucketNote, unreachable }, setup, inbox] = await Promise.all([
     collect({ offline: !!args.offline, fetch: !args['no-fetch'] }),
     setupChecks({ offline: !!args.offline }),
+    inboxSnapshot(env.inbox),
   ]);
+  return { rows, bucketNote, unreachable, setup, inbox, generated: new Date().toISOString() };
+}
+
+/**
+ * Live mode: a local server that rebuilds the snapshot when the Desktop
+ * inbox, photos/ or the authored YAML change (debounced), and every minute
+ * for what changes elsewhere (the bucket, the workflow, img.qsdqsb.com).
+ * The page polls /version and reloads when a newer snapshot exists.
+ */
+async function serve(args, out) {
+  const port = Number(args.port) || 4460;
+  let snap = await snapshot(args), html = '', building = null, again = false;
+  const render = () => { html = renderDashboard(snap.rows, { ...snap, base: env.publicBase, live: true }); fs.writeFileSync(out, renderDashboard(snap.rows, { ...snap, base: env.publicBase })); };
+  render();
+  const rebuild = async (why) => {
+    if (building) { again = true; return; }
+    building = (async () => { try { snap = await snapshot(args); render(); console.log(`${snap.generated.slice(11, 19)} rebuilt (${why})`); } catch (e) { console.error(`rebuild failed: ${e.message}`); } })();
+    await building; building = null;
+    if (again) { again = false; rebuild('changes during the last rebuild'); }
+  };
+  let timer = null;
+  const soon = (why) => { clearTimeout(timer); timer = setTimeout(() => rebuild(why), 2000); };
+  const watch = (dir, label) => { try { if (fs.existsSync(dir)) fs.watch(dir, { recursive: true }, () => soon(`${label} changed`)); } catch { /* not watchable: the minute timer still covers it */ } };
+  watch(inboxSnapshotDir(), 'Desktop inbox');
+  watch(PATHS.photosDir, 'photos/');
+  watch(PATHS.authoredDir, '_data/photos');
+  setInterval(() => rebuild('minute'), 60000);
+
+  http.createServer((req, res) => {
+    if (req.url === '/version') { res.writeHead(200, { 'content-type': 'text/plain', 'cache-control': 'no-store' }); return res.end(snap.generated); }
+    if (req.url === '/snapshot.json') { res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' }); return res.end(JSON.stringify(snap)); }
+    res.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' }); res.end(html);
+  }).listen(port, '127.0.0.1', () => console.log(`photo dashboard live at http://127.0.0.1:${port} (Ctrl-C to stop)`));
+}
+const inboxSnapshotDir = () => path.resolve(String(env.inbox).replace(/^~(?=$|\/)/, os.homedir()));
+
+async function main() {
+  const args = parseArgs(process.argv.slice(2));
   const out = path.resolve(typeof args.out === 'string' ? args.out : path.join(PATHS.localStore, 'dashboard.html'));
   fs.mkdirSync(path.dirname(out), { recursive: true });
-  fs.writeFileSync(out, renderDashboard(rows, { bucketNote, unreachable, base: env.publicBase, setup }));
-  const t = totals(rows);
+  if (args.serve) { await serve(args, out); return null; }
+
+  const snap = await snapshot(args);
+  fs.writeFileSync(out, renderDashboard(snap.rows, { ...snap, base: env.publicBase }));
+  const t = totals(snap.rows);
+  const bad = snap.inbox.files.filter(x => NON_MATCH.has(x.action)).length;
   console.log(`${path.relative(process.cwd(), out)}: ${t.recollected}/${t.photos} originals re-collected, ${t.original} live, ${t.problems} problem(s)`);
-  console.log(`pipeline: ${setup.map(c => `${c.state === 'ok' ? '✓' : c.state === 'fail' ? '✗' : '·'} ${c.id}`).join('  ')}`);
+  console.log(`pipeline: ${snap.setup.map(c => `${c.state === 'ok' ? '✓' : c.state === 'fail' ? '✗' : '·'} ${c.id}`).join('  ')}`);
+  console.log(`inbox: ${snap.inbox.files.length} file(s) on the Desktop, ${bad} non-match(es) to decide`);
   if (args.open) spawnSync('open', [out]);
   return 0;
 }
 
-if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1]))) main().then(c => process.exit(c), e => { console.error(e); process.exit(2); });
+if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1]))) main().then(c => { if (c !== null) process.exit(c); }, e => { console.error(e); process.exit(2); });

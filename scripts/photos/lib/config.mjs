@@ -71,6 +71,8 @@ export const env = {
   rcloneRemote:    process.env.PHOTOS_RCLONE_REMOTE || 'r2',
   deployHook:      process.env.CF_PAGES_DEPLOY_HOOK || '',
   avif:            process.env.PHOTOS_AVIF !== '0',
+  // Staging folder camera originals are exported into before photos:import.
+  inbox:           process.env.PHOTOS_INBOX || '~/Desktop/voyage originals',
 };
 
 /** `prague/petrin-hill` → `prague_petrin-hill`, the key Liquid reads from `site.data`. */

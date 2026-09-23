@@ -15,47 +15,90 @@ const ROOT = path.join(__dirname, '..');
 const hasRclone = spawnSync('rclone', ['version']).status === 0;
 const STAMP = 'qsdqsb bootstrap: compressed copy';
 
-async function jpeg(colour, exif) {
+// A textured picture: `seed` decides the pattern, so the same seed is "the
+// same photograph" at any size or quality and different seeds are not.
+async function jpeg(seed, exif, { w = 96, h = 64, quality = 90 } = {}) {
   const sharp = require('sharp');
   const { injectExif } = await import('../scripts/photos/lib/exif-write.mjs');
-  const buf = await sharp({ create: { width: 16, height: 9, channels: 3, background: colour } }).jpeg().toBuffer();
+  const px = Buffer.alloc(w * h * 3);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const u = x / w, t = y / h; // size-independent, so a smaller copy is the same picture
+    const v = 128 + 100 * Math.sin(u * (seed % 7 + 2) * 4 + seed) * Math.cos(t * (seed % 5 + 2) * 4 - seed);
+    px.fill(Math.max(0, Math.min(255, Math.round(v))), (y * w + x) * 3, (y * w + x) * 3 + 3);
+  }
+  const buf = await sharp(px, { raw: { width: w, height: h, channels: 3 } }).jpeg({ quality }).toBuffer();
   return exif ? injectExif(buf, exif) : buf;
 }
+const CAMERA = (t) => ({ camera: 'FUJIFILM X-S10', taken: `2023-03-14T15:0${t}:00` });
 
-test('import replaces compressed copies under their existing name, adds new frames, refuses to clobber originals', { timeout: 30000 }, async () => {
-  const { planImport, applyImport } = await import('../scripts/photos/import.mjs');
+function tree() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'photos-import-'));
-  const photos = path.join(root, 'photos', 'cornwall'), from = path.join(root, 'staging', 'cornwall');
-  fs.mkdirSync(photos, { recursive: true }); fs.mkdirSync(from, { recursive: true });
+  const dirs = { root, photosDir: path.join(root, 'photos'), legacyDir: path.join(root, 'gallery'), inbox: path.join(root, 'inbox'), cacheFile: path.join(root, 'sigs.json') };
+  for (const d of [dirs.photosDir, dirs.legacyDir, dirs.inbox]) fs.mkdirSync(d, { recursive: true });
+  return dirs;
+}
+const put = (dir, rel, buf) => { fs.mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true }); fs.writeFileSync(path.join(dir, rel), buf); };
 
-  fs.writeFileSync(path.join(photos, 'DSCF0001.jpg'), await jpeg('#111', { software: STAMP }));      // compressed copy
-  fs.writeFileSync(path.join(photos, 'DSCF0002.jpg'), await jpeg('#222', { taken: '2023-03-14T15:00:00' })); // already an original
-  fs.writeFileSync(path.join(from, 'DSCF0001.JPG'), await jpeg('#aaa', { taken: '2023-03-14T15:01:00' }));
-  fs.writeFileSync(path.join(from, 'DSCF0003.JPG'), await jpeg('#bbb', { taken: '2023-03-14T15:02:00' }));
+test('import verifies by picture, replaces compressed copies under their name, adds new frames, refuses to clobber originals', { timeout: 60000 }, async () => {
+  const { planImport, applyImport, signatureIndex } = await import('../scripts/photos/import.mjs');
+  const d = tree();
+  put(d.photosDir, 'cornwall/DSCF0001.jpg', await jpeg(1, { software: STAMP }, { w: 48, h: 32, quality: 60 })); // compressed copy
+  put(d.photosDir, 'cornwall/DSCF0002.jpg', await jpeg(2, CAMERA(0)));                                          // already an original
+  put(d.inbox, 'cornwall/DSCF0001.JPG', await jpeg(1, CAMERA(1)));   // its camera original
+  put(d.inbox, 'cornwall/DSCF0003.JPG', await jpeg(3, CAMERA(2)));   // a new frame, filed under its voyage
 
-  let plan = await planImport(path.join(root, 'staging'), { photosDir: path.join(root, 'photos') });
-  assert.deepStrictEqual(plan.map(s => [s.file, s.action, path.basename(s.to)]), [
-    ['DSCF0001.JPG', 'replace', 'DSCF0001.jpg'],
-    ['DSCF0003.JPG', 'add', 'DSCF0003.JPG'],
+  const opts = { photosDir: d.photosDir, legacyDir: d.legacyDir, index: await signatureIndex({ ...d }) };
+  let plan = await planImport(d.inbox, opts);
+  assert.deepStrictEqual(plan.map(s => [s.rel, s.action, s.to && path.basename(s.to)]), [
+    ['cornwall/DSCF0001.JPG', 'replace', 'DSCF0001.jpg'],
+    ['cornwall/DSCF0003.JPG', 'add', 'DSCF0003.JPG'],
   ]);
-  assert.strictEqual(applyImport(plan), 2);
-  assert.deepStrictEqual(fs.readFileSync(path.join(photos, 'DSCF0001.jpg')), fs.readFileSync(path.join(from, 'DSCF0001.JPG')));
+  assert.ok(plan[0].checks.some(c => c.name === 'same photo' && c.ok && !c.warn), 'the replacement is confirmed by picture');
+  assert.deepStrictEqual(applyImport(plan, { move: true }), { copied: 2, moved: 2 });
+  assert.deepStrictEqual(fs.readdirSync(path.join(d.inbox, 'cornwall')), [], 'verified files leave the inbox');
 
-  plan = await planImport(path.join(root, 'staging'), { photosDir: path.join(root, 'photos') });
-  assert.deepStrictEqual(plan.map(s => s.action), ['same', 'same'], 'a re-run copies nothing');
+  // The same frame number with a different picture, a different original for a frame that has one, and a stamped copy.
+  put(d.inbox, 'cornwall/DSCF0002.JPG', await jpeg(9, CAMERA(3)));
+  put(d.inbox, 'cornwall/DSCF0004.jpg', await jpeg(4, { software: STAMP }));
+  plan = await planImport(d.inbox, { ...opts, index: await signatureIndex({ ...d }) });
+  const by = Object.fromEntries(plan.map(s => [s.file, s]));
+  assert.strictEqual(by['DSCF0002.JPG'].action, 'unplaced');
+  assert.match(by['DSCF0002.JPG'].why, /different one/);
+  assert.strictEqual(by['DSCF0004.jpg'].action, 'refuse');
+  assert.match(by['DSCF0004.jpg'].why, /bootstrap stamp/);
+  fs.rmSync(d.root, { recursive: true, force: true });
+});
 
-  // A different original for a frame that already has one, and a stamped copy coming back in.
-  fs.writeFileSync(path.join(from, 'DSCF0002.JPG'), await jpeg('#ccc', { taken: '2023-03-14T15:00:00' }));
-  fs.writeFileSync(path.join(from, 'DSCF0004.jpg'), await jpeg('#ddd', { software: STAMP }));
-  plan = await planImport(path.join(root, 'staging'), { photosDir: path.join(root, 'photos') });
-  const byFile = Object.fromEntries(plan.map(s => [s.file, s]));
-  assert.strictEqual(byFile['DSCF0002.JPG'].action, 'refuse');
-  assert.match(byFile['DSCF0002.JPG'].why, /already an original/);
-  assert.strictEqual(byFile['DSCF0004.jpg'].action, 'refuse');
-  assert.match(byFile['DSCF0004.jpg'].why, /bootstrap stamp/);
-  const again = await planImport(path.join(root, 'staging'), { photosDir: path.join(root, 'photos'), replaceOriginals: true });
-  assert.strictEqual(again.find(s => s.file === 'DSCF0002.JPG').action, 'replace');
-  fs.rmSync(root, { recursive: true, force: true });
+test('the gateway sorts loose and misfiled files by name or by picture, and flags what matches nothing', { timeout: 60000 }, async () => {
+  const { planImport, signatureIndex, discard, NON_MATCH } = await import('../scripts/photos/import.mjs');
+  const d = tree();
+  put(d.legacyDir, 'capri/DSCF3921_Monte_Solaro__XF90mm_f7.6_1:140s_ISO800.jpg', await jpeg(21, null, { w: 48, h: 32 }));
+  put(d.legacyDir, 'rome/trevi/DSCF0500_Trevi__XF90mm_f5_1:250s_ISO200.jpg', await jpeg(50, null, { w: 48, h: 32 }));
+  put(d.photosDir, 'capri/DSCF3921.jpg', await jpeg(21, { software: STAMP }, { w: 48, h: 32 }));
+  put(d.photosDir, 'rome/trevi/DSCF0500.jpg', await jpeg(50, { software: STAMP }, { w: 48, h: 32 }));
+
+  put(d.inbox, 'DSCF0500.JPG', await jpeg(50, CAMERA(1)));                 // loose at the root, right name
+  put(d.inbox, 'wrong folder/DSCF3951.JPG', await jpeg(21, CAMERA(2)));    // a typo'd name: only the picture says capri
+  put(d.inbox, 'wrong folder/zz copy.JPG', await jpeg(21, CAMERA(2)));        // byte-identical to the one above
+  put(d.inbox, 'IMG_0042.JPG', await jpeg(77, CAMERA(3)));                 // matches nothing
+
+  const plan = await planImport(d.inbox, { photosDir: d.photosDir, legacyDir: d.legacyDir, index: await signatureIndex({ ...d }) });
+  const by = Object.fromEntries(plan.map(s => [s.rel, s]));
+  assert.strictEqual(by['DSCF0500.JPG'].gallery, 'rome/trevi');
+  assert.strictEqual(by['DSCF0500.JPG'].action, 'replace');
+  assert.strictEqual(by['wrong folder/DSCF3951.JPG'].gallery, 'capri');
+  assert.strictEqual(path.basename(by['wrong folder/DSCF3951.JPG'].to), 'DSCF3921.jpg', 'imported under the published name, so the slug survives');
+  assert.match(by['wrong folder/DSCF3951.JPG'].placed, /matched by picture to capri\/dscf3921/);
+  assert.strictEqual(by['wrong folder/zz copy.JPG'].action, 'duplicate');
+  assert.strictEqual(by['IMG_0042.JPG'].action, 'unplaced');
+  assert.deepStrictEqual(plan.filter(s => NON_MATCH.has(s.action)).map(s => s.rel).sort(), ['IMG_0042.JPG', 'wrong folder/zz copy.JPG']);
+
+  // Discarding moves to a trash folder, never deletes, and only inside the inbox.
+  const trash = path.join(d.root, 'Trash');
+  assert.deepStrictEqual(discard(d.inbox, ['IMG_0042.JPG'], trash).map(x => path.basename(x.dest)), ['IMG_0042.JPG']);
+  assert.ok(fs.existsSync(path.join(trash, 'IMG_0042.JPG')) && !fs.existsSync(path.join(d.inbox, 'IMG_0042.JPG')));
+  assert.throws(() => discard(d.inbox, ['../photos/capri/DSCF3921.jpg'], trash), /not a file in/);
+  fs.rmSync(d.root, { recursive: true, force: true });
 });
 
 test('pull fetches only what photos/ lacks, and leaves trash and private manifests in the bucket', { skip: !hasRclone && 'rclone not installed', timeout: 30000 }, () => {

@@ -85,14 +85,14 @@ and no GPS ever reaches the public bucket.
 |---|---|---|
 | `npm run photos:push [-- --gallery x] [--dry-run]` | rclone copy of the diff from `photos/` to the originals bucket. Adds and updates only; every original it replaces moves to `trash/<date>/` first. | write |
 | `npm run photos:pull [-- --gallery x] [--dry-run]` | The reverse of push: fetches originals `photos/` lacks from the bucket. Never overwrites a local file; skips `trash/`. | read |
-| `npm run photos:import -- --from <dir> [--gallery x] [--dry-run] [--replace-originals]` | Copies camera files from a staging folder (`<dir>/<gallery>/…`) into `photos/`, under the names `photos/` already uses. Replaces compressed copies only. | none |
+| `npm run photos:import [-- --dry-run] [--move] [--from <dir>]` | The gateway: sorts every file in the Desktop inbox into its voyage by frame number or by picture, verifies it, copies it into `photos/` (`--move` then removes it from the inbox). Files that match nothing stay and are listed. `--discard "<file>"` moves one to the Trash. | none |
 | `npm run photos:plan [-- --gallery x]` | Reports new, changed, orphaned files; refuses orphans still named in YAML. | read |
 | `npm run photos:prune -- --gallery x [--yes]` | Moves that gallery's orphans to `trash/<date>/…` in the originals bucket. Asks you to type the gallery name. | write |
 | `npm run photos:process [-- --gallery x] [--force] [--dry-run] [--local dir] [--no-avif]` | The processor. Runs in Actions; runs locally against a directory with `--local`. | read + write |
 | `npm run photos:fetch [-- --local dir] [--strict]` | Pre-build merge into `_data/photo_manifests/`. Never fails a build. | read (HTTP, public) |
 | `npm run photos:bootstrap [-- --gallery x] [--dry-run] [--yaml-only] [--force]` | One-time: `gallery/` → `photos/` with frame-number names and injected EXIF; writes YAML skeletons. | none |
 | `npm run photos:status [-- --gallery x] [--offline] [--no-fetch] [--json]` | One row per gallery: local, bucket, pending, processed, compressed, captioned, unlisted, orphans, last processed, formats. Exits 1 on anything out of place. | read |
-| `npm run photos:dashboard [-- --offline] [--no-fetch] [--out f] [--open]` | The same rows as one dense HTML page, `.photos-local/dashboard.html`: migration stage per photo, per gallery and overall. | read |
+| `npm run photos:dashboard [-- --serve] [--open]` | The migration on one page: pipeline readiness, the Desktop inbox (and its non-matches), stage per photo per gallery. `--serve` keeps it live at `http://127.0.0.1:4460`, rebuilt when the inbox, `photos/` or the captions change. | read |
 | `npm run photos:captions -- --gallery x [--dry-run]` | Appends an empty `caption:` entry for every slug the YAML lacks, in capture-time order. Never rewrites what is there. | none |
 | `npm run photos:recollect -- --gallery x [--rename] [--allow-drop] [--push] [--offline]` | The check before pushing re-collected files: matched, new, renamed, vanishing. Refuses while captioned work would vanish. | read (+ write with `--push`) |
 | `npm run photos:trash -- list [--gallery x]` / `restore <key\|prefix/> [--dry-run] [--bucket-only]` | Shows `trash/` with prune and expiry dates; moves an object back and copies it into `photos/` if missing there. | read / write |
@@ -164,15 +164,30 @@ the photo uncaptioned. The edit hook shape-checks the file on every save
 Replacing compressed copies with camera files, or adding frames to a
 voyage that already has some:
 
-1. Export the camera files into a staging folder laid out like `photos/`,
-   one folder per voyage (`~/Desktop/voyage originals/cornwall/DSCF1422.JPG`),
-   then `npm run photos:import -- --from "~/Desktop/voyage originals" --dry-run`
-   and, if the plan reads right, the same without `--dry-run`. Import copies
-   each file over its compressed copy under the name `photos/` already
-   uses (so the camera's `.JPG` lands as the bootstrap's `.jpg`), adds
-   frames it has never seen, refuses to overwrite a file that is already an
-   original (`--replace-originals` for a re-export), and never changes the
-   staging folder. A re-run copies nothing.
+1. Export camera files from iCloud Photos into the inbox,
+   `~/Desktop/voyage originals` (`PHOTOS_INBOX`), in any folders or none;
+   folder names are hints, not trusted. `npm run photos:import -- --dry-run`,
+   then `npm run photos:import -- --move`. For each file the gateway:
+   - **matches by name**: galleries holding the same frame number,
+     confirmed by picture, since frame numbers repeat across years;
+   - **else by picture**: the closest of every published photograph by
+     fingerprint (48×48 greyscale, correlation ≥ 0.95; true pairs score
+     ≥ 0.99, different frames of one beach ≤ 0.76). A match is imported
+     under the published frame's name, so a typo in an old name (the old
+     `DSCF3921` was really frame 3951) keeps its slug and captions;
+   - **verifies** it: decodes whole, carries camera make and capture time,
+     no bootstrap stamp, same aspect ratio as the published copy;
+   - **copies** it over its compressed copy (or adds a new frame when the
+     file sits in a voyage's folder and nothing published matches), and with
+     `--move` removes it from the inbox once the copy is byte-identical.
+   Files that match nothing, fail a check, or duplicate another staged file
+   stay in the inbox, are listed in the output and on the dashboard, and
+   leave only when you say so (`--discard`, to the Trash).
+
+   Round one runs the bulk of the exports through this. Round two sweeps
+   the non-matches one by one: a wrong export is discarded; an unpublished
+   frame worth keeping is moved into its voyage's folder in the inbox and
+   imported as a new frame.
 2. `npm run photos:recollect -- --gallery <voyage>` and read the report:
    - **matched**: frames the gallery already had; the count says how many
      are now originals and how many still carry the bootstrap stamp.
