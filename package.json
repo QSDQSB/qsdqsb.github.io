@@ -47,6 +47,8 @@
     "generate:depth": "node scripts/generate-hero-depth-maps.mjs",
     "generate:gallery:lqip": "node scripts/generate-gallery-assets.mjs --lqip-only",
     "photos:push": "node scripts/photos/push.mjs",
+    "photos:pull": "node scripts/photos/pull.mjs",
+    "photos:import": "node scripts/photos/import.mjs",
     "photos:plan": "node scripts/photos/plan.mjs",
     "photos:prune": "node scripts/photos/prune.mjs",
     "photos:process": "node scripts/photos/process.mjs",

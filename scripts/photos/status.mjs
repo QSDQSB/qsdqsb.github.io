@@ -32,7 +32,7 @@ import { createRequire } from 'node:module';
 import { PATHS, parseArgs } from './lib/config.mjs';
 import {
   cleanGallery, originalsBucket, localGallery, galleriesUnder, bucketGalleries,
-  readAuthored, readMerged, isCaptioned,
+  readAuthored, readMerged, isCaptioned, isCompressedCopy, readHeadExif,
 } from './lib/inventory.mjs';
 import { slugFor } from './lib/slug.mjs';
 
@@ -66,6 +66,9 @@ export function buildStatus({ galleries, referenced, local, bucket, merged, auth
       local: l.files.length, bucket: b ? b.length : null,
       pending: [], processed: inventory.length,
       compressed: inventory.filter(p => p.compressed).length,
+      // Re-collected on this machine, pushed or not: local files without the
+      // bootstrap stamp. Only known when the local files carry a `compressed` flag.
+      localOriginals: l.files.filter(f => f.compressed === false).length,
       captioned: inventory.filter(p => isCaptioned(aPhotos[p.slug])).length,
       unlisted: inventory.filter(p => !(p.slug in aPhotos)).map(p => p.slug),
       orphans: [], referencedOrphans: [], unprocessed: [],
@@ -140,7 +143,7 @@ export function formatStatus(rows, { bucketNote = null } = {}) {
   }
   const t = (k) => rows.reduce((n, r) => n + (typeof r[k] === 'number' ? r[k] : 0), 0);
   const bad = rows.filter(r => r.problems.length).length;
-  out.push('', `${rows.length} galleries · ${t('local')} local · ${t('processed')} processed · ${t('compressed')} still compressed · ${t('captioned')} captioned · ${bad ? `${bad} with problems` : 'no problems'}`);
+  out.push('', `${rows.length} galleries · ${t('local')} local · ${t('processed')} processed · ${t('localOriginals')} originals on this machine · ${t('compressed')} live still compressed · ${t('captioned')} captioned · ${bad ? `${bad} with problems` : 'no problems'}`);
   return out;
 }
 
@@ -184,9 +187,17 @@ export async function collect({ gallery = null, offline = false, fetch = true } 
   let unreachable = 0;
   if (fetch) ({ unreachable } = await (await import('./fetch-manifests.mjs')).fetchAll({ galleries }));
 
+  // Read each local file's stamp once, so re-collection shows before it is pushed.
+  const locals = new Map();
+  for (const g of galleries) {
+    const l = localGallery(g);
+    for (const f of l.files) f.compressed = isCompressedCopy(await readHeadExif(f.abs).catch(() => null));
+    locals.set(g, l);
+  }
+
   const rows = buildStatus({
     galleries, referenced, bucket,
-    local: (g) => localGallery(g),
+    local: (g) => locals.get(g),
     merged: (g) => readMerged(g),
     authored: (g) => readAuthored(g),
   });

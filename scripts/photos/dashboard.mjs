@@ -8,6 +8,9 @@
  *   awaiting     in the originals bucket, not rendered yet
  *   local        only on this machine
  *
+ * "Re-collected" counts an original as soon as it is in photos/, before it
+ * is pushed; the bar still shows where each photograph is on its way live.
+ *
  * Bars are drawn to one scale across galleries, so a long bar is a big
  * voyage. Problems are the same ones photos:status fails on.
  *
@@ -34,15 +37,19 @@ const STAGES = [
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const pct = (n, d) => d ? Math.round((n / d) * 100) : 0;
 
+const recollected = (r) => Math.max(r.localOriginals || 0, r.stages.original);
+
 export function totals(rows) {
-  const t = { galleries: rows.length, photos: 0, live: 0, original: 0, compressed: 0, awaiting: 0, localOnly: 0, captioned: 0, pending: 0, problems: 0, galleriesLive: 0, galleriesDone: 0 };
+  const t = { galleries: rows.length, photos: 0, recollected: 0, live: 0, original: 0, compressed: 0, awaiting: 0, localOnly: 0, captioned: 0, pending: 0, problems: 0, galleriesLive: 0, galleriesDone: 0 };
   for (const r of rows) {
     const s = r.stages;
     const n = s.original + s.compressed + s.awaiting + s.localOnly;
     t.photos += n; t.original += s.original; t.compressed += s.compressed; t.awaiting += s.awaiting; t.localOnly += s.localOnly;
+    // Re-collected: an original on this machine or live, whichever this machine can see more of.
+    t.recollected += recollected(r);
     t.live += r.processed; t.captioned += r.captioned; t.pending += r.pending.length; t.problems += r.problems.length;
     if (r.processed) t.galleriesLive++;
-    if (n && s.original === n) t.galleriesDone++;
+    if (n && recollected(r) === n) t.galleriesDone++;
   }
   return t;
 }
@@ -61,12 +68,12 @@ export function renderDashboard(rows, { generated = new Date().toISOString(), bu
   const body = rows.map(r => {
     const n = Object.values(r.stages).reduce((a, b) => a + b, 0);
     const [parent, child] = r.gallery.includes('/') ? [r.gallery.slice(0, r.gallery.lastIndexOf('/') + 1), r.gallery.slice(r.gallery.lastIndexOf('/') + 1)] : ['', r.gallery];
-    const state = r.problems.length ? 'bad' : n && r.stages.original === n ? 'done' : '';
+    const state = r.problems.length ? 'bad' : n && recollected(r) === n ? 'done' : '';
     return `<tr class="${state}">
       <th scope="row"><span class="parent">${esc(parent)}</span>${esc(child)}${r.referenced ? '' : ' <em title="no voyage names this gallery">unlinked</em>'}</th>
       <td class="bars">${bar(r.stages, Math.max(2, (n / max) * 100))}</td>
       <td class="num">${n}</td>
-      <td class="num">${r.stages.original}<span class="dim"> · ${pct(r.stages.original, n)}%</span></td>
+      <td class="num">${recollected(r)}<span class="dim"> · ${pct(recollected(r), n)}%</span></td>
       <td class="num">${r.captioned}<span class="dim">/${r.processed}</span></td>
       <td class="num">${r.bucket == null ? '<span class="dim">–</span>' : r.pending.length || '<span class="dim">0</span>'}</td>
       <td class="when">${r.lastProcessed ? esc(r.lastProcessed.slice(0, 16).replace('T', ' ')) : '<span class="dim">never</span>'}</td>
@@ -108,7 +115,8 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--dim);font-size:12px}u
 </style></head><body><main>
 <header><h1>Photo migration</h1><span class="meta">${esc(generated.slice(0, 16).replace('T', ' '))} UTC · ${esc(base)}${bucketNote ? ` · bucket not read: ${esc(bucketNote)}` : ''}${unreachable ? ` · ${unreachable} manifest(s) unreachable` : ''}</span></header>
 <section class="kpis">
-${kpi('originals re-collected', t.original, t.photos)}
+${kpi('originals re-collected', t.recollected, t.photos)}
+${kpi('originals live', t.original, t.photos)}
 ${kpi('photos live', t.live, t.photos)}
 ${kpi('galleries live', t.galleriesLive, t.galleries)}
 ${kpi('galleries complete', t.galleriesDone, t.galleries)}
@@ -137,7 +145,7 @@ async function main() {
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, renderDashboard(rows, { bucketNote, unreachable, base: env.publicBase }));
   const t = totals(rows);
-  console.log(`${path.relative(process.cwd(), out)}: ${t.original}/${t.photos} originals, ${t.live} live, ${t.problems} problem(s)`);
+  console.log(`${path.relative(process.cwd(), out)}: ${t.recollected}/${t.photos} originals re-collected, ${t.original} live, ${t.problems} problem(s)`);
   if (args.open) spawnSync('open', [out]);
   return 0;
 }
