@@ -35,6 +35,7 @@ import {
   readAuthored, readMerged, isCaptioned, isCompressedCopy, readHeadExif,
 } from './lib/inventory.mjs';
 import { slugFor } from './lib/slug.mjs';
+import { readSidecar } from './locate.mjs';
 
 const require = createRequire(import.meta.url);
 
@@ -48,7 +49,7 @@ const require = createRequire(import.meta.url);
  * @param {(g:string)=>object|null} input.merged
  * @param {(g:string)=>{doc:object|null,problems:string[]}} input.authored
  */
-export function buildStatus({ galleries, referenced, local, bucket, merged, authored }) {
+export function buildStatus({ galleries, referenced, local, bucket, merged, authored, locations = () => ({}) }) {
   return galleries.map((gallery) => {
     const problems = [], notes = [];
     const l = local(gallery);
@@ -74,6 +75,11 @@ export function buildStatus({ galleries, referenced, local, bucket, merged, auth
       orphans: [], referencedOrphans: [], unprocessed: [],
       lastProcessed: inventory.map(p => p.processed).filter(Boolean).sort().pop() || (m && m.generated) || null,
       formats: [...new Set(inventory.flatMap(p => p.formats || []))].sort(),
+      // Where each photo's place name comes from (photos:locate): GPS, a visual guess, or not yet.
+      located: Object.values(locations(gallery)).reduce((n, e) => {
+        const k = e.gps === 'present' ? 'gps' : e.source === 'visual guess' ? 'visual' : e.source === 'awaiting original' ? 'awaiting' : 'pending';
+        n[k] = (n[k] || 0) + 1; return n;
+      }, { gps: 0, visual: 0, pending: 0, awaiting: 0 }),
       problems, notes,
     };
 
@@ -200,6 +206,7 @@ export async function collect({ gallery = null, offline = false, fetch = true } 
     local: (g) => locals.get(g),
     merged: (g) => readMerged(g),
     authored: (g) => readAuthored(g),
+    locations: (g) => readSidecar(g),
   });
   return { rows, bucketNote, unreachable };
 }

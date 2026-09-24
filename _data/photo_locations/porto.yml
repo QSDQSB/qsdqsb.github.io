@@ -1,0 +1,156 @@
+# Suggested locations for gallery porto, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf1338:
+    gps: missing
+    source: awaiting original
+  dscf1430:
+    gps: missing
+    source: awaiting original
+  dscf1593:
+    gps: missing
+    source: awaiting original
+  dscf1618:
+    suggested: Palácio da Bolsa, Porto
+    landmark: Palácio da Bolsa
+    street: Rua da Alfândega
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1670:
+    suggested: Torre da Reboleira, Porto
+    landmark: Torre da Reboleira
+    street: Muro dos Bacalhoeiros
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1680:
+    suggested: Palácio da Bolsa, Porto
+    landmark: Palácio da Bolsa
+    street: Cais da Alfândega
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1697:
+    suggested: Jardins do Palácio de Cristal, Porto
+    landmark: Jardins do Palácio de Cristal
+    street: Rua de Jorge Viterbo Ferreira
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1710:
+    suggested: Jardins do Palácio de Cristal, Porto
+    landmark: Jardins do Palácio de Cristal
+    street: Rua de Dom Manuel II
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1712:
+    suggested: Jardins do Palácio de Cristal, Porto
+    landmark: Jardins do Palácio de Cristal
+    street: Rua de Dom Manuel II
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1719:
+    suggested: Jardins do Palácio de Cristal, Porto
+    landmark: Jardins do Palácio de Cristal
+    street: Avenida das Tílias
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1759:
+    suggested: Jardins do Palácio de Cristal, Porto
+    landmark: Jardins do Palácio de Cristal
+    street: Rua de Entre Quintas
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7005:
+    suggested: Mosteiro da Serra do Pilar, Porto
+    landmark: Mosteiro da Serra do Pilar
+    street: Rua do Casino da Ponte
+    city: Vila Nova de Gaia
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7007:
+    gps: missing
+    source: awaiting original
+  dscf7023:
+    suggested: Funicular dos Guindais, Porto
+    landmark: Funicular dos Guindais
+    street: Ponte Luiz I (tabuleiro inferior)
+    city: Vila Nova de Gaia
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7030:
+    suggested: Funicular dos Guindais, Porto
+    landmark: Funicular dos Guindais
+    street: Largo Diocleciano Monteiro
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7057:
+    gps: missing
+    source: awaiting original
+  dscf7059:
+    gps: missing
+    source: awaiting original
+  dscf7097:
+    suggested: Palácio da Bolsa, Porto
+    landmark: Palácio da Bolsa
+    street: Túnel do Porto
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7110:
+    gps: missing
+    source: awaiting original
+  dscf7111:
+    gps: missing
+    source: awaiting original
+  dscf7129:
+    suggested: Hard Club, Porto
+    landmark: Hard Club
+    street: Rua de Mouzinho da Silveira
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7144:
+    suggested: Clérigos Tower, Porto
+    landmark: Clérigos Tower
+    street: Rua Doutor Ferreira da Silva
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7157:
+    suggested: Clérigos Tower, Porto
+    landmark: Clérigos Tower
+    street: Rua Doutor Ferreira da Silva
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7338:
+    suggested: Clérigos Tower, Porto
+    landmark: Clérigos Tower
+    street: Rua Arquitecto Nicolau Nasoni
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode

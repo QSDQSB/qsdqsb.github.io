@@ -1,0 +1,16 @@
+# Suggested locations for gallery paris, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf0865:
+    gps: missing
+    source: awaiting original
+  dscf2921:
+    gps: missing
+    source: awaiting original
+  dscf9892:
+    gps: missing
+    source: awaiting original
+  dscf9905:
+    gps: missing
+    source: awaiting original

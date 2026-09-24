@@ -1,0 +1,19 @@
+# Suggested locations for gallery singapore, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf3966:
+    gps: missing
+    source: awaiting original
+  dscf4035:
+    gps: missing
+    source: awaiting original
+  dscf4082:
+    gps: missing
+    source: awaiting original
+  dscf4108:
+    gps: missing
+    source: awaiting original
+  dscf4171:
+    gps: missing
+    source: awaiting original

@@ -1,0 +1,13 @@
+# Suggested locations for gallery florence, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf2732:
+    gps: missing
+    source: awaiting original
+  dscf2758:
+    gps: missing
+    source: awaiting original
+  dscf2809:
+    gps: missing
+    source: awaiting original

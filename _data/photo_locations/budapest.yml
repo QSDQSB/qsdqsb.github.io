@@ -1,0 +1,52 @@
+# Suggested locations for gallery budapest, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf5834:
+    gps: missing
+    source: awaiting original
+  dscf5838:
+    gps: missing
+    source: awaiting original
+  dscf5857:
+    gps: missing
+    source: awaiting original
+  dscf5870:
+    gps: missing
+    source: awaiting original
+  dscf5897:
+    gps: missing
+    source: awaiting original
+  dscf5915:
+    gps: missing
+    source: awaiting original
+  dscf6084:
+    gps: missing
+    source: awaiting original
+  dscf6363:
+    gps: missing
+    source: awaiting original
+  dscf6552:
+    gps: missing
+    source: awaiting original
+  dscf6582:
+    gps: missing
+    source: awaiting original
+  dscf6599:
+    gps: missing
+    source: awaiting original
+  dscf6608:
+    gps: missing
+    source: awaiting original
+  dscf6621:
+    gps: missing
+    source: awaiting original
+  dscf6638:
+    gps: missing
+    source: awaiting original
+  dscf6666:
+    gps: missing
+    source: awaiting original
+  dscf6671:
+    gps: missing
+    source: awaiting original

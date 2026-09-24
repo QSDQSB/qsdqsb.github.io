@@ -80,6 +80,18 @@ export function fNumberFromLegacy(av) {
   return THIRD_STOPS.reduce((best, s) => Math.abs(Math.log2(s / n)) < Math.abs(Math.log2(best / n)) ? s : best);
 }
 
+/**
+ * The old site named files two ways. With a place and an `XF`/`XC`/`GF`
+ * lens (`…__XF90mm_f7.6_…`) the aperture is an APEX value; with a bare lens
+ * (`…_90mm_f8.0_…`) it is the f-number itself. Checked against every
+ * re-collected original: 540 names of the first kind, 34 of the second.
+ */
+export function legacyAperture(legacy) {
+  if (!legacy || typeof legacy.aperture !== 'number') return null;
+  const apex = /^(XF|XC|GF)\s/i.test(legacy.lens || '');
+  return apex ? fNumberFromLegacy(legacy.aperture) : legacy.aperture;
+}
+
 function looksLikeExposure(p) { return /^(f\d|ISO\d|\d+:\d+s$|\d+mm$)/i.test(p); }
 
 /** Assign unique slugs to a list of filenames; a collision gets `-2`, `-3`… and a warning entry. */

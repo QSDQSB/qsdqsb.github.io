@@ -1,0 +1,27 @@
+# Suggested locations for gallery prague/astronomical-clock, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf4349:
+    gps: missing
+    source: awaiting original
+  dscf4522:
+    gps: missing
+    source: awaiting original
+  dscf4523:
+    suggested: Celetná, Prague
+    landmark: Celetná
+    street: Celetná
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4525:
+    gps: missing
+    source: awaiting original
+  dscf4526:
+    gps: missing
+    source: awaiting original
+  dscf4531:
+    gps: missing
+    source: awaiting original

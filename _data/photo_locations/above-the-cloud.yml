@@ -1,0 +1,34 @@
+# Suggested locations for gallery above-the-cloud, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf0559:
+    gps: missing
+    source: awaiting original
+  dscf0567:
+    gps: missing
+    source: awaiting original
+  dscf0949:
+    gps: missing
+    source: awaiting original
+  dscf0962:
+    gps: missing
+    source: awaiting original
+  dscf3631:
+    gps: missing
+    source: awaiting original
+  dscf3659:
+    gps: missing
+    source: awaiting original
+  dscf4237:
+    gps: missing
+    source: awaiting original
+  dscf5863:
+    gps: missing
+    source: awaiting original
+  dscf5865:
+    gps: missing
+    source: awaiting original
+  dscf5874:
+    gps: missing
+    source: awaiting original

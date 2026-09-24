@@ -58,7 +58,7 @@ import os from 'node:os';
 import { PATHS, env, parseArgs } from './lib/config.mjs';
 import sharp from 'sharp';
 import { galleriesUnder, localGallery, readHeadExif, isCompressedCopy, cleanGallery } from './lib/inventory.mjs';
-import { slugFor, parseLegacyName, fNumberFromLegacy } from './lib/slug.mjs';
+import { slugFor, parseLegacyName, legacyAperture } from './lib/slug.mjs';
 
 export const MATCH_THRESHOLD = 0.95;
 const RATIO_TOLERANCE = 0.01;
@@ -85,7 +85,7 @@ export async function publishedReference(gallery, slug, { legacyDir = path.join(
   const dir = path.join(legacyDir, ...gallery.split('/'));
   if (fs.existsSync(dir)) {
     const hit = fs.readdirSync(dir).find(f => !f.startsWith('.') && slugFor(f) === slug);
-    if (hit) { const l = parseLegacyName(hit); return { file: path.join(dir, hit), source: 'gallery/', legacy: { ...l, aperture: fNumberFromLegacy(l.aperture) } }; }
+    if (hit) { const l = parseLegacyName(hit); return { file: path.join(dir, hit), source: 'gallery/', legacy: { ...l, aperture: legacyAperture(l) } }; }
   }
   const cur = localGallery(gallery, photosDir).files.find(f => f.slug === slug);
   if (cur && isCompressedCopy(await readHeadExif(cur.abs).catch(() => null))) {

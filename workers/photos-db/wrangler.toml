@@ -1,0 +1,37 @@
+# The photo database's Worker: keeps D1 in step with the pipeline and
+# serves a read-only API.
+#
+#   public bucket  */manifest.json   ─┐
+#   originals      */.private.json   ─┴─ R2 event ─▶ queue photos-manifests ─▶ this Worker
+#                                                      upserts only rows whose version changed
+#   GET https://api.qsdqsb.com/v1/…  ◀── the site build, later the front end (public fields only)
+#
+# Deploy from this directory: npx wrangler deploy
+# Schema: npx wrangler d1 migrations apply qsdqsb-photos --remote
+# Full setup in _docs/photos-pipeline.md → Photo database.
+
+name = "qsdqsb-photos-db"
+main = "src/index.mjs"
+compatibility_date = "2026-08-01"
+workers_dev = false
+routes = [{ pattern = "api.qsdqsb.com", custom_domain = true }]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "qsdqsb-photos"
+database_id = "477ac9fa-ace0-456a-bbac-10b59e2abb5d"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "PUBLIC"
+bucket_name = "qsdqsb-photos"
+
+[[r2_buckets]]
+binding = "ORIGINALS"
+bucket_name = "qsdqsb-originals"
+
+[[queues.consumers]]
+queue = "photos-manifests"
+max_batch_size = 50
+max_batch_timeout = 10
+max_retries = 5

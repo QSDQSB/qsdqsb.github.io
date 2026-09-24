@@ -5,7 +5,7 @@
  *
  *   rclone     the `r2` remote exists on this machine
  *   bucket     the originals bucket answers a listing
- *   domain     img.qsdqsb.com answers over HTTPS from R2
+ *   domain     img.qsdqsb.com serves a processed gallery's manifest
  *   secrets    the four repository secrets the workflow needs exist (names only)
  *   worker     a processing run was started by the Worker (repository_dispatch)
  *   workflow   the last processing run, and how it ended
@@ -14,9 +14,19 @@
  * 'todo' is a step not done yet; 'fail' is a step done but not working.
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { env } from './config.mjs';
+import { env, PATHS } from './config.mjs';
 import { rcloneVersion, remoteExists } from './rclone.mjs';
+
+/** A gallery the last photos:fetch saw processed, to probe the public domain with. */
+function processedGallery() {
+  try {
+    const idx = JSON.parse(fs.readFileSync(path.join(PATHS.mergedDir, '_index.json'), 'utf8'));
+    return Object.entries(idx.galleries || {}).find(([, s]) => s.processed)?.[0] || null;
+  } catch { return null; }
+}
 
 export const REQUIRED_SECRETS = ['R2_ACCOUNT_ID', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'CF_PAGES_DEPLOY_HOOK'];
 const WORKFLOW = 'photos-process.yml';
@@ -59,12 +69,20 @@ export async function setupChecks({ offline = false } = {}) {
 
   if (offline) add('domain', new URL(env.publicBase).host, 'todo', 'not checked (--offline)');
   else {
+    // The bare root is always 404 (nothing lives there), so ask for a real
+    // manifest: a processed gallery's, else just prove DNS, TLS and R2 answer.
+    const host = new URL(env.publicBase).host;
+    const probe = processedGallery();
     try {
-      const r = await fetch(`${env.publicBase}/`, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
-      // A connected R2 custom domain answers 404 for the bare root; anything answering at all means DNS and TLS work.
-      add('domain', new URL(env.publicBase).host, 'ok', `answers HTTP ${r.status}`);
+      const url = probe ? `${env.publicBase}/${probe}/manifest.json` : `${env.publicBase}/`;
+      const r = await fetch(url, { signal: AbortSignal.timeout(10000) }); // the dashboard fetches 50 manifests alongside
+      if (probe && r.ok) {
+        const m = await r.json().catch(() => null);
+        add('domain', host, 'ok', `serves ${probe}/manifest.json (${m?.photos?.length ?? '?'} photos)`);
+      } else if (probe) add('domain', host, 'fail', `${probe}/manifest.json answered HTTP ${r.status}`);
+      else add('domain', host, 'ok', 'reachable; no gallery processed yet to fetch');
     } catch (e) {
-      add('domain', new URL(env.publicBase).host, 'todo', (e.cause?.code || e.name || 'unreachable').toString());
+      add('domain', host, 'todo', (e.cause?.code || e.name || 'unreachable').toString());
     }
   }
 

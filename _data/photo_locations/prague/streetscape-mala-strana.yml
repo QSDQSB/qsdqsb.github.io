@@ -1,0 +1,66 @@
+# Suggested locations for gallery prague/streetscape-mala-strana, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf3162:
+    gps: missing
+    source: awaiting original
+  dscf3174:
+    gps: missing
+    source: awaiting original
+  dscf3180:
+    gps: missing
+    source: awaiting original
+  dscf4270:
+    suggested: Saint Nicholas, Prague
+    landmark: Saint Nicholas
+    street: Malostranské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4807:
+    gps: missing
+    source: awaiting original
+  dscf4811:
+    suggested: Hellichova, Prague
+    street: Hellichova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5181:
+    suggested: Saint Nicholas, Prague
+    landmark: Saint Nicholas
+    street: Malostranské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5204:
+    gps: missing
+    source: awaiting original
+  dscf5264:
+    suggested: Saint Nicholas, Prague
+    landmark: Saint Nicholas
+    street: Malostranské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5285:
+    suggested: Wallenstein Palace, Prague
+    landmark: Wallenstein Palace
+    street: Valdštejnská
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5595:
+    suggested: Morzin Palace, Prague
+    landmark: Morzin Palace
+    street: Hradčanské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode

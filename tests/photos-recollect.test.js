@@ -30,6 +30,8 @@ test('matched, new, renamed and vanishing are told apart, with authored work nam
   assert.deepStrictEqual(r.original, ['dscf0001', 'dscf0008']);
   assert.deepStrictEqual(r.compressed, ['dscf0002']);
   assert.deepStrictEqual(r.unchanged, ['dscf0002']);
+  const restamped = compareRecollection({ local: [{ ...loc('DSCF0002.jpg', true, 5), md5: 'b' }], baseline: [{ ...base('DSCF0002.jpg'), md5: 'a' }], baselineHasSizes: true });
+  assert.deepStrictEqual(restamped.unchanged, [], 'same size, different bytes is a change');
   assert.deepStrictEqual(r.new.map(n => n.slug), ['dscf0007']);
   assert.deepStrictEqual(r.renamed, [
     { slug: 'dscf0001', local: 'DSCF0001.JPG', bucket: 'DSCF0001.jpg', safe: true },
