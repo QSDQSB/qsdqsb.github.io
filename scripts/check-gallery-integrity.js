@@ -16,8 +16,18 @@
  * Thumbnails are gitignored and regenerated, so their absence is reported as
  * "run the generator", never as a content error.
  *
+ * Two sources of truth, one per stage of the photo migration:
+ *
+ *   --source gallery     (default until the cutover) the gallery/ tree and
+ *                        its generated thumbnails, as described above
+ *   --source manifests   the photo pipeline: every gallery_name must have a
+ *                        processed manifest with photos in
+ *                        _data/photo_manifests/_index.json (npm run
+ *                        photos:fetch writes it), and every gallery under
+ *                        photos/ must be referenced by some voyage
+ *
  * Usage:
- *   node scripts/check-gallery-integrity.js
+ *   node scripts/check-gallery-integrity.js [--source gallery|manifests]
  *   node scripts/check-gallery-integrity.js --json
  *   node scripts/check-gallery-integrity.js --strict   # orphans become errors
  *
@@ -146,15 +156,60 @@ function audit() {
   return findings;
 }
 
+/**
+ * The pipeline's view: gallery_name against the merged manifest index.
+ * @param {object} index    parsed _data/photo_manifests/_index.json
+ * @param {Map} refs        referencedGalleries()
+ * @param {string[]} local  galleries under photos/ (orphan candidates)
+ */
+function auditManifests(index, refs = referencedGalleries(), local = []) {
+  const findings = [];
+  const add = (level, message) => findings.push({ level, message });
+  const galleries = (index && index.galleries) || {};
+  for (const [name, files] of refs) {
+    const g = galleries[name];
+    if (!g) add('error', `gallery_name "${name}" has no photo manifest — referenced by ${files.join(', ')}; run npm run photos:fetch, or push its photos`);
+    else if (!g.processed) add('error', `"${name}" is not processed yet — ${files.join(', ')} will render an empty grid`);
+    else if (!g.count) add('error', `"${name}" is processed but shows no photos (all hidden?) — ${files.join(', ')}`);
+    else if (g.note) add('warn', `"${name}": ${g.note}`);
+  }
+  for (const name of local) {
+    if (refs.has(name) || [...refs.keys()].some((r) => r.startsWith(`${name}/`))) continue;
+    add('orphan', `photos/${name}/ is referenced by no voyage or sub-voyage`);
+  }
+  return findings;
+}
+
+function localPhotoGalleries(root = path.join(ROOT, 'photos')) {
+  const out = [];
+  const visit = (abs, rel) => {
+    const entries = fs.readdirSync(abs, { withFileTypes: true });
+    if (entries.some((e) => e.isFile() && IMAGE_RE.test(e.name))) out.push(rel);
+    for (const d of entries.filter((e) => e.isDirectory() && !e.name.startsWith('.'))) visit(path.join(abs, d.name), `${rel}/${d.name}`);
+  };
+  if (fs.existsSync(root)) for (const e of fs.readdirSync(root, { withFileTypes: true })) if (e.isDirectory() && !e.name.startsWith('.')) visit(path.join(root, e.name), e.name);
+  return out;
+}
+
 function main(argv) {
   const args = argv.slice(2);
   const strict = args.includes('--strict');
-  const findings = audit();
+  const at = args.indexOf('--source');
+  const source = at >= 0 ? args[at + 1] : 'gallery';
+  if (!['gallery', 'manifests'].includes(source)) { process.stderr.write('--source is gallery or manifests\n'); return 2; }
+  let findings;
+  if (source === 'manifests') {
+    const file = path.join(ROOT, '_data', 'photo_manifests', '_index.json');
+    if (!fs.existsSync(file)) { process.stderr.write(`no ${path.relative(ROOT, file)}: run npm run photos:fetch first\n`); return 2; }
+    findings = auditManifests(JSON.parse(fs.readFileSync(file, 'utf8')), referencedGalleries(), localPhotoGalleries());
+  } else findings = audit();
 
   if (args.includes('--json')) {
     process.stdout.write(JSON.stringify({ findings }, null, 2) + '\n');
   } else if (!findings.length) {
-    process.stdout.write('OK — every gallery_name resolves and no orphan gallery directories.\n');
+    process.stdout.write(source === 'manifests'
+      ? 'OK — every gallery_name has a processed photo manifest, and no orphan galleries under photos/.\n'
+      : 'OK — every gallery_name resolves and no orphan gallery directories.\n');
   } else {
     const order = { error: 0, warn: 1, orphan: 2 };
     for (const f of findings.sort((a, b) => order[a.level] - order[b.level])) {
@@ -173,4 +228,4 @@ if (require.main === module) {
   process.exit(main(process.argv));
 }
 
-module.exports = { audit, referencedGalleries, actualGalleries, main };
+module.exports = { audit, auditManifests, referencedGalleries, actualGalleries, localPhotoGalleries, main };
