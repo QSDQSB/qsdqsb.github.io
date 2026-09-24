@@ -1,15 +1,19 @@
 /**
  * Reverse geocoding for photo locations, from OpenStreetMap:
  *
- *   Nominatim  the address at a point: street, neighbourhood, city, country
+ *   Geoapify   the address at a point: street, neighbourhood, city, country.
+ *              OpenStreetMap data behind a keyed API (GEOAPIFY_API_KEY in
+ *              .env) that answers five a second; without a key, Nominatim,
+ *              one a second
  *   Overpass   the nearest *well-known* landmark within RADIUS metres:
  *              one with a Wikidata or Wikipedia link (Tower Bridge, St
  *              Paul's, Minack Theatre). Memorials, plaques, artworks,
  *              shops and cafés never qualify: a caption naming the plaque
  *              beside the camera confuses more than it places
  *
- * Both are free services with usage policies: at most one request a
- * second, an identifying User-Agent, and a cache so a point is asked once.
+ * The free services have usage policies: at most one request a second, an
+ * identifying User-Agent, and a cache so a point is asked once. The key never
+ * leaves the request: errors name the host, the cache holds the answer.
  * The cache (.photos-local/reverse-geocode.json) holds coordinates and is
  * gitignored; nothing this module returns carries a coordinate, so its
  * output can be committed. Displaying the result needs the attribution
@@ -19,6 +23,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { PATHS } from './config.mjs';
+
+const GEOAPIFY_KEY = process.env.GEOAPIFY_API_KEY || '';
 
 const UA = 'qsdqsb-photos/1.0 (+https://qsdqsb.com)';
 // Public Overpass instances, tried in order: the main one sheds load or
@@ -38,15 +44,15 @@ const CACHE = path.join(PATHS.localStore, 'reverse-geocode.json');
 let cache = null, lastCall = 0;
 const load = () => { if (!cache) { try { cache = JSON.parse(fs.readFileSync(CACHE, 'utf8')); } catch { cache = {}; } } return cache; };
 const save = () => { fs.mkdirSync(path.dirname(CACHE), { recursive: true }); fs.writeFileSync(CACHE, JSON.stringify(cache)); };
-async function politely(url, init, attempt = 0) {
-  const wait = lastCall + 1100 - Date.now();
+async function politely(url, init, attempt = 0, gap = 1100) {
+  const wait = lastCall + gap - Date.now();
   if (wait > 0) await new Promise(r => setTimeout(r, wait));
   lastCall = Date.now();
   let r;
   try { r = await fetch(url, { ...init, headers: { 'User-Agent': UA, ...(init?.headers || {}) }, signal: AbortSignal.timeout(45000) }); }
-  catch (e) { if (attempt < 2) return politely(url, init, attempt + 1); throw e; }
+  catch (e) { if (attempt < 2) return politely(url, init, attempt + 1, gap); throw e; }
   // Overpass sheds load with 429 and 504: back off and ask again, then give up for this run.
-  if ((r.status === 429 || r.status === 504) && attempt < 2) { await new Promise(res => setTimeout(res, 8000 * (attempt + 1))); return politely(url, init, attempt + 1); }
+  if ((r.status === 429 || r.status === 504) && attempt < 2) { await new Promise(res => setTimeout(res, 8000 * (attempt + 1))); return politely(url, init, attempt + 1, gap); }
   if (!r.ok) throw new Error(`${r.status} from ${new URL(url).host}`);
   return r.json();
 }
@@ -115,6 +121,21 @@ export function effectiveTier(x) {
   return 0;
 }
 
+/** Geoapify's answer in Nominatim's shape, so the address is read one way whichever service gave it. */
+async function geoapify(lat, lng) {
+  const u = new URL('https://api.geoapify.com/v1/geocode/reverse');
+  for (const [k, v] of Object.entries({ lat, lon: lng, lang: 'en', format: 'json', apiKey: GEOAPIFY_KEY })) u.searchParams.set(k, v);
+  const p = (await politely(u, { headers: { Accept: 'application/json' } }, 0, 220)).results?.[0];
+  if (!p) return { address: {} };
+  const address = {
+    road: p.street, neighbourhood: p.neighbourhood, quarter: p.quarter, suburb: p.suburb, city_district: p.district,
+    village: p.village, hamlet: p.hamlet, city: p.city, county: p.county, state: p.state, country: p.country, country_code: p.country_code,
+  };
+  return { address: Object.fromEntries(Object.entries(address).filter(([, v]) => v)), source: 'geoapify' };
+}
+
+const address = (lat, lng) => (GEOAPIFY_KEY ? geoapify(lat, lng) : nominatim(lat, lng));
+
 async function nominatim(lat, lng) {
   const u = new URL('https://nominatim.openstreetmap.org/reverse');
   for (const [k, v] of Object.entries({ format: 'jsonv2', lat, lon: lng, zoom: 18, addressdetails: 1, namedetails: 1, 'accept-language': 'en' })) u.searchParams.set(k, v);
@@ -158,7 +179,7 @@ export async function locate(lat, lng) {
   for (const k of [`v4:${at}`, `v3:${at}`, `v2:${at}`, at]) delete c[k];
   // A lookup is kept only when it answered. A failure stays unset and is asked
   // again next run; an empty answer from before `verified` existed is asked once more.
-  if (!e.addr) e.addr = await nominatim(lat, lng);
+  if (!e.addr) e.addr = await address(lat, lng);
   if (!e.verified || !e.marks) { try { e.marks = await overpass(lat, lng); } catch { e.marks = e.marks?.length ? e.marks : null; } }
   if (!e.verified || !e.inside) { try { e.inside = await enclosing(lat, lng); } catch { e.inside = e.inside?.length ? e.inside : null; } }
   e.verified = !!(e.marks && e.inside);
