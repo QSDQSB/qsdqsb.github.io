@@ -45,6 +45,10 @@ test('legacy apertures are APEX values, converted to the camera\'s third-stop f-
     assert.strictEqual(fNumberFromLegacy(av), n, `f${av} → f/${n}`);
   }
   assert.strictEqual(fNumberFromLegacy(null), null);
+  const { legacyAperture, parseLegacyName } = await import('../scripts/photos/lib/slug.mjs');
+  assert.strictEqual(legacyAperture(parseLegacyName('DSCF1422_Tidal_Causeway,_Marazion,_UK__XF16-55mm_f7.6_1:6400s_ISO1600.jpg')), 14, 'XF lens: APEX');
+  assert.strictEqual(legacyAperture(parseLegacyName('DSCF5594_title_90mm_f8.0_1:200s_ISO500.JPG')), 8, 'bare lens: the f-number itself');
+  assert.strictEqual(legacyAperture(parseLegacyName('DSCF5135_90mm_f6.4_1:5800s_ISO640.JPG')), 6.4);
 });
 
 test('slug collisions get a numeric suffix and a warning', async () => {
