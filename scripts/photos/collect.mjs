@@ -31,17 +31,19 @@
  *   - at the end, photos:locate names the places of the new originals
  * Nothing is pushed to R2.
  *
- * Usage: npm run photos:collect [-- --gallery <name>] [--rounds 3] [--batch 20] [--dry-run] [--no-locate]
+ * Usage: npm run photos:collect [-- --gallery <name>] [--rounds 10] [--batch 20] [--dry-run] [--no-locate]
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import { PATHS, ROOT, parseArgs } from './lib/config.mjs';
 import { galleriesUnder, localGallery, readHeadExif, isCompressedCopy, cleanGallery } from './lib/inventory.mjs';
 import { findByFilename, exportPhotos, guardMemory, photosMemoryGB } from './lib/apple-photos.mjs';
 import { planImport, applyImport, signatureIndex, NON_MATCH } from './import.mjs';
 
+const require = createRequire(import.meta.url);
 const DIR = path.join(PATHS.localStore, 'collect');
 const STATE = path.join(DIR, 'state.json');
 const loadState = () => { try { return JSON.parse(fs.readFileSync(STATE, 'utf8')); } catch { return { tried: {}, candidates: {} }; } };
@@ -95,8 +97,26 @@ async function targets(only) {
   return out;
 }
 
-/** Capture days of the originals already in each gallery: where its other photos were taken, in time. */
-async function galleryDays() {
+/** The `date:` of the voyage page naming each gallery (a sub-voyage's, else its parent's). */
+function voyageDates() {
+  const out = new Map();
+  const { referencedGalleries } = require('../check-gallery-integrity.js');
+  for (const [g, files] of referencedGalleries()) {
+    for (const f of files) {
+      const m = fs.readFileSync(path.join(ROOT, f), 'utf8').match(/^date:\s*["']?(\d{4}-\d{2}-\d{2})/m);
+      if (m) { out.set(g, Date.parse(m[1])); break; }
+    }
+  }
+  return out;
+}
+
+/**
+ * When each gallery was shot: the capture days of its originals already in
+ * photos/, else the date on its voyage page (a gallery re-collected for the
+ * first time has no originals yet). Recomputed every round, so the first
+ * match in a gallery anchors the ranking of the rest.
+ */
+async function galleryDays(pageDates = voyageDates()) {
   const out = new Map();
   for (const g of galleriesUnder(PATHS.photosDir)) {
     const days = [];
@@ -104,7 +124,8 @@ async function galleryDays() {
       const x = await readHeadExif(f.abs).catch(() => null);
       if (x?.taken && !isCompressedCopy(x)) days.push(Date.parse(x.taken.slice(0, 10)));
     }
-    out.set(g, days);
+    const page = pageDates.get(g) ?? pageDates.get(g.split('/')[0]);
+    out.set(g, days.length ? days : page ? [page] : []);
   }
   return out;
 }
@@ -119,7 +140,8 @@ export function rank(cands, days) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const only = args.gallery ? cleanGallery(args.gallery) : null;
-  const rounds = Number(args.rounds) || 3, batch = Number(args.batch) || 20;
+  // Rounds continue until every photo's candidates are tried; the cap only guards against a bug looping.
+  const rounds = Number(args.rounds) || 10, batch = Number(args.batch) || 20;
   const log = (m) => { const line = `${stamp()} ${m}`; console.log(line); fs.mkdirSync(DIR, { recursive: true }); fs.appendFileSync(LOG, line + '\n'); };
   const holder = lock();
   if (holder) { console.error(`another photos:collect is running (pid ${holder}); not starting a second one`); return 1; }
@@ -144,13 +166,14 @@ async function main() {
   if (none.length) log(`${none.length} photo(s) have no item of that name in Photos: ${none.map(t => `${t.gallery}/${t.slug}`).slice(0, 12).join(' ')}${none.length > 12 ? ' …' : ''}`);
   if (args['dry-run']) { log('dry run: stopping before any export'); return 0; }
 
-  const days = await galleryDays();
+  const pageDates = voyageDates();
   const index = await signatureIndex();
   let imported = 0;
 
   // 2–3. Rounds: the best untried candidate per photo, exported in small batches, judged by the gateway.
   for (let round = 1; round <= rounds; round++) {
     todo = await targets(only);
+    const days = await galleryDays(pageDates);
     const picks = [];
     for (const t of todo) {
       const key = `${t.gallery}/${t.slug}`, tried = new Set(state.tried[key] || []);
