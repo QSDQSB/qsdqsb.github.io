@@ -28,7 +28,8 @@
  *   - a short pause between batches keeps Photos and iCloud unhurried
  *   - everything is logged to .photos-local/collect/log.txt, which the
  *     dashboard shows
- *   - at the end, photos:locate names the places of the new originals
+ *   - at the end the lock is released and photos:locate names the places of
+ *     the new originals in the background (it only talks to OpenStreetMap)
  * Nothing is pushed to R2.
  *
  * Usage: npm run photos:collect [-- --gallery <name>] [--rounds 10] [--batch 20] [--dry-run] [--no-locate]
@@ -36,7 +37,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { PATHS, ROOT, parseArgs } from './lib/config.mjs';
 import { galleriesUnder, localGallery, readHeadExif, isCompressedCopy, cleanGallery } from './lib/inventory.mjs';
@@ -64,11 +65,12 @@ export function lock() {
   } catch { /* none */ }
   fs.mkdirSync(DIR, { recursive: true });
   fs.writeFileSync(LOCK, String(process.pid));
-  const release = () => { try { if (Number(fs.readFileSync(LOCK, 'utf8')) === process.pid) fs.unlinkSync(LOCK); } catch { /* gone */ } };
-  process.on('exit', release);
-  for (const sig of ['SIGINT', 'SIGTERM']) process.on(sig, () => { release(); process.exit(130); });
+  process.on('exit', unlock);
+  for (const sig of ['SIGINT', 'SIGTERM']) process.on(sig, () => { unlock(); process.exit(130); });
   return null;
 }
+/** Give the lock back early, once this process is done with Photos. */
+export function unlock() { try { if (Number(fs.readFileSync(LOCK, 'utf8')) === process.pid) fs.unlinkSync(LOCK); } catch { /* gone */ } }
 
 /** Try fn up to `times`, pausing longer each time and restarting Photos between tries. */
 export async function retry(what, fn, log, times = 3) {
@@ -212,11 +214,20 @@ async function main() {
   fs.writeFileSync(report, left.map(t => `${t.gallery}/${t.file}  candidates tried: ${(state.tried[`${t.gallery}/${t.slug}`] || []).length}/${(state.candidates[t.name] || []).length}`).join('\n') + '\n');
   log(`collected: ${imported} original(s) imported; ${left.length} still compressed, listed in ${path.relative(ROOT, report)}`);
 
+  // Naming places only talks to OpenStreetMap, and takes hours for a large
+  // import: it runs on its own, so the lock goes back to the next Photos job.
+  unlock();
   if (imported && !args['no-locate']) {
-    log('naming places for the new originals (photos:locate --all)');
-    const r = spawnSync(process.execPath, [path.join(ROOT, 'scripts/photos/locate.mjs'), '--all', '--quiet'], { encoding: 'utf8' });
-    for (const line of (r.stdout || '').split('\n').filter(l => l && !/ 0 from GPS/.test(l))) log(`  ${line}`);
-    if (r.status !== 0) log(`locate stopped: ${(r.stderr || '').trim().split('\n').pop()}`);
+    const pidFile = path.join(DIR, 'locate.pid');
+    const running = (() => { try { const pid = Number(fs.readFileSync(pidFile, 'utf8')); process.kill(pid, 0); return pid; } catch { return 0; } })();
+    if (running) log(`places: photos:locate is already running (pid ${running})`);
+    else {
+      const out = fs.openSync(path.join(DIR, 'locate.out'), 'a');
+      const child = spawn(process.execPath, [path.join(ROOT, 'scripts/photos/locate.mjs'), '--all', '--quiet'], { cwd: ROOT, detached: true, stdio: ['ignore', out, out] });
+      fs.writeFileSync(pidFile, String(child.pid));
+      child.unref();
+      log(`places: photos:locate --all runs on in the background (pid ${child.pid}), output in ${path.relative(ROOT, path.join(DIR, 'locate.out'))}`);
+    }
   }
   log('done');
   return 0;
