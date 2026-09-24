@@ -30,6 +30,7 @@ export const PATHS = {
   legacyGallery: path.join(ROOT, 'gallery'),              // today's compressed tree, bootstrap source
   authoredDir:   path.join(ROOT, '_data', 'photos'),      // captions, order, stories (committed)
   mergedDir:     path.join(ROOT, '_data', 'photo_manifests'), // machine + authored merge (gitignored)
+  locationsDir:  path.join(ROOT, '_data', 'photo_locations'), // place names from photos:locate (committed)
   localStore:    path.join(ROOT, '.photos-local'),        // filesystem stand-in for both buckets
 };
 
