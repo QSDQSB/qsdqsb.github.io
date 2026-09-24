@@ -86,6 +86,7 @@ and no GPS ever reaches the public bucket.
 | `npm run photos:push [-- --gallery x] [--dry-run]` | rclone copy of the diff from `photos/` to the originals bucket. Adds and updates only; every original it replaces moves to `trash/<date>/` first. | write |
 | `npm run photos:pull [-- --gallery x] [--dry-run]` | The reverse of push: fetches originals `photos/` lacks from the bucket. Never overwrites a local file; skips `trash/`. | read |
 | `npm run photos:import [-- --dry-run] [--move] [--from <dir>]` | The gateway: sorts every file in the Desktop inbox into its voyage by frame number or by picture, verifies it, copies it into `photos/` (`--move` then removes it from the inbox). Files that match nothing stay and are listed. `--discard "<file>"` moves one to the Trash. | none |
+| `npm run photos:locate -- --gallery x \| --all [--sheets] [--set slug="place"] [--accept [slugs]]` | Suggests where each photo was taken (a well-known landmark, square, park or inn, else the road) into `_data/photo_locations/`; `--accept` writes suggestions into captions nobody wrote by hand. | none (OpenStreetMap, HTTP) |
 | `npm run photos:plan [-- --gallery x]` | Reports new, changed, orphaned files; refuses orphans still named in YAML. | read |
 | `npm run photos:prune -- --gallery x [--yes]` | Moves that gallery's orphans to `trash/<date>/…` in the originals bucket. Asks you to type the gallery name. | write |
 | `npm run photos:process [-- --gallery x] [--force] [--dry-run] [--local dir] [--no-avif]` | The processor. Runs in Actions; runs locally against a directory with `--local`. | read + write |
@@ -244,6 +245,48 @@ private manifests in the bucket. The stamp comes down with each file, so
 the restored tree knows which frames are still compressed. Anything that was
 only on the lost machine (imported, never pushed) is not in the bucket;
 that is what the camera library is for.
+
+### Name where a photo was taken
+
+The captions from the old file names are coarse ("City of London, London"
+for a dozen different streets). `photos:locate` suggests better ones, as a
+reader would place them, in each voyage's own caption style:
+
+| Photo | Source | Suggestion |
+|---|---|---|
+| a camera original with GPS | OpenStreetMap: Nominatim (address) and Overpass (landmarks) | `Tower of London, London`, `Middlesex Street, London`, `Minack Theatre, Penzance, UK` |
+| a camera original without GPS | a visual guess (contact sheets, `--sheets`), recorded as `gps: missing`, `source: visual guess` | imprecise by design |
+| a compressed copy | none yet: `source: awaiting original`; its old caption stands until the original arrives with GPS | — |
+
+What may name a photo, from GPS: a landmark with a Wikidata or Wikipedia
+link, in two tiers (castles, palaces, cathedrals, monuments, famous
+bridges, squares, parks, viewpoints, beaches, peaks and airports up to
+300 m away, measured to their outline, or when the photo was taken inside
+them; churches, historic buildings, inns, markets and stations only within
+120 m), else the road. Never museums, theatres, clubs, shops, cafés,
+memorials or plaques: a caption naming the plaque beside the camera
+confuses more than it places. A city voyage keeps two parts
+(`Tower of London, London`); a regional one names the town between
+(`Porthcurno Beach, Penzance, UK`), following the tail its captions
+already use.
+
+```bash
+npm run photos:locate -- --all                     # geocode every original with GPS (cached, ~1 request a second)
+npm run photos:locate -- --all --sheets            # contact sheets of originals without GPS, to guess from
+npm run photos:locate -- --gallery london --set dscf3141="Oxford Street, London"
+npm run photos:locate -- --gallery london --accept # suggestions into captions
+```
+
+`--accept` replaces a caption only while it is empty or still the old
+file-name place the bootstrap recorded; a caption written by hand is
+listed and kept. It edits the one caption line, so stories, order and
+comments stay as written.
+
+Privacy: `_data/photo_locations/*.yml` is committed and holds names only.
+Coordinates stay in the originals' EXIF, the private bucket's
+`.private.json`, and the gitignored lookup cache
+`.photos-local/reverse-geocode.json`. Place names shown on the site are
+OpenStreetMap data: credit "© OpenStreetMap contributors".
 
 ### Remove a photo
 

@@ -54,13 +54,14 @@ const pct = (n, d) => d ? Math.round((n / d) * 100) : 0;
 const recollected = (r) => Math.max(r.localOriginals || 0, r.stages.original);
 
 export function totals(rows) {
-  const t = { galleries: rows.length, photos: 0, recollected: 0, live: 0, original: 0, compressed: 0, awaiting: 0, localOnly: 0, captioned: 0, pending: 0, problems: 0, galleriesLive: 0, galleriesDone: 0 };
+  const t = { galleries: rows.length, photos: 0, recollected: 0, live: 0, original: 0, compressed: 0, awaiting: 0, localOnly: 0, captioned: 0, located: 0, pending: 0, problems: 0, galleriesLive: 0, galleriesDone: 0 };
   for (const r of rows) {
     const s = r.stages;
     const n = s.original + s.compressed + s.awaiting + s.localOnly;
     t.photos += n; t.original += s.original; t.compressed += s.compressed; t.awaiting += s.awaiting; t.localOnly += s.localOnly;
     // Re-collected: an original on this machine or live, whichever this machine can see more of.
     t.recollected += recollected(r);
+    t.located += (r.located?.gps || 0) + (r.located?.visual || 0);
     t.live += r.processed; t.captioned += r.captioned; t.pending += r.pending.length; t.problems += r.problems.length;
     if (r.processed) t.galleriesLive++;
     if (n && recollected(r) === n) t.galleriesDone++;
@@ -122,6 +123,7 @@ export function renderDashboard(rows, { generated = new Date().toISOString(), bu
       <td class="num">${n}</td>
       <td class="num">${recollected(r)}<span class="dim"> · ${pct(recollected(r), n)}%</span></td>
       <td class="num">${r.captioned}<span class="dim">/${r.processed}</span></td>
+      <td class="num" title="${r.located.gps} from GPS, ${r.located.visual} visual guess, ${r.located.pending} to guess, ${r.located.awaiting} awaiting original">${r.located.gps + r.located.visual}${r.located.pending ? `<span class="prob"> +${r.located.pending}?</span>` : ''}<span class="dim">/${n}</span></td>
       <td class="num">${r.bucket == null ? '<span class="dim">–</span>' : r.pending.length || '<span class="dim">0</span>'}</td>
       <td class="when">${r.lastProcessed ? esc(r.lastProcessed.slice(0, 16).replace('T', ' ')) : '<span class="dim">never</span>'}</td>
       <td class="num prob" title="${esc(r.problems.join('\n'))}">${r.problems.length || ''}</td>
@@ -188,6 +190,7 @@ ${kpi('photos live', t.live, t.photos)}
 ${kpi('galleries live', t.galleriesLive, t.galleries)}
 ${kpi('galleries complete', t.galleriesDone, t.galleries)}
 ${kpi('captioned', t.captioned, t.live)}
+${kpi('located', t.located, t.photos)}
 ${kpi('awaiting render', t.awaiting, null)}
 ${kpi('not pushed', bucketNote ? '–' : t.pending, null)}
 ${kpi('problems', t.problems, null, t.problems ? 'bad' : '')}
@@ -195,7 +198,7 @@ ${kpi('problems', t.problems, null, t.problems ? 'bad' : '')}
 <div class="overall">${STAGES.map(([k]) => overall[k] ? `<i class="s-${k}" style="flex:${overall[k]}" title="${overall[k]} ${STAGES.find(s => s[0] === k)[1]}"></i>` : '').join('')}</div>
 <div class="legend">${STAGES.map(([k, label]) => `<span style="--c:var(--${k})">${label} <b>${overall[k]}</b></span>`).join('')}</div>
 <div class="wrap"><table>
-<thead><tr><th>gallery</th><th>stages</th><th class="num">photos</th><th class="num">originals</th><th class="num">captioned</th><th class="num">unpushed</th><th class="num">last render</th><th class="num">!</th></tr></thead>
+<thead><tr><th>gallery</th><th>stages</th><th class="num">photos</th><th class="num">originals</th><th class="num">captioned</th><th class="num" title="place names: from GPS · by a visual guess · to guess · awaiting the original">located</th><th class="num">unpushed</th><th class="num">last render</th><th class="num">!</th></tr></thead>
 <tbody>
 ${body}
 </tbody></table></div>
