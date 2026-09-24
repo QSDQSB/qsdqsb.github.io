@@ -103,3 +103,21 @@ test('--accept replaces only empty or file-name captions, and only the caption l
   assert.deepStrictEqual(acceptSuggestions('london', { legacy, authoredDir, dir }).done, [], 'a second run changes nothing');
   fs.rmSync(root, { recursive: true, force: true });
 });
+
+test('photos:collect tries the candidate shot nearest the voyage\'s other originals first', async () => {
+  const { rank } = await import('../scripts/photos/collect.mjs');
+  const cands = [{ id: 'a', date: '2024-07-02T14:10:48' }, { id: 'b', date: '2023-09-16T15:16:22' }, { id: 'c', date: '2025-05-28T07:50:47' }];
+  const cornwallDays = [Date.parse('2023-09-25'), Date.parse('2023-09-27')];
+  assert.deepStrictEqual(rank(cands, cornwallDays).map(c => c.id), ['b', 'a', 'c']);
+  assert.deepStrictEqual(rank(cands, []).map(c => c.id), ['a', 'b', 'c'], 'no known dates: Photos\' order');
+});
+
+test('the dashboard reads the collector\'s state from its lock and log', async () => {
+  const { collectorStatus } = await import('../scripts/photos/dashboard.mjs');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'photos-collector-'));
+  assert.deepStrictEqual(collectorStatus(dir), { running: false, lines: [] });
+  fs.writeFileSync(path.join(dir, 'lock'), String(process.pid));
+  fs.writeFileSync(path.join(dir, 'log.txt'), 'a\nb\nc\nd\ne\n');
+  assert.deepStrictEqual(collectorStatus(dir), { running: true, lines: ['b', 'c', 'd', 'e'] });
+  fs.rmSync(dir, { recursive: true, force: true });
+});

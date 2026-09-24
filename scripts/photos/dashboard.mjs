@@ -33,7 +33,8 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { PATHS, env, parseArgs } from './lib/config.mjs';
 import { collect } from './status.mjs';
 import http from 'node:http';
@@ -87,6 +88,20 @@ export async function inboxSnapshot(dir) {
   return { dir: abs, exists: true, files: plan.map(s => ({ rel: s.rel, action: s.action, gallery: s.gallery, why: s.why || null, placed: s.placed || null })) };
 }
 
+/** The Apple Photos collector, from its log and lock: running or idle, and its last lines. */
+export function collectorStatus(dir = path.join(PATHS.localStore, 'collect')) {
+  let running = false, lines = [];
+  try { const pid = Number(fs.readFileSync(path.join(dir, 'lock'), 'utf8')); process.kill(pid, 0); running = true; } catch { /* idle */ }
+  try { lines = fs.readFileSync(path.join(dir, 'log.txt'), 'utf8').trim().split('\n').slice(-4); } catch { /* never run */ }
+  return { running, lines };
+}
+
+function collectorSection(c) {
+  if (!c || (!c.running && !c.lines.length)) return '';
+  return `<section class="collector"><h2>Apple Photos collector <span class="${c.running ? 'live' : 'dim'}">${c.running ? '● running' : 'idle'}</span></h2>
+<pre>${c.lines.map(esc).join('\n')}</pre></section>`;
+}
+
 function inboxSection(inbox) {
   if (!inbox) return '';
   if (!inbox.exists) return `<section class="inbox"><h2>Desktop inbox</h2><p class="dim">${esc(inbox.dir)} does not exist.</p></section>`;
@@ -108,7 +123,7 @@ ${bad.length ? `<ul class="nonmatch">${rows}</ul>
 </section>`;
 }
 
-export function renderDashboard(rows, { generated = new Date().toISOString(), bucketNote = null, unreachable = 0, base = 'https://img.qsdqsb.com', setup = [], inbox = null, live = false } = {}) {
+export function renderDashboard(rows, { generated = new Date().toISOString(), bucketNote = null, unreachable = 0, base = 'https://img.qsdqsb.com', setup = [], inbox = null, collector = null, live = false } = {}) {
   const t = totals(rows);
   const max = Math.max(1, ...rows.map(r => Object.values(r.stages).reduce((a, b) => a + b, 0)));
   const kpi = (label, value, of, cls = '') => `<div class="kpi ${cls}"><b>${value}</b>${of != null ? `<span class="of">/${of}</span>` : ''}<small>${label}</small></div>`;
@@ -165,6 +180,8 @@ h1{font:600 22px/1 "Playfair Display",Didot,Georgia,serif;margin:0;letter-spacin
 .nonmatch li:last-child{border-bottom:0}.nonmatch b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nonmatch .verdict{color:var(--bad)}.nonmatch small{grid-column:1/-1;color:var(--dim);font-size:11px}.note{font-size:12px;margin:6px 0 0}.nonmatch code,.inbox code{font-size:11px;color:var(--ink)}
 .live{color:var(--original)}
+.collector{margin:0 0 14px}.collector h2{font:600 13px/1 "Barlow",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;margin:0 0 6px}.collector h2 span{text-transform:none;letter-spacing:0;font-weight:400;margin-left:6px}
+.collector pre{margin:0;padding:8px 10px;background:var(--panel);border:1px solid var(--line);font-size:11px;white-space:pre-wrap;color:var(--dim)}
 .chk.ok i{background:var(--original)}.chk.fail i{background:var(--bad)}.chk.fail small{color:var(--bad)}
 .overall{display:flex;height:10px;margin:0 0 6px}.overall i,.bar i{display:block;min-width:2px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--dim);font-size:11px;margin-bottom:14px}.legend span::before{content:"";display:inline-block;width:9px;height:9px;margin-right:5px;vertical-align:-1px;background:var(--c)}
@@ -182,6 +199,7 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--dim);font-size:12px}u
 </style></head><body><main>
 <header><h1>Photo migration</h1><span class="meta">${live ? '<span class="live">● live</span> · ' : ''}${esc(generated.slice(0, 16).replace('T', ' '))} UTC · ${esc(base)}${bucketNote ? ` · bucket not read: ${esc(bucketNote)}` : ''}${unreachable ? ` · ${unreachable} manifest(s) unreachable` : ''}</span></header>
 ${pipeline}
+${collectorSection(collector)}
 ${inboxSection(inbox)}
 <section class="kpis">
 ${kpi('originals re-collected', t.recollected, t.photos)}
@@ -214,7 +232,7 @@ async function snapshot(args) {
     setupChecks({ offline: !!args.offline }),
     inboxSnapshot(env.inbox),
   ]);
-  return { rows, bucketNote, unreachable, setup, inbox, generated: new Date().toISOString() };
+  return { rows, bucketNote, unreachable, setup, inbox, collector: collectorStatus(), generated: new Date().toISOString() };
 }
 
 /**
@@ -223,14 +241,35 @@ async function snapshot(args) {
  * for what changes elsewhere (the bucket, the workflow, img.qsdqsb.com).
  * The page polls /version and reloads when a newer snapshot exists.
  */
+/**
+ * One snapshot in a short-lived child process: sharp, the fingerprint index
+ * and the manifests are freed with it, so a server rebuilding every minute
+ * for weeks keeps a flat footprint (in-process rebuilds grew past 2 GB).
+ */
+function snapshotInChild(args) {
+  const extra = [args.offline ? '--offline' : null, args['no-fetch'] ? '--no-fetch' : null].filter(Boolean);
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, [fileURLToPath(import.meta.url), '--emit-snapshot', ...extra], { stdio: ['ignore', 'pipe', 'pipe'] });
+    let out = '', err = '';
+    const kill = setTimeout(() => child.kill('SIGKILL'), 10 * 60 * 1000);
+    child.stdout.on('data', d => { out += d; });
+    child.stderr.on('data', d => { err += d; });
+    child.on('close', code => {
+      clearTimeout(kill);
+      if (code !== 0) return reject(new Error((err || `snapshot exited ${code}`).trim().split('\n').pop()));
+      try { resolve(JSON.parse(out)); } catch (e) { reject(e); }
+    });
+  });
+}
+
 async function serve(args, out) {
   const port = Number(args.port) || 4460;
-  let snap = await snapshot(args), html = '', building = null, again = false;
+  let snap = await snapshotInChild(args), html = '', building = null, again = false;
   const render = () => { html = renderDashboard(snap.rows, { ...snap, base: env.publicBase, live: true }); fs.writeFileSync(out, renderDashboard(snap.rows, { ...snap, base: env.publicBase })); };
   render();
   const rebuild = async (why) => {
     if (building) { again = true; return; }
-    building = (async () => { try { snap = await snapshot(args); render(); console.log(`${snap.generated.slice(11, 19)} rebuilt (${why})`); } catch (e) { console.error(`rebuild failed: ${e.message}`); } })();
+    building = (async () => { try { snap = await snapshotInChild(args); render(); console.log(`${snap.generated.slice(11, 19)} rebuilt (${why})`); } catch (e) { console.error(`rebuild failed: ${e.message}`); } })();
     await building; building = null;
     if (again) { again = false; rebuild('changes during the last rebuild'); }
   };
@@ -254,6 +293,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const out = path.resolve(typeof args.out === 'string' ? args.out : path.join(PATHS.localStore, 'dashboard.html'));
   fs.mkdirSync(path.dirname(out), { recursive: true });
+  if (args['emit-snapshot']) { process.stdout.write(JSON.stringify(await snapshot(args))); return 0; }
   if (args.serve) { await serve(args, out); return null; }
 
   const snap = await snapshot(args);
