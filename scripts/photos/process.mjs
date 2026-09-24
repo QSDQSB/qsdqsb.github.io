@@ -16,13 +16,15 @@
  *
  * Usage:
  *   node scripts/photos/process.mjs [--gallery <name>]… [--force] [--dry-run]
- *                                   [--local [dir]] [--no-avif] [--concurrency 2]
+ *                                   [--local [dir]] [--no-avif] [--concurrency 2] [--gc]
  *   PHOTOS_GALLERIES='["london","prague/twilight"]'   same as repeated --gallery
  *
  * Exit codes: 0 ok, 1 one or more photos failed, 2 environment problem.
  */
 
 import path from 'node:path';
+import crypto from 'node:crypto';
+import { readCamera, closeCamera } from './lib/camera.mjs';
 import { env, PATHS, ORIGINAL_RE, IGNORED_PREFIXES, MANIFEST_FILE, PRIVATE_FILE, MANIFEST_VERSION, FORMATS, BOOTSTRAP_STAMP, parseArgs } from './lib/config.mjs';
 import { storesFrom } from './lib/store.mjs';
 import { readExif } from './lib/exif.mjs';
@@ -66,7 +68,9 @@ async function main() {
     changed += r.changed; failed += r.failed; skipped += r.skipped; removed += r.removed;
   }
 
+  await closeCamera();
   log(`\ndone: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed across ${byGallery.size} galleries`);
+  if (args.gc) await collectGarbage(pub);
   if (changed + removed > 0 && env.deployHook && !DRY) {
     const r = await fetch(env.deployHook, { method: 'POST' });
     log(`deploy hook: ${r.status}`);
@@ -90,28 +94,39 @@ async function processGallery(gallery, files, { originals, pub }) {
       const { file, slug } = item; const meta = fileMeta.get(file);
       const version = `${meta.etag}:${meta.size}`;
       const existing = bySlug.get(slug);
-      if (existing && existing.version === version && existing.formats?.join() === formats.join() && !FORCE) { skipped++; continue; }
+      // Entries from before content-addressed tiers (no hash) are re-rendered once into t/<hash>/.
+      if (existing && existing.hash && existing.version === version && existing.formats?.join() === formats.join() && !FORCE) { skipped++; continue; }
       log(`  ${gallery}/${file} → ${slug}${existing ? ' (changed)' : ''}`);
       if (DRY) { changed++; continue; }
       try {
         const buf = await originals.get(meta.key);
-        const [exif, facts] = await Promise.all([readExif(buf), analyse(buf)]);
+        // Tiers live under the original's content hash: a new original is a new URL, so
+        // `immutable` caching is true by construction and never serves a replaced picture.
+        const hash = crypto.createHash('sha256').update(buf).digest('hex').slice(0, 16);
+        const [exif, facts, cam] = await Promise.all([readExif(buf), analyse(buf), readCamera(buf).catch(e => { log(`  ${gallery}/${file}: camera record unreadable (${e.message})`); return null; })]);
         const tiers = await renderTiers(buf, { formats, longEdge: Math.max(facts.w, facts.h) });
-        await runLimited(tiers.map(t => () => pub.put(`${gallery}/${slug}/${t.name}`, t.buffer)), 6);
-        // Retire tiers from an earlier run that this run no longer produces (e.g. AVIF switched off).
-        const stale = (existing ? tierKeys(gallery, existing) : []).filter(k => !tiers.some(t => `${gallery}/${slug}/${t.name}` === k));
+        await runLimited(tiers.map(t => () => pub.put(`t/${hash}/${t.name}`, t.buffer)), 6);
+        // Legacy <gallery>/<slug>/ tiers go once their photo is re-rendered; hash tiers are only
+        // ever removed by --gc, since another gallery may share the same original.
+        const stale = existing && !existing.hash ? tierKeys(gallery, existing) : [];
         if (stale.length) await pub.del(stale);
 
         const sizes = {}; for (const t of tiers) (sizes[t.format] = sizes[t.format] || []).push(t.size);
         for (const k of Object.keys(sizes)) sizes[k].sort((a, b) => a - b);
         bySlug.set(slug, {
-          slug, file, version, w: facts.w, h: facts.h, ratio: +(facts.w / facts.h).toFixed(4),
+          slug, file, key: meta.key, hash, frame: path.parse(file).name.toUpperCase(),
+          version, w: facts.w, h: facts.h, ratio: +(facts.w / facts.h).toFixed(4),
           taken: exif.taken, camera: exif.camera, lens: exif.lens, focal: exif.focal, focal35: exif.focal35,
           aperture: exif.aperture, shutter: exif.shutter, iso: exif.iso, exposureBias: exif.exposureBias,
+          ...(cam ? cam.pub : {}),
           thumbhash: facts.thumbhash, tint: facts.tint, sizes, formats, processed: new Date().toISOString(),
           ...(exif.software === BOOTSTRAP_STAMP ? { compressed: true } : {}),
         });
-        priv.photos[slug] = { file, version, gps: exif.gps, exif: exif.raw };
+        priv.photos[slug] = {
+          file, key: meta.key, hash, version, gps: exif.gps,
+          cameraSerial: cam?.priv.cameraSerial ?? null, lensSerial: cam?.priv.lensSerial ?? null, shutterCount: cam?.priv.shutterCount ?? null,
+          exif: cam?.priv.all || exif.raw,
+        };
         changed++;
       } catch (e) {
         failed++; log(`  FAILED ${gallery}/${file}: ${e.message}`);
@@ -125,7 +140,7 @@ async function processGallery(gallery, files, { originals, pub }) {
   for (const [slug, p] of bySlug) {
     if (live.has(slug)) continue;
     log(`  ${gallery}/${slug}: original gone, removing ${p.file}'s tiers`);
-    if (!DRY) await pub.del(tierKeys(gallery, p));
+    if (!DRY && !p.hash) await pub.del(tierKeys(gallery, p));
     bySlug.delete(slug); delete priv.photos[slug]; removed++;
   }
 
@@ -138,6 +153,23 @@ async function processGallery(gallery, files, { originals, pub }) {
   return { changed, failed, skipped, removed };
 }
 
+/**
+ * Delete tiers under t/<hash>/ that no gallery's manifest references any
+ * more (an original replaced or removed). Runs only with --gc, after every
+ * manifest is written, because one original may be shared by galleries.
+ */
+async function collectGarbage(pub) {
+  const all = await pub.list('');
+  const refs = new Set();
+  for (const o of all.filter(o => o.key.endsWith('/' + MANIFEST_FILE))) {
+    for (const p of (await pub.getJson(o.key))?.photos || []) if (p.hash) refs.add(p.hash);
+  }
+  const dead = all.filter(o => o.key.startsWith('t/') && !refs.has(o.key.split('/')[1])).map(o => o.key);
+  log(`gc: ${refs.size} referenced originals; ${dead.length} unreferenced tier file(s)${DRY ? ' (dry run, kept)' : ' deleted'}`);
+  if (dead.length && !DRY) await pub.del(dead);
+}
+
+/** Legacy tier keys (<gallery>/<slug>/<size>.<fmt>), for entries rendered before content addressing. */
 function tierKeys(gallery, p) {
   const out = [];
   for (const [fmt, sizes] of Object.entries(p.sizes || {})) for (const s of sizes) out.push(`${gallery}/${p.slug}/${s}.${fmt}`);
