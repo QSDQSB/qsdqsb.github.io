@@ -75,7 +75,7 @@ export async function setupChecks({ offline = false } = {}) {
     const probe = processedGallery();
     try {
       const url = probe ? `${env.publicBase}/${probe}/manifest.json` : `${env.publicBase}/`;
-      const r = await fetch(url, { signal: AbortSignal.timeout(5000) });
+      const r = await fetch(url, { signal: AbortSignal.timeout(10000) }); // the dashboard fetches 50 manifests alongside
       if (probe && r.ok) {
         const m = await r.json().catch(() => null);
         add('domain', host, 'ok', `serves ${probe}/manifest.json (${m?.photos?.length ?? '?'} photos)`);

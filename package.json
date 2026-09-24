@@ -61,6 +61,7 @@
     "photos:dashboard": "node scripts/photos/dashboard.mjs",
     "photos:locate": "node scripts/photos/locate.mjs",
     "photos:collect": "node scripts/photos/collect.mjs",
+    "photos:enrich": "node scripts/photos/enrich.mjs",
     "build": "npm run generate:gallery && npm run photos:fetch && npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll build",
     "serve": "npm run generate:gallery && npm run photos:fetch && npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll serve",
     "build:fast": "npm run photos:fetch && npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll build",
