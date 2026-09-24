@@ -1,3 +1,4 @@
+{% if page.header.overlay_color or page.header.overlay_image or page.header.image %}
 {% include base_path %}
 
 {% if page.header.image contains "://" %}
@@ -78,3 +79,4 @@
     <span class="page__hero-caption">{{ page.header.caption | markdownify | remove: "<p>" | remove: "</p>" }}</span>
   {% endif %}
 </div>
+{% endif %}
