@@ -334,6 +334,50 @@ copies the file into `photos/` when it is missing there, so the next
 `photos:plan` does not flag it as an orphan again (`--bucket-only` skips
 that). The upload event re-runs the processor.
 
+## Photo database (D1)
+
+Every photograph is one row in the D1 database `qsdqsb-photos`, under a
+permanent id (`p_` + a ULID) that no rename, move or re-collection changes.
+Files and folders are just where a photo's bytes happen to be.
+
+| Table | Holds |
+|---|---|
+| `photos` | the picture (size, thumbhash, tint, tiers), the exposure, the camera's own rendering from the Fujifilm maker notes (film simulation, dynamic range, grain, colour chrome, tones, focus and drive modes, shutter type, stabilisation, shutter count), the place, and your caption, story, featured and hidden |
+| `memberships` | which galleries a photo sits in, and its pinned position in each: a photo can live in several |
+| `sources` | originals-bucket keys (`london/DSCF1797.jpg`) → photo id |
+| `photo_private` | GPS, body and lens serials, the whole camera record. Never served |
+| `audit` | every change to a caption, place, flag or pin, written by triggers |
+
+How a file finds its photo, in order: its source key (a re-collected
+original keeps the same key); its camera key, body serial with shutter
+count, one exposure for ever (a moved or renamed file); its content hash
+(the same bytes elsewhere); otherwise a new id.
+
+Images are content-addressed: `img.qsdqsb.com/t/<hash>/<size>.<format>`,
+where the hash is the original's. A new original is a new URL, so caching
+them as immutable is true by construction. `process.mjs --gc` deletes only
+tiers no manifest references any more.
+
+The database follows the pipeline, it is never refetched: the processor
+writes a gallery's `manifest.json` (public) and `.private.json` (originals),
+R2 sends an event to the `photos-manifests` queue, and the
+`qsdqsb-photos-db` Worker upserts only the rows whose version changed. The
+same Worker serves a read-only API of public fields:
+
+```
+GET https://api.qsdqsb.com/v1/galleries
+GET https://api.qsdqsb.com/v1/photos?gallery=london       in order: pinned, then taken
+GET https://api.qsdqsb.com/v1/photos?since=<ISO time>     changed rows only
+GET https://api.qsdqsb.com/v1/photos/<id>
+```
+
+Setup (done once, `workers/photos-db/`): `npx wrangler d1 create qsdqsb-photos`,
+`CI=true npx wrangler d1 migrations apply qsdqsb-photos --remote` (CI=true:
+a migration that drops tables otherwise waits on a prompt), `npx wrangler
+queues create photos-manifests`, one notification per bucket (`--suffix
+manifest.json` on `qsdqsb-photos`, `--suffix .private.json` on
+`qsdqsb-originals`), `npx wrangler deploy`.
+
 ## Cloudflare setup (once)
 
 Everything that has a CLI goes through `wrangler` (logged in once with

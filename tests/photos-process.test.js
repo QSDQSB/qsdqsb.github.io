@@ -47,8 +47,15 @@ test('processor renders tiers, skips unchanged, garbage-collects, and keeps EXIF
   assert.ok(p1.thumbhash.length > 10); assert.match(p1.tint, /^#[0-9a-f]{6}$/);
   // 1600px long edge: 480, 960, 1280 rendered; 1920+ skipped (no upscaling).
   assert.deepStrictEqual(p1.sizes.webp, [480, 960, 1280]);
-  assert.ok(fs.existsSync(path.join(pub, 'dscf0001', '1280.webp')));
-  assert.ok(!fs.existsSync(path.join(pub, 'dscf0001', '1920.webp')));
+  // Tiers live under the original's content hash, not the gallery path.
+  assert.match(p1.hash, /^[0-9a-f]{16}$/);
+  assert.strictEqual(p1.key, 'demo/nested/DSCF0001.jpg');
+  assert.strictEqual(p1.frame, 'DSCF0001');
+  const tiers = (h) => path.join(store, 'public', 't', h);
+  assert.ok(fs.existsSync(path.join(tiers(p1.hash), '1280.webp')));
+  assert.ok(!fs.existsSync(path.join(tiers(p1.hash), '1920.webp')));
+  assert.ok(!fs.existsSync(path.join(pub, 'dscf0001')), 'nothing under the old gallery path');
+  assert.strictEqual(p1.settings, null, 'no maker notes in a generated JPEG');
   assert.ok(!('gps' in p1), 'public manifest must not carry GPS');
   assert.ok(!('compressed' in p1), 'an unstamped original carries no compressed flag');
   assert.strictEqual(manifest.photos[1].compressed, true, 'the bootstrap stamp becomes compressed: true');
@@ -59,20 +66,24 @@ test('processor renders tiers, skips unchanged, garbage-collects, and keeps EXIF
 
   // Public tiers carry no EXIF at all.
   const { readExif } = await import('../scripts/photos/lib/exif.mjs');
-  const tierExif = await readExif(fs.readFileSync(path.join(pub, 'dscf0001', '960.jpg')));
+  const tierExif = await readExif(fs.readFileSync(path.join(tiers(p1.hash), '960.jpg')));
   assert.strictEqual(tierExif.aperture, null);
 
   out = run(store);
   assert.match(out, /0 processed, 2 unchanged, 0 removed/);
 
+  const h2 = manifest.photos[1].hash;
   fs.unlinkSync(path.join(originals, 'DSCF0002_old_name,_Place__XF90mm_f2.0_1:270s_ISO800.jpg'));
   out = run(store);
   assert.match(out, /1 removed/);
-  assert.ok(!fs.existsSync(path.join(pub, 'dscf0002')), 'tiers of a removed original are deleted');
   assert.deepStrictEqual(JSON.parse(fs.readFileSync(path.join(pub, 'manifest.json'), 'utf8')).photos.map(p => p.slug), ['dscf0001']);
+  assert.ok(fs.existsSync(tiers(h2)), 'a normal run never deletes hash tiers: another gallery may share them');
+  out = run(store, ['--gc']);
+  assert.match(out, /gc: 1 referenced originals; \d+ unreferenced tier file\(s\) deleted/);
+  assert.ok(!fs.existsSync(tiers(h2)), '--gc removes tiers no manifest references');
 
-  // Only tiers and the manifest live in the public store.
-  assert.deepStrictEqual(listFiles(path.join(store, 'public')).filter(f => !f.startsWith('demo/nested/dscf0001/')), ['demo/nested/manifest.json']);
+  // Only the one live original's tiers and the manifest live in the public store.
+  assert.deepStrictEqual(listFiles(path.join(store, 'public')).filter(f => !f.startsWith(`t/${p1.hash}/`)), ['demo/nested/manifest.json']);
 
   fs.rmSync(store, { recursive: true, force: true });
 });
