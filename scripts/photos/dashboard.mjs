@@ -28,6 +28,7 @@
  *
  * Usage: npm run photos:dashboard [-- --offline] [--no-fetch] [--out <file>] [--open]
  *        npm run photos:dashboard -- --serve [--port 4460]     live, rebuilt on change
+ *        npm run photos:dashboard -- --artifact <file>          the page as an Artifact body, for claude.ai
  *   writes .photos-local/dashboard.html (gitignored) unless --out says otherwise
  */
 
@@ -160,9 +161,11 @@ const shown = ${JSON.stringify(generated)};
 setInterval(() => fetch('/version', { cache: 'no-store' }).then(r => r.text()).then(v => { if (v && v !== shown) location.reload(); }).catch(() => {}), 5000);
 </script>` : ''}
 <title>Photo migration</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Playfair+Display:wght@600&display=swap">
 <style>
-:root{--bg:#0e0e10;--panel:#16161a;--line:#26262c;--ink:#ece6da;--dim:#8a8479;--original:#5f9384;--compressed:#b89a5a;--awaiting:#4f6a93;--localOnly:#5a5363;--bad:#a44848}
-@media (prefers-color-scheme:light){:root{--bg:#f6f2ea;--panel:#fffdf8;--line:#e2dbcd;--ink:#1d1b18;--dim:#7a7368;--localOnly:#b8b0c2}}
+:root{color-scheme:dark;--bg:#0e0e10;--panel:#16161a;--line:#26262c;--ink:#ece6da;--dim:#8a8479;--original:#5f9384;--compressed:#b89a5a;--awaiting:#4f6a93;--localOnly:#5a5363;--bad:#a44848}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){color-scheme:light;--bg:#f6f2ea;--panel:#fffdf8;--line:#e2dbcd;--ink:#1d1b18;--dim:#6f685e;--original:#3f7466;--compressed:#94763a;--awaiting:#3e5a86;--localOnly:#b8b0c2;--bad:#9a3a3a}}
+:root[data-theme="light"]{color-scheme:light;--bg:#f6f2ea;--panel:#fffdf8;--line:#e2dbcd;--ink:#1d1b18;--dim:#6f685e;--original:#3f7466;--compressed:#94763a;--awaiting:#3e5a86;--localOnly:#b8b0c2;--bad:#9a3a3a}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.35 "Barlow",-apple-system,system-ui,sans-serif;font-variant-numeric:tabular-nums}
 main{max-width:1180px;margin:0 auto;padding:20px 16px 40px}
 header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
@@ -289,8 +292,26 @@ async function serve(args, out) {
 }
 const inboxSnapshotDir = () => path.resolve(String(env.inbox).replace(/^~(?=$|\/)/, os.homedir()));
 
+/**
+ * The same page as an Artifact body: the publish skeleton supplies doctype,
+ * head and body, so only the title, styles and content are kept.
+ */
+export function artifactFragment(html) {
+  return html.replace(/^<!doctype html>\s*<html[^>]*><head>/i, '').replace(/<meta [^>]*>/gi, '')
+    .replace(/<\/head><body>/i, '').replace(/<\/body><\/html>\s*$/i, '');
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+  if (args.artifact) {
+    // Prefer the live server's latest snapshot: instant, and exactly what the local page shows.
+    let snap = null;
+    try { snap = await (await fetch(`http://127.0.0.1:${Number(args.port) || 4460}/snapshot.json`, { signal: AbortSignal.timeout(5000) })).json(); } catch { snap = await snapshot(args); }
+    const file = path.resolve(String(args.artifact));
+    fs.writeFileSync(file, artifactFragment(renderDashboard(snap.rows, { ...snap, base: env.publicBase })));
+    console.log(`${file}: snapshot of ${snap.generated}`);
+    return 0;
+  }
   const out = path.resolve(typeof args.out === 'string' ? args.out : path.join(PATHS.localStore, 'dashboard.html'));
   fs.mkdirSync(path.dirname(out), { recursive: true });
   if (args['emit-snapshot']) { process.stdout.write(JSON.stringify(await snapshot(args))); return 0; }
