@@ -35,8 +35,12 @@ photos:
     gps: missing
     source: awaiting original
   dscf0513:
-    gps: missing
-    source: awaiting original
+    suggested: Adolf-Munkel-Weg, Villnöß - Funes, Italy
+    street: Adolf-Munkel-Weg
+    city: Villnöß - Funes
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0531:
     gps: missing
     source: awaiting original
@@ -47,11 +51,20 @@ photos:
     gps: missing
     source: awaiting original
   dscf6291:
-    gps: missing
-    source: awaiting original
+    suggested: Adolf-Munkel-Weg, Villnöß - Funes, Italy
+    street: Adolf-Munkel-Weg
+    city: Villnöß - Funes
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8139:
-    gps: missing
-    source: awaiting original
+    suggested: Secëda - Monte Seceda, Villnöß - Funes, Italy
+    landmark: Secëda - Monte Seceda
+    street: Adolf-Munkel-Weg
+    city: Villnöß - Funes
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8259:
     gps: missing
     source: awaiting original

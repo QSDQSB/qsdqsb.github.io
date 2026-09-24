@@ -9,8 +9,13 @@ photos:
     gps: missing
     source: awaiting original
   dscf4523:
-    gps: missing
-    source: awaiting original
+    suggested: Celetná, Prague
+    landmark: Celetná
+    street: Celetná
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4525:
     gps: missing
     source: awaiting original

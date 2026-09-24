@@ -15,14 +15,27 @@ photos:
     gps: missing
     source: awaiting original
   dscf5154:
-    gps: missing
-    source: awaiting original
+    suggested: Republic Square, Prague
+    landmark: Republic Square
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5557:
-    gps: missing
-    source: awaiting original
+    suggested: Prague Castle, Prague
+    landmark: Prague Castle
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5594:
-    gps: missing
-    source: awaiting original
+    suggested: Morzin Palace, Prague
+    landmark: Morzin Palace
+    street: Hradčanské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5683:
     gps: missing
     source: awaiting original

@@ -3,26 +3,48 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf8495:
-    gps: missing
-    source: awaiting original
+    suggested: Patern Gallerie und Kriegssteige, Sexten - Sesto, Italy
+    street: Patern Gallerie und Kriegssteige
+    city: Sexten - Sesto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9073:
-    gps: missing
-    source: awaiting original
+    suggested: Gamsschartensteig - Sentiero delle Forcelle, Auronzo di Cadore, Italy
+    street: Gamsschartensteig - Sentiero delle Forcelle
+    city: Auronzo di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9287:
     gps: missing
     source: awaiting original
   dscf9401:
-    gps: missing
-    source: awaiting original
+    suggested: Chiesetta San Bernardo di Mentone protettore degli alpinisti, Sexten - Sesto, Italy
+    landmark: Chiesetta San Bernardo di Mentone protettore degli alpinisti
+    street: Patern Gallerie und Kriegssteige
+    city: Sexten - Sesto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9447:
     gps: missing
     source: awaiting original
   dscf9449:
-    gps: missing
-    source: awaiting original
+    suggested: Chiesetta San Bernardo di Mentone protettore degli alpinisti, Sexten - Sesto, Italy
+    landmark: Chiesetta San Bernardo di Mentone protettore degli alpinisti
+    street: Patern Gallerie und Kriegssteige
+    city: Sexten - Sesto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9474:
-    gps: missing
-    source: awaiting original
+    suggested: Patern Gallerie und Kriegssteige, Sexten - Sesto, Italy
+    street: Patern Gallerie und Kriegssteige
+    city: Sexten - Sesto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9481:
     gps: missing
     source: awaiting original
@@ -33,11 +55,19 @@ photos:
     gps: missing
     source: awaiting original
   dscf9537:
-    gps: missing
-    source: awaiting original
+    suggested: Patern Gallerie und Kriegssteige, Sexten - Sesto, Italy
+    street: Patern Gallerie und Kriegssteige
+    city: Sexten - Sesto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9602:
-    gps: missing
-    source: awaiting original
+    suggested: Gamsschartensteig - Sentiero delle Forcelle, Auronzo di Cadore, Italy
+    street: Gamsschartensteig - Sentiero delle Forcelle
+    city: Auronzo di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9604:
     gps: missing
     source: awaiting original
@@ -48,8 +78,12 @@ photos:
     gps: missing
     source: awaiting original
   dscf9714:
-    gps: missing
-    source: awaiting original
+    suggested: Sentiero Kriegssteig, Auronzo di Cadore, Italy
+    street: Sentiero Kriegssteig
+    city: Auronzo di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9855:
     gps: missing
     source: awaiting original

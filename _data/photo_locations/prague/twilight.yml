@@ -23,8 +23,18 @@ photos:
     gps: missing
     source: awaiting original
   dscf4997:
-    gps: missing
-    source: awaiting original
+    suggested: Petrin Observation Tower, Prague
+    landmark: Petrin Observation Tower
+    street: Petřínské sady
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5678:
-    gps: missing
-    source: awaiting original
+    suggested: Rieger Gardens, Prague
+    landmark: Rieger Gardens
+    street: promenáda Pawla Adamowicze
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode

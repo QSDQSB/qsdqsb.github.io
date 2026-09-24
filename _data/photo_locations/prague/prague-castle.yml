@@ -3,8 +3,13 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf3254:
-    gps: missing
-    source: awaiting original
+    suggested: Prague Castle, Prague, Czechia
+    landmark: Prague Castle
+    street: 2nd Courtyard
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3279:
     gps: missing
     source: awaiting original
@@ -24,11 +29,20 @@ photos:
     gps: missing
     source: awaiting original
   dscf5286:
-    gps: missing
-    source: awaiting original
+    suggested: Valdštejnská, Prague, Czechia
+    street: Valdštejnská
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5312:
-    gps: missing
-    source: awaiting original
+    suggested: Wallenstein Palace, Prague, Czechia
+    landmark: Wallenstein Palace
+    street: Valdštejnská
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5350:
     gps: missing
     source: awaiting original
@@ -42,20 +56,44 @@ photos:
     gps: missing
     source: awaiting original
   dscf5453:
-    gps: missing
-    source: awaiting original
+    suggested: Prague Castle, Prague, Czechia
+    landmark: Prague Castle
+    street: 3rd Courtyard
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5477:
-    gps: missing
-    source: awaiting original
+    suggested: Prague Castle, Prague, Czechia
+    landmark: Prague Castle
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5496:
-    gps: missing
-    source: awaiting original
+    suggested: Prague Castle, Prague, Czechia
+    landmark: Prague Castle
+    street: 3rd Courtyard
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5498:
-    gps: missing
-    source: awaiting original
+    suggested: Prague Castle, Prague, Czechia
+    landmark: Prague Castle
+    street: St. George’s Square
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5575:
     gps: missing
     source: awaiting original
   dscf5587:
-    gps: missing
-    source: awaiting original
+    suggested: Morzin Palace, Prague, Czechia
+    landmark: Morzin Palace
+    street: Hradčanské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode

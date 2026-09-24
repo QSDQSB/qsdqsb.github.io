@@ -57,14 +57,28 @@ photos:
     gps: missing
     source: awaiting original
   dscf5116:
-    gps: missing
-    source: awaiting original
+    suggested: Republic Square, Prague
+    landmark: Republic Square
+    street: Havlíčkova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5123:
     gps: missing
     source: awaiting original
   dscf5132:
-    gps: missing
-    source: awaiting original
+    suggested: V Celnici, Prague
+    street: V Celnici
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5135:
-    gps: missing
-    source: awaiting original
+    suggested: Republic Square, Prague
+    landmark: Republic Square
+    street: V Celnici
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode

@@ -9,23 +9,51 @@ photos:
     gps: missing
     source: awaiting original
   dscf7698:
-    gps: missing
-    source: awaiting original
+    suggested: Streda J. Skasa, Urtijëi - St. Ulrich in Gröden - Ortisei, Italy
+    street: Streda J. Skasa
+    city: Urtijëi - St. Ulrich in Gröden - Ortisei
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7749:
-    gps: missing
-    source: awaiting original
+    suggested: Col da Vettes, Kastelruth - Castelrotto, Italy
+    street: Col da Vettes
+    city: Kastelruth - Castelrotto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7849:
-    gps: missing
-    source: awaiting original
+    suggested: Piz, Kastelruth - Castelrotto, Italy
+    street: Piz
+    city: Kastelruth - Castelrotto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7851:
-    gps: missing
-    source: awaiting original
+    suggested: Piz, Kastelruth - Castelrotto, Italy
+    street: Piz
+    city: Kastelruth - Castelrotto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7910:
-    gps: missing
-    source: awaiting original
+    suggested: Compatsch, Kastelruth - Castelrotto, Italy
+    street: Compatsch
+    city: Kastelruth - Castelrotto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7954:
-    gps: missing
-    source: awaiting original
+    suggested: GS/SC19.4, Kastelruth - Castelrotto, Italy
+    street: GS/SC19.4
+    city: Kastelruth - Castelrotto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7960:
-    gps: missing
-    source: awaiting original
+    suggested: GS/SC19.4, Kastelruth - Castelrotto, Italy
+    street: GS/SC19.4
+    city: Kastelruth - Castelrotto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
