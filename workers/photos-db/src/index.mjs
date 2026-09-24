@@ -43,8 +43,20 @@ const MACHINE = {
   focus_mode: p => p.settings?.focusMode, af_mode: p => p.settings?.afMode, shutter_type: p => p.settings?.shutterType,
   drive_mode: p => p.settings?.driveMode, stabilization: p => p.settings?.stabilization,
   shutter_count: p => p.shutterCount,
+  sun_alt: p => p.sun?.alt, sun_az: p => p.sun?.az, sun_rising: p => (p.sun ? (p.sun.rising ? 1 : 0) : null),
+  to_sunrise: p => p.sun?.toSunrise, to_sunset: p => p.sun?.toSunset, to_noon: p => p.sun?.toNoon,
 };
 const COLS = Object.keys(MACHINE);
+/**
+ * A short digest of everything the machine derives for a photo. A source whose
+ * version and hash are unchanged is still rewritten when this moves, so a fact
+ * added later (the sun, say) reaches rows the originals never touched again.
+ */
+export function factsDigest(p) {
+  let h = 0x811c9dc5;
+  for (const ch of JSON.stringify(COLS.map(c => MACHINE[c](p) ?? null))) { h ^= ch.charCodeAt(0); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(36);
+}
 const NOW = "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')";
 const PUBLIC = ['id', ...COLS, 'place', 'place_source', 'place_landmark', 'place_street', 'place_city', 'place_country',
   'caption', 'caption_zh', 'alt', 'story', 'story_zh', 'featured', 'hidden', 'created_at', 'updated_at', 'removed_at'];
@@ -85,8 +97,9 @@ export function resolve(entries, priv, known, mint = newId) {
     if (!id && cameraKey && known.byCamera.has(cameraKey)) { id = known.byCamera.get(cameraKey); how = 'camera'; }
     if (!id && p.hash && known.byHash.has(p.hash)) { id = known.byHash.get(p.hash); how = 'hash'; }
     if (!id) { id = mint(); how = 'new'; }
-    const unchanged = !!(src && !src.removed_at && (src.version ?? null) === (p.version ?? null) && (src.hash ?? null) === (p.hash ?? null));
-    out.push({ p, pr, id, how, cameraKey, unchanged });
+    const facts = factsDigest(p);
+    const unchanged = !!(src && !src.removed_at && (src.version ?? null) === (p.version ?? null) && (src.hash ?? null) === (p.hash ?? null) && (src.facts ?? null) === facts);
+    out.push({ p, pr, id, how, cameraKey, unchanged, facts });
   }
   return out;
 }
@@ -95,9 +108,9 @@ export async function syncGallery(db, gallery, manifest, privDoc) {
   // Manifests written before sources were recorded carry no key: it is the gallery plus the file name.
   const entries = (manifest?.photos || []).map(p => (p.key ? p : { ...p, key: p.file ? `${gallery}/${p.file}` : null })).filter(p => p.key);
   const priv = privDoc?.photos || {};
-  const sources = new Map((await db.prepare('SELECT key, photo_id, version, hash, removed_at FROM sources WHERE gallery = ?').bind(gallery).all()).results.map(r => [r.key, r]));
+  const sources = new Map((await db.prepare('SELECT key, photo_id, version, hash, facts, removed_at FROM sources WHERE gallery = ?').bind(gallery).all()).results.map(r => [r.key, r]));
   const keys = entries.map(p => p.key).filter(k => !sources.has(k));
-  for (const r of await inList(db, 'SELECT key, photo_id, version, hash, removed_at FROM sources WHERE key IN (?)', keys)) sources.set(r.key, r);
+  for (const r of await inList(db, 'SELECT key, photo_id, version, hash, facts, removed_at FROM sources WHERE key IN (?)', keys)) sources.set(r.key, r);
   const counts0 = [...new Set(entries.map(p => p.shutterCount).filter(c => c != null))];
   const byCamera = new Map((await inList(db, 'SELECT id, camera, shutter_count FROM photos WHERE camera IS NOT NULL AND shutter_count IN (?)', counts0))
     .map(r => [`${r.camera}#${r.shutter_count}`, r.id]));
@@ -118,10 +131,10 @@ export async function syncGallery(db, gallery, manifest, privDoc) {
        ON CONFLICT (id) DO UPDATE SET ${COLS.map(c => `${c} = excluded.${c}`).join(', ')}, updated_at = ${NOW}, removed_at = NULL`,
     ).bind(r.id, ...COLS.map(c => val(MACHINE[c](r.p)))));
     stmts.push(db.prepare(
-      `INSERT INTO sources (key, photo_id, gallery, version, hash) VALUES (?, ?, ?, ?, ?)
+      `INSERT INTO sources (key, photo_id, gallery, version, hash, facts) VALUES (?, ?, ?, ?, ?, ?)
        ON CONFLICT (key) DO UPDATE SET photo_id = excluded.photo_id, gallery = excluded.gallery, version = excluded.version,
-         hash = excluded.hash, seen_at = ${NOW}, removed_at = NULL`,
-    ).bind(r.p.key, r.id, gallery, val(r.p.version), val(r.p.hash)));
+         hash = excluded.hash, facts = excluded.facts, seen_at = ${NOW}, removed_at = NULL`,
+    ).bind(r.p.key, r.id, gallery, val(r.p.version), val(r.p.hash), r.facts));
     stmts.push(membership);
     // GPS at full precision and the whole camera record: private, never served.
     stmts.push(db.prepare(

@@ -7,7 +7,8 @@
  *      (same etag + size), unless --force
  *   2. read EXIF, orient, measure, thumbhash, dominant colour
  *   3. render every public tier and upload it
- *   4. record the photo in <gallery>/manifest.json (public, no GPS) and
+ *   4. record the photo in <gallery>/manifest.json (public, no GPS; the sun
+ *      at the moment of the frame, worked out at city precision) and
  *      <gallery>/.private.json (originals bucket, GPS + full EXIF)
  *
  * Tiers whose original has disappeared are deleted and dropped from the
@@ -31,6 +32,7 @@ import { readExif } from './lib/exif.mjs';
 import { assignSlugs } from './lib/slug.mjs';
 import { analyse, renderTiers } from './lib/tiers.mjs';
 import { emptyManifest, sortPhotos } from './lib/manifest.mjs';
+import { sunAt } from './lib/sun.mjs';
 
 const args = parseArgs(process.argv.slice(2), { multi: ['gallery'] });
 const DRY = !!args['dry-run'];
@@ -62,7 +64,7 @@ async function main() {
   // A gallery named in the filter with no originals left still needs its manifest reconciled.
   for (const g of galleryFilter) if (!byGallery.has(g)) byGallery.set(g, []);
 
-  let changed = 0, failed = 0, skipped = 0, removed = 0;
+  let changed = 0, failed = 0, skipped = 0, removed = 0, lit = 0;
   for (const [gallery, files] of [...byGallery].sort()) {
     const r = await processGallery(gallery, files, { originals, pub });
     changed += r.changed; failed += r.failed; skipped += r.skipped; removed += r.removed;
@@ -87,7 +89,7 @@ async function processGallery(gallery, files, { originals, pub }) {
   for (const w of warnings) log(`  ${gallery}: ${w}`);
   const fileMeta = new Map(files.map(f => [path.posix.basename(f.key), f]));
 
-  let changed = 0, failed = 0, skipped = 0, removed = 0;
+  let changed = 0, failed = 0, skipped = 0, removed = 0, lit = 0;
   const queue = [...slugs];
   const worker = async () => {
     for (let item = queue.shift(); item; item = queue.shift()) {
@@ -95,7 +97,11 @@ async function processGallery(gallery, files, { originals, pub }) {
       const version = `${meta.etag}:${meta.size}`;
       const existing = bySlug.get(slug);
       // Entries from before content-addressed tiers (no hash) are re-rendered once into t/<hash>/.
-      if (existing && existing.hash && existing.version === version && existing.formats?.join() === formats.join() && !FORCE) { skipped++; continue; }
+      if (existing && existing.hash && existing.version === version && existing.formats?.join() === formats.join() && !FORCE) {
+        // Photos processed before the sun was kept get it from the private GPS: no download, no render.
+        if (!('sun' in existing)) { existing.sun = sunAt(existing.taken, priv.photos[slug]?.gps); lit++; }
+        skipped++; continue;
+      }
       log(`  ${gallery}/${file} → ${slug}${existing ? ' (changed)' : ''}`);
       if (DRY) { changed++; continue; }
       try {
@@ -119,6 +125,7 @@ async function processGallery(gallery, files, { originals, pub }) {
           taken: exif.taken, camera: exif.camera, lens: exif.lens, focal: exif.focal, focal35: exif.focal35,
           aperture: exif.aperture, shutter: exif.shutter, iso: exif.iso, exposureBias: exif.exposureBias,
           ...(cam ? cam.pub : {}),
+          sun: sunAt(exif.taken, exif.gps),
           thumbhash: facts.thumbhash, tint: facts.tint, sizes, formats, processed: new Date().toISOString(),
           ...(exif.software === BOOTSTRAP_STAMP ? { compressed: true } : {}),
         });
@@ -144,12 +151,12 @@ async function processGallery(gallery, files, { originals, pub }) {
     bySlug.delete(slug); delete priv.photos[slug]; removed++;
   }
 
-  if ((changed || removed) && !DRY) {
+  if ((changed || removed || lit) && !DRY) {
     const photos = sortPhotos([...bySlug.values()]);
     await pub.putJson(manifestKey, { version: MANIFEST_VERSION, gallery, generated: new Date().toISOString(), photos });
     await originals.putJson(privateKey, { gallery, generated: new Date().toISOString(), photos: priv.photos });
   }
-  if (changed || removed || failed) log(`  ${gallery}: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed`);
+  if (changed || removed || failed || lit) log(`  ${gallery}: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed${lit ? `, ${lit} given their sun` : ''}`);
   return { changed, failed, skipped, removed };
 }
 
