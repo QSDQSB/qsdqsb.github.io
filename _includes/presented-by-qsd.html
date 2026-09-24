@@ -2,5 +2,5 @@
 <hr>
 <div class="center-wrapper">  
     {% include qsd-logo.html %}
-    <h6>Presented by QSD.</h6>
+    <h6>{{ include.line | default: "Presented by QSD." }}</h6>
 </div>

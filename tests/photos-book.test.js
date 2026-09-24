@@ -63,7 +63,7 @@ test('the colophon counts films, lenses and the half hours of the day', async ()
   ]);
   assert.deepEqual(c.films.map(f => [f.name, f.n, f.pc]), [['Classic Negative', 2, 67], ['Astia', 1, 33]]);
   assert.equal(c.films[0].hue, '#7fbcbc');
-  assert.deepEqual(c.lenses.map(l => l.name), ['XF90', 'XF16']);
+  assert.deepEqual(c.lenses.map(l => l.name), ['XF 90', 'XF 16']);
   assert.deepEqual(c.hours.map(h => h.stack), [0, 1, 0], 'two frames in the 18:00 half hour stack');
   assert.deepEqual(c.phases, { day: 2, golden: 1, night: 0 });
 });
@@ -75,4 +75,18 @@ test('bookOf takes the place from the locate sidecar, else the caption', async (
   assert.deepEqual(b.photos.map(p => p.place), [{ name: 'Pembroke Road', city: 'London' }, { name: 'Tower Bridge', city: 'London' }]);
   assert.equal(b.book.cover, 0);
   assert.equal(b.book.rows[0].kind, 'spread');
+});
+
+test('the specs list the in-camera rendering with short labels and no glosses', async () => {
+  const { settingsOf } = await lib();
+  const rows = settingsOf({ whiteBalance: 'Auto (white priority)', settings: { dynamicRange: 'Standard', grainRoughness: 'Weak', grainSize: 'Small', highlightTone: '-2 (soft)', color: '+3 (very high)', focusMode: 'AF-S', afMode: 'Single Point' } });
+  assert.deepEqual(rows, [['DR', 'Standard'], ['Grain', 'Weak / S'], ['Highl.', '−2'], ['WB', 'Auto'], ['Colour', '+3'], ['Focus', 'AF-S · Single Point']]);
+});
+
+test('lenses read as a photographer says them', async () => {
+  const { lensName } = await lib();
+  assert.equal(lensName('XF90mmF2 R LM WR'), 'XF 90 mm f/2');
+  assert.equal(lensName('XF16-55mmF2.8 R LM WR'), 'XF 16-55 mm f/2.8');
+  assert.equal(lensName('XF23mmF1.4 R'), 'XF 23 mm f/1.4');
+  assert.equal(lensName(null), null);
 });

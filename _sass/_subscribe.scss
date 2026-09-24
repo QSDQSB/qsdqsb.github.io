@@ -238,14 +238,7 @@
 }
 
 /* ---------- context tweaks ---------- */
-/* Gallery viewer pages set their own dense type context; keep the slip aligned
-   with the archive blocks that precede it there. */
-.gallery-viewer .subscribe-slip {
-  margin-top: 2.2rem;
-}
-
-/* Gallery pages centre paragraphs/headings globally (`.gallery_view p` etc.) —
-   double up the class so the slip keeps its own composition in any context. */
+/* Double up the class so the slip keeps its own composition in any context. */
 .subscribe-slip .subscribe-slip__heading,
 .subscribe-slip .subscribe-slip__invite,
 .subscribe-slip .subscribe-slip__note {

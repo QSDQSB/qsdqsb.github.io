@@ -17,6 +17,9 @@
 
 import { thumbHashToDataURL, thumbHashToRGBA } from 'thumbhash';
 import { normalizeFilm } from './camera.mjs';
+// The rhythm is shared with the page, whose film filter re-lays the frames it keeps.
+import { bookRows, PORTRAIT } from '../../../assets/js/photobook/rows.mjs';
+export { bookRows };
 
 // Film simulations take a hue from the site's palette: an original mark, not Fujifilm's artwork.
 const FILMS = {
@@ -30,23 +33,6 @@ export function filmHue(name) {
   return k ? FILMS[k] : /^(Acros|Monochrome)/.test(name) ? '#e6eee8' : '#8b9296';
 }
 
-const PORTRAIT = 1.2; // below this ratio a frame is too tall for a full-width spread
-
-/** Rows of indices into `photos`: [{ kind: 'spread'|'pair'|'triple', items: [i, …] }]. */
-export function bookRows(photos) {
-  const rows = []; let k = 0, beat = 0;
-  const kinds = ['spread', 'pair', 'triple'];
-  while (k < photos.length) {
-    const left = photos.length - k;
-    let want = [1, 2, 3][beat++ % 3];
-    if (want === 1 && (photos[k].ratio || 1.5) < PORTRAIT) want = 2;
-    const take = k > 0 && left <= 3 && left !== want ? left : Math.min(want, left);
-    rows.push({ kind: kinds[take - 1], items: Array.from({ length: take }, (_, j) => k + j) });
-    k += take;
-  }
-  return rows;
-}
-
 /** The opening frame: the first featured landscape, else the first landscape, else the first. */
 export function coverIndex(photos) {
   const land = (p) => (p.ratio || 1.5) >= PORTRAIT;
@@ -55,6 +41,12 @@ export function coverIndex(photos) {
   const j = photos.findIndex(land);
   return j >= 0 ? j : photos.length ? 0 : null;
 }
+
+/** "XF90mmF2 R LM WR" → "XF 90 mm f/2": the lens as a photographer says it. */
+export const lensName = (l) => (l ? String(l).replace(/^(XF|XC|GF)(?=\d)/, '$1 ').replace(/mmF/, ' mm f/').replace(/ R LM WR| R WR| R LM| OIS WR| LM WR| WR| R$/g, '').trim() : null);
+
+/** "FUJIFILM X-S10" → "Fujifilm X-S10". */
+export const cameraName = (c) => (c ? String(c).replace(/^FUJIFILM\b/, 'Fujifilm').replace(/^SONY\b/, 'Sony').replace(/^NIKON CORPORATION\b|^NIKON\b/, 'Nikon').replace(/^Canon\b/, 'Canon') : null);
 
 /** "Tower Bridge, London" → { name: 'Tower Bridge', city: 'London' }. */
 export function splitPlace(text, fallbackCity = null) {
@@ -123,7 +115,7 @@ export function colophonOf(photos) {
     return [...m].sort((a, b) => b[1] - a[1]).map(([name, n]) => ({ name, n, pc: Math.round(n / photos.length * 100) }));
   };
   const films = count(p => p.film ?? normalizeFilm(p.settings?.filmSimulation)).map(f => ({ ...f, hue: filmHue(f.name) }));
-  const lenses = count(p => p.lens);
+  const lenses = count(p => lensName(p.lens));
   const bins = new Map(), phases = { day: 0, golden: 0, night: 0 }, hours = [];
   for (const p of photos) {
     const m = p.taken && String(p.taken).match(/T(\d{2}):(\d{2})/);
@@ -134,8 +126,39 @@ export function colophonOf(photos) {
     phases[phase]++;
     hours.push({ at: `${m[1]}:${m[2]}`, left: +((bin + 0.5) / 48 * 100).toFixed(2), stack: k, phase });
   }
-  const bodies = count(p => p.camera);
+  const bodies = count(p => cameraName(p.camera));
   return { films, lenses, hours, phases, bodies, frames: photos.length };
+}
+
+// The in-camera rendering, as the specs panel lists it: short labels, values without their glosses.
+const SETTINGS = [
+  ['dynamicRange', 'DR'], ['grainRoughness', 'Grain'], ['colorChrome', 'Chrome'], ['colorChromeBlue', 'Chr. blue'],
+  ['highlightTone', 'Highl.'], ['shadowTone', 'Shad.'], ['whiteBalance', 'WB'], ['color', 'Colour'], ['sharpness', 'Sharp'],
+  ['noiseReduction', 'NR'], ['clarity', 'Clarity'], ['shutterType', 'Shutter'], ['focusMode', 'Focus'],
+];
+export const tidy = (v) => String(v).replace(/\s*\((?!\d)[^)]*\)/g, '').replace(/^-(?=\d)/, '−').trim();
+export function settingsOf(p) {
+  const st = p.settings || {};
+  const out = [];
+  for (const [key, label] of SETTINGS) {
+    let v = key === 'whiteBalance' ? p.whiteBalance : st[key];
+    if (key === 'grainRoughness' && v && v !== 'Off' && st.grainSize) v = `${v} / ${String(st.grainSize)[0]}`;
+    if (key === 'focusMode' && v && st.afMode) v = `${v} · ${st.afMode}`;
+    if (v == null || v === '') continue;
+    out.push([label, tidy(v)]);
+  }
+  return out;
+}
+
+/** What the lightbox needs per frame, and nothing more: the page carries it as one JSON block. */
+export function lightboxOf(photos) {
+  return photos.map(p => ({
+    slug: p.slug, frame: p.frame, url: p.url, sizes: p.sizes?.webp || [], ratio: p.ratio,
+    name: p.place?.name || p.caption || p.frame, city: p.place?.city || null,
+    shots: p.shutterCount ?? null, focal: p.focal ?? null, aperture: p.aperture ?? null, shutter: p.shutter ?? null,
+    iso: p.iso ?? null, bias: p.exposureBias ?? null, camera: cameraName(p.camera), lens: lensName(p.lens),
+    film: p.film ?? null, hue: p.filmHue ?? null, light: p.light, glow: p.glow, ph: p.ph, settings: settingsOf(p),
+  }));
 }
 
 /** Add the Photobook's layer to a merged manifest. `locations` is the locate sidecar's `photos` map, if any. */
@@ -148,5 +171,5 @@ export function bookOf(merged, locations = {}) {
     const film = normalizeFilm(p.settings?.filmSimulation);
     return { ...p, film, place, light, glow: glowOf(p.thumbhash), ph: placeholderOf(p.thumbhash), filmHue: filmHue(film) };
   });
-  return { ...merged, photos, book: { rows: bookRows(photos), cover: coverIndex(photos), colophon: colophonOf(photos) } };
+  return { ...merged, photos, book: { rows: bookRows(photos), cover: coverIndex(photos), colophon: colophonOf(photos), lightbox: lightboxOf(photos) } };
 }
