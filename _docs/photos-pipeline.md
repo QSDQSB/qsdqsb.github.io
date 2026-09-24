@@ -87,6 +87,7 @@ and no GPS ever reaches the public bucket.
 | `npm run photos:pull [-- --gallery x] [--dry-run]` | The reverse of push: fetches originals `photos/` lacks from the bucket. Never overwrites a local file; skips `trash/`. | read |
 | `npm run photos:import [-- --dry-run] [--move] [--from <dir>]` | The gateway: sorts every file in the Desktop inbox into its voyage by frame number or by picture, verifies it, copies it into `photos/` (`--move` then removes it from the inbox). Files that match nothing stay and are listed. `--discard "<file>"` moves one to the Trash. | none |
 | `npm run photos:locate -- --gallery x \| --all [--sheets] [--set slug="place"] [--accept [slugs]]` | Suggests where each photo was taken (a well-known landmark, square, park or inn, else the road) into `_data/photo_locations/`; `--accept` writes suggestions into captions nobody wrote by hand. | none (OpenStreetMap, HTTP) |
+| `npm run photos:collect [-- --gallery x] [--dry-run]` | Replaces compressed copies with the edited originals straight from Apple Photos: exact-name lookups, best candidate by date, verified by the gateway. Resumable, memory-guarded, one run at a time. | none (Apple Photos) |
 | `npm run photos:plan [-- --gallery x]` | Reports new, changed, orphaned files; refuses orphans still named in YAML. | read |
 | `npm run photos:prune -- --gallery x [--yes]` | Moves that gallery's orphans to `trash/<date>/…` in the originals bucket. Asks you to type the gallery name. | write |
 | `npm run photos:process [-- --gallery x] [--force] [--dry-run] [--local dir] [--no-avif]` | The processor. Runs in Actions; runs locally against a directory with `--local`. | read + write |
@@ -210,6 +211,33 @@ voyage that already has some:
    `npm run photos:prune -- --gallery <voyage>`.
 5. `npm run photos:captions -- --gallery <voyage>` gives any new frame an
    empty caption to fill in.
+
+### Collect from Apple Photos (unattended)
+
+The originals live in the Photos library (30,000+ items, many in iCloud
+only). `npm run photos:collect` finds and imports them without the Desktop:
+
+1. For every photo still on its compressed copy, it asks Photos for items
+   with exactly that file name (`DSCF1148.JPG`), 25 names per call. Exact
+   names are cheap; never let anything ask Photos for a date range or a
+   name prefix: those make it load the whole library (it reached 66 GB once).
+2. Frame numbers repeat about every 10,000 shots, so a name has a few
+   candidates. It exports the one shot nearest the voyage's other originals,
+   **as edited in Photos** (the site publishes your crop; an unedited
+   camera file fails the aspect check), 20 at a time.
+3. The gateway verifies each export by picture and imports the match;
+   the rest of the batch is deleted from `.photos-local/collect/stage/`
+   (Photos itself is never touched). Up to three rounds: the next
+   candidate only for photos still unmatched.
+4. When done it runs `photos:locate --all`, and lists what is left in
+   `.photos-local/collect/unresolved.txt`: usually files whose frame
+   number was changed by hand, for round two.
+
+It runs for as long as it needs: state in `.photos-local/collect/state.json`
+(a stopped run resumes), a lock (one run at a time), Photos restarted past
+6 GB, failed lookups and exports retried with a pause and otherwise left for
+the next run, a log in `.photos-local/collect/log.txt` that the dashboard
+shows. The first run asks macOS to let this app control Photos.
 
 ### A short session
 
