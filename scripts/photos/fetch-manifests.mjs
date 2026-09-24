@@ -5,6 +5,7 @@
  *
  *   in   https://img.qsdqsb.com/<gallery>/manifest.json   (or --local <dir>)
  *   in   _data/photos/<gallery>.yml
+ *   in   _data/photo_locations/<gallery>.yml               place names, when located
  *   out  _data/photo_manifests/<key>.json                  (gitignored)
  *   out  _data/photo_manifests/_index.json                 summary + warnings
  *
@@ -30,6 +31,7 @@ import yaml from 'js-yaml';
 import { env, PATHS, MANIFEST_FILE, galleryKey, parseArgs } from './lib/config.mjs';
 import { FsStore } from './lib/store.mjs';
 import { mergeManifest, validateAuthored } from './lib/manifest.mjs';
+import { bookOf } from './lib/book.mjs';
 
 const require = createRequire(import.meta.url);
 const { referencedGalleries } = require('../check-gallery-integrity.js');
@@ -57,6 +59,12 @@ async function mapLimited(items, limit, fn) {
     for (let i = next++; i < items.length; i = next++) out[i] = await fn(items[i], i);
   }));
   return out;
+}
+
+/** The locate sidecar's `photos` map (names only, never coordinates), or an empty one. */
+function readLocations(gallery) {
+  const file = path.join(PATHS.locationsDir, `${gallery}.yml`);
+  try { return (yaml.load(fs.readFileSync(file, 'utf8')) || {}).photos || {}; } catch { return {}; }
 }
 
 function readAuthored(gallery) {
@@ -94,7 +102,8 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
       if (fs.existsSync(out)) { note = `bucket unreachable (${error}); kept the previous merge`; index.galleries[gallery] = { ...summary(JSON.parse(fs.readFileSync(out, 'utf8'))), note }; return; }
       note = `bucket unreachable (${error}); no previous merge`;
     }
-    const merged = mergeManifest(gallery, machine, doc, env.publicBase);
+    // The Photobook's layer (rows, cover, colophon, place, light, glow) is worked out here, once.
+    const merged = bookOf(mergeManifest(gallery, machine, doc, env.publicBase), readLocations(gallery));
     merged.warnings.push(...problems);
     if (note) merged.warnings.push(note);
     fs.writeFileSync(out, JSON.stringify(merged, null, 2) + '\n');
