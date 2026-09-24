@@ -50,9 +50,10 @@ jobs:
           CF_PAGES_DEPLOY_HOOK: ${{ secrets.CF_PAGES_DEPLOY_HOOK }}
           PHOTOS_ORIGINALS_BUCKET: ${{ vars.PHOTOS_ORIGINALS_BUCKET || 'qsdqsb-originals' }}
           PHOTOS_PUBLIC_BUCKET: ${{ vars.PHOTOS_PUBLIC_BUCKET || 'qsdqsb-photos' }}
-          PHOTOS_GALLERIES: ${{ toJSON(github.event.client_payload.galleries) }}
           INPUT_GALLERY: ${{ github.event.inputs.gallery }}
           INPUT_FORCE: ${{ github.event.inputs.force }}
+        # Every run diffs the whole bucket (ETag + size, cheap) rather than the galleries in its
+        # dispatch: a newer upload replaces a waiting run, and that run's gallery list goes with it.
         run: |
           set -euo pipefail
           extra=()
