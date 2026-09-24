@@ -1,0 +1,30 @@
+# Suggested locations for gallery prague/twilight, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf4287:
+    gps: missing
+    source: awaiting original
+  dscf4299:
+    gps: missing
+    source: awaiting original
+  dscf4303:
+    suggested: Charles Bridge, Prague
+    landmark: Charles Bridge
+    street: Rašínovo nábřeží
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4322:
+    gps: missing
+    source: awaiting original
+  dscf4623:
+    gps: missing
+    source: awaiting original
+  dscf4997:
+    gps: missing
+    source: awaiting original
+  dscf5678:
+    gps: missing
+    source: awaiting original

@@ -1,0 +1,36 @@
+# Suggested locations for gallery barcelona, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf0965:
+    suggested: Parc del Guinardó, Barcelona
+    landmark: Parc del Guinardó
+    street: Túnel de la Rovira
+    city: Barcelona
+    country: Spain
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1055:
+    suggested: Cathedral of Santa Eulalia, Barcelona
+    landmark: Cathedral of Santa Eulalia
+    street: Avinguda de la Catedral
+    city: Barcelona
+    country: Spain
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1070:
+    suggested: Platja de la Barceloneta, Barcelona
+    landmark: Platja de la Barceloneta
+    street: Passeig Marítim de la Barceloneta - Oriol Bohigas i Guardiola
+    city: Barcelona
+    country: Spain
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1085:
+    suggested: Platja de Sant Miquel, Barcelona
+    landmark: Platja de Sant Miquel
+    street: Passeig Marítim de la Barceloneta - Oriol Bohigas i Guardiola
+    city: Barcelona
+    country: Spain
+    gps: present
+    source: OpenStreetMap reverse geocode

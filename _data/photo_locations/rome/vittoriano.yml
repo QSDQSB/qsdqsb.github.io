@@ -1,0 +1,40 @@
+# Suggested locations for gallery rome/vittoriano, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf0933:
+    gps: missing
+    source: awaiting original
+  dscf0977:
+    gps: missing
+    source: awaiting original
+  dscf0983:
+    gps: missing
+    source: awaiting original
+  dscf0985:
+    gps: missing
+    source: awaiting original
+  dscf1251:
+    gps: missing
+    source: awaiting original
+  dscf1610:
+    gps: missing
+    source: awaiting original
+  dscf1614:
+    gps: missing
+    source: awaiting original
+  dscf1619:
+    gps: missing
+    source: awaiting original
+  dscf1629:
+    gps: missing
+    source: awaiting original
+  dscf1639:
+    gps: missing
+    source: awaiting original
+  dscf1662:
+    gps: missing
+    source: awaiting original
+  dscf1753:
+    gps: missing
+    source: awaiting original

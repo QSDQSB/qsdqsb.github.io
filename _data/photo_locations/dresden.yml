@@ -1,0 +1,13 @@
+# Suggested locations for gallery dresden, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf2816:
+    gps: missing
+    source: awaiting original
+  dscf2880:
+    gps: missing
+    source: awaiting original
+  dscf2997:
+    gps: missing
+    source: awaiting original

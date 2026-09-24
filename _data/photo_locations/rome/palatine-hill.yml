@@ -1,0 +1,34 @@
+# Suggested locations for gallery rome/palatine-hill, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf0986:
+    gps: missing
+    source: awaiting original
+  dscf0987:
+    gps: missing
+    source: awaiting original
+  dscf1007:
+    gps: missing
+    source: awaiting original
+  dscf1016:
+    gps: missing
+    source: awaiting original
+  dscf1186:
+    gps: missing
+    source: awaiting original
+  dscf1191:
+    gps: missing
+    source: awaiting original
+  dscf1659:
+    gps: missing
+    source: awaiting original
+  dscf1669:
+    gps: missing
+    source: awaiting original
+  dscf1682:
+    gps: missing
+    source: awaiting original
+  dscf1689:
+    gps: missing
+    source: awaiting original

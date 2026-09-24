@@ -1,0 +1,36 @@
+# Suggested locations for gallery dragonstone, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf6820:
+    gps: missing
+    source: awaiting original
+  dscf6826:
+    suggested: Bay of Biscay, Bakio, Spain
+    landmark: Bay of Biscay
+    street: Gibelortzagako San Pelaio
+    city: Bakio
+    country: Spain
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6835:
+    gps: missing
+    source: awaiting original
+  dscf6847:
+    gps: missing
+    source: awaiting original
+  dscf6878:
+    gps: missing
+    source: awaiting original
+  dscf6888:
+    gps: missing
+    source: awaiting original
+  dscf6915:
+    gps: missing
+    source: awaiting original
+  dscf6922:
+    gps: missing
+    source: awaiting original
+  dscf6933:
+    gps: missing
+    source: awaiting original

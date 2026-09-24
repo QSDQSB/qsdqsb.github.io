@@ -1,0 +1,57 @@
+# Suggested locations for gallery dolomites/seceda, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf0142:
+    gps: missing
+    source: awaiting original
+  dscf0152:
+    suggested: Secëda - Monte Seceda, Villnöß - Funes, Italy
+    landmark: Secëda - Monte Seceda
+    street: Adolf-Munkel-Weg
+    city: Villnöß - Funes
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf0153:
+    gps: missing
+    source: awaiting original
+  dscf0197:
+    gps: missing
+    source: awaiting original
+  dscf0357:
+    gps: missing
+    source: awaiting original
+  dscf0411:
+    gps: missing
+    source: awaiting original
+  dscf0414:
+    gps: missing
+    source: awaiting original
+  dscf0500:
+    gps: missing
+    source: awaiting original
+  dscf0504:
+    gps: missing
+    source: awaiting original
+  dscf0513:
+    gps: missing
+    source: awaiting original
+  dscf0531:
+    gps: missing
+    source: awaiting original
+  dscf0648:
+    gps: missing
+    source: awaiting original
+  dscf5177:
+    gps: missing
+    source: awaiting original
+  dscf6291:
+    gps: missing
+    source: awaiting original
+  dscf8139:
+    gps: missing
+    source: awaiting original
+  dscf8259:
+    gps: missing
+    source: awaiting original

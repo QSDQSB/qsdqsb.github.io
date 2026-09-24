@@ -1,0 +1,46 @@
+# Suggested locations for gallery morocco, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf0055:
+    gps: missing
+    source: awaiting original
+  dscf0348:
+    gps: missing
+    source: awaiting original
+  dscf0434:
+    gps: missing
+    source: awaiting original
+  dscf0680:
+    gps: missing
+    source: awaiting original
+  dscf0739:
+    gps: missing
+    source: awaiting original
+  dscf8340:
+    gps: missing
+    source: awaiting original
+  dscf8762:
+    gps: missing
+    source: awaiting original
+  dscf8937:
+    gps: missing
+    source: awaiting original
+  dscf8992:
+    gps: missing
+    source: awaiting original
+  dscf9031:
+    gps: missing
+    source: awaiting original
+  dscf9089:
+    gps: missing
+    source: awaiting original
+  dscf9265:
+    gps: missing
+    source: awaiting original
+  dscf9539:
+    gps: missing
+    source: awaiting original
+  dscf9794:
+    gps: missing
+    source: awaiting original

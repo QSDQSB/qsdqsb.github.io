@@ -1,0 +1,28 @@
+# Suggested locations for gallery rigi, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf5721:
+    gps: missing
+    source: awaiting original
+  dscf5730:
+    gps: missing
+    source: awaiting original
+  dscf5735:
+    gps: missing
+    source: awaiting original
+  dscf5741:
+    gps: missing
+    source: awaiting original
+  dscf5750:
+    gps: missing
+    source: awaiting original
+  dscf5760:
+    gps: missing
+    source: awaiting original
+  dscf5778:
+    gps: missing
+    source: awaiting original
+  dscf5789:
+    gps: missing
+    source: awaiting original

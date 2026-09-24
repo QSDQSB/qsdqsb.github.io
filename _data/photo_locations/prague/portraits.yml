@@ -1,0 +1,28 @@
+# Suggested locations for gallery prague/portraits, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf4305:
+    gps: missing
+    source: awaiting original
+  dscf4425:
+    gps: missing
+    source: awaiting original
+  dscf4538:
+    gps: missing
+    source: awaiting original
+  dscf5074:
+    gps: missing
+    source: awaiting original
+  dscf5154:
+    gps: missing
+    source: awaiting original
+  dscf5557:
+    gps: missing
+    source: awaiting original
+  dscf5594:
+    gps: missing
+    source: awaiting original
+  dscf5683:
+    gps: missing
+    source: awaiting original

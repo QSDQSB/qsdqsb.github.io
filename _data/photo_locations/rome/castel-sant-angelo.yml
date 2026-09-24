@@ -1,0 +1,25 @@
+# Suggested locations for gallery rome/castel-sant-angelo, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf2006:
+    gps: missing
+    source: awaiting original
+  dscf2015:
+    gps: missing
+    source: awaiting original
+  dscf2050:
+    gps: missing
+    source: awaiting original
+  dscf2098:
+    gps: missing
+    source: awaiting original
+  dscf2101:
+    gps: missing
+    source: awaiting original
+  dscf2105:
+    gps: missing
+    source: awaiting original
+  dscf2108:
+    gps: missing
+    source: awaiting original

@@ -1,0 +1,58 @@
+# Suggested locations for gallery rome/st-peters-basilica, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf1288:
+    gps: missing
+    source: awaiting original
+  dscf1801:
+    gps: missing
+    source: awaiting original
+  dscf1804:
+    gps: missing
+    source: awaiting original
+  dscf1869:
+    gps: missing
+    source: awaiting original
+  dscf1878:
+    gps: missing
+    source: awaiting original
+  dscf1888:
+    gps: missing
+    source: awaiting original
+  dscf1892:
+    gps: missing
+    source: awaiting original
+  dscf1898:
+    gps: missing
+    source: awaiting original
+  dscf1899:
+    gps: missing
+    source: awaiting original
+  dscf1904:
+    gps: missing
+    source: awaiting original
+  dscf1920:
+    gps: missing
+    source: awaiting original
+  dscf1929:
+    gps: missing
+    source: awaiting original
+  dscf1934:
+    gps: missing
+    source: awaiting original
+  dscf1945:
+    gps: missing
+    source: awaiting original
+  dscf1959:
+    gps: missing
+    source: awaiting original
+  dscf1979:
+    gps: missing
+    source: awaiting original
+  dscf1984:
+    gps: missing
+    source: awaiting original
+  dscf2241:
+    gps: missing
+    source: awaiting original
