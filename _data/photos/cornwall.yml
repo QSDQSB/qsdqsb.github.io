@@ -1,13 +1,11 @@
 # Authored layer for gallery/cornwall — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
 photos:
-  dscf1148:
+  dscf1848:
     caption: The Valley, Penzance, UK
-  dscf1357:
-    caption: St. Nicholas Chapel, St. Ives, UK
-  dscf1361:
+  dscf1321:
     caption: Porthmeor Road, St. Ives, UK
-  dscf1364:
+  dscf2206:
     caption: Porthmeor Road, St. Ives, UK
   dscf1422:
     caption: Tidal Causeway, Marazion, UK
@@ -15,8 +13,6 @@ photos:
     caption: Bedford Road, Cornwall, UK
   dscf1686:
     caption: The Valley, Porthcurno, UK
-  dscf1706:
-    caption: The Cornish Way, Sennen Cove, UK
   dscf1724:
     caption: Porthcurno Beach, Penzance, UK
   dscf1732:

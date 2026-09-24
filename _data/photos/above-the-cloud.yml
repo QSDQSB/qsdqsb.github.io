@@ -1,10 +1,8 @@
 # Authored layer for gallery/above-the-cloud — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
 photos:
-  dscf0559:
+  dscf3559:
     caption: Altyn-Tagh, Xinjiang, China
-  dscf0567:
-    caption: Dunhuang City, Gansu, China
   dscf0949:
     caption: North Sea, North Atlantic Ocean, England
   dscf0962:
