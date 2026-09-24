@@ -26,19 +26,21 @@
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { readCamera, closeCamera } from './lib/camera.mjs';
-import { env, PATHS, ORIGINAL_RE, IGNORED_PREFIXES, MANIFEST_FILE, PRIVATE_FILE, MANIFEST_VERSION, FORMATS, BOOTSTRAP_STAMP, parseArgs } from './lib/config.mjs';
+import { env, ROOT, PATHS, ORIGINAL_RE, IGNORED_PREFIXES, MANIFEST_FILE, PRIVATE_FILE, MANIFEST_VERSION, FORMATS, BOOTSTRAP_STAMP, parseArgs } from './lib/config.mjs';
 import { storesFrom } from './lib/store.mjs';
 import { readExif } from './lib/exif.mjs';
 import { assignSlugs } from './lib/slug.mjs';
 import { analyse, renderTiers } from './lib/tiers.mjs';
 import { emptyManifest, sortPhotos } from './lib/manifest.mjs';
-import { sunAt } from './lib/sun.mjs';
+import { lightGallery } from './lib/sun.mjs';
+import { galleryPlaces } from './lib/places.mjs';
 
 const args = parseArgs(process.argv.slice(2), { multi: ['gallery'] });
 const DRY = !!args['dry-run'];
 const FORCE = !!args.force;
 const CONCURRENCY = Math.max(1, Number(args.concurrency) || 2);
 const formats = Object.keys(FORMATS).filter(f => f !== 'avif' || (env.avif && !args['no-avif']));
+const placeOf = galleryPlaces(ROOT);
 const galleryFilter = new Set([...(args.gallery || []), ...(safeJson(process.env.PHOTOS_GALLERIES) || [])].map(String));
 
 function safeJson(s) { try { return s ? JSON.parse(s) : null; } catch { return null; } }
@@ -67,13 +69,13 @@ async function main() {
   let changed = 0, failed = 0, skipped = 0, removed = 0, lit = 0;
   for (const [gallery, files] of [...byGallery].sort()) {
     const r = await processGallery(gallery, files, { originals, pub });
-    changed += r.changed; failed += r.failed; skipped += r.skipped; removed += r.removed;
+    changed += r.changed; failed += r.failed; skipped += r.skipped; removed += r.removed; lit += r.lit;
   }
 
   await closeCamera();
-  log(`\ndone: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed across ${byGallery.size} galleries`);
+  log(`\ndone: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed, ${lit} given their sun across ${byGallery.size} galleries`);
   if (args.gc) await collectGarbage(pub);
-  if (changed + removed > 0 && env.deployHook && !DRY) {
+  if (changed + removed + lit > 0 && env.deployHook && !DRY) {
     const r = await fetch(env.deployHook, { method: 'POST' });
     log(`deploy hook: ${r.status}`);
   }
@@ -89,7 +91,7 @@ async function processGallery(gallery, files, { originals, pub }) {
   for (const w of warnings) log(`  ${gallery}: ${w}`);
   const fileMeta = new Map(files.map(f => [path.posix.basename(f.key), f]));
 
-  let changed = 0, failed = 0, skipped = 0, removed = 0, lit = 0;
+  let changed = 0, failed = 0, skipped = 0, removed = 0;
   const queue = [...slugs];
   const worker = async () => {
     for (let item = queue.shift(); item; item = queue.shift()) {
@@ -98,8 +100,6 @@ async function processGallery(gallery, files, { originals, pub }) {
       const existing = bySlug.get(slug);
       // Entries from before content-addressed tiers (no hash) are re-rendered once into t/<hash>/.
       if (existing && existing.hash && existing.version === version && existing.formats?.join() === formats.join() && !FORCE) {
-        // Photos processed before the sun was kept get it from the private GPS: no download, no render.
-        if (!('sun' in existing)) { existing.sun = sunAt(existing.taken, priv.photos[slug]?.gps); lit++; }
         skipped++; continue;
       }
       log(`  ${gallery}/${file} → ${slug}${existing ? ' (changed)' : ''}`);
@@ -125,7 +125,6 @@ async function processGallery(gallery, files, { originals, pub }) {
           taken: exif.taken, camera: exif.camera, lens: exif.lens, focal: exif.focal, focal35: exif.focal35,
           aperture: exif.aperture, shutter: exif.shutter, iso: exif.iso, exposureBias: exif.exposureBias,
           ...(cam ? cam.pub : {}),
-          sun: sunAt(exif.taken, exif.gps),
           thumbhash: facts.thumbhash, tint: facts.tint, sizes, formats, processed: new Date().toISOString(),
           ...(exif.software === BOOTSTRAP_STAMP ? { compressed: true } : {}),
         });
@@ -151,13 +150,17 @@ async function processGallery(gallery, files, { originals, pub }) {
     bySlug.delete(slug); delete priv.photos[slug]; removed++;
   }
 
+  // The sun, once per photo, from the original's GPS or the gallery's point on the atlas:
+  // no download, no render, so photos processed before it was kept get it on the next run.
+  const lit = lightGallery([...bySlug.values()], (slug) => priv.photos[slug]?.gps, placeOf(gallery));
+
   if ((changed || removed || lit) && !DRY) {
     const photos = sortPhotos([...bySlug.values()]);
     await pub.putJson(manifestKey, { version: MANIFEST_VERSION, gallery, generated: new Date().toISOString(), photos });
     await originals.putJson(privateKey, { gallery, generated: new Date().toISOString(), photos: priv.photos });
   }
   if (changed || removed || failed || lit) log(`  ${gallery}: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed${lit ? `, ${lit} given their sun` : ''}`);
-  return { changed, failed, skipped, removed };
+  return { changed, failed, skipped, removed, lit };
 }
 
 /**
