@@ -86,6 +86,21 @@ end tell`;
 }
 
 /**
+ * Whether a Photos item's date and a file's capture time name the same
+ * moment. Photos gives its dates on this Mac's clock; the camera records
+ * the local time where the photograph was taken, with its UTC offset when
+ * it knows it. Without an offset, the two can only differ by a whole
+ * number of quarter hours (a time zone), at the same minute and second.
+ */
+export function sameMoment(photosDate, taken) {
+  if (!photosDate || !taken) return false;
+  const here = new Date(photosDate.slice(0, 19)).getTime();
+  if (/(Z|[+-]\d\d:?\d\d)$/.test(taken)) return Math.abs(here - new Date(taken).getTime()) < 1000;
+  const gap = Math.abs(here - new Date(taken.slice(0, 19)).getTime());
+  return gap <= 14 * 3600e3 && gap % 900e3 < 1000;
+}
+
+/**
  * Export photos as they are in Photos now: the edited version, crop and
  * all, full size, camera EXIF kept. That is what the site publishes (an
  * unedited original of a cropped photo fails the aspect check), and what

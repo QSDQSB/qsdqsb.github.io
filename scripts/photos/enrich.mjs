@@ -29,7 +29,7 @@ import { spawnSync } from 'node:child_process';
 import sharp from 'sharp';
 import { PATHS, parseArgs } from './lib/config.mjs';
 import { galleriesUnder, localGallery, readHeadExif, isCompressedCopy, cleanGallery } from './lib/inventory.mjs';
-import { findByFilename, exportPhotos, guardMemory } from './lib/apple-photos.mjs';
+import { findByFilename, exportPhotos, guardMemory, sameMoment } from './lib/apple-photos.mjs';
 import { lock, retry, pause, stamp, LOG } from './collect.mjs';
 
 const DIR = path.join(PATHS.localStore, 'collect');
@@ -91,8 +91,8 @@ async function main() {
     const chunk = todo.slice(i, i + batch);
     const found = await retry(`lookup of ${chunk.length} names`, () => findByFilename([...new Set(chunk.map(t => t.name))]), log);
     if (!found) continue;
-    // The item shot at the same second as our file: frame numbers repeat, capture times do not.
-    const pick = chunk.map(t => ({ t, item: (found.get(t.name) || []).find(c => t.taken && c.date.slice(0, 19) === t.taken.slice(0, 19)) }));
+    // The item shot at the same moment as our file: frame numbers repeat, capture times do not.
+    const pick = chunk.map(t => ({ t, item: (found.get(t.name) || []).find(c => sameMoment(c.date, t.taken)) }));
     for (const p of pick.filter(p => !p.item)) { state.failed[`${p.t.gallery}/${p.t.slug}`] = (state.failed[`${p.t.gallery}/${p.t.slug}`] || 0) + 1; }
     const wanted = pick.filter(p => p.item);
     if (!wanted.length) { saveState(state); continue; }
