@@ -4,9 +4,7 @@ layout: default
 
 {% include base_path %}
 
-{% if page.header.overlay_color or page.header.overlay_image or page.header.image %}
-  {% include page__hero.html %}
-{% endif %}
+{% include page__hero.html %}
 
 {% comment %} Honour author_profile: when set, render the shared left rail
 (sidebar.html) and wrap the article as .page-no-right-sidebar so the flex shell
