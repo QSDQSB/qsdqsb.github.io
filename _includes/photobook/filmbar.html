@@ -1,0 +1,18 @@
+{%- comment -%}
+  The film index, a glass pill that stays with the reader beside the masthead: filter the frames
+  by the simulation they were made with, or lay them out as a contact sheet.
+{%- endcomment -%}
+{%- assign films = include.book.book.colophon.films -%}
+<div class="photobook-bar">
+  <div class="photobook-bar__pill">
+    {%- if films.size > 1 %}
+    <div class="photobook-bar__films" role="group" aria-label="Filter by film simulation">
+      <button type="button" aria-pressed="true" data-film="">All<b>{{ include.book.count }}</b></button>
+      {%- for f in films %}<button type="button" aria-pressed="false" data-film="{{ f.name | escape }}" style="--film:{{ f.hue }}"><i></i>{{ f.name }}<b>{{ f.n }}</b></button>{% endfor %}
+    </div>
+    {%- endif %}
+    <div class="photobook-bar__views" role="group" aria-label="View">
+      <button type="button" aria-pressed="true" data-view="book">Book</button><button type="button" aria-pressed="false" data-view="sheet">Sheet</button>
+    </div>
+  </div>
+</div>

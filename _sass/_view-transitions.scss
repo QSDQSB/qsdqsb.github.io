@@ -31,11 +31,6 @@
     view-transition-name: archive-content;
   }
 
-  /* Gallery page transitions */
-  #gallery_main {
-    view-transition-name: gallery-main;
-  }
-
   /* Root transition styles */
   ::view-transition-old(root),
   ::view-transition-new(root) {

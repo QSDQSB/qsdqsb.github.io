@@ -1,0 +1,31 @@
+{%- comment -%}
+  One frame of the book: its placeholder, the print at the right size for its place in the row,
+  and a caption. Params: photo, index (in the gallery's order), kind (spread | pair | triple).
+{%- endcomment -%}
+{%- assign p = include.photo -%}
+{%- case include.kind -%}
+  {%- when 'spread' -%}{%- assign sz = '100vw' -%}
+  {%- when 'pair' -%}{%- assign sz = '(min-width: 768px) 50vw, 86vw' -%}
+  {%- else -%}{%- assign sz = '(min-width: 768px) 34vw, 86vw' -%}
+{%- endcase -%}
+{%- assign fallback = p.sizes.webp[1] | default: p.sizes.webp[0] -%}
+{%- assign name = p.place.name | default: p.caption | default: p.frame -%}
+<figure class="photobook-frame" data-i="{{ include.index }}"{% if p.film %} data-film="{{ p.film | escape }}"{% endif %} style="--ratio:{{ p.ratio }}">
+  <button class="photobook-frame__print" type="button" aria-label="{{ name | escape }}{% if p.film %}, {{ p.film | escape }}{% endif %}"{% if p.ph %} style="background-image:url({{ p.ph }})"{% endif %}>
+    <picture>
+      {%- if p.sizes.avif %}<source type="image/avif" sizes="{{ sz }}" srcset="{% for w in p.sizes.avif %}{{ p.url }}/{{ w }}.avif {{ w }}w{% unless forloop.last %}, {% endunless %}{% endfor %}">{% endif -%}
+      <img src="{{ p.url }}/{{ fallback }}.webp" sizes="{{ sz }}" srcset="{% for w in p.sizes.webp %}{{ p.url }}/{{ w }}.webp {{ w }}w{% unless forloop.last %}, {% endunless %}{% endfor %}" width="{{ p.w }}" height="{{ p.h }}" alt="{{ p.alt | default: name | escape }}" loading="lazy" decoding="async">
+    </picture>
+  </button>
+  <figcaption class="photobook-frame__caption">
+    <span class="photobook-frame__place">{{ name }}</span>
+    {%- if p.film %}<span class="photobook-film" style="--film:{{ p.filmHue }}"><i></i>{{ p.film }}</span>{% endif -%}
+    <span class="photobook-frame__specs">
+      {%- if p.focal %}<span><b>{{ p.focal | round }}</b>mm</span>{% endif -%}
+      {%- if p.aperture %}<span><b>ƒ/{{ p.aperture }}</b></span>{% endif -%}
+      {%- if p.shutter %}<span><b>{{ p.shutter }}</b>s</span>{% endif -%}
+      {%- if p.iso %}<span>ISO <b>{{ p.iso }}</b></span>{% endif -%}
+      {%- include photobook/sun.html light=p.light -%}
+    </span>
+  </figcaption>
+</figure>
