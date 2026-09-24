@@ -48,7 +48,10 @@ const loadState = () => { try { return JSON.parse(fs.readFileSync(STATE, 'utf8')
 const saveState = (s) => { fs.mkdirSync(DIR, { recursive: true }); fs.writeFileSync(STATE, JSON.stringify(s, null, 1)); };
 const LOG = path.join(DIR, 'log.txt');
 const LOCK = path.join(DIR, 'lock');
-const stamp = () => new Date().toISOString().replace('T', ' ').slice(0, 19);
+// Local wall-clock time: the log is read by the owner, not a machine.
+const stamp = () => { const d = new Date(), p = (n) => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; };
+// A closed stdout (a pipe to `head`, a terminal gone) must not end a run: the log file is the record.
+for (const s of [process.stdout, process.stderr]) s.on('error', () => {});
 const pause = (ms) => new Promise(r => setTimeout(r, ms));
 
 /** Take the lock, or return the pid that holds it. A lock whose process is gone is stale and taken over. */
