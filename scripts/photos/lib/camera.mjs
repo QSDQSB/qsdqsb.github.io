@@ -6,12 +6,12 @@
  *
  * Split in two:
  *   pub   settings for the public manifest and the database's columns
- *   priv  identity (body and lens serials) and the whole tag dump, which
- *         only ever go to the private manifest
+ *   priv  the whole tag dump, which only ever goes to the private manifest
  *
- * The body serial with the shutter count names one exposure uniquely, for
- * ever: the database matches a re-exported or re-collected file to its
- * photo by that pair.
+ * No serial number is kept anywhere: body, internal and lens serials are
+ * stripped from the dump. The camera model with the shutter count is
+ * enough to name one exposure: the database matches a re-exported or
+ * re-collected file to its photo by that pair.
  *
  * Edited exports from Apple Photos drop the maker notes; photos:enrich
  * copies them back from the unedited original.
@@ -65,12 +65,12 @@ export function splitCamera(t) {
       shutterCount: n(t.ImageCount),
       settings: hasMakerNotes ? settings : null,
     },
-    priv: { cameraSerial: s(t.SerialNumber), lensSerial: s(t.LensSerialNumber), shutterCount: n(t.ImageCount) },
+    priv: { shutterCount: n(t.ImageCount) },
   };
 }
 
 // Tags that are bulky, binary, or describe the file rather than the photograph.
-const DROP = /^(SourceFile|errors|warnings|Directory|FileName|FileModifyDate|FileAccessDate|FileInodeChangeDate|FilePermissions|ThumbnailImage|PreviewImage|MPImage\d*|ExifToolVersion)$/;
+const DROP = /^(SourceFile|errors|warnings|Directory|FileName|FileModifyDate|FileAccessDate|FileInodeChangeDate|FilePermissions|ThumbnailImage|PreviewImage|MPImage\d*|ExifToolVersion)$|Serial/i;
 
 /** Read a buffer's full camera record. */
 export async function readCamera(buffer) {
