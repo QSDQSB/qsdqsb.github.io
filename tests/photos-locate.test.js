@@ -28,8 +28,12 @@ test('only well-known roads-and-landmarks kinds qualify; museums, theatres, plaq
   assert.strictEqual(tierOf({ name: 'Victims of Human BSE', historic: 'memorial', ...wd }), -1);
   // A mapped point is small, the whole outranks its parts.
   assert.strictEqual(effectiveTier({ type: 'node', tags: { name: 'London Stone', historic: 'monument', ...wd } }), 1);
-  assert.strictEqual(effectiveTier({ type: 'node', tags: { name: 'Monte Solaro', natural: 'peak', ...wd } }), 0);
+  assert.strictEqual(effectiveTier({ type: 'node', tags: { name: 'Monte Solaro', natural: 'peak', wikipedia: 'en:Monte Solaro', ...wd } }), 0);
   assert.ok(weightOf({ historic: 'castle' }) < weightOf({ historic: 'tower' }), 'the Tower of London before Martin Tower');
+  // Renown: tier 1 wants an English article or name, or an attraction; local fame only counts up close.
+  assert.strictEqual(effectiveTier({ type: 'way', tags: { name: 'Sterneggovský palác', historic: 'palace', wikidata: 'Q2', wikipedia: 'cs:Sterneggovský palác' } }), 1);
+  assert.strictEqual(effectiveTier({ type: 'way', tags: { name: 'Palácio da Bolsa', historic: 'palace', wikidata: 'Q3', wikipedia: 'en:Palácio da Bolsa' } }), 0);
+  assert.strictEqual(tierOf({ name: 'Minack Theatre', amenity: 'theatre', tourism: 'attraction', ...wd }), 0, 'an attraction overrides the theatre exclusion');
 });
 
 test('suggestions read like the voyage\'s own captions', async () => {

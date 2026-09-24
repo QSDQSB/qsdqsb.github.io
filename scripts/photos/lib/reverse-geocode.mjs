@@ -21,6 +21,17 @@ import path from 'node:path';
 import { PATHS } from './config.mjs';
 
 const UA = 'qsdqsb-photos/1.0 (+https://qsdqsb.com)';
+// Public Overpass instances, tried in order: the main one sheds load or
+// refuses clients after heavy use, so a lookup moves to the next rather than fail.
+const OVERPASS = ['https://overpass-api.de/api/interpreter', 'https://overpass.private.coffee/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'];
+async function overpassQuery(q) {
+  let last;
+  for (const url of OVERPASS) {
+    try { return await politely(url, { method: 'POST', body: new URLSearchParams({ data: q }) }); }
+    catch (e) { last = e; }
+  }
+  throw last;
+}
 const RADIUS = 250;
 const CACHE = path.join(PATHS.localStore, 'reverse-geocode.json');
 
@@ -79,17 +90,29 @@ export function weightOf(tags) {
 
 export function tierOf(tags) {
   if (!(tags.wikidata || tags.wikipedia)) return -1;
-  if (Object.entries(EXCLUDE).some(([k, re]) => tags[k] && re.test(tags[k]))) return -1;
+  // A tourist attraction is a landmark whatever else it is (the Minack Theatre);
+  // otherwise museums, theatres, clubs and plaques never name a photo.
+  const attraction = tags.tourism === 'attraction';
+  if (!attraction && Object.entries(EXCLUDE).some(([k, re]) => tags[k] && re.test(tags[k]))) return -1;
   // An inn among pubs and hotels: the name says so.
   if ((tags.amenity === 'pub' || tags.tourism === 'hotel' || tags.tourism === 'guest_house') && !/\b(inn|tavern|arms)\b/i.test(tags.name || '') && !tags.historic) return -1;
   return TIERS.findIndex(t => Object.entries(t.match).some(([k, re]) => tags[k] && re.test(tags[k])));
 }
 
-/** A mapped point (a stone, a statue) is small: it only places a photo at tier-2 range, peaks and viewpoints excepted. */
+/** Known to an English-reading visitor: an English Wikipedia article, an English name, or a tourist attraction. */
+const renowned = (tags) => /^en:/.test(tags.wikipedia || '') || !!tags['name:en'] || tags.tourism === 'attraction';
+
+/**
+ * Tier 1 is for places a reader recognises from afar. A mapped point (a
+ * stone, a statue) is small, and a place known only locally (a palace with
+ * a Czech article alone) confuses: both only name a photo at tier-2 range.
+ */
 export function effectiveTier(x) {
   const t = tierOf(x.tags);
-  if (t === 0 && x.type === 'node' && !/^(peak|viewpoint)$/.test(x.tags.natural || x.tags.tourism || '')) return 1;
-  return t;
+  if (t !== 0) return t;
+  if (x.type === 'node' && !/^(peak|viewpoint)$/.test(x.tags.natural || x.tags.tourism || '')) return 1;
+  if (!renowned(x.tags)) return 1;
+  return 0;
 }
 
 async function nominatim(lat, lng) {
@@ -102,7 +125,7 @@ async function overpass(lat, lng) {
   const around = `(around:${RADIUS},${lat},${lng})`;
   const around300 = around.replace(`around:${RADIUS}`, 'around:300');
   const q = `[out:json][timeout:25];(${KEYS.map(k => { const key = k.includes(':') ? `"${k}"` : k; return `nwr${around300}[name][${key}][wikidata];nwr${around300}[name][${key}][wikipedia];`; }).join('')});out tags bb 120;`;
-  const j = await politely('https://overpass-api.de/api/interpreter', { method: 'POST', body: new URLSearchParams({ data: q }) });
+  const j = await overpassQuery(q);
   // Keep the raw tags that decide the tier, so the rules can change without asking again.
   // Distance to the outline's bounding box, not the centre: standing at the
   // Tower of London's wall is 0 m from it, however far its middle is.
@@ -118,7 +141,7 @@ const keepTags = (t = {}) => Object.fromEntries(['name', 'name:en', 'wikidata', 
 /** Named, well-known areas the point lies inside: an airport, a park, a castle's grounds. */
 async function enclosing(lat, lng) {
   const q = `[out:json][timeout:25];is_in(${lat},${lng})->.a;(${TIERS[0] && Object.keys(TIERS[0].match).filter(k => !k.includes(':')).map(k => `area.a[name][${k}][wikidata];`).join('')});out tags;`;
-  const j = await politely('https://overpass-api.de/api/interpreter', { method: 'POST', body: new URLSearchParams({ data: q }) });
+  const j = await overpassQuery(q);
   return (j.elements || []).map(e => ({ type: 'area', tags: keepTags(e.tags), m: 0 })).filter(x => x.tags.name);
 }
 

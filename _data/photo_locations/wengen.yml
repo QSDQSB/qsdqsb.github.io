@@ -1,0 +1,67 @@
+# Suggested locations for gallery wengen, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf8721:
+    gps: missing
+    source: awaiting original
+  dscf8788:
+    gps: missing
+    source: awaiting original
+  dscf8794:
+    gps: missing
+    source: awaiting original
+  dscf8839:
+    gps: missing
+    source: awaiting original
+  dscf9018:
+    gps: missing
+    source: awaiting original
+  dscf9043:
+    gps: missing
+    source: awaiting original
+  dscf9048:
+    gps: missing
+    source: awaiting original
+  dscf9091:
+    gps: missing
+    source: awaiting original
+  dscf9096:
+    gps: missing
+    source: awaiting original
+  dscf9099:
+    gps: missing
+    source: awaiting original
+  dscf9191:
+    gps: missing
+    source: awaiting original
+  dscf9205:
+    gps: missing
+    source: awaiting original
+  dscf9219:
+    gps: missing
+    source: awaiting original
+  dscf9291:
+    gps: missing
+    source: awaiting original
+  dscf9350:
+    gps: missing
+    source: awaiting original
+  dscf9408:
+    gps: missing
+    source: awaiting original
+  dscf9494:
+    gps: missing
+    source: awaiting original
+  dscf9508:
+    gps: missing
+    source: awaiting original
+  dscf9513:
+    gps: missing
+    source: awaiting original
+  dscf9721:
+    gps: missing
+    source: awaiting original
+  dscf9736:
+    gps: missing
+    source: awaiting original

@@ -1,0 +1,55 @@
+# Suggested locations for gallery dolomites/sesto, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf8495:
+    gps: missing
+    source: awaiting original
+  dscf9073:
+    gps: missing
+    source: awaiting original
+  dscf9287:
+    gps: missing
+    source: awaiting original
+  dscf9401:
+    gps: missing
+    source: awaiting original
+  dscf9447:
+    gps: missing
+    source: awaiting original
+  dscf9449:
+    gps: missing
+    source: awaiting original
+  dscf9474:
+    gps: missing
+    source: awaiting original
+  dscf9481:
+    gps: missing
+    source: awaiting original
+  dscf9483:
+    gps: missing
+    source: awaiting original
+  dscf9500:
+    gps: missing
+    source: awaiting original
+  dscf9537:
+    gps: missing
+    source: awaiting original
+  dscf9602:
+    gps: missing
+    source: awaiting original
+  dscf9604:
+    gps: missing
+    source: awaiting original
+  dscf9631:
+    gps: missing
+    source: awaiting original
+  dscf9702:
+    gps: missing
+    source: awaiting original
+  dscf9714:
+    gps: missing
+    source: awaiting original
+  dscf9855:
+    gps: missing
+    source: awaiting original

@@ -1,0 +1,62 @@
+# Suggested locations for gallery bled, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf4443:
+    gps: missing
+    source: awaiting original
+  dscf4479:
+    gps: missing
+    source: awaiting original
+  dscf4481:
+    gps: missing
+    source: awaiting original
+  dscf4495:
+    gps: missing
+    source: awaiting original
+  dscf4519:
+    gps: missing
+    source: awaiting original
+  dscf4533:
+    gps: missing
+    source: awaiting original
+  dscf4562:
+    gps: missing
+    source: awaiting original
+  dscf4610:
+    gps: missing
+    source: awaiting original
+  dscf4625:
+    gps: missing
+    source: awaiting original
+  dscf4664:
+    gps: missing
+    source: awaiting original
+  dscf4672:
+    gps: missing
+    source: awaiting original
+  dscf4684:
+    gps: missing
+    source: awaiting original
+  dscf4685:
+    gps: missing
+    source: awaiting original
+  dscf4691:
+    suggested: Italian charnel house, Kobarid, Slovenia
+    landmark: Italian charnel house
+    city: Kobarid
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4703:
+    gps: missing
+    source: awaiting original
+  dscf4707:
+    gps: missing
+    source: awaiting original
+  dscf4724:
+    gps: missing
+    source: awaiting original
+  dscf4753:
+    gps: missing
+    source: awaiting original

@@ -1,0 +1,269 @@
+# Suggested locations for gallery london, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf0958:
+    suggested: Sedgeway, London
+    street: Sedgeway
+    city: Greater London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1797:
+    suggested: Tower of London, London
+    landmark: Tower of London
+    street: Tower Bridge Approach
+    city: Greater London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1839:
+    suggested: Cleveland Square, London
+    landmark: Cleveland Square
+    street: Bishop's Bridge Road
+    city: City of Westminster
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1845:
+    suggested: Cleveland Square, London
+    landmark: Cleveland Square
+    street: Gloucester Terrace
+    city: City of Westminster
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2087:
+    suggested: Pembroke Road, London
+    street: Pembroke Road
+    city: Greater London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2206:
+    suggested: Westminster Bridge, London
+    landmark: Westminster Bridge
+    street: Albert Embankment
+    city: Greater London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2229:
+    suggested: St Paul's Cathedral, London
+    landmark: St Paul's Cathedral
+    street: St Paul's Churchyard
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2245:
+    suggested: St Paul's Cathedral, London
+    landmark: St Paul's Cathedral
+    street: St Paul's Churchyard
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2742:
+    suggested: Heathrow Airport, London
+    landmark: Heathrow Airport
+    street: Cayley Road
+    city: Greater London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf3141:
+    suggested: Regent Street, London
+    gps: missing
+    source: visual guess
+  dscf6358:
+    suggested: Middlesex Street, London
+    street: Middlesex Street
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6366:
+    suggested: Middlesex Street, London
+    street: Middlesex Street
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6377:
+    suggested: Middlesex Street, London
+    street: Middlesex Street
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6419:
+    suggested: Bank of England, London
+    landmark: Bank of England
+    street: Cornhill
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6422:
+    suggested: Bank of England, London
+    landmark: Bank of England
+    street: Princes Street
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6429:
+    suggested: Bank of England, London
+    landmark: Bank of England
+    street: King William Street
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6437:
+    suggested: Bank of England, London
+    landmark: Bank of England
+    street: King William Street
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6440:
+    suggested: Bank of England, London
+    landmark: Bank of England
+    street: King William Street
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6441:
+    suggested: Bank of England, London
+    landmark: Bank of England
+    street: King William Street
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6442:
+    suggested: Bank of England, London
+    landmark: Bank of England
+    street: King William Street
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6443:
+    suggested: Middlesex Street, London
+    street: Middlesex Street
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6474:
+    suggested: Wentworth Street Market, London
+    landmark: Wentworth Street Market
+    street: St. Botolph Street
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6495:
+    suggested: Potters Fields Park, London
+    landmark: Potters Fields Park
+    street: The Queen's Walk
+    city: Greater London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6521:
+    suggested: London Bridge, London
+    landmark: London Bridge
+    street: London Bridge
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6533:
+    suggested: St Martin-in-the-Fields, London
+    landmark: St Martin-in-the-Fields
+    street: Hungerford Lane
+    city: City of Westminster
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6534:
+    suggested: St Martin-in-the-Fields, London
+    landmark: St Martin-in-the-Fields
+    street: Hungerford Lane
+    city: City of Westminster
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6536:
+    suggested: St Martin-in-the-Fields, London
+    landmark: St Martin-in-the-Fields
+    street: Hungerford Lane
+    city: City of Westminster
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6553:
+    suggested: St Martin-in-the-Fields, London
+    landmark: St Martin-in-the-Fields
+    street: Hungerford Lane
+    city: City of Westminster
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6723:
+    suggested: Finsbury Circus Gardens, London
+    landmark: Finsbury Circus Gardens
+    street: Ropemaker Street
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7404:
+    suggested: Middlesex Street, London
+    street: Middlesex Street
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7406:
+    suggested: Tower Bridge, London
+    gps: missing
+    source: visual guess
+  dscf7412:
+    suggested: Tower Bridge, London
+    gps: missing
+    source: visual guess
+  dscf7480:
+    suggested: Finsbury Circus Gardens, London
+    landmark: Finsbury Circus Gardens
+    street: Ropemaker Street
+    city: City of London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7500:
+    suggested: The Shard, London
+    gps: missing
+    source: visual guess
+  dscf7507:
+    suggested: Piccadilly Circus, London
+    landmark: Piccadilly Circus
+    street: Piccadilly Circus
+    city: City of Westminster
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7568:
+    suggested: Old Royal Naval College, London
+    landmark: Old Royal Naval College
+    street: Crescent Arcade
+    city: Greater London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode

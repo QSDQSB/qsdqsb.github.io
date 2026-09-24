@@ -1,0 +1,61 @@
+# Suggested locations for gallery prague/prague-castle, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf3254:
+    gps: missing
+    source: awaiting original
+  dscf3279:
+    gps: missing
+    source: awaiting original
+  dscf3318:
+    gps: missing
+    source: awaiting original
+  dscf3421:
+    gps: missing
+    source: awaiting original
+  dscf3425:
+    gps: missing
+    source: awaiting original
+  dscf4915:
+    gps: missing
+    source: awaiting original
+  dscf5180:
+    gps: missing
+    source: awaiting original
+  dscf5286:
+    gps: missing
+    source: awaiting original
+  dscf5312:
+    gps: missing
+    source: awaiting original
+  dscf5350:
+    gps: missing
+    source: awaiting original
+  dscf5416:
+    gps: missing
+    source: awaiting original
+  dscf5420:
+    gps: missing
+    source: awaiting original
+  dscf5439:
+    gps: missing
+    source: awaiting original
+  dscf5453:
+    gps: missing
+    source: awaiting original
+  dscf5477:
+    gps: missing
+    source: awaiting original
+  dscf5496:
+    gps: missing
+    source: awaiting original
+  dscf5498:
+    gps: missing
+    source: awaiting original
+  dscf5575:
+    gps: missing
+    source: awaiting original
+  dscf5587:
+    gps: missing
+    source: awaiting original

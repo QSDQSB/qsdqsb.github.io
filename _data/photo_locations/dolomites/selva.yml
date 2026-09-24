@@ -1,0 +1,55 @@
+# Suggested locations for gallery dolomites/selva, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf0109:
+    gps: missing
+    source: awaiting original
+  dscf0110:
+    gps: missing
+    source: awaiting original
+  dscf0123:
+    gps: missing
+    source: awaiting original
+  dscf0128:
+    suggested: Cappella di San Giovanni Gualberto, San Vito di Cadore, Italy
+    landmark: Cappella di San Giovanni Gualberto
+    street: SP638
+    city: San Vito di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf0136:
+    gps: missing
+    source: awaiting original
+  dscf0491:
+    suggested: SP638, San Vito di Cadore, Italy
+    street: SP638
+    city: San Vito di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf0494:
+    gps: missing
+    source: awaiting original
+  dscf0589:
+    gps: missing
+    source: awaiting original
+  dscf0602:
+    gps: missing
+    source: awaiting original
+  dscf0612:
+    gps: missing
+    source: awaiting original
+  dscf0685:
+    gps: missing
+    source: awaiting original
+  dscf0716:
+    gps: missing
+    source: awaiting original
+  dscf0735:
+    gps: missing
+    source: awaiting original
+  dscf0742:
+    gps: missing
+    source: awaiting original

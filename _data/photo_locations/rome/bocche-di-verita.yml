@@ -1,0 +1,19 @@
+# Suggested locations for gallery rome/bocche-di-verita, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf0998:
+    gps: missing
+    source: awaiting original
+  dscf1309:
+    gps: missing
+    source: awaiting original
+  dscf1999:
+    gps: missing
+    source: awaiting original
+  dscf2019:
+    gps: missing
+    source: awaiting original
+  dscf2406:
+    gps: missing
+    source: awaiting original

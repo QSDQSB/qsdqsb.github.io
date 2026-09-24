@@ -1,0 +1,43 @@
+# Suggested locations for gallery japan/nara, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf6875:
+    gps: missing
+    source: awaiting original
+  dscf6977:
+    gps: missing
+    source: awaiting original
+  dscf7013:
+    gps: missing
+    source: awaiting original
+  dscf7019:
+    gps: missing
+    source: awaiting original
+  dscf7504:
+    gps: missing
+    source: awaiting original
+  dscf7571:
+    gps: missing
+    source: awaiting original
+  dscf7619:
+    gps: missing
+    source: awaiting original
+  dscf7620:
+    gps: missing
+    source: awaiting original
+  dscf7696:
+    gps: missing
+    source: awaiting original
+  dscf7720:
+    gps: missing
+    source: awaiting original
+  dscf7730:
+    gps: missing
+    source: awaiting original
+  dscf7744:
+    gps: missing
+    source: awaiting original
+  dscf7765:
+    gps: missing
+    source: awaiting original

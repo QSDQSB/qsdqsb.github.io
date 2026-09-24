@@ -1,0 +1,25 @@
+# Suggested locations for gallery prague/zizkov-tower, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf5618:
+    gps: missing
+    source: awaiting original
+  dscf5704:
+    gps: missing
+    source: awaiting original
+  dscf5711:
+    gps: missing
+    source: awaiting original
+  dscf5726:
+    gps: missing
+    source: awaiting original
+  dscf5754:
+    gps: missing
+    source: awaiting original
+  dscf5767:
+    gps: missing
+    source: awaiting original
+  dscf5770:
+    gps: missing
+    source: awaiting original

@@ -1,0 +1,52 @@
+# Suggested locations for gallery japan/kyoto, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf7124:
+    gps: missing
+    source: awaiting original
+  dscf7191:
+    gps: missing
+    source: awaiting original
+  dscf7207:
+    gps: missing
+    source: awaiting original
+  dscf7276:
+    gps: missing
+    source: awaiting original
+  dscf7299:
+    gps: missing
+    source: awaiting original
+  dscf7379:
+    gps: missing
+    source: awaiting original
+  dscf7413:
+    gps: missing
+    source: awaiting original
+  dscf7426:
+    gps: missing
+    source: awaiting original
+  dscf7450:
+    gps: missing
+    source: awaiting original
+  dscf7779:
+    gps: missing
+    source: awaiting original
+  dscf7818:
+    gps: missing
+    source: awaiting original
+  dscf7906:
+    gps: missing
+    source: awaiting original
+  dscf8006:
+    gps: missing
+    source: awaiting original
+  dscf8041:
+    gps: missing
+    source: awaiting original
+  dscf8203:
+    gps: missing
+    source: awaiting original
+  dscf8370:
+    gps: missing
+    source: awaiting original

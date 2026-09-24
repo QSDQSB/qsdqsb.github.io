@@ -1,0 +1,37 @@
+# Suggested locations for gallery prague/streetscape-mala-strana, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf3162:
+    gps: missing
+    source: awaiting original
+  dscf3174:
+    gps: missing
+    source: awaiting original
+  dscf3180:
+    gps: missing
+    source: awaiting original
+  dscf4270:
+    gps: missing
+    source: awaiting original
+  dscf4807:
+    gps: missing
+    source: awaiting original
+  dscf4811:
+    gps: missing
+    source: awaiting original
+  dscf5181:
+    gps: missing
+    source: awaiting original
+  dscf5204:
+    gps: missing
+    source: awaiting original
+  dscf5264:
+    gps: missing
+    source: awaiting original
+  dscf5285:
+    gps: missing
+    source: awaiting original
+  dscf5595:
+    gps: missing
+    source: awaiting original

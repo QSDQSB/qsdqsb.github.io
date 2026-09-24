@@ -1,0 +1,34 @@
+# Suggested locations for gallery prague/petrin-hill, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf3859:
+    gps: missing
+    source: awaiting original
+  dscf4204:
+    gps: missing
+    source: awaiting original
+  dscf4826:
+    gps: missing
+    source: awaiting original
+  dscf4837:
+    gps: missing
+    source: awaiting original
+  dscf4843:
+    gps: missing
+    source: awaiting original
+  dscf4861:
+    gps: missing
+    source: awaiting original
+  dscf4872:
+    gps: missing
+    source: awaiting original
+  dscf4877:
+    gps: missing
+    source: awaiting original
+  dscf4893:
+    gps: missing
+    source: awaiting original
+  dscf4908:
+    gps: missing
+    source: awaiting original

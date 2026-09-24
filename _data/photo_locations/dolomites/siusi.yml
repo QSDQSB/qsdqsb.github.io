@@ -1,0 +1,31 @@
+# Suggested locations for gallery dolomites/siusi, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf0608:
+    gps: missing
+    source: awaiting original
+  dscf0634:
+    gps: missing
+    source: awaiting original
+  dscf7698:
+    gps: missing
+    source: awaiting original
+  dscf7749:
+    gps: missing
+    source: awaiting original
+  dscf7849:
+    gps: missing
+    source: awaiting original
+  dscf7851:
+    gps: missing
+    source: awaiting original
+  dscf7910:
+    gps: missing
+    source: awaiting original
+  dscf7954:
+    gps: missing
+    source: awaiting original
+  dscf7960:
+    gps: missing
+    source: awaiting original
