@@ -1,10 +1,8 @@
 # Authored layer for gallery/prague/petrin-hill — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
 photos:
-  dscf3859:
+  dscf4859:
     caption: Hellichova, Lesser Town, Prague
-  dscf4204:
-    caption: Promenáda Raoula Wallenberga, Hradčany, Prague
   dscf4826:
     caption: Vyšší odborná škola grafická a Střední průmyslová škola grafická, Lesser Town, Prague
   dscf4837:

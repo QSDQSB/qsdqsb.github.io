@@ -1,7 +1,7 @@
 # Authored layer for gallery/budapest — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
 photos:
-  dscf5834:
+  dscf6634:
     caption: Széchenyi Chain Bridge, Budapest, Hungary
   dscf5838:
     caption: Bécsi utca, Budapest, Hungary
@@ -21,7 +21,7 @@ photos:
     caption: Országház utca, Budapest, Hungary
   dscf6582:
     caption: Szent György tér, Budapest, Hungary
-  dscf6599:
+  dscf6499:
     caption: Fishermans Bastion, Budapest, Hungary
   dscf6608:
     caption: Országház utca, Budapest, Hungary

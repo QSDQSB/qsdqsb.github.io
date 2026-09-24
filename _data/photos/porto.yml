@@ -1,9 +1,9 @@
 # Authored layer for gallery/porto — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
 photos:
-  dscf1338:
+  dscf7338:
     caption: Clérigos, Centro Histórico, Porto
-  dscf1430:
+  dscf1590:
     caption: São Domingos, Centro Histórico, Porto
   dscf1593:
     caption: São Domingos, Centro Histórico, Porto
@@ -27,7 +27,7 @@ photos:
     caption: Ribeira, Centro Histórico, Porto
   dscf7030:
     caption: Ribeira, Centro Histórico, Porto
-  dscf7057:
+  dscf1457:
     caption: Santa Marinha, Vila Nova de Gaia, Porto
   dscf7059:
     caption: Ribeira, Centro Histórico, Porto
