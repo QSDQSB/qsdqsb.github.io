@@ -48,16 +48,16 @@ const DIR = path.join(PATHS.localStore, 'collect');
 const STATE = path.join(DIR, 'state.json');
 const loadState = () => { try { return JSON.parse(fs.readFileSync(STATE, 'utf8')); } catch { return { tried: {}, candidates: {} }; } };
 const saveState = (s) => { fs.mkdirSync(DIR, { recursive: true }); fs.writeFileSync(STATE, JSON.stringify(s, null, 1)); };
-const LOG = path.join(DIR, 'log.txt');
+export const LOG = path.join(DIR, 'log.txt');
 const LOCK = path.join(DIR, 'lock');
 // Local wall-clock time: the log is read by the owner, not a machine.
-const stamp = () => { const d = new Date(), p = (n) => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; };
+export const stamp = () => { const d = new Date(), p = (n) => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; };
 // A closed stdout (a pipe to `head`, a terminal gone) must not end a run: the log file is the record.
 for (const s of [process.stdout, process.stderr]) s.on('error', () => {});
-const pause = (ms) => new Promise(r => setTimeout(r, ms));
+export const pause = (ms) => new Promise(r => setTimeout(r, ms));
 
 /** Take the lock, or return the pid that holds it. A lock whose process is gone is stale and taken over. */
-function lock() {
+export function lock() {
   try {
     const pid = Number(fs.readFileSync(LOCK, 'utf8'));
     if (pid && pid !== process.pid) { try { process.kill(pid, 0); return pid; } catch { /* stale */ } }
@@ -71,7 +71,7 @@ function lock() {
 }
 
 /** Try fn up to `times`, pausing longer each time and restarting Photos between tries. */
-async function retry(what, fn, log, times = 3) {
+export async function retry(what, fn, log, times = 3) {
   for (let i = 1; ; i++) {
     try { return fn(); }
     catch (e) {
