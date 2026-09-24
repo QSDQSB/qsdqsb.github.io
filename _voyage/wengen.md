@@ -7,6 +7,8 @@ tags:
   - 🏔️Alps
   - 🚞Switzerland
   - 🥾Hiking
+map:
+  query: "Wengen, Lauterbrunnen, Switzerland"
 header:
   overlay_image: cover/wengen-3v1.jpg
 ---
