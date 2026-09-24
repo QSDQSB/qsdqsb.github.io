@@ -16,9 +16,10 @@ test('ids are p_ + a 26-character ULID, sortable by creation time', async () => 
 });
 
 test('an entry finds its photo by source key, then camera key, then content hash, else a new id', async () => {
-  const { resolve } = await db();
+  const { resolve, factsDigest } = await db();
+  const facts = factsDigest({ slug: 'dscf1797', key: 'london/DSCF1797.jpg', version: 'e1:10', hash: 'h1' });
   const known = {
-    sources: new Map([['london/DSCF1797.jpg', { photo_id: 'p_SOURCE', version: 'e1:10', hash: 'h1', removed_at: null }]]),
+    sources: new Map([['london/DSCF1797.jpg', { photo_id: 'p_SOURCE', version: 'e1:10', hash: 'h1', facts, removed_at: null }]]),
     byCamera: new Map([['FUJIFILM X-S10#11391', 'p_CAMERA']]),
     byHash: new Map([['h9', 'p_HASH']]),
   };
@@ -39,9 +40,19 @@ test('an entry finds its photo by source key, then camera key, then content hash
 });
 
 test('an entry with no hash yet is unchanged when its version is, not rewritten every sync', async () => {
-  const { resolve } = await db();
-  const known = { sources: new Map([['london/DSCF1797.jpg', { photo_id: 'p_A', version: 'e1:10', hash: null, removed_at: null }]]), byCamera: new Map(), byHash: new Map() };
-  assert.strictEqual(resolve([{ slug: 'dscf1797', key: 'london/DSCF1797.jpg', version: 'e1:10' }], {}, known)[0].unchanged, true);
+  const { resolve, factsDigest } = await db();
+  const entry = { slug: 'dscf1797', key: 'london/DSCF1797.jpg', version: 'e1:10' };
+  const known = { sources: new Map([['london/DSCF1797.jpg', { photo_id: 'p_A', version: 'e1:10', hash: null, facts: factsDigest(entry), removed_at: null }]]), byCamera: new Map(), byHash: new Map() };
+  assert.strictEqual(resolve([entry], {}, known)[0].unchanged, true);
+});
+
+test('a fact derived later (the sun) rewrites a photo whose original never changed', async () => {
+  const { resolve, factsDigest } = await db();
+  const before = { slug: 'dscf1797', key: 'london/DSCF1797.jpg', version: 'e1:10', hash: 'h1' };
+  const known = { sources: new Map([['london/DSCF1797.jpg', { photo_id: 'p_A', version: 'e1:10', hash: 'h1', facts: factsDigest(before), removed_at: null }]]), byCamera: new Map(), byHash: new Map() };
+  const after = { ...before, sun: { alt: 2.8, az: 302, rising: false, toSunrise: 480, toSunset: 28, toNoon: -452 } };
+  assert.strictEqual(resolve([after], {}, known)[0].unchanged, false);
+  assert.strictEqual(resolve([before], {}, known)[0].unchanged, true);
 });
 
 test('manifest and private-file events both mark their gallery as touched; trash never does', async () => {
