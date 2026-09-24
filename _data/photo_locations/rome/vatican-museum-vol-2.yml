@@ -1,0 +1,46 @@
+# Suggested locations for gallery rome/vatican-museum-vol-2, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf1400:
+    gps: missing
+    source: awaiting original
+  dscf1407:
+    gps: missing
+    source: awaiting original
+  dscf1414:
+    gps: missing
+    source: awaiting original
+  dscf1417:
+    gps: missing
+    source: awaiting original
+  dscf1418:
+    gps: missing
+    source: awaiting original
+  dscf1421:
+    gps: missing
+    source: awaiting original
+  dscf1422:
+    gps: missing
+    source: awaiting original
+  dscf1428:
+    gps: missing
+    source: awaiting original
+  dscf1476:
+    gps: missing
+    source: awaiting original
+  dscf1501:
+    gps: missing
+    source: awaiting original
+  dscf1503:
+    gps: missing
+    source: awaiting original
+  dscf1506:
+    gps: missing
+    source: awaiting original
+  dscf1572:
+    gps: missing
+    source: awaiting original
+  dscf1588:
+    gps: missing
+    source: awaiting original

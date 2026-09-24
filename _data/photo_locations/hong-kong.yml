@@ -1,0 +1,31 @@
+# Suggested locations for gallery hong-kong, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf4610:
+    gps: missing
+    source: awaiting original
+  dscf4672:
+    gps: missing
+    source: awaiting original
+  dscf4699:
+    gps: missing
+    source: awaiting original
+  dscf4728:
+    gps: missing
+    source: awaiting original
+  dscf5028:
+    gps: missing
+    source: awaiting original
+  dscf5233:
+    gps: missing
+    source: awaiting original
+  dscf5290:
+    gps: missing
+    source: awaiting original
+  dscf5391:
+    gps: missing
+    source: awaiting original
+  dscf6675:
+    gps: missing
+    source: awaiting original

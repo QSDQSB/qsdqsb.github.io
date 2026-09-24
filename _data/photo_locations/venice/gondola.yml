@@ -1,0 +1,19 @@
+# Suggested locations for gallery venice/gondola, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf5957:
+    gps: missing
+    source: awaiting original
+  dscf5966:
+    gps: missing
+    source: awaiting original
+  dscf6065:
+    gps: missing
+    source: awaiting original
+  dscf6069:
+    gps: missing
+    source: awaiting original
+  dscf6090:
+    gps: missing
+    source: awaiting original

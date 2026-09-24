@@ -1,0 +1,88 @@
+# Suggested locations for gallery cornwall, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf1148:
+    gps: missing
+    source: awaiting original
+  dscf1357:
+    gps: missing
+    source: awaiting original
+  dscf1361:
+    gps: missing
+    source: awaiting original
+  dscf1364:
+    gps: missing
+    source: awaiting original
+  dscf1422:
+    suggested: The Pilgrim's Steps, Marazion, UK
+    street: The Pilgrim's Steps
+    city: Marazion
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1559:
+    gps: missing
+    source: awaiting original
+  dscf1686:
+    suggested: Porthcurno Beach, Penzance, UK
+    gps: missing
+    source: visual guess
+  dscf1706:
+    gps: missing
+    source: awaiting original
+  dscf1724:
+    suggested: Porthcurno Beach, Penzance, UK
+    gps: missing
+    source: visual guess
+  dscf1732:
+    suggested: Porthcurno Beach, Penzance, UK
+    gps: missing
+    source: visual guess
+  dscf1859:
+    gps: missing
+    source: awaiting original
+  dscf1910:
+    suggested: Primrose Valley Road Overbridge, St. Ives, UK
+    street: Primrose Valley Road Overbridge
+    city: St. Ives
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1940:
+    suggested: Minack Theatre, Porthcurno, UK
+    landmark: Minack Theatre
+    street: The Valley
+    city: Porthcurno
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2170:
+    suggested: First and Last House, Sennen Cove, UK
+    landmark: First and Last House
+    street: The Cornish Way
+    city: Sennen Cove
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2192:
+    suggested: The Cornish Way, Sennen Cove, UK
+    street: The Cornish Way
+    city: Sennen Cove
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2233:
+    suggested: Stone Chair Lane, Sennen Cove, UK
+    street: Stone Chair Lane
+    city: Sennen Cove
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2242:
+    suggested: Cove Hill, Sennen Cove, UK
+    street: Cove Hill
+    city: Sennen Cove
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode

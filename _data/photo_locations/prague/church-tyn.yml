@@ -1,0 +1,33 @@
+# Suggested locations for gallery prague/church-tyn, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf3228:
+    gps: missing
+    source: awaiting original
+  dscf3363:
+    gps: missing
+    source: awaiting original
+  dscf4253:
+    suggested: Charles Bridge, Prague
+    landmark: Charles Bridge
+    street: Charles Bridge
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4456:
+    gps: missing
+    source: awaiting original
+  dscf4886:
+    gps: missing
+    source: awaiting original
+  dscf4992:
+    gps: missing
+    source: awaiting original
+  dscf5272:
+    gps: missing
+    source: awaiting original
+  dscf5408:
+    gps: missing
+    source: awaiting original

@@ -1,0 +1,45 @@
+# Suggested locations for gallery capri, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf3921:
+    suggested: Monte Solaro, Anacapri, Italy
+    landmark: Monte Solaro
+    street: Via Monte Solaro
+    city: Anacapri
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf3930:
+    gps: missing
+    source: awaiting original
+  dscf3938:
+    gps: missing
+    source: awaiting original
+  dscf4047:
+    gps: missing
+    source: awaiting original
+  dscf4051:
+    gps: missing
+    source: awaiting original
+  dscf4107:
+    gps: missing
+    source: awaiting original
+  dscf4115:
+    gps: missing
+    source: awaiting original
+  dscf4125:
+    gps: missing
+    source: awaiting original
+  dscf4150:
+    gps: missing
+    source: awaiting original
+  dscf4162:
+    gps: missing
+    source: awaiting original
+  dscf4193:
+    gps: missing
+    source: awaiting original
+  dscf4279:
+    gps: missing
+    source: awaiting original

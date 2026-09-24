@@ -28,12 +28,14 @@
  *
  * Usage: npm run photos:dashboard [-- --offline] [--no-fetch] [--out <file>] [--open]
  *        npm run photos:dashboard -- --serve [--port 4460]     live, rebuilt on change
+ *        npm run photos:dashboard -- --artifact <file>          the page as an Artifact body, for claude.ai
  *   writes .photos-local/dashboard.html (gitignored) unless --out says otherwise
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { PATHS, env, parseArgs } from './lib/config.mjs';
 import { collect } from './status.mjs';
 import http from 'node:http';
@@ -54,13 +56,14 @@ const pct = (n, d) => d ? Math.round((n / d) * 100) : 0;
 const recollected = (r) => Math.max(r.localOriginals || 0, r.stages.original);
 
 export function totals(rows) {
-  const t = { galleries: rows.length, photos: 0, recollected: 0, live: 0, original: 0, compressed: 0, awaiting: 0, localOnly: 0, captioned: 0, pending: 0, problems: 0, galleriesLive: 0, galleriesDone: 0 };
+  const t = { galleries: rows.length, photos: 0, recollected: 0, live: 0, original: 0, compressed: 0, awaiting: 0, localOnly: 0, captioned: 0, located: 0, pending: 0, problems: 0, galleriesLive: 0, galleriesDone: 0 };
   for (const r of rows) {
     const s = r.stages;
     const n = s.original + s.compressed + s.awaiting + s.localOnly;
     t.photos += n; t.original += s.original; t.compressed += s.compressed; t.awaiting += s.awaiting; t.localOnly += s.localOnly;
     // Re-collected: an original on this machine or live, whichever this machine can see more of.
     t.recollected += recollected(r);
+    t.located += (r.located?.gps || 0) + (r.located?.visual || 0);
     t.live += r.processed; t.captioned += r.captioned; t.pending += r.pending.length; t.problems += r.problems.length;
     if (r.processed) t.galleriesLive++;
     if (n && recollected(r) === n) t.galleriesDone++;
@@ -86,6 +89,20 @@ export async function inboxSnapshot(dir) {
   return { dir: abs, exists: true, files: plan.map(s => ({ rel: s.rel, action: s.action, gallery: s.gallery, why: s.why || null, placed: s.placed || null })) };
 }
 
+/** The Apple Photos collector, from its log and lock: running or idle, and its last lines. */
+export function collectorStatus(dir = path.join(PATHS.localStore, 'collect')) {
+  let running = false, lines = [];
+  try { const pid = Number(fs.readFileSync(path.join(dir, 'lock'), 'utf8')); process.kill(pid, 0); running = true; } catch { /* idle */ }
+  try { lines = fs.readFileSync(path.join(dir, 'log.txt'), 'utf8').trim().split('\n').slice(-4); } catch { /* never run */ }
+  return { running, lines };
+}
+
+function collectorSection(c) {
+  if (!c || (!c.running && !c.lines.length)) return '';
+  return `<section class="collector"><h2>Apple Photos collector <span class="${c.running ? 'live' : 'dim'}">${c.running ? '● running' : 'idle'}</span></h2>
+<pre>${c.lines.map(esc).join('\n')}</pre></section>`;
+}
+
 function inboxSection(inbox) {
   if (!inbox) return '';
   if (!inbox.exists) return `<section class="inbox"><h2>Desktop inbox</h2><p class="dim">${esc(inbox.dir)} does not exist.</p></section>`;
@@ -107,7 +124,7 @@ ${bad.length ? `<ul class="nonmatch">${rows}</ul>
 </section>`;
 }
 
-export function renderDashboard(rows, { generated = new Date().toISOString(), bucketNote = null, unreachable = 0, base = 'https://img.qsdqsb.com', setup = [], inbox = null, live = false } = {}) {
+export function renderDashboard(rows, { generated = new Date().toISOString(), bucketNote = null, unreachable = 0, base = 'https://img.qsdqsb.com', setup = [], inbox = null, collector = null, live = false } = {}) {
   const t = totals(rows);
   const max = Math.max(1, ...rows.map(r => Object.values(r.stages).reduce((a, b) => a + b, 0)));
   const kpi = (label, value, of, cls = '') => `<div class="kpi ${cls}"><b>${value}</b>${of != null ? `<span class="of">/${of}</span>` : ''}<small>${label}</small></div>`;
@@ -122,6 +139,7 @@ export function renderDashboard(rows, { generated = new Date().toISOString(), bu
       <td class="num">${n}</td>
       <td class="num">${recollected(r)}<span class="dim"> · ${pct(recollected(r), n)}%</span></td>
       <td class="num">${r.captioned}<span class="dim">/${r.processed}</span></td>
+      <td class="num" title="${r.located.gps} from GPS, ${r.located.visual} visual guess, ${r.located.pending} to guess, ${r.located.awaiting} awaiting original">${r.located.gps + r.located.visual}${r.located.pending ? `<span class="prob"> +${r.located.pending}?</span>` : ''}<span class="dim">/${n}</span></td>
       <td class="num">${r.bucket == null ? '<span class="dim">–</span>' : r.pending.length || '<span class="dim">0</span>'}</td>
       <td class="when">${r.lastProcessed ? esc(r.lastProcessed.slice(0, 16).replace('T', ' ')) : '<span class="dim">never</span>'}</td>
       <td class="num prob" title="${esc(r.problems.join('\n'))}">${r.problems.length || ''}</td>
@@ -143,9 +161,11 @@ const shown = ${JSON.stringify(generated)};
 setInterval(() => fetch('/version', { cache: 'no-store' }).then(r => r.text()).then(v => { if (v && v !== shown) location.reload(); }).catch(() => {}), 5000);
 </script>` : ''}
 <title>Photo migration</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Playfair+Display:wght@600&display=swap">
 <style>
-:root{--bg:#0e0e10;--panel:#16161a;--line:#26262c;--ink:#ece6da;--dim:#8a8479;--original:#5f9384;--compressed:#b89a5a;--awaiting:#4f6a93;--localOnly:#5a5363;--bad:#a44848}
-@media (prefers-color-scheme:light){:root{--bg:#f6f2ea;--panel:#fffdf8;--line:#e2dbcd;--ink:#1d1b18;--dim:#7a7368;--localOnly:#b8b0c2}}
+:root{color-scheme:dark;--bg:#0e0e10;--panel:#16161a;--line:#26262c;--ink:#ece6da;--dim:#8a8479;--original:#5f9384;--compressed:#b89a5a;--awaiting:#4f6a93;--localOnly:#5a5363;--bad:#a44848}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){color-scheme:light;--bg:#f6f2ea;--panel:#fffdf8;--line:#e2dbcd;--ink:#1d1b18;--dim:#6f685e;--original:#3f7466;--compressed:#94763a;--awaiting:#3e5a86;--localOnly:#b8b0c2;--bad:#9a3a3a}}
+:root[data-theme="light"]{color-scheme:light;--bg:#f6f2ea;--panel:#fffdf8;--line:#e2dbcd;--ink:#1d1b18;--dim:#6f685e;--original:#3f7466;--compressed:#94763a;--awaiting:#3e5a86;--localOnly:#b8b0c2;--bad:#9a3a3a}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.35 "Barlow",-apple-system,system-ui,sans-serif;font-variant-numeric:tabular-nums}
 main{max-width:1180px;margin:0 auto;padding:20px 16px 40px}
 header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
@@ -163,6 +183,8 @@ h1{font:600 22px/1 "Playfair Display",Didot,Georgia,serif;margin:0;letter-spacin
 .nonmatch li:last-child{border-bottom:0}.nonmatch b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nonmatch .verdict{color:var(--bad)}.nonmatch small{grid-column:1/-1;color:var(--dim);font-size:11px}.note{font-size:12px;margin:6px 0 0}.nonmatch code,.inbox code{font-size:11px;color:var(--ink)}
 .live{color:var(--original)}
+.collector{margin:0 0 14px}.collector h2{font:600 13px/1 "Barlow",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;margin:0 0 6px}.collector h2 span{text-transform:none;letter-spacing:0;font-weight:400;margin-left:6px}
+.collector pre{margin:0;padding:8px 10px;background:var(--panel);border:1px solid var(--line);font-size:11px;white-space:pre-wrap;color:var(--dim)}
 .chk.ok i{background:var(--original)}.chk.fail i{background:var(--bad)}.chk.fail small{color:var(--bad)}
 .overall{display:flex;height:10px;margin:0 0 6px}.overall i,.bar i{display:block;min-width:2px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--dim);font-size:11px;margin-bottom:14px}.legend span::before{content:"";display:inline-block;width:9px;height:9px;margin-right:5px;vertical-align:-1px;background:var(--c)}
@@ -180,6 +202,7 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--dim);font-size:12px}u
 </style></head><body><main>
 <header><h1>Photo migration</h1><span class="meta">${live ? '<span class="live">● live</span> · ' : ''}${esc(generated.slice(0, 16).replace('T', ' '))} UTC · ${esc(base)}${bucketNote ? ` · bucket not read: ${esc(bucketNote)}` : ''}${unreachable ? ` · ${unreachable} manifest(s) unreachable` : ''}</span></header>
 ${pipeline}
+${collectorSection(collector)}
 ${inboxSection(inbox)}
 <section class="kpis">
 ${kpi('originals re-collected', t.recollected, t.photos)}
@@ -188,6 +211,7 @@ ${kpi('photos live', t.live, t.photos)}
 ${kpi('galleries live', t.galleriesLive, t.galleries)}
 ${kpi('galleries complete', t.galleriesDone, t.galleries)}
 ${kpi('captioned', t.captioned, t.live)}
+${kpi('located', t.located, t.photos)}
 ${kpi('awaiting render', t.awaiting, null)}
 ${kpi('not pushed', bucketNote ? '–' : t.pending, null)}
 ${kpi('problems', t.problems, null, t.problems ? 'bad' : '')}
@@ -195,7 +219,7 @@ ${kpi('problems', t.problems, null, t.problems ? 'bad' : '')}
 <div class="overall">${STAGES.map(([k]) => overall[k] ? `<i class="s-${k}" style="flex:${overall[k]}" title="${overall[k]} ${STAGES.find(s => s[0] === k)[1]}"></i>` : '').join('')}</div>
 <div class="legend">${STAGES.map(([k, label]) => `<span style="--c:var(--${k})">${label} <b>${overall[k]}</b></span>`).join('')}</div>
 <div class="wrap"><table>
-<thead><tr><th>gallery</th><th>stages</th><th class="num">photos</th><th class="num">originals</th><th class="num">captioned</th><th class="num">unpushed</th><th class="num">last render</th><th class="num">!</th></tr></thead>
+<thead><tr><th>gallery</th><th>stages</th><th class="num">photos</th><th class="num">originals</th><th class="num">captioned</th><th class="num" title="place names: from GPS · by a visual guess · to guess · awaiting the original">located</th><th class="num">unpushed</th><th class="num">last render</th><th class="num">!</th></tr></thead>
 <tbody>
 ${body}
 </tbody></table></div>
@@ -211,7 +235,7 @@ async function snapshot(args) {
     setupChecks({ offline: !!args.offline }),
     inboxSnapshot(env.inbox),
   ]);
-  return { rows, bucketNote, unreachable, setup, inbox, generated: new Date().toISOString() };
+  return { rows, bucketNote, unreachable, setup, inbox, collector: collectorStatus(), generated: new Date().toISOString() };
 }
 
 /**
@@ -220,14 +244,35 @@ async function snapshot(args) {
  * for what changes elsewhere (the bucket, the workflow, img.qsdqsb.com).
  * The page polls /version and reloads when a newer snapshot exists.
  */
+/**
+ * One snapshot in a short-lived child process: sharp, the fingerprint index
+ * and the manifests are freed with it, so a server rebuilding every minute
+ * for weeks keeps a flat footprint (in-process rebuilds grew past 2 GB).
+ */
+function snapshotInChild(args) {
+  const extra = [args.offline ? '--offline' : null, args['no-fetch'] ? '--no-fetch' : null].filter(Boolean);
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, [fileURLToPath(import.meta.url), '--emit-snapshot', ...extra], { stdio: ['ignore', 'pipe', 'pipe'] });
+    let out = '', err = '';
+    const kill = setTimeout(() => child.kill('SIGKILL'), 10 * 60 * 1000);
+    child.stdout.on('data', d => { out += d; });
+    child.stderr.on('data', d => { err += d; });
+    child.on('close', code => {
+      clearTimeout(kill);
+      if (code !== 0) return reject(new Error((err || `snapshot exited ${code}`).trim().split('\n').pop()));
+      try { resolve(JSON.parse(out)); } catch (e) { reject(e); }
+    });
+  });
+}
+
 async function serve(args, out) {
   const port = Number(args.port) || 4460;
-  let snap = await snapshot(args), html = '', building = null, again = false;
+  let snap = await snapshotInChild(args), html = '', building = null, again = false;
   const render = () => { html = renderDashboard(snap.rows, { ...snap, base: env.publicBase, live: true }); fs.writeFileSync(out, renderDashboard(snap.rows, { ...snap, base: env.publicBase })); };
   render();
   const rebuild = async (why) => {
     if (building) { again = true; return; }
-    building = (async () => { try { snap = await snapshot(args); render(); console.log(`${snap.generated.slice(11, 19)} rebuilt (${why})`); } catch (e) { console.error(`rebuild failed: ${e.message}`); } })();
+    building = (async () => { try { snap = await snapshotInChild(args); render(); console.log(`${snap.generated.slice(11, 19)} rebuilt (${why})`); } catch (e) { console.error(`rebuild failed: ${e.message}`); } })();
     await building; building = null;
     if (again) { again = false; rebuild('changes during the last rebuild'); }
   };
@@ -247,10 +292,29 @@ async function serve(args, out) {
 }
 const inboxSnapshotDir = () => path.resolve(String(env.inbox).replace(/^~(?=$|\/)/, os.homedir()));
 
+/**
+ * The same page as an Artifact body: the publish skeleton supplies doctype,
+ * head and body, so only the title, styles and content are kept.
+ */
+export function artifactFragment(html) {
+  return html.replace(/^<!doctype html>\s*<html[^>]*><head>/i, '').replace(/<meta [^>]*>/gi, '')
+    .replace(/<\/head><body>/i, '').replace(/<\/body><\/html>\s*$/i, '');
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+  if (args.artifact) {
+    // Prefer the live server's latest snapshot: instant, and exactly what the local page shows.
+    let snap = null;
+    try { snap = await (await fetch(`http://127.0.0.1:${Number(args.port) || 4460}/snapshot.json`, { signal: AbortSignal.timeout(5000) })).json(); } catch { snap = await snapshot(args); }
+    const file = path.resolve(String(args.artifact));
+    fs.writeFileSync(file, artifactFragment(renderDashboard(snap.rows, { ...snap, base: env.publicBase })));
+    console.log(`${file}: snapshot of ${snap.generated}`);
+    return 0;
+  }
   const out = path.resolve(typeof args.out === 'string' ? args.out : path.join(PATHS.localStore, 'dashboard.html'));
   fs.mkdirSync(path.dirname(out), { recursive: true });
+  if (args['emit-snapshot']) { process.stdout.write(JSON.stringify(await snapshot(args))); return 0; }
   if (args.serve) { await serve(args, out); return null; }
 
   const snap = await snapshot(args);

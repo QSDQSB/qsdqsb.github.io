@@ -84,9 +84,9 @@ function gpsFrom(x) {
     let d = Array.isArray(v) ? v[0] + (v[1] || 0) / 60 + (v[2] || 0) / 3600 : Number(v);
     if (!Number.isFinite(d)) return null;
     if (ref && /^[SW]/i.test(String(ref))) d = -Math.abs(d);
-    return +d.toFixed(6);
+    return d; // full precision: GPS only ever goes to the private manifest
   };
   const lat = toDec(x.GPSLatitude, x.GPSLatitudeRef), lng = toDec(x.GPSLongitude, x.GPSLongitudeRef);
   if (lat == null || lng == null) return null;
-  return { lat, lng, alt: typeof x.GPSAltitude === 'number' ? Math.round(x.GPSAltitude) : null };
+  return { lat, lng, alt: typeof x.GPSAltitude === 'number' ? x.GPSAltitude : null };
 }

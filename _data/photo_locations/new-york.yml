@@ -1,0 +1,43 @@
+# Suggested locations for gallery new-york, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf7157:
+    gps: missing
+    source: awaiting original
+  dscf7257:
+    gps: missing
+    source: awaiting original
+  dscf7411:
+    gps: missing
+    source: awaiting original
+  dscf7476:
+    gps: missing
+    source: awaiting original
+  dscf7543:
+    gps: missing
+    source: awaiting original
+  dscf7602:
+    gps: missing
+    source: awaiting original
+  dscf7638:
+    gps: missing
+    source: awaiting original
+  dscf7663:
+    gps: missing
+    source: awaiting original
+  dscf7670:
+    gps: missing
+    source: awaiting original
+  dscf7717:
+    gps: missing
+    source: awaiting original
+  dscf7751:
+    gps: missing
+    source: awaiting original
+  dscf7798:
+    gps: missing
+    source: awaiting original
+  dscf7962:
+    gps: missing
+    source: awaiting original

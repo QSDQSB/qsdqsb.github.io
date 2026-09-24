@@ -79,7 +79,7 @@ export function mergeManifest(gallery, machine, authored, base) {
 
   const photos = sortPhotos(
     m.photos.filter(p => !(aPhotos[p.slug] && aPhotos[p.slug].hidden))
-      .map(p => ({ ...p, ...pickAuthored(aPhotos[p.slug]), url: `${base}/${gallery}/${p.slug}` })),
+      .map(p => ({ ...p, ...pickAuthored(aPhotos[p.slug]), url: p.hash ? `${base}/t/${p.hash}` : `${base}/${gallery}/${p.slug}` })),
     a.order || [],
   );
   const unlisted = m.photos.filter(p => !aPhotos[p.slug]).length;

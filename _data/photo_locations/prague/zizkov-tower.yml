@@ -1,0 +1,41 @@
+# Suggested locations for gallery prague/zizkov-tower, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf5618:
+    suggested: V. Nejedlého, Prague
+    gps: missing
+    source: visual guess
+  dscf5704:
+    gps: missing
+    source: awaiting original
+  dscf5711:
+    gps: missing
+    source: awaiting original
+  dscf5726:
+    gps: missing
+    source: awaiting original
+  dscf5754:
+    suggested: Žižkov Television Tower, Prague
+    landmark: Žižkov Television Tower
+    street: Mahlerovy sady
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5767:
+    suggested: Žižkov Television Tower, Prague
+    landmark: Žižkov Television Tower
+    street: Mahlerovy sady
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5770:
+    suggested: Žižkov Television Tower, Prague
+    landmark: Žižkov Television Tower
+    street: Mahlerovy sady
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode

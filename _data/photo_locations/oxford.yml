@@ -1,0 +1,70 @@
+# Suggested locations for gallery oxford, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf1041:
+    gps: missing
+    source: awaiting original
+  dscf1213:
+    gps: missing
+    source: awaiting original
+  dscf1395:
+    gps: missing
+    source: awaiting original
+  dscf1405:
+    gps: missing
+    source: awaiting original
+  dscf1439:
+    gps: missing
+    source: awaiting original
+  dscf1441:
+    gps: missing
+    source: awaiting original
+  dscf1458:
+    gps: missing
+    source: awaiting original
+  dscf1464:
+    gps: missing
+    source: awaiting original
+  dscf1857:
+    gps: missing
+    source: awaiting original
+  dscf1887:
+    gps: missing
+    source: awaiting original
+  dscf1939:
+    gps: missing
+    source: awaiting original
+  dscf2428:
+    gps: missing
+    source: awaiting original
+  dscf4449:
+    gps: missing
+    source: awaiting original
+  dscf4468:
+    gps: missing
+    source: awaiting original
+  dscf4486:
+    gps: missing
+    source: awaiting original
+  dscf4893:
+    gps: missing
+    source: awaiting original
+  dscf4903:
+    gps: missing
+    source: awaiting original
+  dscf6676:
+    gps: missing
+    source: awaiting original
+  dscf6728:
+    gps: missing
+    source: awaiting original
+  dscf6742:
+    gps: missing
+    source: awaiting original
+  dscf6763:
+    gps: missing
+    source: awaiting original
+  dscf7615:
+    gps: missing
+    source: awaiting original

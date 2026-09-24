@@ -1,0 +1,59 @@
+# Suggested locations for gallery dolomites/siusi, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf0608:
+    gps: missing
+    source: awaiting original
+  dscf0634:
+    gps: missing
+    source: awaiting original
+  dscf7698:
+    suggested: Streda J. Skasa, Urtijëi - St. Ulrich in Gröden - Ortisei, Italy
+    street: Streda J. Skasa
+    city: Urtijëi - St. Ulrich in Gröden - Ortisei
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7749:
+    suggested: Col da Vettes, Kastelruth - Castelrotto, Italy
+    street: Col da Vettes
+    city: Kastelruth - Castelrotto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7849:
+    suggested: Piz, Kastelruth - Castelrotto, Italy
+    street: Piz
+    city: Kastelruth - Castelrotto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7851:
+    suggested: Piz, Kastelruth - Castelrotto, Italy
+    street: Piz
+    city: Kastelruth - Castelrotto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7910:
+    suggested: Compatsch, Kastelruth - Castelrotto, Italy
+    street: Compatsch
+    city: Kastelruth - Castelrotto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7954:
+    suggested: GS/SC19.4, Kastelruth - Castelrotto, Italy
+    street: GS/SC19.4
+    city: Kastelruth - Castelrotto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7960:
+    suggested: GS/SC19.4, Kastelruth - Castelrotto, Italy
+    street: GS/SC19.4
+    city: Kastelruth - Castelrotto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode

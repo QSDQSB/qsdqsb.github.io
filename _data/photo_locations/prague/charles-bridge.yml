@@ -1,0 +1,50 @@
+# Suggested locations for gallery prague/charles-bridge, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf4235:
+    suggested: Grand Priory Square, Prague
+    landmark: Grand Priory Square
+    street: Lázeňská
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4236:
+    suggested: Grand Priory Square, Prague
+    landmark: Grand Priory Square
+    street: Mostecká
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4271:
+    suggested: Charles Bridge, Prague
+    landmark: Charles Bridge
+    street: Bridge of Legions
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4272:
+    suggested: Charles Bridge, Prague
+    landmark: Charles Bridge
+    street: Bridge of Legions
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4277:
+    suggested: Charles Bridge, Prague
+    landmark: Charles Bridge
+    street: Bridge of Legions
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4296:
+    gps: missing
+    source: awaiting original
+  dscf5410:
+    gps: missing
+    source: awaiting original

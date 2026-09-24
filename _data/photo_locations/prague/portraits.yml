@@ -1,0 +1,41 @@
+# Suggested locations for gallery prague/portraits, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf4305:
+    gps: missing
+    source: awaiting original
+  dscf4425:
+    gps: missing
+    source: awaiting original
+  dscf4538:
+    gps: missing
+    source: awaiting original
+  dscf5074:
+    gps: missing
+    source: awaiting original
+  dscf5154:
+    suggested: Republic Square, Prague
+    landmark: Republic Square
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5557:
+    suggested: Prague Castle, Prague
+    landmark: Prague Castle
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5594:
+    suggested: Morzin Palace, Prague
+    landmark: Morzin Palace
+    street: Hradčanské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5683:
+    gps: missing
+    source: awaiting original

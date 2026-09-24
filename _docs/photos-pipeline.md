@@ -86,6 +86,8 @@ and no GPS ever reaches the public bucket.
 | `npm run photos:push [-- --gallery x] [--dry-run]` | rclone copy of the diff from `photos/` to the originals bucket. Adds and updates only; every original it replaces moves to `trash/<date>/` first. | write |
 | `npm run photos:pull [-- --gallery x] [--dry-run]` | The reverse of push: fetches originals `photos/` lacks from the bucket. Never overwrites a local file; skips `trash/`. | read |
 | `npm run photos:import [-- --dry-run] [--move] [--from <dir>]` | The gateway: sorts every file in the Desktop inbox into its voyage by frame number or by picture, verifies it, copies it into `photos/` (`--move` then removes it from the inbox). Files that match nothing stay and are listed. `--discard "<file>"` moves one to the Trash. | none |
+| `npm run photos:locate -- --gallery x \| --all [--sheets] [--set slug="place"] [--accept [slugs]]` | Suggests where each photo was taken (a well-known landmark, square, park or inn, else the road) into `_data/photo_locations/`; `--accept` writes suggestions into captions nobody wrote by hand. | none (OpenStreetMap, HTTP) |
+| `npm run photos:collect [-- --gallery x] [--dry-run]` | Replaces compressed copies with the edited originals straight from Apple Photos: exact-name lookups, best candidate by date, verified by the gateway. Resumable, memory-guarded, one run at a time. | none (Apple Photos) |
 | `npm run photos:plan [-- --gallery x]` | Reports new, changed, orphaned files; refuses orphans still named in YAML. | read |
 | `npm run photos:prune -- --gallery x [--yes]` | Moves that gallery's orphans to `trash/<date>/…` in the originals bucket. Asks you to type the gallery name. | write |
 | `npm run photos:process [-- --gallery x] [--force] [--dry-run] [--local dir] [--no-avif]` | The processor. Runs in Actions; runs locally against a directory with `--local`. | read + write |
@@ -210,6 +212,33 @@ voyage that already has some:
 5. `npm run photos:captions -- --gallery <voyage>` gives any new frame an
    empty caption to fill in.
 
+### Collect from Apple Photos (unattended)
+
+The originals live in the Photos library (30,000+ items, many in iCloud
+only). `npm run photos:collect` finds and imports them without the Desktop:
+
+1. For every photo still on its compressed copy, it asks Photos for items
+   with exactly that file name (`DSCF1148.JPG`), 25 names per call. Exact
+   names are cheap; never let anything ask Photos for a date range or a
+   name prefix: those make it load the whole library (it reached 66 GB once).
+2. Frame numbers repeat about every 10,000 shots, so a name has a few
+   candidates. It exports the one shot nearest the voyage's other originals,
+   **as edited in Photos** (the site publishes your crop; an unedited
+   camera file fails the aspect check), 20 at a time.
+3. The gateway verifies each export by picture and imports the match;
+   the rest of the batch is deleted from `.photos-local/collect/stage/`
+   (Photos itself is never touched). Up to three rounds: the next
+   candidate only for photos still unmatched.
+4. When done it runs `photos:locate --all`, and lists what is left in
+   `.photos-local/collect/unresolved.txt`: usually files whose frame
+   number was changed by hand, for round two.
+
+It runs for as long as it needs: state in `.photos-local/collect/state.json`
+(a stopped run resumes), a lock (one run at a time), Photos restarted past
+6 GB, failed lookups and exports retried with a pause and otherwise left for
+the next run, a log in `.photos-local/collect/log.txt` that the dashboard
+shows. The first run asks macOS to let this app control Photos.
+
 ### A short session
 
 Re-collection does not need a whole voyage at once. Three photos of one
@@ -245,6 +274,48 @@ the restored tree knows which frames are still compressed. Anything that was
 only on the lost machine (imported, never pushed) is not in the bucket;
 that is what the camera library is for.
 
+### Name where a photo was taken
+
+The captions from the old file names are coarse ("City of London, London"
+for a dozen different streets). `photos:locate` suggests better ones, as a
+reader would place them, in each voyage's own caption style:
+
+| Photo | Source | Suggestion |
+|---|---|---|
+| a camera original with GPS | OpenStreetMap: Nominatim (address) and Overpass (landmarks) | `Tower of London, London`, `Middlesex Street, London`, `Minack Theatre, Penzance, UK` |
+| a camera original without GPS | a visual guess (contact sheets, `--sheets`), recorded as `gps: missing`, `source: visual guess` | imprecise by design |
+| a compressed copy | none yet: `source: awaiting original`; its old caption stands until the original arrives with GPS | — |
+
+What may name a photo, from GPS: a landmark with a Wikidata or Wikipedia
+link, in two tiers (castles, palaces, cathedrals, monuments, famous
+bridges, squares, parks, viewpoints, beaches, peaks and airports up to
+300 m away, measured to their outline, or when the photo was taken inside
+them; churches, historic buildings, inns, markets and stations only within
+120 m), else the road. Never museums, theatres, clubs, shops, cafés,
+memorials or plaques: a caption naming the plaque beside the camera
+confuses more than it places. A city voyage keeps two parts
+(`Tower of London, London`); a regional one names the town between
+(`Porthcurno Beach, Penzance, UK`), following the tail its captions
+already use.
+
+```bash
+npm run photos:locate -- --all                     # geocode every original with GPS (cached, ~1 request a second)
+npm run photos:locate -- --all --sheets            # contact sheets of originals without GPS, to guess from
+npm run photos:locate -- --gallery london --set dscf3141="Oxford Street, London"
+npm run photos:locate -- --gallery london --accept # suggestions into captions
+```
+
+`--accept` replaces a caption only while it is empty or still the old
+file-name place the bootstrap recorded; a caption written by hand is
+listed and kept. It edits the one caption line, so stories, order and
+comments stay as written.
+
+Privacy: `_data/photo_locations/*.yml` is committed and holds names only.
+Coordinates stay in the originals' EXIF, the private bucket's
+`.private.json`, and the gitignored lookup cache
+`.photos-local/reverse-geocode.json`. Place names shown on the site are
+OpenStreetMap data: credit "© OpenStreetMap contributors".
+
 ### Remove a photo
 
 Hide it (`hidden: true` in the YAML) if it might come back. To remove it for
@@ -262,6 +333,50 @@ A restore refuses to overwrite an original already back in place, and
 copies the file into `photos/` when it is missing there, so the next
 `photos:plan` does not flag it as an orphan again (`--bucket-only` skips
 that). The upload event re-runs the processor.
+
+## Photo database (D1)
+
+Every photograph is one row in the D1 database `qsdqsb-photos`, under a
+permanent id (`p_` + a ULID) that no rename, move or re-collection changes.
+Files and folders are just where a photo's bytes happen to be.
+
+| Table | Holds |
+|---|---|
+| `photos` | the picture (size, thumbhash, tint, tiers), the exposure, the camera's own rendering from the Fujifilm maker notes (film simulation, dynamic range, grain, colour chrome, tones, focus and drive modes, shutter type, stabilisation, shutter count), the place, and your caption, story, featured and hidden |
+| `memberships` | which galleries a photo sits in, and its pinned position in each: a photo can live in several |
+| `sources` | originals-bucket keys (`london/DSCF1797.jpg`) → photo id |
+| `photo_private` | exact GPS and the whole camera record (serial numbers stripped). Never served |
+| `audit` | every change to a caption, place, flag or pin, written by triggers |
+
+How a file finds its photo, in order: its source key (a re-collected
+original keeps the same key); its camera key, camera model with shutter
+count (no serial is kept), one exposure for ever (a moved or renamed file); its content hash
+(the same bytes elsewhere); otherwise a new id.
+
+Images are content-addressed: `img.qsdqsb.com/t/<hash>/<size>.<format>`,
+where the hash is the original's. A new original is a new URL, so caching
+them as immutable is true by construction. `process.mjs --gc` deletes only
+tiers no manifest references any more.
+
+The database follows the pipeline, it is never refetched: the processor
+writes a gallery's `manifest.json` (public) and `.private.json` (originals),
+R2 sends an event to the `photos-manifests` queue, and the
+`qsdqsb-photos-db` Worker upserts only the rows whose version changed. The
+same Worker serves a read-only API of public fields:
+
+```
+GET https://api.qsdqsb.com/v1/galleries
+GET https://api.qsdqsb.com/v1/photos?gallery=london       in order: pinned, then taken
+GET https://api.qsdqsb.com/v1/photos?since=<ISO time>     changed rows only
+GET https://api.qsdqsb.com/v1/photos/<id>
+```
+
+Setup (done once, `workers/photos-db/`): `npx wrangler d1 create qsdqsb-photos`,
+`CI=true npx wrangler d1 migrations apply qsdqsb-photos --remote` (CI=true:
+a migration that drops tables otherwise waits on a prompt), `npx wrangler
+queues create photos-manifests`, one notification per bucket (`--suffix
+manifest.json` on `qsdqsb-photos`, `--suffix .private.json` on
+`qsdqsb-originals`), `npx wrangler deploy`.
 
 ## Cloudflare setup (once)
 

@@ -1,0 +1,84 @@
+# Suggested locations for gallery prague/streetscape, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf4258:
+    gps: missing
+    source: awaiting original
+  dscf4275:
+    gps: missing
+    source: awaiting original
+  dscf4284:
+    gps: missing
+    source: awaiting original
+  dscf4303:
+    gps: missing
+    source: awaiting original
+  dscf4409:
+    gps: missing
+    source: awaiting original
+  dscf4414:
+    gps: missing
+    source: awaiting original
+  dscf4515:
+    gps: missing
+    source: awaiting original
+  dscf4517:
+    gps: missing
+    source: awaiting original
+  dscf4519:
+    gps: missing
+    source: awaiting original
+  dscf4521:
+    gps: missing
+    source: awaiting original
+  dscf4546:
+    gps: missing
+    source: awaiting original
+  dscf4563:
+    gps: missing
+    source: awaiting original
+  dscf4576:
+    gps: missing
+    source: awaiting original
+  dscf4582:
+    gps: missing
+    source: awaiting original
+  dscf4631:
+    gps: missing
+    source: awaiting original
+  dscf4731:
+    gps: missing
+    source: awaiting original
+  dscf4737:
+    gps: missing
+    source: awaiting original
+  dscf4742:
+    gps: missing
+    source: awaiting original
+  dscf5116:
+    suggested: Republic Square, Prague
+    landmark: Republic Square
+    street: Havlíčkova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5123:
+    gps: missing
+    source: awaiting original
+  dscf5132:
+    suggested: V Celnici, Prague
+    street: V Celnici
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5135:
+    suggested: Republic Square, Prague
+    landmark: Republic Square
+    street: V Celnici
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode

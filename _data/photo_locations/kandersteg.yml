@@ -1,0 +1,67 @@
+# Suggested locations for gallery kandersteg, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf8201:
+    gps: missing
+    source: awaiting original
+  dscf8207:
+    gps: missing
+    source: awaiting original
+  dscf8213:
+    gps: missing
+    source: awaiting original
+  dscf8254:
+    gps: missing
+    source: awaiting original
+  dscf8261:
+    gps: missing
+    source: awaiting original
+  dscf8266:
+    gps: missing
+    source: awaiting original
+  dscf8277:
+    gps: missing
+    source: awaiting original
+  dscf8351:
+    gps: missing
+    source: awaiting original
+  dscf8385:
+    gps: missing
+    source: awaiting original
+  dscf8388:
+    gps: missing
+    source: awaiting original
+  dscf8452:
+    gps: missing
+    source: awaiting original
+  dscf8466:
+    gps: missing
+    source: awaiting original
+  dscf8500:
+    gps: missing
+    source: awaiting original
+  dscf8581:
+    gps: missing
+    source: awaiting original
+  dscf8604:
+    gps: missing
+    source: awaiting original
+  dscf8616:
+    gps: missing
+    source: awaiting original
+  dscf8617:
+    gps: missing
+    source: awaiting original
+  dscf8630:
+    gps: missing
+    source: awaiting original
+  dscf8646:
+    gps: missing
+    source: awaiting original
+  dscf8653:
+    gps: missing
+    source: awaiting original
+  dscf8664:
+    gps: missing
+    source: awaiting original

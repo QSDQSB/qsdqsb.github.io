@@ -1,0 +1,22 @@
+# Suggested locations for gallery beijing, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf3267:
+    gps: missing
+    source: awaiting original
+  dscf3369:
+    gps: missing
+    source: awaiting original
+  dscf3422:
+    gps: missing
+    source: awaiting original
+  dscf3461:
+    gps: missing
+    source: awaiting original
+  dscf3462:
+    gps: missing
+    source: awaiting original
+  dscf3572:
+    gps: missing
+    source: awaiting original
