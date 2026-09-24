@@ -6,14 +6,27 @@ photos:
     gps: missing
     source: awaiting original
   dscf4168:
-    gps: missing
-    source: awaiting original
+    suggested: Mont Saint-Michel Bay, Le Mont-Saint-Michel, France
+    landmark: Mont Saint-Michel Bay
+    street: Avancée des Bombardes
+    city: Le Mont-Saint-Michel
+    country: France
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4222:
     gps: missing
     source: awaiting original
   dscf4224:
     gps: missing
     source: awaiting original
+  dscf4226:
+    suggested: Mont Saint-Michel Bay, Pontorson, France
+    landmark: Mont Saint-Michel Bay
+    street: D 275
+    city: Pontorson
+    country: France
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4261:
     gps: missing
     source: awaiting original

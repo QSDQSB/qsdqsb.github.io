@@ -12,26 +12,55 @@ photos:
     gps: missing
     source: awaiting original
   dscf4270:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Nicholas, Prague
+    landmark: Saint Nicholas
+    street: Malostranské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4807:
     gps: missing
     source: awaiting original
   dscf4811:
-    gps: missing
-    source: awaiting original
+    suggested: Hellichova, Prague
+    street: Hellichova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5181:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Nicholas, Prague
+    landmark: Saint Nicholas
+    street: Malostranské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5204:
     gps: missing
     source: awaiting original
   dscf5264:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Nicholas, Prague
+    landmark: Saint Nicholas
+    street: Malostranské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5285:
-    gps: missing
-    source: awaiting original
+    suggested: Wallenstein Palace, Prague
+    landmark: Wallenstein Palace
+    street: Valdštejnská
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5595:
-    gps: missing
-    source: awaiting original
+    suggested: Morzin Palace, Prague
+    landmark: Morzin Palace
+    street: Hradčanské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode

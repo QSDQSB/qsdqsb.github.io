@@ -12,23 +12,48 @@ photos:
     gps: missing
     source: awaiting original
   dscf4837:
-    gps: missing
-    source: awaiting original
+    suggested: Petřín Gardens – Seminar Garden, Prague
+    landmark: Petřín Gardens – Seminar Garden
+    street: Hellichova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4843:
     gps: missing
     source: awaiting original
   dscf4861:
-    gps: missing
-    source: awaiting original
+    suggested: Petřín Gardens – Seminar Garden, Prague
+    landmark: Petřín Gardens – Seminar Garden
+    street: Hellichova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4872:
-    gps: missing
-    source: awaiting original
+    suggested: Rose Garden, Prague
+    landmark: Rose Garden
+    street: křížová cesta
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4877:
     gps: missing
     source: awaiting original
   dscf4893:
-    gps: missing
-    source: awaiting original
+    suggested: Petrin Observation Tower, Prague
+    landmark: Petrin Observation Tower
+    street: křížová cesta
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4908:
-    gps: missing
-    source: awaiting original
+    suggested: Petrin Observation Tower, Prague
+    landmark: Petrin Observation Tower
+    street: Petřínské sady
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
