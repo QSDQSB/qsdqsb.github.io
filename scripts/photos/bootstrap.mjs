@@ -29,7 +29,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import yaml from 'js-yaml';
 import { PATHS, ORIGINAL_RE, BOOTSTRAP_STAMP, parseArgs } from './lib/config.mjs';
-import { parseLegacyName, slugFor, fNumberFromLegacy } from './lib/slug.mjs';
+import { parseLegacyName, slugFor, legacyAperture } from './lib/slug.mjs';
 import { injectExif } from './lib/exif-write.mjs';
 import { readHeadExif, isCompressedCopy } from './lib/inventory.mjs';
 
@@ -80,7 +80,7 @@ async function main() {
       fs.mkdirSync(destDir, { recursive: true });
       let buf = fs.readFileSync(path.join(PATHS.legacyGallery, ...gallery.split('/'), name));
       if (ext === '.jpg' && !args['no-exif']) {
-        try { buf = injectExif(buf, { aperture: fNumberFromLegacy(legacy.aperture), shutter: legacy.shutter, iso: legacy.iso, focal: legacy.focal, lens: legacy.lens, software: BOOTSTRAP_STAMP }); exifs++; }
+        try { buf = injectExif(buf, { aperture: legacyAperture(legacy), shutter: legacy.shutter, iso: legacy.iso, focal: legacy.focal, lens: legacy.lens, software: BOOTSTRAP_STAMP }); exifs++; }
         catch (e) { console.log(`  ${gallery}/${name}: EXIF not written (${e.message})`); }
       }
       fs.writeFileSync(path.join(destDir, dest), buf);
