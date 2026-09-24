@@ -345,12 +345,12 @@ Files and folders are just where a photo's bytes happen to be.
 | `photos` | the picture (size, thumbhash, tint, tiers), the exposure, the camera's own rendering from the Fujifilm maker notes (film simulation, dynamic range, grain, colour chrome, tones, focus and drive modes, shutter type, stabilisation, shutter count), the place, and your caption, story, featured and hidden |
 | `memberships` | which galleries a photo sits in, and its pinned position in each: a photo can live in several |
 | `sources` | originals-bucket keys (`london/DSCF1797.jpg`) → photo id |
-| `photo_private` | GPS, body and lens serials, the whole camera record. Never served |
+| `photo_private` | exact GPS and the whole camera record (serial numbers stripped). Never served |
 | `audit` | every change to a caption, place, flag or pin, written by triggers |
 
 How a file finds its photo, in order: its source key (a re-collected
-original keeps the same key); its camera key, body serial with shutter
-count, one exposure for ever (a moved or renamed file); its content hash
+original keeps the same key); its camera key, camera model with shutter
+count (no serial is kept), one exposure for ever (a moved or renamed file); its content hash
 (the same bytes elsewhere); otherwise a new id.
 
 Images are content-addressed: `img.qsdqsb.com/t/<hash>/<size>.<format>`,

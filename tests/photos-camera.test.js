@@ -17,7 +17,7 @@ test('film simulation reads FilmMode, or Saturation for the monochrome ones', as
   assert.strictEqual(filmSimulation({}), null);
 });
 
-test('settings are public, serials private, and a file without maker notes has no settings', async () => {
+test('settings are public, no serial is kept anywhere, and a file without maker notes has no settings', async () => {
   const { splitCamera } = await cam();
   const x = splitCamera({
     FilmMode: 'Classic Negative', DynamicRange: 'Standard', GrainEffectRoughness: 'Off', ShutterType: 'Mechanical',
@@ -29,7 +29,7 @@ test('settings are public, serials private, and a file without maker notes has n
   assert.strictEqual(x.pub.settings.color, 'Film Simulation');
   assert.strictEqual(x.pub.shutterCount, 11391);
   assert.strictEqual(x.pub.exposureProgram, 'Program AE');
-  assert.ok(!JSON.stringify(x.pub).includes('0D018089'), 'no serial in the public record');
-  assert.deepStrictEqual(x.priv, { cameraSerial: '0D018089', lensSerial: '85B01025', shutterCount: 11391 });
+  assert.ok(!JSON.stringify(x).includes('0D018089') && !JSON.stringify(x).includes('85B01025'), 'no serial, public or private');
+  assert.deepStrictEqual(x.priv, { shutterCount: 11391 });
   assert.strictEqual(splitCamera({ ExposureProgram: 'Manual' }).pub.settings, null);
 });

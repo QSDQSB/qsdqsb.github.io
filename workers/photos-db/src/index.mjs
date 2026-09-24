@@ -8,8 +8,8 @@
  *
  *     1. by source key    london/DSCF1797.jpg seen before: same photo, even
  *                         when a compressed copy is replaced by its original
- *     2. by camera key    body serial + shutter count: the same exposure,
- *                         moved to another voyage or renamed
+ *     2. by camera key    camera model + shutter count: the same exposure,
+ *                         moved to another voyage or renamed (no serial is kept)
  *     3. by content hash  the same bytes already known under another key
  *     4. a new id         'p_' + ULID
  *
@@ -78,7 +78,8 @@ export function resolve(entries, priv, known, mint = newId) {
   const out = [];
   for (const p of entries) {
     const pr = priv?.[p.slug] || {};
-    const cameraKey = pr.cameraSerial && pr.shutterCount != null ? `${pr.cameraSerial}#${pr.shutterCount}` : null;
+    const count = p.shutterCount ?? pr.shutterCount;
+    const cameraKey = p.camera && count != null ? `${p.camera}#${count}` : null;
     const src = known.sources.get(p.key);
     let id = src?.photo_id, how = 'source';
     if (!id && cameraKey && known.byCamera.has(cameraKey)) { id = known.byCamera.get(cameraKey); how = 'camera'; }
@@ -97,9 +98,9 @@ export async function syncGallery(db, gallery, manifest, privDoc) {
   const sources = new Map((await db.prepare('SELECT key, photo_id, version, hash, removed_at FROM sources WHERE gallery = ?').bind(gallery).all()).results.map(r => [r.key, r]));
   const keys = entries.map(p => p.key).filter(k => !sources.has(k));
   for (const r of await inList(db, 'SELECT key, photo_id, version, hash, removed_at FROM sources WHERE key IN (?)', keys)) sources.set(r.key, r);
-  const serials = [...new Set(Object.values(priv).map(x => x.cameraSerial).filter(Boolean))];
-  const byCamera = new Map((await inList(db, 'SELECT photo_id, camera_serial, shutter_count FROM photo_private WHERE camera_serial IN (?)', serials))
-    .map(r => [`${r.camera_serial}#${r.shutter_count}`, r.photo_id]));
+  const counts0 = [...new Set(entries.map(p => p.shutterCount).filter(c => c != null))];
+  const byCamera = new Map((await inList(db, 'SELECT id, camera, shutter_count FROM photos WHERE camera IS NOT NULL AND shutter_count IN (?)', counts0))
+    .map(r => [`${r.camera}#${r.shutter_count}`, r.id]));
   const hashes = [...new Set(entries.map(p => p.hash).filter(Boolean))];
   const byHash = new Map((await inList(db, 'SELECT id, hash FROM photos WHERE hash IN (?)', hashes)).map(r => [r.hash, r.id]));
 
@@ -122,15 +123,12 @@ export async function syncGallery(db, gallery, manifest, privDoc) {
          hash = excluded.hash, seen_at = ${NOW}, removed_at = NULL`,
     ).bind(r.p.key, r.id, gallery, val(r.p.version), val(r.p.hash)));
     stmts.push(membership);
-    // A camera key another photo already holds stays with that photo; this one keeps the rest.
-    const clash = r.cameraKey && byCamera.has(r.cameraKey) && byCamera.get(r.cameraKey) !== r.id;
+    // GPS at full precision and the whole camera record: private, never served.
     stmts.push(db.prepare(
-      `INSERT INTO photo_private (photo_id, camera_serial, lens_serial, shutter_count, lat, lng, altitude, exif) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-       ON CONFLICT (photo_id) DO UPDATE SET camera_serial = excluded.camera_serial, lens_serial = excluded.lens_serial,
-         shutter_count = excluded.shutter_count, lat = excluded.lat, lng = excluded.lng, altitude = excluded.altitude,
+      `INSERT INTO photo_private (photo_id, lat, lng, altitude, exif) VALUES (?, ?, ?, ?, ?)
+       ON CONFLICT (photo_id) DO UPDATE SET lat = excluded.lat, lng = excluded.lng, altitude = excluded.altitude,
          exif = excluded.exif, updated_at = ${NOW}`,
-    ).bind(r.id, clash ? null : val(r.pr.cameraSerial), val(r.pr.lensSerial), clash ? null : val(r.pr.shutterCount),
-      val(r.pr.gps?.lat), val(r.pr.gps?.lng), val(r.pr.gps?.alt), r.pr.exif ? JSON.stringify(r.pr.exif) : null));
+    ).bind(r.id, val(r.pr.gps?.lat), val(r.pr.gps?.lng), val(r.pr.gps?.alt), r.pr.exif ? JSON.stringify(r.pr.exif) : null));
   }
   // Sources this gallery no longer lists: removed, with their membership; the photo once nothing holds it.
   const live = new Set(entries.map(p => p.key));

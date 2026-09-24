@@ -124,7 +124,7 @@ async function processGallery(gallery, files, { originals, pub }) {
         });
         priv.photos[slug] = {
           file, key: meta.key, hash, version, gps: exif.gps,
-          cameraSerial: cam?.priv.cameraSerial ?? null, lensSerial: cam?.priv.lensSerial ?? null, shutterCount: cam?.priv.shutterCount ?? null,
+          shutterCount: cam?.priv.shutterCount ?? null,
           exif: cam?.priv.all || exif.raw,
         };
         changed++;

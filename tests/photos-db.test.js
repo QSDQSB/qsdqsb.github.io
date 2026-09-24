@@ -19,7 +19,7 @@ test('an entry finds its photo by source key, then camera key, then content hash
   const { resolve } = await db();
   const known = {
     sources: new Map([['london/DSCF1797.jpg', { photo_id: 'p_SOURCE', version: 'e1:10', hash: 'h1', removed_at: null }]]),
-    byCamera: new Map([['0D018089#11391', 'p_CAMERA']]),
+    byCamera: new Map([['FUJIFILM X-S10#11391', 'p_CAMERA']]),
     byHash: new Map([['h9', 'p_HASH']]),
   };
   let n = 0;
@@ -27,11 +27,11 @@ test('an entry finds its photo by source key, then camera key, then content hash
   const entries = [
     { slug: 'dscf1797', key: 'london/DSCF1797.jpg', version: 'e2:20', hash: 'h2' },        // re-collected original, same key
     { slug: 'dscf1797', key: 'london/DSCF1797.jpg', version: 'e1:10', hash: 'h1' },        // untouched
-    { slug: 'dscf1559', key: 'cornwall/DSCF1559.jpg', version: 'e3:1', hash: 'h3' },       // moved: same exposure, new key
+    { slug: 'dscf1559', key: 'cornwall/DSCF1559.jpg', version: 'e3:1', hash: 'h3', camera: 'FUJIFILM X-S10', shutterCount: 11391 }, // moved: same exposure, new key
     { slug: 'dscf0001', key: 'paris/DSCF0001.jpg', version: 'e4:1', hash: 'h9' },          // same bytes as a known photo
     { slug: 'dscf0002', key: 'paris/DSCF0002.jpg', version: 'e5:1', hash: 'h5' },          // never seen
   ];
-  const priv = { dscf1559: { cameraSerial: '0D018089', shutterCount: 11391 } };
+  const priv = {};
   const r = resolve(entries, priv, known, mint);
   assert.deepStrictEqual(r.map(x => [x.id, x.how, x.unchanged]), [
     ['p_SOURCE', 'source', false], ['p_SOURCE', 'source', true], ['p_CAMERA', 'camera', false], ['p_HASH', 'hash', false], ['p_NEW1', 'new', false],
