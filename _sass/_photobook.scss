@@ -1000,8 +1000,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
 }
 
 .photobook-lightbox__back,
-.photobook-lightbox__tool,
-.photobook-specs__pin {
+.photobook-lightbox__tool {
   position: relative;
 
   // A finger's target, larger than what is drawn.
@@ -1245,27 +1244,6 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   color: var(--photobook-ink-3);
 }
 
-.photobook-specs__pin {
-  grid-column: 2;
-  grid-row: 1 / span 3;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.3rem 0.55rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  background: var(--photobook-button);
-  color: var(--photobook-ink-2);
-  font: 500 0.55rem $barlow-font-family;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  cursor: pointer;
-
-  &:hover { background: var(--photobook-button-hover); color: #fff; }
-  &[aria-pressed="true"] { color: $h2-color; border-color: rgba($h2-color, 0.35); }
-
-  svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-}
 
 // The highlights: six numbers, set large.
 .photobook-specs__highlights {
@@ -1414,7 +1392,6 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   .photobook-lightbox__city,
   .photobook-specs__no,
   .photobook-specs__city,
-  .photobook-specs__pin,
   .photobook-specs__highlights > div > span,
   .photobook-specs__settings dt { font-size: 0.7rem; }
 
