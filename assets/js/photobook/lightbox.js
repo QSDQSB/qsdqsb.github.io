@@ -62,7 +62,7 @@ export function lightbox(frames) {
     const r = p.ratio || 1.5, box = mat.getBoundingClientRect(), bare = lb.classList.contains('is-bare'), zoomed = lb.classList.contains('is-zoomed');
     const [bw, bh] = box.width ? [box.width, box.height] : [window.innerWidth, window.innerHeight];
     const fill = bare && lb.style.getPropertyValue('--fit') === 'cover';
-    const width = (fill ? Math.max : Math.min)(bw, bh * r) * Math.min(window.devicePixelRatio || 1, 3) * (zoomed ? 2.2 : 1);
+    const width = (fill ? Math.max : Math.min)(bw, bh * r) * Math.min(window.devicePixelRatio || 1, 3) * (zoomed ? Math.max(2.2, zoom) : 1);
     const want = width / Math.min(1, r);
     const cap = bare || zoomed ? Infinity : 2880;
     const fit = p.sizes.filter((s) => s <= cap);
@@ -115,7 +115,7 @@ export function lightbox(frames) {
     const here = !screening && pos >= 0 && [...document.querySelectorAll(`.photobook-frame[data-i="${order[pos]}"] .photobook-frame__print`)].find((b) => b.offsetParent);
     const was = screening ? screenFrom : null;
     stop(); screening = false; lb.classList.remove('is-screening');
-    lb.classList.remove('has-specs', 'is-pinned', 'is-bare', 'is-zoomed', 'is-idle'); pressed('bare', false);
+    lb.classList.remove('has-specs', 'is-pinned', 'is-bare', 'is-idle'); pressed('bare', false); setZoom(1);
     if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
     mat.replaceChildren(); wash.replaceChildren(); pos = -1;
     const back = here || lastFocus;
@@ -139,7 +139,7 @@ export function lightbox(frames) {
     if (n === pos) return;
     pos = n;
     const p = cur(), i = order[pos];
-    lb.classList.remove('is-zoomed');
+    setZoom(1);
     lb.classList.toggle('is-single', order.length === 1);
     fitFor(p);
     // The mount beneath the print takes this frame's shape (_photobook.scss, .photobook-lightbox__mount).
@@ -272,7 +272,7 @@ export function lightbox(frames) {
   lb.addEventListener('click', (e) => { const b = e.target.closest('[data-act]'); if (b && ACTS[b.dataset.act]) { ACTS[b.dataset.act](); wake(); } });
   lb.addEventListener('cancel', (e) => {
     if (screening) return;                                     // Esc ends a screening outright
-    if (lb.classList.contains('is-zoomed')) { e.preventDefault(); lb.classList.remove('is-zoomed'); }
+    if (lb.classList.contains('is-zoomed')) { e.preventDefault(); setZoom(1); }
     else if (lb.classList.contains('is-bare')) { e.preventDefault(); bare(false); }
   });
   window.addEventListener('keydown', (e) => {
@@ -281,14 +281,25 @@ export function lightbox(frames) {
     if ((k === ' ' || k === 'enter') && e.target.closest?.('button')) return;
     if (k === 'arrowright') next(); else if (k === 'arrowleft') prev();
     else if (k === ' ' || k === 's') ACTS.play(); else if (k === 'i') toggleSpecs(); else if (k === 'f') bare();
-    else if (k === 'z') { lb.classList.toggle('is-zoomed'); upgrade(); } else return;
+    else if (k === 'z') setZoom(zoom > 1.02 ? 1 : 2.2); else return;
     e.preventDefault(); wake();
   });
   window.addEventListener('resize', () => { if (lb.open && pos >= 0) { fitFor(cur()); upgrade(); } });
 
-  // Loupe: double-click to look closer; the print follows the pointer.
+  // Loupe: double-click (or Z) to look closer, or pinch on a trackpad for any depth from 1× to 4×,
+  // about the point between the fingers; the print follows the pointer.
+  let zoom = 1, pinchT = 0;
+  function setZoom(z, e) {
+    zoom = Math.min(4, Math.max(1, z));
+    if (e) origin(e);
+    lb.style.setProperty('--zoom', zoom.toFixed(3));
+    lb.classList.toggle('is-zoomed', zoom > 1.02);
+    if (zoom > 1.02) upgrade();
+  }
+  // Pinching follows the fingers directly, without the eased step of a double-click.
+  const pinching = () => { lb.classList.add('is-pinching'); clearTimeout(pinchT); pinchT = setTimeout(() => lb.classList.remove('is-pinching'), 160); };
   const origin = (e) => { const r = mat.getBoundingClientRect(); lb.style.setProperty('--ox', `${((e.clientX - r.left) / r.width * 100).toFixed(1)}%`); lb.style.setProperty('--oy', `${((e.clientY - r.top) / r.height * 100).toFixed(1)}%`); };
-  mat.addEventListener('dblclick', (e) => { origin(e); lb.classList.toggle('is-zoomed'); upgrade(); });
+  mat.addEventListener('dblclick', (e) => setZoom(zoom > 1.02 ? 1 : 2.2, e));
   mat.addEventListener('pointermove', (e) => { if (lb.classList.contains('is-zoomed')) origin(e); });
 
   // Touch: swipe to move, swipe up for the specs, tap to bring the tools back.
@@ -310,7 +321,16 @@ export function lightbox(frames) {
   // scrolls itself when it is taller than its room (and hands no scroll on: overscroll-behavior).
   const own = (e) => specsEl.contains(e.target) && specsEl.scrollHeight > specsEl.clientHeight;
   lb.addEventListener('touchmove', (e) => { if (!own(e)) e.preventDefault(); }, { passive: false });
-  lb.addEventListener('wheel', (e) => { if (!own(e)) e.preventDefault(); }, { passive: false });
+  lb.addEventListener('wheel', (e) => {
+    if (own(e)) return;
+    e.preventDefault();
+    // A trackpad pinch arrives as a wheel with Ctrl held (Chrome, Firefox); it zooms the print.
+    if (e.ctrlKey) { pinching(); setZoom(zoom * Math.exp(-e.deltaY * 0.012), e); }
+  }, { passive: false });
+  // Safari reports the same pinch as gesture events.
+  let gz = 1;
+  lb.addEventListener('gesturestart', (e) => { e.preventDefault(); gz = zoom; });
+  lb.addEventListener('gesturechange', (e) => { e.preventDefault(); pinching(); setZoom(gz * e.scale, e); });
 
   // A pull down on the sheet from its top puts it away, as a pull down on the print does.
   let ty = null;

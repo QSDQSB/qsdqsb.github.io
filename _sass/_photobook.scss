@@ -984,11 +984,13 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 }
 
 .photobook-lightbox.is-zoomed .photobook-lightbox__mat img.is-on {
-  transform: scale(2.2);
+  transform: scale(var(--zoom, 2.2));
   transform-origin: var(--ox, 50%) var(--oy, 50%);
   transition: transform 0.45s $cubic-bezier-smooth;
   cursor: zoom-out;
 }
+
+.photobook-lightbox.is-pinching .photobook-lightbox__mat img.is-on { transition: none; }
 
 .photobook-lightbox__zone {
   position: absolute;
