@@ -14,7 +14,8 @@
  * and random posts, the word card), so an ordinary build differs from the
  * last one before a single style changes. `visual:build` seeds Ruby's PRNG
  * first, which is what `sample` draws from, so the same source renders the
- * same HTML. Thumbnails must already exist (`npm run build` once).
+ * same HTML, but only while no source changes: any edit reshuffles the draws,
+ * so the sampled blocks (SAMPLED below) are painted over in every shot.
  *
  * Why this exists: CSS refactors — `!important` triage, token inlining,
  * import reordering — are verified by eye or not at all, and "not at all"
@@ -98,6 +99,11 @@ const SETTLE_MS = 7000; // longest page-side timer (Home reveal fallback) + marg
  * covers kramdown `{: .notice}` paragraphs, where `.page__content p` outranks
  * the notice class — neither is reachable from the other pages.
  */
+// What Liquid picks with `sample`: the footer logo, the word cards, the related and "elsewhere"
+// cards. The seeded build repeats a draw only while no source changes, so any unrelated edit
+// would reshuffle them; the shots paint them over instead of comparing them.
+const SAMPLED = ['img[alt="QSD Logo"]', '.center-wrapper:has(img[alt="QSD Logo"])', '.word_card_container', '.page__related .grid__wrapper', '.photobook-end__more'];
+
 async function drawAllRows(page) {
   await page.addStyleTag({ content: '.photobook-row { content-visibility: visible; }' });
 }
@@ -319,7 +325,7 @@ async function shoot(browser, baseUrl, pageDef, viewportName, outDir) {
     if (pageDef.setup) await pageDef.setup(page);
     await settle(page, startedAt);
     const file = path.join(outDir, `${pageDef.id}--${viewportName}.png`);
-    await page.screenshot({ path: file, fullPage: !pageDef.screenOnly, animations: 'disabled' });
+    await page.screenshot({ path: file, fullPage: !pageDef.screenOnly, animations: 'disabled', mask: SAMPLED.map((s) => page.locator(s)), maskColor: '#2a2a2a' });
     return { file, errors };
   } finally {
     await context.close();
