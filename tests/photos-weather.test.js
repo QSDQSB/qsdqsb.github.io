@@ -36,6 +36,7 @@ test('weatherOf names the sky in one word and one mark; clear after dark is a cl
   assert.equal(weatherOf({ t: 20, code: 0 }, { below: true }).kind, 'night');
   assert.equal(weatherOf({ t: 20, code: 1 }, { below: false }).text, 'Clear');
   assert.equal(weatherOf({ t: 12, code: 2 }).text, 'Partly cloudy');
+  assert.equal(weatherOf({ t: 12, code: 2 }, { below: true }).kind, 'partly-night', 'no sun in the mark after dark');
   assert.equal(weatherOf({ t: 12, code: 45 }).kind, 'fog');
   assert.equal(weatherOf({ t: 12, code: 53 }).kind, 'rain');
   assert.equal(weatherOf({ t: 12, code: 81 }).kind, 'rain');
