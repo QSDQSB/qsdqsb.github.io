@@ -20,7 +20,8 @@
  * Shares the collector's lock and log, so the two never talk to Photos at
  * once. Resumable. Nothing is pushed.
  *
- * Usage: npm run photos:enrich [-- --gallery <name>] [--batch 20] [--dry-run]
+ * Usage: npm run photos:enrich [-- --gallery <name>] [--batch 20] [--dry-run] [--by-time]
+ *   --by-time  find items by capture time alone (renamed files), retrying earlier misses
  */
 
 import fs from 'node:fs';
@@ -29,7 +30,7 @@ import { spawnSync } from 'node:child_process';
 import sharp from 'sharp';
 import { PATHS, parseArgs } from './lib/config.mjs';
 import { galleriesUnder, localGallery, readHeadExif, isCompressedCopy, cleanGallery } from './lib/inventory.mjs';
-import { findByFilename, exportPhotos, guardMemory, sameMoment } from './lib/apple-photos.mjs';
+import { findByFilename, findByMoment, exportPhotos, guardMemory, sameMoment } from './lib/apple-photos.mjs';
 import { lock, retry, pause, stamp, LOG } from './collect.mjs';
 
 const DIR = path.join(PATHS.localStore, 'collect');
@@ -82,17 +83,22 @@ async function main() {
   if (holder) { console.error(`photos:collect or photos:enrich is running (pid ${holder}); not starting another`); return 1; }
   const state = loadState();
 
-  const todo = (await targets(only)).filter(t => !state.done[`${t.gallery}/${t.slug}`] && !(state.failed[`${t.gallery}/${t.slug}`] >= 2));
+  // --by-time looks items up by capture time alone, for files whose names Photos does not know;
+  // it retries the ones the name lookup gave up on.
+  const byTime = !!args['by-time'];
+  const todo = (await targets(only)).filter(t => !state.done[`${t.gallery}/${t.slug}`] && (byTime || !(state.failed[`${t.gallery}/${t.slug}`] >= 2)));
   log(`${todo.length} original(s) without maker notes`);
   if (args['dry-run'] || !todo.length) return 0;
 
   let enriched = 0;
   for (let i = 0; i < todo.length; i += batch) {
     const chunk = todo.slice(i, i + batch);
-    const found = await retry(`lookup of ${chunk.length} names`, () => findByFilename([...new Set(chunk.map(t => t.name))]), log);
+    const found = byTime
+      ? await retry(`lookup of ${chunk.length} capture times`, () => findByMoment(chunk.map(t => t.taken)), log)
+      : await retry(`lookup of ${chunk.length} names`, () => findByFilename([...new Set(chunk.map(t => t.name))]), log);
     if (!found) continue;
     // The item shot at the same moment as our file: frame numbers repeat, capture times do not.
-    const pick = chunk.map(t => ({ t, item: (found.get(t.name) || []).find(c => sameMoment(c.date, t.taken)) }));
+    const pick = chunk.map(t => ({ t, item: (found.get(byTime ? t.taken : t.name) || []).find(c => sameMoment(c.date, t.taken)) }));
     for (const p of pick.filter(p => !p.item)) { state.failed[`${p.t.gallery}/${p.t.slug}`] = (state.failed[`${p.t.gallery}/${p.t.slug}`] || 0) + 1; }
     const wanted = pick.filter(p => p.item);
     if (!wanted.length) { saveState(state); continue; }
