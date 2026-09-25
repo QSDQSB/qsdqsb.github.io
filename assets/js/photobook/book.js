@@ -86,13 +86,15 @@ export function book({ frames, onOpen, onLayout }) {
     const stuck = bar.getBoundingClientRect().top + 16 < nav.bottom + 8;
     bar.classList.toggle('is-under-masthead', !!(out && stuck && pill && pill.left < nav.right + 12));
   };
+  // Past the book (the colophon and what follows) the bar has nothing to filter, so it steps away.
+  // Read on every frame of scrolling: a jump (End, Home) can carry the colophon past any threshold.
+  const end = document.querySelector('.photobook-colophon') || document.querySelector('.photobook-end');
+  const past = () => { if (bar && end) bar.classList.toggle('is-past', end.getBoundingClientRect().top < window.innerHeight * 0.5); };
   let tick = 0;
-  window.addEventListener('scroll', () => { if (!tick) tick = requestAnimationFrame(() => { tick = 0; under(); }); }, { passive: true });
+  window.addEventListener('scroll', () => { if (!tick) tick = requestAnimationFrame(() => { tick = 0; under(); past(); }); }, { passive: true });
+  past();
   if (mast) new MutationObserver(under).observe(mast, { attributes: true, attributeFilter: ['class'] });
 
-  // Past the book (the colophon and what follows) the bar has nothing to filter, so it steps away.
-  const end = document.querySelector('.photobook-colophon') || document.querySelector('.photobook-end');
-  if (bar && end) new IntersectionObserver(([e]) => bar.classList.toggle('is-past', e.boundingClientRect.top < window.innerHeight * 0.5), { threshold: [0, 1], rootMargin: '0px 0px -50% 0px' }).observe(end);
   window.addEventListener('resize', under);
   // Any frame, in the book or on the sheet, opens the lightbox over the frames currently shown.
   document.querySelector('.photobook-main')?.addEventListener('click', (e) => {
