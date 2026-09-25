@@ -1,18 +1,33 @@
 {%- comment -%}
-  The film index, a glass pill that stays with the reader beside the masthead: filter the frames
-  by the simulation they were made with, or lay them out as a contact sheet.
+  The book's controls, at the top right: the film dial, and in the corner beside it the view switch
+  (the book, or every frame on a contact sheet), a slide as tall as the dial. The dial turns a film under the red index: at rest a dot of
+  each film's colour (white for ALL), in hand its letters and, underneath, its name. Each film's letters (P, V, CN…) come from filmCode() in
+  scripts/photos/lib/book.mjs. A gallery made on one film has no dial. Script: assets/js/photobook/dial.js.
 {%- endcomment -%}
 {%- assign films = include.book.book.colophon.films -%}
 <div class="photobook-bar">
-  <div class="photobook-bar__pill">
+  {%- if films.size > 1 %}
+  <button class="photobook-bar__mark" type="button" aria-label="A film is chosen: show the controls"></button>
+  {%- endif %}
+  <div class="photobook-bar__dock">
     {%- if films.size > 1 %}
-    <div class="photobook-bar__films" role="group" aria-label="Filter by film simulation">
-      <button type="button" aria-pressed="true" data-film="">All<b>{{ include.book.count }}</b></button>
-      {%- for f in films %}<button type="button" aria-pressed="false" data-film="{{ f.name | escape }}" style="--film:{{ f.hue }}"><i></i>{{ f.name }}<b>{{ f.n }}</b></button>{% endfor %}
+    <div class="photobook-dial" role="radiogroup" aria-label="Film simulation">
+      <div class="photobook-dial__well">
+        <span class="photobook-dial__index" aria-hidden="true"></span>
+        <div class="photobook-dial__face">
+          <button type="button" role="radio" aria-checked="true" tabindex="0" data-film="" aria-label="All films, {{ include.book.count }} frames" style="--at:0deg"><span>ALL</span></button>
+          {%- for f in films %}
+          <button type="button" role="radio" aria-checked="false" tabindex="-1" data-film="{{ f.name | escape }}" aria-label="{{ f.name | escape }}, {{ f.n }} frame{% if f.n != 1 %}s{% endif %}" style="--film:{{ f.hue }}; --at:{{ forloop.index | times: 45 }}deg"><span>{{ f.code }}</span></button>
+          {%- endfor %}
+        </div>
+      </div>
+      <p class="photobook-dial__name" aria-hidden="true"><span class="is-on"><i></i>All<b>{{ include.book.count }}</b></span>{% for f in films %}<span style="--film:{{ f.hue }}"><i></i>{{ f.name }}<b>{{ f.n }}</b></span>{% endfor %}</p>
     </div>
     {%- endif %}
-    <div class="photobook-bar__views" role="group" aria-label="View">
-      <button type="button" aria-pressed="true" data-view="book" aria-label="Book"><svg class="photobook-bar__view-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2.5h12v6H2zM2 10.5h5.5v3H2zM8.5 10.5H14v3H8.5z"/></svg><span>Book</span></button><button type="button" aria-pressed="false" data-view="sheet" aria-label="Sheet"><svg class="photobook-bar__view-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h4.5v4.5H2.5zM9 2.5h4.5v4.5H9zM2.5 9h4.5v4.5H2.5zM9 9h4.5v4.5H9z"/></svg><span>Sheet</span></button>
+    <div class="photobook-switch" role="group" aria-label="View">
+      <span class="photobook-switch__thumb" aria-hidden="true"></span>
+      <button type="button" aria-pressed="true" data-view="book" aria-label="Book"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2.5h12v6H2zM2 10.5h5.5v3H2zM8.5 10.5H14v3H8.5z"/></svg></button>
+      <button type="button" aria-pressed="false" data-view="sheet" aria-label="Sheet"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h4.5v4.5H2.5zM9 2.5h4.5v4.5H9zM2.5 9h4.5v4.5H2.5zM9 9h4.5v4.5H9z"/></svg></button>
     </div>
   </div>
 </div>
