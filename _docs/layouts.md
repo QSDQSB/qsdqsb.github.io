@@ -73,7 +73,7 @@ cover and book (their centre on the cover's lower edge).
   (`localStorage` `qsd.dial.hinted:<path>`).
 
 **Lightbox keyboard:** arrows = navigate, Space / S = slideshow, I = specs,
-P = pin specs, F = bare print, Z (or double-click) = loupe, Esc = back out
+F = bare print, Z (or double-click) = loupe, Esc = back out
 (loupe, then bare, then close).
 
 ## Page hero overlay (`_includes/page__hero.html`)
