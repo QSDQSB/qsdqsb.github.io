@@ -109,17 +109,18 @@ export function lightOf(sun) {
 }
 
 /**
- * The weather as one mark and one word, from the WMO code the processor kept. Clear after dark
- * is a clear night. Codes: 0–1 clear, 2 partly cloudy, 3 overcast, 45/48 fog, 51–67 and 80–82
+ * The weather as one mark and one word, from the WMO code the processor kept. Once the sun is
+ * below the horizon, the marks that carry a sun (clear, partly cloudy) carry the moon. Codes: 0–1 clear, 2 partly cloudy, 3 overcast, 45/48 fog, 51–67 and 80–82
  * rain (drizzle is rain here), 71–77 and 85–86 snow, 95–99 thunder.
  */
 export function weatherOf(w, light) {
   if (!w || !Number.isFinite(w.t) || !Number.isFinite(w.code)) return null;
   const c = w.code;
-  const kind = c <= 1 ? (light?.below ? 'night' : 'clear') : c === 2 ? 'partly' : c === 3 ? 'overcast'
+  const dark = !!light?.below;
+  const kind = c <= 1 ? (dark ? 'night' : 'clear') : c === 2 ? (dark ? 'partly-night' : 'partly') : c === 3 ? 'overcast'
     : c === 45 || c === 48 ? 'fog' : (c >= 71 && c <= 77) || c === 85 || c === 86 ? 'snow'
     : c >= 95 ? 'thunder' : 'rain';
-  const text = { clear: 'Clear', night: 'Clear', partly: 'Partly cloudy', overcast: 'Overcast', fog: 'Fog', rain: 'Rain', snow: 'Snow', thunder: 'Thunder' }[kind];
+  const text = { clear: 'Clear', night: 'Clear', partly: 'Partly cloudy', 'partly-night': 'Partly cloudy', overcast: 'Overcast', fog: 'Fog', rain: 'Rain', snow: 'Snow', thunder: 'Thunder' }[kind];
   return { t: w.t, kind, text };
 }
 
