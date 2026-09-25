@@ -203,7 +203,7 @@ export function lightbox(frames) {
         <div><b><i>ƒ</i>/${p.aperture ?? '—'}</b><span>Aperture</span></div>
         <div><b>${esc(p.shutter || '—')}<small>s</small></b><span>Shutter</span></div>
         <div><b>${p.iso ?? '—'}</b><span>ISO${ev}</span></div>
-        ${p.weather ? `<div class="photobook-specs__weather"><b>${String(p.weather.t).replace('-', '−')}°C${weatherGlyph(p.weather)}</b><span>${esc(p.weather.text)}</span></div>` : ''}
+        ${p.weather ? `<div class="photobook-specs__weather"><b>${String(p.weather.t).replace('-', '−')}°C</b><span>${weatherGlyph(p.weather)}${esc(p.weather.text)}</span></div>` : ''}
         ${sun}
         ${p.film ? `<div class="photobook-specs__film"><div class="photobook-specs__print" style="--film:${p.hue}">${esc(p.film)}</div></div>` : ''}
       </div>
