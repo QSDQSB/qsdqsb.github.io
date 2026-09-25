@@ -58,6 +58,9 @@ const creds = { accountId: env.accountId, accessKeyId: env.accessKeyId, secretAc
 const r2 = creds.accountId && creds.accessKeyId && creds.secretAccessKey ? new R2Store(env.originalsBucket, creds) : null;
 const viaRclone = !r2 && rcloneVersion() && remoteExists(env.rcloneRemote);
 export const fellBack = new Set();
+// Why the private read failed, when it did (a key without access, a wrong secret…): said once in
+// the summary, since the build falls back rather than failing.
+let privateError = null;
 
 async function privateManifest(gallery) {
   const key = `${gallery}/${MANIFEST_FILE}`;
@@ -71,7 +74,9 @@ async function privateManifest(gallery) {
 
 async function fetchMachine(gallery, local, signal) {
   if (local) return local.getJson(`${gallery}/${MANIFEST_FILE}`);
-  const own = await privateManifest(gallery);
+  // A private read that fails (not merely a manifest not there yet) falls back like one that is
+  // missing: a key that cannot read must never leave a voyage empty.
+  const own = await privateManifest(gallery).catch((e) => { privateError ||= `${e.name || 'Error'}: ${e.message}`.slice(0, 160); return null; });
   if (own) return own;
   // Not yet processed since the manifests moved: the old public copy, while it lasts.
   fellBack.add(gallery);
@@ -172,6 +177,7 @@ async function main() {
   } else warned = rows.reduce((n, [, s]) => n + s.warnings.length, 0);
   const source = local ? 'local store' : r2 ? 'private, R2 key' : viaRclone ? 'private, rclone' : 'no private access';
   console.log(`photo manifests: ${rows.length} galleries → ${path.relative(process.cwd(), PATHS.mergedDir)}/ (${source}; ${warned} warning(s)${unreachable ? `, ${unreachable} unreachable` : ''}${fellBack.size ? `, ${fellBack.size} from the old public copies` : ''})`);
+  if (privateError) console.log(`photo manifests: the private read failed (${privateError}); the public copies stood in`);
   return args.strict && warned ? 1 : 0;
 }
 
