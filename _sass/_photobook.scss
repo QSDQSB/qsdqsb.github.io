@@ -138,14 +138,35 @@
     animation: photobook-rise 1.2s 0.25s $cubic-bezier-smooth both;
   }
 
-  .photobook-kicker {
-    animation: photobook-rise 1.2s 0.1s $cubic-bezier-smooth both;
+}
 
-    // A part's way back to its voyage.
-    a { color: inherit; text-decoration: none; transition: color 0.3s $cubic-bezier-smooth; }
-    a:hover { color: $lighter-gray; }
-    a:focus-visible { outline: 1.5px solid var(--photobook-gold); outline-offset: 3px; }
-  }
+// A part's way back to its voyage, above the title: glass, like the lightbox's back button.
+.photobook-cover__up {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.42rem 0.9rem 0.42rem 0.65rem;
+  border: 1px solid var(--photobook-glass-edge);
+  border-radius: 999px;
+  background: var(--photobook-glass);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  color: $lighter-gray;
+  font: 500 0.72rem $barlow-font-family;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-shadow: none;
+  animation: photobook-rise 1.2s 0.1s $cubic-bezier-smooth both;
+  transition: background 0.3s $cubic-bezier-smooth, border-color 0.3s $cubic-bezier-smooth;
+
+  svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  span { color: var(--photobook-ink-3); letter-spacing: 0.1em; }
+  span::before { content: "·"; margin-right: 0.5rem; }
+
+  &:hover { background: var(--photobook-button-hover); border-color: rgba(255, 255, 255, 0.2); }
+  &:focus-visible { outline: 1.5px solid var(--photobook-gold); outline-offset: 3px; }
 }
 
 .photobook-cover__lede {
@@ -1489,7 +1510,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
 @mixin photobook-still {
   .photobook-cover__image,
   .photobook-cover__title h1,
-  .photobook-cover__title .photobook-kicker,
+  .photobook-cover__up,
   .photobook-cover__lede,
   .photobook-facts,
   .photobook-frame,
