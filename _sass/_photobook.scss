@@ -1034,6 +1034,10 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   b { display: flex; align-items: center; gap: 0.2em; }
 }
 
+// A frost like −50°C is wider than a third of the panel: that column takes what it needs from the others.
+.photobook-specs__highlights > .photobook-specs__weather,
+.photobook-specs__highlights > .photobook-specs__sun { min-width: auto; }
+
 .photobook-specs__sun .photobook-sun__glyph { width: 1.375em; height: 1.1em; color: var(--photobook-ink-3); }
 
 .photobook-weather__glyph {
