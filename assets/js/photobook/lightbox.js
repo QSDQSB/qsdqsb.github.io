@@ -270,6 +270,8 @@ export function lightbox(frames) {
   lb.addEventListener('pointercancel', () => { sx = null; });
   lb.addEventListener('pointerup', (e) => {
     if (sx === null) return;
+    // Zoomed, a drag looks around the print (the loupe follows it); it does not turn the page.
+    if (lb.classList.contains('is-zoomed')) { sx = null; return; }
     const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) (dx < 0 ? next : prev)();
     else if (dy < -60) { if (!specOpen) toggleSpecs(); else revealSpecs(); }
