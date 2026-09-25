@@ -38,7 +38,10 @@ test('processor renders tiers, skips unchanged, garbage-collects, and keeps EXIF
   assert.match(out, /2 processed, 0 unchanged/);
 
   const pub = path.join(store, 'public', 'demo', 'nested');
-  const manifest = JSON.parse(fs.readFileSync(path.join(pub, 'manifest.json'), 'utf8'));
+  // The manifest is private: it lives beside the originals, never in the public store.
+  const manifestAt = path.join(store, 'originals', 'demo', 'nested', 'manifest.json');
+  const manifest = JSON.parse(fs.readFileSync(manifestAt, 'utf8'));
+  assert.ok(!fs.existsSync(path.join(pub, 'manifest.json')), 'no manifest in the public store');
   assert.deepStrictEqual(manifest.photos.map(p => p.slug), ['dscf0001', 'dscf0002']);
   const p1 = manifest.photos[0];
   assert.strictEqual(p1.w, 1600); assert.strictEqual(p1.h, 900);
@@ -76,14 +79,14 @@ test('processor renders tiers, skips unchanged, garbage-collects, and keeps EXIF
   fs.unlinkSync(path.join(originals, 'DSCF0002_old_name,_Place__XF90mm_f2.0_1:270s_ISO800.jpg'));
   out = run(store);
   assert.match(out, /1 removed/);
-  assert.deepStrictEqual(JSON.parse(fs.readFileSync(path.join(pub, 'manifest.json'), 'utf8')).photos.map(p => p.slug), ['dscf0001']);
+  assert.deepStrictEqual(JSON.parse(fs.readFileSync(manifestAt, 'utf8')).photos.map(p => p.slug), ['dscf0001']);
   assert.ok(fs.existsSync(tiers(h2)), 'a normal run never deletes hash tiers: another gallery may share them');
   out = run(store, ['--gc']);
   assert.match(out, /gc: 1 referenced originals; \d+ unreferenced tier file\(s\) deleted/);
   assert.ok(!fs.existsSync(tiers(h2)), '--gc removes tiers no manifest references');
 
-  // Only the one live original's tiers and the manifest live in the public store.
-  assert.deepStrictEqual(listFiles(path.join(store, 'public')).filter(f => !f.startsWith(`t/${p1.hash}/`)), ['demo/nested/manifest.json']);
+  // Only the one live original's tiers live in the public store: images, nothing else.
+  assert.deepStrictEqual(listFiles(path.join(store, 'public')).filter(f => !f.startsWith(`t/${p1.hash}/`)), []);
 
   fs.rmSync(store, { recursive: true, force: true });
 });

@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
- * Pre-build step: merge each gallery's machine manifest (from the public
- * bucket) with its authored YAML (from the repo) into the JSON Liquid reads.
+ * Pre-build step: merge each gallery's machine manifest (from the locked
+ * originals bucket) with its authored YAML (from the repo) into the JSON
+ * Liquid reads.
  *
- *   in   https://img.qsdqsb.com/<gallery>/manifest.json   (or --local <dir>)
+ *   in   r2 qsdqsb-originals/<gallery>/manifest.json      (or --local <dir>)
  *   in   _data/photos/<gallery>.yml
  *   in   _data/photo_locations/<gallery>.yml               place names, when located
  *   out  _data/photo_manifests/<key>.json                  (gitignored)
@@ -12,6 +13,13 @@
  * Galleries are the `gallery_name` values referenced by _voyage and
  * _subvoyage frontmatter, so a voyage with no processed photos still gets
  * an (empty, flagged) manifest rather than a Liquid nil.
+ *
+ * The manifests are private, so reading them needs credentials: R2_ACCOUNT_ID,
+ * R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY in the environment (a read-only
+ * key, set in the Cloudflare Pages build settings), else the local `r2:`
+ * rclone remote. Until every gallery has been processed since the move, a
+ * gallery with no private manifest falls back to its old public copy, and
+ * says so.
  *
  * Never fails the build: an unreachable bucket keeps the previously merged
  * file when there is one and reports it. `--strict` turns warnings into a
@@ -26,10 +34,12 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import yaml from 'js-yaml';
 import { env, PATHS, MANIFEST_FILE, galleryKey, parseArgs } from './lib/config.mjs';
-import { FsStore } from './lib/store.mjs';
+import { FsStore, R2Store } from './lib/store.mjs';
+import { rcloneVersion, remoteExists } from './lib/rclone.mjs';
 import { mergeManifest, validateAuthored } from './lib/manifest.mjs';
 import { bookOf } from './lib/book.mjs';
 
@@ -43,8 +53,28 @@ const TIMEOUT_MS = 5000;
 const BUDGET_MS = 30000;
 const PARALLEL = 8;
 
+// The private manifests: through the S3 API with the build's key, or the local rclone remote.
+const creds = { accountId: env.accountId, accessKeyId: env.accessKeyId, secretAccessKey: env.secretAccessKey };
+const r2 = creds.accountId && creds.accessKeyId && creds.secretAccessKey ? new R2Store(env.originalsBucket, creds) : null;
+const viaRclone = !r2 && rcloneVersion() && remoteExists(env.rcloneRemote);
+export const fellBack = new Set();
+
+async function privateManifest(gallery) {
+  const key = `${gallery}/${MANIFEST_FILE}`;
+  if (r2) return r2.getJson(key);
+  if (viaRclone) {
+    const r = spawnSync('rclone', ['cat', `${env.rcloneRemote}:${env.originalsBucket}/${key}`], { encoding: 'utf8', timeout: TIMEOUT_MS * 2 });
+    return r.status === 0 && r.stdout.trim() ? JSON.parse(r.stdout) : null;
+  }
+  return null;
+}
+
 async function fetchMachine(gallery, local, signal) {
   if (local) return local.getJson(`${gallery}/${MANIFEST_FILE}`);
+  const own = await privateManifest(gallery);
+  if (own) return own;
+  // Not yet processed since the manifests moved: the old public copy, while it lasts.
+  fellBack.add(gallery);
   const url = `${env.publicBase}/${gallery}/${MANIFEST_FILE}`;
   const r = await fetch(url, { signal: AbortSignal.any([signal, AbortSignal.timeout(TIMEOUT_MS)]) });
   if (r.status === 404) return null;
@@ -140,7 +170,8 @@ async function main() {
       for (const w of s.warnings) { console.log(`    ! ${w}`); warned++; }
     }
   } else warned = rows.reduce((n, [, s]) => n + s.warnings.length, 0);
-  console.log(`photo manifests: ${rows.length} galleries → ${path.relative(process.cwd(), PATHS.mergedDir)}/ (${warned} warning(s)${unreachable ? `, ${unreachable} unreachable` : ''})`);
+  const source = local ? 'local store' : r2 ? 'private, R2 key' : viaRclone ? 'private, rclone' : 'no private access';
+  console.log(`photo manifests: ${rows.length} galleries → ${path.relative(process.cwd(), PATHS.mergedDir)}/ (${source}; ${warned} warning(s)${unreachable ? `, ${unreachable} unreachable` : ''}${fellBack.size ? `, ${fellBack.size} from the old public copies` : ''})`);
   return args.strict && warned ? 1 : 0;
 }
 

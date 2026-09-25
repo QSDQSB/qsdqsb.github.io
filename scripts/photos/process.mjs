@@ -7,9 +7,9 @@
  *      (same etag + size), unless --force
  *   2. read EXIF, orient, measure, thumbhash, dominant colour
  *   3. render every public tier and upload it
- *   4. record the photo in <gallery>/manifest.json (public, no GPS; the sun
- *      at the moment of the frame, worked out at city precision) and
- *      <gallery>/.private.json (originals bucket, GPS + full EXIF)
+ *   4. record the photo in <gallery>/manifest.json (what the site builds from: no GPS; the sun
+ *      and the weather at the moment of the frame) and <gallery>/.private.json (GPS + full
+ *      EXIF), both in the locked originals bucket; the public bucket serves image tiers only
  *
  * Tiers whose original has disappeared are deleted and dropped from the
  * manifest. When anything changed and CF_PAGES_DEPLOY_HOOK is set, the site
@@ -75,7 +75,7 @@ async function main() {
 
   await closeCamera();
   log(`\ndone: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed, ${lit} given their sun across ${byGallery.size} galleries`);
-  if (args.gc) await collectGarbage(pub);
+  if (args.gc) await collectGarbage(pub, originals);
   if (changed + removed + lit > 0 && env.deployHook && !DRY) {
     const r = await fetch(env.deployHook, { method: 'POST' });
     log(`deploy hook: ${r.status}`);
@@ -85,7 +85,9 @@ async function main() {
 
 async function processGallery(gallery, files, { originals, pub }) {
   const manifestKey = `${gallery}/${MANIFEST_FILE}`, privateKey = `${gallery}/${PRIVATE_FILE}`;
-  const manifest = (await pub.getJson(manifestKey)) || emptyManifest(gallery);
+  // The manifest lives beside the originals, in the locked bucket; the public bucket serves images
+  // only. A gallery last processed before the move starts from its old public copy.
+  const manifest = (await originals.getJson(manifestKey)) || (await pub.getJson(manifestKey)) || emptyManifest(gallery);
   const priv = (await originals.getJson(privateKey)) || { gallery, photos: {} };
   const bySlug = new Map(manifest.photos.map(p => [p.slug, p]));
   const { slugs, warnings } = assignSlugs(files.map(f => path.posix.basename(f.key)));
@@ -169,7 +171,7 @@ async function processGallery(gallery, files, { originals, pub }) {
 
   if ((changed || removed || lit) && !DRY) {
     const photos = sortPhotos([...bySlug.values()]);
-    await pub.putJson(manifestKey, { version: MANIFEST_VERSION, gallery, generated: new Date().toISOString(), photos });
+    await originals.putJson(manifestKey, { version: MANIFEST_VERSION, gallery, generated: new Date().toISOString(), photos });
     await originals.putJson(privateKey, { gallery, generated: new Date().toISOString(), photos: priv.photos });
   }
   if (changed || removed || failed || lit) log(`  ${gallery}: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed${lit ? `, ${lit} given their sun or weather` : ''}`);
@@ -181,9 +183,13 @@ async function processGallery(gallery, files, { originals, pub }) {
  * more (an original replaced or removed). Runs only with --gc, after every
  * manifest is written, because one original may be shared by galleries.
  */
-async function collectGarbage(pub) {
-  const all = await pub.list('');
+async function collectGarbage(pub, originals) {
+  // Tiers still named by any manifest, private or (until the old copies are gone) public, are kept.
   const refs = new Set();
+  for (const o of (await originals.list('')).filter((x) => x.key.endsWith(`/${MANIFEST_FILE}`))) {
+    for (const p of (await originals.getJson(o.key))?.photos || []) if (p.hash) refs.add(p.hash);
+  }
+  const all = await pub.list('');
   for (const o of all.filter(o => o.key.endsWith('/' + MANIFEST_FILE))) {
     for (const p of (await pub.getJson(o.key))?.photos || []) if (p.hash) refs.add(p.hash);
   }

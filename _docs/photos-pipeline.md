@@ -7,10 +7,10 @@ read this when touching anything under `scripts/photos/`, `_data/photos/`,
 ```
 laptop                      Cloudflare                          GitHub                    site build
 photos/<gallery>/*.jpg ──▶  R2 qsdqsb-originals (private) ──▶  Actions: process.mjs ──▶  R2 qsdqsb-photos (public)
-      npm run photos:push        │ event notification                 Sharp tiers,             img.qsdqsb.com/<gallery>/…
-                                 ▼                                    EXIF, thumbhash          │
-                            queue photos-uploads                      manifest.json            ▼
-                                 ▼                                         │              npm run photos:fetch
+      npm run photos:push        │ event notification                 Sharp tiers ─────────▶   img.qsdqsb.com/t/<hash>/…
+                                 ▼                                    manifest.json, GPS ──▶   back into qsdqsb-originals
+                            queue photos-uploads                      (private)                │
+                                 ▼                                         │              npm run photos:fetch (R2 key)
                             Worker photos-trigger ──repository_dispatch──▶ ┘              merges with _data/photos/*.yml
                                                                                           → _data/photo_manifests/*.json
 _data/photos/<gallery>.yml  (captions, order, stories — committed) ───────────────────────┘        → Liquid
@@ -25,7 +25,7 @@ every step is re-runnable and idempotent.
 | Layer | Where | Written by | Holds |
 |---|---|---|---|
 | Originals | `photos/<gallery>/<FRAME>.jpg` locally, mirrored to the private bucket | you, via `photos:push` | camera files, EXIF intact |
-| Machine | `<gallery>/manifest.json` in the public bucket; `<gallery>/.private.json` in the private bucket | the processor | dimensions, EXIF fields, thumbhash, tint, tier list; GPS and full EXIF only in the private file |
+| Machine | `<gallery>/manifest.json` and `<gallery>/.private.json`, both in the private originals bucket (the public bucket serves image tiers only) | the processor | dimensions, EXIF fields, thumbhash, tint, tier list, sun, weather; GPS and full EXIF only in `.private.json` |
 | Authored | `_data/photos/<gallery>.yml` (nested for sub-voyages: `_data/photos/prague/twilight.yml`) | you, by hand | captions, order, stories, featured, hidden |
 
 The site build merges machine + authored into `_data/photo_manifests/<key>.json`
@@ -65,7 +65,7 @@ Every key is optional. A photograph with no entry still shows, sorted by
 capture time, captioned by nothing. `npm run photos:fetch` validates the
 shape and reports slugs that no processed photo matches.
 
-### Public manifest entry
+### Manifest entry (private; the build reads it with an R2 key)
 
 ```json
 { "slug": "dscf1797", "file": "DSCF1797.jpg", "version": "<etag>:<size>",
@@ -373,7 +373,7 @@ them as immutable is true by construction. `process.mjs --gc` deletes only
 tiers no manifest references any more.
 
 The database follows the pipeline, it is never refetched: the processor
-writes a gallery's `manifest.json` (public) and `.private.json` (originals),
+writes a gallery's `manifest.json` and `.private.json` (both in the originals bucket),
 R2 sends an event to the `photos-manifests` queue, and the
 `qsdqsb-photos-db` Worker upserts only the rows whose version changed. The
 same Worker serves a read-only API of public fields:
@@ -388,9 +388,14 @@ GET https://api.qsdqsb.com/v1/photos/<id>
 Setup (done once, `workers/photos-db/`): `npx wrangler d1 create qsdqsb-photos`,
 `CI=true npx wrangler d1 migrations apply qsdqsb-photos --remote` (CI=true:
 a migration that drops tables otherwise waits on a prompt), `npx wrangler
-queues create photos-manifests`, one notification per bucket (`--suffix
-manifest.json` on `qsdqsb-photos`, `--suffix .private.json` on
-`qsdqsb-originals`), `npx wrangler deploy`.
+queues create photos-manifests`, a notification on `qsdqsb-originals` with
+`--suffix .private.json` (written with each manifest), `npx wrangler deploy`.
+
+**The manifests are private.** The site's build reads them with a read-only
+R2 key: in the Cloudflare Pages project → Settings → Variables and secrets
+(Production and Preview), `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`,
+`R2_SECRET_ACCESS_KEY`, from an R2 API token with **Object Read only** on
+`qsdqsb-originals`. Locally, `photos:fetch` uses the `r2:` rclone remote.
 
 ## Cloudflare setup (once)
 
@@ -526,7 +531,7 @@ and everything else is either in git or rebuilt from the originals.
 | Camera originals | your camera library / cards | `photos/` locally, then the originals bucket after `photos:push` (back down with `photos:pull`) | library, `photos/` and the bucket all go at once |
 | Compressed copies | `gallery/` in git history | `photos/`, the bucket | never, while git history keeps them |
 | Captions, order, stories | `_data/photos/*.yml` in git | GitHub | never, once committed and pushed |
-| Tiers, public manifests | rebuilt by the processor | — | nothing: `gh workflow run photos-process.yml -f force=true` |
+| Tiers, manifests | rebuilt by the processor | — | nothing: `gh workflow run photos-process.yml -f force=true` |
 | GPS, full EXIF (`.private.json`) | rebuilt by the processor from originals | — | nothing |
 | Merged manifests | rebuilt every build | — | nothing |
 
