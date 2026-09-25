@@ -1,5 +1,8 @@
 # Authored layer for gallery/london — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# The book opens on these, in this order; the rest follows by capture time.
+# Pre-filled with the old viewer's opening (an evening arrival from the air, then City Hall at sunset).
+order: [dscf0958, dscf1797]
 photos:
   # GPS here was a stale fix from the phone ("Bank of England" for both).
   dscf6440:
