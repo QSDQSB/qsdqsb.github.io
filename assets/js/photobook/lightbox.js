@@ -34,7 +34,7 @@ export function lightbox(frames) {
   const pressed = (act, on) => $(`[data-act="${act}"]`)?.setAttribute('aria-pressed', String(on));
 
   // The smallest rendition at least as wide as the print will be drawn on this screen, in device
-  // pixels. Framed, never past 2560 px (the 4096 file is several times the weight for little more);
+  // pixels. Framed, never past 2880 px (the 4096 file is several times the weight for little more);
   // picture only and the loupe may take the largest.
   // Renditions are named by their long edge, so a portrait needs a larger name for the same width.
   const srcFor = (p) => {
@@ -43,7 +43,7 @@ export function lightbox(frames) {
     const fill = bare && lb.style.getPropertyValue('--fit') === 'cover';
     const width = (fill ? Math.max : Math.min)(bw, bh * r) * Math.min(window.devicePixelRatio || 1, 3) * (zoomed ? 2.2 : 1);
     const want = width / Math.min(1, r);
-    const cap = bare || zoomed ? Infinity : 2560;
+    const cap = bare || zoomed ? Infinity : 2880;
     const fit = p.sizes.filter((s) => s <= cap);
     const w = fit.find((s) => s >= want) || fit[fit.length - 1] || p.sizes[0] || 1920;
     return `${p.url}/${w}.webp`;

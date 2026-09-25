@@ -35,10 +35,11 @@ export const PATHS = {
 };
 
 // Long-edge sizes. Thumb tiers feed the grid, full tiers feed the lightbox
-// and the loupe. 4096 is the largest anything public ever reaches.
+// and the loupe. 2880 is a MacBook's full-width spread at 2x (1440 × 2), so
+// it need not reach for 4096; 4096 is the largest anything public ever reaches.
 export const SIZES = {
   thumb: [480, 960],
-  full:  [1280, 1920, 2560, 4096],
+  full:  [1280, 1920, 2560, 2880, 4096],
 };
 export const ALL_SIZES = [...SIZES.thumb, ...SIZES.full];
 

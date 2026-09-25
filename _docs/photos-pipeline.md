@@ -73,7 +73,7 @@ shape and reports slugs that no processed photo matches.
   "taken": "2023-06-16T18:22:01+01:00", "camera": "FUJIFILM X-T5", "lens": "XF90mmF2 R LM WR",
   "focal": 90, "focal35": 137, "aperture": 4.3, "shutter": "1/2000", "iso": 320, "exposureBias": 0,
   "thumbhash": "…base64…", "tint": "#1a1c20",
-  "sizes": { "webp": [480, 960, 1280, 1920, 2560, 4096], "jpg": [480, 960, 1280, 1920, 2560, 4096], "avif": [480, 960, 1280, 1920] } }
+  "sizes": { "webp": [480, 960, 1280, 1920, 2560, 2880, 4096], "jpg": [480, 960, 1280, 1920, 2560, 2880, 4096], "avif": [480, 960, 1280, 1920] } }
 ```
 
 URL template, the one contract the front end depends on:
