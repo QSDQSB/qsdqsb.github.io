@@ -20,6 +20,7 @@ if (dataEl) {
     frames,
     onOpen: (i, order, fromImg) => lb.open(i, order, fromImg),
     onLayout: (targets) => g.watch(targets),
+    onScreen: (order) => lb.screen(order),
   });
   lb.openFromHash();
 }

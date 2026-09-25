@@ -45,7 +45,7 @@ export const weatherGlyph = (w) => {
 
 export function lightbox(frames) {
   const lb = document.getElementById('photobook-lightbox');
-  if (!lb) return { open() {}, openFromHash() {} };
+  if (!lb) return { open() {}, openFromHash() {}, screen() {} };
   const $ = (s) => lb.querySelector(s);
   const mat = $('.photobook-lightbox__mat'), wash = $('.photobook-lightbox__wash');
   const specsEl = $('.photobook-specs'), specsIn = $('.photobook-specs__inner');
@@ -83,8 +83,11 @@ export function lightbox(frames) {
 
   // Opening adds one history entry and moving between frames replaces it, so Back closes the
   // lightbox instead of leaving the voyage; closing by any other way steps back over that entry.
-  let pushed = false, popping = false, stepping = false, returnTo = null, firstQuick = null;
-  const settle = (el) => { if (el) { el.scrollIntoView({ block: 'center' }); el.focus({ preventScroll: true }); } };
+  let pushed = false, popping = false, stepping = false, returnTo = null, returnY = null, firstQuick = null;
+  const settle = (el, y = null) => {
+    if (y !== null) { window.scrollTo({ top: y, behavior: 'instant' }); el?.focus({ preventScroll: true }); return; }
+    if (el) { el.scrollIntoView({ block: 'center' }); el.focus({ preventScroll: true }); }
+  };
   function open(i, visible, fromImg) {
     order = visible?.length ? visible : frames.map((_, k) => k);
     lastFocus = document.activeElement;
@@ -107,22 +110,24 @@ export function lightbox(frames) {
   }
 
   lb.addEventListener('close', () => {
-    stop();
-    // Back on the page where the reader left off: the frame last shown, in whichever view is out.
-    const here = pos >= 0 && [...document.querySelectorAll(`.photobook-frame[data-i="${order[pos]}"] .photobook-frame__print`)].find((b) => b.offsetParent);
+    // Back on the page where the reader left off: the frame last shown, in whichever view is out;
+    // after a screening, the place the reader started it from.
+    const here = !screening && pos >= 0 && [...document.querySelectorAll(`.photobook-frame[data-i="${order[pos]}"] .photobook-frame__print`)].find((b) => b.offsetParent);
+    const was = screening ? screenFrom : null;
+    stop(); screening = false; lb.classList.remove('is-screening');
     lb.classList.remove('has-specs', 'is-pinned', 'is-bare', 'is-zoomed', 'is-idle'); pressed('bare', false);
     if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
     mat.replaceChildren(); wash.replaceChildren(); pos = -1;
     const back = here || lastFocus;
-    if (pushed && !popping) { stepping = true; returnTo = back; history.back(); }
-    else { history.replaceState(null, '', location.pathname + location.search); settle(back); }
+    if (pushed && !popping) { stepping = true; returnTo = back; returnY = was; history.back(); }
+    else { history.replaceState(null, '', location.pathname + location.search); settle(back, was); }
     pushed = false; popping = false;
   });
   window.addEventListener('popstate', () => {
     if (stepping) {
       stepping = false; history.replaceState(null, '', location.pathname + location.search);
-      const el = returnTo; returnTo = null;
-      requestAnimationFrame(() => { settle(el); history.scrollRestoration = 'auto'; });
+      const el = returnTo, y = returnY; returnTo = null; returnY = null;
+      requestAnimationFrame(() => { settle(el, y); history.scrollRestoration = 'auto'; });
       return;
     }
     if (lb.open) { popping = true; lb.close(); history.scrollRestoration = 'auto'; }
@@ -260,6 +265,7 @@ export function lightbox(frames) {
   const ACTS = { next, prev, close: () => lb.close(), specs: toggleSpecs, bare: () => bare(), play: () => (timer ? stop() : play()) };
   lb.addEventListener('click', (e) => { const b = e.target.closest('[data-act]'); if (b && ACTS[b.dataset.act]) { ACTS[b.dataset.act](); wake(); } });
   lb.addEventListener('cancel', (e) => {
+    if (screening) return;                                     // Esc ends a screening outright
     if (lb.classList.contains('is-zoomed')) { e.preventDefault(); lb.classList.remove('is-zoomed'); }
     else if (lb.classList.contains('is-bare')) { e.preventDefault(); bare(false); }
   });
@@ -310,11 +316,22 @@ export function lightbox(frames) {
   });
   lb.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') wake(); });
 
+  // Screening: the book shown full screen, picture only, as a slideshow from the first frame of what
+  // is on the page. A tap or a click anywhere, or Esc, ends it and puts the reader back where they were.
+  let screening = false, screenFrom = 0;
+  function screen(visible) {
+    screenFrom = window.scrollY;
+    open(visible?.[0] ?? 0, visible);
+    screening = true; lb.classList.add('is-screening');
+    bare(true); play();
+  }
+  lb.addEventListener('pointerdown', (e) => { if (screening) { e.preventDefault(); lb.close(); } }, true);
+
   /** A link to a frame (#slug) opens it straight away. */
   function openFromHash() {
     const slug = decodeURIComponent(location.hash.slice(1));
     const i = slug ? frames.findIndex((p) => p.slug === slug) : -1;
     if (i >= 0) open(i);
   }
-  return { open, openFromHash };
+  return { open, openFromHash, screen };
 }

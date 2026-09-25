@@ -137,50 +137,6 @@
     letter-spacing: 0.015em;
     animation: photobook-rise 1.2s 0.25s $cubic-bezier-smooth both;
   }
-
-}
-
-// The spine: down the cover's left margin, the name of what holds this book, set like the title on
-// a book's spine (top to bottom) between two hairlines; the way back to it. It lives in the margin
-// the title leaves, from below the masthead to the cover's foot, and leaves with the cover.
-.photobook-spine {
-  position: absolute;
-  z-index: 2;
-  left: 0;
-  top: 6rem;
-  bottom: clamp(1.5rem, 4vw, 3rem);
-  width: max(var(--photobook-gutter), 1.6rem);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.9rem;
-  color: rgba(230, 238, 232, 0.5);
-  text-decoration: none;
-  text-shadow: none;
-  transition: color 0.4s $cubic-bezier-smooth;
-  animation: photobook-rise 1.2s 0.5s $cubic-bezier-smooth both;
-
-  i { flex: 1; width: 1px; background: currentColor; opacity: 0.45; transition: opacity 0.4s $cubic-bezier-smooth; }
-  // The name near the top, as on a spine, clear of the title at the cover's foot.
-  i:first-child { flex: 0 0 1.4rem; }
-
-  span {
-    writing-mode: vertical-rl;
-    font: 500 0.6rem/1 $barlow-font-family;
-    letter-spacing: 0.34em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  // On the way out, a small chevron points back.
-  span::before { content: "‹"; display: inline-block; margin-bottom: 0.6em; letter-spacing: 0; rotate: 90deg; opacity: 0; transition: opacity 0.4s $cubic-bezier-smooth; }
-
-  &:hover,
-  &:focus-visible { color: $lighter-gray; }
-  &:hover i { opacity: 0.8; }
-  &:hover span::before,
-  &:focus-visible span::before { opacity: 1; }
-  &:focus-visible { outline: 1.5px solid var(--photobook-gold); outline-offset: -2px; }
 }
 
 .photobook-cover__lede {
@@ -290,7 +246,7 @@
   @include photobook-bar-glass;
   position: relative;
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
   width: 34px;
   height: 86px;
   padding: 3px;
@@ -314,6 +270,10 @@
   }
 
   svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.2; }
+
+  // Screening is an act, not a view: set off from the two views by a hairline; the thumb never rests there.
+  [data-act="screen"] { border-top: 1px solid var(--photobook-glass-edge); }
+  [data-act="screen"] svg { width: 12px; height: 12px; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 }
 
 .photobook-switch__thumb {
@@ -321,7 +281,7 @@
   top: 3px;
   left: 3px;
   right: 3px;
-  height: calc(50% - 3px);
+  height: calc((100% - 6px) / 3);
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.13);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
@@ -902,7 +862,8 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 
 .photobook-lightbox {
   touch-action: none; // swipes are the lightbox's, not the page's
-  --top: 4rem;
+  --bar: 4rem;          // the tools' band at the top
+  --top: var(--bar);     // the print's top margin: the band, except in picture only
   --bot: 5.4rem;
   --side: clamp(3rem, 5vw, 5.5rem);
   --right: var(--side);
@@ -1057,11 +1018,13 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   left: 0;
   right: 0;
   z-index: 6;
-  height: var(--top);
+  // Its own height, not the print's margin (--top): picture only sets that to 0, and the tools,
+  // returning, would sit half off the top of the screen.
+  height: calc(var(--bar) + env(safe-area-inset-top, 0px));
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: env(safe-area-inset-top, 0px) 1rem 0;
+  padding: env(safe-area-inset-top, 0px) max(1rem, env(safe-area-inset-right, 0px)) 0 max(1rem, env(safe-area-inset-left, 0px));
 }
 
 .photobook-lightbox__back,
@@ -1489,7 +1452,8 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-colophon__grid { grid-template-columns: 1fr; }
 
   .photobook-lightbox {
-    --top: 3.6rem;
+    --bar: 3.6rem;
+    --top: var(--bar);
     --bot: 6.6rem;
     --side: 0px;
     --right: 0px;
@@ -1524,7 +1488,6 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 @mixin photobook-still {
   .photobook-cover__image,
   .photobook-cover__title h1,
-  .photobook-spine,
   .photobook-cover__lede,
   .photobook-facts,
   .photobook-frame,

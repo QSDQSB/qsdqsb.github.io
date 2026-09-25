@@ -1,8 +1,11 @@
 {%- comment -%}
   The book's controls, at the top right: the film dial, and in the corner beside it the view switch
-  (the book, or every frame on a contact sheet), a slide as tall as the dial. The dial turns a film under the red index: at rest a dot of
-  each film's colour (white for ALL), in hand its letters and, underneath, its name. Each film's letters (P, V, CN…) come from filmCode() in
-  scripts/photos/lib/book.mjs. A gallery made on one film has no dial. Script: assets/js/photobook/dial.js.
+  (the book, or every frame on a contact sheet), a slide as tall as the dial. Its third stop, the
+  full-screen corners, is Screening: the book full screen as a slideshow (lightbox.js screen()), an
+  act rather than a view. The dial turns a film under the red index: at rest a dot of each film's
+  colour (white for ALL), in hand its letters and, underneath, its name. Each film's letters (P, V,
+  CN…) come from filmCode() in scripts/photos/lib/book.mjs. A gallery made on one film has no dial.
+  Script: assets/js/photobook/dial.js.
 {%- endcomment -%}
 {%- assign films = include.book.book.colophon.films -%}
 <div class="photobook-bar">
@@ -28,6 +31,7 @@
       <span class="photobook-switch__thumb" aria-hidden="true"></span>
       <button type="button" aria-pressed="true" data-view="book" aria-label="Book"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2.5h12v6H2zM2 10.5h5.5v3H2zM8.5 10.5H14v3H8.5z"/></svg></button>
       <button type="button" aria-pressed="false" data-view="sheet" aria-label="Sheet"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h4.5v4.5H2.5zM9 2.5h4.5v4.5H9zM2.5 9h4.5v4.5H2.5zM9 9h4.5v4.5H9z"/></svg></button>
+      <button type="button" data-act="screen" aria-label="Screening: the book full screen, as a slideshow" title="Screening"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
     </div>
   </div>
 </div>
