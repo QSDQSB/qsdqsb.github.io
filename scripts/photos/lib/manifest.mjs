@@ -88,7 +88,7 @@ export function mergeManifest(gallery, machine, authored, base) {
   // Every processed photo, hidden ones included, for the management scripts
   // (photos:status, photos:recollect) that compare the bucket with the YAML.
   const inventory = sortPhotos(m.photos).map(p => ({
-    slug: p.slug, file: p.file, taken: p.taken || null, camera: p.camera || null, compressed: !!p.compressed,
+    slug: p.slug, file: p.file, taken: p.taken || null, camera: p.camera || null,
     formats: p.formats || Object.keys(p.sizes || {}), processed: p.processed || null,
   }));
 

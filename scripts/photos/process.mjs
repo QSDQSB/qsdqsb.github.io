@@ -26,7 +26,7 @@
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { readCamera, closeCamera } from './lib/camera.mjs';
-import { env, ROOT, PATHS, ORIGINAL_RE, IGNORED_PREFIXES, MANIFEST_FILE, PRIVATE_FILE, MANIFEST_VERSION, FORMATS, BOOTSTRAP_STAMP, parseArgs } from './lib/config.mjs';
+import { env, ROOT, PATHS, ORIGINAL_RE, IGNORED_PREFIXES, MANIFEST_FILE, PRIVATE_FILE, MANIFEST_VERSION, FORMATS, parseArgs } from './lib/config.mjs';
 import { storesFrom } from './lib/store.mjs';
 import { readExif } from './lib/exif.mjs';
 import { assignSlugs } from './lib/slug.mjs';
@@ -129,7 +129,6 @@ async function processGallery(gallery, files, { originals, pub }) {
           aperture: exif.aperture, shutter: exif.shutter, iso: exif.iso, exposureBias: exif.exposureBias,
           ...(cam ? cam.pub : {}),
           thumbhash: facts.thumbhash, tint: facts.tint, sizes, formats, processed: new Date().toISOString(),
-          ...(exif.software === BOOTSTRAP_STAMP ? { compressed: true } : {}),
         });
         priv.photos[slug] = {
           file, key: meta.key, hash, version, gps: exif.gps,

@@ -15,23 +15,21 @@ const ROOT = path.join(__dirname, '..');
 const recollect = () => import('../scripts/photos/recollect.mjs');
 const hasRclone = spawnSync('rclone', ['version']).status === 0;
 
-const loc = (file, compressed = false, size = 10) => ({ file, slug: file.replace(/\..*$/, '').toLowerCase(), size, compressed });
+const loc = (file, size = 10) => ({ file, slug: file.replace(/\..*$/, '').toLowerCase(), size });
 const base = (file, size = 5) => ({ file, slug: file.replace(/\..*$/, '').toLowerCase(), size });
 
 test('matched, new, renamed and vanishing are told apart, with authored work named', async () => {
   const { compareRecollection, blockers } = await recollect();
   const r = compareRecollection({
-    local: [loc('DSCF0001.JPG'), loc('DSCF0002.jpg', true, 5), loc('DSCF0007.JPG'), loc('DSCF0008.tif')],
+    local: [loc('DSCF0001.JPG'), loc('DSCF0002.jpg', 5), loc('DSCF0007.JPG'), loc('DSCF0008.tif')],
     baseline: [base('DSCF0001.jpg'), base('DSCF0002.jpg'), base('DSCF0003.jpg'), base('DSCF0004.jpg'), base('DSCF0008.jpg')],
     baselineHasSizes: true,
     doc: { order: ['dscf0004'], photos: { dscf0003: { caption: 'Gone' }, dscf0005: { caption: null } } },
   });
   assert.deepStrictEqual(r.matched, ['dscf0001', 'dscf0002', 'dscf0008']);
-  assert.deepStrictEqual(r.original, ['dscf0001', 'dscf0008']);
-  assert.deepStrictEqual(r.compressed, ['dscf0002']);
   assert.deepStrictEqual(r.unchanged, ['dscf0002']);
-  const restamped = compareRecollection({ local: [{ ...loc('DSCF0002.jpg', true, 5), md5: 'b' }], baseline: [{ ...base('DSCF0002.jpg'), md5: 'a' }], baselineHasSizes: true });
-  assert.deepStrictEqual(restamped.unchanged, [], 'same size, different bytes is a change');
+  const rewritten = compareRecollection({ local: [{ ...loc('DSCF0002.jpg', 5), md5: 'b' }], baseline: [{ ...base('DSCF0002.jpg'), md5: 'a' }], baselineHasSizes: true });
+  assert.deepStrictEqual(rewritten.unchanged, [], 'same size, different bytes is a change');
   assert.deepStrictEqual(r.new.map(n => n.slug), ['dscf0007']);
   assert.deepStrictEqual(r.renamed, [
     { slug: 'dscf0001', local: 'DSCF0001.JPG', bucket: 'DSCF0001.jpg', safe: true },
@@ -83,7 +81,7 @@ test('CLI refuses a case mismatch against the bucket, then fixes it with --renam
   const gallery = 'zz-recollect-test';
   fs.mkdirSync(path.join(root, 'bucket', gallery), { recursive: true });
   fs.mkdirSync(path.join(root, 'photos', gallery), { recursive: true });
-  fs.writeFileSync(path.join(root, 'bucket', gallery, 'DSCF0001.jpg'), 'compressed');
+  fs.writeFileSync(path.join(root, 'bucket', gallery, 'DSCF0001.jpg'), 'earlier upload');
   fs.writeFileSync(path.join(root, 'photos', gallery, 'DSCF0001.JPG'), 'camera original');
   const env = {
     ...process.env, RCLONE_CONFIG_TESTR2_TYPE: 'local', PHOTOS_RCLONE_REMOTE: 'testr2',

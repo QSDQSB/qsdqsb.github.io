@@ -1,8 +1,7 @@
 /**
- * Lossless EXIF injection for JPEGs. Used by the bootstrap to give today's
- * compressed files, whose exposure data lives only in their filenames, real
- * EXIF so the processor treats them like any other original. The image
- * bytes are untouched; only the APP1 segment is rewritten.
+ * Lossless EXIF injection for JPEGs, for test fixtures: a synthetic picture
+ * given a camera, a capture time and an exposure reads like a camera file.
+ * The image bytes are untouched; only the APP1 segment is rewritten.
  */
 
 import { createRequire } from 'node:module';

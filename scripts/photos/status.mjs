@@ -2,15 +2,12 @@
 /**
  * One report for the whole collection: per gallery, how many originals sit
  * on this machine, how many in the bucket, how many the processor has
- * rendered, how many of those are still the bootstrap's compressed copies,
- * how many carry a caption, and what is out of place.
+ * rendered, how many carry a caption, and what is out of place.
  *
  *   local      files in photos/<gallery>/
  *   bucket     originals in the private bucket (rclone listing)
  *   pending    local files the bucket does not have yet, or has at another size
  *   processed  photos in the public manifest, hidden ones included
- *   compressed processed photos that are still the bootstrap's stamped copy
- *              (transitional: 0 everywhere once re-collection is done)
  *   captioned  processed photos whose YAML entry has words in it
  *   unlisted   processed photos with no YAML entry at all
  *
@@ -32,7 +29,7 @@ import { createRequire } from 'node:module';
 import { PATHS, parseArgs } from './lib/config.mjs';
 import {
   cleanGallery, originalsBucket, localGallery, galleriesUnder, bucketGalleries,
-  readAuthored, readMerged, isCaptioned, isCompressedCopy, readHeadExif,
+  readAuthored, readMerged, isCaptioned,
 } from './lib/inventory.mjs';
 import { slugFor } from './lib/slug.mjs';
 import { readSidecar } from './locate.mjs';
@@ -66,10 +63,6 @@ export function buildStatus({ galleries, referenced, local, bucket, merged, auth
       gallery, referenced: referenced.has(gallery),
       local: l.files.length, bucket: b ? b.length : null,
       pending: [], processed: inventory.length,
-      compressed: inventory.filter(p => p.compressed).length,
-      // Re-collected on this machine, pushed or not: local files without the
-      // bootstrap stamp. Only known when the local files carry a `compressed` flag.
-      localOriginals: l.files.filter(f => f.compressed === false).length,
       captioned: inventory.filter(p => isCaptioned(aPhotos[p.slug])).length,
       unlisted: inventory.filter(p => !(p.slug in aPhotos)).map(p => p.slug),
       orphans: [], referencedOrphans: [], unprocessed: [],
@@ -77,9 +70,9 @@ export function buildStatus({ galleries, referenced, local, bucket, merged, auth
       formats: [...new Set(inventory.flatMap(p => p.formats || []))].sort(),
       // Where each photo's place name comes from (photos:locate): GPS, a visual guess, or not yet.
       located: Object.values(locations(gallery)).reduce((n, e) => {
-        const k = e.gps === 'present' ? 'gps' : e.source === 'visual guess' ? 'visual' : e.source === 'awaiting original' ? 'awaiting' : 'pending';
+        const k = e.gps === 'present' ? 'gps' : e.source === 'visual guess' ? 'visual' : 'pending';
         n[k] = (n[k] || 0) + 1; return n;
-      }, { gps: 0, visual: 0, pending: 0, awaiting: 0 }),
+      }, { gps: 0, visual: 0, pending: 0 }),
       problems, notes,
     };
 
@@ -99,17 +92,6 @@ export function buildStatus({ galleries, referenced, local, bucket, merged, auth
       // Offline: the best available stand-in for "in the bucket" is "on this machine".
       row.unprocessed = l.files.filter(f => !processedSlugs.has(f.slug)).map(f => f.slug);
     }
-
-    // Where each photograph stands in the migration, one bucket per photo:
-    // live as an original, live as the compressed copy, pushed but not yet
-    // rendered, or only on this machine. Drives the dashboard's bars.
-    const bucketSlugs = new Set((b || []).map(f => f.slug));
-    row.stages = {
-      original: inventory.filter(p => !p.compressed).length,
-      compressed: row.compressed,
-      awaiting: b ? b.filter(f => !processedSlugs.has(f.slug)).length : 0,
-      localOnly: l.files.filter(f => !processedSlugs.has(f.slug) && !bucketSlugs.has(f.slug)).length,
-    };
 
     if (row.orphans.length) problems.push(`${row.orphans.length} orphan(s) in the bucket, not in photos/: ${row.orphans.join(', ')}`);
     if (row.referencedOrphans.length) problems.push(`${row.referencedOrphans.length} orphan(s) still named in the YAML: ${row.referencedOrphans.join(', ')}`);
@@ -134,7 +116,7 @@ export function formatStatus(rows, { bucketNote = null } = {}) {
   const cols = [
     ['gallery', 34, r => r.gallery], ['local', 6, r => r.local], ['bucket', 7, r => r.bucket ?? '–'],
     ['pending', 8, r => r.bucket == null ? '–' : r.pending.length], ['processed', 10, r => r.processed],
-    ['compressed', 11, r => r.compressed], ['captioned', 10, r => r.captioned], ['unlisted', 9, r => r.unlisted.length],
+    ['captioned', 10, r => r.captioned], ['unlisted', 9, r => r.unlisted.length],
     ['orphans', 8, r => r.bucket == null ? '–' : r.orphans.length + r.referencedOrphans.length],
     ['last processed', 17, r => r.lastProcessed ? r.lastProcessed.slice(0, 16).replace('T', ' ') : '–'],
     ['formats', 0, r => r.formats.join('/') || '–'],
@@ -149,7 +131,7 @@ export function formatStatus(rows, { bucketNote = null } = {}) {
   }
   const t = (k) => rows.reduce((n, r) => n + (typeof r[k] === 'number' ? r[k] : 0), 0);
   const bad = rows.filter(r => r.problems.length).length;
-  out.push('', `${rows.length} galleries · ${t('local')} local · ${t('processed')} processed · ${t('localOriginals')} originals on this machine · ${t('compressed')} live still compressed · ${t('captioned')} captioned · ${bad ? `${bad} with problems` : 'no problems'}`);
+  out.push('', `${rows.length} galleries · ${t('local')} local · ${t('processed')} processed · ${t('captioned')} captioned · ${bad ? `${bad} with problems` : 'no problems'}`);
   return out;
 }
 
@@ -167,7 +149,7 @@ function authoredGalleries(dir) {
 }
 
 /**
- * Read everything and build the rows. Shared with photos:dashboard.
+ * Read everything and build the rows.
  * @returns {Promise<{rows:object[], bucketNote:string|null, unreachable:number}>}
  */
 export async function collect({ gallery = null, offline = false, fetch = true } = {}) {
@@ -193,17 +175,9 @@ export async function collect({ gallery = null, offline = false, fetch = true } 
   let unreachable = 0;
   if (fetch) ({ unreachable } = await (await import('./fetch-manifests.mjs')).fetchAll({ galleries }));
 
-  // Read each local file's stamp once, so re-collection shows before it is pushed.
-  const locals = new Map();
-  for (const g of galleries) {
-    const l = localGallery(g);
-    for (const f of l.files) f.compressed = isCompressedCopy(await readHeadExif(f.abs).catch(() => null));
-    locals.set(g, l);
-  }
-
   const rows = buildStatus({
     galleries, referenced, bucket,
-    local: (g) => locals.get(g),
+    local: (g) => localGallery(g),
     merged: (g) => readMerged(g),
     authored: (g) => readAuthored(g),
     locations: (g) => readSidecar(g),

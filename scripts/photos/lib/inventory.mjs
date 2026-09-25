@@ -15,7 +15,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import yaml from 'js-yaml';
-import { env, PATHS, ORIGINAL_RE, BOOTSTRAP_STAMP, galleryKey } from './config.mjs';
+import { env, PATHS, ORIGINAL_RE, galleryKey } from './config.mjs';
 import { assignSlugs } from './slug.mjs';
 import { validateAuthored } from './manifest.mjs';
 import { rcloneVersion, remoteExists } from './rclone.mjs';
@@ -113,17 +113,6 @@ export function authoredWork(doc) {
   }
   return out;
 }
-
-/**
- * True for a compressed copy the bootstrap made: it carries BOOTSTRAP_STAMP
- * in EXIF Software. Anything else is an original.
- *
- * Transitional: this, the `compressed` column in photos:status, and the
- * "still the compressed copy" count in photos:recollect exist only to track
- * the re-collection. Remove them together once every gallery reports
- * compressed 0 (see _docs/photos-pipeline.md → Re-collecting the originals).
- */
-export const isCompressedCopy = (exif) => !!exif && exif.software === BOOTSTRAP_STAMP;
 
 /**
  * EXIF from the head of a file. JPEG and TIFF keep their metadata in the

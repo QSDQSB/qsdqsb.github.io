@@ -54,7 +54,7 @@ test('appendEntries handles an empty flow mapping, a missing key, a missing file
 test('scaffold orders new slugs by capture time, keeps existing entries, and is idempotent', { timeout: 30000 }, async () => {
   const { scaffold } = await captions();
   const sharp = require('sharp');
-  const { injectExif } = await import('../scripts/photos/lib/exif-write.mjs');
+  const { injectExif } = await import('./helpers/exif-write.mjs');
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'photos-captions-'));
   const photosDir = path.join(root, 'photos'), authoredDir = path.join(root, 'authored'), mergedDir = path.join(root, 'merged');
   fs.mkdirSync(path.join(photosDir, 'g'), { recursive: true });

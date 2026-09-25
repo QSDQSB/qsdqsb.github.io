@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Bring camera originals from a staging folder into photos/, the first
- * step of re-collecting a voyage (or of adding a new one).
+ * step of adding a voyage (or new frames to one).
  *
  *   <from>/<gallery>/DSCF1797.JPG  →  photos/<gallery>/DSCF1797.jpg
  *
@@ -10,33 +10,29 @@
  *
  *   - a frame photos/ already has keeps the file name photos/ uses, so the
  *     bucket key, slug, captions and URL all stay put (the camera's .JPG
- *     becomes the bootstrap's .jpg); a new frame keeps its camera name
- *   - it replaces a compressed copy (one carrying BOOTSTRAP_STAMP)
- *   - it never replaces a file that is already an original, unless
+ *     becomes the .jpg already there); a new frame keeps its camera name
+ *   - it never replaces a file photos/ already holds, unless
  *     --replace-originals (a re-export after an edit)
- *   - a stamped file in the staging folder is refused: that is a compressed
- *     copy on its way back in
  *   - byte-identical files are skipped, so a re-run does nothing
  *
  * Every file is verified before anything is copied (verifyOriginal):
  *
  *   decodes     the whole image decodes: not truncated, not corrupt
  *   camera      it carries camera make and capture time, as a camera file does
- *   same photo  against the photograph the site publishes for that frame
- *               (gallery/<g>/, else the stamped copy in photos/): the same
+ *   same photo  against the original photos/ holds for that frame: the same
  *               aspect ratio within 1 %, and the same picture, by the
  *               correlation of 48×48 greyscale thumbnails ≥ 0.95. Calibrated
  *               on the first re-collection: true pairs scored ≥ 0.991, the
  *               closest different frames of one beach ≤ 0.76
- *   exposure    aperture, shutter, ISO against the published copy's; a
- *               difference is a warning, since the old names were rounded
+ *   exposure    aperture, shutter, ISO against that original's; a
+ *               difference is a warning, not a refusal
  *
  * A file failing any check is refused and nothing is copied. A new frame
  * has nothing to compare against and says so.
  *
  * The staging folder is only read, unless --move: then each file whose copy
  * in photos/ is byte-identical is removed from the staging folder, so it
- * empties as the migration proceeds. Nothing touches R2: the next step is
+ * empties as it is imported. Nothing touches R2: the next step is
  * `photos:recollect -- --gallery <g> --push` per gallery.
  *
  * A staging folder that is not a gallery (`uncategorised`) is sorted: each
@@ -57,8 +53,8 @@ import crypto from 'node:crypto';
 import os from 'node:os';
 import { PATHS, env, parseArgs } from './lib/config.mjs';
 import sharp from 'sharp';
-import { galleriesUnder, localGallery, readHeadExif, isCompressedCopy, cleanGallery } from './lib/inventory.mjs';
-import { slugFor, parseLegacyName, legacyAperture } from './lib/slug.mjs';
+import { galleriesUnder, localGallery, readHeadExif, cleanGallery } from './lib/inventory.mjs';
+import { slugFor } from './lib/slug.mjs';
 
 export const MATCH_THRESHOLD = 0.95;
 const RATIO_TOLERANCE = 0.01;
@@ -80,93 +76,78 @@ async function orientedRatio(file) {
   return w / h;
 }
 
-/** The photograph the site publishes today for this frame: gallery/<g>/, else a stamped copy in photos/. */
-export async function publishedReference(gallery, slug, { legacyDir = path.join(PATHS.photosDir, '..', 'gallery'), photosDir = PATHS.photosDir } = {}) {
-  const dir = path.join(legacyDir, ...gallery.split('/'));
-  if (fs.existsSync(dir)) {
-    const hit = fs.readdirSync(dir).find(f => !f.startsWith('.') && slugFor(f) === slug);
-    if (hit) { const l = parseLegacyName(hit); return { file: path.join(dir, hit), source: 'gallery/', legacy: { ...l, aperture: legacyAperture(l) } }; }
-  }
+/** The original photos/ holds for this frame, which is what the site publishes, or null for a new frame. */
+export async function publishedReference(gallery, slug, { photosDir = PATHS.photosDir } = {}) {
   const cur = localGallery(gallery, photosDir).files.find(f => f.slug === slug);
-  if (cur && isCompressedCopy(await readHeadExif(cur.abs).catch(() => null))) {
-    const x = await readHeadExif(cur.abs);
-    return { file: cur.abs, source: 'photos/ (compressed copy)', legacy: { aperture: x.aperture, shutter: x.shutter, iso: x.iso } };
-  }
-  return null;
+  if (!cur) return null;
+  const x = await readHeadExif(cur.abs).catch(() => null);
+  return { file: cur.abs, source: `photos/${gallery}/${cur.file}`, camera: x?.camera, taken: x?.taken, exposure: { aperture: x?.aperture, shutter: x?.shutter, iso: x?.iso } };
 }
 
 /**
  * Is this a genuine original of the photograph it claims to be?
  * @returns {{ok:boolean, checks:{name,ok,detail,warn?}[], reference:string|null}}
  */
-export async function verifyOriginal(file, gallery, slug, { allowNoExif = false, ...dirs } = {}) {
+export async function verifyOriginal(file, gallery, slug, { allowNoExif = false, reedit = false, ...dirs } = {}) {
   const checks = [];
-  const add = (name, ok, detail, warn = false) => checks.push({ name, ok, detail, warn });
+  const add = (name, ok, detail, warn = false, extra = {}) => checks.push({ name, ok, detail, warn, ...extra });
   try { await sharp(file).stats(); add('decodes', true, 'whole image decodes'); }
   catch (e) { add('decodes', false, `does not decode: ${e.message}`); return { ok: false, checks, reference: null }; }
 
   const exif = await readHeadExif(file).catch(() => null);
-  if (isCompressedCopy(exif)) add('camera', false, 'carries the bootstrap stamp: a compressed copy, not an original');
-  else if (exif?.camera && exif?.taken) add('camera', true, `${exif.camera}, ${exif.taken}`);
+  if (exif?.camera && exif?.taken) add('camera', true, `${exif.camera}, ${exif.taken}`);
   else add('camera', allowNoExif, `no ${exif?.camera ? 'capture time' : 'camera make'} in EXIF${allowNoExif ? ' (allowed by --allow-no-exif)' : '; an export that stripped metadata? --allow-no-exif to accept'}`, allowNoExif);
 
   const ref = await publishedReference(gallery, slug, dirs);
-  if (!ref) { add('same photo', true, 'new frame: nothing published to compare against', true); }
+  if (!ref) { add('same photo', true, 'new frame: nothing in photos/ to compare against', true); }
   else {
     const [ra, rb] = await Promise.all([orientedRatio(file), orientedRatio(ref.file)]);
     const dr = Math.abs(ra - rb) / rb;
     const r = correlation(await signature(file), await signature(ref.file));
     const same = dr <= RATIO_TOLERANCE && r >= MATCH_THRESHOLD;
-    add('same photo', same, `vs ${ref.source}: correlation ${r.toFixed(3)} (≥ ${MATCH_THRESHOLD}), aspect Δ ${(dr * 100).toFixed(2)}%`);
+    // A new edit (--replace-originals) may be cropped differently: the same camera and capture time,
+    // to the second, still make it the same frame. Said as a warning, never passed silently.
+    const edit = !same && reedit && exif?.taken && exif.taken === ref.taken && exif.camera === ref.camera;
+    if (edit) add('same photo', true, `a new edit of ${ref.source}: same camera and capture time, cropped differently (correlation ${r.toFixed(3)}, aspect Δ ${(dr * 100).toFixed(2)}%)`, true, { reedit: true });
+    else add('same photo', same, `vs ${ref.source}: correlation ${r.toFixed(3)} (≥ ${MATCH_THRESHOLD}), aspect Δ ${(dr * 100).toFixed(2)}%`);
     const diffs = [];
-    const l = ref.legacy || {};
-    // Aperture within a third of a stop; shutter within 10 %, since the old names rounded it.
+    const l = ref.exposure || {};
+    // Aperture within a third of a stop; shutter within 10 %.
     if (l.aperture && exif?.aperture && Math.abs(Math.log2(l.aperture / exif.aperture)) > 0.2) diffs.push(`f/${exif.aperture} vs f/${l.aperture}`);
     const secs = (s) => { const m = String(s).match(/^(\d+)\/(\d+)$/); return m ? m[1] / m[2] : Number(s); };
     if (l.shutter && exif?.shutter && Math.abs(secs(l.shutter) / secs(exif.shutter) - 1) > 0.1) diffs.push(`${exif.shutter}s vs ${l.shutter}s`);
     if (l.iso && exif?.iso && l.iso !== exif.iso) diffs.push(`ISO ${exif.iso} vs ${l.iso}`);
-    add('exposure', true, diffs.length ? `differs from the published copy: ${diffs.join(', ')}` : 'matches the published copy', diffs.length > 0);
+    add('exposure', true, diffs.length ? `differs from the original in photos/: ${diffs.join(', ')}` : 'matches the original in photos/', diffs.length > 0);
   }
   return { ok: checks.every(c => c.ok), checks, reference: ref ? ref.source : null };
 }
 
 const md5 = (f) => crypto.createHash('md5').update(fs.readFileSync(f)).digest('hex');
 
-/**
- * Work out what to copy without copying it.
- * @returns {{gallery, from, to, action:'replace'|'add'|'same'|'refuse', why?:string}[]}
- */
-/** Every gallery that has a frame, from photos/ and the legacy gallery/ tree: slug → [gallery]. */
-function frameIndex(photosDir, legacyDir) {
+/** Every gallery in photos/ that has a frame: slug → Set<gallery>. */
+function frameIndex(photosDir) {
   const idx = new Map();
-  for (const root of [photosDir, legacyDir]) {
-    if (!root || !fs.existsSync(root)) continue;
-    for (const g of galleriesUnder(root)) for (const f of localGallery(g, root).files) {
-      if (!idx.has(f.slug)) idx.set(f.slug, new Set());
-      idx.get(f.slug).add(g);
-    }
+  if (!fs.existsSync(photosDir)) return idx;
+  for (const g of galleriesUnder(photosDir)) for (const f of localGallery(g, photosDir).files) {
+    if (!idx.has(f.slug)) idx.set(f.slug, new Set());
+    idx.get(f.slug).add(g);
   }
   return idx;
 }
 
 /**
- * A picture fingerprint of every published photograph, for matching a file
+ * A picture fingerprint of every original in photos/, for matching a file
  * whose name says nothing (an iCloud export renamed IMG_…, a copy named
- * "DSCF1797 (1)"). Built from gallery/ (the site as published), else from
- * the stamped copies in photos/; cached in .photos-local/signatures.json by
- * path, size and modification time, so only new or changed files are read.
+ * "DSCF1797 (1)"). Cached in .photos-local/signatures.json by path, size and
+ * modification time, so only new or changed files are read.
  */
-export async function signatureIndex({ photosDir = PATHS.photosDir, legacyDir = path.join(PATHS.photosDir, '..', 'gallery'), cacheFile = path.join(PATHS.localStore, 'signatures.json') } = {}) {
+export async function signatureIndex({ photosDir = PATHS.photosDir, cacheFile = path.join(PATHS.localStore, 'signatures.json') } = {}) {
   let cache = {};
   try { cache = JSON.parse(fs.readFileSync(cacheFile, 'utf8')); } catch { /* first run */ }
-  const refs = new Map(); // `${gallery}/${slug}` → { gallery, slug, file }
-  if (fs.existsSync(legacyDir)) for (const g of galleriesUnder(legacyDir)) for (const f of localGallery(g, legacyDir).files) refs.set(`${g}/${f.slug}`, { gallery: g, slug: f.slug, file: f.abs });
-  for (const g of galleriesUnder(photosDir)) for (const f of localGallery(g, photosDir).files) {
-    if (refs.has(`${g}/${f.slug}`)) continue;
-    if (isCompressedCopy(await readHeadExif(f.abs).catch(() => null))) refs.set(`${g}/${f.slug}`, { gallery: g, slug: f.slug, file: f.abs });
-  }
+  const refs = [];
+  if (fs.existsSync(photosDir)) for (const g of galleriesUnder(photosDir)) for (const f of localGallery(g, photosDir).files) refs.push({ gallery: g, slug: f.slug, file: f.abs });
   const next = {}, out = [];
-  for (const r of refs.values()) {
+  for (const r of refs) {
     const st = fs.statSync(r.file), key = `${r.file}|${st.size}|${st.mtimeMs}`;
     let e = cache[key];
     if (!e) e = { sig: (await signature(r.file)).toString('base64'), ratio: await orientedRatio(r.file) };
@@ -178,7 +159,7 @@ export async function signatureIndex({ photosDir = PATHS.photosDir, legacyDir = 
   return out;
 }
 
-/** Best published matches for a file by picture alone, highest first. */
+/** Best matches in photos/ for a file by picture alone, highest first. */
 export async function matchByPicture(file, index, { threshold = MATCH_THRESHOLD } = {}) {
   const [sig, ratio] = await Promise.all([signature(file), orientedRatio(file)]);
   return index
@@ -211,23 +192,26 @@ function stagedFiles(fromDir) {
  *
  *   1. by name     galleries holding the same frame number, confirmed by
  *                  picture (frame numbers repeat across years and cameras)
- *   2. by picture  no frame fits: the closest published photograph by
+ *   2. by picture  no frame fits: the closest photograph in photos/ by
  *                  fingerprint; the file is imported under that frame's
  *                  name so the slug, captions and URL survive
  *   3. by folder   the folder is a gallery (or named in `newGalleries`) and
- *                  nothing published matches: a new frame for that voyage
+ *                  nothing in photos/ matches: a new frame for that voyage
+ *
+ * An existing frame is only replaced with `replaceOriginals`; otherwise a
+ * verified file for it is refused.
  *
  * Actions: replace | add | same (already imported) — verified;
  * refuse | unplaced | duplicate — non-matches, left in the staging folder
  * for the owner to see and decide on.
  */
-export async function planImport(fromDir, { photosDir = PATHS.photosDir, legacyDir = path.join(PATHS.photosDir, '..', 'gallery'), gallery = null, replaceOriginals = false, allowNoExif = false, newGalleries = [], index = null } = {}) {
+export async function planImport(fromDir, { photosDir = PATHS.photosDir, gallery = null, replaceOriginals = false, allowNoExif = false, newGalleries = [], index = null } = {}) {
   const out = [];
-  const frames = frameIndex(photosDir, legacyDir);
-  const known = new Set([...galleriesUnder(photosDir), ...(fs.existsSync(legacyDir) ? galleriesUnder(legacyDir) : []), ...newGalleries]);
+  const frames = frameIndex(photosDir);
+  const known = new Set([...(fs.existsSync(photosDir) ? galleriesUnder(photosDir) : []), ...newGalleries]);
   const seen = new Map(); // md5 → first staged path, to catch the same file staged twice
-  const vopts = { allowNoExif, photosDir, legacyDir };
-  const isMatch = (v) => v.ok && v.checks.some(c => c.name === 'same photo' && !c.warn);
+  const vopts = { allowNoExif, photosDir, reedit: replaceOriginals };
+  const isMatch = (v) => v.ok && v.checks.some(c => c.name === 'same photo' && (!c.warn || c.reedit));
   let pictures = index;
 
   for (const src of stagedFiles(fromDir)) {
@@ -245,9 +229,9 @@ export async function planImport(fromDir, { photosDir = PATHS.photosDir, legacyD
       tries.push({ g, v });
       if (isMatch(v)) { target = g; verdict = v; step.placed = g === src.folder ? null : `matched by name and picture to ${g}`; break; }
     }
-    // 2. by picture: nothing by name, so search every published photograph.
+    // 2. by picture: nothing by name, so search every photograph in photos/.
     if (!target) {
-      pictures = pictures || await signatureIndex({ photosDir, legacyDir });
+      pictures = pictures || await signatureIndex({ photosDir });
       const hits = await matchByPicture(src.abs, pictures);
       const best = hits[0];
       if (best && !(hits[1] && hits[1].gallery !== best.gallery && hits[1].score > best.score - 0.005)) {
@@ -255,7 +239,7 @@ export async function planImport(fromDir, { photosDir = PATHS.photosDir, legacyD
         if (isMatch(v)) { target = best.gallery; targetSlug = best.slug; verdict = v; step.placed = `matched by picture to ${best.gallery}/${best.slug} (${best.score.toFixed(3)})`; }
       }
     }
-    // 3. by folder: a voyage folder with a frame nothing published matches is a new frame.
+    // 3. by folder: a voyage folder with a frame nothing in photos/ matches is a new frame.
     if (!target && known.has(src.folder) && !byName.length) {
       const v = await verifyOriginal(src.abs, src.folder, src.slug, vopts);
       if (v.ok) { target = src.folder; verdict = v; }
@@ -264,7 +248,7 @@ export async function planImport(fromDir, { photosDir = PATHS.photosDir, legacyD
     if (!target) {
       const why = byName.length
         ? `frame ${src.slug} exists in ${byName.join(', ')}, but the picture is a different one (${tries.map(t => t.v.checks.find(c => c.name === 'same photo')?.detail).filter(Boolean).join('; ')})`
-        : `matches no published photograph by name or by picture`;
+        : `matches no photograph in photos/ by name or by picture`;
       out.push({ ...step, action: 'unplaced', why, checks: tries[0]?.v.checks || [] });
       continue;
     }
@@ -276,9 +260,8 @@ export async function planImport(fromDir, { photosDir = PATHS.photosDir, legacyD
     if (!cur) { out.push({ ...step, to: path.join(photosDir, ...target.split('/'), src.file), action: 'add' }); continue; }
     const to = cur.abs;
     if (cur.size === fs.statSync(src.abs).size && md5(cur.abs) === hash) { out.push({ ...step, to, action: 'same' }); continue; }
-    const compressed = isCompressedCopy(await readHeadExif(cur.abs).catch(() => null));
-    if (!compressed && !replaceOriginals) { out.push({ ...step, to, action: 'refuse', why: `${target}/${cur.file} is already an original; --replace-originals to overwrite it` }); continue; }
-    out.push({ ...step, to, action: 'replace', replacing: compressed ? 'compressed copy' : 'original' });
+    if (!replaceOriginals) { out.push({ ...step, to, action: 'refuse', why: `${target}/${cur.file} is already an original; --replace-originals to overwrite it` }); continue; }
+    out.push({ ...step, to, action: 'replace' });
   }
   return out;
 }
@@ -337,7 +320,7 @@ async function main() {
   });
   if (!plan.length) { console.log(`nothing to import: ${from} holds no originals.`); return 0; }
 
-  const label = (s) => ({ replace: `replaces ${s.replacing}`, add: 'new frame', same: 'already imported', refuse: 'REFUSED', unplaced: 'NOT PLACED', duplicate: 'DUPLICATE' }[s.action]);
+  const label = (s) => ({ replace: 'replaces the original', add: 'new frame', same: 'already imported', refuse: 'REFUSED', unplaced: 'NOT PLACED', duplicate: 'DUPLICATE' }[s.action]);
   const byGallery = new Map();
   for (const s of plan.filter(s => !NON_MATCH.has(s.action))) (byGallery.get(s.gallery) || byGallery.set(s.gallery, []).get(s.gallery)).push(s);
   for (const [g, steps] of [...byGallery].sort()) {
@@ -356,7 +339,7 @@ async function main() {
 
   const good = plan.filter(s => !NON_MATCH.has(s.action));
   const matched = good.filter(s => s.checks?.some(c => c.name === 'same photo' && c.ok && !c.warn)).length;
-  console.log(`\nVerified ${good.length}: ${matched} match their published photograph, ${good.length - matched} new frame(s). ${bad.length} non-match(es).`);
+  console.log(`\nVerified ${good.length}: ${matched} match a photograph in photos/, ${good.length - matched} new frame(s). ${bad.length} non-match(es).`);
   if (args['dry-run']) { console.log(`Dry run: would copy ${good.filter(s => s.action !== 'same').length} file(s)${args.move ? ` and move ${good.length} out of ${from}` : ''}.`); return bad.length ? 1 : 0; }
 
   const { copied, moved } = applyImport(good, { move: !!args.move });
