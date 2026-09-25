@@ -1321,8 +1321,9 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   }
 }
 
-// The weather, then the sun: a cell each, the degrees (in line with the figures above) and
-// their mark, over the word for them.
+// The weather, then the sun: a cell each, the degrees in line with the figures above. The sun's
+// diagram stands beside its angle (the site's own reading of the light); the weather's mark sits
+// beside the word it illustrates.
 .photobook-specs__weather,
 .photobook-specs__sun {
   b { display: flex; align-items: center; gap: 0.2em; }
@@ -1337,6 +1338,11 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 .photobook-weather__glyph {
   width: calc(var(--ink, 1.25) * 1.1em); // the box is cut to the mark's ink (lightbox.js)
   height: 1.1em;
+
+  // In the specs the mark illustrates the word under the temperature, at the label's size; the
+  // temperature stays a numeral like the figures above it. (The sun keeps its diagram by the angle.)
+  .photobook-specs__weather span & { width: calc(var(--ink, 1.25) * 1.7em); height: 1.7em; margin-right: 0.45em; vertical-align: -0.55em; }
+  .photobook-specs__weather span & .w-ink { stroke-width: 1.3; }
   flex: none;
   overflow: visible;
 
