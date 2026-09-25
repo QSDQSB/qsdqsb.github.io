@@ -14,7 +14,7 @@
   {%- else -%}{%- assign sz = '(min-width: 768px) 34vw, 86vw' -%}{%- assign avif_media = '(max-width: 5600px) and (max-resolution: 1dppx), (max-width: 2800px) and (max-resolution: 2dppx), (max-width: 1880px)' -%}
 {%- endcase -%}
 {%- assign fallback = p.sizes.webp[1] | default: p.sizes.webp[0] -%}
-{%- assign name = p.place.name | default: p.caption | default: p.frame -%}
+{%- assign name = p.name | default: p.frame -%}
 <figure class="photobook-frame" data-i="{{ include.index }}"{% if p.film %} data-film="{{ p.film | escape }}"{% endif %} style="--ratio:{{ p.ratio }}">
   <button class="photobook-frame__print" type="button" aria-label="{{ name | escape }}{% if p.film %}, {{ p.film | escape }}{% endif %}"{% if p.ph %} style="background-image:url({{ p.ph }})"{% endif %}>
     <picture>

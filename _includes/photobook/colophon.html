@@ -5,7 +5,7 @@
 {%- assign c = include.book.book.colophon -%}
 {%- assign lens_shades = "var(--photobook-ink),var(--photobook-ink-2),var(--photobook-ink-3),var(--photobook-line)" | split: "," -%}
 <section class="photobook-colophon" aria-labelledby="photobook-colophon-title">
-  <p class="photobook-kicker" id="photobook-colophon-title">Colophon</p>
+  <h2 class="photobook-kicker" id="photobook-colophon-title">Colophon</h2>
   <div class="photobook-colophon__grid">
     {%- if c.films.size > 0 %}
     <div>
@@ -24,11 +24,11 @@
     {%- if c.hours.size > 0 %}
     <div>
       <h3>Hours</h3>
-      <div class="photobook-colophon__bar"><div class="photobook-hours">{% for h in c.hours %}<i class="photobook-hours__dot photobook-hours__dot--{{ h.phase }}" style="left:{{ h.left }}%;bottom:{{ h.stack | times: 6 }}px" title="{{ h.at }}"></i>{% endfor %}</div></div>
+      <div class="photobook-colophon__bar"><div class="photobook-hours">{% for h in c.hours %}<i class="photobook-hours__dot photobook-hours__dot--{{ h.phase }}" style="left:{{ h.left }}%;bottom:{{ h.stack | times: 6 }}px"></i>{% endfor %}</div></div>
       <div class="photobook-hours__ticks"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
       <div class="photobook-legend">
         {%- if c.phases.day > 0 %}<i class="photobook-hours__dot photobook-hours__dot--day"></i><span>Daylight</span><span class="photobook-legend__n">{{ c.phases.day }}</span><span class="photobook-legend__pc">{{ c.phases.day | times: 100 | divided_by: c.frames }}%</span>{% endif -%}
-        {%- if c.phases.golden > 0 %}<i class="photobook-hours__dot photobook-hours__dot--golden"></i><span>Golden hour</span><span class="photobook-legend__n">{{ c.phases.golden }}</span><span class="photobook-legend__pc">{{ c.phases.golden | times: 100 | divided_by: c.frames }}%</span>{% endif -%}
+        {%- if c.phases.golden > 0 %}<i class="photobook-hours__dot photobook-hours__dot--golden"></i><span>Low sun</span><span class="photobook-legend__n">{{ c.phases.golden }}</span><span class="photobook-legend__pc">{{ c.phases.golden | times: 100 | divided_by: c.frames }}%</span>{% endif -%}
         {%- if c.phases.night > 0 %}<i class="photobook-hours__dot photobook-hours__dot--night"></i><span>Blue hour, night</span><span class="photobook-legend__n">{{ c.phases.night }}</span><span class="photobook-legend__pc">{{ c.phases.night | times: 100 | divided_by: c.frames }}%</span>{% endif -%}
       </div>
     </div>

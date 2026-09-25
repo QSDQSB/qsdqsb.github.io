@@ -48,6 +48,17 @@
   color: var(--photobook-ink-2);
 }
 
+// Focus in the book and the lightbox: a gold hairline clear of the thing it marks; on a print, inside it.
+.photobook-bar,
+.photobook-main,
+.photobook-colophon,
+.photobook-end,
+.photobook-lightbox {
+  :focus-visible { outline: 1.5px solid var(--photobook-gold); outline-offset: 3px; }
+}
+
+.photobook-frame__print:focus-visible { outline-offset: -4px; }
+
 /* ── the glow ─────────────────────────────────────────────────────────── */
 .photobook-glow {
   position: fixed;
@@ -201,8 +212,14 @@
 
   &::-webkit-scrollbar { display: none; }
 
+  &.is-scrollable {
+    -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent);
+    mask-image: linear-gradient(90deg, #000 82%, transparent);
+  }
+
   i { width: 0.7rem; height: 2px; background: var(--film); }
   b { font-weight: 400; color: var(--photobook-ink-3); font-variant-numeric: tabular-nums; }
+  [aria-pressed="true"] b { color: var(--photobook-ink-2); }
 }
 
 .photobook-bar__films button,
@@ -239,6 +256,7 @@
 /* ── the book ─────────────────────────────────────────────────────────── */
 .photobook-main {
   padding: clamp(4.5rem, 7vw, 6rem) 0 2rem;
+  scroll-margin-top: -2rem; // a filter change lands on the first row, just under the bar
 }
 
 .photobook-book[hidden],
@@ -251,8 +269,6 @@
   gap: var(--photobook-gap);
   margin-bottom: var(--photobook-gap);
   padding: 0 var(--photobook-gutter);
-  content-visibility: auto;
-  contain-intrinsic-size: auto 32rem;
 
   // Frames in a row share a height: each takes width in proportion to its shape.
   .photobook-frame { flex: var(--ratio) 1 0; }
@@ -268,6 +284,7 @@
 .photobook-book > .photobook-row--spread:first-child { margin-top: 0; }
 
 .photobook-frame {
+  display: block; // the site gives every figure flex-wrap, which would let a caption outgrow its frame
   margin: 0;
   min-width: 0;
 }
@@ -287,15 +304,15 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 1s $cubic-bezier-param, filter 0.5s $cubic-bezier-smooth;
+    transition: filter 0.6s $cubic-bezier-smooth;
   }
 
-  &:hover img { transform: scale(1.02); filter: brightness(1.06); }
+  &:hover img { filter: brightness(1.06); }
 }
 
 .photobook-frame__caption {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 1rem;
   min-height: 2.2rem;
   padding-top: 0.7rem;
@@ -340,16 +357,19 @@
 .photobook-row--triple .photobook-frame__caption > * {
   opacity: 0;
   transform: translateY(-4px);
-  transition: opacity 0.35s $cubic-bezier-smooth, transform 0.35s $cubic-bezier-smooth;
+  transition: opacity 0.8s $cubic-bezier-smooth, transform 0.8s $cubic-bezier-smooth;
 }
 
+// Up in half a second, away in a slower breath.
 .photobook-frame:hover .photobook-frame__caption > *,
 .photobook-frame:focus-within .photobook-frame__caption > * {
   opacity: 1;
   transform: none;
+  transition-duration: 0.5s;
 }
 
-.photobook-row--triple .photobook-frame__specs { display: none; }
+.photobook-row--triple .photobook-frame__specs,
+.photobook-row--triple .photobook-frame__caption > .photobook-film { display: none; }
 .photobook-row--triple .photobook-frame__caption > .photobook-sun { margin-left: auto; }
 
 // Frames settle into place as they scroll in; without support they are simply there.
@@ -414,11 +434,21 @@
   border: 1px dashed var(--photobook-line);
   border-radius: $border-radius;
 
+  // Every print the same height whatever its shape: a portrait sits whole, the gap left as the table.
+  .photobook-frame__print { aspect-ratio: 16 / 9; background: none; }
+  .photobook-frame__print img { object-fit: contain; }
+
+  // One line: the frame number, and the film only if it fits; otherwise it wraps out of sight.
   .photobook-frame__caption {
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    column-gap: 0.6rem;
+    row-gap: 0;
+    height: 1.9rem;
     min-height: 0;
     padding-top: 0.45rem;
+    overflow: hidden;
   }
 }
 
@@ -550,7 +580,11 @@
 }
 
 /* ── the lightbox: a matted print ─────────────────────────────────────── */
+// While the lightbox is open the page behind it stays where it was.
+html:has(.photobook-lightbox[open]) { overflow: hidden; }
+
 .photobook-lightbox {
+  touch-action: none; // swipes are the lightbox's, not the page's
   --top: 4rem;
   --bot: 5.4rem;
   --side: clamp(3rem, 5vw, 5.5rem);
@@ -644,7 +678,7 @@
   top: var(--top);
   bottom: var(--bot);
   z-index: 3;
-  width: 30%;
+  width: 18%; // the middle of the print is left to the loupe
   padding: 0;
   border: 0;
   background: none;
@@ -686,7 +720,7 @@
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   backdrop-filter: blur(18px) saturate(140%);
   color: $primary-color;
-  font: italic 400 0.9rem $didot-family;
+  font: 400 0.9rem $didot-family;
   cursor: pointer;
 
   svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; }
@@ -775,42 +809,51 @@
 .photobook-lightbox__rail {
   position: absolute;
   left: calc((100% - var(--right) + var(--side)) / 2);
-  bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+  bottom: 0;
   z-index: 7;
-  height: 22px;
   display: flex;
   align-items: flex-end;
+  padding: 0 0.75rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
   translate: -50% 0;
   transition: left 0.6s $cubic-bezier-smooth;
 
+  // Each mark answers across a tall column, so the pointer finds the rail without aiming at a hairline.
   button {
     position: relative;
     width: 12px;
-    height: 22px;
+    height: 48px;
     display: grid;
     place-items: end center;
     padding: 0;
     border: 0;
     background: none;
     cursor: pointer;
+    transition: width 0.35s $cubic-bezier-smooth;
 
     &::before {
       content: "";
       width: 1px;
       height: 7px;
+      border-radius: 1px;
       background: var(--photobook-ink-3);
       opacity: 0.55;
-      transition: height 0.3s $cubic-bezier-smooth, opacity 0.3s;
+      transition: width 0.3s $cubic-bezier-smooth, height 0.3s $cubic-bezier-smooth, opacity 0.3s, background-color 0.3s;
     }
 
-    &:hover::before { height: 14px; opacity: 1; }
     &.is-on::before { width: 1.5px; height: 16px; background: $h2-color; opacity: 1; }
   }
+
+  // Reached for, the whole rail opens: the marks part, thicken and rise; the one under the pointer most.
+  &:hover button { width: 16px; }
+  &:hover button::before { width: 2px; height: 12px; opacity: 0.8; }
+  &:hover button.is-on::before { width: 3px; height: 22px; opacity: 1; }
+  &:hover button:hover::before { width: 3px; height: 26px; opacity: 1; background: $lighter-gray; }
+  &:hover button.is-on:hover::before { background: $h2-color; }
 }
 
 .photobook-lightbox__peek {
   position: absolute;
-  bottom: 34px;
+  bottom: 40px;
   left: 50%;
   width: 168px;
   aspect-ratio: 16 / 9;
@@ -846,6 +889,8 @@
   width: 20rem;
   max-height: calc(100% - var(--top) - 1rem);
   overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y; // the panel scrolls; the lightbox around it takes the swipes
   scrollbar-width: none;
   background: rgba(12, 12, 16, 0.62);
   -webkit-backdrop-filter: blur(24px) saturate(130%);
@@ -1016,7 +1061,7 @@
   .photobook-lightbox__caption,
   .photobook-lightbox__rail,
   .photobook-lightbox__zone,
-  .photobook-specs { opacity: 0; pointer-events: none; }
+  .photobook-specs { opacity: 0; visibility: hidden; pointer-events: none; }
 
   .photobook-lightbox__top { background: linear-gradient(rgba(0, 0, 0, 0.45), transparent); }
 }
@@ -1028,6 +1073,8 @@
 }
 
 .photobook-lightbox.is-idle:not(.is-bare) .photobook-lightbox__rail { opacity: 0.35; }
+.photobook-lightbox.is-idle:not(.is-bare) .photobook-lightbox__rail:hover,
+.photobook-lightbox.is-idle:not(.is-bare) .photobook-lightbox__rail:focus-within { opacity: 1; }
 
 /* ── phones ───────────────────────────────────────────────────────────── */
 @include responsive-down(tablet) {
@@ -1051,7 +1098,10 @@
 
     &::-webkit-scrollbar { display: none; }
 
-    .photobook-frame { flex: 0 0 86%; scroll-snap-align: start; }
+    align-items: flex-start;
+
+    // One height for the strip (a 16:9 print at 86% of the screen); each frame's width follows its shape.
+    .photobook-frame { flex: 0 0 auto; width: min(86%, calc(86vw / 1.78 * var(--ratio))); scroll-snap-align: start; }
 
     .photobook-frame__caption > * { opacity: 1; transform: none; }
   }
@@ -1067,8 +1117,8 @@
     --right: 0px;
   }
 
-  .photobook-lightbox__zone,
   .photobook-lightbox__rail { display: none; }
+  .photobook-lightbox__zone { width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 
   .photobook-lightbox__caption {
     left: 1rem;
@@ -1100,24 +1150,8 @@
 }
 
 /* ── motion: reduced, and the automated renderer's kill-switch ────────── */
-@include responsive-reduced-motion {
-  .photobook-cover__image,
-  .photobook-cover__title h1,
-  .photobook-cover__title .photobook-kicker,
-  .photobook-cover__lede,
-  .photobook-facts,
-  .photobook-lightbox[open],
-  .photobook-lightbox.is-playing .photobook-lightbox__mat img.is-on { animation: none; }
-
-  .photobook-glow i,
-  .photobook-lightbox__wash div,
-  .photobook-lightbox__mat,
-  .photobook-lightbox__mat img,
-  .photobook-specs { transition-duration: 0.01ms; }
-}
-
-// These rules outrank _motion-off.scss's floor, so each carries its own counterpart.
-html.motion-off {
+// One list for both: whatever moves in the book, nothing moves for a reader who asked for stillness.
+@mixin photobook-still {
   .photobook-cover__image,
   .photobook-cover__title h1,
   .photobook-cover__title .photobook-kicker,
@@ -1128,6 +1162,8 @@ html.motion-off {
   .photobook-lightbox.is-playing .photobook-lightbox__mat img.is-on { animation: none; }
 
   .photobook-glow i,
+  .photobook-bar__films button,
+  .photobook-bar__views button,
   .photobook-lightbox__wash div,
   .photobook-lightbox__mat,
   .photobook-lightbox__mat img,
@@ -1136,6 +1172,20 @@ html.motion-off {
   .photobook-frame__caption > .photobook-sun,
   .photobook-row--pair .photobook-frame__caption > *,
   .photobook-row--triple .photobook-frame__caption > *,
+  .photobook-frame:hover .photobook-frame__caption > *,
+  .photobook-frame:focus-within .photobook-frame__caption > *,
   .photobook-specs,
-  .photobook-lightbox__chrome { transition: none; }
+  .photobook-lightbox__chrome,
+  .photobook-lightbox__rail,
+  .photobook-lightbox__rail button,
+  .photobook-lightbox__rail button::before { transition: none; }
+}
+
+@include responsive-reduced-motion {
+  @include photobook-still;
+}
+
+// These rules outrank _motion-off.scss's floor, so each carries its own counterpart.
+html.motion-off {
+  @include photobook-still;
 }
