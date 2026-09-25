@@ -300,6 +300,12 @@ html.is-resizing {
 }
 
 @include responsive-down(compact) {
+  // On a phone the name would take the bar's width from the sections: the logo alone links home.
+  // (Named with .masthead to outrank the nav's `.greedy-nav a { display: inline-flex }`.)
+  .masthead .masthead__brand-name {
+    display: none;
+  }
+
   .masthead {
     &__inner-wrap {
       padding: 0.65rem 0.6rem 0;
