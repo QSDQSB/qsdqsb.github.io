@@ -25,9 +25,10 @@ isn't enough or something misbehaves.
 
 - **Never push, prune or restore in R2 without the owner's explicit go in this session.** Those commands
   ask for a typed `QSD`; the owner types it. Dry runs and `photos:status` are always fine.
-- In Apple Photos, export with **File → Export → Export Unmodified Original**. A plain Export re-encodes
-  the file and strips the Fujifilm record (film simulation, settings, shutter count). `photos:enrich`
-  can recover it from the library afterwards.
+- In Apple Photos, export **as edited** (File → Export), because the site publishes the owner's crop.
+  That export strips the Fujifilm record (film simulation, settings, shutter count). `photos:enrich`
+  (part of `ingest`) copies it back from the library's unedited original. Don't export *Unmodified
+  Original*: that would throw the edit away.
 - Keep a file's name as `photos/` already has it. R2 keys are case-sensitive, so `DSCF1797.JPG` and
   `.jpg` are different photos.
 - GPS never leaves the private side. Only place *names* are committed (`_data/photo_locations/`).
@@ -87,10 +88,11 @@ No reprocessing needed: rebuild (`npm run build`/`serve`) to see it. Top-level k
 
 ### Replace a photo with a new edit
 
-Re-export the edited photo with its original file name, then:
+Re-export the edited photo (as edited) with its original file name, then:
 
 ```bash
-npm run photos:import -- --replace-originals        # from the inbox; keeps the name, so slug and captions stay
+npm run photos:import -- --replace-originals        # keeps the name, so slug and captions stay; a new crop is
+                                                    # accepted when camera and capture time match (a warning)
 npm run photos:recollect -- --gallery <g>           # the check
 npm run photos:recollect -- --gallery <g> --push    # owner's go; the old file moves to trash/<date>/
 ```
@@ -110,9 +112,11 @@ To undo: `npm run photos:trash -- restore trash/<date>/<g>/<file>`.
 
 ### Photos show no film, settings or shutter count
 
-They were exported without their maker notes. `npm run photos:enrich -- --gallery <g>` looks each one up
-in Photos (add `--by-time` for renamed files) and copies the record back in. Then `recollect --push`
-(owner's go). If Photos only holds an edited export, re-export it as *Unmodified Original*.
+Photos' edited export dropped their maker notes, and enrich didn't restore them. Run
+`npm run photos:enrich -- --gallery <g>` (add `--by-time` for renamed files). It finds each item in Photos,
+reads its unedited camera file, and copies the record into our edited file. Then `recollect --push` (owner's
+go). If the library holds no camera original for a photo (only an edited export was ever imported),
+the record can't be recovered and the photo simply shows without it.
 
 ## When something looks wrong
 
