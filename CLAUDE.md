@@ -90,7 +90,7 @@ Example: `✨ Add bilingual toggle to masthead`
 ## Build & Serve
 
 ```bash
-npm run build        # photos:fetch → geocode → jekyll build
+npm run build        # photos:fetch → covers → geocode → jekyll build
 npm run serve        # same, with serve
 npm run build:fast   # today the same as build (kept as an alias)
 npm run serve:fast
