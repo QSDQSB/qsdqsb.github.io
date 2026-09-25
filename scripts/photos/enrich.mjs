@@ -17,8 +17,9 @@
  *   4. check the result decodes at the same size and now names its film
  *      simulation; if not, restore the file as it was
  *
- * Shares the collector's lock and log, so the two never talk to Photos at
- * once. Resumable. Nothing is pushed.
+ * One run at a time (a lock file with the owning pid). Resumable: progress
+ * is saved after every batch. Logged to .photos-local/collect/log.txt.
+ * Nothing is pushed.
  *
  * Usage: npm run photos:enrich [-- --gallery <name>] [--batch 20] [--dry-run] [--by-time]
  *   --by-time  find items by capture time alone (renamed files), retrying earlier misses
@@ -29,15 +30,49 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import sharp from 'sharp';
 import { PATHS, parseArgs } from './lib/config.mjs';
-import { galleriesUnder, localGallery, readHeadExif, isCompressedCopy, cleanGallery } from './lib/inventory.mjs';
+import { galleriesUnder, localGallery, readHeadExif, cleanGallery } from './lib/inventory.mjs';
 import { findByFilename, findByMoment, exportPhotos, guardMemory, sameMoment } from './lib/apple-photos.mjs';
-import { lock, retry, pause, stamp, LOG } from './collect.mjs';
 
+// The folder is named for the retired photos:collect, whose lock and log this
+// inherited; kept so a run in progress resumes from its state file.
 const DIR = path.join(PATHS.localStore, 'collect');
+const LOG = path.join(DIR, 'log.txt');
+const LOCK = path.join(DIR, 'lock');
 const STAGE = path.join(DIR, 'enrich-stage');
 const STATE = path.join(DIR, 'enrich-state.json');
 const loadState = () => { try { return JSON.parse(fs.readFileSync(STATE, 'utf8')); } catch { return { done: {}, failed: {} }; } };
 const saveState = (s) => fs.writeFileSync(STATE, JSON.stringify(s, null, 1));
+// Local wall-clock time: the log is read by the owner, not a machine.
+const stamp = () => { const d = new Date(), p = (n) => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; };
+const pause = (ms) => new Promise(r => setTimeout(r, ms));
+
+/** Take the lock, or return the pid that holds it. A lock whose process is gone is stale and taken over. */
+function lock() {
+  try {
+    const pid = Number(fs.readFileSync(LOCK, 'utf8'));
+    if (pid && pid !== process.pid) { try { process.kill(pid, 0); return pid; } catch { /* stale */ } }
+  } catch { /* none */ }
+  fs.mkdirSync(DIR, { recursive: true });
+  fs.writeFileSync(LOCK, String(process.pid));
+  const unlock = () => { try { if (Number(fs.readFileSync(LOCK, 'utf8')) === process.pid) fs.unlinkSync(LOCK); } catch { /* gone */ } };
+  process.on('exit', unlock);
+  for (const sig of ['SIGINT', 'SIGTERM']) process.on(sig, () => { unlock(); process.exit(130); });
+  return null;
+}
+
+/** Try fn up to `times`, pausing longer each time and restarting Photos between tries. */
+async function retry(what, fn, log, times = 3) {
+  for (let i = 1; ; i++) {
+    try { return fn(); }
+    catch (e) {
+      const msg = e.message.split('\n')[0].slice(0, 160);
+      if (i >= times) { log(`${what} failed ${times} times (${msg}); leaving it for the next run`); return undefined; }
+      log(`${what} failed (${msg}); retry ${i + 1}/${times} in ${30 * i} s`);
+      guardMemory({ log, max: 0.5 });
+      await pause(30000 * i);
+    }
+  }
+}
 
 function exif(file, tags) {
   const r = spawnSync('exiftool', ['-j', '-n', ...tags.map(t => `-${t}`), file], { encoding: 'utf8' });
@@ -65,7 +100,7 @@ async function targets(only) {
     if (only && g !== only && !g.startsWith(`${only}/`)) continue;
     for (const f of localGallery(g).files) {
       const x = await readHeadExif(f.abs).catch(() => null);
-      if (!x || isCompressedCopy(x) || !x.camera || !/FUJIFILM/i.test(x.camera)) continue; // compressed copies and other cameras have nothing to fetch
+      if (!x?.camera || !/FUJIFILM/i.test(x.camera)) continue; // other cameras have no maker notes to fetch
       if (hasMakerNotes(f.abs)) continue;
       out.push({ gallery: g, slug: f.slug, file: f.file, abs: f.abs, taken: x.taken, name: `${path.parse(f.file).name.toUpperCase()}.JPG` });
     }
@@ -80,7 +115,7 @@ async function main() {
   for (const s of [process.stdout, process.stderr]) s.on('error', () => {});
   if (spawnSync('exiftool', ['-ver']).status !== 0) { console.error('exiftool is not installed: brew install exiftool'); return 2; }
   const holder = lock();
-  if (holder) { console.error(`photos:collect or photos:enrich is running (pid ${holder}); not starting another`); return 1; }
+  if (holder) { console.error(`photos:enrich is already running (pid ${holder}); not starting another`); return 1; }
   const state = loadState();
 
   // --by-time looks items up by capture time alone, for files whose names Photos does not know;

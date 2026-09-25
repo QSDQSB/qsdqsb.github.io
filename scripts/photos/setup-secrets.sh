@@ -63,4 +63,4 @@ if [ -n "$token" ]; then
 fi
 
 echo
-echo "Done. Check with: npm run photos:dashboard -- --open   (the pipeline strip at the top)"
+echo "Done. Check with: npm run photos:status"
