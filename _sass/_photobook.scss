@@ -602,7 +602,7 @@ html.is-refiltering::view-transition-new(*) { animation-duration: 0.35s; }
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font: 500 0.86rem $barlow-font-family; // places in the UI face, like the city beneath them
+  font: 400 0.86rem $barlow-font-family; // places in the UI face, like the city beneath them
   letter-spacing: 0.01em;
   color: var(--photobook-ink-2);
 }
@@ -1079,7 +1079,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font: 500 1.15rem/1.15 $barlow-font-family;
+    font: 300 1.2rem/1.15 $barlow-font-family;
     color: $lighter-gray;
   }
 }
@@ -1227,7 +1227,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   align-items: start;
   gap: 0.3rem 0.8rem;
 
-  h3 { grid-column: 1; margin: 0; font: 500 1.2rem/1.15 $barlow-font-family; letter-spacing: 0.01em; color: $lighter-gray; }
+  h3 { grid-column: 1; margin: 0; font: 300 1.3rem/1.15 $barlow-font-family; letter-spacing: 0.01em; color: $lighter-gray; }
 }
 
 .photobook-specs__no {
