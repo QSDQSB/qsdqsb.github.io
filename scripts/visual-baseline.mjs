@@ -98,6 +98,10 @@ const SETTLE_MS = 7000; // longest page-side timer (Home reveal fallback) + marg
  * covers kramdown `{: .notice}` paragraphs, where `.page__content p` outranks
  * the notice class — neither is reachable from the other pages.
  */
+async function drawAllRows(page) {
+  await page.addStyleTag({ content: '.photobook-row { content-visibility: visible; }' });
+}
+
 const PAGES = [
   { id: 'home', url: '/', motion: true },
   { id: 'post-toc', url: '/posts/shihuqiao/', motion: true },
@@ -106,6 +110,19 @@ const PAGES = [
   { id: 'post-notices', url: '/posts/leetcode-july-challenge/' },
   { id: 'voyage', url: '/voyage/', motion: true },
   { id: 'voyage-prague', url: '/voyage/prague/', motion: true },
+  // The Photobook: a gallery page, and its lightbox opened by a frame link (#slug). Its rows skip
+  // rendering off screen (content-visibility: auto), which a full-page shot would record as blank,
+  // so the shot draws them all; the scroll-through that follows loads their images.
+  { id: 'photobook', url: '/voyage/london/', setup: drawAllRows },
+  {
+    id: 'photobook-lightbox',
+    url: '/voyage/london/#dscf7406',
+    setup: async (page) => {
+      await drawAllRows(page);
+      await page.waitForSelector('#photobook-lightbox[open] .photobook-lightbox__mat img.is-on', { timeout: 10000 });
+      await page.waitForFunction(() => [...document.querySelectorAll('.photobook-lightbox__mat img')].every((im) => im.complete), null, { timeout: 20000 });
+    },
+  },
   { id: 'voyage-by-tags', url: '/voyage-by-tags/' },
   { id: 'about', url: '/about/' },
   { id: 'portfolio', url: '/portfolio/' },
@@ -283,12 +300,18 @@ async function openPage(browser, viewportName) {
   return { context, page };
 }
 
+/** The page's URL with ?motion=off, placed before any #fragment so the page does not read it as part of the hash. */
+function motionOff(baseUrl, url) {
+  const [pathPart, hash = ''] = url.split('#');
+  return `${baseUrl}${pathPart}${pathPart.includes('?') ? '&' : '?'}motion=off${hash ? `#${hash}` : ''}`;
+}
+
 async function shoot(browser, baseUrl, pageDef, viewportName, outDir) {
   const { context, page } = await openPage(browser, viewportName);
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   try {
-    const url = `${baseUrl}${pageDef.url}${pageDef.url.includes('?') ? '&' : '?'}motion=off`;
+    const url = motionOff(baseUrl, pageDef.url);
     const startedAt = Date.now();
     await page.goto(url, { waitUntil: 'load', timeout: 60000 });
     await page.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
@@ -306,7 +329,7 @@ async function shoot(browser, baseUrl, pageDef, viewportName, outDir) {
 async function audit(browser, baseUrl, pageDef, viewportName) {
   const { context, page } = await openPage(browser, viewportName);
   try {
-    await page.goto(`${baseUrl}${pageDef.url}?motion=off`, { waitUntil: 'load', timeout: 60000 });
+    await page.goto(motionOff(baseUrl, pageDef.url), { waitUntil: 'load', timeout: 60000 });
     await page.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
     await page.waitForTimeout(2500);
     return await page.evaluate(() => {
