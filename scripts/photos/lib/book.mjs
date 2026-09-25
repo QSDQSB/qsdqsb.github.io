@@ -186,6 +186,9 @@ export function lightboxOf(photos) {
   }));
 }
 
+/** "prague/zizkov-tower" → "Zizkov Tower": a gallery's own name, for frames with no place yet. */
+const titleOf = (gallery) => String(gallery || '').split('/').pop().split('-').filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(' ');
+
 /** Add the Photobook's layer to a merged manifest. `locations` is the locate sidecar's `photos` map, if any. */
 export function bookOf(merged, locations = {}) {
   const photos = merged.photos.map(p => {
@@ -195,7 +198,7 @@ export function bookOf(merged, locations = {}) {
     // Manifests processed before the names were tidied carry ExifTool's own ("F2/Fujichrome (Velvia)").
     const film = normalizeFilm(p.settings?.filmSimulation);
     // A frame with no place yet is named for its voyage, never for its camera file.
-    const name = place?.name || p.caption || merged.title || p.frame;
+    const name = place?.name || p.caption || merged.title || titleOf(merged.gallery) || p.frame;
     return { ...p, name, film, place, light, glow: glowOf(p.thumbhash), ph: placeholderOf(p.thumbhash), filmHue: filmHue(film) };
   });
   return { ...merged, photos, book: { rows: bookRows(photos), cover: coverIndex(photos), colophon: colophonOf(photos), lightbox: lightboxOf(photos) } };

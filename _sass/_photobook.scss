@@ -84,6 +84,7 @@
   // The heroes are cut 3:1: the cover keeps their shape, and a floor for the title on phones.
   aspect-ratio: 3 / 1;
   min-height: 26rem;
+  padding-top: 5.5rem; // the masthead's room: a two-line title grows the cover instead
   display: flex;
   align-items: flex-end;
   isolation: isolate;
@@ -197,8 +198,9 @@
   max-width: calc(100vw - 9rem);
   padding: 0.3rem;
   background: var(--photobook-glass);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  backdrop-filter: blur(18px) saturate(140%);
+  // Darkened behind, so the labels keep their contrast over a white sky.
+  -webkit-backdrop-filter: blur(18px) saturate(140%) brightness(0.62);
+  backdrop-filter: blur(18px) saturate(140%) brightness(0.62);
   border: 1px solid var(--photobook-glass-edge);
   border-radius: 999px;
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.16), 0 5px 16px rgba(0, 0, 0, 0.12);
@@ -257,7 +259,7 @@
 /* ── the book ─────────────────────────────────────────────────────────── */
 .photobook-main {
   padding: clamp(4.5rem, 7vw, 6rem) 0 2rem;
-  scroll-margin-top: -2rem; // a filter change lands on the first row, just under the bar
+  scroll-margin-top: 4rem; // a filter change lands on the first row, clear of the masthead and the bar
 }
 
 .photobook-book[hidden],
@@ -266,8 +268,8 @@
   display: none;
 }
 
-// While the masthead is out over a scrolled page, the bar steps down beneath it instead of under it.
-body:has(.masthead.is-scrolled.is-nav-expanded:not(.is-nav-faded)) .photobook-bar__pill { translate: 0 4rem; }
+// Where the expanded masthead would sit over it, the bar steps down beneath it (book.js decides).
+.photobook-bar.is-under-masthead .photobook-bar__pill { translate: 0 4rem; }
 
 .photobook-row {
   display: flex;
@@ -318,6 +320,7 @@ body:has(.masthead.is-scrolled.is-nav-expanded:not(.is-nav-faded)) .photobook-ba
 .photobook-frame__caption {
   display: flex;
   align-items: center;
+  overflow-x: clip; // unseen specs still take room; they must not widen the page
   gap: 1rem;
   min-height: 2.2rem;
   padding-top: 0.7rem;
@@ -375,6 +378,11 @@ body:has(.masthead.is-scrolled.is-nav-expanded:not(.is-nav-faded)) .photobook-ba
 
 .photobook-row--triple .photobook-frame__specs,
 .photobook-row--triple .photobook-frame__caption > .photobook-film { display: none; }
+
+@include responsive-coarse-pointer {
+  .photobook-row--pair .photobook-frame__caption > .photobook-frame__place,
+  .photobook-row--triple .photobook-frame__caption > .photobook-frame__place { opacity: 1; transform: none; }
+}
 .photobook-row--triple .photobook-frame__caption > .photobook-sun { margin-left: auto; }
 
 // Frames settle into place as they scroll in; without support they are simply there.
@@ -683,14 +691,14 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   top: var(--top);
   bottom: var(--bot);
   z-index: 3;
-  width: 18%; // the middle of the print is left to the loupe
+  width: calc((100% - var(--side) - var(--right)) * 0.18); // the middle of the print is left to the loupe
   padding: 0;
   border: 0;
   background: none;
 }
 
 .photobook-lightbox__zone--prev {
-  left: 0;
+  left: var(--side);
   cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Cpath d='M22 9l-9 9 9 9' fill='none' stroke='%23e6eee8' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") 18 18, w-resize;
 }
 
@@ -712,6 +720,15 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   align-items: center;
   gap: 1rem;
   padding: env(safe-area-inset-top, 0px) 1rem 0;
+}
+
+.photobook-lightbox__back,
+.photobook-lightbox__tool,
+.photobook-specs__pin {
+  position: relative;
+
+  // A finger's target, larger than what is drawn.
+  &::after { content: ""; position: absolute; inset: -6px; }
 }
 
 .photobook-lightbox__back {
@@ -797,10 +814,13 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   color: var(--photobook-ink-3);
 }
 
+.photobook-lightbox__caption h3 { flex: 0 1 auto; min-width: 8em; }
+
 .photobook-lightbox__specs-line {
   display: flex;
   align-items: center;
   gap: 1.1rem;
+  min-width: 0;
   margin-left: auto;
   font: 400 0.7rem $barlow-font-family;
   letter-spacing: 0.08em;
@@ -833,7 +853,6 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
     border: 0;
     background: none;
     cursor: pointer;
-    transition: width 0.35s $cubic-bezier-smooth;
 
     &::before {
       content: "";
@@ -849,7 +868,6 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   }
 
   // Reached for, the whole rail opens: the marks part, thicken and rise; the one under the pointer most.
-  &:hover button { width: 16px; }
   &:hover button::before { width: 2px; height: 12px; opacity: 0.8; }
   &:hover button.is-on::before { width: 3px; height: 22px; opacity: 1; }
   &:hover button:hover::before { width: 3px; height: 26px; opacity: 1; background: $lighter-gray; }
@@ -1077,6 +1095,15 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   .photobook-lightbox__top { opacity: 0; }
 }
 
+.photobook-lightbox.is-single {
+  .photobook-lightbox__rail,
+  .photobook-lightbox__zone,
+  .photobook-lightbox__count { display: none; }
+}
+
+// Idle in picture only, a control reached by keyboard shows itself.
+.photobook-lightbox.is-bare.is-idle .photobook-lightbox__top:has(:focus-visible) { opacity: 1; }
+
 .photobook-lightbox.is-idle:not(.is-bare) .photobook-lightbox__rail { opacity: 0.35; }
 .photobook-lightbox.is-idle:not(.is-bare) .photobook-lightbox__rail:hover,
 .photobook-lightbox.is-idle:not(.is-bare) .photobook-lightbox__rail:focus-within { opacity: 1; }
@@ -1089,7 +1116,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   }
 
   .photobook-bar__pill { width: 100%; max-width: none; }
-  body:has(.masthead.is-scrolled.is-nav-expanded:not(.is-nav-faded)) .photobook-bar__pill { translate: 0 3.5rem; }
+  .photobook-bar.is-under-masthead .photobook-bar__pill { translate: 0 3.5rem; }
   .photobook-cover__title { grid-template-columns: 1fr; }
   .photobook-facts { gap: 0 1.1rem; }
   .photobook-facts dd { font-size: 1.1rem; }
@@ -1107,7 +1134,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
     align-items: flex-start;
 
     // One height for the strip (a 16:9 print at 86% of the screen); each frame's width follows its shape.
-    .photobook-frame { flex: 0 0 auto; width: min(86%, calc(86vw / 1.78 * var(--ratio))); scroll-snap-align: start; }
+    .photobook-frame { flex: 0 0 auto; width: min(86%, calc((100vw - 2 * var(--photobook-gutter)) * 0.86 / 1.78 * var(--ratio))); scroll-snap-align: start; }
 
     .photobook-frame__caption > * { opacity: 1; transform: none; }
   }
@@ -1136,7 +1163,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
     h3 { width: 100%; }
   }
 
-  .photobook-lightbox__specs-line { margin-left: 0; gap: 0.8rem; }
+  .photobook-lightbox__specs-line { flex-wrap: wrap; row-gap: 0.3rem; margin-left: 0; gap: 0.8rem; }
 
   // On a phone the specs rise as a sheet and the print moves up to make room.
   .photobook-specs {
@@ -1185,7 +1212,10 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   .photobook-lightbox__chrome,
   .photobook-lightbox__rail,
   .photobook-lightbox__rail button,
-  .photobook-lightbox__rail button::before { transition: none; }
+  .photobook-lightbox__rail button::before,
+  .photobook-lightbox__peek,
+  .photobook-lightbox.is-zoomed .photobook-lightbox__mat img.is-on,
+  .photobook-lightbox__mat img.is-on { transition: none; }
 }
 
 @include responsive-reduced-motion {
