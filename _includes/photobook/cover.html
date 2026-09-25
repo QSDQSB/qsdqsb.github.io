@@ -1,18 +1,17 @@
 {%- comment -%}
   The cover: the voyage's own 3:1 hero (header.overlay_image, the one its card and the atlas show),
-  full bleed, with the site's hero recipe (the fade at the foot, the scrim, the Didot title). A page
+  full bleed, with the site's hero recipe (the fade at the foot, the scrim, the title). A page
   without one opens on the book's cover frame. The glow takes its colours from that frame either way.
-  A sub-voyage names its parent in the kicker.
+  A sub-voyage names its parent above the title, as a way back to it; a voyage has nothing there.
 {%- endcomment -%}
 {%- assign pb = include.book -%}
 {%- assign cover = nil -%}
 {%- if pb.book.cover != nil -%}{%- assign cover = pb.photos[pb.book.cover] -%}{%- endif -%}
-{%- assign kicker = "Voyage" -%}
+{%- assign parent = nil -%}
 {%- if page.collection == "subvoyage" -%}
   {%- assign parent_slug = page.path | split: "/" | slice: 1 | first -%}
   {%- assign parent_path = "_voyage/" | append: parent_slug | append: ".md" -%}
   {%- assign parent = site.voyage | where: "path", parent_path | first -%}
-  {%- if parent -%}{%- assign kicker = "Voyage · " | append: parent.title -%}{%- endif -%}
 {%- endif -%}
 <header class="photobook-cover" id="photobook-cover" data-i="{% if cover %}{{ pb.book.cover }}{% endif %}">
   {%- if page.header.overlay_image %}
@@ -26,7 +25,9 @@
   {%- endif %}
   <div class="photobook-cover__title">
     <div>
-      <p class="photobook-kicker">{{ kicker }}</p>
+      {%- if parent %}
+      <p class="photobook-kicker"><a href="{{ parent.url | relative_url }}">{{ parent.title }}</a></p>
+      {%- endif %}
       <h1>{{ page.title | markdownify | remove: "<p>" | remove: "</p>" | strip }}</h1>
       {%- assign lede = page.subtitle | default: page.description | default: page.excerpt -%}
       {%- if lede %}<p class="photobook-cover__lede">{{ lede | strip_html | strip }}</p>{% endif %}
