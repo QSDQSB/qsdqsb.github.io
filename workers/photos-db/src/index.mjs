@@ -187,7 +187,10 @@ const decode = (x) => ({ ...x, sizes: x.sizes ? JSON.parse(x.sizes) : null, form
 export default {
   async queue(batch, env) {
     for (const g of touched(batch.messages)) {
-      const [m, p] = await Promise.all([env.PUBLIC.get(`${g}/manifest.json`), env.ORIGINALS.get(`${g}/.private.json`)]);
+      // The manifest lives beside the originals now; a gallery not yet processed since the move
+      // still has only its old public copy.
+      const [own, p] = await Promise.all([env.ORIGINALS.get(`${g}/manifest.json`), env.ORIGINALS.get(`${g}/.private.json`)]);
+      const m = own || await env.PUBLIC.get(`${g}/manifest.json`);
       if (!m) continue;
       console.log(g, JSON.stringify(await syncGallery(env.DB, g, await m.json(), p ? await p.json() : null)));
     }

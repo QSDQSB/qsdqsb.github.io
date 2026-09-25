@@ -88,29 +88,27 @@ end tell`;
 /**
  * Candidates for each capture time, found by date alone: every item Photos dates within 14 hours
  * of it (the most a time zone can move a clock). For a file whose name Photos does not know (a
- * renamed export); sameMoment then picks the one taken at the same second.
+ * renamed export); sameMoment then picks the one taken at the same second. Photos cannot filter
+ * items by date, so the library's ids, names and dates are read once, as three lists.
  * @param {string[]} takens  capture times as the camera wrote them (local, offset optional)
  * @returns {Map<string, {id, filename, date}[]>}
  */
 export function findByMoment(takens) {
+  const script = `tell application "Photos"
+  set ids to id of every media item
+  set names to filename of every media item
+  set ds to date of every media item
+end tell
+set out to ""
+repeat with i from 1 to count of ids
+  set out to out & (item i of ids) & tab & (item i of names) & tab & (((item i of ds) as «class isot») as string) & linefeed
+end repeat
+return out`;
+  const all = parse(osa(script, 1800));
   const out = new Map();
-  const at = (ms) => { const d = new Date(ms); return `set d to current date
-    set day of d to 1
-    set year of d to ${d.getUTCFullYear()}
-    set month of d to ${d.getUTCMonth() + 1}
-    set day of d to ${d.getUTCDate()}
-    set time of d to ${d.getUTCHours() * 3600 + d.getUTCMinutes() * 60 + d.getUTCSeconds()}`; };
   for (const taken of takens) {
     const local = Date.parse(`${taken.slice(0, 19)}Z`); // the wall clock as written, read as if UTC
-    const script = `tell application "Photos"
-    ${at(local - 14 * 3600e3)}
-    set d1 to d
-    ${at(local + 14 * 3600e3)}
-    set d2 to d
-    set hits to (every media item whose date ≥ d1 and date ≤ d2)${LINES}
-    return out
-end tell`;
-    out.set(taken, parse(osa(script)));
+    out.set(taken, all.filter((it) => Math.abs(Date.parse(`${it.date.slice(0, 19)}Z`) - local) <= 14 * 3600e3));
   }
   return out;
 }

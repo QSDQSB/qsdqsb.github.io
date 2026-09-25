@@ -1,8 +1,8 @@
 # The photo database's Worker: keeps D1 in step with the pipeline and
 # serves a read-only API.
 #
-#   public bucket  */manifest.json   ─┐
-#   originals      */.private.json   ─┴─ R2 event ─▶ queue photos-manifests ─▶ this Worker
+#   originals      */manifest.json + */.private.json (both locked; the public bucket serves
+#                  image tiers only) ── R2 event ─▶ queue photos-manifests ─▶ this Worker
 #                                                      upserts only rows whose version changed
 #   GET https://api.qsdqsb.com/v1/…  ◀── the site build, later the front end (public fields only)
 #
