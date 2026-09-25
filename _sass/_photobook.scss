@@ -157,13 +157,18 @@
 }
 
 .photobook-facts {
-  display: grid;
-  grid-template-columns: repeat(4, auto);
-  gap: 0 1.8rem;
+  // A label set in the cover's bottom-right corner: the figures close together, a hairline between,
+  // never spread across the width.
+  display: flex;
+  justify-self: end;
   margin: 0;
+  text-align: right;
   animation: photobook-rise 1.2s 0.6s $cubic-bezier-smooth both;
 
-  div { display: grid; gap: 0.45rem; }
+  div { display: grid; gap: 0.45rem; padding-inline: 0.95rem; }
+  div:first-child { padding-left: 0; }
+  div:last-child { padding-right: 0; }
+  div + div { border-left: 1px solid rgba(255, 255, 255, 0.16); }
 
   dt {
     font: 500 0.6rem $barlow-font-family;
@@ -321,11 +326,15 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: filter 0.6s $cubic-bezier-smooth;
+    transition: filter 0.6s $cubic-bezier-smooth, opacity 0.6s $cubic-bezier-smooth;
   }
 
   &:hover img { filter: brightness(1.06); }
 }
+
+// The print develops over its blurred placeholder as it arrives, instead of cutting in.
+// Only once the script has marked the book, so a page without it shows every image at once.
+.photobook-main.is-developing .photobook-frame__print img:not(.is-in) { opacity: 0; }
 
 .photobook-frame__caption {
   display: flex;
@@ -1185,7 +1194,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   // The sheet on a phone: two columns, a contact sheet rather than a smaller book.
   .photobook-sheet { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem 0.6rem; padding: 0.8rem; }
   .photobook-cover__title { grid-template-columns: 1fr; }
-  .photobook-facts { gap: 0 1.1rem; }
+  .photobook-facts div { padding-inline: 0.7rem; }
   .photobook-facts dd { font-size: 1.1rem; }
 
   // Pairs and threes become a strip the reader swipes; spreads stay full width.

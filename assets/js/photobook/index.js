@@ -24,6 +24,20 @@ if (dataEl) {
   lb.openFromHash();
 }
 
+// Prints develop over their placeholders as they arrive (see .is-developing in _photobook.scss);
+// one already in hand when the script runs is shown at once.
+const main = document.querySelector('.photobook-main');
+if (main) {
+  const show = (img) => img.classList.add('is-in');
+  for (const img of main.querySelectorAll('.photobook-frame__print img')) {
+    if (img.complete && img.naturalWidth) show(img);
+    else { img.addEventListener('load', () => show(img), { once: true }); img.addEventListener('error', () => show(img), { once: true }); }
+  }
+  new MutationObserver((ms) => { for (const m of ms) for (const n of m.addedNodes) n.querySelectorAll?.('.photobook-frame__print img').forEach((img) => (img.complete ? show(img) : img.addEventListener('load', () => show(img), { once: true }))); })
+    .observe(main, { childList: true, subtree: true });
+  main.classList.add('is-developing');
+}
+
 // The closing cards take their covers only as they come near (see _includes/photobook/end.html).
 const later = document.querySelectorAll('.photobook-end .card');
 if (later.length) {
