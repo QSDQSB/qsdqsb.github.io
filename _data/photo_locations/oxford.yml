@@ -90,9 +90,6 @@ photos:
     country: United Kingdom
     gps: present
     source: OpenStreetMap reverse geocode
-  dscf2541:
-    gps: missing
-    source: pending visual guess
   dscf2676:
     gps: missing
     source: pending visual guess
