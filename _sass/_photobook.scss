@@ -1073,6 +1073,8 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 }
 
 .photobook-lightbox__count {
+  flex: none;
+  white-space: nowrap;
   font: 500 0.68rem $barlow-font-family;
   letter-spacing: 0.2em;
   color: var(--photobook-ink-3);
@@ -1162,13 +1164,17 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   z-index: 7;
   display: flex;
   align-items: flex-end;
+  max-width: calc(100vw - 1rem);   // on a phone the marks close up to fit the screen
   padding: 0 0.75rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
   translate: -50% 0;
+  touch-action: none;               // a finger along it scrubs (lightbox.js)
   transition: left 0.6s $cubic-bezier-smooth;
 
   // Each mark answers across a tall column, so the pointer finds the rail without aiming at a hairline.
   button {
     position: relative;
+    flex: 0 1 12px;
+    min-width: 0;
     width: 12px;
     height: 48px;
     display: grid;
@@ -1196,6 +1202,11 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   &:hover button.is-on::before { width: 3px; height: 22px; opacity: 1; }
   &:hover button:hover::before { width: 3px; height: 26px; opacity: 1; background: $lighter-gray; }
   &:hover button.is-on:hover::before { background: $h2-color; }
+
+  // Scrubbed by a finger: the rail opens as under the pointer, and the frame under the finger stands up.
+  &.is-scrubbing button::before { width: 2px; height: 12px; opacity: 0.8; }
+  &.is-scrubbing button.is-on::before { width: 3px; height: 22px; opacity: 1; }
+  &.is-scrubbing button.is-scrub::before { width: 3px; height: 26px; opacity: 1; background: $lighter-gray; }
 }
 
 .photobook-lightbox__peek {
@@ -1204,7 +1215,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   left: 50%;
   width: 168px;
   aspect-ratio: 16 / 9;
-  translate: -50% 6px;
+  translate: calc(-50% + var(--px, 0px)) 6px;   // --px keeps it on screen (lightbox.js)
   border-radius: 6px;
   background: $background-color center / cover;
   box-shadow: $shadow-floating;
@@ -1212,7 +1223,8 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   pointer-events: none;
   transition: opacity 0.25s, translate 0.25s $cubic-bezier-smooth;
 
-  button:hover > & { opacity: 1; translate: -50% 0; }
+  button:hover > &,
+  button.is-scrub > & { opacity: 1; translate: calc(-50% + var(--px, 0px)) 0; }
 }
 
 .photobook-lightbox__progress {
@@ -1496,17 +1508,17 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-lightbox {
     --bar: 3.6rem;
     --top: var(--bar);
-    --bot: 6.6rem;
+    --bot: 9.2rem;          // the caption, and the scrubber beneath it
     --side: 0px;
     --right: 0px;
   }
 
-  .photobook-lightbox__rail { display: none; }
   .photobook-lightbox__zone { width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 
   .photobook-lightbox__caption {
     left: 1rem;
     right: 1rem;
+    padding-bottom: calc(3.4rem + env(safe-area-inset-bottom, 0px)); // clear of the scrubber
     flex-wrap: wrap;
     align-content: center;
     gap: 0.4rem 0.8rem;

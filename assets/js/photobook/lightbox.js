@@ -215,12 +215,50 @@ export function lightbox(frames) {
   function buildRail() {
     rail.innerHTML = order.map((i, k) => `<button type="button" data-k="${k}" tabindex="-1" aria-label="Frame ${k + 1}: ${esc(frames[i].name)}"><span class="photobook-lightbox__peek"></span></button>`).join('');
   }
-  // A preview is only fetched the first time the pointer rests on its mark.
-  rail.addEventListener('pointerover', (e) => {
-    const b = e.target.closest('button'); const pk = b?.querySelector('.photobook-lightbox__peek');
-    if (pk && !pk.style.backgroundImage) { const p = frames[order[Number(b.dataset.k)]]; pk.style.backgroundImage = `url(${p.url}/${p.sizes[0] || 480}.webp)`; }
+  // A preview is only fetched the first time the pointer (or a finger) rests on its mark; it is kept on screen.
+  const peekOf = (b) => {
+    const pk = b?.querySelector('.photobook-lightbox__peek'); if (!pk) return;
+    if (!pk.style.backgroundImage) { const p = frames[order[Number(b.dataset.k)]]; pk.style.backgroundImage = `url(${p.url}/${p.sizes[0] || 480}.webp)`; }
+    pk.style.removeProperty('--px');
+    const r = pk.getBoundingClientRect(), m = 8;
+    const shift = r.left < m ? m - r.left : r.right > innerWidth - m ? innerWidth - m - r.right : 0;
+    if (shift) pk.style.setProperty('--px', `${Math.round(shift)}px`);
+  };
+  rail.addEventListener('pointerover', (e) => peekOf(e.target.closest('button')));
+  let scrubbed = false;
+  rail.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b || scrubbed) { scrubbed = false; return; }
+    const k = Number(b.dataset.k); stop(); show(k, { dir: Math.sign(k - pos) });
   });
-  rail.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; const k = Number(b.dataset.k); stop(); show(k, { dir: Math.sign(k - pos) }); });
+  // By touch: a finger drawn along the rail scrubs the frames, each one's preview rising above it;
+  // lifting it opens that frame. A tap stays a tap.
+  let scrub = null;
+  const markAt = (x) => {
+    const bs = [...rail.children]; if (!bs.length) return null;
+    return bs.reduce((best, b) => { const r = b.getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - x); return d < best.d ? { b, d } : best; }, { b: null, d: Infinity }).b;
+  };
+  const scrubTo = (b) => {
+    if (!b || b === scrub.at) return;
+    scrub.at?.classList.remove('is-scrub'); b.classList.add('is-scrub'); scrub.at = b; peekOf(b);
+  };
+  rail.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'mouse') return;
+    scrub = { x: e.clientX, at: null, moved: false, id: e.pointerId };
+    rail.setPointerCapture(e.pointerId); rail.classList.add('is-scrubbing'); scrubTo(markAt(e.clientX));
+  });
+  rail.addEventListener('pointermove', (e) => {
+    if (!scrub || e.pointerId !== scrub.id) return;
+    if (Math.abs(e.clientX - scrub.x) > 6) scrub.moved = true;
+    scrubTo(markAt(e.clientX));
+  });
+  const endScrub = (open) => {
+    if (!scrub) return;
+    const { at, moved } = scrub; scrub = null;
+    rail.classList.remove('is-scrubbing'); at?.classList.remove('is-scrub');
+    if (open && at) { const k = Number(at.dataset.k); scrubbed = moved; if (k !== pos) { stop(); show(k, { dir: Math.sign(k - pos) }); } else scrubbed = true; }
+  };
+  rail.addEventListener('pointerup', () => endScrub(true));
+  rail.addEventListener('pointercancel', () => endScrub(false));
 
   // The panel's state: open or closed (the toolbar button). Open, the print makes room for it.
   function applySpecs() {
