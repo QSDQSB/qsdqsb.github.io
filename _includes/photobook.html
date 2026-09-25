@@ -6,7 +6,16 @@
 {%- endcomment -%}
 {%- assign photobook_key = page.gallery_name | replace: "/", "_" -%}
 {%- assign book = site.data.photo_manifests[photobook_key] -%}
-{% include_cached masthead.html %}
+{%- comment -%} The way back, first in the masthead: a part's to its voyage, a voyage's to all voyages. {%- endcomment -%}
+{%- assign back_url = "/voyage/" | relative_url -%}
+{%- assign back_label = "All voyages" -%}
+{%- if page.collection == "subvoyage" -%}
+  {%- assign parent_slug = page.path | split: "/" | slice: 1 | first -%}
+  {%- assign parent_path = "_voyage/" | append: parent_slug | append: ".md" -%}
+  {%- assign parent = site.voyage | where: "path", parent_path | first -%}
+  {%- if parent -%}{%- assign back_url = parent.url | relative_url -%}{%- assign back_label = "Back to " | append: parent.title -%}{%- endif -%}
+{%- endif -%}
+{% include_cached masthead.html back_url=back_url back_label=back_label %}
 <div class="photobook-glow" aria-hidden="true"><i></i><i></i></div>
 {% include photobook/cover.html book=book %}
 {%- if book and book.count > 0 %}

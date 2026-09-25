@@ -2,18 +2,11 @@
   The cover: the voyage's own 3:1 hero (header.overlay_image, the one its card and the atlas show),
   full bleed, with the site's hero recipe (the fade at the foot, the scrim, the title). A page
   without one opens on the book's cover frame. The glow takes its colours from that frame either way.
-  Along its left edge, the spine: the name of what holds this book (a part's voyage, or all voyages),
-  set vertically between hairlines, and the way back to it.
+  The way back (to a part's voyage, or to all voyages) is the masthead's ‹ (_includes/photobook.html).
 {%- endcomment -%}
 {%- assign pb = include.book -%}
 {%- assign cover = nil -%}
 {%- if pb.book.cover != nil -%}{%- assign cover = pb.photos[pb.book.cover] -%}{%- endif -%}
-{%- assign parent = nil -%}
-{%- if page.collection == "subvoyage" -%}
-  {%- assign parent_slug = page.path | split: "/" | slice: 1 | first -%}
-  {%- assign parent_path = "_voyage/" | append: parent_slug | append: ".md" -%}
-  {%- assign parent = site.voyage | where: "path", parent_path | first -%}
-{%- endif -%}
 <header class="photobook-cover" id="photobook-cover" data-i="{% if cover %}{{ pb.book.cover }}{% endif %}">
   {%- if page.header.overlay_image %}
   {%- assign hero = page.header.overlay_image -%}
@@ -23,11 +16,6 @@
   <img class="photobook-cover__image" src="{{ hero | relative_url }}"{% if sized %} srcset="{% for s in sized %}{{ s.src | relative_url }} {{ s.w }}w{% unless forloop.last %}, {% endunless %}{% endfor %}" sizes="max(100vw, 78rem)"{% endif %} alt="" fetchpriority="high" decoding="async">
   {%- elsif cover %}
   <img class="photobook-cover__image" src="{{ cover.url }}/1920.webp" sizes="100vw" srcset="{% for w in cover.sizes.webp %}{{ cover.url }}/{{ w }}.webp {{ w }}w{% unless forloop.last %}, {% endunless %}{% endfor %}" width="{{ cover.w }}" height="{{ cover.h }}" alt="" fetchpriority="high" decoding="async"{% if cover.ph %} style="background-image:url({{ cover.ph }})"{% endif %}>
-  {%- endif %}
-  {%- if parent %}
-  <a class="photobook-spine" href="{{ parent.url | relative_url }}" aria-label="Back to {{ parent.title | escape }}"><i></i><span>{{ parent.title }}</span><i></i></a>
-  {%- else %}
-  <a class="photobook-spine" href="{{ '/voyage/' | relative_url }}" aria-label="All voyages"><i></i><span>Voyages</span><i></i></a>
   {%- endif %}
   <div class="photobook-cover__title">
     <div>
