@@ -119,8 +119,7 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf7866:
-    suggested: Philosopher's Walk, Kyoto
-    landmark: Philosopher's Walk
+    suggested: Kotobuki Bridge, Kyoto
     street: Kotobuki Bridge
     city: Kyoto
     country: Japan

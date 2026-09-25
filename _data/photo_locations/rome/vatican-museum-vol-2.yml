@@ -3,7 +3,8 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf1268:
-    suggested: Via Vittor Pisani, Vatican City
+    suggested: Santa Maria delle Grazie al Trionfale, Vatican City
+    landmark: Santa Maria delle Grazie al Trionfale
     street: Via Vittor Pisani
     city: Rome
     country: Italy

@@ -58,9 +58,6 @@ photos:
     country: Czechia
     gps: present
     source: OpenStreetMap reverse geocode
-  dscf5204:
-    gps: missing
-    source: awaiting original
   dscf5264:
     suggested: Saint Nicholas, Prague
     landmark: Saint Nicholas

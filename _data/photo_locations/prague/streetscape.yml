@@ -2,9 +2,6 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
-  dscf4258:
-    gps: missing
-    source: awaiting original
   dscf4275:
     suggested: Saint Bartholomew, Prague
     landmark: Saint Bartholomew
@@ -13,12 +10,6 @@ photos:
     country: Czechia
     gps: present
     source: OpenStreetMap reverse geocode
-  dscf4284:
-    gps: missing
-    source: awaiting original
-  dscf4303:
-    gps: missing
-    source: awaiting original
   dscf4409:
     gps: missing
     source: pending visual guess
@@ -68,9 +59,6 @@ photos:
     country: Czechia
     gps: present
     source: OpenStreetMap reverse geocode
-  dscf4576:
-    gps: missing
-    source: awaiting original
   dscf4582:
     suggested: Charles Bridge, Prague
     landmark: Charles Bridge
