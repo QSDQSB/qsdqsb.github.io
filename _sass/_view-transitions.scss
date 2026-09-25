@@ -27,7 +27,8 @@
   }
 
   /* Archive page transitions */
-  .archive {
+  /* One named region per page: the Photobook's closing card sections (up to two) are not it. */
+  .archive:not(.photobook-end__more) {
     view-transition-name: archive-content;
   }
 
