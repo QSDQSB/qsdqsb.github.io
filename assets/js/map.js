@@ -25,7 +25,7 @@
   };
 
   const TILE_LAYER = {
-    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=cb1_3xht_1_28f15964527989c65928bbcd',
     attribution: '© OpenStreetMap contributors, © CartoDB',
     maxZoom: 19
   };
