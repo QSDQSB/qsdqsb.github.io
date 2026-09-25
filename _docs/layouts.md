@@ -71,6 +71,13 @@ cover and book (their centre on the cover's lower edge).
   film's edge print (`.photobook-book__film`). Book ⇄ Sheet jumps to the top.
 - The first-visit hint turns the dial ~10° and back once per voyage
   (`localStorage` `qsd.dial.hinted:<path>`).
+- The switch has a third stop, the full-screen corners: **Screening**, the book
+  full screen as a slideshow from the first frame of the current filter
+  (`lightbox.js` `screen()`); a tap, click or Esc ends it where it started.
+  Book or Sheet is remembered (`localStorage` `photobook-view`).
+- **The way back** is the masthead's ‹ before the logo (`_includes/photobook.html`
+  passes `back_url` / `back_label` to `masthead.html`, cached per destination):
+  a part's to its voyage, a voyage's to all voyages. Nothing sits on the cover.
 
 **Lightbox keyboard:** arrows = navigate, Space / S = slideshow, I = specs,
 F = bare print, Z (or double-click) = loupe, Esc = back out
