@@ -865,8 +865,9 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   --bar: 4rem;          // the tools' band at the top
   --top: var(--bar);     // the print's top margin: the band, except in picture only
   --bot: 5.4rem;
-  --side: clamp(3rem, 5vw, 5.5rem);
+  --side: clamp(1rem, 1.6vw, 1.5rem);   // the print as large as the screen allows
   --right: var(--side);
+  transition: --pr 0.55s $cubic-bezier-standard;
   width: 100vw;
   height: 100dvh;
   max-width: none;
@@ -931,7 +932,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   position: absolute;
   inset: var(--top) var(--right) var(--bot) var(--side);
   container-type: size;
-  transition: inset 0.6s $cubic-bezier-smooth, --pr 0.55s $cubic-bezier-standard;
+  transition: inset 0.6s $cubic-bezier-smooth;
 
   &:focus { outline: none; }
 
@@ -943,7 +944,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
     object-fit: contain;
     opacity: 0;
     transform: translateX(calc(var(--d, 0) * 2.5%));
-    transition: opacity var(--xf, 0.55s) $cubic-bezier-standard, transform 0.9s $cubic-bezier-smooth;
+    transition: opacity var(--xf, 0.55s) $cubic-bezier-standard, transform 0.9s $cubic-bezier-smooth, object-position 0.6s $cubic-bezier-smooth;
     // No drop-shadow filter: Safari draws a filtered layer in tiles and, resizing it, can leave a
     // hairline seam across the print. The glass behind gives the depth.
     -webkit-user-drag: none;
@@ -969,7 +970,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
     0 2px 6px rgba(0, 0, 0, 0.3),
     0 24px 60px rgba(0, 0, 0, 0.45),
     0 60px 120px rgba(0, 0, 0, 0.35);
-  transition: opacity 0.5s $cubic-bezier-smooth;
+  transition: opacity 0.5s $cubic-bezier-smooth, top 0.6s $cubic-bezier-smooth, translate 0.6s $cubic-bezier-smooth;
 }
 
 .photobook-lightbox:is(.is-bare, .is-zoomed) .photobook-lightbox__mount { opacity: 0; }
@@ -1236,8 +1237,17 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 .photobook-lightbox.has-specs .photobook-specs { opacity: 1; transform: none; }
 // The panel carries the place and the specs, so the band beneath the print steps aside while it shows.
 .photobook-lightbox.has-specs .photobook-lightbox__caption { opacity: 0; pointer-events: none; }
-// Pinned, the print also takes the band's height; on auto-hide it holds still and the band fades back.
-.photobook-lightbox.has-specs.is-pinned { --right: calc(21rem + var(--side) * 0.5); --bot: 3rem; }
+// Open, the panel stands beside the print, a rem apart, and the print takes the caption band's height.
+// They share a top line: the print hangs from the panel's top, as a label hangs beside a frame, and
+// the panel is never taller than the print (it scrolls within it). Closed, the print is centred.
+.photobook-lightbox.has-specs.is-pinned {
+  --right: calc(21rem + var(--side));
+  --bot: 3rem;
+
+  .photobook-lightbox__mat img { object-position: 50% 0; }
+  .photobook-lightbox__mount { top: 0; translate: -50% 0; }
+  .photobook-specs { max-height: min(100dvh - var(--top) - var(--bot), (100vw - var(--side) - var(--right)) / var(--pr)); }
+}
 
 .photobook-specs__inner {
   display: grid;
@@ -1402,7 +1412,15 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   }
 
   .photobook-lightbox.has-specs { --bot: #{$height}; }
-  .photobook-lightbox.has-specs.is-pinned { --right: 0px; --bot: #{$height}; }
+  .photobook-lightbox.has-specs.is-pinned {
+    --right: 0px;
+    --bot: #{$height};
+
+    // A sheet from below has no top line to share: the print stays centred in the room above it.
+    .photobook-lightbox__mat img { object-position: 50% 50%; }
+    .photobook-lightbox__mount { top: 50%; translate: -50% -50%; }
+    .photobook-specs { max-height: $height; }
+  }
   .photobook-specs__inner { padding: 1rem 1.1rem calc(1.2rem + env(safe-area-inset-bottom, 0px)); }
 }
 
