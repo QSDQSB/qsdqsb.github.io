@@ -144,7 +144,7 @@ export function lightbox(frames) {
     fitFor(p);
     // The mount beneath the print takes this frame's shape (_photobook.scss, .photobook-lightbox__mount).
     if (!mat.querySelector('.photobook-lightbox__mount')) mat.prepend(Object.assign(document.createElement('div'), { className: 'photobook-lightbox__mount' }));
-    mat.style.setProperty('--pr', String(p.ratio || 1.5));
+    lb.style.setProperty('--pr', String(p.ratio || 1.5));
     // The print drifts in from the side it came from; the old one leaves the other way.
     const old = [...mat.querySelectorAll('img')];
     // A light rendition shows at once; the full one takes its place as soon as it is decoded.
