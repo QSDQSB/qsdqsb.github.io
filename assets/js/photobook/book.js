@@ -60,36 +60,40 @@ export function book({ frames, onOpen, onLayout, onScreen }) {
   // A new view starts the reader at its top, at once.
   const toTop = () => { if (main && main.getBoundingClientRect().top < 0) main.scrollIntoView({ block: 'start', behavior: 'instant' }); };
 
-  // A new film: first the page glides back to the start of the book, the old layout still in place;
-  // then the book re-lays there, the frames that stay moving into their new rows, the others
-  // dissolving (a view transition; a crossfade where there is none; nothing moves when motion is off).
+  // A new film re-lays the book where the reader is: the frame they were at keeps its place on the
+  // screen, or, if the film leaves it out, the nearest kept frame after it (before it, at the end)
+  // takes that place. The frames that stay move into their new rows, the others dissolve (a view
+  // transition; a crossfade where there is none; nothing moves when motion is off).
   const filmHead = document.querySelector('.photobook-book__film');
-  const glide = () => new Promise((done) => {
-    const top = main.getBoundingClientRect().top - parseFloat(getComputedStyle(main).scrollMarginTop || 0);
-    if (Math.abs(top) < 2) return done();
-    let over = false;
-    const end = () => { if (!over) { over = true; done(); } };
-    window.addEventListener('scrollend', end, { once: true });
-    setTimeout(end, 1000);
-    main.scrollIntoView({ block: 'start', behavior: still() ? 'instant' : 'smooth' });
-  });
   const inView = (f) => { const r = f.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; };
-  let gliding = null;
-  async function refilter(f, hue) {
+  function placeOf(all, box) {
+    if (main.getBoundingClientRect().top > 0) return null;     // the cover is still in view: nothing to hold
+    const at = all.find((x) => !x.hidden && box.contains(x) && x.getBoundingClientRect().top + x.offsetHeight / 2 > 0);
+    return at ? { el: at, top: at.getBoundingClientRect().top } : null;
+  }
+  function holdPlace(place, all, f) {
+    if (!place) return;
+    const kept = (x) => !f || x.dataset.film === f, k = all.indexOf(place.el);
+    const to = kept(place.el) ? place.el : all.slice(k + 1).find(kept) || all.slice(0, k).reverse().find(kept);
+    if (to) window.scrollBy({ top: to.getBoundingClientRect().top - place.top, behavior: 'instant' });
+  }
+  function refilter(f, hue) {
     if (!main) { film = f; layout(); return; }
-    await (gliding || glide());
-    gliding = null;
+    const box = view === 'book' ? bookEl : sheetEl;
+    const all = view === 'book' ? figures : [...sheetEl.children];
+    const place = placeOf(all, box);
     const apply = () => {
       film = f;
       if (filmHead) { filmHead.hidden = !f; filmHead.textContent = f; filmHead.style.setProperty('--film', hue); }
       layout();
+      holdPlace(place, all, f);
     };
     if (still()) return apply();
-    const box = view === 'book' ? bookEl : sheetEl;
     if (document.startViewTransition) {
-      // Named: what is on screen now, and what will be; each frame is one element across the change.
-      const all = view === 'book' ? figures : [...sheetEl.children];
-      const soon = new Set(all.filter((x) => !f || x.dataset.film === f).slice(0, 9));
+      // Named: what is on screen now, and the kept frames around the reader's place, which will be;
+      // each frame is one element across the change.
+      const k = place ? all.indexOf(place.el) : 0;
+      const soon = new Set([...all.slice(k), ...all.slice(0, k).reverse()].filter((x) => !f || x.dataset.film === f).slice(0, 9));
       const named = all.filter((x) => soon.has(x) || (!x.hidden && box.contains(x) && inView(x)));
       named.forEach((x) => { x.style.viewTransitionName = `photobook-f${x.dataset.i}`; });
       document.documentElement.classList.add('is-refiltering');
@@ -109,7 +113,7 @@ export function book({ frames, onOpen, onLayout, onScreen }) {
     mark?.style.setProperty('--film', turn.hue());
     document.querySelector('.photobook-bar')?.classList.toggle('has-filter', !!f);
     refilter(f, turn.hue());
-  }, () => { gliding = glide(); });
+  });
   // Once per reader and voyage: when the dial first comes fully into view, it turns a little and back.
   if (turn && 'IntersectionObserver' in window) {
     const key = `qsd.dial.hinted:${location.pathname}`;

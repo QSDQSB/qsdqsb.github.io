@@ -4,12 +4,12 @@
  * and settles on the nearest), or use the arrow keys; hovering a mark names it faintly underneath.
  * On a touch screen the first tap opens the dial (the dots become letters) and the next one chooses,
  * so nothing is picked blind. The book changes once the dial has settled, so turning through films
- * never re-lays the page; onPick hears of a click or a turn by hand as the dial starts towards it.
+ * never re-lays the page.
  */
 
 const TURN_MS = 520;
 
-export function filmDial(el, onChoose, onPick) {
+export function filmDial(el, onChoose) {
   const face = el.querySelector('.photobook-dial__face');
   const marks = [...face.querySelectorAll('[role="radio"]')];
   const names = [...el.querySelectorAll('.photobook-dial__name > span')];
@@ -29,7 +29,7 @@ export function filmDial(el, onChoose, onPick) {
   };
   const open = (on) => { clearTimeout(shut); el.classList.toggle('is-open', on); };
 
-  function choose(i, { focus = false, pick = false } = {}) {
+  function choose(i, { focus = false } = {}) {
     i = clamp(i);
     const changed = i !== sel;
     sel = i; say(i);
@@ -40,7 +40,6 @@ export function filmDial(el, onChoose, onPick) {
       if (changed) onChoose(marks[i].dataset.film || '');
       if (el.classList.contains('is-open')) shut = setTimeout(() => open(false), 1200);
     };
-    if (changed && pick) onPick?.();                           // the page may start moving while the dial turns
     if (still()) { at = i; paint(); settle(); return; }
     const from = at, t0 = performance.now();
     const turn = (t) => {
@@ -62,7 +61,7 @@ export function filmDial(el, onChoose, onPick) {
   }, true);
 
   marks.forEach((m, i) => {
-    m.addEventListener('click', () => { if (!turned) choose(i, { pick: true }); });
+    m.addEventListener('click', () => { if (!turned) choose(i); });
     m.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse' && !held && i !== sel) say(i, true); });
     m.addEventListener('pointerleave', () => { if (!held) say(sel); });
   });
@@ -93,7 +92,7 @@ export function filmDial(el, onChoose, onPick) {
   const release = () => {
     if (!held) return;
     held = false; el.classList.remove('is-held');
-    if (turned) choose(Math.round(at), { pick: true });
+    if (turned) choose(Math.round(at));
     setTimeout(() => { turned = false; });
   };
   face.addEventListener('pointerup', release);

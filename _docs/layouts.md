@@ -65,10 +65,12 @@ cover and book (their centre on the cover's lower edge).
 - Over the book both step away; scrolling up about 24 px calls them back
   drawn in to 58 px (`is-stuck` / `is-summoned`). While a film is chosen the
   corner keeps the dial's index over that film's colour (`.photobook-bar__mark`).
-- A film change: the page glides to the book's start as the dial turns, then
-  the book re-lays in a view transition (staying frames move, others
-  dissolve; crossfade without the API; nothing with motion off), headed by the
-  film's edge print (`.photobook-book__film`). Book ⇄ Sheet jumps to the top.
+- A film change re-lays the book where the reader is: the frame they were at
+  keeps its place on screen, or the nearest kept frame after it takes that
+  place (`placeOf` / `holdPlace` in `book.js`); with the cover in view nothing
+  scrolls. Staying frames move, others dissolve (view transition; crossfade
+  without the API; nothing with motion off); the filtered book is headed by
+  the film's edge print (`.photobook-book__film`). Book ⇄ Sheet jumps to the top.
 - The first-visit hint turns the dial ~10° and back once per voyage
   (`localStorage` `qsd.dial.hinted:<path>`).
 - The switch has a third stop, the full-screen corners: **Screening**, the book
