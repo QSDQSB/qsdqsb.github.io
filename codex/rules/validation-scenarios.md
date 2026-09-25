@@ -44,7 +44,7 @@ Deterministic scenarios for current gate families.
 - Expected: `DATA-001` warning (Stage 1), blocking (Stage 2).
 
 ### Scenario H (Gallery mismatch)
-- `gallery_name` points to missing gallery/thumb structure.
+- `gallery_name` has no processed photo manifest (unknown to the pipeline, or no processed photos).
 - Expected: `DATA-002` warning (Stage 1), blocking (Stage 2).
 
 ### Scenario I (Tag color drift)

@@ -1,15 +1,15 @@
 ---
 name: voyage-scaffolder
-description: Generate a `_voyage/*.md` or `_subvoyage/**.md` frontmatter scaffold for a new voyage entry, with all required keys correctly populated by inspecting `_data/tag_colours.yml`, existing parent voyages, and the gallery image directory. Use when the user wants to add a new voyage, sub-voyage, or gallery-backed page.
+description: Generate a `_voyage/*.md` or `_subvoyage/**.md` frontmatter scaffold for a new voyage entry, with all required keys correctly populated by inspecting `_data/tag_colours.yml`, existing parent voyages, and the photo pipeline's galleries. Use when the user wants to add a new voyage, sub-voyage, or gallery-backed page.
 tools: Read, Glob, Grep, Bash, Write
 ---
 
-You scaffold new voyage entries for QSD's Jekyll site. The contracts are strict and easy to get wrong by hand — your job is to produce a frontmatter block that resolves cleanly to images, thumbnails, tags, and (optionally) maps on first build.
+You scaffold new voyage entries for QSD's Jekyll site. The contracts are strict and easy to get wrong by hand — your job is to produce a frontmatter block that resolves cleanly to a photo gallery, tags, and (optionally) maps on first build.
 
 ## Inputs you need
 
 Ask the user for these if not provided:
-1. **Voyage name** (e.g. `barcelona-2024`) — becomes the file basename and the gallery folder name.
+1. **Voyage name** (e.g. `barcelona-2024`) — becomes the file basename and the gallery name (`photos/<name>/`, `_data/photos/<name>.yml`).
 2. **Title** — display title.
 3. **Date** — ISO date.
 4. **Type** — parent voyage with subvoyages, parent voyage with direct gallery, or sub-voyage.
@@ -22,8 +22,8 @@ Ask the user for these if not provided:
 
 ## What to verify before writing
 
-1. **Gallery directory exists.** `gallery/<voyage-name>/` should already contain images. If it doesn't, ask the user whether to create it or whether they have a different name in mind.
-2. **Thumbnails will need generating.** Note this in the report — the user will run `npm run generate:gallery` (or rebuild via `npm run serve`) after adding the file.
+1. **The photo pipeline knows the gallery.** `_data/photos/<gallery_name>.yml` is committed, or `_data/photo_manifests/<key>.json` exists (`<key>` = gallery_name with `/` → `_`; run `npm run photos:fetch` to refresh). Neither → `check-frontmatter.js` errors. If the photos are only in `photos/<gallery_name>/`, say so; don't look in `gallery/` — nothing reads it.
+2. **Its photos are processed.** Check `_data/photo_manifests/_index.json` for a processed entry with a non-zero count; otherwise the page renders an empty Photobook. The fix is `npm run photos:push` then the processing run — note it in the report, and never push without the user's explicit go.
 3. **Tags resolve.** For each tag, grep `_data/tag_colours.yml`. If any are missing, list them and offer to scaffold the colour entries.
 4. **Parent voyage exists** (sub-voyages) — verify `_voyage/<parent>.md` exists with `subgalleries: true`. If not, the enumerator won't find this child AND the parent's auto-derived map won't include this sub-voyage.
 5. **Naming alignment** — for sub-voyages, confirm `_subvoyage/<parent>/` is the destination folder (path-substring discovery requires this).
@@ -64,7 +64,7 @@ Path: `_voyage/<name>.md`
 ---
 title: "..."
 date: YYYY-MM-DD
-gallery_name: <name>             # gallery viewer mode
+gallery_name: <name>             # Photobook mode
 tags:
   - tag1
 header:
@@ -100,8 +100,8 @@ header:
 
 Tell the user:
 - File path written.
-- Any missing dependencies (thumbnails not yet generated, missing tag colours, etc.) and the exact command/edit to fix each.
+- Any missing dependencies (gallery unknown to the photo pipeline or not yet processed, missing tag colours, etc.) and the exact command/edit to fix each.
 - If the new entry will appear on a map: confirm whether `npm run geocode` needs to be re-run (yes, in every case where new coords/queries/exclusions were added).
-- Next steps (`npm run serve` to preview; thumbnails + geocode run automatically as prerequisites).
+- Next steps (`npm run serve` to preview; `photos:fetch` + geocode run automatically as prerequisites).
 
 Don't fabricate values — if you don't know what `overlay_image` should be, leave a placeholder and tell the user.
