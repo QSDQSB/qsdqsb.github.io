@@ -1,17 +1,3 @@
 # Authored layer for gallery/prague/charles-bridge — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf4235:
-    caption: Lesser Town, Praha 1, Prague
-  dscf4236:
-    caption: Lesser Town, Praha 1, Prague
-  dscf4271:
-    caption: Bridge of Legions, Old Town, Prague
-  dscf4272:
-    caption: Bridge of Legions, Old Town, Prague
-  dscf4277:
-    caption: Bridge of Legions, Old Town, Prague
-  dscf4296:
-    caption: Holy Saviour, Old Town, Prague
-  dscf5410:
-    caption: Hradčany, Praha 1, Prague
+photos: {}

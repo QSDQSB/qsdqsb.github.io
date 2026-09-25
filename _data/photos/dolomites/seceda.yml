@@ -1,33 +1,3 @@
 # Authored layer for gallery/dolomites/seceda — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf0142:
-    caption: St. Ulrich in Gröden, Ortisei, Italy
-  dscf0152:
-    caption: Adolf-Munkel-Weg, Villnöß - Funes, Italy
-  dscf0153:
-    caption: St. Ulrich in Gröden, Ortisei, Italy
-  dscf0197:
-    caption: Adolf-Munkel-Weg, Villnöß - Funes, Italy
-  dscf0357:
-    caption: Adolf-Munkel-Weg, Villnöß Funes, Italy
-  dscf0411:
-    caption: Adolf-Munkel-Weg, Villnöß - Funes, Italy
-  dscf0414:
-    caption: Adolf-Munkel-Weg, Villnöß - Funes, Italy
-  dscf0500:
-    caption: Adolf-Munkel-Weg, Villnöß - Funes, South Tyrol
-  dscf0504:
-    caption: Sass Rigais, Villnöß - Funes, Italy
-  dscf0513:
-    caption: Adolf-Munkel-Weg, Villnöß - Funes, Italy
-  dscf0531:
-    caption: Adolf-Munkel-Weg, Villnöß - Funes, Italy
-  dscf0148:
-    caption: Urtijëi - St. Ulrich in Gröden - Ortisei, South Tyrol, Italy
-  dscf6291:
-    caption: Almhotel Col Raiser, Santa Cristina, Italy
-  dscf8139:
-    caption: Adolf-Munkel-Weg, Villnöß - Funes, Italy
-  dscf8177:
-    caption: Rio Cisles, Villnöß - Funes, Italy
+photos: {}

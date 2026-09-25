@@ -1,17 +1,3 @@
 # Authored layer for gallery/prague/st-nicolas — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf4786:
-    caption: Karmelitská, Prague, Czechia
-  dscf4837:
-    caption: Hellichova, Prague, Czechia
-  dscf5247:
-    caption: Saint Nicholas, Lesser Town, Prague
-  dscf5186:
-    caption: Malostranské náměstí, Prague, Czechia
-  dscf5193:
-    caption: Malá Strana, Prague, Czechia
-  dscf5234:
-    caption: Saint Nicholas, Lesser Town, Prague
-  dscf5236:
-    caption: Saint Nicholas, Lesser Town, Prague
+photos: {}

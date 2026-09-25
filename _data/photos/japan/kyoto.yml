@@ -1,35 +1,3 @@
 # Authored layer for gallery/japan/kyoto — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf7324:
-    caption: Fukakusa-Kaidocho, Fushimi Ward, Kyoto
-  dscf7191:
-    caption: Fukakusa-Moriyoshicho, Fushimi Ward, Kyoto
-  dscf7207:
-    caption: Fukakusa-Moriyoshicho, Fushimi Ward, Kyoto
-  dscf7276:
-    caption: Fukakusa-Kaidoguchicho, Fushimi Ward, Kyoto
-  dscf7299:
-    caption: Fukakusa-Inarionmaecho, Fushimi Ward, Kyoto
-  dscf7379:
-    caption: Honmachi 15, Higashiyama Ward, Kyoto
-  dscf7413:
-    caption: Blend Kyoto, Nakagyo Ward, Kyoto
-  dscf7426:
-    caption: Kyoto Imperial Palace Park, Higashisakuracho, Kyoto
-  dscf7450:
-    caption: Kyotogyoen, Kamigyō Ward, Kyoto
-  dscf7779:
-    caption: Kinkakuji-chō, Kita Ward, Kyoto
-  dscf7818:
-    caption: Kinkakuji-chō, Kita Ward, Kyoto
-  dscf7906:
-    caption: Kiyomizu 3-chome, Higashiyama Ward, Kyoto
-  dscf8006:
-    caption: Kiyomizu 1-chōme, Higashiyama Ward, Kyoto
-  dscf8041:
-    caption: Yodo-Honmachi, Fushimi Ward, Kyoto
-  dscf8203:
-    caption: Kiyomizu 3-chome, Higashiyama Ward, Kyoto
-  dscf8370:
-    caption: Giommachi-Minamigawa, Higashiyama Ward, Kyoto
+photos: {}
