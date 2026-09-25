@@ -97,7 +97,7 @@ test('the specs list the in-camera rendering with short labels and no glosses', 
   const { settingsOf } = await lib();
   const rows = settingsOf({ whiteBalance: 'Auto (white priority)', settings: { dynamicRange: 'Standard', grainRoughness: 'Weak', grainSize: 'Small', highlightTone: '-2 (soft)', color: '+3 (very high)', focusMode: 'AF-S', afMode: 'Single Point' } });
   // What the camera left at its default (DR Standard, WB Auto) is not shown; what was chosen is.
-  assert.deepEqual(rows, [['Grain', 'Weak / S'], ['Highl.', '−2'], ['Colour', '+3'], ['Focus', 'AF-S · Single Point']]);
+  assert.deepEqual(rows, [['Grain', 'Weak / S'], ['Highlights', '−2'], ['Colour', '+3'], ['Focus', 'AF-S · Single Point']]);
 });
 
 test('lenses read as a photographer says them', async () => {

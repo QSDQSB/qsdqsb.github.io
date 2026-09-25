@@ -152,8 +152,8 @@ export function colophonOf(photos) {
 
 // The in-camera rendering, as the specs panel lists it: short labels, values without their glosses.
 const SETTINGS = [
-  ['dynamicRange', 'DR'], ['grainRoughness', 'Grain'], ['colorChrome', 'Chrome'], ['colorChromeBlue', 'Chr. blue'],
-  ['highlightTone', 'Highl.'], ['shadowTone', 'Shad.'], ['whiteBalance', 'WB'], ['color', 'Colour'], ['sharpness', 'Sharp'],
+  ['dynamicRange', 'DR'], ['grainRoughness', 'Grain'], ['colorChrome', 'Chrome'], ['colorChromeBlue', 'Chrome blue'],
+  ['highlightTone', 'Highlights'], ['shadowTone', 'Shadows'], ['whiteBalance', 'WB'], ['color', 'Colour'], ['sharpness', 'Sharp'],
   ['noiseReduction', 'NR'], ['clarity', 'Clarity'], ['shutterType', 'Shutter type'], ['focusMode', 'Focus'],
 ];
 const DEFAULTS = new Set(['Off', '0', 'Standard', 'Auto', 'Normal']);
@@ -168,7 +168,8 @@ export function settingsOf(p) {
     // A value the camera leaves alone says nothing ("Film Simulation" means the film decides it);
     // what the photographer chose is what the panel keeps.
     if (v == null || v === '' || v === 'Film Simulation') continue;
-    const shown = tidy(v);
+    let shown = tidy(v);
+    if (key === 'clarity' && /^\d/.test(shown)) shown = `+${shown}`;
     if (DEFAULTS.has(shown)) continue;
     out.push([label, shown]);
   }

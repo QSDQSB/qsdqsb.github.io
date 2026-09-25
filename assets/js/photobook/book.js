@@ -76,16 +76,23 @@ export function book({ frames, onOpen, onLayout }) {
   films?.addEventListener('scroll', edge, { passive: true });
   window.addEventListener('resize', edge);
 
-  // The bar steps below the masthead only when the expanded masthead would reach over it; widths only,
-  // since stepping down does not move it sideways.
+  // The bar steps below the masthead only when the expanded masthead would reach over it: across (the
+  // step does not move it sideways) and down (the bar is stuck at the top, not still in the page's flow).
   const bar = document.querySelector('.photobook-bar'), mast = document.querySelector('.masthead');
   const under = () => {
     if (!bar || !mast) return;
     const out = mast.classList.contains('is-scrolled') && mast.classList.contains('is-nav-expanded') && !mast.classList.contains('is-nav-faded');
     const nav = (mast.querySelector('.greedy-nav') || mast).getBoundingClientRect(), pill = bar.querySelector('.photobook-bar__pill')?.getBoundingClientRect();
-    bar.classList.toggle('is-under-masthead', !!(out && pill && pill.left < nav.right + 12));
+    const stuck = bar.getBoundingClientRect().top + 16 < nav.bottom + 8;
+    bar.classList.toggle('is-under-masthead', !!(out && stuck && pill && pill.left < nav.right + 12));
   };
+  let tick = 0;
+  window.addEventListener('scroll', () => { if (!tick) tick = requestAnimationFrame(() => { tick = 0; under(); }); }, { passive: true });
   if (mast) new MutationObserver(under).observe(mast, { attributes: true, attributeFilter: ['class'] });
+
+  // Past the book (the colophon and what follows) the bar has nothing to filter, so it steps away.
+  const end = document.querySelector('.photobook-colophon') || document.querySelector('.photobook-end');
+  if (bar && end) new IntersectionObserver(([e]) => bar.classList.toggle('is-past', e.boundingClientRect.top < window.innerHeight * 0.5), { threshold: [0, 1], rootMargin: '0px 0px -50% 0px' }).observe(end);
   window.addEventListener('resize', under);
   // Any frame, in the book or on the sheet, opens the lightbox over the frames currently shown.
   document.querySelector('.photobook-main')?.addEventListener('click', (e) => {

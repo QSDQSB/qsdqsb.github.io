@@ -191,7 +191,7 @@
 .photobook-bar__pill {
   pointer-events: auto;
   margin-top: 1rem;
-  transition: translate 0.35s $cubic-bezier-smooth;
+  transition: translate 0.35s $cubic-bezier-smooth, opacity 0.35s $cubic-bezier-smooth;
   display: flex;
   align-items: center;
   gap: 0.2rem;
@@ -259,7 +259,7 @@
 /* ── the book ─────────────────────────────────────────────────────────── */
 .photobook-main {
   padding: clamp(4.5rem, 7vw, 6rem) 0 2rem;
-  scroll-margin-top: 4rem; // a filter change lands on the first row, clear of the masthead and the bar
+  scroll-margin-top: 5.5rem; // a filter change lands on the first row, clear of the masthead and the bar
 }
 
 .photobook-book[hidden],
@@ -270,6 +270,9 @@
 
 // Where the expanded masthead would sit over it, the bar steps down beneath it (book.js decides).
 .photobook-bar.is-under-masthead .photobook-bar__pill { translate: 0 4rem; }
+
+// Past the book the bar has nothing to filter.
+.photobook-bar.is-past .photobook-bar__pill { opacity: 0; pointer-events: none; }
 
 .photobook-row {
   display: flex;
