@@ -1030,8 +1030,8 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   flex: none;
   overflow: visible;
 
+  // One ink for every mark: gold in the panel belongs to the sun's position alone.
   .w-ink { fill: none; stroke: var(--photobook-ink-3); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
-  .w-gold { fill: none; stroke: var(--photobook-gold); stroke-width: 1; stroke-linecap: round; }
   .w-dot { fill: var(--photobook-ink-3); }
 }
 

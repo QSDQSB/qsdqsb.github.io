@@ -203,16 +203,32 @@ export function lightboxOf(photos) {
     name: p.name, place: p.place?.name || null, city: p.place?.city || null,
     shots: p.shutterCount ?? null, focal: p.focal ?? null, aperture: p.aperture ?? null, shutter: p.shutter ?? null,
     iso: p.iso ?? null, bias: p.exposureBias ?? null, camera: cameraName(p.camera), lens: lensName(p.lens),
-    film: p.film ?? null, hue: p.filmHue ?? null, light: p.light, weather: weatherOf(p.weather, p.light), glow: p.glow, ph: p.ph, settings: settingsOf(p),
+    film: p.film ?? null, hue: p.filmHue ?? null, light: p.light, weather: p.aloft || weatherOf(p.weather, p.light), glow: p.glow, ph: p.ph, settings: settingsOf(p),
   }));
 }
 
 /** "prague/zizkov-tower" → "Zizkov Tower": a gallery's own name, for frames with no place yet. */
 const titleOf = (gallery) => String(gallery || '').split('/').pop().split('-').filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(' ');
 
+/**
+ * A voyage taken from an aircraft (`aerial: { altitude_ft }` in its YAML) has no position to trust:
+ * the phone's GPS is the last fix before take-off. Its frames carry no place and no sun; the air
+ * is the standard atmosphere's at that height (15 °C at sea level, 1.98 °C colder per 1,000 ft, no
+ * colder than the tropopause's −56.5 °C), under a mark of its own (a cloud layer below the
+ * cruising line) and the height in words, true at any hour.
+ */
+export const isaCelsius = (ft) => Math.round(Math.max(-56.5, 15 - 1.98 * ft / 1000));
+
 /** Add the Photobook's layer to a merged manifest. `locations` is the locate sidecar's `photos` map, if any. */
 export function bookOf(merged, locations = {}) {
+  const aerial = merged.aerial && Number.isFinite(merged.aerial.altitude_ft) ? merged.aerial : null;
   const photos = merged.photos.map(p => {
+    if (aerial) {
+      const film = normalizeFilm(p.settings?.filmSimulation);
+      const name = merged.title || titleOf(merged.gallery) || p.frame;
+      const aloft = { t: isaCelsius(aerial.altitude_ft), kind: 'aloft', text: `${Number(aerial.altitude_ft).toLocaleString('en-GB')} ft` };
+      return { ...p, name, film, place: null, light: null, weather: null, aloft, glow: glowOf(p.thumbhash), ph: placeholderOf(p.thumbhash), filmHue: filmHue(film) };
+    }
     const loc = locations?.[p.slug];
     // The owner's `place` beats the GPS name; the GPS name beats an old caption.
     const place = splitPlace(typeof p.place === 'string' ? p.place : null) || splitPlace(loc?.suggested) || splitPlace(p.caption);

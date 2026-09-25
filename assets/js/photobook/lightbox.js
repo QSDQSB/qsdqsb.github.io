@@ -22,18 +22,19 @@ export function sunGlyph(l, cls = 'photobook-sun__glyph') {
   return `<svg class="${cls}" viewBox="0 0 20 16" aria-hidden="true"><path class="photobook-sun__arc" d="M2 11A8 8 0 0 1 18 11"/><path class="photobook-sun__horizon" d="M0 11H20"/><circle class="photobook-sun__dot${l.below ? ' photobook-sun__dot--below' : ''}" cx="${l.x}" cy="${l.y}" r="1.7"/></svg>`;
 }
 
-/** The weather's mark: drawn in the sun glyph's hand (ink hairline, gold only for light). */
+/** The weather's mark: drawn in the sun glyph's hand, one ink hairline throughout. */
 const CLOUD = 'M5 10h10.5a3 3 0 0 0 .3-6 4.2 4.2 0 0 0-8-.8A3.4 3.4 0 0 0 5 10z';
 const WEATHER = {
-  clear: '<circle class="w-gold" cx="10" cy="8" r="3"/><path class="w-gold" d="M10 1.5v1.8M10 12.7v1.8M3.5 8h1.8M14.7 8h1.8M5.4 3.4l1.3 1.3M13.3 11.3l1.3 1.3M5.4 12.6l1.3-1.3M13.3 4.7l1.3-1.3"/>',
-  night: '<path class="w-gold" d="M12.6 2.6A4.6 4.6 0 1 0 15.4 11 5.4 5.4 0 0 1 12.6 2.6z"/>',
-  partly: '<circle class="w-gold" cx="7" cy="6" r="2.4"/><path class="w-gold" d="M7 1.6v1M2.6 6h1M3.9 2.9l.7.7M10.1 2.9l-.7.7"/><path class="w-ink" d="M6.5 13.5h9a2.7 2.7 0 0 0 .2-5.4 3.6 3.6 0 0 0-6.9-.6 2.9 2.9 0 0 0-2.3 6z"/>',
-  'partly-night': '<path class="w-gold" d="M7.3 3.1A2.9 2.9 0 1 0 9.4 8.3 3.4 3.4 0 0 1 7.3 3.1z"/><path class="w-ink" d="M6.5 13.5h9a2.7 2.7 0 0 0 .2-5.4 3.6 3.6 0 0 0-6.9-.6 2.9 2.9 0 0 0-2.3 6z"/>',
+  clear: '<circle class="w-ink" cx="10" cy="8" r="3"/><path class="w-ink" d="M10 1.5v1.8M10 12.7v1.8M3.5 8h1.8M14.7 8h1.8M5.4 3.4l1.3 1.3M13.3 11.3l1.3 1.3M5.4 12.6l1.3-1.3M13.3 4.7l1.3-1.3"/>',
+  night: '<path class="w-ink" d="M12.6 2.6A4.6 4.6 0 1 0 15.4 11 5.4 5.4 0 0 1 12.6 2.6z"/>',
+  partly: '<circle class="w-ink" cx="7" cy="6" r="2.4"/><path class="w-ink" d="M7 1.6v1M2.6 6h1M3.9 2.9l.7.7M10.1 2.9l-.7.7"/><path class="w-ink" d="M6.5 13.5h9a2.7 2.7 0 0 0 .2-5.4 3.6 3.6 0 0 0-6.9-.6 2.9 2.9 0 0 0-2.3 6z"/>',
+  'partly-night': '<path class="w-ink" d="M7.3 3.1A2.9 2.9 0 1 0 9.4 8.3 3.4 3.4 0 0 1 7.3 3.1z"/><path class="w-ink" d="M6.5 13.5h9a2.7 2.7 0 0 0 .2-5.4 3.6 3.6 0 0 0-6.9-.6 2.9 2.9 0 0 0-2.3 6z"/>',
+  aloft: '<path class="w-ink" d="M2 3.5h16" stroke-dasharray="1.5 2"/><path class="w-ink" d="M5 14h10.5a3 3 0 0 0 .3-6 4.2 4.2 0 0 0-8-.8A3.4 3.4 0 0 0 5 14z"/>',
   overcast: '<path class="w-ink" d="M5 13h10.5a3 3 0 0 0 .3-6 4.2 4.2 0 0 0-8-.8A3.4 3.4 0 0 0 5 13z"/>',
   fog: '<path class="w-ink" d="M3 5.5h14M5 8.5h12M3 11.5h11"/>',
   rain: `<path class="w-ink" d="${CLOUD}"/><path class="w-ink" d="M7 12l-.8 2M10.5 12l-.8 2M14 12l-.8 2"/>`,
   snow: `<path class="w-ink" d="${CLOUD}"/><circle class="w-dot" cx="7" cy="13.3" r=".7"/><circle class="w-dot" cx="10.5" cy="14.3" r=".7"/><circle class="w-dot" cx="14" cy="13.3" r=".7"/>`,
-  thunder: `<path class="w-ink" d="${CLOUD}"/><path class="w-gold" d="M10.8 10.5l-1.8 2.3h2.2l-1.6 2.4"/>`,
+  thunder: `<path class="w-ink" d="${CLOUD}"/><path class="w-ink" d="M10.8 10.5l-1.8 2.3h2.2l-1.6 2.4"/>`,
 };
 export const weatherGlyph = (w) => `<svg class="photobook-weather__glyph" viewBox="0 0 20 16" aria-hidden="true">${WEATHER[w.kind] || ''}</svg>`;
 
