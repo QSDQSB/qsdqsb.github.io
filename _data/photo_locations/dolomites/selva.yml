@@ -3,11 +3,21 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf0109:
-    gps: missing
-    source: awaiting original
+    suggested: Cappella di San Giovanni Gualberto, San Vito di Cadore, Italy
+    landmark: Cappella di San Giovanni Gualberto
+    street: SP638
+    city: San Vito di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0110:
-    gps: missing
-    source: awaiting original
+    suggested: Cappella di San Giovanni Gualberto, San Vito di Cadore, Italy
+    landmark: Cappella di San Giovanni Gualberto
+    street: SP638
+    city: San Vito di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0123:
     suggested: Cappella di San Giovanni Gualberto, San Vito di Cadore, Italy
     landmark: Cappella di San Giovanni Gualberto
@@ -40,8 +50,12 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf0494:
-    gps: missing
-    source: awaiting original
+    suggested: SP638, San Vito di Cadore, Italy
+    street: SP638
+    city: San Vito di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0589:
     suggested: Alle pareti di Lastoi Formin, San Vito di Cadore, Italy
     street: Alle pareti di Lastoi Formin
@@ -50,20 +64,40 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf0602:
-    gps: missing
-    source: awaiting original
+    suggested: Alle pareti di Lastoi Formin, San Vito di Cadore, Italy
+    street: Alle pareti di Lastoi Formin
+    city: San Vito di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0612:
-    gps: missing
-    source: awaiting original
+    suggested: Alle pareti di Lastoi Formin, San Vito di Cadore, Italy
+    street: Alle pareti di Lastoi Formin
+    city: San Vito di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0685:
-    gps: missing
-    source: awaiting original
+    suggested: Sito archeologico sepolcrale Uomo di Mondeval, San Vito di Cadore, Italy
+    street: Sito archeologico sepolcrale Uomo di Mondeval
+    city: San Vito di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0716:
-    gps: missing
-    source: awaiting original
+    suggested: Sito archeologico sepolcrale Uomo di Mondeval, San Vito di Cadore, Italy
+    street: Sito archeologico sepolcrale Uomo di Mondeval
+    city: San Vito di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0735:
-    gps: missing
-    source: awaiting original
+    suggested: Sito archeologico sepolcrale Uomo di Mondeval, San Vito di Cadore, Italy
+    street: Sito archeologico sepolcrale Uomo di Mondeval
+    city: San Vito di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0742:
     suggested: Sito archeologico sepolcrale Uomo di Mondeval, San Vito di Cadore, Italy
     street: Sito archeologico sepolcrale Uomo di Mondeval

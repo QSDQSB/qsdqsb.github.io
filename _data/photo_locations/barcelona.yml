@@ -11,8 +11,7 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf1055:
-    suggested: Cathedral of Santa Eulalia, Barcelona
-    landmark: Cathedral of Santa Eulalia
+    suggested: Avinguda de la Catedral, Barcelona
     street: Avinguda de la Catedral
     city: Barcelona
     country: Spain

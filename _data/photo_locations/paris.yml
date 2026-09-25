@@ -2,15 +2,43 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
-  dscf0865:
-    gps: missing
-    source: awaiting original
+  dscf0022:
+    suggested: Louvre Palace, Paris
+    landmark: Louvre Palace
+    street: Quai Voltaire
+    city: Paris
+    country: France
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2921:
-    gps: missing
-    source: awaiting original
+    suggested: Square Franck Bauer, Paris
+    landmark: Square Franck Bauer
+    street: Rue Dupleix
+    city: Paris
+    country: France
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf9865:
+    suggested: Marigny Square, Paris
+    landmark: Marigny Square
+    street: Rue Jean Mermoz
+    city: Paris
+    country: France
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9892:
-    gps: missing
-    source: awaiting original
+    suggested: Opéra Garnier, Paris
+    landmark: Opéra Garnier
+    street: Boulevard Haussmann
+    city: Paris
+    country: France
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9905:
-    gps: missing
-    source: awaiting original
+    suggested: Opéra Garnier, Paris
+    landmark: Opéra Garnier
+    street: Impasse Sandrié
+    city: Paris
+    country: France
+    gps: present
+    source: OpenStreetMap reverse geocode

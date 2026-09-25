@@ -2,12 +2,14 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
-  dscf3228:
-    gps: missing
-    source: awaiting original
   dscf3363:
-    gps: missing
-    source: awaiting original
+    suggested: Celetná, Prague
+    landmark: Celetná
+    street: Melantrichova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4253:
     suggested: Charles Bridge, Prague
     landmark: Charles Bridge
@@ -16,18 +18,41 @@ photos:
     country: Czechia
     gps: present
     source: OpenStreetMap reverse geocode
+  dscf4428:
+    gps: missing
+    source: pending visual guess
   dscf4456:
     gps: missing
-    source: awaiting original
+    source: pending visual guess
   dscf4886:
-    gps: missing
-    source: awaiting original
+    suggested: Petrin Observation Tower, Prague
+    landmark: Petrin Observation Tower
+    street: Petřínské sady
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4992:
-    gps: missing
-    source: awaiting original
+    suggested: Petrin Observation Tower, Prague
+    landmark: Petrin Observation Tower
+    street: Petřínské sady
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5272:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Nicholas, Prague
+    landmark: Saint Nicholas
+    street: Malostranské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5408:
-    gps: missing
-    source: awaiting original
+    suggested: Prague Castle, Prague
+    landmark: Prague Castle
+    street: 3rd Courtyard
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode

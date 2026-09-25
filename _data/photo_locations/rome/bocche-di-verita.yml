@@ -3,17 +3,41 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf0998:
-    gps: missing
-    source: awaiting original
+    suggested: Palazzetto Venezia, Rome
+    landmark: Palazzetto Venezia
+    street: Largo Enrico Berlinguer
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1309:
-    gps: missing
-    source: awaiting original
+    suggested: Belvedere Courtyard, Rome
+    landmark: Belvedere Courtyard
+    street: Stradone dei Giardini
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1999:
-    gps: missing
-    source: awaiting original
+    suggested: Palazzo Torlonia, Rome
+    landmark: Palazzo Torlonia
+    street: Via della Conciliazione
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2019:
-    gps: missing
-    source: awaiting original
+    suggested: Castle of the Holy Angel, Rome
+    landmark: Castle of the Holy Angel
+    street: Lungotevere Castello
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2406:
-    gps: missing
-    source: awaiting original
+    suggested: Spanish Square, Rome
+    landmark: Spanish Square
+    street: Spanish Square
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode

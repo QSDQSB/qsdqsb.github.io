@@ -3,11 +3,26 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf2816:
-    gps: missing
-    source: awaiting original
+    suggested: Brühl's Terrace, Dresden
+    landmark: Brühl's Terrace
+    street: Brühl's Terrace
+    city: Dresden
+    country: Germany
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2880:
-    gps: missing
-    source: awaiting original
+    suggested: Zwinger, Dresden
+    landmark: Zwinger
+    street: Schweriner Straße
+    city: Dresden
+    country: Germany
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2997:
-    gps: missing
-    source: awaiting original
+    suggested: Altmarkt, Dresden
+    landmark: Altmarkt
+    street: An der Kreuzkirche
+    city: Dresden
+    country: Germany
+    gps: present
+    source: OpenStreetMap reverse geocode

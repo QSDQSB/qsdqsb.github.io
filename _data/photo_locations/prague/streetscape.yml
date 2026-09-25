@@ -6,8 +6,13 @@ photos:
     gps: missing
     source: awaiting original
   dscf4275:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Bartholomew, Prague
+    landmark: Saint Bartholomew
+    street: Bartolomějská
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4284:
     gps: missing
     source: awaiting original
@@ -16,46 +21,96 @@ photos:
     source: awaiting original
   dscf4409:
     gps: missing
-    source: awaiting original
+    source: pending visual guess
   dscf4414:
     gps: missing
-    source: awaiting original
+    source: pending visual guess
   dscf4515:
     gps: missing
-    source: awaiting original
+    source: pending visual guess
   dscf4517:
-    gps: missing
-    source: awaiting original
+    suggested: Celetná, Prague
+    landmark: Celetná
+    street: Ovocný trh
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4519:
-    gps: missing
-    source: awaiting original
+    suggested: Celetná, Prague
+    landmark: Celetná
+    street: Celetná
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4521:
-    gps: missing
-    source: awaiting original
+    suggested: Celetná, Prague
+    landmark: Celetná
+    street: Celetná
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4546:
-    gps: missing
-    source: awaiting original
+    suggested: Old Jewish Cemetery, Prague
+    landmark: Old Jewish Cemetery
+    street: Maiselova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4563:
-    gps: missing
-    source: awaiting original
+    suggested: Old Jewish Cemetery, Prague
+    landmark: Old Jewish Cemetery
+    street: Maiselova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4576:
     gps: missing
     source: awaiting original
   dscf4582:
-    gps: missing
-    source: awaiting original
+    suggested: Charles Bridge, Prague
+    landmark: Charles Bridge
+    street: Řásnovka
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4631:
-    gps: missing
-    source: awaiting original
+    suggested: Franciscan Garden, Prague
+    landmark: Franciscan Garden
+    street: Purkyňova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4731:
-    gps: missing
-    source: awaiting original
+    suggested: Republic Square, Prague
+    landmark: Republic Square
+    street: Soukenická
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4737:
-    gps: missing
-    source: awaiting original
+    suggested: Charles Bridge, Prague
+    landmark: Charles Bridge
+    street: nábřeží Edvarda Beneše
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4742:
-    gps: missing
-    source: awaiting original
+    suggested: Charles Bridge, Prague
+    landmark: Charles Bridge
+    street: nábřeží Edvarda Beneše
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5116:
     suggested: Republic Square, Prague
     landmark: Republic Square
@@ -65,10 +120,16 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf5123:
-    gps: missing
-    source: awaiting original
+    suggested: Republic Square, Prague
+    landmark: Republic Square
+    street: V Celnici
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5132:
-    suggested: V Celnici, Prague
+    suggested: Republic Square, Prague
+    landmark: Republic Square
     street: V Celnici
     city: Prague
     country: Czechia

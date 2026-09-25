@@ -3,41 +3,100 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf6875:
-    gps: missing
-    source: awaiting original
+    suggested: Nara Park, Nara, Japan
+    landmark: Nara Park
+    city: Nara
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6977:
-    gps: missing
-    source: awaiting original
+    suggested: Nara Park, Nara, Japan
+    landmark: Nara Park
+    street: 東大寺参道
+    city: Nara
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7013:
-    gps: missing
-    source: awaiting original
+    suggested: Nara Park, Nara, Japan
+    landmark: Nara Park
+    street: 東大寺参道
+    city: Nara
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7019:
-    gps: missing
-    source: awaiting original
+    suggested: Nara Park, Nara, Japan
+    landmark: Nara Park
+    street: 東大寺参道
+    city: Nara
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7504:
-    gps: missing
-    source: awaiting original
+    suggested: Nara Park, Nara, Japan
+    landmark: Nara Park
+    street: Noboriōji
+    city: Nara
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7571:
-    gps: missing
-    source: awaiting original
+    suggested: Nara Park, Nara, Japan
+    landmark: Nara Park
+    street: Noboriōji
+    city: Nara
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7619:
-    gps: missing
-    source: awaiting original
+    suggested: Nara Park, Nara, Japan
+    landmark: Nara Park
+    street: 東大寺参道
+    city: Nara
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7620:
-    gps: missing
-    source: awaiting original
+    suggested: Nara Park, Nara, Japan
+    landmark: Nara Park
+    street: 東大寺参道
+    city: Nara
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7696:
-    gps: missing
-    source: awaiting original
+    suggested: Nara Park, Nara, Japan
+    landmark: Nara Park
+    city: Nara
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7720:
-    gps: missing
-    source: awaiting original
+    suggested: Nara Park, Nara, Japan
+    landmark: Nara Park
+    city: Nara
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7730:
-    gps: missing
-    source: awaiting original
+    suggested: Nara Park, Nara, Japan
+    landmark: Nara Park
+    city: Nara
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7744:
-    gps: missing
-    source: awaiting original
+    suggested: Nara Park, Nara, Japan
+    landmark: Nara Park
+    city: Nara
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7765:
-    gps: missing
-    source: awaiting original
+    suggested: Nara Park, Nara, Japan
+    landmark: Nara Park
+    city: Nara
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode

@@ -3,56 +3,145 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf1288:
-    gps: missing
-    source: awaiting original
+    suggested: Belvedere Courtyard, Vatican City
+    landmark: Belvedere Courtyard
+    street: Stradone dei Giardini
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1801:
-    gps: missing
-    source: awaiting original
+    suggested: Piazza del Risorgimento, Vatican City
+    landmark: Piazza del Risorgimento
+    street: Via Crescenzio
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1804:
-    gps: missing
-    source: awaiting original
+    suggested: Piazza del Risorgimento, Vatican City
+    landmark: Piazza del Risorgimento
+    street: Via Crescenzio
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1808:
+    suggested: Piazza del Risorgimento, Vatican City
+    landmark: Piazza del Risorgimento
+    street: Via Crescenzio
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1869:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Peter's Square, Vatican City
+    landmark: Saint Peter's Square
+    street: Piazza San Pietro
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1878:
-    gps: missing
-    source: awaiting original
-  dscf1888:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Peter's Square, Vatican City
+    landmark: Saint Peter's Square
+    street: Piazza San Pietro
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1892:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Peter's Square, Vatican City
+    landmark: Saint Peter's Square
+    street: Piazza San Pietro
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1898:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Peter's Basilica, Vatican City
+    landmark: Saint Peter's Basilica
+    street: Piazza San Pietro
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1899:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Peter's Basilica, Vatican City
+    landmark: Saint Peter's Basilica
+    street: Piazza San Pietro
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1904:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Peter's Basilica, Vatican City
+    landmark: Saint Peter's Basilica
+    street: Piazza San Pietro
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1920:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Peter's Basilica, Vatican City
+    landmark: Saint Peter's Basilica
+    street: Piazza San Pietro
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1929:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Peter's Basilica, Vatican City
+    landmark: Saint Peter's Basilica
+    street: Piazza San Pietro
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1934:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Peter's Basilica, Vatican City
+    landmark: Saint Peter's Basilica
+    street: Piazza San Pietro
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1945:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Peter's Basilica, Vatican City
+    landmark: Saint Peter's Basilica
+    street: Piazza San Pietro
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1959:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Peter's Basilica, Vatican City
+    landmark: Saint Peter's Basilica
+    street: Piazza San Pietro
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1979:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Peter's Basilica, Vatican City
+    landmark: Saint Peter's Basilica
+    street: Piazza San Pietro
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1984:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Peter's Basilica, Vatican City
+    landmark: Saint Peter's Basilica
+    street: Piazza San Pietro
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2241:
-    gps: missing
-    source: awaiting original
+    suggested: Villa Borghese Park, Vatican City
+    landmark: Villa Borghese Park
+    street: Piazzale Napoleone Primo
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode

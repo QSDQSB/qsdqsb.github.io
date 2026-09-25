@@ -2,21 +2,44 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
-  dscf8418:
-    gps: missing
-    source: awaiting original
   dscf8468:
-    gps: missing
-    source: awaiting original
+    suggested: Roppongi-itchome, Tokyo
+    landmark: Roppongi-itchome
+    street: Circle 1
+    city: Minato
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8536:
-    gps: missing
-    source: awaiting original
+    suggested: Roppongi Hills, Tokyo
+    landmark: Roppongi Hills
+    city: Minato
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8625:
-    gps: missing
-    source: awaiting original
+    suggested: Meiji-dori Avenue, Tokyo
+    street: Meiji-dori Avenue
+    city: Shibuya
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8803:
-    gps: missing
-    source: awaiting original
+    suggested: Tokyo Tower, Tokyo
+    landmark: Tokyo Tower
+    street: Tokyo Tower Street
+    city: Minato
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8818:
+    suggested: Tokyo Tower, Tokyo
+    landmark: Tokyo Tower
+    street: Tokyo Tower Street
+    city: Minato
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8917:
     gps: missing
-    source: awaiting original
+    source: pending visual guess

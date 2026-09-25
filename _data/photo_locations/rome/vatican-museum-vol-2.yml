@@ -2,45 +2,111 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
+  dscf1268:
+    suggested: Via Vittor Pisani, Vatican City
+    street: Via Vittor Pisani
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1326:
+    suggested: Belvedere Courtyard, Vatican City
+    landmark: Belvedere Courtyard
+    street: Stradone dei Giardini
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1400:
-    gps: missing
-    source: awaiting original
+    suggested: Belvedere Courtyard, Vatican City
+    landmark: Belvedere Courtyard
+    street: Leo XIII Avenue
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1407:
-    gps: missing
-    source: awaiting original
+    suggested: Belvedere Courtyard, Vatican City
+    landmark: Belvedere Courtyard
+    street: Leo XIII Avenue
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1414:
-    gps: missing
-    source: awaiting original
+    suggested: Belvedere Courtyard, Vatican City
+    landmark: Belvedere Courtyard
+    street: Leo XIII Avenue
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1417:
-    gps: missing
-    source: awaiting original
+    suggested: Apostolic Palace, Vatican City
+    landmark: Apostolic Palace
+    street: Stradone dei Giardini
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1418:
-    gps: missing
-    source: awaiting original
+    suggested: Apostolic Palace, Vatican City
+    landmark: Apostolic Palace
+    street: Stradone dei Giardini
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1421:
-    gps: missing
-    source: awaiting original
+    suggested: Apostolic Palace, Vatican City
+    landmark: Apostolic Palace
+    street: Stradone dei Giardini
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1422:
-    gps: missing
-    source: awaiting original
+    suggested: Apostolic Palace, Vatican City
+    landmark: Apostolic Palace
+    street: Stradone dei Giardini
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1428:
-    gps: missing
-    source: awaiting original
+    suggested: Apostolic Palace, Vatican City
+    landmark: Apostolic Palace
+    street: Cortile della Sentinella
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1476:
-    gps: missing
-    source: awaiting original
+    suggested: Apostolic Palace, Vatican City
+    landmark: Apostolic Palace
+    city: Vatican City
+    country: Vatican
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1501:
-    gps: missing
-    source: awaiting original
+    suggested: Belvedere Courtyard, Vatican City
+    landmark: Belvedere Courtyard
+    street: Viale della Zitella
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1503:
-    gps: missing
-    source: awaiting original
-  dscf1506:
-    gps: missing
-    source: awaiting original
+    suggested: Belvedere Courtyard, Vatican City
+    landmark: Belvedere Courtyard
+    street: Square Garden
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1572:
-    gps: missing
-    source: awaiting original
-  dscf1588:
-    gps: missing
-    source: awaiting original
+    suggested: Belvedere Courtyard, Vatican City
+    landmark: Belvedere Courtyard
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode

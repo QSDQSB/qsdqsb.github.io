@@ -260,8 +260,7 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf7568:
-    suggested: Old Royal Naval College, London
-    landmark: Old Royal Naval College
+    suggested: Crescent Arcade, London
     street: Crescent Arcade
     city: Greater London
     country: United Kingdom

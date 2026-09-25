@@ -2,15 +2,29 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
-  dscf1338:
-    gps: missing
-    source: awaiting original
-  dscf1430:
-    gps: missing
-    source: awaiting original
+  dscf1457:
+    suggested: Teleférico de Gaia, Porto
+    landmark: Teleférico de Gaia
+    street: Avenida de Diogo Leite
+    city: Vila Nova de Gaia
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1590:
+    suggested: Hard Club, Porto
+    landmark: Hard Club
+    street: R Ferreira Borges
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1593:
-    gps: missing
-    source: awaiting original
+    suggested: Palacete de Belomonte, Porto
+    landmark: Palacete de Belomonte
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1618:
     suggested: Palácio da Bolsa, Porto
     landmark: Palácio da Bolsa
@@ -84,8 +98,13 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf7007:
-    gps: missing
-    source: awaiting original
+    suggested: Mosteiro da Serra do Pilar, Porto
+    landmark: Mosteiro da Serra do Pilar
+    street: Rua do Casino da Ponte
+    city: Vila Nova de Gaia
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7023:
     suggested: Funicular dos Guindais, Porto
     landmark: Funicular dos Guindais
@@ -102,12 +121,14 @@ photos:
     country: Portugal
     gps: present
     source: OpenStreetMap reverse geocode
-  dscf7057:
-    gps: missing
-    source: awaiting original
   dscf7059:
-    gps: missing
-    source: awaiting original
+    suggested: Funicular dos Guindais, Porto
+    landmark: Funicular dos Guindais
+    street: Ponte Luiz I (tabuleiro superior)
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7097:
     suggested: Palácio da Bolsa, Porto
     landmark: Palácio da Bolsa
@@ -117,11 +138,21 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf7110:
-    gps: missing
-    source: awaiting original
+    suggested: Palacete de Belomonte, Porto
+    landmark: Palacete de Belomonte
+    street: Largo de São Domingos
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7111:
-    gps: missing
-    source: awaiting original
+    suggested: Palacete de Belomonte, Porto
+    landmark: Palacete de Belomonte
+    street: Largo de São Domingos
+    city: Porto
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7129:
     suggested: Hard Club, Porto
     landmark: Hard Club
