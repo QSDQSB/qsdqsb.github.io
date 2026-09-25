@@ -3,23 +3,58 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf4786:
-    gps: missing
-    source: awaiting original
+    suggested: Lennon Wall, Prague, Czechia
+    landmark: Lennon Wall
+    street: Karmelitská
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4837:
-    gps: missing
-    source: awaiting original
-  dscf5147:
-    gps: missing
-    source: awaiting original
+    suggested: Petřín Gardens – Seminar Garden, Prague, Czechia
+    landmark: Petřín Gardens – Seminar Garden
+    street: Hellichova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5186:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Nicholas, Prague, Czechia
+    landmark: Saint Nicholas
+    street: Malostranské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5193:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Nicholas, Prague, Czechia
+    landmark: Saint Nicholas
+    street: Malostranské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5234:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Nicholas, Prague, Czechia
+    landmark: Saint Nicholas
+    street: Malostranské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5236:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Nicholas, Prague, Czechia
+    landmark: Saint Nicholas
+    street: Malostranské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5247:
+    suggested: Saint Nicholas, Prague, Czechia
+    landmark: Saint Nicholas
+    street: Malostranské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode

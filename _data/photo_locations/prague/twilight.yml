@@ -3,11 +3,21 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf4287:
-    gps: missing
-    source: awaiting original
+    suggested: Charles Bridge, Prague
+    landmark: Charles Bridge
+    street: Masarykovo nábřeží
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4299:
-    gps: missing
-    source: awaiting original
+    suggested: Křižovnické náměstí, Prague
+    landmark: Křižovnické náměstí
+    street: Křižovnické náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4303:
     suggested: Charles Bridge, Prague
     landmark: Charles Bridge
@@ -17,11 +27,21 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf4322:
-    gps: missing
-    source: awaiting original
+    suggested: Charles Bridge, Prague
+    landmark: Charles Bridge
+    street: Charles Bridge
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4623:
-    gps: missing
-    source: awaiting original
+    suggested: Smallest house in Prague, Prague
+    landmark: Smallest house in Prague
+    street: Haštalská
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4997:
     suggested: Petrin Observation Tower, Prague
     landmark: Petrin Observation Tower

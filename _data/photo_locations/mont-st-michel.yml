@@ -3,8 +3,12 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf4069:
-    gps: missing
-    source: awaiting original
+    suggested: Mont Saint-Michel Bay, La Caserne, France
+    landmark: Mont Saint-Michel Bay
+    street: Barrage du Mont Saint-Michel
+    country: France
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4168:
     suggested: Mont Saint-Michel Bay, Le Mont-Saint-Michel, France
     landmark: Mont Saint-Michel Bay
@@ -14,12 +18,14 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf4222:
-    gps: missing
-    source: awaiting original
+    suggested: Mont Saint-Michel Bay, Pontorson, France
+    landmark: Mont Saint-Michel Bay
+    street: D 275
+    city: Pontorson
+    country: France
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4224:
-    gps: missing
-    source: awaiting original
-  dscf4226:
     suggested: Mont Saint-Michel Bay, Pontorson, France
     landmark: Mont Saint-Michel Bay
     street: D 275
@@ -28,5 +34,10 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf4261:
-    gps: missing
-    source: awaiting original
+    suggested: Mont Saint-Michel Bay, Pontorson, France
+    landmark: Mont Saint-Michel Bay
+    street: D 275
+    city: Pontorson
+    country: France
+    gps: present
+    source: OpenStreetMap reverse geocode

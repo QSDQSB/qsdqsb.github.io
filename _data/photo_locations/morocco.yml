@@ -3,44 +3,104 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf0055:
-    gps: missing
-    source: awaiting original
+    suggested: RP1506, Tabouraht, Morocco
+    street: RP1506
+    city: Tabouraht
+    country: Morocco
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0348:
-    gps: missing
-    source: awaiting original
+    suggested: Erg Chebbi, Et-taous ⵟⴰⵡⵙ الطاوس, Morocco
+    landmark: Erg Chebbi
+    street: RR702
+    city: Et-taous ⵟⴰⵡⵙ الطاوس
+    country: Morocco
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0434:
-    gps: missing
-    source: awaiting original
+    suggested: Erg Chebbi, Et-taous ⵟⴰⵡⵙ الطاوس, Morocco
+    landmark: Erg Chebbi
+    city: Et-taous ⵟⴰⵡⵙ الطاوس
+    country: Morocco
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0680:
-    gps: missing
-    source: awaiting original
+    suggested: Mausoleum of Moulay Idriss II, Fez, Morocco
+    landmark: Mausoleum of Moulay Idriss II
+    street: Derb Moulay Driss
+    city: Fez
+    country: Morocco
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0739:
-    gps: missing
-    source: awaiting original
+    suggested: RN4, Sidi Abdallah Al Khayat, Morocco
+    street: RN4
+    city: Sidi Abdallah Al Khayat
+    country: Morocco
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8340:
-    gps: missing
-    source: awaiting original
+    suggested: Cap Spartel, Tangier, Morocco
+    landmark: Cap Spartel
+    street: RP4601
+    city: Tangier
+    country: Morocco
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8762:
-    gps: missing
-    source: awaiting original
+    suggested: Rue Jabha Al Wataniya, Tangier, Morocco
+    street: Rue Jabha Al Wataniya
+    city: Tangier
+    country: Morocco
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8937:
-    gps: missing
-    source: awaiting original
+    suggested: Rue Al Ouatassine زنقة الوطاسيين, Chefchaouen, Morocco
+    street: Rue Al Ouatassine زنقة الوطاسيين
+    city: Chefchaouen
+    country: Morocco
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8992:
     gps: missing
-    source: awaiting original
+    source: pending visual guess
   dscf9031:
-    gps: missing
-    source: awaiting original
+    suggested: Hassan II Mosque, Casablanca, Morocco
+    landmark: Hassan II Mosque
+    street: Rue de Doukkala
+    city: Casablanca
+    country: Morocco
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9089:
-    gps: missing
-    source: awaiting original
+    suggested: Hassan II Mosque, Casablanca, Morocco
+    landmark: Hassan II Mosque
+    street: Boulevard Sidi Mohammed Ben Abdellah
+    city: Casablanca
+    country: Morocco
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9265:
-    gps: missing
-    source: awaiting original
+    suggested: Bahia Palace, Marrakesh, Morocco
+    landmark: Bahia Palace
+    street: Rue Riad Zitoun El Jedid
+    city: Marrakesh
+    country: Morocco
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9539:
-    gps: missing
-    source: awaiting original
+    suggested: Jemaa El-Fna, Marrakesh, Morocco
+    landmark: Jemaa El-Fna
+    street: Avenue Houman El Fetouaki
+    city: Marrakesh
+    country: Morocco
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9794:
-    gps: missing
-    source: awaiting original
+    suggested: Majorelle Garden, Marrakesh, Morocco
+    landmark: Majorelle Garden
+    street: Rue Yves Saint Laurent
+    city: Marrakesh
+    country: Morocco
+    gps: present
+    source: OpenStreetMap reverse geocode

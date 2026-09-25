@@ -3,47 +3,115 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf1262:
-    gps: missing
-    source: awaiting original
+    suggested: Santa Maria delle Grazie al Trionfale, Vatican City
+    landmark: Santa Maria delle Grazie al Trionfale
+    street: Via Vittor Pisani
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1272:
-    gps: missing
-    source: awaiting original
+    suggested: Belvedere Courtyard, Vatican City
+    landmark: Belvedere Courtyard
+    street: Viale Vaticano
+    city: Vatican City
+    country: Vatican
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1335:
-    gps: missing
-    source: awaiting original
+    suggested: Belvedere Courtyard, Vatican City
+    landmark: Belvedere Courtyard
+    street: Stradone dei Giardini
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1337:
-    gps: missing
-    source: awaiting original
+    suggested: Belvedere Courtyard, Vatican City
+    landmark: Belvedere Courtyard
+    street: Stradone dei Giardini
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1353:
+    suggested: Scala Elicoidale Giuseppe Momo, Vatican City
+    landmark: Scala Elicoidale Giuseppe Momo
+    street: Via Sebastiano Veniero
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1360:
-    gps: missing
-    source: awaiting original
-  dscf1361:
-    gps: missing
-    source: awaiting original
+    suggested: Scala Elicoidale Giuseppe Momo, Vatican City
+    landmark: Scala Elicoidale Giuseppe Momo
+    street: Via Sebastiano Veniero
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1362:
-    gps: missing
-    source: awaiting original
+    suggested: Scala Elicoidale Giuseppe Momo, Vatican City
+    landmark: Scala Elicoidale Giuseppe Momo
+    street: Via Sebastiano Veniero
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1374:
-    gps: missing
-    source: awaiting original
+    suggested: Belvedere Courtyard, Vatican City
+    landmark: Belvedere Courtyard
+    street: Leo XIII Avenue
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1376:
-    gps: missing
-    source: awaiting original
+    suggested: Belvedere Courtyard, Vatican City
+    landmark: Belvedere Courtyard
+    street: Leo XIII Avenue
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1389:
-    gps: missing
-    source: awaiting original
+    suggested: Belvedere Courtyard, Vatican City
+    landmark: Belvedere Courtyard
+    street: Leo XIII Avenue
+    city: Vatican City
+    country: Vatican City
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1472:
-    gps: missing
-    source: awaiting original
+    suggested: Apostolic Palace, Vatican City
+    landmark: Apostolic Palace
+    city: Vatican City
+    country: Vatican
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1486:
-    gps: missing
-    source: awaiting original
+    suggested: Apostolic Palace, Vatican City
+    landmark: Apostolic Palace
+    city: Vatican City
+    country: Vatican
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1487:
-    gps: missing
-    source: awaiting original
+    suggested: Apostolic Palace, Vatican City
+    landmark: Apostolic Palace
+    city: Vatican City
+    country: Vatican
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1489:
-    gps: missing
-    source: awaiting original
+    suggested: Apostolic Palace, Vatican City
+    landmark: Apostolic Palace
+    city: Vatican City
+    country: Vatican
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1494:
-    gps: missing
-    source: awaiting original
+    suggested: Apostolic Palace, Vatican City
+    landmark: Apostolic Palace
+    city: Vatican City
+    country: Vatican
+    gps: present
+    source: OpenStreetMap reverse geocode

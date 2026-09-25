@@ -3,26 +3,60 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf5721:
-    gps: missing
-    source: awaiting original
+    suggested: Rigi Staffel, Arth, Switzerland
+    landmark: Rigi Staffel
+    street: Staffelhöheweg
+    city: Arth
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5730:
-    gps: missing
-    source: awaiting original
+    suggested: Kulmweg, Arth, Switzerland
+    street: Kulmweg
+    city: Arth
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5735:
-    gps: missing
-    source: awaiting original
+    suggested: Kulmweg, Arth, Switzerland
+    street: Kulmweg
+    city: Arth
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5741:
-    gps: missing
-    source: awaiting original
+    suggested: Kulmweg, Arth, Switzerland
+    street: Kulmweg
+    city: Arth
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5750:
-    gps: missing
-    source: awaiting original
+    suggested: Kulmweg, Arth, Switzerland
+    street: Kulmweg
+    city: Arth
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5760:
-    gps: missing
-    source: awaiting original
+    suggested: Kulmweg, Arth, Switzerland
+    street: Kulmweg
+    city: Arth
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5778:
-    gps: missing
-    source: awaiting original
+    suggested: Kulmweg, Arth, Switzerland
+    street: Kulmweg
+    city: Arth
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5789:
-    gps: missing
-    source: awaiting original
+    suggested: Rigi, Arth, Switzerland
+    landmark: Rigi
+    street: Kulmweg
+    city: Arth
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode

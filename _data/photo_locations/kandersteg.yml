@@ -3,65 +3,147 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf8201:
-    gps: missing
-    source: awaiting original
+    suggested: Aeussere Dorfstrasse, Kandersteg, Switzerland
+    street: Aeussere Dorfstrasse
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8207:
-    gps: missing
-    source: awaiting original
+    suggested: Aeussere Dorfstrasse, Kandersteg, Switzerland
+    street: Aeussere Dorfstrasse
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8213:
-    gps: missing
-    source: awaiting original
+    suggested: Aeussere Dorfstrasse, Kandersteg, Switzerland
+    street: Aeussere Dorfstrasse
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8254:
-    gps: missing
-    source: awaiting original
+    suggested: Aeussere Dorfstrasse, Kandersteg, Switzerland
+    street: Aeussere Dorfstrasse
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8261:
-    gps: missing
-    source: awaiting original
+    suggested: Bundesrat Adolf Ogi-Strasse, Kandersteg, Switzerland
+    street: Bundesrat Adolf Ogi-Strasse
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8266:
-    gps: missing
-    source: awaiting original
+    suggested: Oeschistrasse, Kandersteg, Switzerland
+    street: Oeschistrasse
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8277:
-    gps: missing
-    source: awaiting original
+    suggested: Kandersteg, Switzerland
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8351:
-    gps: missing
-    source: awaiting original
+    suggested: Kandersteg, Switzerland
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8385:
-    gps: missing
-    source: awaiting original
+    suggested: Oeschinensee, Kandersteg, Switzerland
+    street: Oeschinensee
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8388:
-    gps: missing
-    source: awaiting original
+    suggested: Fründenschnur, Kandersteg, Switzerland
+    street: Fründenschnur
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8452:
-    gps: missing
-    source: awaiting original
+    suggested: Fründenschnur, Kandersteg, Switzerland
+    street: Fründenschnur
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8466:
-    gps: missing
-    source: awaiting original
+    suggested: Fründenschnur, Kandersteg, Switzerland
+    street: Fründenschnur
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8500:
-    gps: missing
-    source: awaiting original
+    suggested: Fründenschnur, Kandersteg, Switzerland
+    street: Fründenschnur
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8581:
-    gps: missing
-    source: awaiting original
+    suggested: Fründenschnur, Kandersteg, Switzerland
+    street: Fründenschnur
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8604:
-    gps: missing
-    source: awaiting original
+    suggested: Fründenschnur, Kandersteg, Switzerland
+    street: Fründenschnur
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8616:
-    gps: missing
-    source: awaiting original
+    suggested: Fründenschnur, Kandersteg, Switzerland
+    street: Fründenschnur
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8617:
-    gps: missing
-    source: awaiting original
+    suggested: Fründenschnur, Kandersteg, Switzerland
+    street: Fründenschnur
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8630:
-    gps: missing
-    source: awaiting original
+    suggested: Fründenschnur, Kandersteg, Switzerland
+    street: Fründenschnur
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8646:
-    gps: missing
-    source: awaiting original
+    suggested: Aeussere Dorfstrasse, Kandersteg, Switzerland
+    street: Aeussere Dorfstrasse
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8653:
-    gps: missing
-    source: awaiting original
+    suggested: Aeussere Dorfstrasse, Kandersteg, Switzerland
+    street: Aeussere Dorfstrasse
+    city: Kandersteg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8664:
-    gps: missing
-    source: awaiting original
+    suggested: Bahnhofstrasse, Spiez, Switzerland
+    street: Bahnhofstrasse
+    city: Spiez
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode

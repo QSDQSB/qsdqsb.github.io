@@ -3,14 +3,29 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf3162:
-    gps: missing
-    source: awaiting original
+    suggested: Waldstein Garden, Prague
+    landmark: Waldstein Garden
+    street: Letenská
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3174:
-    gps: missing
-    source: awaiting original
+    suggested: Strahov Monastery, Prague
+    landmark: Strahov Monastery
+    street: Strahovské nádvoří
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3180:
-    gps: missing
-    source: awaiting original
+    suggested: Large Strahov Garden, Prague
+    landmark: Large Strahov Garden
+    street: Promenáda Raoula Wallenberga
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4270:
     suggested: Saint Nicholas, Prague
     landmark: Saint Nicholas
@@ -20,10 +35,16 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf4807:
-    gps: missing
-    source: awaiting original
+    suggested: Grand Priory Palace, Prague
+    landmark: Grand Priory Palace
+    street: Karmelitská
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4811:
-    suggested: Hellichova, Prague
+    suggested: Petřín Gardens – Seminar Garden, Prague
+    landmark: Petřín Gardens – Seminar Garden
     street: Hellichova
     city: Prague
     country: Czechia

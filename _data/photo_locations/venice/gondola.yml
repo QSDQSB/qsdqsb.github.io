@@ -3,17 +3,32 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf5957:
-    gps: missing
-    source: awaiting original
+    suggested: St. Mark's Square, Venice
+    landmark: St. Mark's Square
+    street: San Marco
+    city: Venice
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5966:
-    gps: missing
-    source: awaiting original
+    suggested: St. Mark's Square, Venice
+    landmark: St. Mark's Square
+    street: Sestiere San Marco
+    city: Venice
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6065:
     gps: missing
-    source: awaiting original
+    source: pending visual guess
   dscf6069:
     gps: missing
-    source: awaiting original
+    source: pending visual guess
   dscf6090:
-    gps: missing
-    source: awaiting original
+    suggested: St. Mark's Square, Venice
+    landmark: St. Mark's Square
+    street: San Marco
+    city: Venice
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode

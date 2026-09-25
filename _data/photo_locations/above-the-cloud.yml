@@ -2,33 +2,52 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
-  dscf0559:
-    gps: missing
-    source: awaiting original
-  dscf0567:
-    gps: missing
-    source: awaiting original
   dscf0949:
-    gps: missing
-    source: awaiting original
+    suggested: China
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0962:
-    gps: missing
-    source: awaiting original
+    suggested: Northwood Road, China
+    street: Northwood Road
+    city: Greater London
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf3559:
+    suggested: 江享一路, Dongguan, China
+    street: 江享一路
+    city: Dongguan
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf3567:
+    suggested: Dunhuang City, China
+    city: Dunhuang City
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3631:
-    gps: missing
-    source: awaiting original
+    suggested: Daxing District, China
+    city: Daxing District
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3659:
-    gps: missing
-    source: awaiting original
+    suggested: China
+    country: Russia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4237:
-    gps: missing
-    source: awaiting original
+    suggested: Русаново, China
+    country: Russia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5863:
     gps: missing
-    source: awaiting original
+    source: pending visual guess
   dscf5865:
     gps: missing
-    source: awaiting original
+    source: pending visual guess
   dscf5874:
     gps: missing
-    source: awaiting original
+    source: pending visual guess

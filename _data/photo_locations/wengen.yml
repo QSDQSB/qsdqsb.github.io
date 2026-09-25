@@ -3,65 +3,151 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf8721:
-    gps: missing
-    source: awaiting original
+    suggested: Schönbühl, Iseltwald, Switzerland
+    street: Schönbühl
+    city: Iseltwald
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8788:
-    gps: missing
-    source: awaiting original
-  dscf8794:
-    gps: missing
-    source: awaiting original
+    suggested: Feld, Iseltwald, Switzerland
+    street: Feld
+    city: Iseltwald
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8839:
-    gps: missing
-    source: awaiting original
+    suggested: Mürren, Lauterbrunnen, Switzerland
+    landmark: Mürren
+    street: Ägerten
+    city: Lauterbrunnen
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9018:
-    gps: missing
-    source: awaiting original
+    suggested: 221, Gündlischwand, Switzerland
+    street: "221"
+    city: Gündlischwand
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9043:
-    gps: missing
-    source: awaiting original
+    suggested: Galliweidli, Lauterbrunnen, Switzerland
+    street: Galliweidli
+    city: Lauterbrunnen
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9048:
-    gps: missing
-    source: awaiting original
+    suggested: Galliweidli, Lauterbrunnen, Switzerland
+    street: Galliweidli
+    city: Lauterbrunnen
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9091:
-    gps: missing
-    source: awaiting original
+    suggested: Schleif, Lauterbrunnen, Switzerland
+    street: Schleif
+    city: Lauterbrunnen
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9096:
-    gps: missing
-    source: awaiting original
+    suggested: Schleif, Lauterbrunnen, Switzerland
+    street: Schleif
+    city: Lauterbrunnen
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9099:
-    gps: missing
-    source: awaiting original
+    suggested: Schleif, Lauterbrunnen, Switzerland
+    street: Schleif
+    city: Lauterbrunnen
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9191:
-    gps: missing
-    source: awaiting original
+    suggested: Männlichen, Grindelwald, Switzerland
+    street: Männlichen
+    city: Grindelwald
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9205:
-    gps: missing
-    source: awaiting original
-  dscf9219:
-    gps: missing
-    source: awaiting original
+    suggested: Männlichen, Grindelwald, Switzerland
+    street: Männlichen
+    city: Grindelwald
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9291:
-    gps: missing
-    source: awaiting original
+    suggested: Männlichen, Grindelwald, Switzerland
+    landmark: Männlichen
+    street: Männlichen
+    city: Grindelwald
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9350:
-    gps: missing
-    source: awaiting original
+    suggested: Am Stalden, Lütschental, Switzerland
+    street: Am Stalden
+    city: Lütschental
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9408:
-    gps: missing
-    source: awaiting original
+    suggested: Truffersbrunnengässli, Grindelwald, Switzerland
+    street: Truffersbrunnengässli
+    city: Grindelwald
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9494:
-    gps: missing
-    source: awaiting original
+    suggested: Grundstrasse, Grindelwald, Switzerland
+    street: Grundstrasse
+    city: Grindelwald
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9508:
-    gps: missing
-    source: awaiting original
+    suggested: Beim Schützenbach, Lauterbrunnen, Switzerland
+    street: Beim Schützenbach
+    city: Lauterbrunnen
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9513:
-    gps: missing
-    source: awaiting original
+    suggested: Beim Schützenbach, Lauterbrunnen, Switzerland
+    street: Beim Schützenbach
+    city: Lauterbrunnen
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9721:
-    gps: missing
-    source: awaiting original
+    suggested: Galliweidli, Lauterbrunnen, Switzerland
+    street: Galliweidli
+    city: Lauterbrunnen
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf9736:
-    gps: missing
-    source: awaiting original
+    suggested: Galliweidli, Lauterbrunnen, Switzerland
+    street: Galliweidli
+    city: Lauterbrunnen
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf9739:
+    suggested: Galliweidli, Lauterbrunnen, Switzerland
+    street: Galliweidli
+    city: Lauterbrunnen
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf9794:
+    suggested: Chäppelisträssli, Lungern, Switzerland
+    street: Chäppelisträssli
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode

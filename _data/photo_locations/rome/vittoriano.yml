@@ -3,38 +3,98 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf0933:
-    gps: missing
-    source: awaiting original
+    suggested: Palazzetto Venezia, Rome
+    landmark: Palazzetto Venezia
+    street: Via di San Marco
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0977:
-    gps: missing
-    source: awaiting original
+    suggested: Palazzetto Venezia, Rome
+    landmark: Palazzetto Venezia
+    street: Largo Enrico Berlinguer
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0983:
-    gps: missing
-    source: awaiting original
-  dscf0985:
-    gps: missing
-    source: awaiting original
+    suggested: Palazzetto Venezia, Rome
+    landmark: Palazzetto Venezia
+    street: Largo Enrico Berlinguer
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1251:
-    gps: missing
-    source: awaiting original
+    suggested: Roman Forum, Rome
+    landmark: Roman Forum
+    street: Via Dei Fori Imperiali
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1610:
-    gps: missing
-    source: awaiting original
+    suggested: Monument to Vittorio Emanuele II, Rome
+    landmark: Monument to Vittorio Emanuele II
+    street: Via di San Marco
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1614:
-    gps: missing
-    source: awaiting original
+    suggested: Monument to Vittorio Emanuele II, Rome
+    landmark: Monument to Vittorio Emanuele II
+    street: Via di San Marco
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1619:
-    gps: missing
-    source: awaiting original
+    suggested: Monument to Vittorio Emanuele II, Rome
+    landmark: Monument to Vittorio Emanuele II
+    street: Via di San Marco
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1629:
-    gps: missing
-    source: awaiting original
+    suggested: Monument to Vittorio Emanuele II, Rome
+    landmark: Monument to Vittorio Emanuele II
+    street: La terrazza delle città redente
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1639:
-    gps: missing
-    source: awaiting original
+    suggested: Monument to Vittorio Emanuele II, Rome
+    landmark: Monument to Vittorio Emanuele II
+    street: La terrazza delle città redente
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1662:
-    gps: missing
-    source: awaiting original
+    suggested: Monument to Vittorio Emanuele II, Rome
+    landmark: Monument to Vittorio Emanuele II
+    street: La terrazza delle città redente
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1675:
+    suggested: Monument to Vittorio Emanuele II, Rome
+    landmark: Monument to Vittorio Emanuele II
+    street: La terrazza delle città redente
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1753:
-    gps: missing
-    source: awaiting original
+    suggested: Piazza Venezia, Rome
+    landmark: Piazza Venezia
+    street: Piazza Venezia
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
