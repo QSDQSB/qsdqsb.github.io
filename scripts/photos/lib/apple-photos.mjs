@@ -86,6 +86,36 @@ end tell`;
 }
 
 /**
+ * Candidates for each capture time, found by date alone: every item Photos dates within 14 hours
+ * of it (the most a time zone can move a clock). For a file whose name Photos does not know (a
+ * renamed export); sameMoment then picks the one taken at the same second.
+ * @param {string[]} takens  capture times as the camera wrote them (local, offset optional)
+ * @returns {Map<string, {id, filename, date}[]>}
+ */
+export function findByMoment(takens) {
+  const out = new Map();
+  const at = (ms) => { const d = new Date(ms); return `set d to current date
+    set day of d to 1
+    set year of d to ${d.getUTCFullYear()}
+    set month of d to ${d.getUTCMonth() + 1}
+    set day of d to ${d.getUTCDate()}
+    set time of d to ${d.getUTCHours() * 3600 + d.getUTCMinutes() * 60 + d.getUTCSeconds()}`; };
+  for (const taken of takens) {
+    const local = Date.parse(`${taken.slice(0, 19)}Z`); // the wall clock as written, read as if UTC
+    const script = `tell application "Photos"
+    ${at(local - 14 * 3600e3)}
+    set d1 to d
+    ${at(local + 14 * 3600e3)}
+    set d2 to d
+    set hits to (every media item whose date ≥ d1 and date ≤ d2)${LINES}
+    return out
+end tell`;
+    out.set(taken, parse(osa(script)));
+  }
+  return out;
+}
+
+/**
  * Whether a Photos item's date and a file's capture time name the same
  * moment. Photos gives its dates on this Mac's clock; the camera records
  * the local time where the photograph was taken, with its UTC offset when

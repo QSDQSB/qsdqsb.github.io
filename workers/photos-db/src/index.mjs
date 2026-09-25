@@ -45,6 +45,7 @@ const MACHINE = {
   shutter_count: p => p.shutterCount,
   sun_alt: p => p.sun?.alt, sun_az: p => p.sun?.az, sun_rising: p => (p.sun ? (p.sun.rising ? 1 : 0) : null),
   to_sunrise: p => p.sun?.toSunrise, to_sunset: p => p.sun?.toSunset, to_noon: p => p.sun?.toNoon,
+  temp_c: p => p.weather?.t, weather_code: p => p.weather?.code,
 };
 const COLS = Object.keys(MACHINE);
 /**
