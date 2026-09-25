@@ -17,6 +17,12 @@ layout: compress
   {% assign body_class = "photobook" %}
 {% endif %}
 <body{% if body_class != "" %} class="{{ body_class }}"{% endif %}>
+{%- comment -%} The masthead's search opens this panel, as on every other page (_layouts/default.html). {%- endcomment -%}
+{% if site.search == true %}
+<div class="search-content">
+  {% include_cached search/search_form.html %}
+</div>
+{% endif %}
 
 {% if page.subgalleries %}
   <!-- Enumerate sub-galleries with single view -->
