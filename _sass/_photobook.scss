@@ -136,12 +136,6 @@
   background: center / cover no-repeat;
   -webkit-mask-image: linear-gradient(180deg, #000 72%, rgba(0, 0, 0, 0.78) 88%, transparent 100%);
   mask-image: linear-gradient(180deg, #000 72%, rgba(0, 0, 0, 0.78) 88%, transparent 100%);
-  animation: photobook-settle 2.4s $cubic-bezier-param both;
-}
-
-@keyframes photobook-settle {
-  from { transform: scale(1.05); opacity: 0.4; }
-  to { transform: none; opacity: 1; }
 }
 
 .photobook-cover__title {
@@ -157,23 +151,20 @@
   h1 {
     margin: 1rem 0 0;
     color: $lighter-gray;
-    font: 700 clamp(3.6rem, 10vw, 9rem)/0.92 $global-font-family; // Playfair Display, as every page's title
+    // Set as every hero page's title (_page.scss, .page__hero--overlay .page__title), size for size.
+    font: 700 clamp(1.75rem, 2.8vw, 2.85rem)/1 $global-font-family;
     letter-spacing: 0.015em;
-    animation: photobook-rise 1.2s 0.25s $cubic-bezier-smooth both;
+    @include responsive-up(desktop) { font-size: clamp(1.95rem, 2.6vw, 3rem); }
+    @include responsive-up(wide) { font-size: clamp(2.1rem, 2.35vw, 3.1rem); }
+    @include responsive-down(tablet) { font-size: clamp(1.2rem, 5vw, 1.65rem); }
   }
 }
 
 .photobook-cover__lede {
-  margin: 0.9rem 0 0;
-  max-width: 36ch;
+  margin: clamp(0.72rem, 1.5vw, 1.08rem) 0 0;
+  max-width: min(100%, #{$overlay-hero-excerpt-max-width}); // as the hero pages' excerpt: one line where it fits
   font: italic 400 clamp(1.02rem, 1.34vw, 1.34rem)/1.26 $didot-family;
   opacity: 0.9;
-  animation: photobook-rise 1.2s 0.45s $cubic-bezier-smooth both;
-}
-
-@keyframes photobook-rise {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: none; }
 }
 
 .photobook-facts {
@@ -183,7 +174,6 @@
   justify-self: end;
   margin: 0;
   text-align: right;
-  animation: photobook-rise 1.2s 0.6s $cubic-bezier-smooth both;
 
   div { display: grid; gap: 0.45rem; padding-inline: 0.95rem; }
   div:first-child { padding-left: 0; }
@@ -1532,10 +1522,6 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 /* ── motion: reduced, and the automated renderer's kill-switch ────────── */
 // One list for both: whatever moves in the book, nothing moves for a reader who asked for stillness.
 @mixin photobook-still {
-  .photobook-cover__image,
-  .photobook-cover__title h1,
-  .photobook-cover__lede,
-  .photobook-facts,
   .photobook-frame,
   .photobook-lightbox[open],
   .photobook-lightbox.is-playing .photobook-lightbox__mat img.is-on { animation: none; }
