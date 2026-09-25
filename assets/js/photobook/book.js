@@ -16,7 +16,9 @@ export function book({ frames, onOpen, onLayout }) {
   const sheetEl = document.getElementById('photobook-sheet');
   if (!bookEl) return;
   const figures = [...bookEl.querySelectorAll('.photobook-frame')].sort((a, b) => a.dataset.i - b.dataset.i);
-  let film = '', view = 'book';
+  // The view the reader last chose, on any voyage, is where the next one opens.
+  const saved = (() => { try { return localStorage.getItem('photobook-view'); } catch { return null; } })();
+  let film = '', view = saved === 'sheet' ? 'sheet' : 'book';
 
   const shown = () => figures.filter((f) => !film || f.dataset.film === film);
 
@@ -129,6 +131,7 @@ export function book({ frames, onOpen, onLayout }) {
     const b = e.target.closest('button');
     if (!b || b.dataset.view === view) return;
     view = b.dataset.view;
+    try { localStorage.setItem('photobook-view', view); } catch { /* the choice lasts this page only */ }
     for (const x of views.querySelectorAll('button')) x.setAttribute('aria-pressed', String(x.dataset.view === view));
     layout(); toTop();
   });
@@ -182,5 +185,6 @@ export function book({ frames, onOpen, onLayout }) {
     onOpen?.(i, keepOrder(), b.querySelector('img'));
   });
 
+  if (views) for (const x of views.querySelectorAll('button')) x.setAttribute('aria-pressed', String(x.dataset.view === view));
   layout();
 }
