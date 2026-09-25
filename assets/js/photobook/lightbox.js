@@ -22,6 +22,20 @@ export function sunGlyph(l, cls = 'photobook-sun__glyph') {
   return `<svg class="${cls}" viewBox="0 0 20 16" aria-hidden="true"><path class="photobook-sun__arc" d="M2 11A8 8 0 0 1 18 11"/><path class="photobook-sun__horizon" d="M0 11H20"/><circle class="photobook-sun__dot${l.below ? ' photobook-sun__dot--below' : ''}" cx="${l.x}" cy="${l.y}" r="1.7"/></svg>`;
 }
 
+/** The weather's mark: drawn in the sun glyph's hand (ink hairline, gold only for light). */
+const CLOUD = 'M5 10h10.5a3 3 0 0 0 .3-6 4.2 4.2 0 0 0-8-.8A3.4 3.4 0 0 0 5 10z';
+const WEATHER = {
+  clear: '<circle class="w-gold" cx="10" cy="8" r="3"/><path class="w-gold" d="M10 1.5v1.8M10 12.7v1.8M3.5 8h1.8M14.7 8h1.8M5.4 3.4l1.3 1.3M13.3 11.3l1.3 1.3M5.4 12.6l1.3-1.3M13.3 4.7l1.3-1.3"/>',
+  night: '<path class="w-gold" d="M12.6 2.6A4.6 4.6 0 1 0 15.4 11 5.4 5.4 0 0 1 12.6 2.6z"/>',
+  partly: '<circle class="w-gold" cx="7" cy="6" r="2.4"/><path class="w-gold" d="M7 1.6v1M2.6 6h1M3.9 2.9l.7.7M10.1 2.9l-.7.7"/><path class="w-ink" d="M6.5 13.5h9a2.7 2.7 0 0 0 .2-5.4 3.6 3.6 0 0 0-6.9-.6 2.9 2.9 0 0 0-2.3 6z"/>',
+  overcast: '<path class="w-ink" d="M5 13h10.5a3 3 0 0 0 .3-6 4.2 4.2 0 0 0-8-.8A3.4 3.4 0 0 0 5 13z"/>',
+  fog: '<path class="w-ink" d="M3 5.5h14M5 8.5h12M3 11.5h11"/>',
+  rain: `<path class="w-ink" d="${CLOUD}"/><path class="w-ink" d="M7 12l-.8 2M10.5 12l-.8 2M14 12l-.8 2"/>`,
+  snow: `<path class="w-ink" d="${CLOUD}"/><circle class="w-dot" cx="7" cy="13.3" r=".7"/><circle class="w-dot" cx="10.5" cy="14.3" r=".7"/><circle class="w-dot" cx="14" cy="13.3" r=".7"/>`,
+  thunder: `<path class="w-ink" d="${CLOUD}"/><path class="w-gold" d="M10.8 10.5l-1.8 2.3h2.2l-1.6 2.4"/>`,
+};
+export const weatherGlyph = (w) => `<svg class="photobook-weather__glyph" viewBox="0 0 20 16" aria-hidden="true">${WEATHER[w.kind] || ''}</svg>`;
+
 export function lightbox(frames) {
   const lb = document.getElementById('photobook-lightbox');
   if (!lb) return { open() {}, openFromHash() {} };
@@ -161,22 +175,23 @@ export function lightbox(frames) {
     p.film && `<span class="photobook-film" style="--film:${p.hue}"><i></i>${esc(p.film)}</span>`,
   ].filter(Boolean).join('');
 
-  const captionHTML = (p) => `<h3>${esc(p.name)}</h3>${p.city ? `<span class="photobook-lightbox__city">${esc(p.city)}</span>` : ''}<div class="photobook-lightbox__specs-line">${specsLine(p)}</div>`;
+  const captionHTML = (p) => `${p.place ? `<h3>${esc(p.place)}</h3>` : ''}${p.city ? `<span class="photobook-lightbox__city">${esc(p.city)}</span>` : ''}<div class="photobook-lightbox__specs-line">${specsLine(p)}</div>`;
 
   function specsHTML(p) {
     const ev = p.bias ? ` · ${p.bias > 0 ? '+' : '−'}${Math.abs(Math.round(p.bias * 100) / 100)} EV` : '';
-    const sun = p.light ? `<div class="photobook-specs__sun"><b>${sunGlyph(p.light)}${String(p.light.alt).replace('-', '−')}°<em>${esc(p.light.text.startsWith('Sun at') ? (p.light.alt >= 0 ? 'above the horizon' : 'below the horizon') : p.light.text)}</em></b><span>Sun</span></div>` : '';
+    const sun = p.light ? `<div class="photobook-specs__sun"><b>${sunGlyph(p.light)}${String(p.light.alt).replace('-', '−')}°<em>${esc(p.light.text)}</em></b><span>Sun</span></div>` : '';
     const wide = ([, v]) => String(v).length > 12;
     const settings = p.settings?.length ? `<dl class="photobook-specs__settings">${[...p.settings.filter((s) => !wide(s)), ...p.settings.filter(wide)].map(([k, v]) => `<div${wide([k, v]) ? ' class="is-wide"' : ''}><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : '';
     return `<div class="photobook-specs__head"><span class="photobook-specs__no">${esc(p.frame)}${p.shots ? ` · <span title="Shutter count">№ ${Number(p.shots).toLocaleString('en-GB')}</span>` : ''}</span>
         <button class="photobook-specs__pin" type="button" data-act="pin" aria-pressed="${pinned}" title="${pinned ? 'Pinned: stays open' : 'Auto-hide: slips away'}"><svg viewBox="0 0 12 12" aria-hidden="true">${pinned ? '<path d="M4 1.5h4M5 1.5v4L3 7.5h6L7 5.5v-4M6 7.5V11"/>' : '<path d="M1.5 6h9M7.5 3l3 3-3 3"/>'}</svg>${pinned ? 'Pinned' : 'Auto-hide'}</button>
-        <h3>${esc(p.name)}</h3>${p.city ? `<span class="photobook-specs__city">${esc(p.city)}</span>` : ''}</div>
+        ${p.place ? `<h3>${esc(p.place)}</h3>` : ''}${p.city ? `<span class="photobook-specs__city">${esc(p.city)}</span>` : ''}</div>
       <div class="photobook-specs__highlights">
         <div><b>${p.focal ? Math.round(p.focal) : '—'}<small>mm</small></b><span>Focal length</span></div>
         <div><b><i>ƒ</i>/${p.aperture ?? '—'}</b><span>Aperture</span></div>
         <div><b>${esc(p.shutter || '—')}<small>s</small></b><span>Shutter</span></div>
         <div><b>${p.iso ?? '—'}</b><span>ISO${ev}</span></div>
         ${sun}
+        ${p.weather ? `<div class="photobook-specs__weather"><b>${weatherGlyph(p.weather)}${String(p.weather.t).replace('-', '−')}°</b><span>${esc(p.weather.text)}</span></div>` : ''}
         ${p.film ? `<div class="photobook-specs__film"><div class="photobook-specs__print" style="--film:${p.hue}">${esc(p.film)}</div></div>` : ''}
       </div>
       ${p.camera || p.lens ? `<p class="photobook-specs__gear"><b>${esc(p.camera || '')}</b>${p.lens ? ` · ${esc(p.lens)}` : ''}</p>` : ''}

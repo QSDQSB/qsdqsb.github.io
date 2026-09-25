@@ -11,14 +11,14 @@
     <div>
       <h3>Films</h3>
       <div class="photobook-colophon__bar"><div class="photobook-stack">{% for f in c.films %}<i style="--film:{{ f.hue }};flex:{{ f.n }}" title="{{ f.name | escape }}"></i>{% endfor %}</div></div>
-      <div class="photobook-legend">{% for f in c.films %}<i style="--film:{{ f.hue }}"></i><span>{{ f.name }}</span><span class="photobook-legend__n">{{ f.n }}</span><span class="photobook-legend__pc">{{ f.pc }}%</span>{% endfor %}</div>
+      <div class="photobook-legend">{% for f in c.films %}<i style="--film:{{ f.hue }}"></i><span>{{ f.name }}</span><span class="photobook-legend__n">{{ f.n }}</span>{% endfor %}</div>
     </div>
     {%- endif %}
     {%- if c.lenses.size > 0 %}
     <div>
       <h3>Lenses</h3>
       <div class="photobook-colophon__bar"><div class="photobook-stack">{% for l in c.lenses %}{% assign shade = lens_shades[forloop.index0] | default: lens_shades.last %}<i style="--film:{{ shade }};flex:{{ l.n }}" title="{{ l.name | escape }}"></i>{% endfor %}</div></div>
-      <div class="photobook-legend">{% for l in c.lenses %}{% assign shade = lens_shades[forloop.index0] | default: lens_shades.last %}<i style="--film:{{ shade }}"></i><span>{{ l.name }}</span><span class="photobook-legend__n">{{ l.n }}</span><span class="photobook-legend__pc">{{ l.pc }}%</span>{% endfor %}</div>
+      <div class="photobook-legend">{% for l in c.lenses %}{% assign shade = lens_shades[forloop.index0] | default: lens_shades.last %}<i style="--film:{{ shade }}"></i><span>{{ l.name }}</span><span class="photobook-legend__n">{{ l.n }}</span>{% endfor %}</div>
     </div>
     {%- endif %}
     {%- if c.hours.size > 0 %}
@@ -27,9 +27,9 @@
       <div class="photobook-colophon__bar"><div class="photobook-hours">{% for h in c.hours %}<i class="photobook-hours__dot photobook-hours__dot--{{ h.phase }}" style="left:{{ h.left }}%;bottom:{{ h.stack | times: 6 }}px"></i>{% endfor %}</div></div>
       <div class="photobook-hours__ticks"><span>Midnight</span><span>Noon</span><span>Midnight</span></div>
       <div class="photobook-legend">
-        {%- if c.phases.day > 0 %}<i class="photobook-hours__dot photobook-hours__dot--day"></i><span>Daylight</span><span class="photobook-legend__n">{{ c.phases.day }}</span><span class="photobook-legend__pc">{{ c.phases.day | times: 100 | divided_by: c.frames }}%</span>{% endif -%}
-        {%- if c.phases.golden > 0 %}<i class="photobook-hours__dot photobook-hours__dot--golden"></i><span>Low sun</span><span class="photobook-legend__n">{{ c.phases.golden }}</span><span class="photobook-legend__pc">{{ c.phases.golden | times: 100 | divided_by: c.frames }}%</span>{% endif -%}
-        {%- if c.phases.night > 0 %}<i class="photobook-hours__dot photobook-hours__dot--night"></i><span>Blue hour, night</span><span class="photobook-legend__n">{{ c.phases.night }}</span><span class="photobook-legend__pc">{{ c.phases.night | times: 100 | divided_by: c.frames }}%</span>{% endif -%}
+        {%- if c.phases.day > 0 %}<i class="photobook-hours__dot photobook-hours__dot--day"></i><span>Daylight</span><span class="photobook-legend__n">{{ c.phases.day }}</span>{% endif -%}
+        {%- if c.phases.golden > 0 %}<i class="photobook-hours__dot photobook-hours__dot--golden"></i><span>Low sun</span><span class="photobook-legend__n">{{ c.phases.golden }}</span>{% endif -%}
+        {%- if c.phases.night > 0 %}<i class="photobook-hours__dot photobook-hours__dot--night"></i><span>Blue hour, night</span><span class="photobook-legend__n">{{ c.phases.night }}</span>{% endif -%}
       </div>
     </div>
     {%- endif %}

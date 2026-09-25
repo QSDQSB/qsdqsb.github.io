@@ -61,7 +61,8 @@ const HORIZON = -0.833; // the sun's upper limb on the horizon, with refraction 
 
 /**
  * The sun as one phrase, and where the glyph's sun sits. The phrase never states a time: within a
- * quarter hour of sunrise or sunset it is golden hour; the sun's height says the rest.
+ * quarter hour of sunrise or sunset it is golden hour; within ninety minutes, how far from it; in
+ * plain daylight a word for the light (high, low, morning, afternoon); below the horizon its hour.
  *
  * The glyph is a 20×16 box with the horizon at y = 11. While the sun is up it is a filled disc on
  * the day's arc, from (2,11) at sunrise over the top at noon to (18,11) at sunset, placed by that
@@ -83,7 +84,10 @@ export function lightOf(sun) {
     : alt < -4 ? 'Blue hour'
     : !up ? (rising ? 'Dawn glow' : 'Afterglow')
     : near && Math.abs(near.m) <= 90 ? `${span(Math.abs(near.m))} ${near.m > 0 ? 'before' : 'after'} ${near.what}`
-    : `Sun at ${Math.round(alt)}°`;
+    // Plain daylight in words; the degrees are the lightbox panel's.
+    : alt >= 45 ? 'High sun'
+    : alt < 15 ? 'Low sun'
+    : rising ? 'Morning light' : 'Afternoon light';
 
   const clamp = (v) => Math.min(1, Math.max(0, v));
   let x, y;
@@ -102,6 +106,21 @@ export function lightOf(sun) {
   }
   const phase = alt < -4 ? 'night' : alt < 6 ? 'golden' : 'day';
   return { alt: Math.round(alt), text, phase, below: !up, x: +x.toFixed(1), y: +y.toFixed(1) };
+}
+
+/**
+ * The weather as one mark and one word, from the WMO code the processor kept. Clear after dark
+ * is a clear night. Codes: 0–1 clear, 2 partly cloudy, 3 overcast, 45/48 fog, 51–67 and 80–82
+ * rain (drizzle is rain here), 71–77 and 85–86 snow, 95–99 thunder.
+ */
+export function weatherOf(w, light) {
+  if (!w || !Number.isFinite(w.t) || !Number.isFinite(w.code)) return null;
+  const c = w.code;
+  const kind = c <= 1 ? (light?.below ? 'night' : 'clear') : c === 2 ? 'partly' : c === 3 ? 'overcast'
+    : c === 45 || c === 48 ? 'fog' : (c >= 71 && c <= 77) || c === 85 || c === 86 ? 'snow'
+    : c >= 95 ? 'thunder' : 'rain';
+  const text = { clear: 'Clear', night: 'Clear', partly: 'Partly cloudy', overcast: 'Overcast', fog: 'Fog', rain: 'Rain', snow: 'Snow', thunder: 'Thunder' }[kind];
+  return { t: w.t, kind, text };
 }
 
 const GROUND = [21, 21, 21], STRENGTH = 0.34;
@@ -180,10 +199,10 @@ export function settingsOf(p) {
 export function lightboxOf(photos) {
   return photos.map(p => ({
     slug: p.slug, frame: p.frame, url: p.url, sizes: p.sizes?.webp || [], ratio: p.ratio,
-    name: p.name, city: p.place?.city || null,
+    name: p.name, place: p.place?.name || null, city: p.place?.city || null,
     shots: p.shutterCount ?? null, focal: p.focal ?? null, aperture: p.aperture ?? null, shutter: p.shutter ?? null,
     iso: p.iso ?? null, bias: p.exposureBias ?? null, camera: cameraName(p.camera), lens: lensName(p.lens),
-    film: p.film ?? null, hue: p.filmHue ?? null, light: p.light, glow: p.glow, ph: p.ph, settings: settingsOf(p),
+    film: p.film ?? null, hue: p.filmHue ?? null, light: p.light, weather: weatherOf(p.weather, p.light), glow: p.glow, ph: p.ph, settings: settingsOf(p),
   }));
 }
 
@@ -194,7 +213,8 @@ const titleOf = (gallery) => String(gallery || '').split('/').pop().split('-').f
 export function bookOf(merged, locations = {}) {
   const photos = merged.photos.map(p => {
     const loc = locations?.[p.slug];
-    const place = splitPlace(loc?.suggested) || splitPlace(p.caption);
+    // The owner's `place` beats the GPS name; the GPS name beats an old caption.
+    const place = splitPlace(typeof p.place === 'string' ? p.place : null) || splitPlace(loc?.suggested) || splitPlace(p.caption);
     const light = lightOf(p.sun);
     // Manifests processed before the names were tidied carry ExifTool's own ("F2/Fujichrome (Velvia)").
     const film = normalizeFilm(p.settings?.filmSimulation);
