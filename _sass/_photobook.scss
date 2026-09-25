@@ -1031,12 +1031,10 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
 // their mark, over the word for them.
 .photobook-specs__weather,
 .photobook-specs__sun {
-  b { display: flex; align-items: center; gap: 0.4rem; }
+  b { display: flex; align-items: center; gap: 0.2em; }
 }
 
-.photobook-specs__weather b { gap: 0.2em; }
-
-.photobook-specs__sun .photobook-sun__glyph { width: 22px; height: 18px; color: var(--photobook-ink-3); }
+.photobook-specs__sun .photobook-sun__glyph { width: 1.375em; height: 1.1em; color: var(--photobook-ink-3); }
 
 .photobook-weather__glyph {
   width: calc(var(--ink, 1.25) * 1.1em); // the box is cut to the mark's ink (lightbox.js)
