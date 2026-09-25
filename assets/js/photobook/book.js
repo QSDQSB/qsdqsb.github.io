@@ -11,7 +11,7 @@ import { filmDial } from './dial.js';
 const srcset = (p) => p.sizes.filter((s) => s <= 1280).map((s) => `${p.url}/${s}.webp ${Math.round(s * Math.min(1, p.ratio || 1.5))}w`).join(', ');
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-export function book({ frames, onOpen, onLayout }) {
+export function book({ frames, onOpen, onLayout, onScreen }) {
   const bookEl = document.getElementById('photobook-book');
   const sheetEl = document.getElementById('photobook-sheet');
   if (!bookEl) return;
@@ -73,7 +73,7 @@ export function book({ frames, onOpen, onLayout }) {
     setTimeout(end, 1000);
     main.scrollIntoView({ block: 'start', behavior: still() ? 'instant' : 'smooth' });
   });
-  const onScreen = (f) => { const r = f.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; };
+  const inView = (f) => { const r = f.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; };
   let gliding = null;
   async function refilter(f, hue) {
     if (!main) { film = f; layout(); return; }
@@ -90,7 +90,7 @@ export function book({ frames, onOpen, onLayout }) {
       // Named: what is on screen now, and what will be; each frame is one element across the change.
       const all = view === 'book' ? figures : [...sheetEl.children];
       const soon = new Set(all.filter((x) => !f || x.dataset.film === f).slice(0, 9));
-      const named = all.filter((x) => soon.has(x) || (!x.hidden && box.contains(x) && onScreen(x)));
+      const named = all.filter((x) => soon.has(x) || (!x.hidden && box.contains(x) && inView(x)));
       named.forEach((x) => { x.style.viewTransitionName = `photobook-f${x.dataset.i}`; });
       document.documentElement.classList.add('is-refiltering');
       const t = document.startViewTransition(apply);
@@ -129,10 +129,11 @@ export function book({ frames, onOpen, onLayout }) {
   const views = document.querySelector('.photobook-switch');
   views?.addEventListener('click', (e) => {
     const b = e.target.closest('button');
+    if (b?.dataset.act === 'screen') { onScreen?.(keepOrder()); return; }
     if (!b || b.dataset.view === view) return;
     view = b.dataset.view;
     try { localStorage.setItem('photobook-view', view); } catch { /* the choice lasts this page only */ }
-    for (const x of views.querySelectorAll('button')) x.setAttribute('aria-pressed', String(x.dataset.view === view));
+    for (const x of views.querySelectorAll('button[data-view]')) x.setAttribute('aria-pressed', String(x.dataset.view === view));
     layout(); toTop();
   });
   // The bar steps below the masthead only when the expanded masthead would reach over it: across (the
@@ -185,6 +186,6 @@ export function book({ frames, onOpen, onLayout }) {
     onOpen?.(i, keepOrder(), b.querySelector('img'));
   });
 
-  if (views) for (const x of views.querySelectorAll('button')) x.setAttribute('aria-pressed', String(x.dataset.view === view));
+  if (views) for (const x of views.querySelectorAll('button[data-view]')) x.setAttribute('aria-pressed', String(x.dataset.view === view));
   layout();
 }
