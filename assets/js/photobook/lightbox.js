@@ -36,9 +36,14 @@ export function lightbox(frames) {
   // The smallest rendition at least as wide as the print will be drawn on this screen, in device
   // pixels. Framed, never past 2560 px (the 4096 file is several times the weight for little more);
   // picture only and the loupe may take the largest.
+  // Renditions are named by their long edge, so a portrait needs a larger name for the same width.
   const srcFor = (p) => {
-    const want = Math.min(window.innerWidth, window.innerHeight * (p.ratio || 1.5)) * Math.min(window.devicePixelRatio || 1, 3);
-    const cap = lb.classList.contains('is-bare') || lb.classList.contains('is-zoomed') ? Infinity : 2560;
+    const r = p.ratio || 1.5, box = mat.getBoundingClientRect(), bare = lb.classList.contains('is-bare'), zoomed = lb.classList.contains('is-zoomed');
+    const [bw, bh] = box.width ? [box.width, box.height] : [window.innerWidth, window.innerHeight];
+    const fill = bare && lb.style.getPropertyValue('--fit') === 'cover';
+    const width = (fill ? Math.max : Math.min)(bw, bh * r) * Math.min(window.devicePixelRatio || 1, 3) * (zoomed ? 2.2 : 1);
+    const want = width / Math.min(1, r);
+    const cap = bare || zoomed ? Infinity : 2560;
     const fit = p.sizes.filter((s) => s <= cap);
     const w = fit.find((s) => s >= want) || fit[fit.length - 1] || p.sizes[0] || 1920;
     return `${p.url}/${w}.webp`;
@@ -57,10 +62,14 @@ export function lightbox(frames) {
 
   // Opening adds one history entry and moving between frames replaces it, so Back closes the
   // lightbox instead of leaving the voyage; closing by any other way steps back over that entry.
-  let pushed = false, popping = false, stepping = false;
+  let pushed = false, popping = false, stepping = false, returnTo = null, firstQuick = null;
+  const settle = (el) => { if (el) { el.scrollIntoView({ block: 'center' }); el.focus({ preventScroll: true }); } };
   function open(i, visible, fromImg) {
     order = visible?.length ? visible : frames.map((_, k) => k);
     lastFocus = document.activeElement;
+    firstQuick = fromImg?.currentSrc || null;
+    // Scroll restoration belongs to each entry: the one we will step back to must not restore its old scroll.
+    history.scrollRestoration = 'manual';
     if (!history.state?.photobook) history.pushState({ photobook: true }, '', location.href);
     pushed = true;
     const run = () => { lb.showModal(); buildRail(); applySpecs(); show(Math.max(0, order.indexOf(i)), { instant: true }); wake(); };
@@ -83,14 +92,19 @@ export function lightbox(frames) {
     lb.classList.remove('has-specs', 'is-pinned', 'is-bare', 'is-zoomed', 'is-idle'); pressed('bare', false);
     if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
     mat.replaceChildren(); wash.replaceChildren(); pos = -1;
-    if (pushed && !popping) { stepping = true; history.back(); }
-    else history.replaceState(null, '', location.pathname + location.search);
+    const back = here || lastFocus;
+    if (pushed && !popping) { stepping = true; returnTo = back; history.back(); }
+    else { history.replaceState(null, '', location.pathname + location.search); settle(back); }
     pushed = false; popping = false;
-    if (here) { here.scrollIntoView({ block: 'center' }); here.focus({ preventScroll: true }); } else lastFocus?.focus?.({ preventScroll: true });
   });
   window.addEventListener('popstate', () => {
-    if (stepping) { stepping = false; history.replaceState(null, '', location.pathname + location.search); return; }
-    if (lb.open) { popping = true; lb.close(); }
+    if (stepping) {
+      stepping = false; history.replaceState(null, '', location.pathname + location.search);
+      const el = returnTo; returnTo = null;
+      requestAnimationFrame(() => { settle(el); history.scrollRestoration = 'auto'; });
+      return;
+    }
+    if (lb.open) { popping = true; lb.close(); history.scrollRestoration = 'auto'; }
     else if (location.hash) openFromHash();
   });
 
@@ -100,11 +114,13 @@ export function lightbox(frames) {
     pos = n;
     const p = cur(), i = order[pos];
     lb.classList.remove('is-zoomed');
+    lb.classList.toggle('is-single', order.length === 1);
     fitFor(p);
     // The print drifts in from the side it came from; the old one leaves the other way.
     const old = [...mat.querySelectorAll('img')];
     // A light rendition shows at once; the full one takes its place as soon as it is decoded.
-    const im = new Image(), full = srcFor(p), quick = `${p.url}/${p.sizes.find((s) => s >= 960) || p.sizes[0] || 960}.webp`;
+    const im = new Image(), full = srcFor(p);
+    const quick = firstQuick || `${p.url}/${p.sizes.find((s) => s >= 960) || p.sizes[0] || 960}.webp`; firstQuick = null;
     im.alt = p.name; im.draggable = false; im.decoding = 'async'; im.src = seen.has(full) ? full : quick;
     if (!seen.has(full) && full !== quick) fetchImg(full).decode().then(() => { if (im.isConnected) im.src = full; }, () => {});
     im.style.setProperty('--d', String(dir));
@@ -123,7 +139,13 @@ export function lightbox(frames) {
     $('.photobook-lightbox__count').innerHTML = `<b>${String(pos + 1).padStart(2, '0')}</b> / ${String(order.length).padStart(2, '0')}`;
     $('.photobook-lightbox__caption').innerHTML = captionHTML(p);
     specsIn.innerHTML = specsHTML(p);
-    for (const [k, b] of [...$('.photobook-lightbox__rail').children].entries()) { b.classList.toggle('is-on', k === pos); b.toggleAttribute('aria-current', k === pos); }
+    const railHadFocus = rail.contains(document.activeElement);
+    for (const [k, b] of [...rail.children].entries()) {
+      const on = k === pos;
+      b.classList.toggle('is-on', on); b.tabIndex = on ? 0 : -1;
+      if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+      if (on && railHadFocus) b.focus({ preventScroll: true });
+    }
     $('.photobook-lightbox__live').textContent = `${p.name}, ${pos + 1} of ${order.length}`;
     for (const d of [1, -1]) { const q = frames[order[(pos + d + order.length) % order.length]]; if (q && !seen.has(srcFor(q))) fetchImg(srcFor(q)); }
     history.replaceState({ photobook: true }, '', `#${p.slug}`);
@@ -146,7 +168,7 @@ export function lightbox(frames) {
     const sun = p.light ? `<div class="photobook-specs__sun"><b>${sunGlyph(p.light)}${String(p.light.alt).replace('-', '−')}°<em>${esc(p.light.text.startsWith('Sun at') ? (p.light.alt >= 0 ? 'above the horizon' : 'below the horizon') : p.light.text)}</em></b><span>Sun</span></div>` : '';
     const wide = ([, v]) => String(v).length > 12;
     const settings = p.settings?.length ? `<dl class="photobook-specs__settings">${[...p.settings.filter((s) => !wide(s)), ...p.settings.filter(wide)].map(([k, v]) => `<div${wide([k, v]) ? ' class="is-wide"' : ''}><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : '';
-    return `<div class="photobook-specs__head"><span class="photobook-specs__no">${esc(p.frame.replace(/^DSCF/i, 'DSCF '))}${p.shots ? ` · <span title="Shutter count">№ ${Number(p.shots).toLocaleString('en-GB')}</span>` : ''}</span>
+    return `<div class="photobook-specs__head"><span class="photobook-specs__no">${esc(p.frame)}${p.shots ? ` · <span title="Shutter count">№ ${Number(p.shots).toLocaleString('en-GB')}</span>` : ''}</span>
         <button class="photobook-specs__pin" type="button" data-act="pin" aria-pressed="${pinned}" title="${pinned ? 'Pinned: stays open' : 'Auto-hide: slips away'}"><svg viewBox="0 0 12 12" aria-hidden="true">${pinned ? '<path d="M4 1.5h4M5 1.5v4L3 7.5h6L7 5.5v-4M6 7.5V11"/>' : '<path d="M1.5 6h9M7.5 3l3 3-3 3"/>'}</svg>${pinned ? 'Pinned' : 'Auto-hide'}</button>
         <h3>${esc(p.name)}</h3>${p.city ? `<span class="photobook-specs__city">${esc(p.city)}</span>` : ''}</div>
       <div class="photobook-specs__highlights">
@@ -161,11 +183,10 @@ export function lightbox(frames) {
       ${settings}`;
   }
 
-  function buildRail() {
-    const rail = $('.photobook-lightbox__rail');
-    rail.innerHTML = order.map((i, k) => `<button type="button" data-k="${k}" aria-label="Frame ${k + 1}: ${esc(frames[i].name)}"><span class="photobook-lightbox__peek"></span></button>`).join('');
-  }
   const rail = $('.photobook-lightbox__rail');
+  function buildRail() {
+    rail.innerHTML = order.map((i, k) => `<button type="button" data-k="${k}" tabindex="-1" aria-label="Frame ${k + 1}: ${esc(frames[i].name)}"><span class="photobook-lightbox__peek"></span></button>`).join('');
+  }
   // A preview is only fetched the first time the pointer rests on its mark.
   rail.addEventListener('pointerover', (e) => {
     const b = e.target.closest('button'); const pk = b?.querySelector('.photobook-lightbox__peek');
@@ -184,7 +205,11 @@ export function lightbox(frames) {
   }
   const revealSpecs = () => { if (specOpen && !lb.classList.contains('is-bare')) { lb.classList.add('has-specs'); applySpecs(); } };
   function toggleSpecs() { specOpen = !specOpen; store.set('photobook-specs', specOpen ? 'open' : 'closed'); if (specOpen) bare(false); applySpecs(); }
-  function togglePin() { pinned = !pinned; store.set('photobook-pin', pinned ? 'pinned' : 'auto'); specsIn.innerHTML = specsHTML(cur()); applySpecs(); }
+  function togglePin() {
+    const had = specsEl.contains(document.activeElement);
+    pinned = !pinned; store.set('photobook-pin', pinned ? 'pinned' : 'auto'); specsIn.innerHTML = specsHTML(cur()); applySpecs();
+    if (had) $('.photobook-specs__pin')?.focus();
+  }
   function bare(on = !lb.classList.contains('is-bare')) {
     lb.classList.toggle('is-bare', on); pressed('bare', on);
     if (on) lb.classList.remove('has-specs', 'is-pinned'); else applySpecs();
@@ -195,10 +220,16 @@ export function lightbox(frames) {
     wake();
   }
   // Picture only and the loupe may want a larger file than the framed print had.
+  let pending = '';
   function upgrade() {
     const im = mat.querySelector('img.is-on'), f = pos >= 0 && srcFor(cur());
-    if (im && f && !im.src.endsWith(f)) fetchImg(f).decode().then(() => { if (im.isConnected) im.src = f; }, () => {});
+    if (!im || !f || im.src.endsWith(f) || f === pending || !bigger(f, im.src)) return;
+    pending = f;
+    fetchImg(f).decode().then(() => { if (im.isConnected) im.src = f; }, () => {}).finally(() => { if (pending === f) pending = ''; });
   }
+  const bigger = (a, b) => Number(a.match(/\/(\d+)\.webp$/)?.[1] || 0) > Number(b.match(/\/(\d+)\.\w+$/)?.[1] || 0);
+  // The print's area grows when the specs close or the window widens: a larger file follows, never a smaller.
+  mat.addEventListener('transitionend', (e) => { if (e.target === mat && /^(top|right|bottom|left)$/.test(e.propertyName)) upgrade(); });
   function wake() { lb.classList.remove('is-idle'); clearTimeout(idleT); idleT = setTimeout(() => lb.classList.add('is-idle'), lb.classList.contains('is-bare') ? 1000 : 3200); }
   specsEl.addEventListener('pointerleave', () => { if (specOpen && !pinned) applySpecs(); });
 
@@ -226,7 +257,7 @@ export function lightbox(frames) {
     else if (k === 'z') { lb.classList.toggle('is-zoomed'); upgrade(); } else return;
     e.preventDefault(); wake();
   });
-  window.addEventListener('resize', () => { if (lb.open && pos >= 0) fitFor(cur()); });
+  window.addEventListener('resize', () => { if (lb.open && pos >= 0) { fitFor(cur()); upgrade(); } });
 
   // Loupe: double-click to look closer; the print follows the pointer.
   const origin = (e) => { const r = mat.getBoundingClientRect(); lb.style.setProperty('--ox', `${((e.clientX - r.left) / r.width * 100).toFixed(1)}%`); lb.style.setProperty('--oy', `${((e.clientY - r.top) / r.height * 100).toFixed(1)}%`); };
@@ -235,7 +266,7 @@ export function lightbox(frames) {
 
   // Touch: swipe to move, swipe up for the specs, tap to bring the tools back.
   let sx = null, sy = 0;
-  lb.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse' || e.target.closest('button,.photobook-specs')) return; sx = e.clientX; sy = e.clientY; if (timer) stop(); });
+  lb.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse' || e.target.closest('button:not(.photobook-lightbox__zone),.photobook-specs')) return; sx = e.clientX; sy = e.clientY; if (timer) stop(); });
   lb.addEventListener('pointercancel', () => { sx = null; });
   lb.addEventListener('pointerup', (e) => {
     if (sx === null) return;
@@ -244,6 +275,14 @@ export function lightbox(frames) {
     else if (dy < -60) { if (!specOpen) toggleSpecs(); else revealSpecs(); }
     else if (dy > 60 && lb.classList.contains('has-specs')) { if (pinned) toggleSpecs(); else lb.classList.remove('has-specs'); }
     else if (lb.classList.contains('is-idle')) { wake(); revealSpecs(); } else { lb.classList.add('is-idle'); clearTimeout(idleT); }
+  });
+  // A pull down on the sheet from its top puts it away, as a pull down on the print does.
+  let ty = null;
+  specsEl.addEventListener('touchstart', (e) => { ty = specsEl.scrollTop <= 0 ? e.touches[0].clientY : null; }, { passive: true });
+  specsEl.addEventListener('touchend', (e) => {
+    if (ty === null) return;
+    const dy = e.changedTouches[0].clientY - ty; ty = null;
+    if (dy > 60 && lb.classList.contains('has-specs')) { if (pinned) toggleSpecs(); else lb.classList.remove('has-specs'); }
   });
   // On auto-hide, reaching the right edge brings the specs back.
   lb.addEventListener('pointermove', (e) => {

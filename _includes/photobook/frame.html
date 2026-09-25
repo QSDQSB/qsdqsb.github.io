@@ -7,6 +7,7 @@
   AVIF tiers stop at 1920 px (they are slow to encode); WebP goes to 4096. The AVIF source is
   offered only where 1920 px covers the frame at the screen's density (its media: viewport widths
   of 1920 / (share of the row × dppx)); elsewhere the browser takes WebP at full size.
+  Renditions are named by their long edge: a portrait's srcset widths are that edge × its ratio.
 {%- endcomment -%}
 {%- case include.kind -%}
   {%- when 'spread' -%}{%- assign sz = '100vw' -%}{%- assign avif_media = '(max-width: 1920px) and (max-resolution: 1dppx), (max-width: 960px) and (max-resolution: 2dppx), (max-width: 640px)' -%}
@@ -18,8 +19,8 @@
 <figure class="photobook-frame" data-i="{{ include.index }}"{% if p.film %} data-film="{{ p.film | escape }}"{% endif %} style="--ratio:{{ p.ratio }}">
   <button class="photobook-frame__print" type="button" aria-label="{{ name | escape }}{% if p.film %}, {{ p.film | escape }}{% endif %}"{% if p.ph %} style="background-image:url({{ p.ph }})"{% endif %}>
     <picture>
-      {%- if p.sizes.avif %}<source type="image/avif" media="{{ avif_media }}" sizes="{{ sz }}" srcset="{% for w in p.sizes.avif %}{{ p.url }}/{{ w }}.avif {{ w }}w{% unless forloop.last %}, {% endunless %}{% endfor %}">{% endif -%}
-      <img src="{{ p.url }}/{{ fallback }}.webp" sizes="{{ sz }}" srcset="{% for w in p.sizes.webp %}{{ p.url }}/{{ w }}.webp {{ w }}w{% unless forloop.last %}, {% endunless %}{% endfor %}" width="{{ p.w }}" height="{{ p.h }}" alt="{{ p.alt | default: name | escape }}" loading="lazy" decoding="async">
+      {%- if p.sizes.avif %}<source type="image/avif" media="{{ avif_media }}" sizes="{{ sz }}" srcset="{% for w in p.sizes.avif %}{% if p.ratio < 1 %}{% assign d = w | times: p.ratio | round %}{% else %}{% assign d = w %}{% endif %}{{ p.url }}/{{ w }}.avif {{ d }}w{% unless forloop.last %}, {% endunless %}{% endfor %}">{% endif -%}
+      <img src="{{ p.url }}/{{ fallback }}.webp" sizes="{{ sz }}" srcset="{% for w in p.sizes.webp %}{% if p.ratio < 1 %}{% assign d = w | times: p.ratio | round %}{% else %}{% assign d = w %}{% endif %}{{ p.url }}/{{ w }}.webp {{ d }}w{% unless forloop.last %}, {% endunless %}{% endfor %}" width="{{ p.w }}" height="{{ p.h }}" alt="{{ p.alt | default: name | escape }}" loading="lazy" decoding="async">
     </picture>
   </button>
   <figcaption class="photobook-frame__caption">

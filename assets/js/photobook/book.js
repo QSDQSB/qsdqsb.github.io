@@ -6,6 +6,8 @@
 
 import { bookRows } from './rows.mjs';
 
+// Renditions are named by their long edge; a srcset states widths, so a portrait's are scaled down.
+const srcset = (p) => p.sizes.filter((s) => s <= 1280).map((s) => `${p.url}/${s}.webp ${Math.round(s * Math.min(1, p.ratio || 1.5))}w`).join(', ');
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 export function book({ frames, onOpen, onLayout }) {
@@ -34,7 +36,7 @@ export function book({ frames, onOpen, onLayout }) {
     const keep = new Set(shown().map((f) => Number(f.dataset.i)));
     if (!sheetEl.childElementCount) {
       sheetEl.innerHTML = frames.map((p, i) => `<figure class="photobook-frame" data-i="${i}"${p.film ? ` data-film="${esc(p.film)}"` : ''} style="--ratio:${p.ratio}">
-        <button class="photobook-frame__print" type="button" aria-label="${esc(p.name)}"><img src="${p.url}/${p.sizes[0] || 480}.webp" width="480" height="${Math.round(480 / (p.ratio || 1.5))}" alt="" loading="lazy" decoding="async"></button>
+        <button class="photobook-frame__print" type="button" aria-label="${esc(p.name)}"><img src="${p.url}/${p.sizes[0] || 480}.webp" srcset="${srcset(p)}" sizes="(min-width: 768px) 18rem, 90vw" width="480" height="${Math.round(480 / (p.ratio || 1.5))}" alt="" loading="lazy" decoding="async"></button>
         <figcaption class="photobook-frame__caption"><span class="photobook-sheet__frame-no">${esc(p.frame)}</span>${p.film ? `<span class="photobook-film" style="--film:${p.hue}"><i></i>${esc(p.film)}</span>` : ''}</figcaption></figure>`).join('');
     }
     for (const f of sheetEl.children) f.hidden = !keep.has(Number(f.dataset.i));
@@ -60,6 +62,7 @@ export function book({ frames, onOpen, onLayout }) {
     const b = e.target.closest('button'); if (!b) return;
     film = b.dataset.film || '';
     for (const x of b.parentElement.children) x.setAttribute('aria-pressed', String(x === b));
+    b.scrollIntoView({ inline: 'nearest', block: 'nearest' });
     layout(); toTop();
   });
   document.querySelector('.photobook-bar__views')?.addEventListener('click', (e) => {
@@ -72,6 +75,18 @@ export function book({ frames, onOpen, onLayout }) {
   const edge = () => films?.classList.toggle('is-scrollable', films.scrollWidth > films.clientWidth + 1 && films.scrollLeft + films.clientWidth < films.scrollWidth - 1);
   films?.addEventListener('scroll', edge, { passive: true });
   window.addEventListener('resize', edge);
+
+  // The bar steps below the masthead only when the expanded masthead would reach over it; widths only,
+  // since stepping down does not move it sideways.
+  const bar = document.querySelector('.photobook-bar'), mast = document.querySelector('.masthead');
+  const under = () => {
+    if (!bar || !mast) return;
+    const out = mast.classList.contains('is-scrolled') && mast.classList.contains('is-nav-expanded') && !mast.classList.contains('is-nav-faded');
+    const nav = (mast.querySelector('.greedy-nav') || mast).getBoundingClientRect(), pill = bar.querySelector('.photobook-bar__pill')?.getBoundingClientRect();
+    bar.classList.toggle('is-under-masthead', !!(out && pill && pill.left < nav.right + 12));
+  };
+  if (mast) new MutationObserver(under).observe(mast, { attributes: true, attributeFilter: ['class'] });
+  window.addEventListener('resize', under);
   // Any frame, in the book or on the sheet, opens the lightbox over the frames currently shown.
   document.querySelector('.photobook-main')?.addEventListener('click', (e) => {
     const b = e.target.closest('.photobook-frame__print'); if (!b) return;
