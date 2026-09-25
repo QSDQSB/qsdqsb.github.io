@@ -117,6 +117,7 @@ const PAGES = [
   {
     id: 'photobook-lightbox',
     url: '/voyage/london/#dscf7406',
+    screenOnly: true, // the dialog covers the screen; the book behind it is the shot above
     setup: async (page) => {
       await drawAllRows(page);
       await page.waitForSelector('#photobook-lightbox[open] .photobook-lightbox__mat img.is-on', { timeout: 10000 });
@@ -318,7 +319,7 @@ async function shoot(browser, baseUrl, pageDef, viewportName, outDir) {
     if (pageDef.setup) await pageDef.setup(page);
     await settle(page, startedAt);
     const file = path.join(outDir, `${pageDef.id}--${viewportName}.png`);
-    await page.screenshot({ path: file, fullPage: true, animations: 'disabled' });
+    await page.screenshot({ path: file, fullPage: !pageDef.screenOnly, animations: 'disabled' });
     return { file, errors };
   } finally {
     await context.close();
