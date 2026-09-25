@@ -17,6 +17,9 @@ for_agents/
 /gallery/
 /images/thumbnails/gallery/
 /_data/gallery_meta/
+# WebP renditions of the 3:1 heroes, made on every build (scripts/generate-cover-sizes.mjs).
+/images/cover/sized/
+/_data/cover_sizes.json
 /photos/
 /_data/photo_manifests/
 /.photos-local/
