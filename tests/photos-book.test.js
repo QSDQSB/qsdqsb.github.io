@@ -110,3 +110,17 @@ test('lenses read as a photographer says them', async () => {
   assert.equal(lensName('XF23mmF1.4 R'), 'XF 23 mm f/1.4');
   assert.equal(lensName(null), null);
 });
+
+test('each film has its mark on the dial, two letters where a first letter is shared', async () => {
+  const { filmCode, colophonOf } = await lib();
+  assert.equal(filmCode('Velvia'), 'V');
+  assert.equal(filmCode('Classic Negative'), 'CN');
+  assert.equal(filmCode('Classic Chrome'), 'CC');
+  assert.equal(filmCode('Eterna Bleach Bypass'), 'EB', 'the longer name is matched before Eterna');
+  assert.equal(filmCode('Eterna'), 'E');
+  assert.equal(filmCode('Acros+R'), 'AC');
+  assert.equal(filmCode('Something New'), 'SN', 'an unknown film takes its initials');
+  assert.equal(filmCode(null), null);
+  const films = colophonOf([{ film: 'Astia' }, { film: 'Pro Neg. Hi' }]).films;
+  assert.deepEqual(films.map(f => f.code), ['A', 'NH']);
+});

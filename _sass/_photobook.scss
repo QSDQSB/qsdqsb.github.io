@@ -183,89 +183,253 @@
   }
 }
 
-/* ── the film bar: a glass pill that stays with the reader ────────────── */
+/* ── the controls: the view switch and the film dial, staying with the reader ── */
+// The glass both controls sit in, darkened behind so their marks keep contrast over a white sky.
+@mixin photobook-bar-glass {
+  background: var(--photobook-glass);
+  -webkit-backdrop-filter: blur(18px) saturate(140%) brightness(0.62);
+  backdrop-filter: blur(18px) saturate(140%) brightness(0.62);
+  border: 1px solid var(--photobook-glass-edge);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.16), 0 5px 16px rgba(0, 0, 0, 0.12);
+}
+
+// At rest the dial is mounted on the seam of cover and book, its centre on the cover's lower edge;
+// it catches the top of the window at the same height, so nothing moves when it starts to follow.
 .photobook-bar {
   width: 100%;
   position: sticky;
-  top: calc(-0.25rem + env(safe-area-inset-top, 0px));
+  top: calc(3.45rem + env(safe-area-inset-top, 0px));
   z-index: 20;
   height: 0;
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
-  padding: 0 1rem;
+  --bar-pad: 1rem;
+  padding: 0 var(--bar-pad);
   pointer-events: none;
 }
 
-.photobook-bar__pill {
+.photobook-bar__dock {
   pointer-events: auto;
-  margin-top: 1rem;
-  transition: translate 0.35s $cubic-bezier-smooth, opacity 0.35s $cubic-bezier-smooth;
+  margin-top: -43px; // half the dial
   display: flex;
-  align-items: center;
-  gap: 0.2rem;
-  max-width: calc(100vw - 9rem);
-  padding: 0.3rem;
-  background: var(--photobook-glass);
-  // Darkened behind, so the labels keep their contrast over a white sky.
-  -webkit-backdrop-filter: blur(18px) saturate(140%) brightness(0.62);
-  backdrop-filter: blur(18px) saturate(140%) brightness(0.62);
-  border: 1px solid var(--photobook-glass-edge);
-  border-radius: 999px;
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.16), 0 5px 16px rgba(0, 0, 0, 0.12);
+  align-items: flex-start;
+  gap: 0.5rem;
+  transition: translate 0.35s $cubic-bezier-smooth, opacity 0.35s $cubic-bezier-smooth;
 }
 
-.photobook-bar__films {
-  display: flex;
-  gap: 0.1rem;
-  min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
+// The view switch: a slide of the same glass, as tall as the dial beside it, its thumb over the view
+// shown. It draws in with the dial.
+.photobook-switch {
+  @include photobook-bar-glass;
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  width: 34px;
+  height: 86px;
+  padding: 3px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: width 0.45s $cubic-bezier-smooth, height 0.45s $cubic-bezier-smooth;
 
-  &::-webkit-scrollbar { display: none; }
+  button {
+    position: relative;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--photobook-ink-3);
+    cursor: pointer;
+    transition: color 0.3s $cubic-bezier-smooth;
 
-  &.is-scrollable {
-    -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent);
-    mask-image: linear-gradient(90deg, #000 82%, transparent);
+    &:hover { color: var(--photobook-ink); }
+    &[aria-pressed="true"] { color: #fff; }
   }
 
-  i { width: 0.7rem; height: 2px; background: var(--film); }
-  b { font-weight: 400; color: var(--photobook-ink-3); font-variant-numeric: tabular-nums; }
-  [aria-pressed="true"] b { color: var(--photobook-ink-2); }
+  svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.2; }
 }
 
-.photobook-bar__films button,
-.photobook-bar__views button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  min-height: 2.1rem;
-  padding: 0 0.75rem;
-  border: 0;
-  border-radius: 999px;
-  background: none;
-  color: var(--photobook-ink-2);
-  font: 500 0.68rem $barlow-font-family;
-  letter-spacing: 0.08em;
+.photobook-switch__thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  height: calc(50% - 3px);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.13);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: translate 0.45s $cubic-bezier-smooth;
+
+  .photobook-switch:has([data-view="sheet"][aria-pressed="true"]) & { translate: 0 100%; }
+}
+
+// The film dial: a disc of dark glass with a toothed rim that turns with it and a red index above.
+// At rest a dot of each film's colour; under the pointer, the keyboard or a finger the dots become
+// the films' letters and the setting is named underneath. The face is drawn at 86 px and scaled, so
+// its rim and marks keep their proportions.
+.photobook-dial { position: relative; }
+
+.photobook-dial__well {
+  @include photobook-bar-glass;
+  position: relative;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  touch-action: none;
+  transition: width 0.45s $cubic-bezier-smooth, height 0.45s $cubic-bezier-smooth;
+}
+
+.photobook-dial__index {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: -8px;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: #c9483e;
+  box-shadow: 0 0 6px rgba(201, 72, 62, 0.55);
+}
+
+.photobook-dial__face {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 86px;
+  height: 86px;
+  margin: -43px;
+  border-radius: 50%;
+  transform: rotate(var(--rot, 0deg)); // turned by dial.js
+  transition: scale 0.45s $cubic-bezier-smooth;
+  cursor: grab;
+  // A hairline inside the rim.
+  background: radial-gradient(circle, transparent 0 36.6px, rgba(255, 255, 255, 0.16) 37px 37.8px, transparent 38.2px);
+
+  // The rim's teeth.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: 50%;
+    background: repeating-conic-gradient(rgba(255, 255, 255, 0.3) 0 1.6deg, transparent 1.6deg 5deg);
+    -webkit-mask: radial-gradient(circle, transparent 0 38.6px, #000 39px);
+    mask: radial-gradient(circle, transparent 0 38.6px, #000 39px);
+  }
+
+  &:active { cursor: grabbing; }
+
+  button {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 24px;
+    height: 14px;
+    margin: -7px 0 0 -12px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--film, var(--photobook-ink));
+    font: 600 9.5px/14px $barlow-font-family;
+    letter-spacing: 0.06em;
+    opacity: 0.55;
+    cursor: pointer;
+    transform: rotate(var(--at)) translateY(-27px) scale(var(--mark, 1));
+    transition: transform 0.3s $cubic-bezier-smooth, opacity 0.3s $cubic-bezier-smooth;
+
+    // the dot at rest
+    &::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 5px;
+      height: 5px;
+      margin: -2.5px;
+      border-radius: 50%;
+      background: currentColor;
+      transition: opacity 0.3s $cubic-bezier-smooth;
+    }
+
+    // the letters, in their place
+    span { display: block; opacity: 0; transition: opacity 0.3s $cubic-bezier-smooth; }
+
+    &:hover { opacity: 1; }
+    &[aria-checked="true"] { opacity: 1; --mark: 1.25; }
+  }
+}
+
+// What the dial is set to, with its film's colour, hung from the dial's right edge like the cover's
+// figures above it. Every name sits in one cell, so the line never shifts as the dial turns.
+.photobook-dial__name {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  display: grid;
+  margin: 0.55rem 0 0;
+  font: 500 0.56rem $barlow-font-family;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--photobook-ink);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7); // over a photograph once it follows the reader
   white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.25s $cubic-bezier-smooth;
+
+  > span { grid-area: 1 / 1; display: flex; align-items: center; justify-content: flex-end; gap: 0.5em; visibility: hidden; }
+  > span.is-on { visibility: visible; }
+  i { width: 0.7rem; height: 2px; background: var(--film, var(--photobook-ink)); }
+  b { font-weight: 400; letter-spacing: 0.08em; color: var(--photobook-ink-2); font-variant-numeric: tabular-nums; }
+
+}
+
+// In hand: the dots give way to letters and the setting is named.
+.photobook-dial:is(:hover, :focus-within, .is-held) {
+  .photobook-dial__face button::before { opacity: 0; }
+  .photobook-dial__face button span { opacity: 1; }
+  .photobook-dial__name { opacity: 1; }
+  .photobook-dial__name.is-preview { opacity: 0.55; }
+}
+
+// Over the book the controls are away until the reader scrolls back up (book.js).
+.photobook-bar.is-stuck:not(.is-summoned) .photobook-bar__dock { opacity: 0; translate: 0 -0.6rem; pointer-events: none; }
+
+// While a film is chosen and the controls are away, the corner keeps the dial's signature: its red
+// index over that film's colour, where the dial's own index stands when it returns.
+.photobook-bar__mark {
+  position: absolute;
+  top: -57px;
+  right: calc(var(--bar-pad) + 56px); // over the drawn-in dial's index: switch 28 + gap 8 + half the dial 29, less half the mark 9
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  padding: 6px;
+  border: 0;
+  background: none;
   cursor: pointer;
-  transition: color 0.3s $cubic-bezier-smooth, background 0.3s $cubic-bezier-smooth;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s $cubic-bezier-smooth, translate 0.35s $cubic-bezier-smooth;
 
-  &:hover { color: #fff; background: var(--photobook-button); }
-  &[aria-pressed="true"] { color: #fff; background: var(--photobook-button-hover); }
+  &::before,
+  &::after { content: ""; border-radius: 50%; }
+  &::before { width: 5px; height: 5px; background: #c9483e; box-shadow: 0 0 6px rgba(201, 72, 62, 0.55); }
+  &::after { width: 6px; height: 6px; background: var(--film); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35); }
+
+  .photobook-bar.is-stuck.has-filter:not(.is-summoned, .is-past) & { opacity: 1; pointer-events: auto; }
+  .photobook-bar.is-under-masthead & { translate: 0 4rem; }
 }
 
-.photobook-bar__view-icon { display: none; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.1; }
-
-.photobook-bar__views {
-  display: flex;
-  gap: 0.1rem;
-  margin-left: 0.1rem;
-  padding-left: 0.3rem;
-  border-left: 1px solid var(--photobook-glass-edge);
-
-  button { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; }
+// Held over the book the dial and the switch draw in together to 58 px; either in hand opens both.
+.photobook-bar.is-stuck .photobook-bar__dock:not(:hover, :focus-within, :has(.is-held)) {
+  .photobook-dial__well { width: 58px; height: 58px; }
+  .photobook-dial__face { scale: 0.674; }
+  .photobook-switch { width: 28px; height: 58px; }
 }
+
+// The cover's figures stand clear of the controls' upper half.
+.photobook-cover:has(+ .photobook-bar) .photobook-cover__title { padding-bottom: clamp(3.8rem, 5vw, 4rem); }
 
 /* ── the book ─────────────────────────────────────────────────────────── */
 .photobook-main {
@@ -274,6 +438,7 @@
   scroll-margin-top: 5.5rem; // a filter change lands on the first row, clear of the masthead and the bar
 }
 
+
 .photobook-book[hidden],
 .photobook-sheet[hidden],
 .photobook-frame[hidden] {
@@ -281,10 +446,10 @@
 }
 
 // Where the expanded masthead would sit over it, the bar steps down beneath it (book.js decides).
-.photobook-bar.is-under-masthead .photobook-bar__pill { translate: 0 4rem; }
+.photobook-bar.is-under-masthead .photobook-bar__dock { translate: 0 4rem; }
 
 // Past the book the bar has nothing to filter.
-.photobook-bar.is-past .photobook-bar__pill { opacity: 0; pointer-events: none; }
+.photobook-bar.is-past .photobook-bar__dock { opacity: 0; pointer-events: none; }
 
 .photobook-row {
   display: flex;
@@ -1163,25 +1328,15 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
 }
 
 @include responsive-down(tablet) {
-  .photobook-bar {
-    justify-content: stretch;
-    padding: 0 0.75rem 0 5.5rem;
-  }
-
-  .photobook-bar__pill { width: 100%; max-width: none; }
-  .photobook-bar.is-under-masthead .photobook-bar__pill { translate: 0 3.5rem; }
-
-  // The films take the pill's width: their counts go, and the view switch is one icon, the view
-  // the reader is not in.
-  .photobook-bar__films b { display: none; }
-  .photobook-bar__views button[aria-pressed="true"] { display: none; }
-  .photobook-bar__views span { display: none; }
-  .photobook-bar__view-icon { display: block; }
+  .photobook-bar { --bar-pad: 0.75rem; }
+  .photobook-bar.is-under-masthead .photobook-bar__dock,
+  .photobook-bar.is-under-masthead .photobook-bar__mark { translate: 0 3.5rem; }
 
   // Tracked capitals no smaller than about 11 px on a phone.
   .photobook-film,
   .photobook-kicker,
   .photobook-facts dt,
+  .photobook-dial__name,
   .photobook-sheet__frame-no,
   .photobook-lightbox__city,
   .photobook-specs__no,
@@ -1262,9 +1417,18 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   .photobook-lightbox.is-playing .photobook-lightbox__mat img.is-on { animation: none; }
 
   .photobook-glow i,
-  .photobook-bar__pill,
-  .photobook-bar__films button,
-  .photobook-bar__views button,
+  .photobook-bar__dock,
+  .photobook-dial,
+  .photobook-dial__well,
+  .photobook-dial__face,
+  .photobook-dial__face button,
+  .photobook-dial__face button::before,
+  .photobook-dial__face button span,
+  .photobook-dial__name,
+  .photobook-switch,
+  .photobook-switch button,
+  .photobook-switch__thumb,
+  .photobook-bar__mark,
   .photobook-lightbox__wash div,
   .photobook-lightbox__mat,
   .photobook-lightbox__mat img,

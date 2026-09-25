@@ -33,6 +33,18 @@ export function filmHue(name) {
   return k ? FILMS[k] : /^(Acros|Monochrome)/.test(name) ? '#e6eee8' : '#8b9296';
 }
 
+// The film's mark on the dial: the letters it is known by, two where a first letter is shared.
+const CODES = {
+  'Provia': 'P', 'Velvia': 'V', 'Astia': 'A', 'Classic Chrome': 'CC', 'Classic Negative': 'CN', 'Nostalgic Neg.': 'NN',
+  'Eterna Bleach Bypass': 'EB', 'Eterna': 'E', 'Pro Neg. Hi': 'NH', 'Pro Neg. Std': 'NS', 'Reala Ace': 'R', 'Sepia': 'S',
+  'Acros': 'AC', 'Monochrome': 'M',
+};
+export function filmCode(name) {
+  if (!name) return null;
+  const k = Object.keys(CODES).find(f => name.startsWith(f));
+  return k ? CODES[k] : name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+}
+
 /** The opening frame: the first featured landscape, else the first landscape, else the first. */
 export function coverIndex(photos) {
   const land = (p) => (p.ratio || 1.5) >= PORTRAIT;
@@ -154,7 +166,7 @@ export function colophonOf(photos) {
     for (const p of photos) { const k = key(p); if (k) m.set(k, (m.get(k) || 0) + 1); }
     return [...m].sort((a, b) => b[1] - a[1]).map(([name, n]) => ({ name, n, pc: Math.round(n / photos.length * 100) }));
   };
-  const films = count(p => p.film ?? normalizeFilm(p.settings?.filmSimulation)).map(f => ({ ...f, hue: filmHue(f.name) }));
+  const films = count(p => p.film ?? normalizeFilm(p.settings?.filmSimulation)).map(f => ({ ...f, hue: filmHue(f.name), code: filmCode(f.name) }));
   const lenses = count(p => lensName(p.lens));
   const bins = new Map(), phases = { day: 0, golden: 0, night: 0 }, hours = [];
   for (const p of photos) {
