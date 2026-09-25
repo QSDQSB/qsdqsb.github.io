@@ -24,7 +24,7 @@
     </picture>
   </button>
   <figcaption class="photobook-frame__caption">
-    {%- unless name == page.title %}<span class="photobook-frame__place">{{ name }}</span>{% endunless %}
+    {%- if p.place.name %}<span class="photobook-frame__place">{{ p.place.name }}</span>{% endif %}
     {%- if p.film %}<span class="photobook-film" style="--film:{{ p.filmHue }}"><i></i>{{ p.film }}</span>{% endif -%}
     <span class="photobook-frame__specs">
       {%- if p.focal %}<span><b>{{ p.focal | round }}</b>mm</span>{% endif -%}

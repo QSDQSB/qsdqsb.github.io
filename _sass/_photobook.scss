@@ -568,7 +568,7 @@
 
 .photobook-legend {
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 0.55rem 0.8rem;
   font: 400 0.74rem $barlow-font-family;
@@ -580,7 +580,6 @@
 }
 
 .photobook-legend__n { color: var(--photobook-ink); }
-.photobook-legend__pc { color: var(--photobook-ink-3); }
 
 /* ── the end of the page ──────────────────────────────────────────────── */
 .photobook-end {
@@ -1020,7 +1019,25 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   em { font: normal 400 0.66rem $barlow-font-family; letter-spacing: 0.04em; color: var(--photobook-ink-2); }
 }
 
-.photobook-specs__film { grid-column: 1 / -1; }
+// The weather: one cell, its mark and the temperature over one word.
+.photobook-specs__weather {
+  b { display: flex; align-items: center; gap: 0.4rem; }
+}
+
+.photobook-weather__glyph {
+  width: 22px;
+  height: 18px;
+  flex: none;
+  overflow: visible;
+
+  .w-ink { fill: none; stroke: var(--photobook-ink-3); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+  .w-gold { fill: none; stroke: var(--photobook-gold); stroke-width: 1; stroke-linecap: round; }
+  .w-dot { fill: var(--photobook-ink-3); }
+}
+
+// Beside the weather the film strip takes the other two columns; without it, the whole row.
+.photobook-specs__film { grid-column: span 2; }
+.photobook-specs__highlights:not(:has(.photobook-specs__weather)) .photobook-specs__film { grid-column: 1 / -1; }
 
 // The film simulation, set like the edge print along a negative.
 .photobook-specs__print {

@@ -33,6 +33,7 @@ import { assignSlugs } from './lib/slug.mjs';
 import { analyse, renderTiers } from './lib/tiers.mjs';
 import { emptyManifest, sortPhotos } from './lib/manifest.mjs';
 import { lightGallery } from './lib/sun.mjs';
+import { weatherGallery } from './lib/weather.mjs';
 import { galleryPlaces } from './lib/places.mjs';
 
 const args = parseArgs(process.argv.slice(2), { multi: ['gallery'] });
@@ -152,14 +153,26 @@ async function processGallery(gallery, files, { originals, pub }) {
 
   // The sun, once per photo, from the original's GPS or the gallery's point on the atlas:
   // no download, no render, so photos processed before it was kept get it on the next run.
-  const lit = lightGallery([...bySlug.values()], (slug) => priv.photos[slug]?.gps, placeOf(gallery));
+  // A frame without GPS borrows the position of the frame nearest in time that has one (within six
+  // hours): rough, but closer than the voyage's point, which remains the last resort.
+  const withGps = [...bySlug.values()].filter((p) => priv.photos[p.slug]?.gps && Date.parse(p.taken));
+  const gpsOf = (slug) => {
+    if (priv.photos[slug]?.gps) return priv.photos[slug].gps;
+    const t0 = Date.parse(bySlug.get(slug)?.taken); if (!Number.isFinite(t0)) return null;
+    let best = null;
+    for (const p of withGps) { const d = Math.abs(Date.parse(p.taken) - t0); if (d <= 6 * 3600e3 && (!best || d < best.d)) best = { d, gps: priv.photos[p.slug].gps }; }
+    return best?.gps || null;
+  };
+  const lit = lightGallery([...bySlug.values()], gpsOf, placeOf(gallery))
+    // …and the weather of that hour, asked once of Open-Meteo's archive; a network call, no image.
+    + (DRY ? 0 : await weatherGallery([...bySlug.values()], gpsOf, placeOf(gallery)));
 
   if ((changed || removed || lit) && !DRY) {
     const photos = sortPhotos([...bySlug.values()]);
     await pub.putJson(manifestKey, { version: MANIFEST_VERSION, gallery, generated: new Date().toISOString(), photos });
     await originals.putJson(privateKey, { gallery, generated: new Date().toISOString(), photos: priv.photos });
   }
-  if (changed || removed || failed || lit) log(`  ${gallery}: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed${lit ? `, ${lit} given their sun` : ''}`);
+  if (changed || removed || failed || lit) log(`  ${gallery}: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed${lit ? `, ${lit} given their sun or weather` : ''}`);
   return { changed, failed, skipped, removed, lit };
 }
 

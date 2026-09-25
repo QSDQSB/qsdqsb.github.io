@@ -38,7 +38,10 @@ test('the light is one phrase, and the glyph sits under the horizon after dusk',
   assert.equal(lightOf({ alt: -3.5, rising: false, toSunrise: 430, toSunset: -20, toNoon: -500 }).text, 'Afterglow');
   assert.equal(lightOf({ alt: -5, rising: false, toSunrise: 400, toSunset: -37, toNoon: -520 }).text, 'Blue hour');
   assert.equal(lightOf({ alt: -7, rising: false, toSunrise: 400, toSunset: -46, toNoon: -520 }).text, 'Night');
-  assert.equal(lightOf({ alt: 55.2, rising: true, toSunrise: -420, toSunset: 543, toNoon: 60 }).text, 'Sun at 55°');
+  assert.equal(lightOf({ alt: 55.2, rising: true, toSunrise: -420, toSunset: 543, toNoon: 60 }).text, 'High sun');
+  assert.equal(lightOf({ alt: 27, rising: true, toSunrise: -200, toSunset: 600, toNoon: 180 }).text, 'Morning light');
+  assert.equal(lightOf({ alt: 27, rising: false, toSunrise: 700, toSunset: 150, toNoon: -250 }).text, 'Afternoon light');
+  assert.equal(lightOf({ alt: 11, rising: false, toSunrise: 700, toSunset: 100, toNoon: -350 }).text, 'Low sun');
   assert.equal(lightOf({ alt: 3, rising: true, toSunrise: -25, toSunset: 900, toNoon: 480 }).text, '25 min after sunrise');
   const dusk = lightOf({ alt: -3.5, rising: false, toSunrise: 430, toSunset: -20, toNoon: -500 });
   assert.equal(dusk.below, true); assert.ok(dusk.y > 11 && dusk.x > 17);
