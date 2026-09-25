@@ -1,8 +1,6 @@
 # Authored layer for gallery/oxford — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
 photos:
-  dscf2541:
-    caption: Examination School, Oxford, UK
   dscf1395:
     caption: High Street, Oxford, UK
   dscf1405:
