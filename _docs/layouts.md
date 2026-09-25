@@ -32,7 +32,7 @@ the global atlas.
 `filmbar`, `book`, `frame`, `sun`, `colophon`, `lightbox`, `end` (the voyage's
 other parts — up to 3 siblings sampled from `gallery_name`'s first segment —
 then random voyages, tags, sign-off). Styles: `_sass/_photobook.scss`. Script:
-`assets/js/photobook/` ES modules (`index.js`, `book.js`, `glow.js`,
+`assets/js/photobook/` ES modules (`index.js`, `book.js`, `dial.js`, `glow.js`,
 `lightbox.js`, `rows.mjs`), loaded only on these pages; every frame is plain
 HTML without it.
 
@@ -52,6 +52,25 @@ Data contract — no files on disk, only the manifest:
   srcset.
 - No manifest, or no processed photos → the page renders an empty Photobook
   ("still on their way"). `check:frontmatter` and `check:gallery` catch it.
+
+**The controls** (`filmbar.html`, `dial.js`, the bar section of `book.js`): a
+film dial and a Book/Sheet switch of the same height, mounted on the seam of
+cover and book (their centre on the cover's lower edge).
+
+- The dial: a glass disc, a red index above; at rest a dot per film (white for
+  ALL), in hand (hover on a real pointer, keyboard focus, a finger turning it,
+  a first tap, the first-visit hint) the films' letters (`filmCode()` in
+  `book.mjs`) and the setting named underneath. Click, drag with detents, or
+  arrow keys. On touch the first tap only opens it. No dial for one film.
+- Over the book both step away; scrolling up about 24 px calls them back
+  drawn in to 58 px (`is-stuck` / `is-summoned`). While a film is chosen the
+  corner keeps the dial's index over that film's colour (`.photobook-bar__mark`).
+- A film change: the page glides to the book's start as the dial turns, then
+  the book re-lays in a view transition (staying frames move, others
+  dissolve; crossfade without the API; nothing with motion off), headed by the
+  film's edge print (`.photobook-book__film`). Book ⇄ Sheet jumps to the top.
+- The first-visit hint turns the dial ~10° and back once per voyage
+  (`localStorage` `qsd.dial.hinted:<path>`).
 
 **Lightbox keyboard:** arrows = navigate, Space / S = slideshow, I = specs,
 P = pin specs, F = bare print, Z (or double-click) = loupe, Esc = back out
