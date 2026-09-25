@@ -269,7 +269,13 @@ export function lightbox(frames) {
   const next = () => { stop(); show(pos + 1, { dir: 1 }); };
   const prev = () => { stop(); show(pos - 1, { dir: -1 }); };
   const ACTS = { next, prev, close: () => lb.close(), specs: toggleSpecs, bare: () => bare(), play: () => (timer ? stop() : play()) };
-  lb.addEventListener('click', (e) => { const b = e.target.closest('[data-act]'); if (b && ACTS[b.dataset.act]) { ACTS[b.dataset.act](); wake(); } });
+  lb.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b || !ACTS[b.dataset.act]) return;
+    ACTS[b.dataset.act](); wake();
+    // The side zones are for the pointer alone: focus goes back to the print, so no ring is drawn on them.
+    if (b.classList.contains('photobook-lightbox__zone')) mat.focus({ preventScroll: true });
+  });
   lb.addEventListener('cancel', (e) => {
     if (screening) return;                                     // Esc ends a screening outright
     if (lb.classList.contains('is-zoomed')) { e.preventDefault(); setZoom(1); }
