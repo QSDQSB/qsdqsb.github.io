@@ -230,7 +230,13 @@ export function lightbox(frames) {
     pressed('specs', specOpen);
   }
   const revealSpecs = () => { if (specOpen && !lb.classList.contains('is-bare')) { lb.classList.add('has-specs'); applySpecs(); } };
-  function toggleSpecs() { specOpen = !specOpen; store.set('photobook-specs', specOpen ? 'open' : 'closed'); if (specOpen) bare(false); applySpecs(); }
+  // In picture only the panel is out of sight whatever its setting, so the button always brings it out.
+  function toggleSpecs() {
+    specOpen = lb.classList.contains('is-bare') || !specOpen;
+    store.set('photobook-specs', specOpen ? 'open' : 'closed');
+    if (specOpen) bare(false);
+    applySpecs();
+  }
   function bare(on = !lb.classList.contains('is-bare')) {
     lb.classList.toggle('is-bare', on); pressed('bare', on);
     if (on) lb.classList.remove('has-specs', 'is-pinned'); else applySpecs();
@@ -287,7 +293,7 @@ export function lightbox(frames) {
 
   // Touch: swipe to move, swipe up for the specs, tap to bring the tools back.
   let sx = null, sy = 0;
-  lb.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse' || e.target.closest('button:not(.photobook-lightbox__zone),.photobook-specs')) return; sx = e.clientX; sy = e.clientY; if (timer) stop(); });
+  lb.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse' || e.target.closest('button:not(.photobook-lightbox__zone),.photobook-specs')) return; sx = e.clientX; sy = e.clientY; if (timer && !screening) stop(); });
   lb.addEventListener('pointercancel', () => { sx = null; });
   lb.addEventListener('pointerup', (e) => {
     if (sx === null) return;
@@ -317,7 +323,8 @@ export function lightbox(frames) {
   lb.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') wake(); });
 
   // Screening: the book shown full screen, picture only, as a slideshow from the first frame of what
-  // is on the page. A tap or a click anywhere, or Esc, ends it and puts the reader back where they were.
+  // is on the page. A tap or the pointer brings the tools back, as in picture only (the slideshow
+  // keeps playing until its own button pauses it); Esc or ‹ ends it where the reader started it.
   let screening = false, screenFrom = 0;
   function screen(visible) {
     screenFrom = window.scrollY;
@@ -325,7 +332,6 @@ export function lightbox(frames) {
     screening = true; lb.classList.add('is-screening');
     bare(true); play();
   }
-  lb.addEventListener('pointerdown', (e) => { if (screening) { e.preventDefault(); lb.close(); } }, true);
 
   /** A link to a frame (#slug) opens it straight away. */
   function openFromHash() {
