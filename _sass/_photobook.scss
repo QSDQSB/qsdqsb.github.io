@@ -246,6 +246,8 @@
   &[aria-pressed="true"] { color: #fff; background: var(--photobook-button-hover); }
 }
 
+.photobook-bar__view-icon { display: none; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.1; }
+
 .photobook-bar__views {
   display: flex;
   gap: 0.1rem;
@@ -460,7 +462,7 @@
     justify-content: space-between;
     align-items: center;
     column-gap: 0.6rem;
-    row-gap: 0;
+    row-gap: 3rem; // a film that wraps lands well below the line's clip, not half in view
     height: 1.9rem;
     min-height: 0;
     padding-top: 0.45rem;
@@ -1129,6 +1131,24 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
 .photobook-lightbox.is-idle:not(.is-bare) .photobook-lightbox__rail:focus-within { opacity: 1; }
 
 /* ── phones ───────────────────────────────────────────────────────────── */
+// The specs as a sheet from the foot of the screen, `$height` tall at most; the print moves up.
+@mixin photobook-specs-sheet($height) {
+  .photobook-specs {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    max-height: $height;
+    border-radius: 14px 14px 0 0;
+    transform: translateY(100%);
+  }
+
+  .photobook-lightbox.has-specs { --bot: #{$height}; }
+  .photobook-lightbox.has-specs.is-pinned { --right: 0px; --bot: #{$height}; }
+  .photobook-specs__inner { padding: 1rem 1.1rem calc(1.2rem + env(safe-area-inset-bottom, 0px)); }
+}
+
 @include responsive-down(tablet) {
   .photobook-bar {
     justify-content: stretch;
@@ -1137,6 +1157,28 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
 
   .photobook-bar__pill { width: 100%; max-width: none; }
   .photobook-bar.is-under-masthead .photobook-bar__pill { translate: 0 3.5rem; }
+
+  // The films take the pill's width: their counts go, and the view switch is one icon, the view
+  // the reader is not in.
+  .photobook-bar__films b { display: none; }
+  .photobook-bar__views button[aria-pressed="true"] { display: none; }
+  .photobook-bar__views span { display: none; }
+  .photobook-bar__view-icon { display: block; }
+
+  // Tracked capitals no smaller than about 11 px on a phone.
+  .photobook-film,
+  .photobook-kicker,
+  .photobook-facts dt,
+  .photobook-sheet__frame-no,
+  .photobook-lightbox__city,
+  .photobook-specs__no,
+  .photobook-specs__city,
+  .photobook-specs__pin,
+  .photobook-specs__highlights > div > span,
+  .photobook-specs__settings dt { font-size: 0.7rem; }
+
+  // The sheet on a phone: two columns, a contact sheet rather than a smaller book.
+  .photobook-sheet { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem 0.6rem; padding: 0.8rem; }
   .photobook-cover__title { grid-template-columns: 1fr; }
   .photobook-facts { gap: 0 1.1rem; }
   .photobook-facts dd { font-size: 1.1rem; }
@@ -1186,20 +1228,12 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   .photobook-lightbox__specs-line { flex-wrap: wrap; row-gap: 0.3rem; margin-left: 0; gap: 0.8rem; }
 
   // On a phone the specs rise as a sheet and the print moves up to make room.
-  .photobook-specs {
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: auto;
-    max-height: 54dvh;
-    border-radius: 14px 14px 0 0;
-    transform: translateY(100%);
-  }
+  @include photobook-specs-sheet(54dvh);
+}
 
-  .photobook-lightbox.has-specs { --bot: 54dvh; }
-  .photobook-lightbox.has-specs.is-pinned { --right: 0px; --bot: 54dvh; }
-  .photobook-specs__inner { padding: 1rem 1.1rem calc(1.2rem + env(safe-area-inset-bottom, 0px)); }
+// A tablet held upright takes the phone's sheet too: a side panel would leave the print a column.
+@include responsive-portrait-between(tablet, wide) {
+  @include photobook-specs-sheet(42dvh);
 }
 
 /* ── motion: reduced, and the automated renderer's kill-switch ────────── */
