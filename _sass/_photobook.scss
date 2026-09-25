@@ -1027,22 +1027,20 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   }
 }
 
+// The weather, then the sun: a cell each, the degrees (in line with the figures above) and
+// their mark, over the word for them.
+.photobook-specs__weather,
 .photobook-specs__sun {
-  grid-column: span 2;
-
-  b { display: flex; align-items: center; gap: 0.5rem; }
-  .photobook-sun__glyph { width: 26px; height: 21px; color: var(--photobook-ink-3); }
-  em { font: normal 400 0.66rem $barlow-font-family; letter-spacing: 0.04em; color: var(--photobook-ink-2); }
-}
-
-// The weather: one cell, its mark and the temperature over one word.
-.photobook-specs__weather {
   b { display: flex; align-items: center; gap: 0.4rem; }
 }
 
+.photobook-specs__weather b { gap: 0.2em; }
+
+.photobook-specs__sun .photobook-sun__glyph { width: 22px; height: 18px; color: var(--photobook-ink-3); }
+
 .photobook-weather__glyph {
-  width: 22px;
-  height: 18px;
+  width: calc(var(--ink, 1.25) * 1.1em); // the box is cut to the mark's ink (lightbox.js)
+  height: 1.1em;
   flex: none;
   overflow: visible;
 
@@ -1051,9 +1049,8 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   .w-dot { fill: var(--photobook-ink-3); }
 }
 
-// Beside the weather the film strip takes the other two columns; without it, the whole row.
-.photobook-specs__film { grid-column: span 2; }
-.photobook-specs__highlights:not(:has(.photobook-specs__weather)) .photobook-specs__film { grid-column: 1 / -1; }
+// The film strip runs the whole row beneath the six cells.
+.photobook-specs__film { grid-column: 1 / -1; }
 
 // The film simulation, set like the edge print along a negative.
 .photobook-specs__print {

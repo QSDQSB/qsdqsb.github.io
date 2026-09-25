@@ -36,7 +36,13 @@ const WEATHER = {
   snow: `<path class="w-ink" d="${CLOUD}"/><circle class="w-dot" cx="7" cy="13.3" r=".7"/><circle class="w-dot" cx="10.5" cy="14.3" r=".7"/><circle class="w-dot" cx="14" cy="13.3" r=".7"/>`,
   thunder: `<path class="w-ink" d="${CLOUD}"/><path class="w-ink" d="M10.8 10.5l-1.8 2.3h2.2l-1.6 2.4"/>`,
 };
-export const weatherGlyph = (w) => `<svg class="photobook-weather__glyph" viewBox="0 0 20 16" aria-hidden="true">${WEATHER[w.kind] || ''}</svg>`;
+// Each mark's ink from left to right (its bounding box, plus the hairline's half-width), so the box
+// can be cut to it and the mark stand right after the temperature like one more letter.
+const INK = { clear: [3, 17], night: [7.7, 15.9], partly: [2.1, 18.8], 'partly-night': [3.9, 18.8], aloft: [1.5, 19.2], overcast: [2.2, 19.2], fog: [2.5, 17.5], rain: [2.2, 19.2], snow: [2.2, 19.2], thunder: [2.2, 19.2] };
+export const weatherGlyph = (w) => {
+  const [x0, x1] = INK[w.kind] || [0, 20];
+  return `<svg class="photobook-weather__glyph" viewBox="${x0} 0 ${x1 - x0} 16" style="--ink:${((x1 - x0) / 16).toFixed(3)}" aria-hidden="true">${WEATHER[w.kind] || ''}</svg>`;
+};
 
 export function lightbox(frames) {
   const lb = document.getElementById('photobook-lightbox');
@@ -181,7 +187,7 @@ export function lightbox(frames) {
 
   function specsHTML(p) {
     const ev = p.bias ? ` · ${p.bias > 0 ? '+' : '−'}${Math.abs(Math.round(p.bias * 100) / 100)} EV` : '';
-    const sun = p.light ? `<div class="photobook-specs__sun"><b>${sunGlyph(p.light)}${String(p.light.alt).replace('-', '−')}°<em>${esc(p.light.text)}</em></b><span>Sun</span></div>` : '';
+    const sun = p.light ? `<div class="photobook-specs__sun"><b>${String(p.light.alt).replace('-', '−')}°${sunGlyph(p.light)}</b><span>${esc(p.light.text)}</span></div>` : '';
     const wide = ([, v]) => String(v).length > 12;
     const settings = p.settings?.length ? `<dl class="photobook-specs__settings">${[...p.settings.filter((s) => !wide(s)), ...p.settings.filter(wide)].map(([k, v]) => `<div${wide([k, v]) ? ' class="is-wide"' : ''}><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : '';
     return `<div class="photobook-specs__head"><span class="photobook-specs__no">${esc(p.frame)}${p.shots ? ` · <span title="Shutter count">№ ${Number(p.shots).toLocaleString('en-GB')}</span>` : ''}</span>
@@ -192,8 +198,8 @@ export function lightbox(frames) {
         <div><b><i>ƒ</i>/${p.aperture ?? '—'}</b><span>Aperture</span></div>
         <div><b>${esc(p.shutter || '—')}<small>s</small></b><span>Shutter</span></div>
         <div><b>${p.iso ?? '—'}</b><span>ISO${ev}</span></div>
+        ${p.weather ? `<div class="photobook-specs__weather"><b>${String(p.weather.t).replace('-', '−')}°C${weatherGlyph(p.weather)}</b><span>${esc(p.weather.text)}</span></div>` : ''}
         ${sun}
-        ${p.weather ? `<div class="photobook-specs__weather"><b>${weatherGlyph(p.weather)}${String(p.weather.t).replace('-', '−')}°</b><span>${esc(p.weather.text)}</span></div>` : ''}
         ${p.film ? `<div class="photobook-specs__film"><div class="photobook-specs__print" style="--film:${p.hue}">${esc(p.film)}</div></div>` : ''}
       </div>
       ${p.camera || p.lens ? `<p class="photobook-specs__gear"><b>${esc(p.camera || '')}</b>${p.lens ? ` · ${esc(p.lens)}` : ''}</p>` : ''}
