@@ -25,10 +25,9 @@ _pages/              Static pages (about, cv, portfolio…)
 _voyage/             Travel voyage collection
 _subvoyage/          Nested sub-voyages
 _data/               YAML data: navigation, UI text, maps, tag colours, gallery SVGs
-gallery/             Full-size gallery images (legacy; leaves git after the R2 cutover)
 photos/              Local originals, gitignored → R2 via `npm run photos:push` → _docs/photos-pipeline.md
 _data/photos/        Authored photo layer: captions, order, stories (committed)
-images/              Site images + thumbnails (images/thumbnails/gallery/…)
+images/              Site images: covers, hero depth maps (images/depth/), logos
 scripts/             Build scripts (geocode-maps.js, photos/*) + check-*.py|sh guards + hooks/
 workers/             Cloudflare Workers (photos-trigger: R2 upload → processing workflow)
 tests/               Node-test files (`node --test tests/*.test.js` via `npm test`)
@@ -91,9 +90,9 @@ Example: `✨ Add bilingual toggle to masthead`
 ## Build & Serve
 
 ```bash
-npm run build        # generate:gallery → geocode → jekyll build
+npm run build        # photos:fetch → geocode → jekyll build
 npm run serve        # same, with serve
-npm run build:fast   # skip the gallery pipeline (CSS/HTML/JS iteration)
+npm run build:fast   # today the same as build (kept as an alias)
 npm run serve:fast
 npm run build:js     # _main.js → main.min.js
 npm test
@@ -103,9 +102,7 @@ npm test
 
 **Visual changes are verified by pixel diff, not by eye.** `npm run visual:build && npm run visual:diff` against the committed baseline before committing anything under `_sass/`, `_layouts/` or `_includes/`; re-capture only for a change that is meant to be visible, and commit the new PNGs with it.
 
-**Thumbnails are not tracked** — regenerated from `gallery/**` on every deploy and as a prerequisite of `build`/`serve`.
-
-**Photographs live in R2, not git.** `photos/` is the local mirror, `_data/photos/*.yml` the captions, and `_data/photo_manifests/` the build-time merge. Never commit image bytes or anything under `_data/photo_manifests/`.
+**Photographs live in R2, not git.** `photos/` is the local mirror, `_data/photos/*.yml` the captions, and `_data/photo_manifests/` the build-time merge (`photos:fetch`, before every build). Pages load them from `img.qsdqsb.com`; nothing reads `gallery/` or generates thumbnails any more. Never commit image bytes or anything under `_data/photo_manifests/`.
 
 → `_docs/build.md` for the full pipeline, the `generate:depth` authoring step, the rake shim, and all check commands. → `_docs/photos-pipeline.md` for the photo pipeline, its commands, and the Cloudflare setup.
 
@@ -155,15 +152,15 @@ Enforced on touched files only — no global retrofit of untouched legacy files.
 
 Jekyll renders a broken contract as an empty shell rather than an error, so these fail silently and only surface when a reader hits the page.
 
-The two that break most often: `gallery_name` must resolve to **both** `gallery/<name>/` and `images/thumbnails/gallery/<name>/`; and a `subgalleries: true` parent's basename must equal its `_subvoyage/<basename>/` folder name.
+The two that break most often: `gallery_name` must be a gallery the photo pipeline knows — `_data/photos/<name>.yml` committed or its manifest fetched — with processed photographs, or the Photobook renders empty; and a `subgalleries: true` parent's basename must equal its `_subvoyage/<basename>/` folder name.
 
-→ `frontmatter-contract-enforcer` skill (all contracts, `map:` shapes, `seo_description`, routing & placement), `gallery-integrity-audit` skill (directory/filename resolution), `voyage-scaffolder` agent (new voyages).
+→ `frontmatter-contract-enforcer` skill (all contracts, `map:` shapes, `seo_description`, routing & placement), `gallery-integrity-audit` skill (gallery ↔ manifest resolution, orphans), `voyage-scaffolder` agent (new voyages).
 
 ---
 
 ## Layouts & Gallery System
 
-9 layouts. The two with real behaviour are `gallery.html` (enumerator vs gallery-viewer mode, branched on `subgalleries`) and the page hero overlay (depth parallax, opening scene).
+9 layouts. The two with real behaviour are `gallery.html` (a router: `subgalleries: true` → the index of parts; otherwise → the Photobook, `_includes/photobook.html`) and the page hero overlay (depth parallax, opening scene).
 
 When a layout or include changes visible structure, validate desktop *and* mobile-small.
 
@@ -177,12 +174,12 @@ Mechanical checks, all scoped to **changes vs `HEAD`** — never the existing ba
 
 | Script | npm | Guards against |
 |---|---|---|
-| `check-frontmatter.js` | `check:frontmatter` | Broken collection contracts — missing keys, `gallery_name` pointing nowhere, bad `map:` shapes, misplaced sub-voyages |
-| `check-gallery-integrity.js` | `check:gallery` | Empty/missing galleries, thumbnail parity, orphan directories |
+| `check-frontmatter.js` | `check:frontmatter` | Broken collection contracts — missing keys, `gallery_name` unknown to the photo pipeline, bad `map:` shapes, misplaced sub-voyages |
+| `check-gallery-integrity.js` | `check:gallery` | `gallery_name` with no processed manifest (empty Photobook), orphan galleries under `photos/` |
 | `check-single-use-variables.py` | — | Single-use entries in `_variables.scss` |
 | `check-house-style.py` | `check:house-style` | Generic-AI register in prose and code |
 | `check-js-sync.py` | `check:js-sync` | `main.min.js` shipping stale |
-| `check-important-ratchet.py` | `check:important` | Any `!important` growth — the stylesheet uses none (the few left in `_gallery_view.scss` go with its rebuild) |
+| `check-important-ratchet.py` | `check:important` | Any `!important` growth — the stylesheet uses none |
 | `check-responsive-policy.sh` | `check:responsive-policy` | Raw breakpoints outside `_responsive-policy.scss` |
 | `check-seo-descriptions.py` | `check:seo` | Pages with no real meta description |
 

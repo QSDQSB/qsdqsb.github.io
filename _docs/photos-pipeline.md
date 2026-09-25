@@ -29,9 +29,12 @@ every step is re-runnable and idempotent.
 | Authored | `_data/photos/<gallery>.yml` (nested for sub-voyages: `_data/photos/prague/twilight.yml`) | you, by hand | captions, order, stories, featured, hidden |
 
 The site build merges machine + authored into `_data/photo_manifests/<key>.json`
-(gitignored) where `<key>` is the gallery with `/` replaced by `_`, the same
-key today's thumbnail meta used. Liquid reads
-`site.data.photo_manifests[key]`.
+(gitignored) where `<key>` is the gallery with `/` replaced by `_`. Liquid reads
+`site.data.photo_manifests[key]`: the voyage's Photobook
+(`_includes/photobook.html`) and the sitemap's image entries. The same step
+adds the Photobook's layer (rows, cover, colophon, and per photo the place,
+light, glow and lightbox record) through `scripts/photos/lib/book.mjs` —
+`_docs/layouts.md` has the page side.
 
 ### Photo identity
 
@@ -74,8 +77,11 @@ shape and reports slugs that no processed photo matches.
 ```
 
 URL template, the one contract the front end depends on:
-`<PHOTOS_PUBLIC_BASE>/<gallery>/<slug>/<size>.<format>`, e.g.
-`https://img.qsdqsb.com/london/dscf1797/1920.webp`. Sizes are the long edge.
+`<PHOTOS_PUBLIC_BASE>/t/<hash>/<size>.<format>`, e.g.
+`https://img.qsdqsb.com/t/93fa06e0cb81cdfd/1920.webp`, where `<hash>` is the
+first 16 hex of the original's SHA-256 (a replaced original is a new URL, so
+`immutable` caching holds). The merged manifest gives each photo its `url`
+(`<base>/t/<hash>`) and its `sizes`. Sizes are the long edge.
 Nothing public is larger than 4096 px. Every tier is re-encoded, so no EXIF
 and no GPS ever reaches the public bucket.
 
@@ -89,7 +95,7 @@ and no GPS ever reaches the public bucket.
 | `npm run photos:locate -- --gallery x \| --all [--sheets] [--set slug="place"] [--accept [slugs]]` | Suggests where each photo was taken (a well-known landmark, square, park or inn, else the road) into `_data/photo_locations/`; `--accept` writes suggestions into captions nobody wrote by hand. | none (OpenStreetMap, HTTP) |
 | `npm run photos:collect [-- --gallery x] [--dry-run]` | Replaces compressed copies with the edited originals straight from Apple Photos: exact-name lookups, best candidate by date, verified by the gateway. Resumable, memory-guarded, one run at a time. | none (Apple Photos) |
 | `npm run photos:plan [-- --gallery x]` | Reports new, changed, orphaned files; refuses orphans still named in YAML. | read |
-| `npm run photos:prune -- --gallery x [--yes]` | Moves that gallery's orphans to `trash/<date>/…` in the originals bucket. Asks you to type the gallery name. | write |
+| `npm run photos:prune -- --all` / `--gallery x [--gallery y]…` `[--dry-run]` | Moves orphans to `trash/<date>/…` in the originals bucket. Lists every file first; one confirmation (type `QSD`) covers them all. `--all` skips galleries this machine has no `photos/` folder for. | write |
 | `npm run photos:process [-- --gallery x] [--force] [--dry-run] [--local dir] [--no-avif]` | The processor. Runs in Actions; runs locally against a directory with `--local`. | read + write |
 | `npm run photos:fetch [-- --local dir] [--strict]` | Pre-build merge into `_data/photo_manifests/`. Never fails a build. | read (HTTP, public) |
 | `npm run photos:bootstrap [-- --gallery x] [--dry-run] [--yaml-only] [--force]` | One-time: `gallery/` → `photos/` with frame-number names and injected EXIF; writes YAML skeletons. | none |
@@ -99,17 +105,26 @@ and no GPS ever reaches the public bucket.
 | `npm run photos:recollect -- --gallery x [--rename] [--allow-drop] [--push] [--offline]` | The check before pushing re-collected files: matched, new, renamed, vanishing. Refuses while captioned work would vanish. | read (+ write with `--push`) |
 | `npm run photos:trash -- list [--gallery x]` / `restore <key\|prefix/> [--dry-run] [--bucket-only]` | Shows `trash/` with prune and expiry dates; moves an object back and copies it into `photos/` if missing there. | read / write |
 
-### Removing a photograph, the explicit way
+### Removing a photograph from a voyage
 
-1. Delete it from `photos/<gallery>/` locally (or never, and just mark it `hidden: true`).
-2. Remove its slug from `_data/photos/<gallery>.yml` if it is named there.
-3. `npm run photos:plan` shows it as an orphan.
-4. `npm run photos:prune -- --gallery <gallery>` moves the original to `trash/<date>/`.
-5. The processor's next run drops its public tiers and manifest entry.
+To take it off the page but keep it, set `hidden: true` under its slug in
+`_data/photos/<gallery>.yml`. To remove it for good:
 
-Trash expires after 30 days by an R2 lifecycle rule (set up below). Until
-then, `npm run photos:trash -- restore <key>` moves it back and the next
-processor run renders it again.
+```bash
+mv photos/<gallery>/DSCF4226.JPG ~/.Trash/          # 1. take the original out of photos/
+#                                                     2. delete its slug from _data/photos/<gallery>.yml, if named there
+npm run photos:plan -- --gallery <gallery>           # 3. lists it as an orphan, and refuses while the YAML still names it
+npm run photos:prune -- --gallery <gallery>          # 4. type QSD: the original moves to trash/<date>/ (--all: every gallery at once)
+```
+
+The rest follows by itself: the move fires the bucket's notification, the
+processor drops the photo's manifest entry (D1 marks it removed), and the site
+rebuilds without it. Its public tiers stay until `process.mjs --gc` (they
+are shared by content hash). Commit the YAML change with the next push.
+
+The original stays restorable for 30 days:
+`npm run photos:trash -- restore trash/<date>/<gallery>/<file>` puts it back
+in the bucket and in `photos/`, and the processor renders it again.
 
 ## Day-to-day
 
@@ -282,7 +297,7 @@ reader would place them, in each voyage's own caption style:
 
 | Photo | Source | Suggestion |
 |---|---|---|
-| a camera original with GPS | OpenStreetMap: Nominatim (address) and Overpass (landmarks) | `Tower of London, London`, `Middlesex Street, London`, `Minack Theatre, Penzance, UK` |
+| a camera original with GPS | OpenStreetMap: Geoapify (address; `GEOAPIFY_API_KEY` in `.env`, else Nominatim) and Overpass (landmarks) | `Tower of London, London`, `Middlesex Street, London`, `Minack Theatre, Penzance, UK` |
 | a camera original without GPS | a visual guess (contact sheets, `--sheets`), recorded as `gps: missing`, `source: visual guess` | imprecise by design |
 | a compressed copy | none yet: `source: awaiting original`; its old caption stands until the original arrives with GPS | — |
 
@@ -318,8 +333,7 @@ OpenStreetMap data: credit "© OpenStreetMap contributors".
 
 ### Remove a photo
 
-Hide it (`hidden: true` in the YAML) if it might come back. To remove it for
-good, follow *Removing a photograph, the explicit way* above.
+See *Removing a photograph from a voyage* above.
 
 ### Restore from trash
 
@@ -443,7 +457,9 @@ already set in the shell win.
 ## Bootstrap order (the local session)
 
 The cloud session that built this pipeline left `gallery/` tracked and
-untouched. The cutover happens locally, in this order, verifying each step:
+untouched. The cutover ran locally, in this order. Steps 1–5 are done; the
+last check of step 5, a live Cloudflare Pages build logging
+`photo manifests: N galleries`, comes with the merge.
 
 1. `npm run photos:bootstrap` — copies every `gallery/<g>/<legacy>.jpg` to
    `photos/<g>/<FRAME>.jpg`, writing the exposure encoded in the old
@@ -455,12 +471,13 @@ untouched. The cutover happens locally, in this order, verifying each step:
    tier for 577 photographs and takes roughly an hour; later runs only touch
    what changed.
 4. `npm run photos:fetch` locally and confirm `_data/photo_manifests/` fills;
-   `npm run serve:fast` to see the merged data in Liquid once the front end
-   reads it.
-5. When every gallery reports processed and the live site serves from
-   `img.qsdqsb.com`: `git rm -r --cached gallery && echo 'gallery/' >> .gitignore`,
-   retire `scripts/generate-gallery-assets.mjs` and the `generate:gallery`
-   script, commit.
+   `npm run serve:fast` to see the merged data in Liquid.
+5. Done: `gallery/` is untracked, gitignored, and gone from disk (moved to
+   the macOS Trash on 2026-09-24 once every picture in it was in
+   `photos/`); `scripts/generate-gallery-assets.mjs`, the `generate:gallery`
+   scripts and the Rakefile's `generate_thumbnails` are gone, so `build` is
+   `photos:fetch → geocode → jekyll`; the Photobook replaced the gallery
+   viewer. Left: confirm the Pages build log shows `photo manifests: N galleries`.
 6. Re-collect originals voyage by voyage (see *Re-collecting the originals*).
 7. Later, separately: rewrite git history to drop the 600 MB from every clone.
 
@@ -548,7 +565,9 @@ account, one set of credentials.
 - Editing `_data/photos/**.yml` in a Claude Code session runs
   `photos:fetch -- --strict --shape <file>` through the edit hook: shape
   only, no network.
-- `scripts/check-gallery-integrity.js` keeps validating `gallery_name`
-  against `gallery/` until the cutover; after it, the integrity check should
-  read `_data/photo_manifests/_index.json` instead. That change belongs to
-  the cutover commit.
+- `scripts/check-gallery-integrity.js` validates every `gallery_name`
+  against `_data/photo_manifests/_index.json` (a processed manifest with
+  photos, or the Photobook renders empty) and reports galleries under
+  `photos/` that no voyage references. `scripts/check-frontmatter.js`
+  errors on a `gallery_name` with neither `_data/photos/<name>.yml` nor a
+  fetched manifest, and warns on one with no processed photos.

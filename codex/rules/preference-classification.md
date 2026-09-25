@@ -108,8 +108,8 @@ clarification_reference: string | n/a
 | "Modify existing class before creating a new one" | `rule` | Persistent CSS authoring policy | `css-theme-governance.md` |
 | "Implement map docs first, then navigation docs" | `instruction` | Task order only | task thread |
 | "In this PR, skip gallery refactors" | `instruction` | Temporary scoping | task thread |
-| "Run thumbnails + geocode before build" | `rule` | Workflow-wide default behavior | `quality-gates.md` |
-| "When adding voyage posts, validate `gallery_name` and thumbnails" | `skill` | Repeatable repo-specific flow | `skills/layout-include-contract-audit/SKILL.md` |
+| "Run photos:fetch + geocode before build" | `rule` | Workflow-wide default behavior | `quality-gates.md` |
+| "When adding voyage posts, validate `gallery_name` against the photo manifests" | `skill` | Repeatable repo-specific flow | `skills/layout-include-contract-audit/SKILL.md` |
 | "Normalize tag color mappings against `_data/tag_colours.yml`" | `skill` | Reusable taxonomy validation process | `skills/layout-include-contract-audit/SKILL.md` |
 | "For this bugfix, only touch `_sass/_navigation.scss`" | `instruction` | Single-task implementation constraint | task thread |
 | "Detect one-off hex values outside token file" | `skill` | Reusable validation routine | `skills/design-token-steward/SKILL.md` |

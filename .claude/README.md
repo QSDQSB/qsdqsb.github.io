@@ -54,7 +54,7 @@ Manual entrypoints. Type `/<name>` in Claude Code.
 
 | Command | What it does |
 |---|---|
-| `/build` | Full pipeline: thumbnails → geocode → jekyll build. |
+| `/build` | Full pipeline: photos:fetch → geocode → jekyll build. |
 | `/serve` | Same but ends in `jekyll serve`. |
 | `/geocode` | Just `npm run geocode` with before/after `assets/maps/` listing. |
 | `/responsive-audit` | Wraps `bash scripts/check-responsive-policy.sh`. |

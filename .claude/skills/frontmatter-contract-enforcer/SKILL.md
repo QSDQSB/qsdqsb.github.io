@@ -38,17 +38,18 @@ Two placement failures, both silent:
   `_subvoyage/europe/`) → invisible to the enumerator.
 
 For nested galleries (`gallery_name: parent/child`), sibling discovery for the
-related-panel works on the **first segment** — all siblings must live under
-`_subvoyage/parent/` and use `gallery_name: parent/<sibling>`. The panel
-surfaces up to 3 random siblings.
+Photobook's "Other <parent>" panel works on the **first segment** — all
+siblings must live under `_subvoyage/parent/` and use
+`gallery_name: parent/<sibling>`. The panel surfaces up to 3 random siblings.
 
 ## Conditional pairings (these are where things break)
 
-- **`gallery_name: <name>`** must resolve to two real directories:
-  - `gallery/<name>/` (full images)
-  - `images/thumbnails/gallery/<name>/` (thumbnails — often the missing one)
+- **`gallery_name: <name>`** must be a gallery the photo pipeline knows:
+  - `_data/photos/<name>.yml` committed, or `_data/photo_manifests/<key>.json` fetched (`<key>` = name with `/` → `_`) — **error** if neither.
+  - A known gallery with 0 processed photos is a **warn**: the page renders an empty Photobook until its photos are pushed and processed.
+  - `gallery/` and `images/thumbnails/gallery/` are read by nothing; don't check them.
 - **`subgalleries: true`** does two things:
-  1. Puts the voyage in enumerator mode (sub-voyage card list, no image viewer). Parent voyage basename must align with `_subvoyage/<basename>/` so the enumerator can discover children — matched by path substring.
+  1. Puts the voyage in index-of-parts mode (sub-voyage card list, no Photobook). Parent voyage basename must align with `_subvoyage/<basename>/` so the enumerator can discover children — matched by path substring.
   2. Auto-derives an atlas-style map at `assets/maps/voyage-<basename>.geojson`, one feature per child of `_subvoyage/<basename>/*.md`.
 - **`map:` on a parent voyage with `subgalleries:true`** — optional viewport override:
   ```yaml
@@ -127,7 +128,7 @@ node scripts/check-frontmatter.js --json       # machine-readable
 exit 0.
 
 **error** = the page is broken or renders empty. **warn** = it renders, but
-degraded (missing thumbnails, an uncoloured tag, a missing date).
+degraded (an empty Photobook, an uncoloured tag, a missing date).
 
 Then, for each finding:
 
@@ -138,8 +139,8 @@ Then, for each finding:
    which existing tag colour to use.
 3. Re-run to confirm clean.
 
-For set-level questions — orphaned gallery directories, thumbnail/filename
-parity — use `node scripts/check-gallery-integrity.js` and the
+For set-level questions — a processed manifest behind every `gallery_name`,
+orphaned galleries under `photos/` — use `node scripts/check-gallery-integrity.js` and the
 `gallery-integrity-audit` skill.
 
 ## Output

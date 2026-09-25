@@ -56,7 +56,7 @@ major_delta_confirmation_reference: string | n/a
 
 ### Workflow
 - `WF-001`: Canonical sequence applied (`prepare -> serve/build -> verify`).
-- `WF-002`: `prepare` includes both thumbnail and geocode preprocess.
+- `WF-002`: `prepare` includes both photo-manifest fetch (`npm run photos:fetch`) and geocode preprocess.
 - `WF-003`: JS source/artifact sync (`_main.js` -> `main.min.js`) when touched.
 
 ### Content Contracts
@@ -66,7 +66,7 @@ major_delta_confirmation_reference: string | n/a
 
 ### Data Integrity
 - `DATA-001`: map dataset-to-cache consistency.
-- `DATA-002`: `gallery_name` path/thumbnail consistency.
+- `DATA-002`: `gallery_name` resolves to a processed photo manifest.
 - `DATA-003`: tag-to-color mapping consistency.
 
 ### CSS Theme Governance
