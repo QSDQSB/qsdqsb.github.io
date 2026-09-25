@@ -184,6 +184,32 @@
 }
 
 /* ── the controls: the view switch and the film dial, staying with the reader ── */
+// A film's name as it is printed along a negative's edge, between two rows of sprocket holes: the
+// specs panel's film, and the head of a book filtered to one film.
+@mixin photobook-edge-print {
+  position: relative;
+  padding: 0.62rem 0.7rem;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.45);
+  color: var(--film);
+  font: 600 0.66rem $barlow-font-family;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    height: 3px;
+    background: radial-gradient(circle, rgba(230, 238, 232, 0.2) 1.1px, transparent 1.5px) 0 0 / 9px 3px repeat-x;
+  }
+
+  &::before { top: 2px; }
+  &::after { bottom: 2px; }
+}
+
 // The glass both controls sit in, darkened behind so their marks keep contrast over a white sky.
 @mixin photobook-bar-glass {
   background: var(--photobook-glass);
@@ -441,9 +467,34 @@
 
 .photobook-book[hidden],
 .photobook-sheet[hidden],
-.photobook-frame[hidden] {
+.photobook-frame[hidden],
+.photobook-book__film[hidden] {
   display: none;
 }
+
+// A book filtered to one film opens on that film's name: a short length of edge, as long as the name
+// needs, at the left, clear of the controls on the right.
+.photobook-book__film {
+  @include photobook-edge-print;
+  width: max-content;
+  margin: 0 var(--photobook-gutter) clamp(1.2rem, 2.4vw, 2rem);
+  padding-inline: 0.9rem;
+}
+
+// Changing films: the frames that stay move into their new rows while the others dissolve (book.js);
+// without view transitions the book fades out and back in.
+html.is-refiltering::view-transition-group(*) {
+  animation-duration: 0.45s;
+  animation-timing-function: $cubic-bezier-smooth;
+}
+
+html.is-refiltering::view-transition-old(*),
+html.is-refiltering::view-transition-new(*) { animation-duration: 0.35s; }
+
+.photobook-book,
+.photobook-sheet { transition: opacity 0.32s $cubic-bezier-smooth; }
+
+.photobook-main.is-fading :is(.photobook-book, .photobook-sheet) { opacity: 0; transition-duration: 0.18s; }
 
 // Where the expanded masthead would sit over it, the bar steps down beneath it (book.js decides).
 .photobook-bar.is-under-masthead .photobook-bar__dock { translate: 0 4rem; }
@@ -1220,29 +1271,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
 .photobook-specs__film { grid-column: 1 / -1; }
 
 // The film simulation, set like the edge print along a negative.
-.photobook-specs__print {
-  position: relative;
-  padding: 0.62rem 0.7rem;
-  border-radius: 3px;
-  background: rgba(0, 0, 0, 0.45);
-  color: var(--film);
-  font: 600 0.66rem $barlow-font-family;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    left: 5px;
-    right: 5px;
-    height: 3px;
-    background: radial-gradient(circle, rgba(230, 238, 232, 0.2) 1.1px, transparent 1.5px) 0 0 / 9px 3px repeat-x;
-  }
-
-  &::before { top: 2px; }
-  &::after { bottom: 2px; }
-}
+.photobook-specs__print { @include photobook-edge-print; }
 
 .photobook-specs__gear {
   font: 400 0.74rem $barlow-font-family;
@@ -1429,6 +1458,8 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   .photobook-switch button,
   .photobook-switch__thumb,
   .photobook-bar__mark,
+  .photobook-book,
+  .photobook-sheet,
   .photobook-lightbox__wash div,
   .photobook-lightbox__mat,
   .photobook-lightbox__mat img,
