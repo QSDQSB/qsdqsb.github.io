@@ -2,8 +2,7 @@
   The cover: the voyage's own 3:1 hero (header.overlay_image, the one its card and the atlas show),
   full bleed, with the site's hero recipe (the fade at the foot, the scrim, the title). A page
   without one opens on the book's cover frame. The glow takes its colours from that frame either way.
-  Above the title, a way back (a glass pill, like the lightbox's back button): a sub-voyage's to its
-  voyage, with the number of parts; a voyage's to all voyages.
+  A sub-voyage names its parent above the title, as a way back to it; a voyage has nothing there.
 {%- endcomment -%}
 {%- assign pb = include.book -%}
 {%- assign cover = nil -%}
@@ -13,8 +12,6 @@
   {%- assign parent_slug = page.path | split: "/" | slice: 1 | first -%}
   {%- assign parent_path = "_voyage/" | append: parent_slug | append: ".md" -%}
   {%- assign parent = site.voyage | where: "path", parent_path | first -%}
-  {%- assign parts_prefix = "_subvoyage/" | append: parent_slug | append: "/" -%}
-  {%- assign parts = site.subvoyage | where_exp: "s", "s.path contains parts_prefix" -%}
 {%- endif -%}
 <header class="photobook-cover" id="photobook-cover" data-i="{% if cover %}{{ pb.book.cover }}{% endif %}">
   {%- if page.header.overlay_image %}
@@ -29,9 +26,7 @@
   <div class="photobook-cover__title">
     <div>
       {%- if parent %}
-      <a class="photobook-cover__up" href="{{ parent.url | relative_url }}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>{{ parent.title }}{% if parts.size > 1 %}<span>{{ parts.size }} parts</span>{% endif %}</a>
-      {%- else %}
-      <a class="photobook-cover__up" href="{{ '/voyage/' | relative_url }}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>All voyages</a>
+      <p class="photobook-kicker"><a href="{{ parent.url | relative_url }}">{{ parent.title }}</a></p>
       {%- endif %}
       <h1>{{ page.title | markdownify | remove: "<p>" | remove: "</p>" | strip }}</h1>
       {%- assign lede = page.subtitle | default: page.description | default: page.excerpt -%}
