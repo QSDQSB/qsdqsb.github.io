@@ -701,33 +701,33 @@ html.is-refiltering::view-transition-new(*) { animation-duration: 0.35s; }
 .photobook-sun__dot { fill: var(--photobook-gold); }
 .photobook-sun__dot--below { fill: none; stroke: var(--photobook-gold); stroke-width: 1; }
 
-/* ── the sheet: every frame on a light table ──────────────────────────── */
+/* ── the sheet: every frame at once, on the page itself ───────────────── */
+// A contact sheet with no table under it: the frames sit on the page's own ground, in the book's
+// margins, each in the same 16:9 box (a portrait whole within it, the gap left as page).
 .photobook-sheet {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
-  gap: 1.2rem 0.8rem;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: clamp(1.4rem, 2.4vw, 2.2rem) clamp(0.8rem, 1.4vw, 1.2rem);
   margin: 0 var(--photobook-gutter);
-  padding: clamp(1rem, 2vw, 1.6rem);
-  background: #0e0e10;
-  border: 1px dashed var(--photobook-line);
-  border-radius: $border-radius;
 
-  // Every print the same height whatever its shape: a portrait sits whole, the gap left as the table.
   .photobook-frame__print { aspect-ratio: 16 / 9; background: none; }
   .photobook-frame__print img { object-fit: contain; }
 
-  // One line: the frame number, and the film only if it fits; otherwise it wraps out of sight.
+  // The frame number, and the film as a tick in its colour; its name comes with the pointer.
   .photobook-frame__caption {
-    flex-wrap: wrap;
     justify-content: space-between;
-    align-items: center;
-    column-gap: 0.6rem;
-    row-gap: 3rem; // a film that wraps lands well below the line's clip, not half in view
-    height: 1.9rem;
     min-height: 0;
-    padding-top: 0.45rem;
-    overflow: hidden;
+    padding-top: 0.55rem;
   }
+
+  .photobook-film span {
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-width 0.4s $cubic-bezier-smooth, opacity 0.3s $cubic-bezier-smooth;
+  }
+
+  .photobook-frame:hover .photobook-film span { max-width: 12rem; opacity: 1; }
 }
 
 .photobook-sheet__frame-no {
@@ -1424,7 +1424,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-specs__settings dt { font-size: 0.7rem; }
 
   // The sheet on a phone: two columns, a contact sheet rather than a smaller book.
-  .photobook-sheet { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem 0.6rem; padding: 0.8rem; }
+  .photobook-sheet { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem 0.6rem; }
   .photobook-cover__title { grid-template-columns: 1fr; }
   .photobook-facts div { padding-inline: 0.7rem; }
   .photobook-facts dd { font-size: 1.1rem; }
@@ -1509,6 +1509,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-bar__mark,
   .photobook-book,
   .photobook-sheet,
+  .photobook-sheet .photobook-film span,
   .photobook-lightbox__wash div,
   .photobook-lightbox__mat,
   .photobook-lightbox__mat img,
