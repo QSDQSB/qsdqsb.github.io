@@ -53,19 +53,61 @@ export function book({ frames, onOpen, onLayout }) {
   }
   const keepOrder = () => shown().map((f) => Number(f.dataset.i));
 
-  // A change made from deep in the book starts the reader at the top of what it now shows.
-  const toTop = () => {
-    const main = document.querySelector('.photobook-main');
-    if (main && main.getBoundingClientRect().top < 0) main.scrollIntoView({ block: 'start' });
-  };
+  const main = document.querySelector('.photobook-main');
+  const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // A new view starts the reader at its top, at once.
+  const toTop = () => { if (main && main.getBoundingClientRect().top < 0) main.scrollIntoView({ block: 'start', behavior: 'instant' }); };
+
+  // A new film: first the page glides back to the start of the book, the old layout still in place;
+  // then the book re-lays there, the frames that stay moving into their new rows, the others
+  // dissolving (a view transition; a crossfade where there is none; nothing moves when motion is off).
+  const filmHead = document.querySelector('.photobook-book__film');
+  const glide = () => new Promise((done) => {
+    const top = main.getBoundingClientRect().top - parseFloat(getComputedStyle(main).scrollMarginTop || 0);
+    if (Math.abs(top) < 2) return done();
+    let over = false;
+    const end = () => { if (!over) { over = true; done(); } };
+    window.addEventListener('scrollend', end, { once: true });
+    setTimeout(end, 1000);
+    main.scrollIntoView({ block: 'start', behavior: still() ? 'instant' : 'smooth' });
+  });
+  const onScreen = (f) => { const r = f.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; };
+  let gliding = null;
+  async function refilter(f, hue) {
+    if (!main) { film = f; layout(); return; }
+    await (gliding || glide());
+    gliding = null;
+    const apply = () => {
+      film = f;
+      if (filmHead) { filmHead.hidden = !f; filmHead.textContent = f; filmHead.style.setProperty('--film', hue); }
+      layout();
+    };
+    if (still()) return apply();
+    const box = view === 'book' ? bookEl : sheetEl;
+    if (document.startViewTransition) {
+      // Named: what is on screen now, and what will be; each frame is one element across the change.
+      const all = view === 'book' ? figures : [...sheetEl.children];
+      const soon = new Set(all.filter((x) => !f || x.dataset.film === f).slice(0, 9));
+      const named = all.filter((x) => soon.has(x) || (!x.hidden && box.contains(x) && onScreen(x)));
+      named.forEach((x) => { x.style.viewTransitionName = `photobook-f${x.dataset.i}`; });
+      document.documentElement.classList.add('is-refiltering');
+      const t = document.startViewTransition(apply);
+      t.finished.finally(() => {
+        named.forEach((x) => { x.style.viewTransitionName = ''; });
+        document.documentElement.classList.remove('is-refiltering');
+      });
+      return;
+    }
+    main.classList.add('is-fading');
+    setTimeout(() => { apply(); main.classList.remove('is-fading'); }, 180);
+  }
   const dial = document.querySelector('.photobook-dial');
   const mark = document.querySelector('.photobook-bar__mark');
   const turn = dial && filmDial(dial, (f) => {
-    film = f;
     mark?.style.setProperty('--film', turn.hue());
     document.querySelector('.photobook-bar')?.classList.toggle('has-filter', !!f);
-    layout(); toTop();
-  });
+    refilter(f, turn.hue());
+  }, () => { gliding = glide(); });
   // Once per reader: when the dial first comes fully into view, it turns a little and back.
   if (turn && 'IntersectionObserver' in window) {
     let seen = true;

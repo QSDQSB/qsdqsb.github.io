@@ -2,13 +2,14 @@
  * The film dial (_includes/photobook/filmbar.html): a mark per film around a face that turns the
  * chosen one under the red index. Click a mark, turn the face by hand (it leans towards each position
  * and settles on the nearest), or use the arrow keys; hovering a mark names it faintly underneath.
- * The book changes once the dial has settled, so turning through films never re-lays the page.
+ * The book changes once the dial has settled, so turning through films never re-lays the page;
+ * onPick hears of a choice as the dial starts to turn to it.
  */
 
 const STEP = 45;                                     // degrees between marks, as in filmbar.html
 const TURN_MS = 520;
 
-export function filmDial(el, onChoose) {
+export function filmDial(el, onChoose, onPick) {
   const face = el.querySelector('.photobook-dial__face');
   const marks = [...face.querySelectorAll('[role="radio"]')];
   const names = [...el.querySelectorAll('.photobook-dial__name > span')];
@@ -32,6 +33,7 @@ export function filmDial(el, onChoose) {
     if (focus) marks[i].focus({ preventScroll: true });
     cancelAnimationFrame(raf);
     const settle = () => { if (changed) onChoose(marks[i].dataset.film || ''); };
+    if (changed) onPick?.();                                   // the page may start moving while the dial turns
     if (still()) { at = i; paint(); settle(); return; }
     const from = at, t0 = performance.now();
     const turn = (t) => {

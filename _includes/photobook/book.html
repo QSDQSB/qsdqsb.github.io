@@ -2,6 +2,8 @@
   The book: rows laid out at build time (a spread, a pair, a three, again). Every frame is plain
   HTML, so the page reads without its script; the film filter re-lays the same figures.
 {%- endcomment -%}
+{%- comment -%} While a film is chosen, its name heads the book as it is printed along a negative's edge (book.js). {%- endcomment -%}
+<p class="photobook-book__film" hidden></p>
 <div class="photobook-book" id="photobook-book">
   {%- for row in include.book.book.rows %}
   <div class="photobook-row photobook-row--{{ row.kind }}">
