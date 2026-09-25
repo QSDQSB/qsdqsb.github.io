@@ -27,7 +27,7 @@ try { process.loadEnvFile?.(path.join(ROOT, '.env')); } catch { /* no .env */ }
 
 export const PATHS = {
   photosDir:     path.resolve(ROOT, process.env.PHOTOS_DIR || 'photos'), // local originals, gitignored
-  legacyGallery: path.join(ROOT, 'gallery'),              // today's compressed tree, bootstrap source
+  legacyGallery: path.join(ROOT, 'gallery'),              // the old compressed tree, bootstrap source (retired)
   authoredDir:   path.join(ROOT, '_data', 'photos'),      // captions, order, stories (committed)
   mergedDir:     path.join(ROOT, '_data', 'photo_manifests'), // machine + authored merge (gitignored)
   locationsDir:  path.join(ROOT, '_data', 'photo_locations'), // place names from photos:locate (committed)
