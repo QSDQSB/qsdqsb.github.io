@@ -57,31 +57,51 @@ export function splitPlace(text, fallbackCity = null) {
 
 const span = (n) => (n >= 60 ? `${Math.floor(n / 60)} h ${n % 60} min` : `${n} min`);
 
+const HORIZON = -0.833; // the sun's upper limb on the horizon, with refraction (lib/sun.mjs)
+
 /**
- * The sun as one phrase, and where the glyph's dot sits on the day's arc.
+ * The sun as one phrase, and where the glyph's sun sits. The phrase never states a time: within a
+ * quarter hour of sunrise or sunset it is golden hour; the sun's height says the rest.
+ *
+ * The glyph is a 20×16 box with the horizon at y = 11. While the sun is up it is a filled disc on
+ * the day's arc, from (2,11) at sunrise over the top at noon to (18,11) at sunset, placed by that
+ * same day's sunrise, noon and sunset. Once it has set it is a hollow circle on a shallow arc under
+ * the horizon, from the sunset end through midnight to the sunrise end, so an early evening and a
+ * small hour read apart without a clock.
+ *
  * phase: 'day' | 'golden' (sun under 6°) | 'night' (4° below the horizon or lower).
  */
 export function lightOf(sun) {
-  if (!sun || !Number.isFinite(sun.alt) || sun.toSunrise == null || sun.toSunset == null) return null;
-  const { alt, toSunrise, toSunset } = sun;
-  const near = Math.abs(toSunset) <= Math.abs(toSunrise)
-    ? { m: toSunset, what: 'sunset', before: toSunset > 0 }
-    : { m: toSunrise, what: 'sunrise', before: toSunrise > 0 };
-  const text = Math.abs(near.m) <= 1 ? `At ${near.what}`
+  if (!sun || !Number.isFinite(sun.alt)) return null;
+  const { alt, rising, toSunrise, toSunset, toNoon } = sun;
+  const events = [toSunrise != null && { m: toSunrise, what: 'sunrise' }, toSunset != null && { m: toSunset, what: 'sunset' }]
+    .filter(Boolean).sort((a, b) => Math.abs(a.m) - Math.abs(b.m));
+  const near = events[0];
+  const up = alt >= HORIZON;
+  const text = near && Math.abs(near.m) <= 15 ? 'Golden hour'
     : alt < -6 ? 'Night'
     : alt < -4 ? 'Blue hour'
-    : alt < -0.833 ? (sun.rising ? 'Dawn glow' : 'Afterglow')
-    : Math.abs(near.m) <= 90 ? `${span(Math.abs(near.m))} ${near.before ? 'before' : 'after'} ${near.what}`
+    : !up ? (rising ? 'Dawn glow' : 'Afterglow')
+    : near && Math.abs(near.m) <= 90 ? `${span(Math.abs(near.m))} ${near.m > 0 ? 'before' : 'after'} ${near.what}`
     : `Sun at ${Math.round(alt)}°`;
-  // The glyph: a 20×13 box, the day's arc from (2,11) to (18,11). By day the dot rides the arc by how
-  // far the day has gone; before sunrise or after sunset it sits under the horizon at that end.
-  const day = toSunrise <= 0 && toSunset >= 0;
-  const f = day ? -toSunrise / (toSunset - toSunrise || 1) : (near.what === 'sunset' ? 1 : 0);
-  const a = Math.PI * (1 - f);
-  const x = +(10 + 8 * Math.cos(a)).toFixed(1);
-  const y = day ? +(11 - 8 * Math.sin(a)).toFixed(1) : +(11 + Math.min(4, Math.abs(alt) * 0.6)).toFixed(1);
+
+  const clamp = (v) => Math.min(1, Math.max(0, v));
+  let x, y;
+  if (up) {
+    // How far the day has gone: sunrise → noon is the first half, noon → sunset the second.
+    const f = toNoon == null ? 0.5
+      : toNoon >= 0 ? (toSunrise != null && toSunrise <= 0 ? 0.5 * -toSunrise / (-toSunrise + toNoon || 1) : clamp(0.5 - toNoon / 1440))
+      : (toSunset != null && toSunset >= 0 ? 0.5 + 0.5 * -toNoon / (-toNoon + toSunset || 1) : clamp(0.5 - toNoon / 1440));
+    const a = Math.PI * (1 - f);
+    x = 10 + 8 * Math.cos(a); y = 11 - 8 * Math.sin(a);
+  } else {
+    // How far the night has gone: last sunset → next sunrise.
+    const g = toSunset != null && toSunrise != null && toSunset <= 0 && toSunrise >= 0
+      ? -toSunset / (-toSunset + toSunrise || 1) : (rising ? 0.9 : 0.1);
+    x = 18 - 16 * g; y = 11 + 3.2 * Math.sin(Math.PI * g);
+  }
   const phase = alt < -4 ? 'night' : alt < 6 ? 'golden' : 'day';
-  return { alt: Math.round(alt), text, phase, below: !day, x, y };
+  return { alt: Math.round(alt), text, phase, below: !up, x: +x.toFixed(1), y: +y.toFixed(1) };
 }
 
 const GROUND = [21, 21, 21], STRENGTH = 0.34;

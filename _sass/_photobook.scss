@@ -70,7 +70,9 @@
 
 /* ── cover: the site's overlay hero, given the whole first screen ─────── */
 .photobook-cover {
-  min-height: clamp(30rem, 86svh, 58rem);
+  // The heroes are cut 3:1: the cover keeps their shape, and a floor for the title on phones.
+  aspect-ratio: 3 / 1;
+  min-height: 26rem;
   display: flex;
   align-items: flex-end;
   isolation: isolate;
@@ -323,23 +325,32 @@
   b { font-weight: 500; color: var(--photobook-ink-2); }
 }
 
-// Pairs and threes keep their captions until the reader reaches for a frame.
-.photobook-row--pair,
-.photobook-row--triple {
-  .photobook-frame__caption {
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: opacity 0.35s $cubic-bezier-smooth, transform 0.35s $cubic-bezier-smooth;
-  }
+// The sun sits after the specs, in their type.
+.photobook-frame__caption > .photobook-sun {
+  margin-left: 0.6rem;
+  font: 400 0.68rem $barlow-font-family;
+  letter-spacing: 0.06em;
+}
 
-  .photobook-frame:hover .photobook-frame__caption,
-  .photobook-frame:focus-within .photobook-frame__caption {
-    opacity: 1;
-    transform: none;
-  }
+// The book shows the pictures: specs and the sun come up only when the reader reaches for a frame.
+// Spreads keep their place name; pairs and threes keep the whole caption back.
+.photobook-frame__specs,
+.photobook-frame__caption > .photobook-sun,
+.photobook-row--pair .photobook-frame__caption > *,
+.photobook-row--triple .photobook-frame__caption > * {
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.35s $cubic-bezier-smooth, transform 0.35s $cubic-bezier-smooth;
+}
+
+.photobook-frame:hover .photobook-frame__caption > *,
+.photobook-frame:focus-within .photobook-frame__caption > * {
+  opacity: 1;
+  transform: none;
 }
 
 .photobook-row--triple .photobook-frame__specs { display: none; }
+.photobook-row--triple .photobook-frame__caption > .photobook-sun { margin-left: auto; }
 
 // Frames settle into place as they scroll in; without support they are simply there.
 @supports (animation-timeline: view()) {
@@ -382,7 +393,7 @@
 
 .photobook-sun__glyph {
   width: 20px;
-  height: 13px;
+  height: 16px;
   flex: none;
   overflow: visible;
 }
@@ -428,6 +439,8 @@
 
 /* ── colophon: three bars on one baseline ─────────────────────────────── */
 .photobook-colophon {
+  // The site's body is a -webkit-box, which would shrink a centred block to its content.
+  width: 100%;
   max-width: 80rem;
   margin: clamp(4rem, 8vw, 7rem) auto 0;
   padding: 0 var(--photobook-gutter);
@@ -525,6 +538,7 @@
 
 /* ── the end of the page ──────────────────────────────────────────────── */
 .photobook-end {
+  width: 100%;
   max-width: 80rem;
   margin: clamp(3rem, 6vw, 5rem) auto 0;
   padding: 0 var(--photobook-gutter) calc(3rem + env(safe-area-inset-bottom, 0px));
@@ -931,7 +945,7 @@
   grid-column: span 2;
 
   b { display: flex; align-items: center; gap: 0.5rem; }
-  .photobook-sun__glyph { width: 26px; height: 17px; color: var(--photobook-ink-3); }
+  .photobook-sun__glyph { width: 26px; height: 21px; color: var(--photobook-ink-3); }
   em { font: normal 400 0.66rem $barlow-font-family; letter-spacing: 0.04em; color: var(--photobook-ink-2); }
 }
 
@@ -1039,10 +1053,11 @@
 
     .photobook-frame { flex: 0 0 86%; scroll-snap-align: start; }
 
-    .photobook-frame__caption { opacity: 1; transform: none; }
+    .photobook-frame__caption > * { opacity: 1; transform: none; }
   }
 
-  .photobook-frame__specs { display: none; }
+  .photobook-frame__specs,
+  .photobook-frame__caption > .photobook-sun { display: none; }
   .photobook-colophon__grid { grid-template-columns: 1fr; }
 
   .photobook-lightbox {
@@ -1117,8 +1132,10 @@ html.motion-off {
   .photobook-lightbox__mat,
   .photobook-lightbox__mat img,
   .photobook-frame__print img,
-  .photobook-row--pair .photobook-frame__caption,
-  .photobook-row--triple .photobook-frame__caption,
+  .photobook-frame__specs,
+  .photobook-frame__caption > .photobook-sun,
+  .photobook-row--pair .photobook-frame__caption > *,
+  .photobook-row--triple .photobook-frame__caption > *,
   .photobook-specs,
   .photobook-lightbox__chrome { transition: none; }
 }

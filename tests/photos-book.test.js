@@ -32,7 +32,9 @@ test('the cover is the first featured landscape, else the first landscape', asyn
 test('the light is one phrase, and the glyph sits under the horizon after dusk', async () => {
   const { lightOf } = await lib();
   assert.equal(lightOf({ alt: 2.8, rising: false, toSunrise: 480, toSunset: 28, toNoon: -452 }).text, '28 min before sunset');
-  assert.equal(lightOf({ alt: -0.7, rising: false, toSunrise: 450, toSunset: 0, toNoon: -480 }).text, 'At sunset');
+  assert.equal(lightOf({ alt: -0.7, rising: false, toSunrise: 450, toSunset: 0, toNoon: -480 }).text, 'Golden hour');
+  assert.equal(lightOf({ alt: 1.2, rising: false, toSunrise: 470, toSunset: 6, toNoon: -474 }).text, 'Golden hour');
+  assert.equal(lightOf({ alt: 1, rising: true, toSunrise: -12, toSunset: 950, toNoon: 470 }).text, 'Golden hour');
   assert.equal(lightOf({ alt: -3.5, rising: false, toSunrise: 430, toSunset: -20, toNoon: -500 }).text, 'Afterglow');
   assert.equal(lightOf({ alt: -5, rising: false, toSunrise: 400, toSunset: -37, toNoon: -520 }).text, 'Blue hour');
   assert.equal(lightOf({ alt: -7, rising: false, toSunrise: 400, toSunset: -46, toNoon: -520 }).text, 'Night');
@@ -42,6 +44,20 @@ test('the light is one phrase, and the glyph sits under the horizon after dusk',
   assert.equal(dusk.below, true); assert.ok(dusk.y > 11 && dusk.x > 17);
   assert.equal(dusk.phase, 'golden');
   assert.equal(lightOf(null), null);
+});
+
+test('the glyph places the sun by the same day: a morning is not taken for last night', async () => {
+  const { lightOf } = await lib();
+  // 07:49 in June: last night's sunset (10 h ago) is nearer than tonight's.
+  const morning = lightOf({ alt: 19.9, rising: true, toSunrise: -134, toSunset: -625, toNoon: 340 });
+  assert.equal(morning.below, false);
+  assert.ok(morning.x < 10 && morning.y < 11, `morning on the rising half of the arc: ${morning.x},${morning.y}`);
+  const noon = lightOf({ alt: 66.8, rising: true, toSunrise: -464, toSunset: 485, toNoon: 0 });
+  assert.ok(Math.abs(noon.x - 10) < 0.2 && noon.y < 3.2);
+  // Night: a hollow circle under the horizon, deepest at the middle of the night.
+  const late = lightOf({ alt: -15.4, rising: false, toSunrise: 361, toSunset: -130, toNoon: -605 });
+  const small = lightOf({ alt: -18, rising: false, toSunrise: 120, toSunset: -370, toNoon: -850 });
+  assert.ok(late.below && small.below && late.x > small.x && late.y > 11 && late.y <= 14.2);
 });
 
 test('glow and placeholder come from the thumbhash; a missing one gives nothing', async () => {
