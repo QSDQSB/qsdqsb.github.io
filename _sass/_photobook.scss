@@ -1447,10 +1447,12 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
     transform: translateY(100%);
   }
 
-  .photobook-lightbox.has-specs { --bot: #{$height}; }
+  // The rail stands on the sheet's top edge, and the print makes room for both.
+  .photobook-lightbox.has-specs { --bot: calc(#{$height} + 3.4rem); }
+  .photobook-lightbox.has-specs .photobook-lightbox__rail { bottom: $height; padding-bottom: 0.35rem; }
   .photobook-lightbox.has-specs.is-pinned {
     --right: 0px;
-    --bot: #{$height};
+    --bot: calc(#{$height} + 3.4rem);
 
     // A sheet from below has no top line to share: the print stays centred in the room above it.
     .photobook-lightbox__mat img { object-position: 50% 50%; }
