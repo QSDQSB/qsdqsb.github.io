@@ -1,13 +1,6 @@
-# Compatibility shim. The canonical thumbnail pipeline now lives in
-# scripts/generate-gallery-assets.mjs (Sharp-based, produces 1×/2× JPEG/WebP/AVIF
-# + LQIP, runs in CI on every push). The Rake tasks below delegate to npm
-# scripts so older docs / hooks / commands that say `bundle exec rake …`
-# keep working unchanged. New code should call `npm run …` directly.
-
-desc "Generate gallery thumbnails (delegates to npm run generate:gallery)"
-task :generate_thumbnails do
-  sh "npm run generate:gallery"
-end
+# Compatibility shim. The Rake tasks below delegate to npm scripts so older
+# docs / hooks / commands that say `bundle exec rake …` keep working
+# unchanged. New code should call `npm run …` directly.
 
 desc "Build site (delegates to npm run build)"
 task :build do

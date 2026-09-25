@@ -230,10 +230,6 @@ defaults:
       author_profile: false
       share: false
       comment: false 
-  - scope:
-      path: "gallery"
-    values:
-      image: true
 
 image_position: "left center"
 
@@ -306,4 +302,3 @@ compress_html:
   ignore:
     envs: development
 
-gallery_d: "/gallery"

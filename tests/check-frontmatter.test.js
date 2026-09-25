@@ -125,7 +125,7 @@ test('gallery_name pointing nowhere is an error', () => {
   const body = '---\ntitle: T\ndate: 2024-01-01\ngallery_name: definitely-not-a-gallery\n'
     + 'header:\n  overlay_image: x.jpg\n---\n';
   withFixture('_voyage/fixture-badgallery.md', body, (abs) => {
-    assert.ok(hasError(checkFile(abs, null), /missing gallery\//));
+    assert.ok(hasError(checkFile(abs, null), /nothing knows this gallery/));
   });
 });
 
