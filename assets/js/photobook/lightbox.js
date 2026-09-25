@@ -293,6 +293,13 @@ export function lightbox(frames) {
     else if (dy > 60 && lb.classList.contains('has-specs')) toggleSpecs();
     else if (lb.classList.contains('is-idle')) { wake(); revealSpecs(); } else { lb.classList.add('is-idle'); clearTimeout(idleT); }
   });
+  // Open, nothing behind the lightbox scrolls: iOS Safari scrolls the page under `overflow: hidden`
+  // with a finger, so drags and wheels are stopped here, except inside the specs panel, which
+  // scrolls itself when it is taller than its room (and hands no scroll on: overscroll-behavior).
+  const own = (e) => specsEl.contains(e.target) && specsEl.scrollHeight > specsEl.clientHeight;
+  lb.addEventListener('touchmove', (e) => { if (!own(e)) e.preventDefault(); }, { passive: false });
+  lb.addEventListener('wheel', (e) => { if (!own(e)) e.preventDefault(); }, { passive: false });
+
   // A pull down on the sheet from its top puts it away, as a pull down on the print does.
   let ty = null;
   specsEl.addEventListener('touchstart', (e) => { ty = specsEl.scrollTop <= 0 ? e.touches[0].clientY : null; }, { passive: true });
