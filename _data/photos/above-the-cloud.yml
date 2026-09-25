@@ -1,3 +1,7 @@
 # Authored layer for gallery/above-the-cloud — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# Taken from aircraft: the GPS is the phone's last fix before take-off, so no frame carries a place
+# or a sun; the temperature is the standard atmosphere's at cruising height.
+aerial:
+  altitude_ft: 33000
 photos: {}

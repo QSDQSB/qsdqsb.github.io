@@ -22,7 +22,7 @@
 import { MANIFEST_VERSION, galleryKey } from './config.mjs';
 
 export const AUTHORED_PHOTO_KEYS = ['place', 'caption', 'caption_zh', 'alt', 'story', 'story_zh', 'featured', 'hidden'];
-export const AUTHORED_TOP_KEYS = ['title', 'order', 'photos'];
+export const AUTHORED_TOP_KEYS = ['title', 'order', 'aerial', 'photos'];
 
 export function emptyManifest(gallery) {
   return { version: MANIFEST_VERSION, gallery, generated: null, photos: [] };
@@ -94,7 +94,7 @@ export function mergeManifest(gallery, machine, authored, base) {
 
   return {
     gallery, key: galleryKey(gallery), base: `${base}/${gallery}`,
-    title: a.title || null, generated: m.generated, count: photos.length, unlisted, photos, inventory, warnings,
+    title: a.title || null, aerial: a.aerial || null, generated: m.generated, count: photos.length, unlisted, photos, inventory, warnings,
   };
 }
 
