@@ -190,6 +190,7 @@
 .photobook-bar__pill {
   pointer-events: auto;
   margin-top: 1rem;
+  transition: translate 0.35s $cubic-bezier-smooth;
   display: flex;
   align-items: center;
   gap: 0.2rem;
@@ -260,9 +261,13 @@
 }
 
 .photobook-book[hidden],
-.photobook-sheet[hidden] {
+.photobook-sheet[hidden],
+.photobook-frame[hidden] {
   display: none;
 }
+
+// While the masthead is out over a scrolled page, the bar steps down beneath it instead of under it.
+body:has(.masthead.is-scrolled.is-nav-expanded:not(.is-nav-faded)) .photobook-bar__pill { translate: 0 4rem; }
 
 .photobook-row {
   display: flex;
@@ -1084,6 +1089,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   }
 
   .photobook-bar__pill { width: 100%; max-width: none; }
+  body:has(.masthead.is-scrolled.is-nav-expanded:not(.is-nav-faded)) .photobook-bar__pill { translate: 0 3.5rem; }
   .photobook-cover__title { grid-template-columns: 1fr; }
   .photobook-facts { gap: 0 1.1rem; }
   .photobook-facts dd { font-size: 1.1rem; }
@@ -1162,6 +1168,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; }
   .photobook-lightbox.is-playing .photobook-lightbox__mat img.is-on { animation: none; }
 
   .photobook-glow i,
+  .photobook-bar__pill,
   .photobook-bar__films button,
   .photobook-bar__views button,
   .photobook-lightbox__wash div,

@@ -156,6 +156,7 @@ const SETTINGS = [
   ['highlightTone', 'Highl.'], ['shadowTone', 'Shad.'], ['whiteBalance', 'WB'], ['color', 'Colour'], ['sharpness', 'Sharp'],
   ['noiseReduction', 'NR'], ['clarity', 'Clarity'], ['shutterType', 'Shutter type'], ['focusMode', 'Focus'],
 ];
+const DEFAULTS = new Set(['Off', '0', 'Standard', 'Auto', 'Normal']);
 export const tidy = (v) => String(v).replace(/\s*\((?!\d)[^)]*\)/g, '').replace(/^-(?=\d)/, '−').trim();
 export function settingsOf(p) {
   const st = p.settings || {};
@@ -164,9 +165,12 @@ export function settingsOf(p) {
     let v = key === 'whiteBalance' ? p.whiteBalance : st[key];
     if (key === 'grainRoughness' && v && v !== 'Off' && st.grainSize) v = `${v} / ${String(st.grainSize)[0]}`;
     if (key === 'focusMode' && v && st.afMode) v = `${v} · ${st.afMode}`;
-    // "Film Simulation" as a value only says the film decides it: nothing to read.
+    // A value the camera leaves alone says nothing ("Film Simulation" means the film decides it);
+    // what the photographer chose is what the panel keeps.
     if (v == null || v === '' || v === 'Film Simulation') continue;
-    out.push([label, tidy(v)]);
+    const shown = tidy(v);
+    if (DEFAULTS.has(shown)) continue;
+    out.push([label, shown]);
   }
   return out;
 }
