@@ -146,7 +146,7 @@ export function lightbox(frames) {
     const sun = p.light ? `<div class="photobook-specs__sun"><b>${sunGlyph(p.light)}${String(p.light.alt).replace('-', '−')}°<em>${esc(p.light.text.startsWith('Sun at') ? (p.light.alt >= 0 ? 'above the horizon' : 'below the horizon') : p.light.text)}</em></b><span>Sun</span></div>` : '';
     const wide = ([, v]) => String(v).length > 12;
     const settings = p.settings?.length ? `<dl class="photobook-specs__settings">${[...p.settings.filter((s) => !wide(s)), ...p.settings.filter(wide)].map(([k, v]) => `<div${wide([k, v]) ? ' class="is-wide"' : ''}><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : '';
-    return `<div class="photobook-specs__head"><span class="photobook-specs__no">${esc(p.frame.replace(/^DSCF/i, 'DSCF '))}${p.shots ? ` · № ${Number(p.shots).toLocaleString('en-GB')}` : ''}</span>
+    return `<div class="photobook-specs__head"><span class="photobook-specs__no">${esc(p.frame.replace(/^DSCF/i, 'DSCF '))}${p.shots ? ` · <span title="Shutter count">№ ${Number(p.shots).toLocaleString('en-GB')}</span>` : ''}</span>
         <button class="photobook-specs__pin" type="button" data-act="pin" aria-pressed="${pinned}" title="${pinned ? 'Pinned: stays open' : 'Auto-hide: slips away'}"><svg viewBox="0 0 12 12" aria-hidden="true">${pinned ? '<path d="M4 1.5h4M5 1.5v4L3 7.5h6L7 5.5v-4M6 7.5V11"/>' : '<path d="M1.5 6h9M7.5 3l3 3-3 3"/>'}</svg>${pinned ? 'Pinned' : 'Auto-hide'}</button>
         <h3>${esc(p.name)}</h3>${p.city ? `<span class="photobook-specs__city">${esc(p.city)}</span>` : ''}</div>
       <div class="photobook-specs__highlights">
