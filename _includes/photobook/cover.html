@@ -2,7 +2,8 @@
   The cover: the voyage's own 3:1 hero (header.overlay_image, the one its card and the atlas show),
   full bleed, with the site's hero recipe (the fade at the foot, the scrim, the title). A page
   without one opens on the book's cover frame. The glow takes its colours from that frame either way.
-  A sub-voyage names its parent above the title, as a way back to it; a voyage has nothing there.
+  Along its left edge, the spine: the name of what holds this book (a part's voyage, or all voyages),
+  set vertically between hairlines, and the way back to it.
 {%- endcomment -%}
 {%- assign pb = include.book -%}
 {%- assign cover = nil -%}
@@ -23,11 +24,13 @@
   {%- elsif cover %}
   <img class="photobook-cover__image" src="{{ cover.url }}/1920.webp" sizes="100vw" srcset="{% for w in cover.sizes.webp %}{{ cover.url }}/{{ w }}.webp {{ w }}w{% unless forloop.last %}, {% endunless %}{% endfor %}" width="{{ cover.w }}" height="{{ cover.h }}" alt="" fetchpriority="high" decoding="async"{% if cover.ph %} style="background-image:url({{ cover.ph }})"{% endif %}>
   {%- endif %}
+  {%- if parent %}
+  <a class="photobook-spine" href="{{ parent.url | relative_url }}" aria-label="Back to {{ parent.title | escape }}"><i></i><span>{{ parent.title }}</span><i></i></a>
+  {%- else %}
+  <a class="photobook-spine" href="{{ '/voyage/' | relative_url }}" aria-label="All voyages"><i></i><span>Voyages</span><i></i></a>
+  {%- endif %}
   <div class="photobook-cover__title">
     <div>
-      {%- if parent %}
-      <p class="photobook-kicker"><a href="{{ parent.url | relative_url }}">{{ parent.title }}</a></p>
-      {%- endif %}
       <h1>{{ page.title | markdownify | remove: "<p>" | remove: "</p>" | strip }}</h1>
       {%- assign lede = page.subtitle | default: page.description | default: page.excerpt -%}
       {%- if lede %}<p class="photobook-cover__lede">{{ lede | strip_html | strip }}</p>{% endif %}
