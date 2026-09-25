@@ -25,7 +25,7 @@
     <div>
       <h3>Hours</h3>
       <div class="photobook-colophon__bar"><div class="photobook-hours">{% for h in c.hours %}<i class="photobook-hours__dot photobook-hours__dot--{{ h.phase }}" style="left:{{ h.left }}%;bottom:{{ h.stack | times: 6 }}px"></i>{% endfor %}</div></div>
-      <div class="photobook-hours__ticks"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
+      <div class="photobook-hours__ticks"><span>Midnight</span><span>Noon</span><span>Midnight</span></div>
       <div class="photobook-legend">
         {%- if c.phases.day > 0 %}<i class="photobook-hours__dot photobook-hours__dot--day"></i><span>Daylight</span><span class="photobook-legend__n">{{ c.phases.day }}</span><span class="photobook-legend__pc">{{ c.phases.day | times: 100 | divided_by: c.frames }}%</span>{% endif -%}
         {%- if c.phases.golden > 0 %}<i class="photobook-hours__dot photobook-hours__dot--golden"></i><span>Low sun</span><span class="photobook-legend__n">{{ c.phases.golden }}</span><span class="photobook-legend__pc">{{ c.phases.golden | times: 100 | divided_by: c.frames }}%</span>{% endif -%}
