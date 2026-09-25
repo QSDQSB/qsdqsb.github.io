@@ -103,6 +103,9 @@ const SETTLE_MS = 7000; // longest page-side timer (Home reveal fallback) + marg
 // cards. The seeded build repeats a draw only while no source changes, so any unrelated edit
 // would reshuffle them; the shots paint them over instead of comparing them.
 const SAMPLED = ['img[alt="QSD Logo"]', '.center-wrapper:has(img[alt="QSD Logo"])', '.word_card_container', '.page__related .grid__wrapper', '.photobook-end__more'];
+// An animated GIF (post-notices carries LeetCode's monthly badge) is caught on whichever frame it
+// is showing; `animations: 'disabled'` stops CSS, not GIFs. Painted over for the same reason.
+const MOVING = ['img[src$=".gif"]'];
 
 async function drawAllRows(page) {
   await page.addStyleTag({ content: '.photobook-row { content-visibility: visible; }' });
@@ -325,7 +328,7 @@ async function shoot(browser, baseUrl, pageDef, viewportName, outDir) {
     if (pageDef.setup) await pageDef.setup(page);
     await settle(page, startedAt);
     const file = path.join(outDir, `${pageDef.id}--${viewportName}.png`);
-    await page.screenshot({ path: file, fullPage: !pageDef.screenOnly, animations: 'disabled', mask: SAMPLED.map((s) => page.locator(s)), maskColor: '#2a2a2a' });
+    await page.screenshot({ path: file, fullPage: !pageDef.screenOnly, animations: 'disabled', mask: [...SAMPLED, ...MOVING].map((s) => page.locator(s)), maskColor: '#2a2a2a' });
     return { file, errors };
   } finally {
     await context.close();
