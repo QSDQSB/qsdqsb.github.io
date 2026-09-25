@@ -1,17 +1,3 @@
 # Authored layer for gallery/prague/zizkov-tower — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf5618:
-    caption: V. Nejedlého, Žižkov, Prague
-  dscf5704:
-    caption: Vlkova, Žižkov, Prague
-  dscf5711:
-    caption: V. Nejedlého, Žižkov, Prague
-  dscf5726:
-    caption: V. Nejedlého, Žižkov, Prague
-  dscf5754:
-    caption: Tower Park - Mahlerovy sady, Mahlerovy sady, Capital City of Prague
-  dscf5767:
-    caption: Tower Park - Mahlerovy sady, Mahlerovy sady, Capital City of Prague
-  dscf5770:
-    caption: Tower Park - Mahlerovy sady, Mahlerovy sady, Capital City of Prague
+photos: {}

@@ -1,35 +1,3 @@
 # Authored layer for gallery/budapest — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf6634:
-    caption: Széchenyi Chain Bridge, Budapest, Hungary
-  dscf5838:
-    caption: Bécsi utca, Budapest, Hungary
-  dscf5857:
-    caption: Szent István tér, Budapest, Hungary
-  dscf5870:
-    caption: Szent István tér, Budapest, Hungary
-  dscf5897:
-    caption: Szent István tér, Budapest, Hungary
-  dscf5915:
-    caption: Zrínyi utca, Budapest, Hungary
-  dscf6084:
-    caption: Castle District, Budapest, Hungary
-  dscf6363:
-    caption: Árpád fejedelem útja, Budapest, Hungary
-  dscf6552:
-    caption: Országház utca, Budapest, Hungary
-  dscf6582:
-    caption: Szent György tér, Budapest, Hungary
-  dscf6499:
-    caption: Fishermans Bastion, Budapest, Hungary
-  dscf6608:
-    caption: Országház utca, Budapest, Hungary
-  dscf6621:
-    caption: Buda, Budapest, Hungary
-  dscf6638:
-    caption: Széchenyi Chain Bridge, Budapest, Hungary
-  dscf6666:
-    caption: Dunakorzó, Budapest, Hungary
-  dscf6671:
-    caption: InterContinental, Budapest, Hungary
+photos: {}

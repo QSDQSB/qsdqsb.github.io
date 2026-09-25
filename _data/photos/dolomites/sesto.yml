@@ -1,37 +1,3 @@
 # Authored layer for gallery/dolomites/sesto — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf8495:
-    caption: Patern Gallerie und Kriegssteige, Sexten - Sesto, Italy
-  dscf9073:
-    caption: Gamsschartensteig - Sentiero delle Forcelle, Auronzo di Cadore, Italy
-  dscf9287:
-    caption: Patern Gallerie und Kriegssteige, Sexten - Sesto, Italy
-  dscf9401:
-    caption: Patern Gallerie und Kriegssteige, Sexten - Sesto, Italy
-  dscf9447:
-    caption: Patern Gallerie und Kriegssteige, Sexten - Sesto, Italy
-  dscf9449:
-    caption: Patern Gallerie und Kriegssteige, Sexten - Sesto, Italy
-  dscf9474:
-    caption: Patern Gallerie und Kriegssteige, Sexten - Sesto, Italy
-  dscf9481:
-    caption: Patern Gallerie und Kriegssteige, Sexten - Sesto, Italy
-  dscf9483:
-    caption: Patern Gallerie und Kriegssteige, Sexten - Sesto, Italy
-  dscf9500:
-    caption: Patern Gallerie und Kriegssteige, Sexten - Sesto, Italy
-  dscf9537:
-    caption: Patern Gallerie und Kriegssteige, Sexten - Sesto, Italy
-  dscf9602:
-    caption: Gamsschartensteig - Sentiero delle Forcelle, Auronzo di Cadore, Italy
-  dscf9604:
-    caption: Gamsschartensteig - Sentiero delle Forcelle, Auronzo di Cadore, Italy
-  dscf9631:
-    caption: Sentiero Kriegssteig, Auronzo di Cadore, Italy
-  dscf9702:
-    caption: Sentiero Kriegssteig, Auronzo di Cadore, Italy
-  dscf9714:
-    caption: Sentiero Kriegssteig, Auronzo di Cadore, Italy
-  dscf9855:
-    caption: Gamsschartensteig - Sentiero delle Forcelle, Auronzo di Cadore, Italy
+photos: {}

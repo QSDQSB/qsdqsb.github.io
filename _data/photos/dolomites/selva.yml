@@ -1,31 +1,3 @@
 # Authored layer for gallery/dolomites/selva — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf0109:
-    caption: San Vito di Cadore, Belluno, Italy
-  dscf0110:
-    caption: San Vito di Cadore, Belluno, Italy
-  dscf0123:
-    caption: SP638, San Vito di Cadore, Belluno
-  dscf0128:
-    caption: San Vito di Cadore, Belluno, Italy
-  dscf0136:
-    caption: SP638, San Vito di Cadore, Belluno
-  dscf0491:
-    caption: San Vito di Cadore, Belluno, Italy
-  dscf0494:
-    caption: San Vito di Cadore, Belluno, Italy
-  dscf0589:
-    caption: Alle pareti di Lastoi Formin, San Vito di Cadore, Belluno
-  dscf0602:
-    caption: Alle pareti di Lastoi Formin, San Vito di Cadore, Belluno
-  dscf0612:
-    caption: Alle pareti di Lastoi Formin, San Vito di Cadore, Belluno
-  dscf0685:
-    caption: San Vito di Cadore, Belluno, Italy
-  dscf0716:
-    caption: San Vito di Cadore, Belluno, Italy
-  dscf0735:
-    caption: San Vito di Cadore, Belluno, Italy
-  dscf0742:
-    caption: San Vito di Cadore, Belluno, Italy
+photos: {}

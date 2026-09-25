@@ -1,33 +1,3 @@
 # Authored layer for gallery/rome/vatican-museum-vol-1 — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf1262:
-    caption: Le Scalette, Via Vittor Pisani, Rome
-  dscf1272:
-    caption: Vatican Museums, Leo XIII Avenue, Vatican City
-  dscf1335:
-    caption: Stradone dei Giardini, Vatican City, Vatican City
-  dscf1337:
-    caption: Stradone dei Giardini, Vatican City, Vatican City
-  dscf1360:
-    caption: Via Sebastiano Veniero, Municipio Roma I, Rome
-  dscf1353:
-    caption: Via Sebastiano Veniero, Municipio Roma I, Rome
-  dscf1362:
-    caption: Via Sebastiano Veniero, Municipio Roma I, Rome
-  dscf1374:
-    caption: Square Garden, Leo XIII Avenue, Vatican City
-  dscf1376:
-    caption: Square Garden, Leo XIII Avenue, Vatican City
-  dscf1389:
-    caption: Square Garden, Leo XIII Avenue, Vatican City
-  dscf1472:
-    caption: Vatican Museums, Leo XIII Avenue, Vatican City
-  dscf1486:
-    caption: Vatican Museums, Leo XIII Avenue, Vatican City
-  dscf1487:
-    caption: Vatican Museums, Leo XIII Avenue, Vatican City
-  dscf1489:
-    caption: Vatican Museums, Leo XIII Avenue, Vatican City
-  dscf1494:
-    caption: Vatican Museums, Leo XIII Avenue, Vatican City
+photos: {}

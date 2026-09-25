@@ -1,17 +1,3 @@
 # Authored layer for gallery/prague/twilight — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf4287:
-    caption: Masarykovo nábřeží, New Town, Prague
-  dscf4299:
-    caption: Holy Saviour, Křižovnické náměstí, Prague
-  dscf4303:
-    caption: Rašínovo nábřeží, New Town, Prague
-  dscf4322:
-    caption: Charles Bridge, Old Town, Prague
-  dscf4623:
-    caption: Old Town, Praha 1, Prague
-  dscf4997:
-    caption: Petrin Observation Tower, křížová cesta, Prague
-  dscf5678:
-    caption: promenáda Pawla Adamowicze, Vinohrady, Prague
+photos: {}

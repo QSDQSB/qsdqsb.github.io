@@ -1,73 +1,8 @@
 # Authored layer for gallery/london — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
 photos:
-  dscf0958:
-    caption: Burnt Ash Green, London
-  dscf1797:
-    caption: East Smithfield, London
-  dscf1839:
-    caption: Westbourne Green, London
-  dscf1845:
-    caption: Westbourne Green, London
-  dscf2087:
-    caption: Kensington, London
-  dscf2206:
-    caption: Lambeth, London
-  dscf2245:
-    caption: St Pauls, London
-  dscf2742:
-    caption: Heathrow, London
-  dscf3141:
-    caption: Oxford Street, London
-  dscf6358:
-    caption: City of London, London
-  dscf6366:
-    caption: City of London, London
-  dscf6377:
-    caption: City of London, London
-  dscf6419:
-    caption: City of London, London
-  dscf6422:
-    caption: City of London, London
-  dscf6429:
-    caption: City of London, London
-  dscf6437:
-    caption: City of London, London
+  # GPS here was a stale fix from the phone ("Bank of England" for both).
   dscf6440:
-    caption: City of London, London
-  dscf6441:
-    caption: City of London, London
+    place: The Monument, London
   dscf6442:
-    caption: City of London, London
-  dscf6443:
-    caption: Whitechapel, London
-  dscf6474:
-    caption: Tower Bridge, London
-  dscf6495:
-    caption: Butlers Wharf, London
-  dscf6521:
-    caption: The Borough, London
-  dscf6533:
-    caption: Covent Garden, London
-  dscf6534:
-    caption: Covent Garden, London
-  dscf6536:
-    caption: Covent Garden, London
-  dscf6553:
-    caption: Covent Garden, London
-  dscf6723:
-    caption: City of London, London
-  dscf7404:
-    caption: Whitechapel, London
-  dscf7406:
-    caption: Tower Bridge, London
-  dscf7412:
-    caption: Tower Bridge, London
-  dscf7480:
-    caption: City of London, London
-  dscf7500:
-    caption: City of London, London
-  dscf7507:
-    caption: St. Jamess, London
-  dscf7568:
-    caption: Greenwich, London
+    place: Tower Bridge, London
