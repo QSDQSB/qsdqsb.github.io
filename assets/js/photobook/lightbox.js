@@ -19,7 +19,7 @@ const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-mo
 
 /** The sun's glyph and phrase, as _includes/photobook/sun.html draws them. */
 export function sunGlyph(l, cls = 'photobook-sun__glyph') {
-  return `<svg class="${cls}" viewBox="0 0 20 13" aria-hidden="true"><path class="photobook-sun__arc" d="M2 11A8 8 0 0 1 18 11"/><path class="photobook-sun__horizon" d="M0 11H20"/><circle class="photobook-sun__dot${l.below ? ' photobook-sun__dot--below' : ''}" cx="${l.x}" cy="${l.y}" r="1.7"/></svg>`;
+  return `<svg class="${cls}" viewBox="0 0 20 16" aria-hidden="true"><path class="photobook-sun__arc" d="M2 11A8 8 0 0 1 18 11"/><path class="photobook-sun__horizon" d="M0 11H20"/><circle class="photobook-sun__dot${l.below ? ' photobook-sun__dot--below' : ''}" cx="${l.x}" cy="${l.y}" r="1.7"/></svg>`;
 }
 
 export function lightbox(frames) {

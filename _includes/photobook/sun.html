@@ -1,8 +1,8 @@
 {%- comment -%}
-  The light at a frame: a small arc for the day's path with the sun on it (under the horizon
-  after sunset), then one phrase. `include.light` is worked out at build time (scripts/photos/lib/book.mjs).
+  The light at a frame: the day's arc with the sun on it (a filled disc while it is up, a hollow
+  circle under the horizon once it has set), then one phrase. `include.light` is worked out at build time (scripts/photos/lib/book.mjs).
 {%- endcomment -%}
 {%- assign l = include.light -%}
 {%- if l -%}
-<span class="photobook-sun"><svg class="photobook-sun__glyph" viewBox="0 0 20 13" aria-hidden="true"><path class="photobook-sun__arc" d="M2 11A8 8 0 0 1 18 11"/><path class="photobook-sun__horizon" d="M0 11H20"/><circle class="photobook-sun__dot{% if l.below %} photobook-sun__dot--below{% endif %}" cx="{{ l.x }}" cy="{{ l.y }}" r="1.7"/></svg>{{ l.text }}</span>
+<span class="photobook-sun"><svg class="photobook-sun__glyph" viewBox="0 0 20 16" aria-hidden="true"><path class="photobook-sun__arc" d="M2 11A8 8 0 0 1 18 11"/><path class="photobook-sun__horizon" d="M0 11H20"/><circle class="photobook-sun__dot{% if l.below %} photobook-sun__dot--below{% endif %}" cx="{{ l.x }}" cy="{{ l.y }}" r="1.7"/></svg>{{ l.text }}</span>
 {%- endif -%}

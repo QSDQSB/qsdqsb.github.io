@@ -1,6 +1,8 @@
 {%- comment -%}
-  The cover: the voyage's opening frame, full bleed, with the site's hero recipe (the fade at the
-  foot, the scrim, the Didot title). A sub-voyage names its parent in the kicker.
+  The cover: the voyage's own 3:1 hero (header.overlay_image, the one its card and the atlas show),
+  full bleed, with the site's hero recipe (the fade at the foot, the scrim, the Didot title). A page
+  without one opens on the book's cover frame. The glow takes its colours from that frame either way.
+  A sub-voyage names its parent in the kicker.
 {%- endcomment -%}
 {%- assign pb = include.book -%}
 {%- assign cover = nil -%}
@@ -13,12 +15,12 @@
   {%- if parent -%}{%- assign kicker = "Voyage · " | append: parent.title -%}{%- endif -%}
 {%- endif -%}
 <header class="photobook-cover" id="photobook-cover" data-i="{% if cover %}{{ pb.book.cover }}{% endif %}">
-  {%- if cover %}
-  <img class="photobook-cover__image" src="{{ cover.url }}/1920.webp" sizes="100vw" srcset="{% for w in cover.sizes.webp %}{{ cover.url }}/{{ w }}.webp {{ w }}w{% unless forloop.last %}, {% endunless %}{% endfor %}" width="{{ cover.w }}" height="{{ cover.h }}" alt="" fetchpriority="high" decoding="async"{% if cover.ph %} style="background-image:url({{ cover.ph }})"{% endif %}>
-  {%- elsif page.header.overlay_image %}
+  {%- if page.header.overlay_image %}
   {%- assign hero = page.header.overlay_image -%}
   {%- unless hero contains "://" or hero contains "/images/" %}{% assign hero = "/images/" | append: hero %}{% endunless %}
   <img class="photobook-cover__image" src="{{ hero | relative_url }}" alt="" fetchpriority="high" decoding="async">
+  {%- elsif cover %}
+  <img class="photobook-cover__image" src="{{ cover.url }}/1920.webp" sizes="100vw" srcset="{% for w in cover.sizes.webp %}{{ cover.url }}/{{ w }}.webp {{ w }}w{% unless forloop.last %}, {% endunless %}{% endfor %}" width="{{ cover.w }}" height="{{ cover.h }}" alt="" fetchpriority="high" decoding="async"{% if cover.ph %} style="background-image:url({{ cover.ph }})"{% endif %}>
   {%- endif %}
   <div class="photobook-cover__title">
     <div>
