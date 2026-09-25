@@ -33,15 +33,19 @@ export function lightbox(frames) {
   const cur = () => frames[order[pos]];
   const pressed = (act, on) => $(`[data-act="${act}"]`)?.setAttribute('aria-pressed', String(on));
 
-  // The smallest rendition at least as wide as the print will be drawn, and never past 2560 px:
-  // beyond that a screen shows no more, and the 4096 file is several times the weight.
-  const MAX_W = 2560;
+  // The smallest rendition at least as wide as the print will be drawn on this screen, in device
+  // pixels. Framed, never past 2560 px (the 4096 file is several times the weight for little more);
+  // picture only and the loupe may take the largest.
   const srcFor = (p) => {
-    const want = Math.min(window.innerWidth, window.innerHeight * (p.ratio || 1.5), MAX_W / 2) * Math.min(window.devicePixelRatio || 1, 2);
-    const fit = p.sizes.filter((s) => s <= MAX_W);
+    const want = Math.min(window.innerWidth, window.innerHeight * (p.ratio || 1.5)) * Math.min(window.devicePixelRatio || 1, 3);
+    const cap = lb.classList.contains('is-bare') || lb.classList.contains('is-zoomed') ? Infinity : 2560;
+    const fit = p.sizes.filter((s) => s <= cap);
     const w = fit.find((s) => s >= want) || fit[fit.length - 1] || p.sizes[0] || 1920;
     return `${p.url}/${w}.webp`;
   };
+  // Renditions already fetched: a frame whose full print is in hand shows it at once, no light one first.
+  const seen = new Set();
+  const fetchImg = (src) => { const x = new Image(); x.src = src; x.decode().then(() => seen.add(src), () => {}); return x; };
 
   // Picture only fills the screen when the frame's shape is close to it: at most 15% is cropped,
   // so a 16:9 frame fills a MacBook's screen. Further apart it is shown whole on black.
@@ -51,9 +55,14 @@ export function lightbox(frames) {
     lb.style.setProperty('--fit', crop <= MAX_CROP ? 'cover' : 'contain');
   };
 
+  // Opening adds one history entry and moving between frames replaces it, so Back closes the
+  // lightbox instead of leaving the voyage; closing by any other way steps back over that entry.
+  let pushed = false, popping = false, stepping = false;
   function open(i, visible, fromImg) {
     order = visible?.length ? visible : frames.map((_, k) => k);
     lastFocus = document.activeElement;
+    if (!history.state?.photobook) history.pushState({ photobook: true }, '', location.href);
+    pushed = true;
     const run = () => { lb.showModal(); buildRail(); applySpecs(); show(Math.max(0, order.indexOf(i)), { instant: true }); wake(); };
     if (document.startViewTransition && fromImg && !still()) {
       fromImg.style.viewTransitionName = 'photobook-print';
@@ -69,11 +78,20 @@ export function lightbox(frames) {
 
   lb.addEventListener('close', () => {
     stop(); clearTimeout(specT);
+    // Back on the page where the reader left off: the frame last shown, in whichever view is out.
+    const here = pos >= 0 && [...document.querySelectorAll(`.photobook-frame[data-i="${order[pos]}"] .photobook-frame__print`)].find((b) => b.offsetParent);
     lb.classList.remove('has-specs', 'is-pinned', 'is-bare', 'is-zoomed', 'is-idle'); pressed('bare', false);
     if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
     mat.replaceChildren(); wash.replaceChildren(); pos = -1;
-    history.replaceState(null, '', location.pathname + location.search);
-    lastFocus?.focus?.({ preventScroll: true });
+    if (pushed && !popping) { stepping = true; history.back(); }
+    else history.replaceState(null, '', location.pathname + location.search);
+    pushed = false; popping = false;
+    if (here) { here.scrollIntoView({ block: 'center' }); here.focus({ preventScroll: true }); } else lastFocus?.focus?.({ preventScroll: true });
+  });
+  window.addEventListener('popstate', () => {
+    if (stepping) { stepping = false; history.replaceState(null, '', location.pathname + location.search); return; }
+    if (lb.open) { popping = true; lb.close(); }
+    else if (location.hash) openFromHash();
   });
 
   function show(n, { instant = false, slow = false, dir = 0 } = {}) {
@@ -87,14 +105,14 @@ export function lightbox(frames) {
     const old = [...mat.querySelectorAll('img')];
     // A light rendition shows at once; the full one takes its place as soon as it is decoded.
     const im = new Image(), full = srcFor(p), quick = `${p.url}/${p.sizes.find((s) => s >= 960) || p.sizes[0] || 960}.webp`;
-    im.alt = p.name; im.draggable = false; im.decoding = 'async'; im.src = quick;
-    if (full !== quick) { const big = new Image(); big.src = full; big.decode().then(() => { if (im.isConnected) im.src = full; }, () => {}); }
+    im.alt = p.name; im.draggable = false; im.decoding = 'async'; im.src = seen.has(full) ? full : quick;
+    if (!seen.has(full) && full !== quick) fetchImg(full).decode().then(() => { if (im.isConnected) im.src = full; }, () => {});
     im.style.setProperty('--d', String(dir));
     mat.style.setProperty('--xf', still() ? '0s' : slow ? '1.6s' : '.55s');
     mat.appendChild(im);
     const reveal = () => requestAnimationFrame(() => {
       im.classList.add('is-on');
-      for (const o of old) { o.style.setProperty('--d', String(-dir)); o.classList.remove('is-on'); setTimeout(() => o.remove(), slow ? 1700 : 900); }
+      for (const o of old) { o.style.scale = getComputedStyle(o).scale; o.style.setProperty('--d', String(-dir)); o.classList.remove('is-on'); setTimeout(() => o.remove(), slow ? 1700 : 900); }
     });
     if (instant || im.complete) reveal(); else im.decode().then(reveal, reveal);
     // The room takes the print's colour, from its placeholder (already soft, so no blur).
@@ -105,9 +123,10 @@ export function lightbox(frames) {
     $('.photobook-lightbox__count').innerHTML = `<b>${String(pos + 1).padStart(2, '0')}</b> / ${String(order.length).padStart(2, '0')}`;
     $('.photobook-lightbox__caption').innerHTML = captionHTML(p);
     specsIn.innerHTML = specsHTML(p);
-    for (const [k, b] of [...$('.photobook-lightbox__rail').children].entries()) b.classList.toggle('is-on', k === pos);
-    for (const d of [1, -1]) { const q = frames[order[(pos + d + order.length) % order.length]]; if (q) new Image().src = srcFor(q); }
-    history.replaceState(null, '', `#${p.slug}`);
+    for (const [k, b] of [...$('.photobook-lightbox__rail').children].entries()) { b.classList.toggle('is-on', k === pos); b.toggleAttribute('aria-current', k === pos); }
+    $('.photobook-lightbox__live').textContent = `${p.name}, ${pos + 1} of ${order.length}`;
+    for (const d of [1, -1]) { const q = frames[order[(pos + d + order.length) % order.length]]; if (q && !seen.has(srcFor(q))) fetchImg(srcFor(q)); }
+    history.replaceState({ photobook: true }, '', `#${p.slug}`);
     if (timer) restart();
     if (specOpen && !pinned && !timer) revealSpecs();
     return i;
@@ -170,9 +189,15 @@ export function lightbox(frames) {
     lb.classList.toggle('is-bare', on); pressed('bare', on);
     if (on) lb.classList.remove('has-specs', 'is-pinned'); else applySpecs();
     // Picture only asks for the whole screen where the browser allows it; the page never depends on it.
-    if (on && !document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
+    if (on && !document.fullscreenElement) lb.requestFullscreen?.().catch(() => {});
     if (!on && document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+    if (on) upgrade();
     wake();
+  }
+  // Picture only and the loupe may want a larger file than the framed print had.
+  function upgrade() {
+    const im = mat.querySelector('img.is-on'), f = pos >= 0 && srcFor(cur());
+    if (im && f && !im.src.endsWith(f)) fetchImg(f).decode().then(() => { if (im.isConnected) im.src = f; }, () => {});
   }
   function wake() { lb.classList.remove('is-idle'); clearTimeout(idleT); idleT = setTimeout(() => lb.classList.add('is-idle'), lb.classList.contains('is-bare') ? 1000 : 3200); }
   specsEl.addEventListener('pointerleave', () => { if (specOpen && !pinned) applySpecs(); });
@@ -195,21 +220,23 @@ export function lightbox(frames) {
   window.addEventListener('keydown', (e) => {
     if (!lb.open || e.target.matches?.('input,textarea')) return;
     const k = e.key.toLowerCase();
+    if ((k === ' ' || k === 'enter') && e.target.closest?.('button')) return;
     if (k === 'arrowright') next(); else if (k === 'arrowleft') prev();
     else if (k === ' ' || k === 's') ACTS.play(); else if (k === 'i') toggleSpecs(); else if (k === 'p') togglePin(); else if (k === 'f') bare();
-    else if (k === 'z') lb.classList.toggle('is-zoomed'); else return;
+    else if (k === 'z') { lb.classList.toggle('is-zoomed'); upgrade(); } else return;
     e.preventDefault(); wake();
   });
   window.addEventListener('resize', () => { if (lb.open && pos >= 0) fitFor(cur()); });
 
   // Loupe: double-click to look closer; the print follows the pointer.
   const origin = (e) => { const r = mat.getBoundingClientRect(); lb.style.setProperty('--ox', `${((e.clientX - r.left) / r.width * 100).toFixed(1)}%`); lb.style.setProperty('--oy', `${((e.clientY - r.top) / r.height * 100).toFixed(1)}%`); };
-  mat.addEventListener('dblclick', (e) => { origin(e); lb.classList.toggle('is-zoomed'); });
+  mat.addEventListener('dblclick', (e) => { origin(e); lb.classList.toggle('is-zoomed'); upgrade(); });
   mat.addEventListener('pointermove', (e) => { if (lb.classList.contains('is-zoomed')) origin(e); });
 
   // Touch: swipe to move, swipe up for the specs, tap to bring the tools back.
   let sx = null, sy = 0;
   lb.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse' || e.target.closest('button,.photobook-specs')) return; sx = e.clientX; sy = e.clientY; if (timer) stop(); });
+  lb.addEventListener('pointercancel', () => { sx = null; });
   lb.addEventListener('pointerup', (e) => {
     if (sx === null) return;
     const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
@@ -218,20 +245,18 @@ export function lightbox(frames) {
     else if (dy > 60 && lb.classList.contains('has-specs')) { if (pinned) toggleSpecs(); else lb.classList.remove('has-specs'); }
     else if (lb.classList.contains('is-idle')) { wake(); revealSpecs(); } else { lb.classList.add('is-idle'); clearTimeout(idleT); }
   });
-  // On auto-hide, reaching toward the right edge brings the specs back.
+  // On auto-hide, reaching the right edge brings the specs back.
   lb.addEventListener('pointermove', (e) => {
     if (e.pointerType !== 'mouse') return;
     wake();
-    if (specOpen && !pinned && !lb.classList.contains('has-specs') && e.clientX > window.innerWidth - 340) revealSpecs();
+    if (specOpen && !pinned && !lb.classList.contains('has-specs') && e.clientX > window.innerWidth - 40) revealSpecs();
   });
 
-  return {
-    open,
-    /** A link to a frame (#slug) opens it straight away. */
-    openFromHash() {
-      const slug = decodeURIComponent(location.hash.slice(1));
-      const i = slug ? frames.findIndex((p) => p.slug === slug) : -1;
-      if (i >= 0) open(i);
-    },
-  };
+  /** A link to a frame (#slug) opens it straight away. */
+  function openFromHash() {
+    const slug = decodeURIComponent(location.hash.slice(1));
+    const i = slug ? frames.findIndex((p) => p.slug === slug) : -1;
+    if (i >= 0) open(i);
+  }
+  return { open, openFromHash };
 }

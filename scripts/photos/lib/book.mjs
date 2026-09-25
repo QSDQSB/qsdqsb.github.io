@@ -154,7 +154,7 @@ export function colophonOf(photos) {
 const SETTINGS = [
   ['dynamicRange', 'DR'], ['grainRoughness', 'Grain'], ['colorChrome', 'Chrome'], ['colorChromeBlue', 'Chr. blue'],
   ['highlightTone', 'Highl.'], ['shadowTone', 'Shad.'], ['whiteBalance', 'WB'], ['color', 'Colour'], ['sharpness', 'Sharp'],
-  ['noiseReduction', 'NR'], ['clarity', 'Clarity'], ['shutterType', 'Shutter'], ['focusMode', 'Focus'],
+  ['noiseReduction', 'NR'], ['clarity', 'Clarity'], ['shutterType', 'Shutter type'], ['focusMode', 'Focus'],
 ];
 export const tidy = (v) => String(v).replace(/\s*\((?!\d)[^)]*\)/g, '').replace(/^-(?=\d)/, '−').trim();
 export function settingsOf(p) {
@@ -164,7 +164,8 @@ export function settingsOf(p) {
     let v = key === 'whiteBalance' ? p.whiteBalance : st[key];
     if (key === 'grainRoughness' && v && v !== 'Off' && st.grainSize) v = `${v} / ${String(st.grainSize)[0]}`;
     if (key === 'focusMode' && v && st.afMode) v = `${v} · ${st.afMode}`;
-    if (v == null || v === '') continue;
+    // "Film Simulation" as a value only says the film decides it: nothing to read.
+    if (v == null || v === '' || v === 'Film Simulation') continue;
     out.push([label, tidy(v)]);
   }
   return out;
@@ -174,7 +175,7 @@ export function settingsOf(p) {
 export function lightboxOf(photos) {
   return photos.map(p => ({
     slug: p.slug, frame: p.frame, url: p.url, sizes: p.sizes?.webp || [], ratio: p.ratio,
-    name: p.place?.name || p.caption || p.frame, city: p.place?.city || null,
+    name: p.name, city: p.place?.city || null,
     shots: p.shutterCount ?? null, focal: p.focal ?? null, aperture: p.aperture ?? null, shutter: p.shutter ?? null,
     iso: p.iso ?? null, bias: p.exposureBias ?? null, camera: cameraName(p.camera), lens: lensName(p.lens),
     film: p.film ?? null, hue: p.filmHue ?? null, light: p.light, glow: p.glow, ph: p.ph, settings: settingsOf(p),
@@ -189,7 +190,9 @@ export function bookOf(merged, locations = {}) {
     const light = lightOf(p.sun);
     // Manifests processed before the names were tidied carry ExifTool's own ("F2/Fujichrome (Velvia)").
     const film = normalizeFilm(p.settings?.filmSimulation);
-    return { ...p, film, place, light, glow: glowOf(p.thumbhash), ph: placeholderOf(p.thumbhash), filmHue: filmHue(film) };
+    // A frame with no place yet is named for its voyage, never for its camera file.
+    const name = place?.name || p.caption || merged.title || p.frame;
+    return { ...p, name, film, place, light, glow: glowOf(p.thumbhash), ph: placeholderOf(p.thumbhash), filmHue: filmHue(film) };
   });
   return { ...merged, photos, book: { rows: bookRows(photos), cover: coverIndex(photos), colophon: colophonOf(photos), lightbox: lightboxOf(photos) } };
 }

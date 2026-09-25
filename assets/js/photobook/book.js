@@ -34,7 +34,7 @@ export function book({ frames, onOpen, onLayout }) {
     const keep = new Set(shown().map((f) => Number(f.dataset.i)));
     if (!sheetEl.childElementCount) {
       sheetEl.innerHTML = frames.map((p, i) => `<figure class="photobook-frame" data-i="${i}"${p.film ? ` data-film="${esc(p.film)}"` : ''} style="--ratio:${p.ratio}">
-        <button class="photobook-frame__print" type="button" aria-label="${esc(p.name)}"${p.ph ? ` style="background-image:url(${p.ph})"` : ''}><img src="${p.url}/${p.sizes[0] || 480}.webp" width="480" height="${Math.round(480 / (p.ratio || 1.5))}" alt="" loading="lazy" decoding="async"></button>
+        <button class="photobook-frame__print" type="button" aria-label="${esc(p.name)}"><img src="${p.url}/${p.sizes[0] || 480}.webp" width="480" height="${Math.round(480 / (p.ratio || 1.5))}" alt="" loading="lazy" decoding="async"></button>
         <figcaption class="photobook-frame__caption"><span class="photobook-sheet__frame-no">${esc(p.frame)}</span>${p.film ? `<span class="photobook-film" style="--film:${p.hue}"><i></i>${esc(p.film)}</span>` : ''}</figcaption></figure>`).join('');
     }
     for (const f of sheetEl.children) f.hidden = !keep.has(Number(f.dataset.i));
@@ -50,18 +50,28 @@ export function book({ frames, onOpen, onLayout }) {
   }
   const keepOrder = () => shown().map((f) => Number(f.dataset.i));
 
-  document.querySelector('.photobook-bar__films')?.addEventListener('click', (e) => {
+  // A change made from deep in the book starts the reader at the top of what it now shows.
+  const toTop = () => {
+    const main = document.querySelector('.photobook-main');
+    if (main && main.getBoundingClientRect().top < 0) main.scrollIntoView({ block: 'start' });
+  };
+  const films = document.querySelector('.photobook-bar__films');
+  films?.addEventListener('click', (e) => {
     const b = e.target.closest('button'); if (!b) return;
     film = b.dataset.film || '';
     for (const x of b.parentElement.children) x.setAttribute('aria-pressed', String(x === b));
-    layout();
+    layout(); toTop();
   });
   document.querySelector('.photobook-bar__views')?.addEventListener('click', (e) => {
     const b = e.target.closest('button'); if (!b) return;
     view = b.dataset.view;
     for (const x of b.parentElement.children) x.setAttribute('aria-pressed', String(x === b));
-    layout();
+    layout(); toTop();
   });
+  // Films that run past the pill fade at its edge, so the ones out of sight are known to be there.
+  const edge = () => films?.classList.toggle('is-scrollable', films.scrollWidth > films.clientWidth + 1 && films.scrollLeft + films.clientWidth < films.scrollWidth - 1);
+  films?.addEventListener('scroll', edge, { passive: true });
+  window.addEventListener('resize', edge);
   // Any frame, in the book or on the sheet, opens the lightbox over the frames currently shown.
   document.querySelector('.photobook-main')?.addEventListener('click', (e) => {
     const b = e.target.closest('.photobook-frame__print'); if (!b) return;
@@ -69,5 +79,5 @@ export function book({ frames, onOpen, onLayout }) {
     onOpen?.(i, keepOrder(), b.querySelector('img'));
   });
 
-  layout();
+  layout(); edge();
 }
