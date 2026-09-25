@@ -108,24 +108,27 @@ export function book({ frames, onOpen, onLayout }) {
     document.querySelector('.photobook-bar')?.classList.toggle('has-filter', !!f);
     refilter(f, turn.hue());
   }, () => { gliding = glide(); });
-  // Once per reader: when the dial first comes fully into view, it turns a little and back.
+  // Once per reader and voyage: when the dial first comes fully into view, it turns a little and back.
   if (turn && 'IntersectionObserver' in window) {
+    const key = `qsd.dial.hinted:${location.pathname}`;
     let seen = true;
-    try { seen = localStorage.getItem('qsd.dial.hinted') === '1'; } catch { /* no storage: no hint */ }
+    try { seen = localStorage.getItem(key) === '1'; } catch { /* no storage: no hint */ }
     if (!seen) {
       const io = new IntersectionObserver(([e]) => {
         if (!e.isIntersecting) return;
         io.disconnect();
         setTimeout(() => turn.hint(), 900);
-        try { localStorage.setItem('qsd.dial.hinted', '1'); } catch { /* the hint may come again */ }
+        try { localStorage.setItem(key, '1'); } catch { /* the hint may come again */ }
       }, { threshold: 1 });
       io.observe(dial);
     }
   }
-  // The view switch has two positions: a click anywhere on it slides it to the other.
+  // The view switch has two positions, each a button that sets its own view.
   const views = document.querySelector('.photobook-switch');
-  views?.addEventListener('click', () => {
-    view = view === 'book' ? 'sheet' : 'book';
+  views?.addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b || b.dataset.view === view) return;
+    view = b.dataset.view;
     for (const x of views.querySelectorAll('button')) x.setAttribute('aria-pressed', String(x.dataset.view === view));
     layout(); toTop();
   });
@@ -157,10 +160,15 @@ export function book({ frames, onOpen, onLayout }) {
     if (!bar?.classList.contains('is-stuck')) { run = 0; summon(false); return; }
     run = Math.sign(d) === Math.sign(run) ? run + d : d;
     if (run < -24) summon(true);
-    else if (run > 24 && !dock?.matches(':hover, :focus-within')) summon(false);
+    else if (run > 24 && !dock?.matches(':hover, :has(:focus-visible)')) summon(false);
+    // Away, the controls keep no focus a key could act on unseen: a keyboard reader's brings them
+    // back; a tap's is let go.
+    const f = document.activeElement;
+    if (!bar.classList.contains('is-summoned') && dock?.contains(f)) { if (f.matches(':focus-visible')) summon(true); else f.blur(); }
   };
   mark?.addEventListener('click', () => summon(true));
-  dock?.addEventListener('focusin', () => summon(true));
+  dock?.addEventListener('focusin', (e) => { if (e.target.matches(':focus-visible')) summon(true); });
+  dock?.addEventListener('keydown', () => summon(true));
   let tick = 0;
   window.addEventListener('scroll', () => { if (!tick) tick = requestAnimationFrame(() => { tick = 0; stuck(); intent(); under(); past(); }); }, { passive: true });
   stuck(); past();

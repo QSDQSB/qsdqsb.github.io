@@ -99,6 +99,13 @@ $responsive-single-min-content-width: 46rem !default;
   }
 }
 
+// A pointer that really hovers (a mouse or trackpad): hover reveals that a tap must not leave stuck.
+@mixin responsive-hover {
+  @media (hover: hover) and (pointer: fine) {
+    @content;
+  }
+}
+
 @mixin responsive-coarse-pointer {
   @media (hover: none), (pointer: coarse) {
     @content;
