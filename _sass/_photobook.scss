@@ -82,6 +82,9 @@
 /* ── cover: the site's overlay hero, given the whole first screen ─────── */
 .photobook-cover {
   // The heroes are cut 3:1: the cover keeps their shape, and a floor for the title on phones.
+  // The width is stated: under the site's -webkit-box body, Safari otherwise takes the 26rem
+  // floor and derives the width from the ratio (78rem), and the whole page zooms out to fit it.
+  width: 100%;
   aspect-ratio: 3 / 1;
   min-height: 26rem;
   padding-top: 5.5rem; // the masthead's room: a two-line title grows the cover instead
@@ -177,6 +180,7 @@
 
 /* ── the film bar: a glass pill that stays with the reader ────────────── */
 .photobook-bar {
+  width: 100%;
   position: sticky;
   top: calc(-0.25rem + env(safe-area-inset-top, 0px));
   z-index: 20;
@@ -260,6 +264,7 @@
 
 /* ── the book ─────────────────────────────────────────────────────────── */
 .photobook-main {
+  width: 100%; // a -webkit-box child: stated, or it shrinks to its content
   padding: clamp(4.5rem, 7vw, 6rem) 0 2rem;
   scroll-margin-top: 5.5rem; // a filter change lands on the first row, clear of the masthead and the bar
 }
