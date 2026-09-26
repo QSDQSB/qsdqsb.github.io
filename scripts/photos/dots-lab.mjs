@@ -58,4 +58,11 @@ const PAL = path.join(ROOT, 'lab', 'palette');
 fs.mkdirSync(PAL, { recursive: true });
 fs.writeFileSync(path.join(PAL, 'data.json'), JSON.stringify({ generated: new Date().toISOString(), galleries: signatures }));
 fs.copyFileSync(path.join(ROOT, 'scripts', 'photos', 'lab', 'palette.html'), path.join(PAL, 'index.html'));
+// The mood lab reads the site's own /assets/palettes.json; it only needs its page.
+fs.mkdirSync(path.join(ROOT, 'lab', 'moods'), { recursive: true });
+fs.copyFileSync(path.join(ROOT, 'scripts', 'photos', 'lab', 'moods.html'), path.join(ROOT, 'lab', 'moods', 'index.html'));
+// Choosing the mood: its page and the painting it shares (lab/paint.js).
+fs.mkdirSync(path.join(ROOT, 'lab', 'choose'), { recursive: true });
+fs.copyFileSync(path.join(ROOT, 'scripts', 'photos', 'lab', 'choose.html'), path.join(ROOT, 'lab', 'choose', 'index.html'));
+fs.copyFileSync(path.join(ROOT, 'scripts', 'photos', 'lab', 'paint.js'), path.join(ROOT, 'lab', 'paint.js'));
 console.log(`\ncolour lab: ${galleries.reduce((s, g) => s + g.photos.length, 0)} photos in ${galleries.length} galleries, ${((Date.now() - t0) / 1000).toFixed(0)} s → lab/dots/, lab/palette/`);
