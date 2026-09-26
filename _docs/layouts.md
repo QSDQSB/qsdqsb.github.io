@@ -41,8 +41,9 @@ Data contract — no files on disk, only the manifest:
 - Liquid reads `site.data.photo_manifests[<gallery_name, / → _>]`, the merged
   manifest `npm run photos:fetch` writes before every build.
 - The book's layer is worked out there by `scripts/photos/lib/book.mjs`: rows
-  (spread / pair / three; a portrait never takes a spread), cover (first
-  featured landscape, else first landscape), colophon (films, lenses, hours),
+  (spread / pair / three; a portrait never takes a spread), cover frame (the
+  authored cover's photo, else the first featured landscape, else the first
+  landscape), colophon (films, lenses, hours),
   and per photo the place (`_data/photo_locations/<gallery>.yml`, else the
   caption), the light (sun phrase + glyph), glow colours, placeholder, film,
   and the lightbox record.
@@ -57,6 +58,18 @@ Data contract — no files on disk, only the manifest:
   `_includes/photobook-ready.html`; its URL still works. A voyage of parts is listed
   while any part has photos. A build that holds no processed photos at all (a
   failed `photos:fetch`) filters nothing, so the lists never empty on a bad fetch.
+
+**Voyage covers.** A voyage's cover is one of its photographs and a focal
+point (`cover:` in its YAML; `_docs/photos-pipeline.md` → *The voyage cover*).
+`_includes/voyage-cover.html` resolves it for a page (`vc`), and every place a
+voyage cover is drawn reads it there: `photobook/cover.html` (a `<picture>`,
+AVIF to 1920 then the 2880 WebP; `--pos-wide` → `--pos-portrait` as the box
+narrows, `_sass/_photobook.scss`), `page__hero.html` (`.page__hero-media--cover`,
+2880 / 1920 WebP, `_sass/_page.scss`), `archive-single.html` (the 1280 tier and
+`--bg-pos`), `home/whats-new.html` and `seo.html` (the 1200 × 630 link
+preview, `og:image` and `twitter:image`). `head.html` preconnects to the photo
+host on such a page and preloads a hero's background. A voyage without one
+keeps `header.overlay_image` throughout.
 
 **Card covers.** `archive-single.html defer_cover=true` parks a card's cover in
 `--bg-later`; `assets/js/card-covers.js` sets `--bg-img` as the card comes within
@@ -109,7 +122,10 @@ When `images/depth/<mirror>.depth.jpg` exists for the hero's `overlay_image`
 (produced by `npm run generate:depth`, committed), the include emits
 `data-depth-*` attributes and `assets/js/hero-depth-parallax.js` upgrades the
 hero to a WebGL canvas that leans the photograph around its neural depth map
-(pointer-driven, idle "breath" drift when the pointer rests).
+(pointer-driven, idle "breath" drift when the pointer rests). A voyage cover's
+map belongs to its photo, `images/depth/photos/<gallery>/<slug>.depth.jpg`, the
+whole frame; `data-depth-centre` keeps the cover's focus central in the canvas,
+as the static background's position does.
 
 The static `background-image` remains underneath as loading state and universal
 fallback — no WebGL, `prefers-reduced-motion`, `?motion=off`, or any load
