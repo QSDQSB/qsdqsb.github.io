@@ -10,11 +10,9 @@ import { glow } from './glow.js';
 import { book } from './book.js';
 import { lightbox } from './lightbox.js';
 import { tips } from './tip.js';
-import { copyHex } from './copy.js';
 import { field } from './field.js';
 
 tips();
-copyHex();
 
 const dataEl = document.getElementById('photobook-data');
 if (dataEl) {

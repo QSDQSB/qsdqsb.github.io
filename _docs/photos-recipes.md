@@ -144,6 +144,6 @@ writes the manifest). To see colours locally before that, `node scripts/photos/p
 | Authored words | `_data/photos/<g>.yml`; places `_data/photo_locations/<g>.yml` |
 | Page templates | `_includes/photobook/*.html`, `_sass/_photobook.scss`, `assets/js/photobook/` (see `_docs/layouts.md`) |
 | Book logic at build | `scripts/photos/lib/book.mjs` (rows, cover, colophon, sun and weather phrases, film letters, colours) |
-| Colours | `scripts/photos/lib/palette.mjs` (palette, distance, swatches), `lib/atlas.mjs` (across voyages); pages `_pages/light.html`, `_pages/drift.html`, `assets/js/colour/`, `_sass/_colour.scss` |
+| Colours | `scripts/photos/lib/palette.mjs` (palette, distance, swatches), `lib/atlas.mjs` (across voyages); pages `_pages/light.html`, `_pages/drift.html`, `_pages/palette.html` (QSD's Palette, `/palette/#<gallery>`), `assets/js/colour/`, `_sass/_colour.scss` |
 | Database | D1 `qsdqsb-photos`, worker `workers/photos-db/` (api.qsdqsb.com) |
 | Full reference | `_docs/photos-pipeline.md` |

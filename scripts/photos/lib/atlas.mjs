@@ -17,6 +17,19 @@
 
 import { parsePalette, vectorOf, chi2, emd, rgbToOklab, swatchesOf } from './palette.mjs';
 
+/**
+ * QSD's Palette (_pages/palette.html): for every voyage with colours, its signature (no black or
+ * white), its colour line, its colour order (24 dots, lib/book.mjs colourOf) and each frame's own
+ * signature, in the book's order. Galleries are keyed as `gallery_name` says them (`prague/twilight`).
+ */
+export function palettesOf(books) {
+  const voyages = books.filter(m => m.book?.colour).map(m => ({
+    g: m.gallery, palette: m.book.colour.palette, wheel: m.book.colour.wheel, order: m.book.colour.order,
+    photos: m.photos.map(p => ({ slug: p.slug, name: p.name || null, url: p.url, r: p.ratio, sizes: (p.sizes?.webp || []).filter(s => s <= 1280), sig: p.signature || null })),
+  }));
+  return voyages.length ? { voyages } : null;
+}
+
 /** Where the kindred list lives in the originals bucket, beside the galleries' manifests (private). */
 export const KINDRED_KEY = '_kindred.json';
 

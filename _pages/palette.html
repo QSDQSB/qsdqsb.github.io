@@ -1,0 +1,24 @@
+---
+title: "QSD's Palette"
+layout: default
+permalink: /palette/
+sitemap: false
+body_class: photobook colour-page
+seo_description: "The colours of every voyage, and of every photograph in it: QSD's palettes, set like wall labels."
+---
+{%- comment -%}
+  QSD's Palette: one page, a voyage to each anchor (/palette/#london, /palette/#prague/twilight).
+  Without an anchor, every voyage's palette in a column; with one, "QSD's Palette for <voyage>":
+  its signature and colour line, then every frame as a print with its own palette, in the book's
+  sequence or by colour (24 dots, dark to light). ?at=<slug> marks the frame a reader came from.
+  Data: /assets/palettes.json. Script: assets/js/colour/palette.js. Styles: _sass/_colour.scss.
+{%- endcomment -%}
+<main class="palette-page" id="palette-page">
+  <header class="colour-head palette-page__head">
+    <p class="colour-kicker"><a href="{{ '/palette/' | relative_url }}" class="palette-page__home">QSD's Palette</a></p>
+    <h1>QSD's Palette</h1>
+  </header>
+  <div class="palette-page__stage" aria-live="polite"></div>
+  <noscript><p class="colour-empty">The palettes are drawn by a script; with it off, the photographs are in the <a href="{{ '/voyage/' | relative_url }}">voyages</a>.</p></noscript>
+</main>
+<script type="module" src="{{ '/assets/js/colour/palette.js' | relative_url }}"></script>

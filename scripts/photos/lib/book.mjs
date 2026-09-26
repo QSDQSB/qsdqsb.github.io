@@ -19,7 +19,7 @@
 
 import { thumbHashToDataURL, thumbHashToRGBA } from 'thumbhash';
 import { normalizeFilm } from './camera.mjs';
-import { parsePalette, parseGrid, swatchesOf, voyagePalette, emd, colourPath, oklabToRgb, rgbHex } from './palette.mjs';
+import { parsePalette, parseGrid, swatchesOf, voyagePalette, emd, colourPath, oklabToRgb, rgbToOklab, rgbHex } from './palette.mjs';
 import { signatureOfColours } from './signature.mjs';
 // The rhythm is shared with the page, whose film filter re-lays the frames it keeps.
 import { bookRows, PORTRAIT } from '../../../assets/js/photobook/rows.mjs';
@@ -245,9 +245,18 @@ export function colourOf(photos) {
     if (!x?.P.length) return p;
     return { ...p, swatches: swatchesOf(x.P).map(s => [s.hex, s.pc]), strip: x.G.length === 9 ? [0, 1, 2].map(r => rowHex(x.G, r)) : null };
   });
-  const D = have.map(i => have.map(j => (i < j ? emd(parsed[i].P, parsed[j].P) : 0)));
+  // The colour order (the sheet's, and the palette page's): how much colour must move to turn one
+  // photograph's 24 dots into another's (the earth mover's distance, each dot weighed by its share),
+  // then every frame laid on the one line that best keeps those distances, dark to light
+  // (colourPath). Brightness leads; within it, like hues settle together. Frames without dots yet
+  // are compared by their 32-colour palettes.
+  const dotsOf = (i) => parseDots(photos[i].dots);
+  const byDots = have.every(i => dotsOf(i).length);
+  const dist = (i) => (byDots ? dotsOf(i) : parsed[i].P);
+  const Ps = new Map(have.map(i => [i, dist(i)]));
+  const D = have.map(i => have.map(j => (i < j ? emd(Ps.get(i), Ps.get(j)) : 0)));
   for (let a = 0; a < have.length; a++) for (let b = 0; b < a; b++) D[a][b] = D[b][a];
-  const light = have.map(i => parsed[i].P.reduce((s, c) => s + c.w * c.lab[0], 0));
+  const light = have.map(i => Ps.get(i).reduce((s, c) => s + c.w * c.lab[0], 0));
   const order = [...colourPath(D, light).map(k => have[k]), ...photos.map((_, i) => i).filter(i => !parsed[i]?.P.length)];
   // The voyage's signature, pooled from its photographs' palettes (each photograph counting once), with
   // its reading; each swatch keeps its place on the plane of hue (a, b) for the colour line.
@@ -259,6 +268,19 @@ export function colourOf(photos) {
   const ramp = [...voyagePalette(have.map(i => parsed[i].P))].sort((a, b) => a.lab[0] - b.lab[0]).map(s => s.hex);
   const barcode = out.map((p, i) => ({ i, strip: p.strip || null, name: p.name || null }));
   return { photos: out, colour: { palette, reading, wheel, ramp, barcode, order } };
+}
+
+/** A photograph's 24 dots (`rrggbbss` × 24, lib/dots.mjs) as weighted OKLab colours, shares summing to one. */
+export function parseDots(s) {
+  if (!s) return [];
+  const out = [];
+  for (let i = 0; i + 8 <= s.length; i += 8) {
+    const h = s.slice(i, i + 6), w = parseInt(s.slice(i + 6, i + 8), 16) || 1; // a dot's share never rounds to nothing
+    out.push({ lab: rgbToOklab(parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)), w });
+  }
+  const sum = out.reduce((a, c) => a + c.w, 0) || 1;
+  for (const c of out) c.w /= sum;
+  return out;
 }
 
 /**

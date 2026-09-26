@@ -195,10 +195,15 @@ export function lightbox(frames) {
 
   const captionHTML = (p) => `${p.place ? `<h3>${esc(p.place)}</h3>` : ''}${p.city ? `<span class="photobook-lightbox__city">${esc(p.city)}</span>` : ''}<div class="photobook-lightbox__specs-line">${specsLine(p)}</div>`;
 
-  // The frame's signature (three to five colours, lib/signature.mjs) as a thin bar, widths tempered
-  // (the square root of each share) so a black that fills the frame does not drown the rest. A band
-  // names its value under the pointer; a click copies it (copy.js).
-  const paletteHTML = (p) => (p.signature?.length ? `<div class="photobook-specs__palette" role="group" aria-label="Palette">${p.signature.map(([h, pc, accent]) => `<button type="button" style="--c:${h};flex:${Math.sqrt(pc).toFixed(2)}" data-hex="${h}" data-tip="${h.toUpperCase()} · ${Math.round(pc)}%${accent ? ' · accent' : ''}" aria-label="${h.toUpperCase()}, ${Math.round(pc)}%${accent ? ', accent' : ''}: copy"></button>`).join('')}</div>` : '');
+  // The frame's signature (three to five colours, lib/signature.mjs), set like a wall label: a thin
+  // bar, widths tempered (the square root of each share) so a black that fills the frame does not
+  // drown the rest, which leads to the voyage's page in QSD's Palette; beneath it the colours' hex
+  // codes, plain text to select and copy, shown while the palette is under the pointer.
+  const palette = { base: lb.dataset.palette, gallery: lb.dataset.gallery, title: lb.dataset.paletteTitle };
+  const paletteHTML = (p) => (p.signature?.length ? `<div class="palette-strip photobook-specs__palette">
+      <a class="palette-strip__bar" href="${palette.base}?at=${encodeURIComponent(p.slug)}#${palette.gallery}" data-tip="${esc(palette.title)}" data-tip-side="top" aria-label="${esc(palette.title)}">${p.signature.map(([h, pc]) => `<i style="--c:${h};flex:${Math.sqrt(pc).toFixed(2)}"></i>`).join('')}</a>
+      <p class="palette-strip__hex">${p.signature.map(([h, pc, accent]) => `<span title="${Math.round(pc)}%${accent ? ', accent' : ''}"><i style="--c:${h}"></i>${h.slice(1).toUpperCase()}</span>`).join('')}</p>
+    </div>` : '');
 
   function specsHTML(p) {
     const ev = p.bias ? ` · ${p.bias > 0 ? '+' : '−'}${Math.abs(Math.round(p.bias * 100) / 100)} EV` : '';
