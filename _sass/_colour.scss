@@ -1,0 +1,374 @@
+/* ==========================================================================
+   COLOUR — the pages that look across every voyage by colour:
+   The Colour of Light (_pages/light.html) and Drift (_pages/drift.html).
+
+   Both carry the Photobook's body class for its ink and glass tokens
+   (_photobook.scss); their data is /assets/colour-atlas.json, their scripts
+   assets/js/colour/. Colour enters only as the photographs' own: the chrome
+   is ink, and gold is the sun's position alone.
+   ========================================================================== */
+
+.colour-kicker {
+  margin: 0;
+  font: 500 0.62rem/1 $barlow-font-family;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--photobook-ink-3);
+}
+
+.colour-head {
+  h1 {
+    margin: 0.9rem 0 0;
+    color: $lighter-gray;
+    font: 700 clamp(1.75rem, 3.4vw, 3.1rem)/1 $global-font-family;
+    letter-spacing: 0.015em;
+  }
+}
+
+.colour-lede {
+  margin: 0.9rem 0 0;
+  max-width: 40rem;
+  font: italic 400 clamp(1.02rem, 1.34vw, 1.3rem)/1.3 $didot-family;
+  color: var(--photobook-ink-2);
+}
+
+.colour-empty {
+  margin: 3rem 0;
+  font: italic 400 1.1rem $didot-family;
+  color: var(--photobook-ink-2);
+}
+
+/* ── The Colour of Light ──────────────────────────────────────────────── */
+.colour-light {
+  width: 100%; // a -webkit-box child: stated, or it shrinks to its content
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: clamp(6.5rem, 12vw, 9rem) var(--photobook-gutter) clamp(4rem, 8vw, 6rem);
+}
+
+.colour-sky {
+  display: block; // the site's figures are rows of images; this one is a chart
+  margin: clamp(3rem, 7vw, 5rem) 0 0;
+}
+
+// One column a degree; each frame a small print of its own colours, top to bottom.
+.colour-sky__plot {
+  --th: clamp(5px, 0.72vw, 11px);
+  position: relative;
+  height: calc(var(--rows, 1) * (var(--th) + 1px));
+}
+
+.colour-tile {
+  position: absolute;
+  left: calc(var(--c) / var(--cols) * 100%);
+  bottom: calc(var(--s) * (var(--th) + 1px));
+  width: calc(100% / var(--cols) - 1px);
+  height: var(--th);
+  background: linear-gradient(var(--t), var(--m), var(--b));
+  cursor: pointer;
+  transition: opacity 0.3s $cubic-bezier-smooth;
+
+  &.is-on { outline: 1px solid var(--photobook-ink); outline-offset: 1px; }
+}
+
+.colour-sky__plot.has-on .colour-tile:not(.is-on) { opacity: 0.5; }
+
+// The horizon, through the whole sky; the bands' edges, dotted, lighter.
+.colour-sky__horizon,
+.colour-sky__edge {
+  position: absolute;
+  top: -0.6rem;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.colour-sky__horizon { border-left: 1px solid var(--photobook-ink-3); }
+.colour-sky__edge { border-left: 1px dotted var(--photobook-line); }
+
+.colour-sky__axis {
+  position: relative;
+  height: 2.6rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--photobook-line);
+}
+
+.colour-sky__tick {
+  position: absolute;
+  top: 0.55rem;
+  translate: -50% 0;
+  font: 400 0.62rem $barlow-font-family;
+  letter-spacing: 0.08em;
+  color: var(--photobook-ink-3);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+
+  &.is-horizon { letter-spacing: 0.2em; text-transform: uppercase; color: var(--photobook-ink-2); }
+  // The ends hold everything beyond them, and sit inside the chart's edges.
+  &.is-first { translate: 0 0; }
+  &.is-last { translate: -100% 0; }
+}
+
+// The sun, at the altitude of the frame in hand: the one gold on the page.
+.colour-sky__sun {
+  position: absolute;
+  top: -4px;
+  width: 7px;
+  height: 7px;
+  margin-left: -3.5px;
+  border-radius: 50%;
+  background: var(--photobook-gold);
+  opacity: 0;
+  transition: opacity 0.3s $cubic-bezier-smooth, left 0.3s $cubic-bezier-smooth;
+
+  &.is-on { opacity: 1; }
+}
+
+.colour-sky__note {
+  max-width: 44rem;
+  font: 400 0.74rem/1.5 $barlow-font-family;
+  color: var(--photobook-ink-3);
+}
+
+// The frame in hand, by the pointer.
+.colour-card {
+  position: fixed;
+  z-index: 50;
+  width: 15rem;
+  padding: 0.6rem 0.6rem 0.75rem;
+  border: 1px solid var(--photobook-glass-edge);
+  border-radius: 6px;
+  background: rgba(12, 12, 16, 0.86);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+
+  &[hidden] { display: none; }
+
+  img { display: block; width: 100%; height: auto; }
+  p { margin: 0; }
+}
+
+.colour-card__name { margin-top: 0.6rem; font: 500 0.86rem $barlow-font-family; color: var(--photobook-ink); }
+.colour-card__meta { margin-top: 0.2rem; font: 500 0.56rem $barlow-font-family; letter-spacing: 0.18em; text-transform: uppercase; color: var(--photobook-ink-3); }
+.colour-card__light { margin-top: 0.5rem; font: 400 0.74rem $barlow-font-family; color: var(--photobook-ink-2); }
+.colour-card__light b { margin-right: 0.45rem; font: 400 0.95rem $didot-family; color: var(--photobook-ink); }
+
+// The bands: each one's colours, its range, its count.
+.colour-bands {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 2rem clamp(1rem, 2.4vw, 2rem);
+  margin-top: clamp(3rem, 6vw, 4.5rem);
+  padding-top: 1.6rem;
+  border-top: 1px dotted var(--photobook-line);
+
+  h3 { margin: 0; font: 600 1.05rem $didot-family; color: $lighter-gray; }
+  p { margin: 0; }
+}
+
+.colour-band__range { margin-top: 0.35rem; font: 400 0.66rem $barlow-font-family; letter-spacing: 0.08em; color: var(--photobook-ink-3); }
+
+.colour-band__bar {
+  display: flex;
+  gap: 2px;
+  height: 6px;
+  margin: 0.9rem 0 0.7rem;
+
+  i { border-radius: 1px; background: var(--c); }
+}
+
+.colour-band__n { font: 400 0.74rem $barlow-font-family; color: var(--photobook-ink-2); }
+.colour-band__n b { font-weight: 400; color: var(--photobook-ink); }
+
+.colour-findings {
+  max-width: 44rem;
+  margin: clamp(2.5rem, 5vw, 3.5rem) 0 0;
+  font: italic 400 clamp(1.02rem, 1.3vw, 1.25rem)/1.45 $didot-family;
+  color: var(--photobook-ink-2);
+
+  &:empty { display: none; }
+}
+
+.colour-next {
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+
+  a {
+    font: 500 0.66rem $barlow-font-family;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--photobook-ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--photobook-ink-3);
+    padding-bottom: 0.3rem;
+  }
+}
+
+/* ── Drift ────────────────────────────────────────────────────────────── */
+.colour-drift {
+  position: relative;
+  width: 100%; // a -webkit-box child: stated, or it shrinks to its content
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
+// The room, in the frame's colours: two layers trade places by opacity alone.
+.colour-drift__wash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  i {
+    position: absolute;
+    inset: -10%;
+    filter: blur(40px);
+    opacity: 0;
+    transition: opacity 1.6s $cubic-bezier-smooth;
+
+    &.is-on { opacity: 1; }
+  }
+}
+
+.colour-drift__head {
+  position: absolute;
+  z-index: 2;
+  left: var(--photobook-gutter);
+  right: var(--photobook-gutter);
+  top: clamp(5rem, 9vw, 6.5rem);
+  pointer-events: none;
+  transition: opacity 1.2s $cubic-bezier-smooth;
+
+  .is-under-way & { opacity: 0; }
+}
+
+// The stage: the print as large as the room allows, square-cornered, crossfading into the next.
+.colour-drift__stage {
+  position: relative;
+  z-index: 1;
+  min-height: 0;
+  margin: clamp(4.5rem, 8vw, 5.5rem) var(--photobook-gutter) 0;
+}
+
+.colour-drift__print {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 1.2s $cubic-bezier-smooth;
+
+  &.is-on { opacity: 1; }
+}
+
+.colour-drift__zone {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  padding: 0;
+  border: 0;
+  background: none;
+
+  &--prev { left: 0; cursor: w-resize; }
+  &--next { right: 0; cursor: e-resize; }
+}
+
+.colour-drift__foot {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 0.9rem 1.5rem;
+  padding: 1.1rem var(--photobook-gutter) calc(1rem + env(safe-area-inset-bottom, 0px));
+  transition: opacity 1.2s $cubic-bezier-smooth;
+
+  .is-overture & { opacity: 0; }
+}
+
+.colour-drift__caption p { margin: 0; }
+.colour-drift__name { font: 500 clamp(0.95rem, 1.2vw, 1.1rem) $barlow-font-family; color: var(--photobook-ink); }
+
+.colour-drift__meta {
+  margin-top: 0.3rem;
+  font: 500 0.58rem $barlow-font-family;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--photobook-ink-3);
+
+  span { margin-left: 1.2rem; letter-spacing: 0.08em; text-transform: none; font-size: 0.72rem; color: var(--photobook-ink-2); }
+}
+
+.colour-drift__tools { display: flex; gap: 0.5rem; }
+
+.colour-drift__tool {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  border: 1px solid var(--photobook-glass-edge);
+  border-radius: 50%;
+  background: var(--photobook-button);
+  color: var(--photobook-ink-2);
+  cursor: pointer;
+  transition: background 0.3s $cubic-bezier-smooth, color 0.3s $cubic-bezier-smooth;
+
+  &:hover { background: var(--photobook-button-hover); color: var(--photobook-ink); }
+
+  svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+}
+
+.colour-drift__play { display: none; fill: currentColor; stroke: none; }
+.colour-drift__tool[aria-pressed="false"] .colour-drift__pause { display: none; }
+.colour-drift__tool[aria-pressed="false"] .colour-drift__play { display: inline; }
+
+// The way so far: a sliver a frame, shaded as its frame is; the one on show stands taller.
+.colour-drift__thread {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 22px;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+
+  button {
+    flex: 0 0 6px;
+    height: 14px;
+    padding: 0;
+    border: 0;
+    border-radius: 1px;
+    background: linear-gradient(var(--t), var(--m), var(--b));
+    cursor: pointer;
+    transition: height 0.3s $cubic-bezier-smooth;
+
+    &.is-on { height: 22px; }
+    &:focus-visible { outline: 1px solid var(--photobook-ink); outline-offset: 2px; }
+  }
+}
+
+@mixin colour-still {
+  .colour-tile,
+  .colour-sky__sun,
+  .colour-drift__wash i,
+  .colour-drift__head,
+  .colour-drift__foot,
+  .colour-drift__print,
+  .colour-drift__tool,
+  .colour-drift__thread button { transition: none; }
+}
+
+@include responsive-reduced-motion {
+  @include colour-still;
+}
+
+html.motion-off {
+  @include colour-still;
+}
