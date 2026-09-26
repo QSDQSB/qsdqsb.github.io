@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Volume sketch A</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Playfair+Display:wght@700&display=swap">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* A · Contents: the volume's front matter. A plate on the left answers whatever the reader points at. */
+.contents { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 5vw, 5rem); padding: clamp(2.5rem, 6vw, 5rem) var(--gutter) 0; max-width: 96rem; margin: 0 auto; }
+.plate { position: sticky; top: 10vh; align-self: start; display: flex; flex-direction: column; gap: 1rem; }
+.plate__frame { position: relative; flex: none; width: 100%; height: 60vh; transition: height 0.5s var(--ease); }
+.plate__frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; opacity: 0; transition: opacity 0.5s var(--ease); }
+.plate__frame img.is-on { opacity: 1; }
+.plate__label { display: flex; justify-content: space-between; gap: 1rem; font: 400 0.8rem/1.3 var(--ui); color: var(--ink-3); min-height: 1.3em; }
+.plate__label b { font-weight: 500; color: var(--ink-2); letter-spacing: 0.04em; }
+
+.toc { padding-bottom: 2rem; }
+.toc__day { display: flex; align-items: baseline; gap: 1rem; margin: 2.6rem 0 0.4rem; }
+.toc__day:first-child { margin-top: 0; }
+.toc__day::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.toc__day .numeral { font-size: 0.95rem; color: var(--ink-3); }
+.chapter { display: grid; grid-template-columns: 3.4rem minmax(0, 1fr) auto; column-gap: 1.2rem; padding: 1.3rem 0 1.4rem; border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer; }
+.chapter__n { font-size: 1.9rem; line-height: 1; color: var(--ink-3); transition: color 0.3s var(--ease); padding-top: 0.2rem; }
+.chapter h3 { margin: 0; font: 700 clamp(1.35rem, 2vw, 1.75rem)/1.15 var(--display); }
+.chapter p { margin: 0.35rem 0 0; font: 300 0.95rem/1.4 var(--ui); color: var(--ink-3); }
+.chapter__meta { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 0.45rem; padding-top: 0.3rem; }
+.chapter__when { font: 500 0.62rem/1.3 var(--ui); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); max-width: 12rem; }
+.chapter__count { font: 400 1.3rem/1 var(--didot); }
+.chapter__count small { font: 500 0.6rem/1 var(--ui); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); margin-left: 0.35rem; }
+.strip { grid-column: 2 / 4; display: flex; gap: 4px; margin-top: 0.9rem; height: 44px; overflow: hidden; -webkit-mask: linear-gradient(to right, #000 80%, transparent); mask: linear-gradient(to right, #000 80%, transparent); }
+.strip .print { flex: 0 0 44px; height: 44px; opacity: 0.55; transition: opacity 0.25s var(--ease); }
+.chapter:hover .chapter__n, .chapter.is-on .chapter__n { color: var(--gold); }
+.chapter:hover .strip .print { opacity: 0.85; }
+.strip .print:hover { opacity: 1; }
+.chapter--empty { cursor: default; }
+.chapter--empty h3 { color: var(--ink-3); }
+
+@media (max-width: 767px) {
+  .contents { grid-template-columns: 1fr; }
+  .plate { display: none; }
+  .chapter { grid-template-columns: 2.4rem minmax(0, 1fr); }
+  .chapter__meta { grid-column: 2; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0.8rem; margin-top: 0.6rem; text-align: left; }
+  .strip { grid-column: 1 / 3; height: 56px; }
+  .strip .print { flex-basis: 56px; height: 56px; opacity: 1; }
+}
+</style>
+</head>
+<body>
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script>
+const { V, esc, roman, dayLabel, days, print, ticks, coverOf, cover, colophon, glow, chrome } = Vol;
+let n = 0, lastDay = null, toc = '';
+for (const c of V.chapters) {
+  n++;
+  const day = c.first && c.photos.length ? c.first : null;
+  if (day && day !== lastDay) {
+    const dl = dayLabel(day); toc += `<div class="toc__day"><span class="kicker">${dl.label}</span><span class="numeral">Day ${dl.n}</span></div>`;
+    lastDay = day;
+  }
+  if (!c.photos.length) {
+    toc += `<div class="chapter chapter--empty"><span class="chapter__n numeral">${roman(n)}</span><div><h3>${esc(c.title)}</h3><p>Still on their way.</p></div><div class="chapter__meta"></div></div>`;
+    continue;
+  }
+  toc += `<a class="chapter" data-c="${n - 1}" href="#"><span class="chapter__n numeral">${roman(n)}</span>
+    <div><h3>${esc(c.title)}</h3><p>${esc(c.excerpt)}</p></div>
+    <div class="chapter__meta"><span class="chapter__when">${Vol.chapterWhen(c, true)}</span><span class="chapter__count">${c.photos.length}<small>frames</small></span>${ticks(c.films)}</div>
+    <div class="strip">${c.photos.map((p, i) => print(p, { sizes: '56px', style: '', cls: '' }).replace('class="print ', `data-p="${i}" class="print `)).join('')}</div></a>`;
+}
+document.body.insertAdjacentHTML('beforeend', cover() + `<section class="contents">
+  <aside class="plate" aria-hidden="true"><div class="plate__frame"><img alt=""><img alt=""></div><p class="plate__label"><b></b><span></span></p></aside>
+  <nav class="toc" aria-label="Chapters">${toc}</nav></section>` + colophon());
+chrome('a-contents.html');
+
+// The plate: the chapter's cover frame, or the frame under the pointer in its strip.
+const frame = document.querySelector('.plate__frame'), imgs = frame.querySelectorAll('img'), label = document.querySelector('.plate__label');
+let flip = 0, shown = null;
+function show(ci, pi) {
+  const c = V.chapters[ci], p = pi == null ? coverOf(c) : c.photos[pi];
+  if (!p || p === shown) return;
+  shown = p;
+  const next = imgs[flip ^ 1], prev = imgs[flip];
+  next.onload = () => { next.classList.add('is-on'); prev.classList.remove('is-on'); };
+  next.srcset = p.webp.map((w) => `${p.url}/${w}.webp ${p.ratio < 1 ? Math.round(w * p.ratio) : w}w`).join(', ');
+  next.sizes = '42vw';
+  next.src = `${p.url}/1280.webp`;
+  const pw = frame.clientWidth; frame.style.height = `${Math.min(innerHeight * 0.74, pw / p.ratio)}px`;
+  flip ^= 1;
+  label.children[0].textContent = `${roman(ci + 1)} · ${c.title}`;
+  label.children[1].textContent = p.place || '';
+  document.querySelectorAll('.chapter.is-on').forEach((e) => e.classList.remove('is-on'));
+  document.querySelector(`.chapter[data-c="${ci}"]`)?.classList.add('is-on');
+  glow(p);
+}
+document.querySelectorAll('.chapter[data-c]').forEach((el) => {
+  const ci = +el.dataset.c;
+  el.addEventListener('pointerenter', () => show(ci));
+  el.addEventListener('click', (e) => e.preventDefault());
+  el.querySelectorAll('.strip .print').forEach((s) => s.addEventListener('pointerenter', () => show(ci, +s.dataset.p)));
+});
+const firstFull = V.chapters.findIndex((c) => c.photos.length);
+show(firstFull);
+</script>
+</body>
+</html>

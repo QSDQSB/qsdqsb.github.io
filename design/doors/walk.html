@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Through the doors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Playfair+Display:wght@700&display=swap">
+<link rel="stylesheet" href="doors.css">
+<style>
+/* Through the doors. The page does not scroll past places; it walks through them. Each place
+   rests a moment (its name, its line); scrolling on pushes the camera forward into the photograph
+   along its depth map, the near things passing either side, until the next place — waiting beyond
+   — is all that is left. Native scrolling throughout: the scroll only says how far you have walked. */
+.walk { position: relative; }
+.stage { position: sticky; top: 0; height: 100vh; height: 100svh; display: grid; place-items: center; overflow: hidden; }
+.band { position: relative; width: 100%; height: max(calc(100vw / 3), 64vh); cursor: pointer; }
+.band canvas, .band > img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.band > img { object-fit: cover; }
+.band::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(12,12,12,0) 55%, rgba(12,12,12,0.55)); pointer-events: none; }
+.words { position: absolute; z-index: 2; left: var(--gutter); right: var(--gutter); bottom: clamp(1.2rem, 3vw, 2.6rem); display: grid; gap: 0.5rem; max-width: 52rem; pointer-events: none; will-change: opacity, transform; }
+.words h2 { margin: 0; font: 700 clamp(2.2rem, 5vw, 4.6rem)/1.02 var(--display); text-shadow: 0 1px 18px rgba(0,0,0,0.3); }
+.words .air { color: var(--ink-2); }
+.beyond { position: absolute; z-index: 2; right: var(--gutter); bottom: clamp(1.2rem, 3vw, 2.6rem); font: 500 0.64rem/1.3 var(--ui); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-2); text-align: right; opacity: 0; pointer-events: none; }
+.beyond b { display: block; margin-top: 0.3rem; font: 700 0.95rem/1.2 var(--display); letter-spacing: 0; text-transform: none; color: var(--ink); }
+.hint { position: absolute; left: 50%; bottom: 22px; width: 1px; height: 38px; background: linear-gradient(to bottom, transparent, var(--ink-3)); transform: translateX(-50%); transition: opacity 0.6s var(--ease); }
+@media (prefers-reduced-motion: no-preference) { .hint { animation: hint 2.4s var(--ease) infinite; } }
+@keyframes hint { 0% { transform: translate(-50%, -8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translate(-50%, 8px); opacity: 0; } }
+.hint.is-gone { opacity: 0; animation: none; }
+.frame-opt { position: fixed; z-index: 40; top: 1.1rem; right: var(--gutter); display: inline-flex; gap: 2px; padding: 2px; border: 1px dashed rgba(255,255,255,0.3); border-radius: 999px; background: rgba(0,0,0,0.5); font: 500 0.6rem/1 var(--ui); letter-spacing: 0.14em; text-transform: uppercase; }
+.frame-opt button { padding: 6px 10px; border: 0; border-radius: 999px; background: none; color: var(--ink-3); font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
+.frame-opt button[aria-pressed="true"] { background: var(--ink); color: #111; }
+body.is-full .band { height: 100vh; height: 100svh; }
+@media (max-width: 767px) { .band { height: 72svh; } .beyond { display: none; } }
+</style>
+</head>
+<body>
+<script src="data.js"></script>
+<script src="doors.js"></script>
+<main class="walk" id="walk">
+  <div class="stage">
+    <div class="band" id="band" role="link" tabindex="0">
+      <canvas id="gl"></canvas>
+      <div class="words" id="wA"><h2></h2><p class="poem"></p><p class="air"></p></div>
+      <div class="words" id="wB" style="opacity:0"><h2></h2><p class="poem"></p><p class="air"></p></div>
+      <p class="beyond" id="beyond">Beyond<b></b></p>
+    </div>
+    <span class="hint" id="hint" aria-hidden="true"></span>
+    <div class="frame-opt" role="group" aria-label="Sketch option: frame"><button type="button" data-frame="scope" aria-pressed="true">Cinemascope</button><button type="button" data-frame="full" aria-pressed="false">Full screen</button></div>
+  </div>
+</main>
+<script>
+const { D, voyage, esc, air, href, chrome, mast, IMG } = Doors;
+const SK = 'walk.html';
+document.body.insertAdjacentHTML('afterbegin', mast());
+chrome(SK);
+
+// The walk: a voyage's own cover, then its parts; or every voyage.
+const scenes = voyage ? [voyage, ...voyage.parts] : D;
+const DWELL = 0.75, PASS = 1.15, UNIT = DWELL + PASS; // in screen heights
+const walk = document.getElementById('walk');
+walk.style.height = `${((scenes.length - 1) * UNIT + DWELL + 1) * 100}svh`;
+
+const band = document.getElementById('band'), canvas = document.getElementById('gl');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const gl = !reduce && canvas.getContext('webgl', { antialias: false, alpha: false, preserveDrawingBuffer: true });
+
+// Where the walker is: scene i, and t — how far through the passage to i + 1 (0 while resting).
+function where() {
+  const y = scrollY / innerHeight;
+  const i = Math.min(scenes.length - 1, Math.floor(y / UNIT));
+  const f = y - i * UNIT;
+  const rest = Math.min(1, f / DWELL);
+  const t = i >= scenes.length - 1 ? 0 : Math.max(0, Math.min(1, (f - DWELL) / PASS));
+  return { i, t, rest };
+}
+const ease = (x) => x * x * (3 - 2 * x);
+const smooth = (a, b, x) => { const k = Math.max(0, Math.min(1, (x - a) / (b - a))); return k * k * (3 - 2 * k); };
+
+// Words: the place you are in, and the one arriving.
+const wA = document.getElementById('wA'), wB = document.getElementById('wB'), beyond = document.getElementById('beyond');
+function fill(el, d) { el.children[0].textContent = d.title; el.children[1].textContent = d.excerpt || ''; el.children[2].textContent = air(d); }
+let shownA = -1, shownB = -1;
+function words({ i, t, rest }) {
+  if (shownA !== i) { fill(wA, scenes[i]); shownA = i; }
+  const next = scenes[i + 1];
+  if (next && shownB !== i + 1) { fill(wB, next); shownB = i + 1; beyond.querySelector('b').textContent = next.title; }
+  const outA = smooth(0, 0.28, t);
+  wA.style.opacity = String((1 - outA) * (0.35 + 0.65 * smooth(0, 0.35, rest + (i === 0 ? 1 : 0))));
+  wA.style.transform = `translateY(${-outA * 14}px)`;
+  wB.style.opacity = next ? String(smooth(0.78, 1, t)) : '0';
+  wB.style.transform = `translateY(${(1 - smooth(0.78, 1, t)) * 12}px)`;
+  beyond.style.opacity = next ? String(smooth(0.55, 0.95, rest) * (1 - smooth(0, 0.15, t))) : '0';
+}
+
+// Fallback (reduced motion, no WebGL): the places crossfade as you walk; nothing moves.
+if (!gl) {
+  canvas.remove();
+  const a = document.createElement('img'), b = document.createElement('img');
+  band.prepend(b); band.prepend(a); b.style.opacity = 0; b.style.transition = 'none';
+  const tick = () => { const w = where(); a.src = IMG + scenes[w.i].cover; if (scenes[w.i + 1]) { b.src = IMG + scenes[w.i + 1].cover; b.style.opacity = String(w.t); } words(w); };
+  addEventListener('scroll', () => requestAnimationFrame(tick), { passive: true }); tick();
+}
+
+if (gl) {
+  const VERT = 'attribute vec2 aPos; varying vec2 vUv; void main() { vUv = aPos * 0.5 + 0.5; vUv.y = 1.0 - vUv.y; gl_Position = vec4(aPos, 0.0, 1.0); }';
+  // A: the place being walked through. The camera dollies in; near things (bright in the depth
+  // map) swell faster than far ones, and once the passing plane has gone by a layer, that layer is
+  // behind you — transparent — and B, the next place, shows through, coming forward to meet you.
+  const FRAG = `precision mediump float;
+  varying vec2 vUv;
+  uniform sampler2D uA, uDA, uB, uDB;
+  uniform vec2 uCA, uCB, uTilt;
+  uniform float uT, uRest, uHasB;
+  vec2 fit(vec2 uv, vec2 c) { return (uv - 0.5) * c + 0.5; }
+  vec2 dolly(vec2 p, float push, float d, vec2 tilt) { return (p - 0.5) / (1.0 + push * (0.2 + d * d * 1.6)) + 0.5 + tilt * (d - 0.55); }
+  void main() {
+    vec2 a = fit(vUv, uCA);
+    float push = uRest * 0.05 + uT * 1.1;
+    vec2 tilt = uTilt * 0.018;
+    float d = texture2D(uDA, a).r;
+    vec2 pa = dolly(a, push, d, tilt);
+    d = texture2D(uDA, pa).r; pa = dolly(a, push, d, tilt);
+    d = texture2D(uDA, pa).r; pa = dolly(a, push, d, tilt);
+    d = texture2D(uDA, pa).r;
+    vec3 ca = texture2D(uA, clamp(pa, 0.0, 1.0)).rgb;
+    float plane = 1.02 - uT * 1.22;
+    float keepA = 1.0 - smoothstep(plane - 0.07, plane + 0.03, d);
+    ca *= mix(1.0, 0.8, uT);
+    vec2 b = fit(vUv, uCB);
+    float db = texture2D(uDB, b).r;
+    float pushB = (uT - 1.0) * 0.12;
+    vec2 pb = (b - 0.5) / (1.0 + max(pushB, -0.1) * (0.2 + db)) + 0.5 + tilt * 0.6 * (db - 0.55);
+    vec3 cb = texture2D(uB, clamp(pb, 0.0, 1.0)).rgb * mix(0.3, 1.0, smoothstep(0.15, 0.95, uT));
+    cb = mix(vec3(0.082), cb, uHasB);
+    gl_FragColor = vec4(mix(cb, ca, keepA), 1.0);
+  }`;
+  const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s)); return s; };
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG)); gl.linkProgram(prog); gl.useProgram(prog);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const aPos = gl.getAttribLocation(prog, 'aPos'); gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+  const U = {}; ['uA', 'uDA', 'uB', 'uDB', 'uCA', 'uCB', 'uTilt', 'uT', 'uRest', 'uHasB'].forEach((n) => { U[n] = gl.getUniformLocation(prog, n); });
+  gl.uniform1i(U.uA, 0); gl.uniform1i(U.uDA, 1); gl.uniform1i(U.uB, 2); gl.uniform1i(U.uDB, 3);
+
+  function texFrom(src) {
+    const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 1, 1, 0, gl.RGB, gl.UNSIGNED_BYTE, new Uint8Array([21, 21, 21]));
+    ['TEXTURE_WRAP_S', 'TEXTURE_WRAP_T'].forEach((k) => gl.texParameteri(gl.TEXTURE_2D, gl[k], gl.CLAMP_TO_EDGE));
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    return t;
+  }
+  function upload(t, img) { gl.bindTexture(gl.TEXTURE_2D, t); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img); draw(); }
+  // A place without a depth map gets the oldest assumption in painting: the ground is near, the sky far.
+  const ground = (() => { const c = document.createElement('canvas'); c.width = 4; c.height = 256; const x = c.getContext('2d'); const g = x.createLinearGradient(0, 0, 0, 256); g.addColorStop(0, '#101010'); g.addColorStop(1, '#c8c8c8'); x.fillStyle = g; x.fillRect(0, 0, 4, 256); return c; })();
+  const cache = new Map();
+  function scene(k) {
+    if (!scenes[k]) return null;
+    if (cache.has(k)) return cache.get(k);
+    const d = scenes[k], s = { photo: texFrom(), depth: texFrom(), aspect: 3 };
+    const img = new Image(); img.onload = () => { s.aspect = img.naturalWidth / img.naturalHeight; upload(s.photo, img); }; img.src = IMG + d.cover;
+    if (d.depth) { const dm = new Image(); dm.onload = () => upload(s.depth, dm); dm.src = '../../' + d.depth; } else upload(s.depth, ground);
+    cache.set(k, s);
+    for (const key of [...cache.keys()]) if (Math.abs(key - k) > 3) { const o = cache.get(key); gl.deleteTexture(o.photo); gl.deleteTexture(o.depth); cache.delete(key); }
+    return s;
+  }
+  const coverOf = (s) => { const ca = canvas.width / canvas.height; return ca < s.aspect ? [ca / s.aspect, 1] : [1, s.aspect / ca]; };
+  function size() { const dpr = Math.min(devicePixelRatio || 1, 1.5); canvas.width = Math.round(band.clientWidth * dpr); canvas.height = Math.round(band.clientHeight * dpr); gl.viewport(0, 0, canvas.width, canvas.height); }
+  addEventListener('resize', () => { size(); draw(); });
+  size();
+
+  // The walker's head: the pointer (or, resting, a slow breath) leans the near field.
+  const tilt = { x: 0, y: 0 }, aim = { x: 0, y: 0 }; let lastMove = -1e9;
+  addEventListener('pointermove', (e) => { aim.x = (e.clientX / innerWidth - 0.5); aim.y = (e.clientY / innerHeight - 0.5); lastMove = performance.now(); }, { passive: true });
+
+  let pending = false;
+  function draw() { if (!pending) { pending = true; requestAnimationFrame(frame); } }
+  function frame(now) {
+    pending = false;
+    const w = where();
+    const A = scene(w.i), B = scene(w.i + 1); scene(w.i + 2); scene(w.i - 1);
+    if (now - lastMove > 2500) { const s = now / 1000; aim.x = 0.3 * Math.sin(s * 0.19); aim.y = 0.2 * Math.sin(s * 0.13 + 1.3); }
+    tilt.x += (aim.x - tilt.x) * 0.05; tilt.y += (aim.y - tilt.y) * 0.05;
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, A.photo);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, A.depth);
+    gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, (B || A).photo);
+    gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, (B || A).depth);
+    gl.uniform2fv(U.uCA, coverOf(A)); gl.uniform2fv(U.uCB, coverOf(B || A));
+    gl.uniform2f(U.uTilt, tilt.x, tilt.y);
+    gl.uniform1f(U.uT, ease(w.t)); gl.uniform1f(U.uRest, w.rest); gl.uniform1f(U.uHasB, B ? 1 : 0);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    words(w);
+    draw(); // keep breathing
+  }
+  addEventListener('scroll', draw, { passive: true });
+  draw();
+}
+
+// Stepping in: whichever place fills the band opens (its book, or its own walk).
+const hint = document.getElementById('hint');
+addEventListener('scroll', () => hint.classList.add('is-gone'), { once: true, passive: true });
+function enter() {
+  const w = where(), d = scenes[w.t > 0.5 ? w.i + 1 : w.i];
+  if (!d) return;
+  // A voyage's own cover, at the start of its walk, is the threshold: stepping in walks on.
+  if (d === voyage) { scrollTo({ top: UNIT * innerHeight, behavior: reduce ? 'auto' : 'smooth' }); return; }
+  band.style.viewTransitionName = 'cover';
+  location.href = href(d, SK);
+}
+band.addEventListener('click', enter);
+document.querySelectorAll('[data-frame]').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-frame]').forEach((x) => x.setAttribute('aria-pressed', x === b));
+  document.body.classList.toggle('is-full', b.dataset.frame === 'full');
+  try { localStorage.setItem('walk-frame', b.dataset.frame); } catch (_) {}
+  dispatchEvent(new Event('resize'));
+}));
+try { if (localStorage.getItem('walk-frame') === 'full') document.querySelector('[data-frame="full"]').click(); } catch (_) {}
+band.addEventListener('keydown', (e) => { if (e.key === 'Enter') enter(); });
+addEventListener('pageshow', () => { band.style.viewTransitionName = ''; });
+addEventListener('pagereveal', (e) => { if (e.viewTransition) { band.style.viewTransitionName = 'cover'; e.viewTransition.finished.finally(() => { band.style.viewTransitionName = ''; }); } });
+</script>
+</body>
+</html>

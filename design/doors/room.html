@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inside</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Playfair+Display:wght@700&display=swap">
+<link rel="stylesheet" href="doors.css">
+<style>
+/* The far side of a door: the Photobook's own cover (3:1, min 26rem, the title at its foot).
+   A stub — the real book continues on the site. */
+.cover { position: relative; width: 100%; aspect-ratio: 3 / 1; min-height: 26rem; overflow: hidden; }
+.cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; view-transition-name: cover; }
+.cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(21,21,21,0) 45%, rgba(21,21,21,0.55) 78%, var(--ground)); }
+.cover__title { position: absolute; z-index: 1; left: var(--gutter); right: var(--gutter); bottom: clamp(1rem, 3vw, 2.2rem); }
+.cover h1 { margin: 0; font: 700 clamp(2.4rem, 5.4vw, 4.6rem)/1 var(--display); }
+.cover p { margin: 0.6rem 0 0; font: 300 clamp(0.95rem, 1.3vw, 1.15rem)/1.4 var(--ui); color: var(--ink-2); }
+.stub { padding: 4rem var(--gutter) 8rem; display: grid; gap: 1rem; justify-items: start; }
+.stub a { border-bottom: 1px solid var(--line); padding-bottom: 2px; color: var(--ink-2); }
+@media (max-width: 767px) { .cover { aspect-ratio: auto; height: 120vw; min-height: 0; } }
+</style>
+</head>
+<body>
+<script src="data.js"></script>
+<script src="doors.js"></script>
+<script>
+const { bySlug, esc, IMG } = Doors;
+const q = new URLSearchParams(location.search);
+const d = bySlug.get(q.get('d')) || bySlug.values().next().value;
+const from = q.get('from') || 'p1-hang.html';
+const live = `https://qsdqsb.com/voyage/${d.parent ? d.slug : d.slug}/`;
+document.title = d.title;
+document.body.insertAdjacentHTML('beforeend', `<header class="mast"><span class="mast__logo">Q</span><a class="mast__back" href="${esc(from)}" onclick="if (history.length > 1) { history.back(); return false; }">‹ ${d.parent ? esc(d.parent.title) : 'All voyages'}</a></header>
+  <header class="cover"><img src="${IMG}${d.cover}" alt=""><div class="cover__title"><h1>${esc(d.title)}</h1><p>${esc(d.excerpt)}</p></div></header>
+  <section class="stub"><p class="kicker">The Photobook continues here</p><a href="${live}">Open the real book on qsdqsb.com ↗</a></section>`);
+</script>
+</body>
+</html>

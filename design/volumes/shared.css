@@ -1,0 +1,84 @@
+/* Volume sketches — brainstorm only. Tokens mirror _sass/_photobook.scss. */
+:root {
+  --ground: #151515;
+  --ink: #e6e6e6;
+  --ink-2: #b9bcbe;
+  --ink-3: #8b9296;
+  --line: #3b3d3f;
+  --gold: rgba(229, 207, 169, 0.85);
+  --glass: rgba(10, 10, 12, 0.44);
+  --glass-edge: rgba(255, 255, 255, 0.1);
+  --gutter: clamp(1rem, 3vw, 2.4rem);
+  --gap: clamp(6px, 0.7vw, 12px);
+  --display: "Playfair Display", Georgia, serif;
+  --ui: "Barlow", "Helvetica Neue", sans-serif;
+  --didot: "Didot", "Bodoni 72", "Playfair Display", serif;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--ground); }
+body { margin: 0; color: var(--ink); font: 400 16px/1.5 var(--ui); background: var(--ground); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+img { display: block; }
+
+/* The page's glow: two layers that crossfade, tinted by whatever the reader is looking at. */
+.glow { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+.glow i { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s var(--ease); }
+.glow i.is-on { opacity: 1; }
+
+/* Prototype chrome (not part of any design): which sketch, which voyage. */
+.proto { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 50; display: flex; gap: 2px; padding: 3px; border: 1px dashed rgba(255,255,255,0.28); border-radius: 999px; background: rgba(0,0,0,0.72); backdrop-filter: blur(10px); font: 500 11px/1 var(--ui); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; max-width: calc(100vw - 20px); overflow-x: auto; }
+.proto a { padding: 7px 10px; border-radius: 999px; color: var(--ink-3); }
+.proto a[aria-current] { color: #111; background: var(--ink); }
+.proto span { width: 1px; margin: 4px 4px; background: rgba(255,255,255,0.2); }
+
+/* Shared type */
+.kicker { margin: 0; font: 500 0.7rem/1 var(--ui); letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3); }
+.numeral { font-family: var(--didot); font-weight: 400; font-variant-numeric: lining-nums; }
+.ticks { display: inline-flex; gap: 3px; vertical-align: middle; }
+.ticks i { width: 6px; height: 6px; border-radius: 50%; background: var(--film); }
+.ticks--bar { display: flex; gap: 0; height: 3px; width: 100%; }
+.ticks--bar i { height: 3px; width: auto; border-radius: 0; background: var(--film); }
+
+/* The volume cover: the voyage's own 3:1 hero, as every Photobook's. */
+.vcover { position: relative; aspect-ratio: 3 / 1; min-height: 20rem; max-height: 82vh; width: 100%; overflow: hidden; }
+.vcover > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.vcover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(21,21,21,0) 40%, rgba(21,21,21,0.55) 75%, var(--ground)); }
+.vcover__title { position: absolute; z-index: 1; left: var(--gutter); right: var(--gutter); bottom: clamp(1rem, 3vw, 2.2rem); display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; }
+.vcover h1 { margin: 0; font: 700 clamp(2.4rem, 5.4vw, 4.6rem)/1 var(--display); letter-spacing: -0.01em; }
+.vcover__lede { margin: 0.6rem 0 0; font: 300 clamp(0.95rem, 1.3vw, 1.15rem)/1.4 var(--ui); color: var(--ink-2); max-width: 34rem; }
+.facts { display: flex; gap: clamp(1rem, 2.4vw, 2.2rem); margin: 0; }
+.facts div { display: flex; flex-direction: column-reverse; gap: 0.3rem; }
+.facts dt { font: 500 0.62rem/1 var(--ui); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); }
+.facts dd { margin: 0; font: 400 1.7rem/1 var(--didot); }
+
+/* A print: placeholder under it, develops in when it arrives. */
+.print { position: relative; background-size: cover; background-position: center; overflow: hidden; }
+.print img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.9s var(--ease); }
+.print img.is-in { opacity: 1; }
+
+/* The volume colophon */
+.vcolophon { padding: clamp(3rem, 8vw, 6rem) var(--gutter) 7rem; max-width: 72rem; margin: 0 auto; }
+.vcolophon h2 { margin-bottom: 1.6rem; }
+.vcolophon__bar { display: flex; height: 6px; margin-bottom: 1rem; }
+.vcolophon__bar i { background: var(--film); }
+.legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; font: 400 0.8rem/1 var(--ui); color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 0.45rem; }
+.legend i { width: 7px; height: 7px; border-radius: 50%; background: var(--film); }
+.legend b { font: 400 0.95rem/1 var(--didot); color: var(--ink-3); }
+.vcolophon__chapters { display: grid; gap: 0.45rem; margin-top: 2.4rem; }
+.vcolophon__row { display: grid; grid-template-columns: 11rem 1fr 2.4rem; align-items: center; gap: 1rem; font: 400 0.8rem/1.2 var(--ui); color: var(--ink-2); }
+.vcolophon__row .ticks--bar { height: 4px; }
+.vcolophon__row .ticks--bar i { height: 4px; }
+.vcolophon__row b { font: 400 0.95rem/1 var(--didot); color: var(--ink-3); text-align: right; }
+
+@media (max-width: 767px) {
+  .vcover { aspect-ratio: 4 / 3; min-height: 0; }
+  .vcover__title { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .facts dd { font-size: 1.3rem; }
+  .vcolophon__row { grid-template-columns: 7.5rem 1fr 2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}

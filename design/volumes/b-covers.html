@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Volume sketch B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Playfair+Display:wght@700&display=swap">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* B · Covers. The volume's cover is cut into one slice per chapter; beneath it, each chapter is a
+   cover of its own, and running a pointer across one leafs through its prints. */
+.slices { position: relative; display: flex; gap: 2px; height: min(34vw, 78vh); min-height: 22rem; overflow: hidden; }
+.slice { position: relative; flex: 1 1 0; min-width: 0; overflow: hidden; transition: flex-grow 0.6s var(--ease); cursor: pointer; }
+.slice img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.slice::after { content: ""; position: absolute; inset: 0; background: rgba(21,21,21,0.28); transition: background 0.4s var(--ease); }
+.slices:hover .slice::after { background: rgba(21,21,21,0.5); }
+.slices .slice:hover { flex-grow: 7; }
+.slices .slice:hover::after { background: rgba(21,21,21,0); }
+.slice__name { position: absolute; z-index: 1; left: 1rem; top: 1rem; font: 500 0.66rem/1.2 var(--ui); letter-spacing: 0.18em; text-transform: uppercase; opacity: 0; transition: opacity 0.3s var(--ease); white-space: nowrap; text-shadow: 0 1px 8px rgba(0,0,0,0.6); }
+.slice:hover .slice__name { opacity: 1; transition-delay: 0.2s; }
+.slices__title { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: 5rem var(--gutter) clamp(1rem, 3vw, 2.2rem); display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; pointer-events: none; background: linear-gradient(to bottom, rgba(21,21,21,0), rgba(21,21,21,0.7) 60%, var(--ground)); }
+.slices__title h1 { margin: 0; font: 700 clamp(2.4rem, 5.4vw, 4.6rem)/1 var(--display); }
+.slices__title p { margin: 0.6rem 0 0; font: 300 clamp(0.95rem, 1.3vw, 1.15rem)/1.4 var(--ui); color: var(--ink-2); }
+
+.shelf-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: clamp(2.5rem, 5vw, 4rem) var(--gutter) 1.4rem; max-width: 110rem; margin: 0 auto; }
+.option { display: inline-flex; gap: 2px; padding: 2px; border: 1px dashed rgba(255,255,255,0.28); border-radius: 999px; font: 500 0.62rem/1 var(--ui); letter-spacing: 0.14em; text-transform: uppercase; }
+.option button { padding: 6px 10px; border: 0; border-radius: 999px; background: none; color: var(--ink-3); font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
+.option button[aria-pressed="true"] { background: var(--ink); color: #111; }
+
+.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(15rem, 22vw, 20rem), 1fr)); gap: clamp(1.4rem, 2.4vw, 2.4rem) var(--gap); padding: 0 var(--gutter); max-width: 110rem; margin: 0 auto; }
+.shelf.is-weighted { grid-auto-flow: dense; grid-template-columns: repeat(auto-fill, minmax(clamp(12rem, 16vw, 16rem), 1fr)); }
+.shelf.is-weighted .book--big { grid-column: span 2; grid-row: span 2; }
+.book { display: flex; flex-direction: column; gap: 0.8rem; min-width: 0; }
+.book__cover { position: relative; aspect-ratio: 1; overflow: hidden; background-size: cover; background-position: center; }
+.book__cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.book__leaves { position: absolute; left: 0; right: 0; bottom: 0; display: flex; gap: 2px; height: 2px; padding: 0 0 0; opacity: 0; transition: opacity 0.3s var(--ease); }
+.book__leaves i { flex: 1; background: rgba(255,255,255,0.3); }
+.book__leaves i.is-on { background: var(--ink); }
+.book:hover .book__leaves { opacity: 1; }
+.book__place { position: absolute; left: 0.8rem; bottom: 0.9rem; font: 400 0.72rem/1.2 var(--ui); color: var(--ink); text-shadow: 0 1px 8px rgba(0,0,0,0.7); opacity: 0; transition: opacity 0.3s var(--ease); }
+.book:hover .book__place { opacity: 1; }
+.book__meta { display: grid; grid-template-columns: auto 1fr; column-gap: 0.8rem; align-items: baseline; }
+.book__n { font-size: 1.05rem; color: var(--ink-3); grid-row: span 2; }
+.book h3 { margin: 0; font: 700 1.2rem/1.2 var(--display); }
+.book--big h3 { font-size: 1.6rem; }
+.book__line { display: flex; align-items: center; gap: 0.7rem; margin-top: 0.25rem; font: 400 0.72rem/1 var(--ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+.book--empty .book__cover { display: grid; place-items: center; border: 1px solid var(--line); font: 300 0.85rem var(--ui); color: var(--ink-3); }
+
+@media (max-width: 767px) {
+  .slices { height: 72vh; min-height: 0; }
+  .slice__name { writing-mode: vertical-rl; transform: rotate(180deg); left: 0.5rem; top: auto; bottom: 9rem; opacity: 0.8; }
+  .shelf, .shelf.is-weighted { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .book h3 { font-size: 1.02rem; }
+  .shelf-head { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script>
+const { V, esc, roman, range, first, last, days, print, ticks, coverOf, colophon, glow, chrome } = Vol;
+const big = [...V.chapters].map((c) => c.photos.length).sort((a, b) => b - a)[Math.min(2, V.chapters.length - 1)];
+const full = V.chapters.map((c, i) => ({ c, i })).filter(({ c }) => c.photos.length);
+
+const slices = full.map(({ c, i }) => { const p = coverOf(c); return `<a class="slice" href="#ch-${i}" data-c="${i}"><img src="${p.url}/960.webp" alt="" style="object-position:${50}% 50%"><span class="slice__name">${roman(i + 1)} · ${esc(c.title)}</span></a>`; }).join('');
+const books = V.chapters.map((c, i) => {
+  if (!c.photos.length) return `<div class="book book--empty" id="ch-${i}"><div class="book__cover">Still on their way</div><div class="book__meta"><span class="book__n numeral">${roman(i + 1)}</span><h3>${esc(c.title)}</h3></div></div>`;
+  const p = coverOf(c), isBig = c.photos.length >= big && c.photos.length >= 12;
+  return `<a class="book${isBig ? ' book--big' : ''}" href="#" id="ch-${i}" data-c="${i}">
+    <div class="book__cover" style="background-image:url(${p.ph})"><img src="${p.url}/960.webp" alt="${esc(c.title)}" loading="lazy"><span class="book__place"></span><span class="book__leaves">${c.photos.map((_, k) => `<i${k === c.coverIndex ? ' class="is-on"' : ''}></i>`).join('')}</span></div>
+    <div class="book__meta"><span class="book__n numeral">${roman(i + 1)}</span><h3>${esc(c.title)}</h3><span class="book__line">${Vol.chapterWhen(c, true)} · ${c.photos.length} ${ticks(c.films)}</span></div></a>`;
+}).join('');
+
+document.body.insertAdjacentHTML('beforeend', `<header class="slices">${slices}
+  <div class="slices__title"><div><h1>${esc(V.title)}</h1><p>${esc(V.excerpt)}</p></div>
+  <dl class="facts"><div><dt>Chapters</dt><dd>${V.chapters.length}</dd></div><div><dt>Frames</dt><dd>${V.frames}</dd></div>${Vol.visits.length > 1 ? `<div><dt>Visits</dt><dd>${Vol.visits.length}</dd></div>` : `<div><dt>Days</dt><dd>${days.length}</dd></div>`}</dl></div></header>
+  <div class="shelf-head"><h2 class="kicker">${Vol.when(days)}</h2><div class="option" role="group" aria-label="Sketch option"><button aria-pressed="false" data-o="even">Even grid</button><button aria-pressed="true" data-o="weighted">Weighted by frames</button></div></div>
+  <section class="shelf is-weighted">${books}</section>` + colophon());
+chrome('b-covers.html');
+
+// Leafing: the pointer's place across a cover picks the print.
+document.querySelectorAll('.book[data-c]').forEach((el) => {
+  const c = V.chapters[+el.dataset.c], img = el.querySelector('img'), leaves = el.querySelectorAll('.book__leaves i'), place = el.querySelector('.book__place');
+  let at = c.coverIndex, warmed = false;
+  const set = (k) => {
+    if (k === at) return; at = k;
+    img.src = `${c.photos[k].url}/960.webp`;
+    leaves.forEach((l, j) => l.classList.toggle('is-on', j === k));
+    place.textContent = c.photos[k].place || '';
+    glow(c.photos[k]);
+  };
+  el.addEventListener('pointerenter', () => {
+    if (!warmed) { c.photos.forEach((p) => { new Image().src = `${p.url}/960.webp`; }); warmed = true; }
+    glow(c.photos[at]);
+  });
+  el.querySelector('.book__cover').addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    const r = e.currentTarget.getBoundingClientRect();
+    set(Math.min(c.photos.length - 1, Math.floor((e.clientX - r.left) / r.width * c.photos.length)));
+  });
+  el.addEventListener('pointerleave', () => set(c.coverIndex));
+  el.addEventListener('click', (e) => e.preventDefault());
+});
+document.querySelectorAll('.slice').forEach((s) => s.addEventListener('pointerenter', () => glow(coverOf(V.chapters[+s.dataset.c]))));
+document.querySelectorAll('.option button').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('.option button').forEach((x) => x.setAttribute('aria-pressed', x === b));
+  document.querySelector('.shelf').classList.toggle('is-weighted', b.dataset.o === 'weighted');
+}));
+glow(coverOf(full[0].c));
+</script>
+</body>
+</html>

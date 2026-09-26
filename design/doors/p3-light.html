@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P3 · By the light</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap">
+<link rel="stylesheet" href="doors.css">
+<style>
+/* P3 · By the light. Every place hung as a plate with a museum label beside it — nothing laid
+   over the photograph — three to a screen. The collection is hung by the hour its light was
+   made in, morning to night; the ground warms and cools as the day passes. A voyage's parts
+   hang among the others, each carrying its voyage's name on the label. */
+body { transition: background-color 1.4s var(--ease); }
+.band { display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; padding: clamp(6rem, 12vh, 8rem) var(--gutter) clamp(1.6rem, 4vh, 2.6rem); }
+.band h1 { margin: 0; font: 700 clamp(2.4rem, 5vw, 4.2rem)/1 var(--display); }
+.band .poem { margin-top: 0.7rem; }
+.hang-by { display: flex; align-items: baseline; gap: 0.9rem; font: 500 0.66rem/1 var(--ui); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.hang-by button { border: 0; background: none; padding: 0 0 4px; font: inherit; letter-spacing: inherit; text-transform: inherit; color: var(--ink-3); border-bottom: 1px solid transparent; cursor: pointer; }
+.hang-by button[aria-pressed="true"] { color: var(--ink); border-color: var(--ink-3); }
+
+.cover-plate { position: relative; display: block; margin-bottom: clamp(3rem, 8vh, 5rem); }
+.cover-plate .pic { width: 100%; aspect-ratio: 3 / 1; min-height: 24rem; }
+.cover-plate .pic::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(12,12,12,0) 50%, rgba(12,12,12,0.6)); }
+.cover-plate__words { position: absolute; z-index: 1; left: var(--gutter); bottom: clamp(1rem, 2.6vw, 2.2rem); display: grid; gap: 0.5rem; }
+.cover-plate h1 { margin: 0; font: 700 clamp(2.6rem, 6vw, 5rem)/1 var(--display); }
+
+.hour { display: grid; grid-template-columns: 60vw 1fr; column-gap: clamp(1.6rem, 3vw, 3rem); padding: 0 var(--gutter) 0 0; margin-bottom: clamp(3rem, 8vh, 5.5rem); }
+.hour__name { grid-column: 1 / -1; padding-left: calc(60vw + clamp(1.6rem, 3vw, 3rem)); margin: 0 0 1.2rem; font: italic 400 clamp(1.4rem, 2vw, 1.9rem)/1.1 var(--display); color: var(--ink-2); }
+.hour__name small { display: block; margin-top: 0.4rem; font: 500 0.62rem/1 var(--ui); font-style: normal; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); }
+.hour__name button { margin-left: 0.6rem; border: 0; background: none; font: inherit; color: var(--ink-3); cursor: pointer; }
+.plate { display: contents; }
+.plate__pic { grid-column: 1; display: block; margin-bottom: 12px; }
+.plate__pic .pic { width: 100%; aspect-ratio: 3 / 1; }
+.label { grid-column: 2; align-self: end; margin-bottom: 12px; display: grid; gap: 0.35rem; padding-bottom: 0.3rem; max-width: 24rem; }
+.label h3 { margin: 0; font: 700 clamp(1.25rem, 1.7vw, 1.55rem)/1.15 var(--display); }
+.label .kicker a { border-bottom: 1px solid var(--line); padding-bottom: 1px; }
+.label .kicker a:hover { color: var(--ink-2); }
+.label .poem { font-size: clamp(0.92rem, 1.05vw, 1.02rem); }
+.label .air { margin-top: 0.2rem; }
+.plate__pic .pic > img { transition: opacity 0.9s var(--ease), filter 0.5s var(--ease); }
+.hour:hover .plate__pic .pic > img { filter: brightness(0.8); }
+.hour .plate__pic:hover .pic > img { filter: none; }
+.hour { content-visibility: auto; contain-intrinsic-size: auto 900px; }
+
+@media (max-width: 767px) {
+  .band { flex-direction: column; align-items: flex-start; }
+  .hour { grid-template-columns: 1fr; padding: 0 var(--gutter); }
+  .hour__name, .plate__pic, .label { grid-column: 1; }
+  .hour__name { padding-left: 0; }
+  .plate__pic .pic { aspect-ratio: 16 / 10; }
+  .label { margin-bottom: 2.4rem; }
+}
+</style>
+</head>
+<body>
+<script src="data.js"></script>
+<script src="depth.js"></script>
+<script src="doors.js"></script>
+<script>
+const { D, voyage, esc, air, pic, href, chrome, mast, wake } = Doors;
+const SK = 'p3-light.html';
+const HOURS = ['Morning light', 'High sun', 'Afternoon light', 'Low sun', 'Golden hour', 'Blue hour', 'After dark'];
+const TINT = { 'Morning light': '#131619', 'High sun': '#161616', 'Afternoon light': '#171614', 'Low sun': '#191613', 'Golden hour': '#1b1713', 'Blue hour': '#12141a', 'After dark': '#101012', dealt: '#151515', year: '#151515', rest: '#151515' };
+
+// Every place that opens a book: single voyages, and each part (with its voyage's name).
+const places = voyage ? voyage.parts.map((p) => ({ ...p, of: null }))
+  : D.flatMap((v) => v.parts ? v.parts.map((p) => ({ ...p, of: v })) : [{ ...v, of: null }]);
+const plate = (d) => `<article class="plate"><a class="plate__pic" href="${href(d, SK)}" data-door="${esc(d.slug)}">${pic(d)}</a>
+  <div class="label">${d.of ? `<p class="kicker"><a href="${SK}?at=${esc(d.of.slug)}">${esc(d.of.title)}</a></p>` : ''}<a href="${href(d, SK)}"><h3>${esc(d.title)}</h3></a><p class="poem">${esc(d.excerpt)}</p><p class="air">${air(d)}</p></div></article>`;
+const hour = (name, list, key, extra = '') => `<section class="hour" data-tint="${esc(key || name)}"><h2 class="hour__name">${name}${extra}</h2>${list.map(plate).join('')}</section>`;
+
+function deal() { const pool = places.filter((p) => p.atmos); return pool.sort(() => Math.random() - 0.5).slice(0, 3); }
+function hangByHour() {
+  let h = '';
+  if (!voyage) h += hour('Three, for this visit', deal(), 'dealt', ' <button type="button" data-deal aria-label="Deal another three">↻</button>');
+  for (const n of HOURS) { const list = places.filter((p) => p.atmos?.light === n); if (list.length) h += hour(n, list); }
+  const rest = places.filter((p) => !p.atmos);
+  if (rest.length) h += hour('Still on their way', rest, 'rest');
+  return h;
+}
+function hangByYear() {
+  const years = new Map();
+  for (const p of places) { const y = (p.atmos?.when.match(/\d{4}/) || [String(p.date).slice(0, 4)])[0]; if (!years.has(y)) years.set(y, []); years.get(y).push(p); }
+  return [...years].sort((a, b) => b[0].localeCompare(a[0])).map(([y, list]) => hour(y, list, 'year')).join('');
+}
+
+let head = mast();
+if (voyage) {
+  head += `<a class="cover-plate" href="#" data-door="${esc(voyage.slug)}" onclick="return false">${pic(voyage, { eager: true })}<div class="cover-plate__words"><h1>${esc(voyage.title)}</h1><p class="poem">${esc(voyage.excerpt)}</p></div></a>`;
+  head += `<div class="band" style="padding-top:0"><p class="kicker">A day in ${esc(voyage.title)}, morning to night</p><div class="hang-by">Hang by <button type="button" data-by="hour" aria-pressed="true">the hour</button><button type="button" data-by="year" aria-pressed="false">the year</button></div></div>`;
+} else {
+  head += `<header class="band"><div><h1>Voyage</h1><p class="poem">Through boundless paths we roam.</p></div><div class="hang-by">Hang by <button type="button" data-by="hour" aria-pressed="true">the hour</button><button type="button" data-by="year" aria-pressed="false">the year</button></div></header>`;
+}
+document.body.insertAdjacentHTML('beforeend', head + '<main id="wall"></main>');
+const wall = document.getElementById('wall');
+function hang(by) {
+  const go = () => { wall.innerHTML = by === 'year' ? hangByYear() : hangByHour(); watch(); };
+  if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.startViewTransition(go); else go();
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-by]');
+  if (b) { document.querySelectorAll('[data-by]').forEach((x) => x.setAttribute('aria-pressed', x === b)); hang(b.dataset.by); }
+  if (e.target.closest('[data-deal]')) {
+    const sec = e.target.closest('.hour'); const three = deal();
+    const go = () => { sec.querySelectorAll('.plate').forEach((p) => p.remove()); sec.insertAdjacentHTML('beforeend', three.map(plate).join('')); };
+    document.startViewTransition ? document.startViewTransition(go) : go();
+  }
+});
+
+// The ground follows the hour in view; the plate under the pointer breathes.
+let io;
+function watch() {
+  io?.disconnect();
+  io = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) document.body.style.backgroundColor = TINT[e.target.dataset.tint] || '#151515'; }, { rootMargin: '-45% 0px -45% 0px' });
+  wall.querySelectorAll('.hour').forEach((s) => io.observe(s));
+  wall.querySelectorAll('.plate__pic').forEach((a) => a.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') wake(a); }));
+}
+hang('hour');
+chrome(SK);
+</script>
+</body>
+</html>

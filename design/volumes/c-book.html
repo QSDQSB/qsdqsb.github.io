@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Volume sketch C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Playfair+Display:wght@700&display=swap">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* C · One book. The whole voyage as a single Photobook: chapter title cards between the parts, a
+   rail at the edge that is the volume's table of contents, and the light changing with each part. */
+.volume { max-width: 104rem; margin: 0 auto; padding: 0 var(--gutter); }
+.day { display: flex; align-items: baseline; justify-content: center; gap: 1rem; padding-top: clamp(4rem, 10vh, 7rem); }
+.day::before, .day::after { content: ""; flex: 0 1 6rem; height: 1px; background: var(--line); align-self: center; }
+.day .numeral { font-size: 1rem; color: var(--ink-3); }
+.card { display: grid; justify-items: center; text-align: center; gap: 0.6rem; padding: clamp(3rem, 9vh, 6rem) 0 clamp(2.4rem, 7vh, 4.5rem); }
+.card__n { font-size: clamp(3.2rem, 7vw, 5.6rem); line-height: 1; color: var(--ink-3); opacity: 0.55; }
+.card h2 { margin: 0; font: 700 clamp(1.9rem, 3.6vw, 3rem)/1.1 var(--display); }
+.card p { margin: 0; font: 300 1.02rem/1.45 var(--ui); color: var(--ink-3); max-width: 32rem; }
+.card__line { display: flex; align-items: center; gap: 0.8rem; margin-top: 0.4rem; font: 500 0.66rem/1 var(--ui); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); }
+.card--empty { opacity: 0.6; }
+
+.row { display: flex; gap: var(--gap); margin-bottom: var(--gap); }
+.row .print { flex: var(--r) 1 0; aspect-ratio: var(--r); min-width: 0; }
+.row--spread { justify-content: center; }
+.row--spread .print { flex: 0 1 auto; width: min(100%, calc(86vh * var(--r))); }
+
+/* The rail: one segment per chapter, as long as its frames; the one being read fills as it goes. */
+.rail { position: fixed; z-index: 20; right: clamp(0.6rem, 1.4vw, 1.4rem); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 5px; height: 56vh; padding: 0 0 0 1rem; }
+.rail a { position: relative; flex: var(--n) 1 0; width: 2px; background: rgba(255,255,255,0.16); }
+.rail a i { position: absolute; left: 0; top: 0; width: 100%; height: calc(var(--p, 0) * 100%); background: var(--ink); }
+.rail a.is-done i { height: 100%; background: var(--ink-3); }
+.rail a span { position: absolute; right: 1.1rem; top: 50%; transform: translateY(-50%); white-space: nowrap; font: 400 0.74rem/1 var(--ui); color: var(--ink-2); opacity: 0; transition: opacity 0.25s var(--ease); pointer-events: none; }
+.rail a span b { font: 400 0.8rem/1 var(--didot); color: var(--ink-3); margin-right: 0.45rem; }
+.rail:hover a span { opacity: 0.9; }
+.rail a.is-on span { opacity: 1; color: var(--ink); }
+.rail::before { content: ""; position: absolute; inset: -1.4rem -0.8rem -1.4rem -14rem; background: linear-gradient(to left, rgba(12,12,14,0.8), transparent); opacity: 0; transition: opacity 0.3s var(--ease); pointer-events: none; }
+.rail:hover::before { opacity: 1; }
+.now { display: none; }
+
+@media (max-width: 767px) {
+  .rail { top: 0; right: 0; left: 0; transform: none; flex-direction: row; height: 2px; gap: 2px; padding: 0; }
+  .rail a { width: auto; height: 2px; }
+  .rail a i { height: 100%; width: calc(var(--p, 0) * 100%); }
+  .rail a span, .rail::before { display: none; }
+  .now { display: block; position: fixed; z-index: 21; top: 10px; left: 50%; transform: translate(-50%, -6px); padding: 6px 12px; border-radius: 999px; background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-edge); font: 500 0.64rem/1 var(--ui); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-2); opacity: 0; transition: opacity 0.4s var(--ease), transform 0.4s var(--ease); white-space: nowrap; }
+  .now.is-on { opacity: 1; transform: translate(-50%, 0); }
+  .row:not(.row--spread) { flex-wrap: wrap; }
+  .row--triple .print:first-child { flex-basis: 100%; }
+}
+</style>
+</head>
+<body>
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script>
+const { V, esc, roman, dayLabel, days, print, ticks, coverOf, cover, colophon, glow, chrome, bookRows } = Vol;
+let html = '', lastDay = null;
+const sz = { spread: '(min-width: 768px) 90vw, 100vw', pair: '(min-width: 768px) 50vw, 50vw', triple: '(min-width: 768px) 34vw, 100vw' };
+V.chapters.forEach((c, i) => {
+  const day = c.photos.length ? c.first : null;
+  if (day && day !== lastDay) { const dl = dayLabel(day); html += `<div class="day"><span class="kicker">${dl.label}</span><span class="numeral">Day ${dl.n}</span></div>`; lastDay = day; }
+  html += `<section class="chapter" id="ch-${i}" data-c="${i}"><header class="card${c.photos.length ? '' : ' card--empty'}"><span class="card__n numeral">${roman(i + 1)}</span><h2>${esc(c.title)}</h2><p>${esc(c.excerpt)}</p>
+    <span class="card__line">${c.photos.length ? `${Vol.chapterWhen(c)} · ${c.photos.length} frames ${ticks(c.films)}` : 'Still on their way'}</span></header>`;
+  for (const row of bookRows(c.photos)) {
+    html += `<div class="row row--${row.kind}">${row.items.map((k) => print(c.photos[k], { sizes: sz[row.kind], style: `--r:${c.photos[k].ratio}` })).join('')}</div>`;
+  }
+  html += '</section>';
+});
+const rail = V.chapters.map((c, i) => c.photos.length ? `<a href="#ch-${i}" data-c="${i}" style="--n:${Math.max(c.photos.length, 3)}"><i></i><span><b>${roman(i + 1)}</b>${esc(c.title)}</span></a>` : '').join('');
+document.body.insertAdjacentHTML('beforeend', cover() + `<main class="volume">${html}</main>` + colophon() + `<nav class="rail" aria-label="Chapters">${rail}</nav><p class="now" aria-hidden="true"></p>`);
+chrome('c-book.html');
+
+// Where the reader is: each chapter's share read, the one in view, and its light.
+const sections = [...document.querySelectorAll('.chapter')], marks = new Map([...document.querySelectorAll('.rail a')].map((a) => [a.dataset.c, a]));
+const now = document.querySelector('.now');
+let current = null, nowTimer;
+function track() {
+  const mid = innerHeight * 0.5;
+  let at = null;
+  for (const s of sections) {
+    const r = s.getBoundingClientRect(), a = marks.get(s.dataset.c);
+    const p = Math.min(1, Math.max(0, (mid - r.top) / r.height));
+    if (a) { a.style.setProperty('--p', p.toFixed(3)); a.classList.toggle('is-done', p >= 1); }
+    if (r.top <= mid && r.bottom > mid) at = s.dataset.c;
+  }
+  if (at !== current) {
+    current = at;
+    marks.forEach((a, k) => a.classList.toggle('is-on', k === at));
+    if (at != null) {
+      const c = V.chapters[+at];
+      glow(coverOf(c));
+      now.textContent = `${roman(+at + 1)} · ${c.title}`;
+      now.classList.add('is-on'); clearTimeout(nowTimer); nowTimer = setTimeout(() => now.classList.remove('is-on'), 1800);
+    }
+  }
+}
+addEventListener('scroll', () => requestAnimationFrame(track), { passive: true });
+track();
+glow(coverOf(V.chapters.find((c) => c.photos.length)));
+</script>
+</body>
+</html>

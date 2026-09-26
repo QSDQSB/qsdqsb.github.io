@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P1 · The hang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Playfair+Display:wght@700&display=swap">
+<link rel="stylesheet" href="doors.css">
+<style>
+/* P1 · The hang. Doors laid as the Photobook lays prints: a spread, then a pair, again.
+   A voyage with parts is a wing: its own door full width, two of its rooms beneath, and the way in. */
+.band { padding: clamp(6rem, 12vh, 8rem) var(--gutter) clamp(2rem, 5vh, 3.5rem); }
+.band h1 { margin: 0; font: 700 clamp(2.4rem, 5vw, 4.2rem)/1 var(--display); }
+.band .poem { margin-top: 0.7rem; }
+
+.spread { position: relative; display: block; margin-bottom: var(--gap); }
+.spread .pic { width: 100%; aspect-ratio: 3 / 1; max-height: 80vh; }
+.spread .pic::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(12,12,12,0) 52%, rgba(12,12,12,0.62)); pointer-events: none; }
+.spread__words { position: absolute; z-index: 2; left: var(--gutter); right: var(--gutter); bottom: clamp(1rem, 2.6vw, 2.2rem); display: grid; gap: 0.45rem; max-width: 46rem; }
+.spread h2 { margin: 0; font: 700 clamp(1.9rem, 3.8vw, 3.4rem)/1.05 var(--display); text-shadow: 0 1px 14px rgba(0,0,0,0.35); }
+.spread .air { color: var(--ink-2); }
+
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); padding: 0 var(--gutter); margin: clamp(1.4rem, 3vw, 2.6rem) 0 clamp(3rem, 7vw, 6rem); }
+.leaf { display: grid; gap: 0.5rem; align-content: start; }
+.leaf .pic { aspect-ratio: 2 / 1; margin-bottom: 0.6rem; }
+.leaf h3 { margin: 0; font: 700 clamp(1.25rem, 1.8vw, 1.6rem)/1.15 var(--display); }
+.leaf .kicker { margin-bottom: -0.2rem; }
+
+.wing-in { display: flex; justify-content: flex-end; padding: 0 var(--gutter); margin: calc(-1 * clamp(2rem, 5vw, 4.4rem)) 0 clamp(3rem, 7vw, 6rem); }
+.wing-in a { font: 500 0.7rem/1 var(--ui); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-2); border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+.wing-in a:hover { color: var(--ink); border-color: var(--ink-3); }
+
+/* Approach: the poem brightens, the picture breathes (depth, on intent). */
+.spread .poem, .leaf .poem { transition: color 0.4s var(--ease); }
+.spread:hover .poem, .leaf:hover .poem, a:focus-visible .poem { color: var(--ink); }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .spread__words, .leaf h3, .leaf .poem { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 60%; }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  }
+}
+.spread, .pair { content-visibility: auto; contain-intrinsic-size: auto 480px; }
+
+@media (max-width: 767px) {
+  .spread .pic { aspect-ratio: 4 / 3; }
+  .pair { grid-template-columns: 1fr; gap: 2.2rem; }
+  .leaf .pic { aspect-ratio: 16 / 9; }
+  .wing-in { margin-top: -1.6rem; }
+}
+</style>
+</head>
+<body>
+<script src="data.js"></script>
+<script src="depth.js"></script>
+<script src="doors.js"></script>
+<script>
+const { D, at, voyage, esc, air, pic, href, chrome, mast, wake, sleep } = Doors;
+const SK = 'p1-hang.html';
+let first = true;
+const spread = (d, kicker) => { const e = first; first = false; return `<a class="spread" href="${href(d, SK)}" data-door="${esc(d.slug)}">${pic(d, { eager: e })}
+  <div class="spread__words">${kicker ? `<p class="kicker">${esc(kicker)}</p>` : ''}<h2>${esc(d.title)}</h2><p class="poem">${esc(d.excerpt)}</p><p class="air">${air(d)}</p></div></a>`; };
+const leaf = (d, kicker) => `<a class="leaf" href="${href(d, SK)}" data-door="${esc(d.slug)}">${pic(d)}${kicker ? `<p class="kicker">${esc(kicker)}</p>` : ''}<h3>${esc(d.title)}</h3><p class="poem">${esc(d.excerpt)}</p><p class="air">${air(d)}</p></a>`;
+const pair = (a, b, k) => `<div class="pair">${leaf(a, k)}${b ? leaf(b, k) : ''}</div>`;
+
+let html = mast();
+if (!voyage) {
+  html += `<header class="band"><h1>Voyage</h1><p class="poem">Through boundless paths we roam.</p></header>`;
+  // Singles alternate spread · pair; a wing is its door, two rooms, and the way in.
+  let beat = 0, held = [];
+  const flush = () => { if (held.length === 2) { html += pair(held[0], held[1]); held = []; } };
+  for (const v of D) {
+    if (v.parts) {
+      if (held.length) { html += spread(held.pop()); }
+      html += spread(v);
+      const rooms = v.parts.filter((p) => p.atmos).slice(0, 2);
+      html += pair(rooms[0] || v.parts[0], rooms[1] || v.parts[1], v.title);
+      html += `<div class="wing-in"><a href="${href(v, SK)}">Every room of ${esc(v.title)} ›</a></div>`;
+      beat = 1;
+      continue;
+    }
+    if (beat % 2 === 0) { html += spread(v); beat++; }
+    else { held.push(v); if (held.length === 2) { flush(); beat++; } }
+  }
+  if (held.length) html += spread(held[0]);
+} else {
+  // A wing on its own: the voyage's door is the cover; its rooms follow, spread · pair · pair.
+  html += spread(voyage);
+  const ps = voyage.parts; let k = 0, beat = 0;
+  while (k < ps.length) {
+    if (beat % 3 === 0) { html += spread(ps[k]); k++; }
+    else { html += pair(ps[k], ps[k + 1]); k += 2; }
+    beat++;
+  }
+}
+document.body.insertAdjacentHTML('beforeend', html);
+chrome(SK);
+
+// The picture under the pointer breathes; one at a time.
+document.querySelectorAll('a[data-door]').forEach((a) => {
+  a.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') wake(a); });
+});
+</script>
+</body>
+</html>

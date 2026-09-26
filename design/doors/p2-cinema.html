@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P2 · The cinema</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Playfair+Display:wght@700&display=swap">
+<link rel="stylesheet" href="doors.css">
+<style>
+/* P2 · The cinema. Every door a full-bleed scene in its authored 3:1, edge to edge, the page's
+   dark as the letterbox. The scene at the centre of the screen is lit and breathing (depth);
+   the ones around it rest, dimmed and still, so two or three are always in view. */
+.scene { position: relative; display: block; margin-bottom: 3px; }
+.scene .pic { width: 100%; aspect-ratio: 3 / 1; }
+.scene .pic > img, .scene .pic .hero-depth-canvas { filter: brightness(0.5) saturate(0.75); transition: filter 0.9s var(--ease), opacity 0.9s var(--ease); }
+.scene.is-lit .pic > img, .scene.is-lit .pic .hero-depth-canvas { filter: none; }
+.scene .pic::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(12,12,12,0) 50%, rgba(12,12,12,0.6)); pointer-events: none; }
+.scene__words { position: absolute; z-index: 2; left: var(--gutter); right: var(--gutter); bottom: clamp(1rem, 2.6vw, 2.4rem); display: grid; gap: 0.45rem; max-width: 50rem; }
+.scene h2 { margin: 0; font: 700 clamp(2rem, 4.4vw, 4rem)/1.02 var(--display); color: var(--ink-2); transition: color 0.9s var(--ease); }
+.scene .poem { opacity: 0.7; transition: opacity 0.9s var(--ease); }
+.scene .air { opacity: 0; transform: translateY(6px); transition: opacity 0.6s var(--ease) 0.3s, transform 0.6s var(--ease) 0.3s; color: var(--ink-2); }
+.scene.is-lit h2 { color: var(--ink); }
+.scene.is-lit .poem { opacity: 1; }
+.scene.is-lit .air { opacity: 1; transform: none; }
+.scene--cover .pic { aspect-ratio: 3 / 1; min-height: 26rem; }
+.scene--cover h2 { font-size: clamp(2.6rem, 6vw, 5rem); }
+.reel-head { padding: clamp(6rem, 12vh, 8rem) var(--gutter) clamp(2rem, 4vh, 3rem); }
+.reel-head h1 { margin: 0; font: 700 clamp(2.4rem, 5vw, 4.2rem)/1 var(--display); }
+.reel-head .poem { margin-top: 0.7rem; }
+.end { height: 40vh; }
+
+@media (max-width: 767px) {
+  .scene .pic, .scene--cover .pic { aspect-ratio: 5 / 4; min-height: 0; }
+}
+</style>
+</head>
+<body>
+<script src="data.js"></script>
+<script src="depth.js"></script>
+<script src="doors.js"></script>
+<script>
+const { D, voyage, esc, air, pic, href, chrome, mast, wake } = Doors;
+const SK = 'p2-cinema.html';
+let first = true;
+const scene = (d, cls = '') => { const e = first; first = false; return `<a class="scene ${cls}" href="${href(d, SK)}" data-door="${esc(d.slug)}">${pic(d, { eager: e })}
+  <div class="scene__words"><h2>${esc(d.title)}</h2><p class="poem">${esc(d.excerpt)}</p><p class="air">${air(d)}</p></div></a>`; };
+
+let html = mast();
+if (!voyage) {
+  html += `<header class="reel-head"><h1>Voyage</h1><p class="poem">Through boundless paths we roam.</p></header>`;
+  for (const v of D) html += scene(v);
+} else {
+  html += scene(voyage, 'scene--cover');
+  for (const p of voyage.parts) html += scene(p);
+}
+html += '<div class="end"></div>';
+document.body.insertAdjacentHTML('beforeend', html);
+chrome(SK);
+
+// The scene nearest the middle of the screen is lit, and breathes.
+const scenes = [...document.querySelectorAll('.scene')];
+let lit = null;
+function light() {
+  const mid = innerHeight * 0.5;
+  let best = null, dist = Infinity;
+  for (const s of scenes) {
+    const r = s.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight) continue;
+    const d = Math.abs((r.top + r.bottom) / 2 - mid);
+    if (d < dist) { dist = d; best = s; }
+  }
+  if (best && best !== lit) {
+    lit?.classList.remove('is-lit');
+    best.classList.add('is-lit');
+    lit = best;
+    clearTimeout(light.t);
+    light.t = setTimeout(() => wake(best), 250); // wake the depth once the scroll settles on it
+  }
+}
+addEventListener('scroll', () => requestAnimationFrame(light), { passive: true });
+addEventListener('resize', light);
+light();
+</script>
+</body>
+</html>
