@@ -1,11 +1,11 @@
 /**
  * The colophon's field: every dot of the voyage (24 from each frame, lib/dots.mjs) packed into one
- * carpet, the greys first, then the colours in order of hue (starting after the widest gap in this
+ * seamless carpet of squares, no gaps between, the greys first, then the colours in order of hue (starting after the widest gap in this
  * voyage's hues, so no family is split across the two ends), each column light above and dark below.
  * Under the pointer a dot lights its frame's twenty-four and names the frame; a click opens it.
  */
 
-const CELL = 10;
+const CELL = 9;
 // Grey only below chroma 0.015, or 0.02 near black, where a hue is mostly noise (lib/palette.mjs isGrey):
 // OKLab's chroma shrinks towards black, so a higher line would take every dark navy for grey.
 const isGrey = (L, C) => C < 0.015 || (L < 0.18 && C < 0.02);
@@ -60,7 +60,7 @@ export function field(frames, onOpen) {
       if (d.x == null) continue;
       ctx.globalAlpha = on < 0 || d.i === on ? 1 : 0.2;
       ctx.fillStyle = `#${d.hex}`;
-      ctx.beginPath(); ctx.arc(d.x * CELL + CELL / 2, d.y * CELL + CELL / 2, CELL * 0.38, 0, 2 * Math.PI); ctx.fill();
+      ctx.fillRect(d.x * CELL, d.y * CELL, CELL, CELL);
     }
     ctx.globalAlpha = 1;
   }

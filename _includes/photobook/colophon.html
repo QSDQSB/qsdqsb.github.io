@@ -63,7 +63,7 @@
       </div>
       <div class="photobook-field">
         <canvas role="img" aria-label="Every colour of the voyage, twenty-four from each frame, gathered by colour"></canvas>
-        <p class="photobook-field__note">Twenty-four colours from every frame, gathered: the greys first, then the colours in the order of the wheel; light above, dark below.</p>
+        <p class="photobook-field__note">Twenty-four colours from every frame, woven together: the greys first, then the colours in the order of the wheel; light above, dark below.</p>
       </div>
       {%- assign drift_from = include.book.photos[include.book.book.cover] | default: include.book.photos.first %}
       <p class="photobook-colophon__onward"><a href="{{ '/drift/' | relative_url }}?from={{ include.book.gallery | append: '/' | append: drift_from.slug | url_encode }}">Drift from here <span aria-hidden="true">→</span></a><a href="{{ '/light/' | relative_url }}">The colour of light <span aria-hidden="true">→</span></a></p>
