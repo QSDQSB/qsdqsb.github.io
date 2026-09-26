@@ -106,3 +106,10 @@ place). The old `gallery/` tree is retired and no thumbnails are generated;
 
 `/build`, `/serve`, `/geocode`, `/responsive-audit`, `/style-check`,
 `/content-check`, `/js-sync`, `/check-vars`, `/house-style`, `/commit`.
+
+## Ruby on Cloudflare
+
+`.ruby-version` names **3.4.4**, the Ruby that Cloudflare Pages' v3 build image carries ready-made.
+Naming any other version makes every deploy compile it from source (about three minutes). Ruby 3.4
+no longer ships `csv`, `base64`, `bigdecimal`, `logger` and `ostruct` as default gems, so the
+Gemfile names them. When Cloudflare moves its default, move `.ruby-version` with it.
