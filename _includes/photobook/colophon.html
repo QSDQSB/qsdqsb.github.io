@@ -4,7 +4,7 @@
   Beneath them, when the frames' palettes are known, the voyage's colours: its barcode, a sliver
   per frame in the book's order, each shaded top to bottom as its frame is (a sliver opens its
   frame), the voyage's signature (three to five colours pooled from its frames, each copied on a
-  click) with its reading and its colour line on the wheel of hue, the field of every frame's
+  click) and its colour line on the wheel of hue, the field of every frame's
   twenty-four dots gathered by colour (assets/js/photobook/field.js), and the way on to the pages that
   look across every voyage by colour (Drift, from this book's cover; The Colour of Light).
 {%- endcomment -%}
@@ -52,7 +52,6 @@
       <div class="photobook-signature">
         <div>
           <div class="photobook-palette">{% for s in colour.palette %}<button type="button" style="--c:{{ s.hex }}" data-hex="{{ s.hex }}" data-tip="Copy" aria-label="{{ s.hex | upcase }}, {{ s.pc }}%{% if s.accent %}, accent{% endif %}: copy"><i></i>{{ s.hex | remove: "#" | upcase }}<b>{{ s.pc }}</b>{% if s.accent %}<small>accent</small>{% endif %}</button>{% endfor %}</div>
-          <p class="photobook-reading">{{ colour.reading.harmony }} · {{ colour.reading.key }} · {{ colour.reading.contrast }} contrast · {{ colour.reading.temperature }} · {{ colour.reading.saturation }}</p>
         </div>
         <svg class="photobook-wheel" viewBox="0 0 {{ w.size }} {{ w.size }}" role="img" aria-label="The voyage's colours on the wheel of hue, joined from dark to light">
           <circle cx="{{ w.c }}" cy="{{ w.c }}" r="{{ w.R }}" class="photobook-wheel__rim"/>

@@ -968,15 +968,6 @@ html.is-reordering::view-transition-group(*) {
   small { font: 500 0.55rem $barlow-font-family; letter-spacing: 0.18em; text-transform: uppercase; color: var(--photobook-ink-3); }
 }
 
-// What the colours say, in the photographer's words.
-.photobook-reading {
-  margin: 0.9rem 0 0;
-  font: 500 0.6rem $barlow-font-family;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--photobook-ink-3);
-}
-
 // The colour line: the signature on the wheel of hue, joined dark to light.
 .photobook-wheel {
   width: 5.5rem;
