@@ -212,7 +212,7 @@ export function settingsOf(p) {
 export function lightboxOf(photos) {
   return photos.map(p => ({
     slug: p.slug, frame: p.frame, url: p.url, sizes: p.sizes?.webp || [], ratio: p.ratio,
-    name: p.name, place: p.place?.name || null, city: p.place?.city || null,
+    name: p.name, alt: p.alt || p.name, place: p.place?.name || null, city: p.place?.city || null,
     shots: p.shutterCount ?? null, focal: p.focal ?? null, aperture: p.aperture ?? null, shutter: p.shutter ?? null,
     iso: p.iso ?? null, bias: p.exposureBias ?? null, camera: cameraName(p.camera), lens: lensName(p.lens),
     film: p.film ?? null, hue: p.filmHue ?? null, light: p.light, weather: p.aloft || weatherOf(p.weather, p.light), glow: p.glow, ph: p.ph, settings: settingsOf(p),
@@ -231,10 +231,21 @@ const titleOf = (gallery) => String(gallery || '').split('/').pop().split('-').f
  */
 export const isaCelsius = (ft) => Math.round(Math.max(-56.5, 15 - 1.98 * ft / 1000));
 
+/**
+ * What a photograph shows, for alt text and search engines: the owner's `alt:` when written, else
+ * the place and its city, and the film ("Tower Bridge, London — Classic Negative").
+ */
+export function altOf(p) {
+  if (typeof p.alt === 'string' && p.alt.trim()) return p.alt.trim();
+  const where = [p.place?.name || p.name, p.place?.city].filter(Boolean).join(', ');
+  return [where, p.film].filter(Boolean).join(' — ');
+}
+
 /** Add the Photobook's layer to a merged manifest. `locations` is the locate sidecar's `photos` map, if any. */
 export function bookOf(merged, locations = {}) {
   const aerial = merged.aerial && Number.isFinite(merged.aerial.altitude_ft) ? merged.aerial : null;
-  const photos = merged.photos.map(p => {
+  const photos = merged.photos.map(p => ({ ...layered(p), authoredAlt: p.alt })).map(p => ({ ...p, alt: altOf({ ...p, alt: p.authoredAlt }) }));
+  function layered(p) {
     if (aerial) {
       const film = normalizeFilm(p.settings?.filmSimulation);
       const name = merged.title || titleOf(merged.gallery) || p.frame;
@@ -250,6 +261,6 @@ export function bookOf(merged, locations = {}) {
     // A frame with no place yet is named for its voyage, never for its camera file.
     const name = place?.name || p.caption || merged.title || titleOf(merged.gallery) || p.frame;
     return { ...p, name, film, place, light, glow: glowOf(p.thumbhash), ph: placeholderOf(p.thumbhash), filmHue: filmHue(film) };
-  });
+  }
   return { ...merged, photos, book: { rows: bookRows(photos), cover: coverIndex(photos), colophon: colophonOf(photos), lightbox: lightboxOf(photos) } };
 }
