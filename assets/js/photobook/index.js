@@ -24,6 +24,7 @@ if (dataEl) {
     onOpen: (i, order, fromImg) => lb.open(i, order, fromImg),
     onLayout: (targets) => g.watch(targets),
     onScreen: (order) => lb.screen(order),
+    onPrefetch: (i) => lb.prefetch(i),
   });
   lb.openFromHash();
 }

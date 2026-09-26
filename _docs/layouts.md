@@ -82,7 +82,7 @@ cover and book (their centre on the cover's lower edge).
   a part's to its voyage, a voyage's to all voyages. Nothing sits on the cover.
 
 **Lightbox keyboard:** arrows = navigate, Space / S = slideshow, I = specs,
-F = bare print, Z (or double-click) = loupe, trackpad pinch = zoom 1–4×, Esc = back out
+F = bare print, Z (or double-click) = loupe, pinch (trackpad or two fingers) = zoom 1–4×, two-finger sideways swipe = next/previous, swipe down on a phone = close; closing morphs the print back into the book, and a print the pointer rests on is prefetched, Esc = back out
 (loupe, then bare, then close).
 
 ## Page hero overlay (`_includes/page__hero.html`)

@@ -45,7 +45,7 @@ export const weatherGlyph = (w) => {
 
 export function lightbox(frames) {
   const lb = document.getElementById('photobook-lightbox');
-  if (!lb) return { open() {}, openFromHash() {}, screen() {} };
+  if (!lb) return { open() {}, openFromHash() {}, screen() {}, prefetch() {} };
   const $ = (s) => lb.querySelector(s);
   const mat = $('.photobook-lightbox__mat'), wash = $('.photobook-lightbox__wash');
   const specsEl = $('.photobook-specs'), specsIn = $('.photobook-specs__inner');
@@ -130,7 +130,7 @@ export function lightbox(frames) {
       requestAnimationFrame(() => { settle(el, y); history.scrollRestoration = 'auto'; });
       return;
     }
-    if (lb.open) { popping = true; lb.close(); history.scrollRestoration = 'auto'; }
+    if (lb.open) { popping = true; shut(); history.scrollRestoration = 'auto'; }
     else if (location.hash) openFromHash();
   });
 
@@ -332,7 +332,7 @@ export function lightbox(frames) {
 
   const next = () => { stop(); show(pos + 1, { dir: 1 }); };
   const prev = () => { stop(); show(pos - 1, { dir: -1 }); };
-  const ACTS = { next, prev, close: () => lb.close(), specs: toggleSpecs, bare: () => bare(), play: () => (timer ? stop() : play()) };
+  const ACTS = { next, prev, close: () => shut(), specs: toggleSpecs, bare: () => bare(), play: () => (timer ? stop() : play()) };
   lb.addEventListener('click', (e) => {
     const b = e.target.closest('[data-act]');
     if (!b || !ACTS[b.dataset.act]) return;
@@ -341,10 +341,27 @@ export function lightbox(frames) {
     if (b.classList.contains('photobook-lightbox__zone')) mat.focus({ preventScroll: true });
   });
   lb.addEventListener('cancel', (e) => {
-    if (screening) return;                                     // Esc ends a screening outright
-    if (lb.classList.contains('is-zoomed')) { e.preventDefault(); setZoom(1); }
-    else if (lb.classList.contains('is-bare')) { e.preventDefault(); bare(false); }
+    e.preventDefault();
+    if (screening) shut();                                     // Esc ends a screening outright
+    else if (lb.classList.contains('is-zoomed')) setZoom(1);
+    else if (lb.classList.contains('is-bare')) bare(false);
+    else shut();
   });
+
+  // Every way out closes through here: the print shrinks back into its place in the book (a view
+  // transition, the reverse of the opening), the page behind first brought to that place unseen.
+  // A screening, or a frame not on the page, simply fades.
+  function shut() {
+    if (!lb.open) return;
+    const on = mat.querySelector('img.is-on');
+    const to = !screening && pos >= 0 && [...document.querySelectorAll(`.photobook-frame[data-i="${order[pos]}"] .photobook-frame__print img`)].find((x) => x.offsetParent);
+    if (!document.startViewTransition || still() || !on || !to) return lb.close();
+    to.closest('.photobook-frame__print').scrollIntoView({ block: 'center', behavior: 'instant' });
+    on.style.viewTransitionName = 'photobook-print';
+    const t = document.startViewTransition(() => { on.style.viewTransitionName = ''; lb.close(); to.style.viewTransitionName = 'photobook-print'; });
+    t.ready.catch(() => {});
+    t.finished.catch(() => {}).finally(() => { to.style.viewTransitionName = ''; });
+  }
   window.addEventListener('keydown', (e) => {
     if (!lb.open || e.target.matches?.('input,textarea')) return;
     const k = e.key.toLowerCase();
@@ -374,7 +391,7 @@ export function lightbox(frames) {
 
   // Touch: swipe to move, swipe up for the specs, tap to bring the tools back.
   let sx = null, sy = 0;
-  lb.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse' || e.target.closest('button:not(.photobook-lightbox__zone),.photobook-specs')) return; sx = e.clientX; sy = e.clientY; if (timer && !screening) stop(); });
+  lb.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse' || pinch || e.target.closest('button:not(.photobook-lightbox__zone),.photobook-specs')) return; sx = e.clientX; sy = e.clientY; if (timer && !screening) stop(); });
   lb.addEventListener('pointercancel', () => { sx = null; });
   lb.addEventListener('pointerup', (e) => {
     if (sx === null) return;
@@ -384,6 +401,7 @@ export function lightbox(frames) {
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) (dx < 0 ? next : prev)();
     else if (dy < -60) { if (!specOpen) toggleSpecs(); else revealSpecs(); }
     else if (dy > 60 && lb.classList.contains('has-specs')) toggleSpecs();
+    else if (dy > 90) shut();                                  // pulled down with nothing to fold: back to the book
     else if (lb.classList.contains('is-idle')) { wake(); revealSpecs(); } else { lb.classList.add('is-idle'); clearTimeout(idleT); }
   });
   // Open, nothing behind the lightbox scrolls: iOS Safari scrolls the page under `overflow: hidden`
@@ -395,8 +413,23 @@ export function lightbox(frames) {
     if (own(e)) return;
     e.preventDefault();
     // A trackpad pinch arrives as a wheel with Ctrl held (Chrome, Firefox); it zooms the print.
-    if (e.ctrlKey) { pinching(); setZoom(zoom * Math.exp(-e.deltaY * 0.012), e); }
+    if (e.ctrlKey) { pinching(); setZoom(zoom * Math.exp(-e.deltaY * 0.012), e); return; }
+    // A two-finger swipe sideways turns the page, once per gesture (its momentum is let run out).
+    if (lb.classList.contains('is-zoomed') || Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+    clearTimeout(swipeT); swipeT = setTimeout(() => { swipeX = 0; swiped = false; }, 220);
+    if (swiped) return;
+    swipeX += e.deltaX;
+    if (Math.abs(swipeX) > 60) { swiped = true; stop(); (swipeX > 0 ? next : prev)(); }
   }, { passive: false });
+  let swipeX = 0, swiped = false, swipeT = 0;
+  // Two fingers on a touch screen pinch the print, about the point between them; the gesture never
+  // turns the page.
+  let pinch = null;
+  const spread = (t) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+  const between = (t) => ({ clientX: (t[0].clientX + t[1].clientX) / 2, clientY: (t[0].clientY + t[1].clientY) / 2 });
+  lb.addEventListener('touchstart', (e) => { if (e.touches.length === 2 && !own(e)) { pinch = { d: spread(e.touches), z: zoom }; sx = null; } }, { passive: true });
+  lb.addEventListener('touchmove', (e) => { if (pinch && e.touches.length === 2) { pinching(); setZoom(pinch.z * spread(e.touches) / pinch.d, between(e.touches)); } }, { passive: true });
+  lb.addEventListener('touchend', (e) => { if (pinch && e.touches.length < 2) { pinch = null; sx = null; } }, { passive: true });
   // Safari reports the same pinch as gesture events.
   let gz = 1;
   lb.addEventListener('gesturestart', (e) => { e.preventDefault(); gz = zoom; });
@@ -429,5 +462,8 @@ export function lightbox(frames) {
     const i = slug ? frames.findIndex((p) => p.slug === slug) : -1;
     if (i >= 0) open(i);
   }
-  return { open, openFromHash, screen };
+  /** Start fetching a frame's full print before it is opened (the pointer resting on it, a finger on it). */
+  function prefetch(i) { const p = frames[i]; if (!p) return; const f = srcFor(p); if (!seen.has(f)) fetchImg(f); }
+
+  return { open, openFromHash, screen, prefetch };
 }
