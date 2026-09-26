@@ -945,6 +945,27 @@ html.is-reordering::view-transition-group(*) {
   b::after { content: "%"; color: var(--photobook-ink-3); }
 }
 
+// Onward, to the pages that look across every voyage by colour.
+.photobook-colophon__onward {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 2rem;
+  margin: 1.6rem 0 0;
+
+  a {
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--photobook-line);
+    font: 500 0.62rem $barlow-font-family;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--photobook-ink-2);
+    text-decoration: none;
+    transition: color 0.3s $cubic-bezier-smooth, border-color 0.3s $cubic-bezier-smooth;
+
+    &:hover { color: var(--photobook-ink); border-color: var(--photobook-ink-3); }
+  }
+}
+
 /* ── the end of the page ──────────────────────────────────────────────── */
 .photobook-end {
   width: 100%;
@@ -1705,6 +1726,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-sheet__order button,
   .photobook-sheet__order button::after,
   .photobook-barcode button,
+  .photobook-colophon__onward a,
   .photobook-tip,
   .photobook-lightbox__wash div,
   .photobook-lightbox__mat,
