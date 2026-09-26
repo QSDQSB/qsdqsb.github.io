@@ -43,11 +43,4 @@ if (main) {
   main.classList.add('is-developing');
 }
 
-// The closing cards take their covers only as they come near (see _includes/photobook/end.html).
-const later = document.querySelectorAll('.photobook-end .card');
-if (later.length) {
-  const io = new IntersectionObserver((seen) => {
-    for (const e of seen) if (e.isIntersecting) { e.target.style.setProperty('--bg-img', e.target.style.getPropertyValue('--bg-later')); io.unobserve(e.target); }
-  }, { rootMargin: '800px 0px' });
-  later.forEach((c) => io.observe(c));
-}
+// The closing cards' covers come in as they near: assets/js/card-covers.js.
