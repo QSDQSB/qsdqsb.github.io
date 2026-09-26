@@ -3,7 +3,8 @@
  * voyage's palette in a column; with one (#london, #prague/twilight), "QSD's Palette for London":
  * its signature (no black or white) and its colour line, then every frame as a card (the lab's
  * design): the print, its colours as blocks with the hex inside (text to select) and the share
- * beneath, its name and light, its palette as the specs panel draws it, and its own colour line. The frames lie in the book's sequence or by colour: the order worked out at build time
+ * beneath, its name and light, its palette as the specs panel draws it, and its constellation: its
+ * 24 dots on the wheel of hue. The voyage's own is every frame's, pooled into a nebula. The frames lie in the book's sequence or by colour: the order worked out at build time
  * from their 24 dots (lib/book.mjs colourOf), dark to light, like hues together. A print opens in
  * its book; ?at=<slug> marks the frame the reader came from.
  *
@@ -45,35 +46,42 @@ function srgb(L, a, b) {
   return `#${g(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s)}${g(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s)}${g(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s)}`;
 }
 
-// What the wheel shows, said once under the voyage's and on the pointer over each frame's.
-const WHEEL_NOTE = 'Its colours on the wheel of hue: the further out, the more vivid; joined from dark to light.';
-
 /** A palette as blocks: equal widths, the hex inside (text to select), the share beneath. */
 const blocks = (cs) => `<div class="palette-blocks">${cs.map(([h, pc, accent]) => `<div class="${accent ? 'is-accent' : ''}"><i style="--c:${h};--on:${ink(h)}">${h.slice(1).toUpperCase()}</i><b>${Math.round(pc * 10) / 10}%</b></div>`).join('')}</div>`;
 
 /** A palette as the specs panel draws it: a thin bar, widths tempered. */
 const bar = (cs) => `<div class="palette-card__bar" aria-hidden="true">${cs.map(([h, pc]) => `<i style="--c:${h};flex:${Math.sqrt(pc).toFixed(2)}"></i>`).join('')}</div>`;
 
-/** A palette's colour line: its colours on the wheel of hue (OKLab a–b), joined from dark to light. */
-function line(cs, size = 88) {
-  const c = size / 2, R = c - 6, k = R / 0.2;
-  // The rim: each dot the hue that lies at its angle (lightness 0.72, chroma 0.1), so a colour sits
-  // beside its own hue.
-  const ring = Array.from({ length: 24 }, (_, i) => { const t = (i / 24) * 2 * Math.PI; return `<circle cx="${(c + R * Math.cos(t)).toFixed(1)}" cy="${(c - R * Math.sin(t)).toFixed(1)}" r="1.1" class="photobook-wheel__hue" fill="${srgb(0.72, 0.1 * Math.cos(t), 0.1 * Math.sin(t))}"/>`; }).join('');
-  const pts = cs.map(([h, pc]) => { const [, a, b] = oklab(h), r = Math.hypot(a, b) * k, f = r > R ? R / r : 1; return [c + a * k * f, c - b * k * f, h, pc]; });
-  return `<svg class="photobook-wheel palette-card__wheel" viewBox="0 0 ${size} ${size}" role="img" aria-label="${WHEEL_NOTE}" data-tip="${WHEEL_NOTE}"><circle cx="${c}" cy="${c}" r="${R}" class="photobook-wheel__rim"/>${ring}
-    <polyline points="${pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ')}" class="photobook-wheel__line"/>
-    ${pts.map(([x, y, h, pc]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(1.8 + Math.sqrt(pc) * 0.55).toFixed(1)}" fill="${h}" class="photobook-wheel__dot"/>`).join('')}</svg>`;
-}
+/** A photograph's 24 dots (`rrggbbss` × 24): [hex, share]. */
+const dotsOf = (str) => { const out = []; for (let i = 0; str && i + 8 <= str.length; i += 8) out.push([`#${str.slice(i, i + 6)}`, (parseInt(str.slice(i + 6, i + 8), 16) || 1) / 255]); return out; };
 
-/** The colour line: the voyage's colours on the wheel of hue, joined from dark to light. */
-function wheel(w) {
-  if (!w) return '';
-  return `<svg class="photobook-wheel palette-page__wheel" viewBox="0 0 ${w.size} ${w.size}" aria-hidden="true">
-    <circle cx="${w.c}" cy="${w.c}" r="${w.R}" class="photobook-wheel__rim"/>
-    ${w.ring.map((r) => `<circle cx="${r.x}" cy="${r.y}" r="1.1" fill="${r.hex}" class="photobook-wheel__hue"/>`).join('')}
-    <polyline points="${w.line}" class="photobook-wheel__line"/>
-    ${w.pts.map((p) => `<circle cx="${p.x}" cy="${p.y}" r="${p.r}" fill="${p.hex}" class="photobook-wheel__dot"/>`).join('')}</svg>`;
+let skyId = 0;
+/**
+ * A constellation of colour: dots on the wheel of hue, each at its hue (the angle) and vividness
+ * (the distance from the centre, square-rooted so the muted colours of most photographs still
+ * spread), sized by its share and lit by a soft glow; the rim a thin, continuous ring of hue. A
+ * frame's 24 dots, or a voyage's hundreds, pooled into a nebula.
+ */
+function constellation(dots, { size = 88, nebula = false, label = '' } = {}) {
+  const c = size / 2, R = c - 3, id = `sky${skyId++}`;
+  const rim = Array.from({ length: 72 }, (_, i) => {
+    const t0 = (i / 72) * 2 * Math.PI, t1 = ((i + 1.15) / 72) * 2 * Math.PI, t = (t0 + t1) / 2;
+    return `<path d="M${(c + R * Math.cos(t0)).toFixed(2)} ${(c - R * Math.sin(t0)).toFixed(2)}A${R} ${R} 0 0 0 ${(c + R * Math.cos(t1)).toFixed(2)} ${(c - R * Math.sin(t1)).toFixed(2)}" stroke="${srgb(0.7, 0.11 * Math.cos(t), 0.11 * Math.sin(t))}"/>`;
+  }).join('');
+  // Always coloured, as the palettes are: a dot that looks black would only be a hole in the sky.
+  const stars = dots.filter(([h]) => { const [L, a, b] = oklab(h); return !(L < 0.25 && Math.hypot(a, b) < 0.05); }).map(([h, w]) => {
+    const [, a, b] = oklab(h), C = Math.hypot(a, b), r = Math.min(1, Math.sqrt(C / 0.2)) * (R - 4), t = Math.atan2(b, a);
+    const x = c + r * Math.cos(t), y = c - r * Math.sin(t);
+    const rad = nebula ? 0.7 + Math.sqrt(w) * 5 : 1 + Math.sqrt(w * 24) * 1.9;
+    return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rad.toFixed(2)}" fill="${h}"/>`;
+  }).join('');
+  return `<svg class="palette-sky" viewBox="0 0 ${size} ${size}" role="img" aria-label="${esc(label)}">
+    <defs><filter id="${id}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${nebula ? 2.4 : 1.6}"/></filter></defs>
+    <circle cx="${c}" cy="${c}" r="${R}" class="palette-sky__disc"/>
+    <g class="palette-sky__rim" fill="none" stroke-width="${nebula ? 1.2 : 1}">${rim}</g>
+    <g filter="url(#${id})" opacity="${nebula ? 0.55 : 0.7}">${stars}</g>
+    <g opacity="${nebula ? 0.5 : 0.95}">${stars}</g>
+  </svg>`;
 }
 
 async function main() {
@@ -103,7 +111,7 @@ async function main() {
     stage.innerHTML = `<section class="palette-voyage">
         <div>${blocks(sig(v))}
           <p class="palette-voyage__links"><a href="${page.url}">Open the book <span aria-hidden="true">→</span></a><a href="#">Every palette <span aria-hidden="true">→</span></a></p></div>
-        <figure class="palette-voyage__wheel">${wheel(v.wheel)}<figcaption>${WHEEL_NOTE}</figcaption></figure>
+        <div class="palette-voyage__sky">${constellation(v.photos.flatMap((p) => dotsOf(p.dots).map(([h, w]) => [h, w / v.photos.length])), { size: 180, nebula: true, label: `Every colour of ${name}, on the wheel of hue` })}</div>
       </section>
       <div class="photobook-sheet__order palette-page__order" role="group" aria-label="Order">
         <button type="button" aria-pressed="${order === 'sequence'}" data-order="sequence">Sequence</button>
@@ -115,7 +123,7 @@ async function main() {
           <div class="palette-card__row"><div>
             <h3>${esc(p.name || '')}${p.light ? `<small>${esc(p.light)}</small>` : ''}</h3>
             ${p.sig?.length ? bar(p.sig) : ''}
-          </div>${p.sig?.length ? line(p.sig) : ''}</div>
+          </div>${p.dots ? constellation(dotsOf(p.dots), { label: `The colours of ${p.name || 'this frame'}, on the wheel of hue` }) : ''}</div>
         </article>`; }).join('')}</div>`;
     stage.querySelector('.palette-page__order').onclick = (e) => {
       const b = e.target.closest('button[data-order]'); if (!b || b.dataset.order === order) return;
