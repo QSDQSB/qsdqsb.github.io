@@ -3,7 +3,7 @@
  * The processor. Runs in GitHub Actions against R2, or anywhere against a
  * directory with `--local`. For every original in the originals bucket:
  *
- *   1. skip it when the public manifest already carries this exact file
+ *   1. skip it when the manifest already carries this exact file
  *      (same etag + size), unless --force
  *   2. read EXIF, orient, measure, thumbhash, dominant colour
  *   3. render every public tier and upload it
@@ -85,9 +85,8 @@ async function main() {
 
 async function processGallery(gallery, files, { originals, pub }) {
   const manifestKey = `${gallery}/${MANIFEST_FILE}`, privateKey = `${gallery}/${PRIVATE_FILE}`;
-  // The manifest lives beside the originals, in the locked bucket; the public bucket serves images
-  // only. A gallery last processed before the move starts from its old public copy.
-  const manifest = (await originals.getJson(manifestKey)) || (await pub.getJson(manifestKey)) || emptyManifest(gallery);
+  // The manifest lives beside the originals, in the locked bucket; the public bucket serves images only.
+  const manifest = (await originals.getJson(manifestKey)) || emptyManifest(gallery);
   const priv = (await originals.getJson(privateKey)) || { gallery, photos: {} };
   const bySlug = new Map(manifest.photos.map(p => [p.slug, p]));
   const { slugs, warnings } = assignSlugs(files.map(f => path.posix.basename(f.key)));
@@ -183,15 +182,13 @@ async function processGallery(gallery, files, { originals, pub }) {
  * manifest is written, because one original may be shared by galleries.
  */
 async function collectGarbage(pub, originals) {
-  // Tiers still named by any manifest, private or (until the old copies are gone) public, are kept.
+  // Tiers still named by any gallery's manifest are kept (the manifests live beside the originals;
+  // what is in trash/ names nothing).
   const refs = new Set();
-  for (const o of (await originals.list('')).filter((x) => x.key.endsWith(`/${MANIFEST_FILE}`))) {
+  for (const o of (await originals.list('')).filter((x) => x.key.endsWith(`/${MANIFEST_FILE}`) && !x.key.startsWith('trash/'))) {
     for (const p of (await originals.getJson(o.key))?.photos || []) if (p.hash) refs.add(p.hash);
   }
   const all = await pub.list('');
-  for (const o of all.filter(o => o.key.endsWith('/' + MANIFEST_FILE))) {
-    for (const p of (await pub.getJson(o.key))?.photos || []) if (p.hash) refs.add(p.hash);
-  }
   const dead = all.filter(o => o.key.startsWith('t/') && !refs.has(o.key.split('/')[1])).map(o => o.key);
   log(`gc: ${refs.size} referenced originals; ${dead.length} unreferenced tier file(s)${DRY ? ' (dry run, kept)' : ' deleted'}`);
   if (dead.length && !DRY) await pub.del(dead);

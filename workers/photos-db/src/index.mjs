@@ -1,13 +1,13 @@
 /**
  * The photo database's Worker.
  *
- * queue(): R2 events for <gallery>/manifest.json (public bucket) and
- *   <gallery>/.private.json (originals bucket). For each gallery touched in
+ * queue(): R2 events for <gallery>/manifest.json and <gallery>/.private.json
+ *   (both in the originals bucket; nothing public is read). For each gallery touched in
  *   a batch, read both files once and bring D1 in step, writing only what
  *   changed. Each manifest entry resolves to a permanent photo id:
  *
  *     1. by source key    london/DSCF1797.jpg seen before: same photo, even
- *                         when a compressed copy is replaced by its original
+ *                         when its file is replaced by a new edit
  *     2. by camera key    camera model + shutter count: the same exposure,
  *                         moved to another voyage or renamed (no serial is kept)
  *     3. by content hash  the same bytes already known under another key
@@ -28,7 +28,7 @@ const MACHINE = {
   frame: p => p.frame || (p.file ? p.file.replace(/\.[^.]+$/, '').toUpperCase() : null), hash: p => p.hash, version: p => p.version,
   w: p => p.w, h: p => p.h, ratio: p => p.ratio, thumbhash: p => p.thumbhash, tint: p => p.tint,
   sizes: p => p.sizes ? JSON.stringify(p.sizes) : null, formats: p => p.formats ? JSON.stringify(p.formats) : null,
-  compressed: p => p.compressed ? 1 : 0, processed_at: p => p.processed,
+  processed_at: p => p.processed,
   taken: p => p.taken, camera: p => p.camera, lens: p => p.lens,
   focal: p => p.focal, focal35: p => p.focal35, aperture: p => p.aperture, shutter: p => p.shutter, iso: p => p.iso,
   exposure_bias: p => p.exposureBias,
@@ -187,10 +187,8 @@ const decode = (x) => ({ ...x, sizes: x.sizes ? JSON.parse(x.sizes) : null, form
 export default {
   async queue(batch, env) {
     for (const g of touched(batch.messages)) {
-      // The manifest lives beside the originals now; a gallery not yet processed since the move
-      // still has only its old public copy.
-      const [own, p] = await Promise.all([env.ORIGINALS.get(`${g}/manifest.json`), env.ORIGINALS.get(`${g}/.private.json`)]);
-      const m = own || await env.PUBLIC.get(`${g}/manifest.json`);
+      // The manifest lives beside the originals, in the locked bucket.
+      const [m, p] = await Promise.all([env.ORIGINALS.get(`${g}/manifest.json`), env.ORIGINALS.get(`${g}/.private.json`)]);
       if (!m) continue;
       console.log(g, JSON.stringify(await syncGallery(env.DB, g, await m.json(), p ? await p.json() : null)));
     }
