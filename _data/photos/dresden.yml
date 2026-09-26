@@ -1,3 +1,7 @@
 # Authored layer for gallery/dresden — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: dscf2997
+  focus: [0.3, 0.5]
 photos: {}

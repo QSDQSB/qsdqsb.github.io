@@ -1,3 +1,7 @@
 # Authored layer for gallery/dolomites/sesto — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: dscf9537
+  focus: [0.39, 0.34]
 photos: {}

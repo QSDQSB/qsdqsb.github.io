@@ -1,3 +1,7 @@
 # Authored layer for gallery/prague/twilight — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: dscf5678
+  focus: [0.486, 0.555]
 photos: {}

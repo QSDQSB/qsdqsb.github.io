@@ -1,0 +1,5 @@
+# Authored layer for the voyage rome, in parts.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: vittoriano/dscf1614
+  focus: [0.527, 0.304]

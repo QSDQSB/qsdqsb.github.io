@@ -1,3 +1,7 @@
 # Authored layer for gallery/cornwall — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: dscf1724
+  focus: [0.5, 0.521]
 photos: {}
