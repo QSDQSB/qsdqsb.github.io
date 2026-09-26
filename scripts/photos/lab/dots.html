@@ -15,6 +15,8 @@
 <style>
   :root { --ink: #e4e4e4; --ink-2: #b9b9b9; --ink-3: #8b9296; --line: #2e2e2e; --ground: #151515; --gold: rgba(229, 207, 169, .85); }
   html, body { background: var(--ground); color: var(--ink); }
+  /* The site colours its h2 peach and its h3 pink; the lab's titles are ink, like the Photobook's. */
+  h1, h2, h3, h4 { color: var(--ink); }
   body { display: block; margin: 0; font-family: Barlow, system-ui, sans-serif; }
   .lab { max-width: 90rem; margin: 0 auto; padding: 3.5rem clamp(1rem, 3vw, 2.4rem) 5rem; }
   .kicker { margin: 0; font: 500 .62rem/1 Barlow, sans-serif; letter-spacing: .24em; text-transform: uppercase; color: var(--ink-3); }
@@ -73,7 +75,7 @@
   dialog::backdrop { background: rgba(0,0,0,.7); }
   .cmp { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 1.6rem; }
   .cmp img { width: 100%; display: block; }
-  .cmp h2 { margin: 0 0 1rem; font: 700 1.3rem "Playfair Display", serif; }
+  .cmp h2 { margin: 0 0 1rem; font: 700 1.3rem "Playfair Display", serif; color: var(--ink); } /* the site colours its h2 */
   .method { margin-bottom: 1.1rem; }
   .method h4 { display: flex; justify-content: space-between; margin: 0 0 .4rem; font: 500 .6rem Barlow, sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
   .method h4 b { font-weight: 400; letter-spacing: .04em; text-transform: none; color: var(--ink-2); }
