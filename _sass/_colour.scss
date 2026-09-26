@@ -241,7 +241,7 @@
   &:hover { color: #fff; }
 }
 
-// One voyage: its palette as blocks, beside its colour line.
+// One voyage: its palette as blocks, beside its dye vat.
 .palette-voyage {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -253,20 +253,16 @@
   .palette-blocks i { height: 2.5rem; }
 }
 
-.palette-voyage__sky { width: 11rem; }
+// The voyage's dye vat (assets/js/colour/vat.js): its colours run together, each as much as its share.
+.palette-voyage__vat {
+  width: 11rem;
 
-// A constellation of colour on a dark disc, ringed by hue.
-.palette-sky {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
 }
-
-.palette-sky__disc { fill: #111113; }
-.palette-sky__rim { opacity: 0.55; }
-
-
 
 .palette-voyage__links {
   display: flex;
