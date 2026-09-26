@@ -187,47 +187,54 @@ export function parseGrid(s) {
 export function emd(P, Q) {
   const n = P.length, m = Q.length;
   if (!n || !m) return n === m ? 0 : Infinity;
-  const C = P.map(p => Q.map(q => deltaE(p.lab, q.lab)));
-  const supply = P.map(p => p.w), demand = Q.map(q => q.w);
-  const flow = P.map(() => new Float64Array(m));
+  const C = new Float64Array(n * m);
+  for (let i = 0; i < n; i++) for (let j = 0; j < m; j++) C[i * m + j] = deltaE(P[i].lab, Q[j].lab);
+  const supply = Float64Array.from(P, p => p.w), demand = Float64Array.from(Q, q => q.w);
+  const flow = new Float64Array(n * m);
   // Nodes: 0 source, 1..n suppliers, n+1..n+m consumers, n+m+1 sink.
   const N = n + m + 2, S = 0, T = N - 1, pot = new Float64Array(N);
+  const dist = new Float64Array(N), prev = new Int32Array(N), done = new Uint8Array(N);
   const EPS = 1e-12;
   let left = Math.min(supply.reduce((a, b) => a + b, 0), demand.reduce((a, b) => a + b, 0));
   let cost = 0;
   while (left > 1e-9) {
-    const dist = new Float64Array(N).fill(Infinity), prev = new Int32Array(N).fill(-1), done = new Uint8Array(N);
+    dist.fill(Infinity); prev.fill(-1); done.fill(0);
     dist[S] = 0;
     for (;;) {
       let u = -1, bd = Infinity;
       for (let v = 0; v < N; v++) if (!done[v] && dist[v] < bd) { bd = dist[v]; u = v; }
-      if (u < 0) break;
+      if (u < 0 || u === T) break;
       done[u] = 1;
-      const relax = (v, c) => { const nd = dist[u] + c + pot[u] - pot[v]; if (nd < dist[v] - 1e-12) { dist[v] = nd; prev[v] = u; } };
-      if (u === S) { for (let i = 0; i < n; i++) if (supply[i] > EPS) relax(1 + i, 0); }
-      else if (u <= n) { const i = u - 1; for (let j = 0; j < m; j++) relax(1 + n + j, C[i][j]); }
-      else if (u < T) {
+      const base = bd + pot[u];
+      if (u === S) {
+        for (let i = 0; i < n; i++) if (supply[i] > EPS) { const v = 1 + i, nd = base - pot[v]; if (nd < dist[v]) { dist[v] = nd; prev[v] = u; } }
+      } else if (u <= n) {
+        const i = u - 1, row = i * m;
+        for (let j = 0; j < m; j++) { const v = 1 + n + j; if (done[v]) continue; const nd = base + C[row + j] - pot[v]; if (nd < dist[v] - 1e-12) { dist[v] = nd; prev[v] = u; } }
+      } else {
         const j = u - 1 - n;
-        if (demand[j] > EPS) relax(T, 0);
-        for (let i = 0; i < n; i++) if (flow[i][j] > EPS) relax(1 + i, -C[i][j]);
+        if (demand[j] > EPS) { const nd = base - pot[T]; if (nd < dist[T]) { dist[T] = nd; prev[T] = u; } }
+        for (let i = 0; i < n; i++) if (flow[i * m + j] > EPS) { const v = 1 + i; if (done[v]) continue; const nd = base - C[i * m + j] - pot[v]; if (nd < dist[v] - 1e-12) { dist[v] = nd; prev[v] = u; } }
       }
     }
     if (!Number.isFinite(dist[T])) break;
-    for (let v = 0; v < N; v++) if (Number.isFinite(dist[v])) pot[v] += dist[v];
+    // Potentials: settled nodes move by their distance, the rest by the sink's, so reduced costs stay non-negative.
+    const dt = dist[T];
+    for (let v = 0; v < N; v++) pot[v] += done[v] ? dist[v] : dt;
     // The bottleneck along the path, then push it.
     let amt = left;
     for (let v = T; v !== S; v = prev[v]) {
       const u = prev[v];
       if (u === S) amt = Math.min(amt, supply[v - 1]);
       else if (v === T) amt = Math.min(amt, demand[u - 1 - n]);
-      else if (u > n) amt = Math.min(amt, flow[v - 1][u - 1 - n]); // a reverse step: undo flow
+      else if (u > n) amt = Math.min(amt, flow[(v - 1) * m + (u - 1 - n)]); // a reverse step: undo flow
     }
     for (let v = T; v !== S; v = prev[v]) {
       const u = prev[v];
       if (u === S) supply[v - 1] -= amt;
       else if (v === T) demand[u - 1 - n] -= amt;
-      else if (u <= n) { flow[u - 1][v - 1 - n] += amt; cost += amt * C[u - 1][v - 1 - n]; }
-      else { flow[v - 1][u - 1 - n] -= amt; cost -= amt * C[v - 1][u - 1 - n]; }
+      else if (u <= n) { const k = (u - 1) * m + (v - 1 - n); flow[k] += amt; cost += amt * C[k]; }
+      else { const k = (v - 1) * m + (u - 1 - n); flow[k] -= amt; cost -= amt * C[k]; }
     }
     left -= amt;
   }
@@ -303,25 +310,33 @@ export function voyagePalette(palettes, k = 5) {
 }
 
 /**
- * An order in which the sheet reads as a gradient: the shortest open path through all the photos
- * under the picture distance (nearest-neighbour start from the darkest, then 2-opt), running dark
- * to light. `D` is a full distance matrix; returns indices.
+ * An order in which the sheet reads as one gradient. The shortest path through the photos alone
+ * wanders (night, dusk, stone, sky, sunset, and back to night), so the order is global first: every
+ * photo placed on the one line that best keeps the picture distances (classical MDS, the leading
+ * axis of the doubly centred squared distances, by power iteration), which for photographs runs
+ * dark to light. Then only local polish: a stretch of up to `span` neighbours is reversed wherever
+ * that shortens the walk, so each step is gentle without undoing the sweep. `D` is a full distance
+ * matrix, `lightness` each photo's mean L; returns indices, darkest end first.
  */
-export function colourPath(D, lightness) {
+export function colourPath(D, lightness, { span = 4 } = {}) {
   const n = D.length;
-  if (n < 3) return [...Array(n).keys()];
-  const start = lightness.indexOf(Math.min(...lightness));
-  const seen = new Uint8Array(n); const path = [start]; seen[start] = 1;
-  while (path.length < n) {
-    const last = path[path.length - 1];
-    let best = -1, bd = Infinity;
-    for (let j = 0; j < n; j++) if (!seen[j] && D[last][j] < bd) { bd = D[last][j]; best = j; }
-    path.push(best); seen[best] = 1;
+  if (n < 3) return [...Array(n).keys()].sort((a, b) => lightness[a] - lightness[b]);
+  // B = -½ J D² J
+  const D2 = D.map(r => r.map(d => d * d));
+  const rowM = D2.map(r => r.reduce((a, b) => a + b, 0) / n);
+  const allM = rowM.reduce((a, b) => a + b, 0) / n;
+  const B = D2.map((r, i) => r.map((d, j) => -0.5 * (d - rowM[i] - rowM[j] + allM)));
+  let v = lightness.map(l => l - lightness.reduce((a, b) => a + b, 0) / n); // start along lightness: converges the same, faster
+  if (v.every(x => Math.abs(x) < 1e-12)) v = v.map((_, i) => (i % 2 ? 1 : -1));
+  for (let it = 0; it < 200; it++) {
+    const w = B.map(r => r.reduce((s, b, j) => s + b * v[j], 0));
+    const norm = Math.hypot(...w) || 1;
+    v = w.map(x => x / norm);
   }
-  // 2-opt on an open path: reverse a stretch whenever that shortens it.
-  for (let improved = true, rounds = 0; improved && rounds < 200; rounds++) {
+  let path = [...Array(n).keys()].sort((a, b) => v[a] - v[b] || a - b);
+  for (let improved = true, rounds = 0; improved && rounds < 50; rounds++) {
     improved = false;
-    for (let i = 0; i < n - 1; i++) for (let j = i + 1; j < n; j++) {
+    for (let i = 0; i < n - 1; i++) for (let j = i + 1; j < Math.min(n, i + span); j++) {
       const a = i ? path[i - 1] : -1, b = path[i], c = path[j], d = j < n - 1 ? path[j + 1] : -1;
       const before = (a >= 0 ? D[a][b] : 0) + (d >= 0 ? D[c][d] : 0);
       const after = (a >= 0 ? D[a][c] : 0) + (d >= 0 ? D[b][d] : 0);

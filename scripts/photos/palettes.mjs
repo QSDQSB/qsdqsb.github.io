@@ -16,7 +16,6 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import sharp from 'sharp';
 import { PATHS, galleryKey, parseArgs } from './lib/config.mjs';
 import { paletteOf } from './lib/palette.mjs';
 
@@ -25,6 +24,7 @@ const SAMPLE = 96, PARALLEL = 12;
 
 /** One photo's palette and grid from the bytes of any tier. */
 export async function paletteOfImage(buffer) {
+  const { default: sharp } = await import('sharp'); // only here: the build reads the sidecar without it
   const { data, info } = await sharp(buffer).rotate().resize({ width: SAMPLE, height: SAMPLE, fit: 'inside' })
     .removeAlpha().raw().toBuffer({ resolveWithObject: true });
   return paletteOf(data, info.width, info.height, info.channels);
