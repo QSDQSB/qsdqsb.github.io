@@ -8,7 +8,8 @@
  * Dry run by default: per gallery, how many photos would gain which fields, and one sample. With
  * --write, each manifest that changes is first copied to trash/<date>/<gallery>/manifest.json (so
  * `photos:trash restore … --bucket-only` puts it back), re-read to be sure nothing else wrote it in
- * the meantime, then written. Through the local `r2:` rclone remote; no API keys.
+ * the meantime, then written. A backup already made the same day is kept, not overwritten: it is the
+ * earlier restore point. Through the local `r2:` rclone remote; no API keys.
  *
  * `--refresh signature[,dots…]` also replaces those fields where the manifest already has them and the
  * sidecar differs: for when an algorithm changes (as the signature did on 2026-09-26).
@@ -62,7 +63,11 @@ for (const g of galleries) {
   if (!args.write) { console.log(`  ${g.padEnd(34)} ${note}`); continue; }
 
   // Back up, make sure nothing wrote it since we read it, then write.
-  const back = rclone(['copyto', `${remote}/${g}/${MANIFEST_FILE}`, `${remote}/trash/${today}/${g}/${MANIFEST_FILE}`]);
+  // A backup already made today is the earlier, truer restore point (before any colours were added):
+  // keep it rather than overwrite it with this intermediate state.
+  const backupKey = `${remote}/trash/${today}/${g}/${MANIFEST_FILE}`;
+  const had = rclone(['lsf', backupKey]).stdout.trim() !== '';
+  const back = had ? { status: 0 } : rclone(['copyto', `${remote}/${g}/${MANIFEST_FILE}`, backupKey]);
   if (back.status !== 0) { console.log(`  ${g.padEnd(34)} ! backup failed, not written: ${back.stderr.trim().split('\n').pop()}`); continue; }
   if (readManifest(g) !== raw) { console.log(`  ${g.padEnd(34)} ! changed since read, not written`); continue; }
   const file = path.join(tmp, `${g.replace(/\//g, '_')}.json`);
