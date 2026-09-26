@@ -23,10 +23,6 @@ database_id = "477ac9fa-ace0-456a-bbac-10b59e2abb5d"
 migrations_dir = "migrations"
 
 [[r2_buckets]]
-binding = "PUBLIC"
-bucket_name = "qsdqsb-photos"
-
-[[r2_buckets]]
 binding = "ORIGINALS"
 bucket_name = "qsdqsb-originals"
 

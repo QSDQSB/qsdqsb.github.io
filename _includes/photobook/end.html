@@ -1,36 +1,40 @@
 {%- comment -%}
   After the colophon, the page ends as the rest of the site does: the voyage's other parts, a few
   voyages at random, the tags, the subscribe slip, the dates, and the sign-off.
-  The cards' covers are parked in --bg-later and set by assets/js/photobook/index.js as they come
+  The cards' covers are parked in --bg-later and set by assets/js/card-covers.js as they come
   near, so a book's first screen does not fetch the covers of other voyages.
 {%- endcomment -%}
 <div class="photobook-end">
   {%- if page.gallery_name contains "/" %}
     {%- assign parent_name = page.gallery_name | split: "/" | first -%}
-    {%- assign related_posts = site.subvoyage | where_exp: "post", "post.url != page.url" | where_exp: "post", "post.gallery_name contains parent_name" -%}
+    {%- assign siblings = site.subvoyage | where_exp: "post", "post.url != page.url" | where_exp: "post", "post.gallery_name contains parent_name" -%}
+    {%- assign related_posts = "" | split: "" -%}
+    {%- for s in siblings %}{% include photobook-ready.html doc=s %}{% if photobook_ready %}{% assign related_posts = related_posts | push: s %}{% endif %}{% endfor -%}
     {%- if related_posts.size > 3 %}{% assign related_posts = related_posts | sample: 3 %}{% endif -%}
     {%- if related_posts.size > 0 %}
     <section class="archive photobook-end__more">
       <h2 class="photobook-end__title">Other {{ parent_name | capitalize }}</h2>
-      {%- capture cards %}{% for post in related_posts %}{% include archive-single.html %}{% endfor %}{% endcapture %}{{ cards | replace: "--bg-img:", "--bg-later:" }}
+      {% for post in related_posts %}{% include archive-single.html defer_cover=true %}{% endfor %}
     </section>
     {%- endif -%}
   {%- endif %}
   <section class="archive photobook-end__more">
     <h2 class="photobook-end__title">Elsewhere</h2>
-    {%- assign random_posts = site.voyage | where_exp: "post", "post.path != page.path" | sample: 4 -%}
-    {%- capture cards -%}
+    {%- assign others = site.voyage | where_exp: "post", "post.path != page.path" -%}
+    {%- assign ready_voyages = "" | split: "" -%}
+    {%- for v in others %}{% include photobook-ready.html doc=v %}{% if photobook_ready %}{% assign ready_voyages = ready_voyages | push: v %}{% endif %}{% endfor -%}
+    {%- assign random_posts = ready_voyages | sample: 4 -%}
     {%- for post in random_posts -%}
       {%- if post.subgalleries -%}
         {%- assign voyage_name = post.path | split: "/" | last | split: "." | first | append: "/" -%}
-        {%- assign subs = site.subvoyage | where_exp: "item", "item.gallery_name contains voyage_name" | where_exp: "item", "item.path != page.path" -%}
-        {%- if subs.size > 0 %}{% assign post = subs | sample %}{% include archive-single.html %}{% endif -%}
+        {%- assign all_subs = site.subvoyage | where_exp: "item", "item.gallery_name contains voyage_name" | where_exp: "item", "item.path != page.path" -%}
+        {%- assign subs = "" | split: "" -%}
+        {%- for s in all_subs %}{% include photobook-ready.html doc=s %}{% if photobook_ready %}{% assign subs = subs | push: s %}{% endif %}{% endfor -%}
+        {%- if subs.size > 0 %}{% assign post = subs | sample %}{% include archive-single.html defer_cover=true %}{% endif -%}
       {%- else -%}
-        {% include archive-single.html %}
+        {% include archive-single.html defer_cover=true %}
       {%- endif -%}
     {%- endfor -%}
-    {%- endcapture -%}
-    {{ cards | replace: "--bg-img:", "--bg-later:" }}
   </section>
   {%- if site.tag_voyage.type and page.tags[0] %}
   <div class="center-wrapper">{% include tag-list.html %}</div>

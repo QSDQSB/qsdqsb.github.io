@@ -26,9 +26,16 @@ group :jekyll_plugins do
   gem 'hawkins'
   gem 'jekyll-include-cache'
   gem "mini_magick"
-  gem 'jekyll-last-modified-at'
 end
 
 gem "webrick", "~> 1.7"
+
+# Ruby 3.4 no longer ships these as default gems; Jekyll 3.9 and its plugins still require them.
+# (Cloudflare Pages' build image carries Ruby 3.4 ready-made: see .ruby-version.)
+gem "csv"
+gem "base64"
+gem "bigdecimal"
+gem "logger"
+gem "ostruct"
 
 gem "rake", "~> 13.2"

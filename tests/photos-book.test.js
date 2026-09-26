@@ -124,3 +124,14 @@ test('each film has its mark on the dial, two letters where a first letter is sh
   const films = colophonOf([{ film: 'Astia' }, { film: 'Pro Neg. Hi' }]).films;
   assert.deepEqual(films.map(f => f.code), ['A', 'NH']);
 });
+
+test('alt text: the owner\'s alt, else place, city and film', async () => {
+  const { altOf, bookOf } = await lib();
+  assert.equal(altOf({ place: { name: 'Tower Bridge', city: 'London' }, film: 'Classic Negative' }), 'Tower Bridge, London — Classic Negative');
+  assert.equal(altOf({ name: 'Above the Cloud', film: 'Classic Chrome' }), 'Above the Cloud — Classic Chrome');
+  assert.equal(altOf({ alt: '  Rain on a bus window ', place: { name: 'X' } }), 'Rain on a bus window');
+  const merged = { gallery: 'london', photos: [{ slug: 'a', ratio: 1.5, place: 'Tower Bridge, London', settings: { filmSimulation: 'Velvia' } }, { slug: 'b', ratio: 1.5, alt: 'Mine' }] };
+  const out = bookOf(merged).photos;
+  assert.equal(out[0].alt, 'Tower Bridge, London — Velvia');
+  assert.equal(out[1].alt, 'Mine');
+});

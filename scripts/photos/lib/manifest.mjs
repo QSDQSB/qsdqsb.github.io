@@ -62,7 +62,7 @@ export function validateAuthored(doc, where = 'authored') {
 
 /**
  * @param {string} gallery      e.g. `prague/petrin-hill`
- * @param {object|null} machine public manifest
+ * @param {object|null} machine the gallery's manifest (private, beside the originals)
  * @param {object|null} authored parsed YAML
  * @param {string} base         public URL base, e.g. https://img.qsdqsb.com
  */

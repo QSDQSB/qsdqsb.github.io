@@ -8,9 +8,9 @@ permalink: /sitemap.xml
   {%- comment -%}
     Image entries: every photograph of a voyage, from its merged manifest
     (_data/photo_manifests/, written by `npm run photos:fetch`), at the 1920 px
-    JPEG on img.qsdqsb.com, captioned with its place. lastmod comes from
-    jekyll-last-modified-at (real git dates — CI checks out with full
-    history), falling back to the publish date.
+    JPEG on img.qsdqsb.com, captioned with its place. lastmod is the author's
+    `updated:`, falling back to the publish date (never a git date: a layout
+    or tooling sweep is not a revision).
   {%- endcomment -%}
   <url>
     <loc>{{ site.url }}/year-archive/</loc>
@@ -27,7 +27,7 @@ permalink: /sitemap.xml
   {% for post in site.posts %}
     <url>
       <loc>{{ site.url }}{{ post.url }}</loc>
-      <lastmod>{{ post.last_modified_at | default: post.date | date: "%Y-%m-%d" }}</lastmod>
+      <lastmod>{{ post.updated | default: post.date | date: "%Y-%m-%d" }}</lastmod>
     </url>
   {% endfor %}
   <url>
@@ -36,7 +36,7 @@ permalink: /sitemap.xml
   {% for post in site.portfolio %}
     <url>
       <loc>{{ site.url }}{{ post.url }}</loc>
-      <lastmod>{{ post.last_modified_at | default: post.date | date: "%Y-%m-%d" }}</lastmod>
+      <lastmod>{{ post.updated | default: post.date | date: "%Y-%m-%d" }}</lastmod>
     </url>
   {% endfor %}
   <url>
@@ -46,7 +46,7 @@ permalink: /sitemap.xml
   {% for post in gallery_pages %}
     <url>
       <loc>{{ site.url }}{{ post.url }}</loc>
-      <lastmod>{{ post.last_modified_at | default: post.date | date: "%Y-%m-%d" }}</lastmod>
+      <lastmod>{{ post.updated | default: post.date | date: "%Y-%m-%d" }}</lastmod>
       {%- if post.gallery_name %}
         {%- assign sitemap_key = post.gallery_name | replace: "/", "_" %}
         {%- assign sitemap_book = site.data.photo_manifests[sitemap_key] %}
