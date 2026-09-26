@@ -4,8 +4,8 @@
  * its signature (no black or white) and its colour line, then every frame as a card (the lab's
  * design): the print, its colours as blocks with the hex inside (text to select) and the share
  * beneath, its name and light, and its palette as the specs panel draws it. Beside the voyage's
- * blocks, its dye vat (./vat.js): the same colours run together, each as much as its share. The
- * frames lie in the book's sequence or by colour: the order worked out at build time
+ * blocks, its dye vat (./vat.js): the same colours run together, each as much as its share; and
+ * beside each frame's name and bar, the frame's own, poured as its card nears the screen. The frames lie in the book's sequence or by colour: the order worked out at build time
  * from their 24 dots (lib/book.mjs colourOf), dark to light, like hues together. A print opens in
  * its book; ?at=<slug> marks the frame the reader came from.
  *
@@ -79,9 +79,10 @@ async function main() {
           <div class="palette-card__row"><div>
             <h3>${esc(p.name || '')}${p.light ? `<small>${esc(p.light)}</small>` : ''}</h3>
             ${p.sig?.length ? bar(p.sig) : ''}
-          </div></div>
+          </div>${p.sig?.length ? `<div class="palette-card__vat" data-i="${i}"></div>` : ''}</div>
         </article>`; }).join('')}</div>`;
     stage.querySelector('.palette-voyage__vat').append(vat(v.palette, { size: 176, seed: seedOf(v.g), label: `The colours of ${name}, run together as in a dye vat` }));
+    pour(v, stage.querySelectorAll('.palette-card__vat'));
     stage.querySelector('.palette-page__order').onclick = (e) => {
       const b = e.target.closest('button[data-order]'); if (!b || b.dataset.order === order) return;
       order = b.dataset.order; store.set('palette-order', order);
@@ -89,6 +90,24 @@ async function main() {
       if (still() || !document.startViewTransition) redraw(); else document.startViewTransition(redraw);
     };
     if (at) requestAnimationFrame(() => document.getElementById(`f-${at}`)?.scrollIntoView({ block: 'center', behavior: 'instant' }));
+  }
+
+  // Each frame's own vat, poured as its card nears the screen, one a frame so scrolling stays smooth;
+  // kept once poured, so a change of order moves them rather than pouring them again.
+  const poured = new Map();
+  let queue = [], seen = null;
+  function pour(v, slots) {
+    seen?.disconnect(); queue = [];
+    const fill = (slot) => {
+      const p = v.photos[slot.dataset.i], key = `${v.g}/${p.slug}`;
+      if (!poured.has(key)) poured.set(key, vat(p.sig, { size: 83, seed: seedOf(key) }));
+      slot.replaceChildren(poured.get(key));
+    };
+    const next = () => { const slot = queue.shift(); if (!slot) return; if (slot.isConnected) fill(slot); requestAnimationFrame(next); };
+    seen = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { seen.unobserve(e.target); if (queue.push(e.target) === 1) requestAnimationFrame(next); }
+    }, { rootMargin: '600px 0px' });
+    for (const slot of slots) { const p = v.photos[slot.dataset.i]; if (poured.has(`${v.g}/${p.slug}`)) fill(slot); else seen.observe(slot); }
   }
 
   function route() {
