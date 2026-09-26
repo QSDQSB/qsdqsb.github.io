@@ -52,6 +52,17 @@ Data contract — no files on disk, only the manifest:
   srcset.
 - No manifest, or no processed photos → the page renders an empty Photobook
   ("still on their way"). `check:frontmatter` and `check:gallery` catch it.
+  The lists that lead to a book (`/voyage/`, an index of parts, the book's closing
+  cards, Home's Recent Updates) leave such a voyage out, through
+  `_includes/photobook-ready.html`; its URL still works. A voyage of parts is listed
+  while any part has photos. A build that holds no processed photos at all (a
+  failed `photos:fetch`) filters nothing, so the lists never empty on a bad fetch.
+
+**Card covers.** `archive-single.html defer_cover=true` parks a card's cover in
+`--bg-later`; `assets/js/card-covers.js` sets `--bg-img` as the card comes within
+800 px of the screen. `/voyage/`, the index of parts and the closing cards use it.
+Automated renderers (`QSD_MOTION_OFF`: crawlers, the visual baselines) get every
+cover at once, and without JS `.no-js .card` reads `--bg-later` directly.
 
 **The controls** (`filmbar.html`, `dial.js`, the bar section of `book.js`): a
 film dial and a Book/Sheet switch of the same height, mounted on the seam of
