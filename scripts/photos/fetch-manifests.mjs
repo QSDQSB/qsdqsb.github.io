@@ -42,6 +42,7 @@ import { FsStore, R2Store } from './lib/store.mjs';
 import { rcloneVersion, remoteExists } from './lib/rclone.mjs';
 import { mergeManifest, validateAuthored } from './lib/manifest.mjs';
 import { bookOf } from './lib/book.mjs';
+import { readSidecar } from './palettes.mjs';
 
 const require = createRequire(import.meta.url);
 const { referencedGalleries } = require('../check-gallery-integrity.js');
@@ -96,6 +97,17 @@ async function mapLimited(items, limit, fn) {
   return out;
 }
 
+/**
+ * Palettes the machine manifest does not carry yet, from the local sidecar (scripts/photos/palettes.mjs),
+ * matched by content hash. Where there is no sidecar (a Cloudflare build) this changes nothing.
+ */
+function withPalettes(gallery, machine) {
+  if (!machine?.photos) return machine;
+  const side = readSidecar(gallery);
+  if (!Object.keys(side).length) return machine;
+  return { ...machine, photos: machine.photos.map(p => (p.palette || !side[p.hash] ? p : { ...p, ...side[p.hash] })) };
+}
+
 /** The locate sidecar's `photos` map (names only, never coordinates), or an empty one. */
 function readLocations(gallery) {
   const file = path.join(PATHS.locationsDir, `${gallery}.yml`);
@@ -138,7 +150,7 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
       note = `bucket unreachable (${error}); no previous merge`;
     }
     // The Photobook's layer (rows, cover, colophon, place, light, glow) is worked out here, once.
-    const merged = bookOf(mergeManifest(gallery, machine, doc, env.publicBase), readLocations(gallery));
+    const merged = bookOf(mergeManifest(gallery, withPalettes(gallery, machine), doc, env.publicBase), readLocations(gallery));
     merged.warnings.push(...problems);
     if (note) merged.warnings.push(note);
     fs.writeFileSync(out, JSON.stringify(merged, null, 2) + '\n');
