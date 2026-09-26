@@ -1,0 +1,130 @@
+/**
+ * The dye vat (染缸): a palette as one round vat seen from above, its colours poured in and left to
+ * drift together in broad, slow currents, so they run softly into one another. Each colour covers as
+ * much of the vat as its share: the vat measures itself on the GPU at 64 px and adjusts until it does,
+ * so it tells the truth the colour bar tells. Mixed in OKLab with the chroma kept, so two colours make
+ * a clean third, not a grey (across nearly opposite hues it settles, as paint does).
+ *
+ * vat(palette, { size, width, height, seed, stir, label }) → a canvas. `palette` is [{hex, pc}] or
+ * [[hex, pc]]; the vat is `size` across (or the smaller of width and height), centred, transparent
+ * round it. Still by default, and then handed over as a plain 2D canvas, its WebGL context let go;
+ * `stir` keeps the currents moving, unless motion is off. Used by the palette page
+ * (assets/js/colour/palette.js) and the mood lab (scripts/photos/lab/paint.js).
+ */
+
+const FRAG = `
+precision highp float;
+uniform vec2 res, org; uniform float seed, t; uniform int mode;
+uniform vec3 col[5]; uniform float gain[5]; uniform vec2 pos[5]; uniform int n;
+float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7)) + seed * 0.013) * 43758.5453); }
+float noise(vec2 p) { vec2 i = floor(p), f = fract(p); vec2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
+  return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y); }
+float fbm(vec2 p) { float v = 0.0, a = 0.6; for (int i = 0; i < 2; i++) { v += a * noise(p); p = p * 1.9 + 11.0; a *= 0.4; } return v / 0.84; }
+vec3 toRgb(vec3 c) { float l = c.x + 0.3963377774 * c.y + 0.2158037573 * c.z, m = c.x - 0.1055613458 * c.y - 0.0638541728 * c.z, s = c.x - 0.0894841775 * c.y - 1.2914855480 * c.z;
+  l = l * l * l; m = m * m * m; s = s * s * s;
+  vec3 lin = vec3(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s, -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s, -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s);
+  lin = clamp(lin, 0.0, 1.0); return mix(12.92 * lin, 1.055 * pow(lin, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, lin)); }
+void main() {
+  vec2 uv = ((gl_FragCoord.xy - org) / res) * 2.0 - 1.0; uv.y = -uv.y;
+  float r = length(uv), aa = 2.0 / res.x;
+  if (r > 1.0 + aa || (mode > 0 && r > 1.0)) { gl_FragColor = vec4(0.0); return; }
+  // The currents: broad, warped twice, drifting slowly with t; and one long sweep across the vat,
+  // so the colours draw out in ribbons rather than sit in patches.
+  vec2 o = vec2(seed * 0.0071, seed * 0.0037);
+  vec2 q = vec2(fbm(uv + o + t * 0.012), fbm(uv + o + vec2(5.2, 1.3) - t * 0.01));
+  vec2 w = vec2(fbm(uv * 1.2 + 2.2 * q + vec2(1.7, 9.2)), fbm(uv * 1.2 + 2.2 * q + vec2(8.3, 2.8)));
+  vec2 pw = uv + 0.7 * (w - 0.5);
+  vec2 along = vec2(cos(seed * 0.37), sin(seed * 0.37)), across = vec2(-along.y, along.x);
+  pw += along * 0.28 * sin(dot(pw, across) * 2.4 + seed * 0.11 + t * 0.03);
+  // Each colour's hold here: its gain (set so its area is its share), fading softly from where it was poured.
+  float ws[5]; float tot = 0.0;
+  for (int k = 0; k < 5; k++) { ws[k] = 0.0; if (k >= n) continue;
+    vec2 d = pw - pos[k]; ws[k] = gain[k] * exp(-dot(d, d) / 0.26); tot += ws[k]; }
+  for (int k = 0; k < 5; k++) ws[k] /= tot;
+  if (mode == 1) { gl_FragColor = vec4(ws[0], ws[1], ws[2], ws[3]); return; }
+  if (mode == 2) { gl_FragColor = vec4(ws[4], 1.0, 0.0, 1.0); return; }
+  float L = 0.0, C = 0.0; vec2 ab = vec2(0.0);
+  for (int k = 0; k < 5; k++) { if (k >= n) continue; L += ws[k] * col[k].x; ab += ws[k] * col[k].yz; C += ws[k] * length(col[k].yz); }
+  float h = length(ab); if (h > 1e-4) ab *= mix(1.0, C / h, smoothstep(0.25, 0.75, h / max(C, 1e-4)));
+  vec3 rgb = toRgb(vec3(L, ab));
+  // The vessel, lightly: a faint sheen above left, a hairline of light at the rim.
+  rgb += 0.03 * smoothstep(0.7, 0.0, length(uv - vec2(-0.4, -0.45)));
+  rgb = mix(rgb, rgb + 0.08, smoothstep(0.975, 1.0, r));
+  float alpha = 1.0 - smoothstep(1.0 - aa, 1.0 + aa, r);
+  gl_FragColor = vec4(rgb * alpha, alpha);
+}`;
+
+const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
+function oklab(h) {
+  const r = lin(parseInt(h.slice(1, 3), 16)), g = lin(parseInt(h.slice(3, 5), 16)), b = lin(parseInt(h.slice(5, 7), 16));
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b), m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b), s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  return [0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s, 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s];
+}
+
+/** A seed from text (a gallery key), so a voyage's vat is always poured the same way. */
+export const seedOf = (text) => { let h = 2166136261; for (const ch of String(text)) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return (h % 2147483646) + 1; };
+
+export function vat(palette, { size = 176, width = size, height = size, seed = 1, stir = false, label = '' } = {}) {
+  let state = seed;
+  const rand = () => { state = (state * 16807) % 2147483647; return state / 2147483647; };
+  const gauss = () => { let v = 0; for (let i = 0; i < 6; i++) v += rand(); return v / 6 - 0.5; };
+  const cs = palette.slice(0, 5).map((p) => (Array.isArray(p) ? { hex: p[0], pc: p[1] } : p)), n = cs.length;
+  const dpr = Math.min(2, devicePixelRatio || 1), c = document.createElement('canvas');
+  c.width = Math.round(width * dpr); c.height = Math.round(height * dpr);
+  const gl = n && c.getContext('webgl', { preserveDrawingBuffer: true, premultipliedAlpha: true, antialias: true });
+  if (!gl) return c;
+  const sh = (type, src) => { const x = gl.createShader(type); gl.shaderSource(x, src); gl.compileShader(x); return x; };
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, 'attribute vec2 a; void main(){ gl_Position = vec4(a, 0.0, 1.0); }'));
+  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG)); gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return c;
+  gl.useProgram(prog);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  const at = gl.getAttribLocation(prog, 'a'); gl.enableVertexAttribArray(at); gl.vertexAttribPointer(at, 2, gl.FLOAT, false, 0, 0);
+  const u = (name) => gl.getUniformLocation(prog, name);
+  const total = cs.reduce((s, p) => s + p.pc, 0), share = cs.map((p) => p.pc / total);
+  gl.uniform1f(u('seed'), (seed % 1000) + 1); gl.uniform1i(u('n'), n); gl.uniform1f(u('t'), 0);
+  // Where each colour is poured: evenly round the vat, a little astray, the largest in the middle.
+  const order = cs.map((p, i) => i).sort((x, y) => share[y] - share[x]), turn = rand() * 2 * Math.PI;
+  order.forEach((i, rank) => {
+    const lab = oklab(cs[i].hex), ang = turn + (rank / Math.max(1, n - 1)) * 2 * Math.PI + gauss() * 0.6, rad = rank === 0 ? 0.1 * rand() : 0.45 + gauss() * 0.2;
+    gl.uniform3f(u(`col[${i}]`), lab[0], lab[1], lab[2]);
+    gl.uniform2f(u(`pos[${i}]`), Math.cos(ang) * rad, Math.sin(ang) * rad);
+  });
+  // Measure and adjust: how much of the vat each colour covers, until it is its share.
+  const gain = share.slice(), M = 64, px = new Uint8Array(M * M * 4), px2 = new Uint8Array(M * M * 4);
+  gl.viewport(0, 0, M, M); gl.uniform2f(u('res'), M, M); gl.uniform2f(u('org'), 0, 0);
+  let areas = [];
+  for (let it = 0; it < 24; it++) {
+    for (let k = 0; k < 5; k++) gl.uniform1f(u(`gain[${k}]`), gain[k] || 0);
+    gl.uniform1i(u('mode'), 1); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); gl.readPixels(0, 0, M, M, gl.RGBA, gl.UNSIGNED_BYTE, px);
+    gl.uniform1i(u('mode'), 2); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); gl.readPixels(0, 0, M, M, gl.RGBA, gl.UNSIGNED_BYTE, px2);
+    const mass = [0, 0, 0, 0, 0]; let all = 0;
+    for (let j = 0; j < M * M; j++) { if (!px2[j * 4 + 1]) continue; all += 255; for (let k = 0; k < 4; k++) mass[k] += px[j * 4 + k]; mass[4] += px2[j * 4]; }
+    areas = mass.slice(0, n).map((m) => m / all);
+    for (let k = 0; k < n; k++) gain[k] *= ((share[k] + 1e-3) / (areas[k] + 1e-3)) ** 0.8;
+  }
+  for (let k = 0; k < 5; k++) gl.uniform1f(u(`gain[${k}]`), gain[k] || 0);
+  // Then the vat itself, centred.
+  const side = Math.round(Math.min(width, height) * dpr), ox = Math.round((c.width - side) / 2), oy = Math.round((c.height - side) / 2);
+  gl.uniform2f(u('res'), side, side); gl.uniform2f(u('org'), ox, oy); gl.uniform1i(u('mode'), 0);
+  const frame = (t) => { gl.viewport(0, 0, c.width, c.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.viewport(ox, oy, side, side); gl.uniform1f(u('t'), t); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
+  frame(0);
+  const still = window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let out = c;
+  if (stir && !still) {
+    const t0 = performance.now();
+    const loop = (now) => { if (!c.isConnected && now - t0 > 1000) { gl.getExtension('WEBGL_lose_context')?.loseContext(); return; } frame((now - t0) / 1000); requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
+  } else {
+    // Still: copy it to a plain canvas and let the WebGL context go (a browser keeps only a few).
+    out = document.createElement('canvas'); out.width = c.width; out.height = c.height;
+    out.getContext('2d').drawImage(c, 0, 0);
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+  }
+  out.className = 'colour-vat';
+  out.style.aspectRatio = `${width} / ${height}`;
+  out.dataset.areas = areas.map((x) => x.toFixed(3)).join(' '); // what the vat covers, to check against the shares
+  if (label) { out.setAttribute('role', 'img'); out.setAttribute('aria-label', label); }
+  return out;
+}
