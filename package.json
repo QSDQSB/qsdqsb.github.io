@@ -42,7 +42,7 @@
     "build:js": "npm run uglify",
     "check:responsive-policy": "bash scripts/check-responsive-policy.sh",
     "check:seo": "python3 scripts/check-seo-descriptions.py",
-    "covers": "node scripts/generate-cover-sizes.mjs",
+    "covers": "node scripts/generate-cover-sizes.mjs && node scripts/generate-cover-og.mjs",
     "geocode": "node scripts/geocode-maps.js",
     "generate:depth": "node scripts/generate-hero-depth-maps.mjs",
     "photos:push": "node scripts/photos/push.mjs",

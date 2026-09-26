@@ -41,14 +41,14 @@ export function localFiles(root) {
   return out;
 }
 
-/** Slugs the authored YAML for a gallery mentions (photos keys + order). */
+/** Slugs the authored YAML for a gallery mentions (photos keys, order, the cover; a part's, its parent's cover too). */
 export function referencedSlugs(gallery) {
-  const file = path.join(PATHS.authoredDir, `${gallery}.yml`);
-  if (!fs.existsSync(file)) return new Set();
-  try {
-    const doc = yaml.load(fs.readFileSync(file, 'utf8')) || {};
-    return new Set([...Object.keys(doc.photos || {}), ...(doc.order || []).map(String)].map(s => s.toLowerCase()));
-  } catch { return new Set(); }
+  const read = (g) => { try { return yaml.load(fs.readFileSync(path.join(PATHS.authoredDir, `${g}.yml`), 'utf8')) || {}; } catch { return {}; } };
+  const doc = read(gallery);
+  const slugs = [...Object.keys(doc.photos || {}), ...(doc.order || []).map(String), ...(doc.cover?.photo ? [doc.cover.photo] : [])];
+  const parent = gallery.includes('/') ? read(path.posix.dirname(gallery)).cover?.photo : null;
+  if (parent && parent.startsWith(`${path.posix.basename(gallery)}/`)) slugs.push(parent.split('/').pop());
+  return new Set(slugs.map(s => String(s).toLowerCase()));
 }
 
 export function diff(local, remote, sub = '', refsFor = referencedSlugs) {

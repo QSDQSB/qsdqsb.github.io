@@ -13,6 +13,7 @@
  *       place, caption, caption_zh, alt, story, featured, hidden
  *   place: "Tower Bridge, London" names the frame over what its GPS says (a stale fix, a
  *   spot where the camera stood rather than what it saw)
+ *   cover:    { photo, focus: [x, y], crops }   the voyage's cover (lib/cover.mjs)
  *
  * Merged (repo, _data/photo_manifests/<key>.json, gitignored, what Liquid reads)
  *   { gallery, key, base, title, count, photos: [ machine ∪ authored, ordered ] ,
@@ -20,9 +21,10 @@
  */
 
 import { MANIFEST_VERSION, galleryKey } from './config.mjs';
+import { validateCover } from './cover.mjs';
 
 export const AUTHORED_PHOTO_KEYS = ['place', 'caption', 'caption_zh', 'alt', 'story', 'story_zh', 'featured', 'hidden'];
-export const AUTHORED_TOP_KEYS = ['title', 'order', 'aerial', 'photos'];
+export const AUTHORED_TOP_KEYS = ['title', 'order', 'aerial', 'cover', 'photos'];
 
 export function emptyManifest(gallery) {
   return { version: MANIFEST_VERSION, gallery, generated: null, photos: [] };
@@ -48,6 +50,7 @@ export function validateAuthored(doc, where = 'authored') {
   if (typeof doc !== 'object' || Array.isArray(doc)) return [`${where}: must be a mapping`];
   for (const k of Object.keys(doc)) if (!AUTHORED_TOP_KEYS.includes(k)) problems.push(`${where}: unknown top-level key "${k}"`);
   if (doc.order != null && !Array.isArray(doc.order)) problems.push(`${where}: "order" must be a list of slugs`);
+  problems.push(...validateCover(doc.cover, where));
   if (doc.photos != null) {
     if (typeof doc.photos !== 'object' || Array.isArray(doc.photos)) problems.push(`${where}: "photos" must be a mapping keyed by slug`);
     else for (const [slug, p] of Object.entries(doc.photos)) {
@@ -77,6 +80,7 @@ export function mergeManifest(gallery, machine, authored, base) {
   else {
     for (const slug of Object.keys(aPhotos)) if (!known.has(slug)) warnings.push(`authored slug "${slug}" has no processed photo`);
     for (const slug of a.order || []) if (!known.has(String(slug).toLowerCase())) warnings.push(`order lists unknown slug "${slug}"`);
+    if (a.cover?.photo && !known.has(a.cover.photo)) warnings.push(`cover names unknown slug "${a.cover.photo}"`);
   }
 
   const photos = sortPhotos(
@@ -94,7 +98,7 @@ export function mergeManifest(gallery, machine, authored, base) {
 
   return {
     gallery, key: galleryKey(gallery), base: `${base}/${gallery}`,
-    title: a.title || null, aerial: a.aerial || null, generated: m.generated, count: photos.length, unlisted, photos, inventory, warnings,
+    title: a.title || null, aerial: a.aerial || null, cover: a.cover || null, generated: m.generated, count: photos.length, unlisted, photos, inventory, warnings,
   };
 }
 

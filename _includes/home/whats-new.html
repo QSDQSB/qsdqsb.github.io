@@ -22,7 +22,15 @@
       {% assign img = doc.header.overlay_image %}
       {% assign firstchar = img | slice: 0 %}
       {% if firstchar == '/' %}{% assign cover = img %}{% else %}{% assign cover = img | prepend: '/images/' %}{% endif %}
-      <a class="wn-card wn-card--{{ forloop.index }}" href="{{ doc.url | relative_url }}"{% if img %} style="--cover: url('{{ cover | relative_url }}');"{% endif %}>
+      {% comment %} A voyage's cover (voyage-cover.html): the lead and the 3:1 banner (1, 4) take the 1920 tier, the small two 1280. {% endcomment %}
+      {% include voyage-cover.html doc=doc %}
+      {% assign cover_pos = nil %}
+      {% if vc %}
+        {% if forloop.index == 1 or forloop.index == 4 %}{% assign vc_w = 1920 %}{% else %}{% assign vc_w = 1280 %}{% endif %}
+        {% capture cover %}{{ vc.url }}/{{ vc_w }}.webp{% endcapture %}
+        {% if forloop.index == 4 %}{% assign cover_pos = vc.pos.wide %}{% else %}{% assign cover_pos = vc.pos.screen %}{% endif %}
+      {% endif %}
+      <a class="wn-card wn-card--{{ forloop.index }}" href="{{ doc.url | relative_url }}"{% if img %} style="--cover: url('{{ cover | relative_url }}');{% if cover_pos %} --cover-pos: {{ cover_pos }};{% endif %}"{% endif %}>
         <div class="wn-media"></div>
         <div class="wn-scrim"></div>
         <div class="wn-body">

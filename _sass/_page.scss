@@ -571,6 +571,22 @@ body.collection--posts .page__inner-wrap .page__content {
   }
 }
 
+// A voyage's cover (_includes/page__hero.html): the photo's tier and where its subject sits, for each
+// shape the hero takes (about 2.4:1, 16:9 under a desktop, 4:3 on a phone). After the rules above that
+// centre every hero, so it wins at the same specificity; the seam blur (::before) inherits it.
+.page__hero--overlay .page__hero-media--cover {
+  background-image: var(--hero-filter, linear-gradient(transparent, transparent)), var(--hero-img);
+  background-position: var(--hero-pos, center);
+
+  @include responsive-down(desktop) { background-position: var(--hero-pos-md, center); }
+  @include responsive-down(tablet) {
+    background-image: var(--hero-filter, linear-gradient(transparent, transparent)), var(--hero-img-sm, var(--hero-img));
+    background-position: var(--hero-pos-sm, center);
+  }
+
+  &::before { background-position: inherit; }
+}
+
 body.overlay-opening-enabled .page__hero--overlay .page__lead-inner {
   display: block;
   max-width: 100%;
