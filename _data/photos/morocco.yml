@@ -1,31 +1,3 @@
 # Authored layer for gallery/morocco — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf0055:
-    caption: Ksar of Ait-Ben-Haddou, Tabouraht, Morocco
-  dscf0348:
-    caption: Desert Camp, Et-taous, Cercle dEr-Rissani
-  dscf0434:
-    caption: Et-taous, Cercle dEr-Rissani, Morocco
-  dscf0680:
-    caption: Fès-Médina, Fez, Morocco
-  dscf0739:
-    caption: Sidi Abdallah Al Khayat, cercle de Zerhoun, Morocco
-  dscf8340:
-    caption: arrondissement de Tanger-Medina, Tangier, Morocco
-  dscf8762:
-    caption: arrondissement de Tanger-Medina طنجة المدينة, Tangier, Morocco
-  dscf8937:
-    caption: Rif Al Andalous, Chefchaouen, Morocco
-  dscf8992:
-    caption: Boulevard de Tiznit, Casablanca, Morocco
-  dscf9031:
-    caption: Sour Jdid, Casablanca, Morocco
-  dscf9089:
-    caption: Sour Jdid, Casablanca, Morocco
-  dscf9265:
-    caption: Douar Graoua, Arrondissement de Marrakech-Medina, Marrakesh
-  dscf9539:
-    caption: Mechouar Kasbah, Arrondissement de Marrakech-Medina, Marrakesh
-  dscf9794:
-    caption: Guéliz, Marrakesh, Morocco
+photos: {}

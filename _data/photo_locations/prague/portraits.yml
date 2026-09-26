@@ -3,17 +3,32 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf4305:
-    gps: missing
-    source: awaiting original
+    suggested: Charles Bridge, Prague
+    landmark: Charles Bridge
+    street: Charles Bridge
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4425:
     gps: missing
-    source: awaiting original
+    source: pending visual guess
   dscf4538:
-    gps: missing
-    source: awaiting original
+    suggested: Old Town Square, Prague
+    landmark: Old Town Square
+    street: Staroměstské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5074:
-    gps: missing
-    source: awaiting original
+    suggested: Charles Bridge, Prague
+    landmark: Charles Bridge
+    street: Křižovnické náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5154:
     suggested: Republic Square, Prague
     landmark: Republic Square
@@ -37,5 +52,10 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf5683:
-    gps: missing
-    source: awaiting original
+    suggested: Rieger Gardens, Prague
+    landmark: Rieger Gardens
+    street: promenáda Pawla Adamowicze
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode

@@ -1,5 +1,5 @@
 /**
- * Enhanced Scroll Animations (IntersectionObserver)
+ * Scroll reveals: content blocks fade up as they enter the viewport (IntersectionObserver)
  *
  * Conservative defaults:
  * - Only animates direct children of `.page__content`

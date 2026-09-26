@@ -53,14 +53,16 @@
      Preload the WOFF2 the browser will actually use (matches the woff2-first
      src in _custom.scss) — preloading the TTF would download a format the
      @font-face never resolves to.
-     Note: no `crossorigin` — fonts are same-origin; Jekyll dev server does not
-     send CORS headers, so adding `crossorigin` makes Safari reject the preload. -->
-<link rel="preload" href="{{ base_path }}/assets/fonts/Barlow/Barlow-Regular.woff2" as="font" type="font/woff2">
-<link rel="preload" href="{{ base_path }}/assets/fonts/Barlow/Barlow-Italic.woff2" as="font" type="font/woff2">
+     `crossorigin` is required even though the fonts are same-origin: fonts are
+     always fetched in CORS mode, so a preload without it does not match the
+     real request and the font downloads twice. A same-origin request needs no
+     CORS headers from the server, so this holds on the dev server too. -->
+<link rel="preload" href="{{ base_path }}/assets/fonts/Barlow/Barlow-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ base_path }}/assets/fonts/Barlow/Barlow-Italic.woff2" as="font" type="font/woff2" crossorigin>
 <!-- Playfair Display is the site's body + heading face ($global-font-family /
      $header-font-family) — preload the latin regular so first-paint text does
      not wait on the CSS-discovered @font-face. -->
-<link rel="preload" href="{{ base_path }}/assets/fonts/PlayfairDisplay/PlayfairDisplay-400-normal-latin.woff2" as="font" type="font/woff2">
+<link rel="preload" href="{{ base_path }}/assets/fonts/PlayfairDisplay/PlayfairDisplay-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 
 
 <!-- Playfair Display + Philosopher are self-hosted (see _sass/_custom.scss) —

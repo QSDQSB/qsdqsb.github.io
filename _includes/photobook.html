@@ -1,0 +1,40 @@
+{%- comment -%}
+  The Photobook: a voyage's gallery page. Its data is the gallery's merged manifest
+  (_data/photo_manifests/<key>.json, written by `npm run photos:fetch` before every build), with the
+  book's layer worked out by scripts/photos/lib/book.mjs: rows, cover, colophon, place, light, glow.
+  Styles: _sass/_photobook.scss. Script: assets/js/photobook/.
+{%- endcomment -%}
+{%- assign photobook_key = page.gallery_name | replace: "/", "_" -%}
+{%- assign book = site.data.photo_manifests[photobook_key] -%}
+{%- comment -%} The way back, first in the masthead: a part's to its voyage, a voyage's to all voyages. {%- endcomment -%}
+{%- assign back_url = "/voyage/" | relative_url -%}
+{%- assign back_label = "All voyages" -%}
+{%- if page.collection == "subvoyage" -%}
+  {%- assign parent_slug = page.path | split: "/" | slice: 1 | first -%}
+  {%- assign parent_path = "_voyage/" | append: parent_slug | append: ".md" -%}
+  {%- assign parent = site.voyage | where: "path", parent_path | first -%}
+  {%- if parent -%}{%- assign back_url = parent.url | relative_url -%}{%- assign back_label = "Back to " | append: parent.title -%}{%- endif -%}
+{%- endif -%}
+{% include_cached masthead.html back_url=back_url back_label=back_label %}
+<div class="photobook-glow" aria-hidden="true"><i></i><i></i></div>
+{% include photobook/cover.html book=book %}
+{%- if book and book.count > 0 %}
+{% include photobook/filmbar.html book=book %}
+<main class="photobook-main" id="photobook-main">
+  {% include photobook/book.html book=book %}
+  {{ content }}
+</main>
+{% include photobook/colophon.html book=book %}
+{%- else %}
+<main class="photobook-main photobook-main--empty" id="photobook-main">
+  <p class="photobook-empty">The photographs of this voyage are still on their way.</p>
+  {{ content }}
+</main>
+{%- endif %}
+{% include photobook/end.html %}
+{%- if book and book.count > 0 %}
+{% include photobook/lightbox.html %}
+<script type="application/json" id="photobook-data">{{ book.book.lightbox | jsonify }}</script>
+{%- endif %}
+{% include scripts.html %}
+<script type="module" src="{{ '/assets/js/photobook/index.js' | relative_url }}"></script>

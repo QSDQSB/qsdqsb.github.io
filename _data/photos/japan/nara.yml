@@ -1,29 +1,3 @@
 # Authored layer for gallery/japan/nara — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf6875:
-    caption: Noboriojicho, Nara, Japan
-  dscf6977:
-    caption: 内侍道, Nara, Japan
-  dscf7013:
-    caption: Suimoncho, Nara, Japan
-  dscf7019:
-    caption: Nara, Nara Prefecture, Japan
-  dscf7504:
-    caption: Noboriojicho, Nara, Japan
-  dscf7571:
-    caption: Noboriojicho, Nara, Japan
-  dscf7619:
-    caption: Suimoncho, Nara, Japan
-  dscf7620:
-    caption: Suimoncho, Nara, Japan
-  dscf7696:
-    caption: Nara, Nara Prefecture, Japan
-  dscf7720:
-    caption: Nara, Nara Prefecture, Japan
-  dscf7730:
-    caption: Nara, Nara Prefecture, Japan
-  dscf7744:
-    caption: Nara, Nara Prefecture, Japan
-  dscf7765:
-    caption: Nara, Nara Prefecture, Japan
+photos: {}

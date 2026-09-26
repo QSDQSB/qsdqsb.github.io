@@ -1,0 +1,36 @@
+{%- comment -%}
+  The cover: the voyage's own 3:1 hero (header.overlay_image, the one its card and the atlas show),
+  full bleed, with the site's hero recipe (the fade at the foot, the scrim, the title). A page
+  without one opens on the book's cover frame. The glow takes its colours from that frame either way.
+  The way back (to a part's voyage, or to all voyages) is the masthead's ‹ (_includes/photobook.html).
+{%- endcomment -%}
+{%- assign pb = include.book -%}
+{%- assign cover = nil -%}
+{%- if pb.book.cover != nil -%}{%- assign cover = pb.photos[pb.book.cover] -%}{%- endif -%}
+<header class="photobook-cover" id="photobook-cover" data-i="{% if cover %}{{ pb.book.cover }}{% endif %}">
+  {%- if page.header.overlay_image %}
+  {%- assign hero = page.header.overlay_image -%}
+  {%- unless hero contains "://" or hero contains "/images/" %}{% assign hero = "/images/" | append: hero %}{% endunless %}
+  {%- comment -%} WebP renditions from scripts/generate-cover-sizes.mjs; the 3:1 cover is drawn at least 78rem wide (26rem tall). {%- endcomment -%}
+  {%- assign sized = site.data.cover_sizes[page.header.overlay_image] -%}
+  <img class="photobook-cover__image" src="{{ hero | relative_url }}"{% if sized %} srcset="{% for s in sized %}{{ s.src | relative_url }} {{ s.w }}w{% unless forloop.last %}, {% endunless %}{% endfor %}" sizes="max(100vw, 78rem)"{% endif %} alt="" fetchpriority="high" decoding="async">
+  {%- elsif cover %}
+  <img class="photobook-cover__image" src="{{ cover.url }}/1920.webp" sizes="100vw" srcset="{% for w in cover.sizes.webp %}{{ cover.url }}/{{ w }}.webp {{ w }}w{% unless forloop.last %}, {% endunless %}{% endfor %}" width="{{ cover.w }}" height="{{ cover.h }}" alt="" fetchpriority="high" decoding="async"{% if cover.ph %} style="background-image:url({{ cover.ph }})"{% endif %}>
+  {%- endif %}
+  <div class="photobook-cover__title">
+    <div>
+      <h1>{{ page.title | markdownify | remove: "<p>" | remove: "</p>" | strip }}</h1>
+      {%- assign lede = page.subtitle | default: page.description | default: page.excerpt -%}
+      {%- if lede %}<p class="photobook-cover__lede">{{ lede | strip_html | strip }}</p>{% endif %}
+    </div>
+    {%- if pb.count > 0 -%}
+    {%- assign c = pb.book.colophon -%}
+    <dl class="photobook-facts">
+      <div><dt>Frames</dt><dd>{{ pb.count }}</dd></div>
+      {%- if c.lenses.size > 0 %}<div><dt>Lenses</dt><dd>{{ c.lenses.size }}</dd></div>{% endif -%}
+      {%- if c.films.size > 0 %}<div><dt>Films</dt><dd>{{ c.films.size }}</dd></div>{% endif -%}
+      {%- if c.bodies.size > 0 %}<div><dt>Body</dt><dd>{{ c.bodies[0].name | remove: "Fujifilm " }}</dd></div>{% endif -%}
+    </dl>
+    {%- endif -%}
+  </div>
+</header>

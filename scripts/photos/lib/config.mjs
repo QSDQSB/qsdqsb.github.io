@@ -27,17 +27,18 @@ try { process.loadEnvFile?.(path.join(ROOT, '.env')); } catch { /* no .env */ }
 
 export const PATHS = {
   photosDir:     path.resolve(ROOT, process.env.PHOTOS_DIR || 'photos'), // local originals, gitignored
-  legacyGallery: path.join(ROOT, 'gallery'),              // today's compressed tree, bootstrap source
   authoredDir:   path.join(ROOT, '_data', 'photos'),      // captions, order, stories (committed)
   mergedDir:     path.join(ROOT, '_data', 'photo_manifests'), // machine + authored merge (gitignored)
+  locationsDir:  path.join(ROOT, '_data', 'photo_locations'), // place names from photos:locate (committed)
   localStore:    path.join(ROOT, '.photos-local'),        // filesystem stand-in for both buckets
 };
 
 // Long-edge sizes. Thumb tiers feed the grid, full tiers feed the lightbox
-// and the loupe. 4096 is the largest anything public ever reaches.
+// and the loupe. 2880 is a MacBook's full-width spread at 2x (1440 × 2), so
+// it need not reach for 4096; 4096 is the largest anything public ever reaches.
 export const SIZES = {
   thumb: [480, 960],
-  full:  [1280, 1920, 2560, 4096],
+  full:  [1280, 1920, 2560, 2880, 4096],
 };
 export const ALL_SIZES = [...SIZES.thumb, ...SIZES.full];
 
@@ -48,12 +49,6 @@ export const FORMATS = {
   jpg:  { quality: 80, maxSize: Infinity, mozjpeg: true },
   avif: { quality: 55, maxSize: 1920, effort: 4 },
 };
-
-// Written into the EXIF Software tag of every compressed copy the bootstrap
-// made from gallery/. A camera file never carries it, so replacing a copy
-// with its original clears the mark by itself. Transitional: retire with
-// bootstrap.mjs once no gallery holds a compressed copy.
-export const BOOTSTRAP_STAMP = 'qsdqsb bootstrap: compressed copy';
 
 export const ORIGINAL_RE = /\.(jpe?g|png|tiff?|webp|heic)$/i;
 export const IGNORED_PREFIXES = ['trash/', '.'];

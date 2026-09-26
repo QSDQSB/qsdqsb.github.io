@@ -1,21 +1,3 @@
 # Authored layer for gallery/dragonstone — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf6820:
-    caption: Gibelarrotzagako - San Pelaio, Bakio, Spain
-  dscf6826:
-    caption: Gibelarrotzagako - San Pelaio, Bakio, Spain
-  dscf6835:
-    caption: Gibelarrotzagako - San Pelaio, Bakio, Spain
-  dscf6847:
-    caption: Gibelarrotzagako - San Pelaio, Bakio, Spain
-  dscf6878:
-    caption: Gibelarrotzagako - San Pelaio, Bakio, Spain
-  dscf6888:
-    caption: Gibelarrotzagako - San Pelaio, Bakio, Spain
-  dscf6915:
-    caption: Gibelarrotzagako - San Pelaio, Bakio, Spain
-  dscf6922:
-    caption: Gibelarrotzagako - San Pelaio, Bakio, Spain
-  dscf6933:
-    caption: Gaztelugatxe Bridge, Bakio, Spain
+photos: {}

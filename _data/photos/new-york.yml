@@ -1,29 +1,3 @@
 # Authored layer for gallery/new-york — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf7157:
-    caption: Whitehall, New York, US
-  dscf7257:
-    caption: Rockefeller Center, West 49 Street, New York
-  dscf7411:
-    caption: Times Square, Broadway, New York
-  dscf7476:
-    caption: Rockefeller Center, New York, US
-  dscf7543:
-    caption: Top of the Rock, New York, US
-  dscf7602:
-    caption: Colgate Center, Jersey City, US
-  dscf7638:
-    caption: Colgate Center, Jersey City, US
-  dscf7663:
-    caption: The Edge, Chelsea District, New York
-  dscf7670:
-    caption: Pier 57, Meatpacking District, New York
-  dscf7717:
-    caption: Ground Zero, Financial District, New York
-  dscf7751:
-    caption: The Oculus, Financial District, New York
-  dscf7798:
-    caption: Exchange Place, Jersey City, US
-  dscf7962:
-    caption: JFK Access Road, New York, US
+photos: {}

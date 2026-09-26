@@ -1,11 +1,3 @@
 # Authored layer for gallery/prague/streetscape — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf4517:
-    caption: Ovocný trh, Old Town, Prague
-  dscf4521:
-    caption: Celetná, Old Town, Prague
-  dscf5116:
-    caption: Portfolio Restaurant, Havlíčkova, Prague
-  dscf5123:
-    caption: Hilton Prague Old Town, V Celnici, Prague
+photos: {}

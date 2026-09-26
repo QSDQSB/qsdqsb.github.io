@@ -3,8 +3,12 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf6820:
-    gps: missing
-    source: awaiting original
+    suggested: Gibelortzagako San Pelaio, Bakio, Spain
+    street: Gibelortzagako San Pelaio
+    city: Bakio
+    country: Spain
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6826:
     suggested: Bay of Biscay, Bakio, Spain
     landmark: Bay of Biscay
@@ -14,23 +18,58 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf6835:
-    gps: missing
-    source: awaiting original
+    suggested: Bay of Biscay, Bakio, Spain
+    landmark: Bay of Biscay
+    street: Gibelortzagako San Pelaio
+    city: Bakio
+    country: Spain
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6847:
-    gps: missing
-    source: awaiting original
+    suggested: Bay of Biscay, Bermeo, Spain
+    landmark: Bay of Biscay
+    street: Gibelortzaga (San Pelaio)
+    city: Bermeo
+    country: Spain
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6878:
-    gps: missing
-    source: awaiting original
+    suggested: Bay of Biscay, Bermeo, Spain
+    landmark: Bay of Biscay
+    street: Gibelortzaga (San Pelaio)
+    city: Bermeo
+    country: Spain
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6888:
-    gps: missing
-    source: awaiting original
+    suggested: Bay of Biscay, Bermeo, Spain
+    landmark: Bay of Biscay
+    street: Gibelortzaga (San Pelaio)
+    city: Bermeo
+    country: Spain
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6915:
-    gps: missing
-    source: awaiting original
+    suggested: Bay of Biscay, Bermeo, Spain
+    landmark: Bay of Biscay
+    street: Gibelortzaga (San Pelaio)
+    city: Bermeo
+    country: Spain
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6922:
-    gps: missing
-    source: awaiting original
+    suggested: Bay of Biscay, Bermeo, Spain
+    landmark: Bay of Biscay
+    street: Gibelortzaga (San Pelaio)
+    city: Bermeo
+    country: Spain
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6933:
-    gps: missing
-    source: awaiting original
+    suggested: Bay of Biscay, Bakio, Spain
+    landmark: Bay of Biscay
+    street: Gibelortzagako San Pelaio
+    city: Bakio
+    country: Spain
+    gps: present
+    source: OpenStreetMap reverse geocode

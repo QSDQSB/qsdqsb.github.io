@@ -3,14 +3,34 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf2296:
-    gps: missing
-    source: awaiting original
+    suggested: Trevi Fountain, Rome
+    landmark: Trevi Fountain
+    street: Via Delle Muratte
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2345:
-    gps: missing
-    source: awaiting original
+    suggested: Trevi Fountain, Rome
+    landmark: Trevi Fountain
+    street: Via Delle Muratte
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2346:
-    gps: missing
-    source: awaiting original
+    suggested: Trevi Fountain, Rome
+    landmark: Trevi Fountain
+    street: Via Delle Muratte
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2349:
-    gps: missing
-    source: awaiting original
+    suggested: Trevi Fountain, Rome
+    landmark: Trevi Fountain
+    street: Piazza Di Trevi
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode

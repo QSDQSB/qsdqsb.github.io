@@ -53,7 +53,7 @@ Typically required for gallery routing:
 ## Map/Gallery-Specific Contracts
 
 - If `map_dataset` exists, the page must be render-compatible with map include usage.
-- If `gallery_name` exists, it must resolve to gallery and thumbnail path conventions.
+- If `gallery_name` exists, it must be known to the photo pipeline (`_data/photos/<name>.yml` or a fetched `_data/photo_manifests/` entry), with processed photos.
 - If `subgalleries: true`, parent/sub-collection relation must resolve cleanly.
 
 ## Related Checks

@@ -3,11 +3,14 @@
 <div class="masthead">
   <div class="masthead__inner-wrap">
     <div class="masthead__menu">
-      <nav id="site-nav" class="greedy-nav" aria-label="Primary">
+      <nav id="site-nav" class="greedy-nav{% if include.back_url %} greedy-nav--has-back{% endif %}" aria-label="Primary">
         <button type="button" class="greedy-nav__toggle" aria-label="Toggle navigation"><div class="navicon"></div></button>
         <ul class="visible-links">
           <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-item--brand">
             <div class="masthead__brand-group">
+              {%- if include.back_url %}
+              <a href="{{ include.back_url }}" class="masthead__back" aria-label="{{ include.back_label }}" data-tip="{{ include.back_label }}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></a>
+              {%- endif %}
               <a href="{{ base_path }}/" class="masthead__brand-logo" aria-label="{{ site.title }}">
                 <span class="masthead__brand-mark" aria-hidden="true"></span>
               </a>

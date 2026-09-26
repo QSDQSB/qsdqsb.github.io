@@ -296,5 +296,9 @@
   "gondola, venice": {
     "lat": 27.1033865,
     "lng": -82.4108377
+  },
+  "wengen, lauterbrunnen, switzerland": {
+    "lat": 46.6054411,
+    "lng": 7.9217237
   }
 }

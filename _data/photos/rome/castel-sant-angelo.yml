@@ -1,17 +1,3 @@
 # Authored layer for gallery/rome/castel-sant-angelo — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf2006:
-    caption: Via Della Conciliazione, Municipio Roma I, Rome
-  dscf2015:
-    caption: Castle of the Holy Angel, Lungotevere Vaticano, Rome
-  dscf2050:
-    caption: Castle of the Holy Angel, Lungotevere Vaticano, Rome
-  dscf2098:
-    caption: Castle of the Holy Angel, Lungotevere Vaticano, Rome
-  dscf2101:
-    caption: Castle of the Holy Angel, Lungotevere Vaticano, Rome
-  dscf2105:
-    caption: Castle of the Holy Angel, Lungotevere Vaticano, Rome
-  dscf2108:
-    caption: Mausoleum of Hadrian, Lungotevere Castello, Rome
+photos: {}

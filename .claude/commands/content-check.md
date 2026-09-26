@@ -4,7 +4,7 @@ For each file, validate against the contracts in CLAUDE.md "Frontmatter Contract
 
 1. **Required keys present?** Per collection (see the table in CLAUDE.md).
 2. **Conditional pairings resolve?** For each set value:
-   - `gallery_name` → both `gallery/<name>/` and `images/thumbnails/gallery/<name>/` exist with matching filenames.
+   - `gallery_name` → known to the photo pipeline: `_data/photos/<name>.yml` committed or `_data/photo_manifests/<key>.json` fetched (`<key>` = name with `/` → `_`), with processed photos — else the Photobook renders empty.
    - `subgalleries: true` → parent voyage basename aligns with the `_subvoyage/<basename>/` folder.
    - `tags` → entries exist in `_data/tag_colours.yml`.
 3. **Sub-voyage placement?** File lives in `_subvoyage/<parent>/`, not the root.

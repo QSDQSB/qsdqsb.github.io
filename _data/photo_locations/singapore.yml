@@ -3,17 +3,42 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf3966:
-    gps: missing
-    source: awaiting original
+    suggested: Shenton Way, Singapore
+    landmark: Shenton Way
+    street: Straits View
+    city: Singapore
+    country: Singapore
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4035:
-    gps: missing
-    source: awaiting original
+    suggested: Raffles Place Park, Singapore
+    landmark: Raffles Place Park
+    street: Raffles Quay
+    city: Singapore
+    country: Singapore
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4082:
-    gps: missing
-    source: awaiting original
+    suggested: Shenton Way, Singapore
+    landmark: Shenton Way
+    street: Marina View
+    city: Singapore
+    country: Singapore
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4108:
-    gps: missing
-    source: awaiting original
+    suggested: Bayfront, Singapore
+    landmark: Bayfront
+    street: Bayfront Avenue
+    city: Singapore
+    country: Singapore
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4171:
-    gps: missing
-    source: awaiting original
+    suggested: Hong Lim Park, Singapore
+    landmark: Hong Lim Park
+    street: Havelock Road
+    city: Singapore
+    country: Singapore
+    gps: present
+    source: OpenStreetMap reverse geocode

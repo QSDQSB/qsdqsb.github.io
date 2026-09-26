@@ -1,15 +1,3 @@
 # Authored layer for gallery/japan/tokyo — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf8418:
-    caption: Azabudai 1, Minato, Tokyo
-  dscf8468:
-    caption: Roppongi 3, Minato, Tokyo
-  dscf8536:
-    caption: Roppongi Hills, Roppongi 6, Minato
-  dscf8625:
-    caption: Shibuya 3, Shibuya, Tokyo
-  dscf8803:
-    caption: Azabudai 1, Minato, Tokyo
-  dscf8917:
-    caption: Shibuya Scramble Square, 渋谷区, Tokyo
+photos: {}

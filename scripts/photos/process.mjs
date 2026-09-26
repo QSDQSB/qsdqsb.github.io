@@ -7,8 +7,9 @@
  *      (same etag + size), unless --force
  *   2. read EXIF, orient, measure, thumbhash, dominant colour
  *   3. render every public tier and upload it
- *   4. record the photo in <gallery>/manifest.json (public, no GPS) and
- *      <gallery>/.private.json (originals bucket, GPS + full EXIF)
+ *   4. record the photo in <gallery>/manifest.json (what the site builds from: no GPS; the sun
+ *      and the weather at the moment of the frame) and <gallery>/.private.json (GPS + full
+ *      EXIF), both in the locked originals bucket; the public bucket serves image tiers only
  *
  * Tiers whose original has disappeared are deleted and dropped from the
  * manifest. When anything changed and CF_PAGES_DEPLOY_HOOK is set, the site
@@ -25,18 +26,22 @@
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { readCamera, closeCamera } from './lib/camera.mjs';
-import { env, PATHS, ORIGINAL_RE, IGNORED_PREFIXES, MANIFEST_FILE, PRIVATE_FILE, MANIFEST_VERSION, FORMATS, BOOTSTRAP_STAMP, parseArgs } from './lib/config.mjs';
+import { env, ROOT, PATHS, ORIGINAL_RE, IGNORED_PREFIXES, MANIFEST_FILE, PRIVATE_FILE, MANIFEST_VERSION, FORMATS, parseArgs } from './lib/config.mjs';
 import { storesFrom } from './lib/store.mjs';
 import { readExif } from './lib/exif.mjs';
 import { assignSlugs } from './lib/slug.mjs';
 import { analyse, renderTiers } from './lib/tiers.mjs';
 import { emptyManifest, sortPhotos } from './lib/manifest.mjs';
+import { lightGallery } from './lib/sun.mjs';
+import { weatherGallery } from './lib/weather.mjs';
+import { galleryPlaces } from './lib/places.mjs';
 
 const args = parseArgs(process.argv.slice(2), { multi: ['gallery'] });
 const DRY = !!args['dry-run'];
 const FORCE = !!args.force;
 const CONCURRENCY = Math.max(1, Number(args.concurrency) || 2);
 const formats = Object.keys(FORMATS).filter(f => f !== 'avif' || (env.avif && !args['no-avif']));
+const placeOf = galleryPlaces(ROOT);
 const galleryFilter = new Set([...(args.gallery || []), ...(safeJson(process.env.PHOTOS_GALLERIES) || [])].map(String));
 
 function safeJson(s) { try { return s ? JSON.parse(s) : null; } catch { return null; } }
@@ -62,16 +67,16 @@ async function main() {
   // A gallery named in the filter with no originals left still needs its manifest reconciled.
   for (const g of galleryFilter) if (!byGallery.has(g)) byGallery.set(g, []);
 
-  let changed = 0, failed = 0, skipped = 0, removed = 0;
+  let changed = 0, failed = 0, skipped = 0, removed = 0, lit = 0;
   for (const [gallery, files] of [...byGallery].sort()) {
     const r = await processGallery(gallery, files, { originals, pub });
-    changed += r.changed; failed += r.failed; skipped += r.skipped; removed += r.removed;
+    changed += r.changed; failed += r.failed; skipped += r.skipped; removed += r.removed; lit += r.lit;
   }
 
   await closeCamera();
-  log(`\ndone: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed across ${byGallery.size} galleries`);
-  if (args.gc) await collectGarbage(pub);
-  if (changed + removed > 0 && env.deployHook && !DRY) {
+  log(`\ndone: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed, ${lit} given their sun across ${byGallery.size} galleries`);
+  if (args.gc) await collectGarbage(pub, originals);
+  if (changed + removed + lit > 0 && env.deployHook && !DRY) {
     const r = await fetch(env.deployHook, { method: 'POST' });
     log(`deploy hook: ${r.status}`);
   }
@@ -80,7 +85,9 @@ async function main() {
 
 async function processGallery(gallery, files, { originals, pub }) {
   const manifestKey = `${gallery}/${MANIFEST_FILE}`, privateKey = `${gallery}/${PRIVATE_FILE}`;
-  const manifest = (await pub.getJson(manifestKey)) || emptyManifest(gallery);
+  // The manifest lives beside the originals, in the locked bucket; the public bucket serves images
+  // only. A gallery last processed before the move starts from its old public copy.
+  const manifest = (await originals.getJson(manifestKey)) || (await pub.getJson(manifestKey)) || emptyManifest(gallery);
   const priv = (await originals.getJson(privateKey)) || { gallery, photos: {} };
   const bySlug = new Map(manifest.photos.map(p => [p.slug, p]));
   const { slugs, warnings } = assignSlugs(files.map(f => path.posix.basename(f.key)));
@@ -95,7 +102,9 @@ async function processGallery(gallery, files, { originals, pub }) {
       const version = `${meta.etag}:${meta.size}`;
       const existing = bySlug.get(slug);
       // Entries from before content-addressed tiers (no hash) are re-rendered once into t/<hash>/.
-      if (existing && existing.hash && existing.version === version && existing.formats?.join() === formats.join() && !FORCE) { skipped++; continue; }
+      if (existing && existing.hash && existing.version === version && existing.formats?.join() === formats.join() && !FORCE) {
+        skipped++; continue;
+      }
       log(`  ${gallery}/${file} → ${slug}${existing ? ' (changed)' : ''}`);
       if (DRY) { changed++; continue; }
       try {
@@ -120,7 +129,6 @@ async function processGallery(gallery, files, { originals, pub }) {
           aperture: exif.aperture, shutter: exif.shutter, iso: exif.iso, exposureBias: exif.exposureBias,
           ...(cam ? cam.pub : {}),
           thumbhash: facts.thumbhash, tint: facts.tint, sizes, formats, processed: new Date().toISOString(),
-          ...(exif.software === BOOTSTRAP_STAMP ? { compressed: true } : {}),
         });
         priv.photos[slug] = {
           file, key: meta.key, hash, version, gps: exif.gps,
@@ -144,13 +152,29 @@ async function processGallery(gallery, files, { originals, pub }) {
     bySlug.delete(slug); delete priv.photos[slug]; removed++;
   }
 
-  if ((changed || removed) && !DRY) {
+  // The sun, once per photo, from the original's GPS or the gallery's point on the atlas:
+  // no download, no render, so photos processed before it was kept get it on the next run.
+  // A frame without GPS borrows the position of the frame nearest in time that has one (within six
+  // hours): rough, but closer than the voyage's point, which remains the last resort.
+  const withGps = [...bySlug.values()].filter((p) => priv.photos[p.slug]?.gps && Date.parse(p.taken));
+  const gpsOf = (slug) => {
+    if (priv.photos[slug]?.gps) return priv.photos[slug].gps;
+    const t0 = Date.parse(bySlug.get(slug)?.taken); if (!Number.isFinite(t0)) return null;
+    let best = null;
+    for (const p of withGps) { const d = Math.abs(Date.parse(p.taken) - t0); if (d <= 6 * 3600e3 && (!best || d < best.d)) best = { d, gps: priv.photos[p.slug].gps }; }
+    return best?.gps || null;
+  };
+  const lit = lightGallery([...bySlug.values()], gpsOf, placeOf(gallery))
+    // …and the weather of that hour, asked once of Open-Meteo's archive; a network call, no image.
+    + (DRY ? 0 : await weatherGallery([...bySlug.values()], gpsOf, placeOf(gallery)));
+
+  if ((changed || removed || lit) && !DRY) {
     const photos = sortPhotos([...bySlug.values()]);
-    await pub.putJson(manifestKey, { version: MANIFEST_VERSION, gallery, generated: new Date().toISOString(), photos });
+    await originals.putJson(manifestKey, { version: MANIFEST_VERSION, gallery, generated: new Date().toISOString(), photos });
     await originals.putJson(privateKey, { gallery, generated: new Date().toISOString(), photos: priv.photos });
   }
-  if (changed || removed || failed) log(`  ${gallery}: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed`);
-  return { changed, failed, skipped, removed };
+  if (changed || removed || failed || lit) log(`  ${gallery}: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed${lit ? `, ${lit} given their sun or weather` : ''}`);
+  return { changed, failed, skipped, removed, lit };
 }
 
 /**
@@ -158,9 +182,13 @@ async function processGallery(gallery, files, { originals, pub }) {
  * more (an original replaced or removed). Runs only with --gc, after every
  * manifest is written, because one original may be shared by galleries.
  */
-async function collectGarbage(pub) {
-  const all = await pub.list('');
+async function collectGarbage(pub, originals) {
+  // Tiers still named by any manifest, private or (until the old copies are gone) public, are kept.
   const refs = new Set();
+  for (const o of (await originals.list('')).filter((x) => x.key.endsWith(`/${MANIFEST_FILE}`))) {
+    for (const p of (await originals.getJson(o.key))?.photos || []) if (p.hash) refs.add(p.hash);
+  }
+  const all = await pub.list('');
   for (const o of all.filter(o => o.key.endsWith('/' + MANIFEST_FILE))) {
     for (const p of (await pub.getJson(o.key))?.photos || []) if (p.hash) refs.add(p.hash);
   }

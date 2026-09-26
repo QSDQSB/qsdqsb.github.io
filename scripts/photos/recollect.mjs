@@ -7,12 +7,11 @@
  * YAML, and reports:
  *
  *   matched     existing slugs with a local file; of those, how many are
- *               originals and how many are still the bootstrap's stamped
- *               compressed copy
+ *               byte-identical to what the bucket holds
  *   new         local files no existing slug knows
  *   renamed     same frame, different file name than the bucket holds
- *               (DSCF1797.JPG from the camera vs DSCF1797.jpg from the
- *               bootstrap). R2 keys are case-sensitive, so pushing as-is
+ *               (DSCF1797.JPG from the camera vs DSCF1797.jpg in the
+ *               bucket). R2 keys are case-sensitive, so pushing as-is
  *               would leave the old key beside the new one and the site
  *               would show both, the second as dscf1797-2
  *   vanishing   existing slugs with no local file; the ones carrying
@@ -38,13 +37,13 @@ import { parseArgs } from './lib/config.mjs';
 import { frameFromName } from './lib/slug.mjs';
 import {
   cleanGallery, originalsBucket, localGallery, bucketGalleries, readAuthored, readMerged,
-  authoredWork, isCompressedCopy, readHeadExif,
+  authoredWork,
 } from './lib/inventory.mjs';
 
 /**
  * Pure comparison.
  * @param {object} input
- * @param {{file,slug,size,compressed:boolean}[]} input.local
+ * @param {{file,slug,size,md5?}[]} input.local
  * @param {{file,slug,size?}[]} input.baseline   what the gallery holds now (bucket or manifest)
  * @param {boolean} input.baselineHasSizes       true when baseline sizes came from the bucket
  * @param {object|null} input.doc                authored YAML
@@ -60,14 +59,12 @@ export function compareRecollection({ local, baseline, baselineHasSizes = false,
   const matched = local.filter(f => existing.has(f.slug));
   const report = {
     matched: matched.map(f => f.slug),
-    original: matched.filter(f => !f.compressed).map(f => f.slug),
-    compressed: matched.filter(f => f.compressed).map(f => f.slug),
-    // Same size is not same bytes: a re-stamped copy keeps its length. Compare checksums when both sides have one.
+    // Same size is not same bytes: compare checksums when both sides have one.
     unchanged: baselineHasSizes ? matched.filter(f => {
       const b = base.get(f.slug);
       return b?.size === f.size && (!b.md5 || !f.md5 || b.md5 === f.md5);
     }).map(f => f.slug) : [],
-    new: local.filter(f => !existing.has(f.slug)).map(f => ({ slug: f.slug, file: f.file, compressed: f.compressed })),
+    new: local.filter(f => !existing.has(f.slug)).map(f => ({ slug: f.slug, file: f.file })),
     renamed: matched.filter(f => base.get(f.slug) && base.get(f.slug).file !== f.file)
       .map(f => ({ slug: f.slug, local: f.file, bucket: base.get(f.slug).file, safe: sameFormat(f.file, base.get(f.slug).file) })),
     vanishing: [...existing].filter(s => !localBySlug.has(s)).sort()
@@ -89,8 +86,7 @@ export function formatRecollection(gallery, r, { source }) {
   const out = [];
   const list = (xs, n = 8) => xs.length <= n ? xs.join(', ') : `${xs.slice(0, n).join(', ')} … (+${xs.length - n})`;
   out.push(`${gallery}: compared against ${source}`);
-  out.push(`  matched     ${String(r.matched.length).padStart(3)}  ${r.original.length} original(s), ${r.compressed.length} still the compressed copy${r.unchanged.length ? `, ${r.unchanged.length} byte-identical to the bucket` : ''}`);
-  if (r.compressed.length && r.original.length) out.push(`              still compressed: ${list(r.compressed)}`);
+  out.push(`  matched     ${String(r.matched.length).padStart(3)}${r.unchanged.length ? `  ${r.unchanged.length} byte-identical to the bucket` : ''}`);
   out.push(`  new         ${String(r.new.length).padStart(3)}  ${list(r.new.map(n => n.slug)) || '—'}`);
   if (r.renamed.length) {
     out.push(`  renamed     ${String(r.renamed.length).padStart(3)}  the bucket holds another name for the same frame:`);
@@ -130,11 +126,7 @@ async function main() {
 
   const { dir, files, warnings } = localGallery(gallery);
   if (!files.length) { console.error(`nothing in ${path.relative(process.cwd(), dir)}/ to compare.`); return 2; }
-  const local = [];
-  for (const f of files) local.push({
-    ...f, compressed: isCompressedCopy(await readHeadExif(f.abs).catch(() => null)),
-    md5: crypto.createHash('md5').update(fs.readFileSync(f.abs)).digest('hex'),
-  });
+  const local = files.map(f => ({ ...f, md5: crypto.createHash('md5').update(fs.readFileSync(f.abs)).digest('hex') }));
 
   let baseline = [], source, hasSizes = false;
   const { bucket, why } = args.offline ? { bucket: null, why: '--offline' } : originalsBucket();

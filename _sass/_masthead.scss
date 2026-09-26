@@ -252,6 +252,27 @@ html.is-resizing {
   text-decoration: none;
 }
 
+// A voyage page's way back (the parent voyage, or all voyages), before the logo. Collapsed, the
+// masthead keeps it beside the logo, so it is one tap away anywhere on the page.
+.greedy-nav.greedy-nav--has-back { --nav-collapsed-width: #{($nav-shell-padding-x * 2) + $nav-brand-logo-shell-size * 2}; }
+
+.masthead__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 $nav-brand-logo-shell-size;
+  width: $nav-brand-logo-shell-size;
+  height: $nav-brand-logo-shell-size;
+  margin: 0;
+  border-radius: 999px;
+  color: $primary-color;
+  transition: background-color 0.3s $cubic-bezier-smooth;
+
+  svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+  &:hover { background: rgba(255, 255, 255, 0.1); }
+}
+
 .masthead__brand-logo {
   display: inline-flex;
   align-items: center;
@@ -300,6 +321,12 @@ html.is-resizing {
 }
 
 @include responsive-down(compact) {
+  // On a phone the name would take the bar's width from the sections: the logo alone links home.
+  // (Named with .masthead to outrank the nav's `.greedy-nav a { display: inline-flex }`.)
+  .masthead .masthead__brand-name {
+    display: none;
+  }
+
   .masthead {
     &__inner-wrap {
       padding: 0.65rem 0.6rem 0;
@@ -314,6 +341,7 @@ html.is-resizing {
     gap: 0.62rem;
   }
 
+  .masthead__back,
   .masthead__brand-logo {
     flex-basis: $nav-brand-logo-shell-size-mobile;
     width: $nav-brand-logo-shell-size-mobile;

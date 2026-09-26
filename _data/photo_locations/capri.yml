@@ -2,6 +2,21 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
+  dscf3879:
+    suggested: Gulf of Naples, Sorrento, Italy
+    landmark: Gulf of Naples
+    street: Piazza Francesco Saverio Gargiulo
+    city: Sorrento
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf3893:
+    suggested: Scala Santa Teresa, Capri, Italy
+    street: Scala Santa Teresa
+    city: Capri
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3921:
     suggested: Monte Solaro, Anacapri, Italy
     landmark: Monte Solaro
@@ -11,35 +26,72 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf3930:
-    gps: missing
-    source: awaiting original
+    suggested: Monte Solaro, Anacapri, Italy
+    landmark: Monte Solaro
+    street: Via Monte Solaro
+    city: Anacapri
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3938:
-    gps: missing
-    source: awaiting original
+    suggested: Monte Solaro, Anacapri, Italy
+    landmark: Monte Solaro
+    street: Cetrella Monte Solaro
+    city: Anacapri
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4047:
-    gps: missing
-    source: awaiting original
+    suggested: Giardini di Augusto, Capri, Italy
+    landmark: Giardini di Augusto
+    street: Via Krupp
+    city: Capri
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4051:
-    gps: missing
-    source: awaiting original
+    suggested: Giardini di Augusto, Capri, Italy
+    landmark: Giardini di Augusto
+    street: Via Krupp
+    city: Capri
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4107:
-    gps: missing
-    source: awaiting original
+    suggested: Giardini di Augusto, Capri, Italy
+    landmark: Giardini di Augusto
+    street: Via Krupp
+    city: Capri
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4115:
-    gps: missing
-    source: awaiting original
+    suggested: Giardini di Augusto, Capri, Italy
+    landmark: Giardini di Augusto
+    street: Via Krupp
+    city: Capri
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4125:
-    gps: missing
-    source: awaiting original
+    suggested: Giardini di Augusto, Capri, Italy
+    landmark: Giardini di Augusto
+    street: Via Krupp
+    city: Capri
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4150:
-    gps: missing
-    source: awaiting original
+    suggested: Traversa Calata Punta del Capo, Sorrento, Italy
+    street: Traversa Calata Punta del Capo
+    city: Sorrento
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4162:
-    gps: missing
-    source: awaiting original
-  dscf4193:
-    gps: missing
-    source: awaiting original
-  dscf4279:
-    gps: missing
-    source: awaiting original
+    suggested: Traversa Calata Punta del Capo, Sorrento, Italy
+    street: Traversa Calata Punta del Capo
+    city: Sorrento
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode

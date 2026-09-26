@@ -91,7 +91,12 @@ function changedFiles() {
 
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 
-/** `gallery_name` must resolve to BOTH the full-image and thumbnail dirs. */
+/**
+ * `gallery_name` must name a gallery the photo pipeline knows: its authored file
+ * `_data/photos/<name>.yml` is committed, or the build fetched its manifest
+ * (`_data/photo_manifests/<key>.json`, gitignored, written by `npm run photos:fetch`).
+ * A gallery that is known but has nothing processed yet renders an empty Photobook.
+ */
 function checkGalleryName(fm, add) {
   const name = fm.gallery_name;
   if (!name) return;
@@ -99,15 +104,17 @@ function checkGalleryName(fm, add) {
     add('error', `gallery_name must be a string, got ${typeof name}`);
     return;
   }
-  const full = path.join(ROOT, 'gallery', name);
-  const thumbs = path.join(ROOT, 'images', 'thumbnails', 'gallery', name);
-  if (!fs.existsSync(full)) {
-    add('error', `gallery_name "${name}" → missing gallery/${name}/`);
+  const authored = path.join(ROOT, '_data', 'photos', `${name}.yml`);
+  const merged = path.join(ROOT, '_data', 'photo_manifests', `${name.replace(/\//g, '_')}.json`);
+  const hasAuthored = fs.existsSync(authored), hasMerged = fs.existsSync(merged);
+  if (!hasAuthored && !hasMerged) {
+    add('error', `gallery_name "${name}" → no _data/photos/${name}.yml and no fetched manifest; nothing knows this gallery`);
+    return;
   }
-  if (!fs.existsSync(thumbs)) {
-    // Thumbnails are gitignored and regenerated, so a local miss is a warning,
-    // not an error — it means "run the generator", not "the content is wrong".
-    add('warn', `gallery_name "${name}" → missing images/thumbnails/gallery/${name}/ (run \`npm run generate:gallery\`)`);
+  if (hasMerged) {
+    let count = null;
+    try { count = JSON.parse(fs.readFileSync(merged, 'utf8')).count; } catch { /* unreadable: the fetch reports it */ }
+    if (count === 0) add('warn', `gallery_name "${name}" → no processed photographs yet; the page shows an empty Photobook`);
   }
 }
 

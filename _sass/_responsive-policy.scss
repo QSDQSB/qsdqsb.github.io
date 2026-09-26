@@ -70,6 +70,16 @@ $responsive-single-min-content-width: 46rem !default;
   }
 }
 
+// Upright screens between two points: a tablet held in portrait is wide enough for the desktop
+// layout but too narrow for a side panel beside it.
+@mixin responsive-portrait-between($min-point, $max-point) {
+  $min: responsive-resolve($min-point);
+  $max: responsive-resolve($max-point) - $responsive-epsilon;
+  @media (min-width: $min) and (max-width: $max) and (orientation: portrait) {
+    @content;
+  }
+}
+
 @mixin responsive-container-down($point) {
   $max: responsive-resolve($point) - $responsive-epsilon;
   @container (max-width: $max) {
@@ -85,6 +95,13 @@ $responsive-single-min-content-width: 46rem !default;
 
 @mixin responsive-landscape {
   @media (orientation: landscape) {
+    @content;
+  }
+}
+
+// A pointer that really hovers (a mouse or trackpad): hover reveals that a tap must not leave stuck.
+@mixin responsive-hover {
+  @media (hover: hover) and (pointer: fine) {
     @content;
   }
 }

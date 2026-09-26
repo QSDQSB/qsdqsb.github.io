@@ -11,22 +11,19 @@
  *   gps: present   the original carries GPS: reverse-geocoded against
  *                  OpenStreetMap (lib/reverse-geocode.mjs): a well-known
  *                  landmark, square, park or inn nearby, else the road
- *   gps: missing   no coordinates (a compressed copy, or a camera without a
- *                  fix): a guess from looking at the picture, recorded as
- *                  `source: visual guess` so nobody mistakes it for a fix
+ *   gps: missing   no coordinates (a camera without a fix): a guess from
+ *                  looking at the picture, recorded as `source: visual guess`
+ *                  so nobody mistakes it for a fix
  *
  * The coordinates themselves stay private: in the original's EXIF, in the
  * bucket's .private.json, and in a gitignored lookup cache.
- *
- *   gps: missing   a compressed copy: `source: awaiting original`. Its old
- *                  caption stands until the camera original arrives with GPS.
  *
  * Usage:
  *   npm run photos:locate -- --gallery <name> | --all      geocode what has GPS, list what does not
  *   npm run photos:locate -- --all --sheets                contact sheets of originals without GPS, to look at
  *   npm run photos:locate -- --gallery <name> --set dscf1148="Porthcurno Beach, Penzance, UK" …
  *   npm run photos:locate -- --gallery <name> --accept [dscf1797,dscf2245]
- *                  suggestions into captions, only over captions nobody wrote by hand
+ *                  suggestions into empty captions only
  */
 
 import fs from 'node:fs';
@@ -34,7 +31,7 @@ import path from 'node:path';
 import yaml from 'js-yaml';
 import sharp from 'sharp';
 import { PATHS, ROOT, galleryKey, parseArgs } from './lib/config.mjs';
-import { cleanGallery, localGallery, readHeadExif, readAuthored, isCompressedCopy } from './lib/inventory.mjs';
+import { cleanGallery, localGallery, readHeadExif, readAuthored } from './lib/inventory.mjs';
 import { locate } from './lib/reverse-geocode.mjs';
 
 export const LOCATIONS_DIR = path.join(ROOT, '_data', 'photo_locations');
@@ -100,26 +97,13 @@ async function contactSheet(items, out, { cols = 4, w = 300 } = {}) {
   return out;
 }
 
-/** The place text the bootstrap took from the old file names, per slug: a caption still equal to it was never written by hand. */
-export function legacyPlaces(g, photosDir = PATHS.photosDir) {
-  try {
-    const map = JSON.parse(fs.readFileSync(path.join(photosDir, ...g.split('/'), '.bootstrap-map.json'), 'utf8'));
-    return new Map(map.map(m => [m.slug, m.place || null]));
-  } catch { return new Map(); }
-}
-
-/**
- * Locate one gallery: geocode originals with GPS, queue originals without
- * GPS for a visual guess, and mark compressed copies as awaiting their
- * original (their old caption stands; a guess would be thrown away when the
- * original arrives with GPS).
- */
+/** Locate one gallery: geocode originals with GPS, queue originals without GPS for a visual guess. */
 export async function locateGallery(g, { log = () => {} } = {}) {
   const photos = readSidecar(g);
   const files = localGallery(g).files;
   const { doc } = readAuthored(g);
   const suffix = captionSuffix(doc);
-  const out = { located: 0, guess: [], awaiting: 0 };
+  const out = { located: 0, guess: [] };
   const live = new Set(files.map(f => f.slug));
   for (const slug of Object.keys(photos)) if (!live.has(slug)) delete photos[slug];
   for (const f of files) {
@@ -131,9 +115,6 @@ export async function locateGallery(g, { log = () => {} } = {}) {
       for (const k of Object.keys(photos[f.slug])) if (photos[f.slug][k] == null) delete photos[f.slug][k];
       out.located++;
       log(`  ${f.slug}  ${suggested}`);
-    } else if (isCompressedCopy(x)) {
-      photos[f.slug] = { gps: 'missing', source: 'awaiting original' };
-      out.awaiting++;
     } else if (photos[f.slug]?.source !== 'visual guess') {
       photos[f.slug] = { gps: 'missing', source: 'pending visual guess' };
       out.guess.push({ ...f, hint: doc?.photos?.[f.slug]?.caption || '' });
@@ -145,11 +126,11 @@ export async function locateGallery(g, { log = () => {} } = {}) {
 
 /**
  * Put accepted suggestions into the authored captions. A caption is only
- * replaced while it is empty or still the old file-name place (the owner
- * never wrote it); anything else is reported and left. Edits the one
- * caption line per photo, so comments and every other field stay as written.
+ * written while it is empty; one the owner wrote is reported and left. Edits
+ * the one caption line per photo, so comments and every other field stay as
+ * written.
  */
-export function acceptSuggestions(g, { slugs = null, legacy = legacyPlaces(g), authoredDir = PATHS.authoredDir, dir = LOCATIONS_DIR } = {}) {
+export function acceptSuggestions(g, { slugs = null, authoredDir = PATHS.authoredDir, dir = LOCATIONS_DIR } = {}) {
   const suggestions = readSidecar(g, dir);
   const file = path.join(authoredDir, `${g}.yml`);
   const text = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : `photos:\n`;
@@ -160,7 +141,7 @@ export function acceptSuggestions(g, { slugs = null, legacy = legacyPlaces(g), a
     if (!sg.suggested || (slugs && !slugs.includes(slug))) continue;
     const cur = doc.photos?.[slug]?.caption ?? null;
     if (cur === sg.suggested) continue;
-    if (cur && cur !== legacy.get(slug)) { kept.push({ slug, cur, suggested: sg.suggested }); continue; }
+    if (cur) { kept.push({ slug, cur, suggested: sg.suggested }); continue; }
     const value = yaml.dump(sg.suggested, { lineWidth: -1 }).trim();
     const at = lines.findIndex(l => l.replace(/\s+$/, '') === `  ${slug}:` || l.startsWith(`  ${slug}: `));
     if (at < 0) {
@@ -226,7 +207,7 @@ async function main() {
   for (const gg of all || [g]) {
     if (!localGallery(gg).files.length) continue;
     const r = await locateGallery(gg, { log: args.quiet ? () => {} : console.log });
-    console.log(`${gg}: ${r.located} from GPS, ${r.awaiting} awaiting their original, ${r.guess.length} original(s) without GPS to guess`);
+    console.log(`${gg}: ${r.located} from GPS, ${r.guess.length} original(s) without GPS to guess`);
     guess.push(...r.guess.map(x => ({ ...x, gallery: gg })));
   }
   if (guess.length && args.sheets) {

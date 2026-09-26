@@ -2,51 +2,181 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
-  dscf7124:
-    gps: missing
-    source: awaiting original
   dscf7191:
-    gps: missing
-    source: awaiting original
+    suggested: Shidan kaidō, Kyoto
+    street: Shidan kaidō
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7207:
-    gps: missing
-    source: awaiting original
+    suggested: Shidan kaidō, Kyoto
+    street: Shidan kaidō
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7276:
-    gps: missing
-    source: awaiting original
+    suggested: Jyukkoku-bashi Bridge, Kyoto
+    street: Jyukkoku-bashi Bridge
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7299:
-    gps: missing
-    source: awaiting original
+    suggested: 表参道, Kyoto
+    street: 表参道
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7324:
+    suggested: 深草開土町, Kyoto
+    street: 深草開土町
+    city: Kyoto-shi
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7379:
-    gps: missing
-    source: awaiting original
+    suggested: Tōfuku-ji, Kyoto
+    landmark: Tōfuku-ji
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7413:
-    gps: missing
-    source: awaiting original
+    suggested: Kyoto Imperial Palace Park, Kyoto
+    landmark: Kyoto Imperial Palace Park
+    street: Takeyamachi-dori
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7426:
-    gps: missing
-    source: awaiting original
+    suggested: Kyoto Imperial Palace Park, Kyoto
+    landmark: Kyoto Imperial Palace Park
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7443:
+    suggested: 坂本五丁目, Kyoto
+    street: 坂本五丁目
+    city: Ōtsu
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7450:
-    gps: missing
-    source: awaiting original
+    suggested: Kyoto Imperial Palace, Kyoto
+    landmark: Kyoto Imperial Palace
+    street: South Garden
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7651:
+    suggested: Hōsen Temple, Kyoto
+    landmark: Hōsen Temple
+    street: 大原勝林院町
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7672:
+    suggested: 未明橋, Kyoto
+    street: 未明橋
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7732:
+    suggested: Sanzen Temple, Kyoto
+    landmark: Sanzen Temple
+    street: 未明橋
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7779:
-    gps: missing
-    source: awaiting original
+    suggested: Kinkaku-ji, Kyoto
+    landmark: Kinkaku-ji
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7818:
-    gps: missing
-    source: awaiting original
+    suggested: Kinkaku-ji, Kyoto
+    landmark: Kinkaku-ji
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7829:
+    suggested: Philosopher's Walk, Kyoto
+    landmark: Philosopher's Walk
+    street: Philosopher's Walk
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7866:
+    suggested: Kotobuki Bridge, Kyoto
+    street: Kotobuki Bridge
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7887:
+    suggested: Philosopher's Walk, Kyoto
+    landmark: Philosopher's Walk
+    street: Gokuraku Bridge
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7906:
-    gps: missing
-    source: awaiting original
+    suggested: Two-year Slope, Kyoto
+    landmark: Two-year Slope
+    street: Three-year Slope
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7912:
+    suggested: 水路閣, Kyoto
+    landmark: 水路閣
+    street: Path of peace
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8006:
-    gps: missing
-    source: awaiting original
+    suggested: Kiyomizu-dera, Kyoto
+    landmark: Kiyomizu-dera
+    street: Tokiwa Bridge
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8041:
-    gps: missing
-    source: awaiting original
+    suggested: 淀駅, Kyoto
+    landmark: 淀駅
+    street: Yodo Station Line
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8203:
-    gps: missing
-    source: awaiting original
+    suggested: Two-year Slope, Kyoto
+    landmark: Two-year Slope
+    street: Three-year Slope
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf8370:
-    gps: missing
-    source: awaiting original
+    suggested: Kennin-ji, Kyoto
+    landmark: Kennin-ji
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode

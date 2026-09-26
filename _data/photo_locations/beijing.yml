@@ -3,20 +3,50 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf3267:
-    gps: missing
-    source: awaiting original
+    suggested: Beihai Park, Beijing
+    landmark: Beihai Park
+    street: Aimin Street
+    city: Xicheng District
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3369:
-    gps: missing
-    source: awaiting original
+    suggested: Jingshan Park, Beijing
+    landmark: Jingshan Park
+    street: 景山前街
+    city: Xicheng District
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3422:
-    gps: missing
-    source: awaiting original
+    suggested: Summer Palace, Beijing
+    landmark: Summer Palace
+    street: 17 Arch Bridge
+    city: Haidian District
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3461:
-    gps: missing
-    source: awaiting original
+    suggested: Summer Palace, Beijing
+    landmark: Summer Palace
+    street: 东堤
+    city: Haidian District
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3462:
-    gps: missing
-    source: awaiting original
+    suggested: Summer Palace, Beijing
+    landmark: Summer Palace
+    street: 东堤
+    city: Haidian District
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3572:
-    gps: missing
-    source: awaiting original
+    suggested: Beijing Daxing International Airport, Beijing
+    landmark: Beijing Daxing International Airport
+    street: 天兴一街
+    city: Guangyang District
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode

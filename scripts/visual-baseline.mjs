@@ -14,7 +14,8 @@
  * and random posts, the word card), so an ordinary build differs from the
  * last one before a single style changes. `visual:build` seeds Ruby's PRNG
  * first, which is what `sample` draws from, so the same source renders the
- * same HTML. Thumbnails must already exist (`npm run build` once).
+ * same HTML, but only while no source changes: any edit reshuffles the draws,
+ * so the sampled blocks (SAMPLED below) are painted over in every shot.
  *
  * Why this exists: CSS refactors — `!important` triage, token inlining,
  * import reordering — are verified by eye or not at all, and "not at all"
@@ -98,6 +99,18 @@ const SETTLE_MS = 7000; // longest page-side timer (Home reveal fallback) + marg
  * covers kramdown `{: .notice}` paragraphs, where `.page__content p` outranks
  * the notice class — neither is reachable from the other pages.
  */
+// What Liquid picks with `sample`: the footer logo, the word cards, the related and "elsewhere"
+// cards. The seeded build repeats a draw only while no source changes, so any unrelated edit
+// would reshuffle them; the shots paint them over instead of comparing them.
+const SAMPLED = ['img[alt="QSD Logo"]', '.center-wrapper:has(img[alt="QSD Logo"])', '.word_card_container', '.page__related .grid__wrapper', '.photobook-end__more'];
+// An animated GIF (post-notices carries LeetCode's monthly badge) is caught on whichever frame it
+// is showing; `animations: 'disabled'` stops CSS, not GIFs. Painted over for the same reason.
+const MOVING = ['img[src$=".gif"]'];
+
+async function drawAllRows(page) {
+  await page.addStyleTag({ content: '.photobook-row { content-visibility: visible; }' });
+}
+
 const PAGES = [
   { id: 'home', url: '/', motion: true },
   { id: 'post-toc', url: '/posts/shihuqiao/', motion: true },
@@ -106,6 +119,20 @@ const PAGES = [
   { id: 'post-notices', url: '/posts/leetcode-july-challenge/' },
   { id: 'voyage', url: '/voyage/', motion: true },
   { id: 'voyage-prague', url: '/voyage/prague/', motion: true },
+  // The Photobook: a gallery page, and its lightbox opened by a frame link (#slug). Its rows skip
+  // rendering off screen (content-visibility: auto), which a full-page shot would record as blank,
+  // so the shot draws them all; the scroll-through that follows loads their images.
+  { id: 'photobook', url: '/voyage/london/', setup: drawAllRows },
+  {
+    id: 'photobook-lightbox',
+    url: '/voyage/london/#dscf7406',
+    screenOnly: true, // the dialog covers the screen; the book behind it is the shot above
+    setup: async (page) => {
+      await drawAllRows(page);
+      await page.waitForSelector('#photobook-lightbox[open] .photobook-lightbox__mat img.is-on', { timeout: 10000 });
+      await page.waitForFunction(() => [...document.querySelectorAll('.photobook-lightbox__mat img')].every((im) => im.complete), null, { timeout: 20000 });
+    },
+  },
   { id: 'voyage-by-tags', url: '/voyage-by-tags/' },
   { id: 'about', url: '/about/' },
   { id: 'portfolio', url: '/portfolio/' },
@@ -283,19 +310,25 @@ async function openPage(browser, viewportName) {
   return { context, page };
 }
 
+/** The page's URL with ?motion=off, placed before any #fragment so the page does not read it as part of the hash. */
+function motionOff(baseUrl, url) {
+  const [pathPart, hash = ''] = url.split('#');
+  return `${baseUrl}${pathPart}${pathPart.includes('?') ? '&' : '?'}motion=off${hash ? `#${hash}` : ''}`;
+}
+
 async function shoot(browser, baseUrl, pageDef, viewportName, outDir) {
   const { context, page } = await openPage(browser, viewportName);
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   try {
-    const url = `${baseUrl}${pageDef.url}${pageDef.url.includes('?') ? '&' : '?'}motion=off`;
+    const url = motionOff(baseUrl, pageDef.url);
     const startedAt = Date.now();
     await page.goto(url, { waitUntil: 'load', timeout: 60000 });
     await page.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
     if (pageDef.setup) await pageDef.setup(page);
     await settle(page, startedAt);
     const file = path.join(outDir, `${pageDef.id}--${viewportName}.png`);
-    await page.screenshot({ path: file, fullPage: true, animations: 'disabled' });
+    await page.screenshot({ path: file, fullPage: !pageDef.screenOnly, animations: 'disabled', mask: [...SAMPLED, ...MOVING].map((s) => page.locator(s)), maskColor: '#2a2a2a' });
     return { file, errors };
   } finally {
     await context.close();
@@ -306,7 +339,7 @@ async function shoot(browser, baseUrl, pageDef, viewportName, outDir) {
 async function audit(browser, baseUrl, pageDef, viewportName) {
   const { context, page } = await openPage(browser, viewportName);
   try {
-    await page.goto(`${baseUrl}${pageDef.url}?motion=off`, { waitUntil: 'load', timeout: 60000 });
+    await page.goto(motionOff(baseUrl, pageDef.url), { waitUntil: 'load', timeout: 60000 });
     await page.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
     await page.waitForTimeout(2500);
     return await page.evaluate(() => {

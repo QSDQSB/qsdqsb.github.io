@@ -11,25 +11,55 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf3279:
-    gps: missing
-    source: awaiting original
+    suggested: Charles Bridge, Prague, Czechia
+    landmark: Charles Bridge
+    street: Charles Bridge
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3318:
-    gps: missing
-    source: awaiting original
+    suggested: Purkyňova, Prague, Czechia
+    street: Purkyňova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3421:
-    gps: missing
-    source: awaiting original
+    suggested: Prague Castle, Prague, Czechia
+    landmark: Prague Castle
+    street: 3rd Courtyard
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf3425:
-    gps: missing
-    source: awaiting original
+    suggested: Prague Castle, Prague, Czechia
+    landmark: Prague Castle
+    street: 3rd Courtyard
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4915:
-    gps: missing
-    source: awaiting original
+    suggested: Petrin Observation Tower, Prague, Czechia
+    landmark: Petrin Observation Tower
+    street: křížová cesta
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5180:
-    gps: missing
-    source: awaiting original
+    suggested: Saint Nicholas, Prague, Czechia
+    landmark: Saint Nicholas
+    street: Malostranské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5286:
-    suggested: Valdštejnská, Prague, Czechia
+    suggested: Prague Castle, Prague, Czechia
+    landmark: Prague Castle
     street: Valdštejnská
     city: Prague
     country: Czechia
@@ -43,18 +73,46 @@ photos:
     country: Czechia
     gps: present
     source: OpenStreetMap reverse geocode
+  dscf5320:
+    suggested: Wallenstein Palace, Prague, Czechia
+    landmark: Wallenstein Palace
+    street: Valdštejnská
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5350:
-    gps: missing
-    source: awaiting original
+    suggested: Prague Castle, Prague, Czechia
+    landmark: Prague Castle
+    street: Hrad Ii. Nádvoří
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5416:
-    gps: missing
-    source: awaiting original
+    suggested: Prague Castle, Prague, Czechia
+    landmark: Prague Castle
+    street: 3rd Courtyard
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5420:
-    gps: missing
-    source: awaiting original
+    suggested: Prague Castle, Prague, Czechia
+    landmark: Prague Castle
+    street: 3rd Courtyard
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5439:
-    gps: missing
-    source: awaiting original
+    suggested: Prague Castle, Prague, Czechia
+    landmark: Prague Castle
+    street: 3rd Courtyard
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5453:
     suggested: Prague Castle, Prague, Czechia
     landmark: Prague Castle
@@ -87,8 +145,13 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf5575:
-    gps: missing
-    source: awaiting original
+    suggested: Morzin Palace, Prague, Czechia
+    landmark: Morzin Palace
+    street: Hradčanské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5587:
     suggested: Morzin Palace, Prague, Czechia
     landmark: Morzin Palace

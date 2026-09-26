@@ -35,9 +35,31 @@ export async function closeCamera() { if (tool) { await tool.end(); tool = null;
 
 // The monochrome simulations are not recorded as FilmMode but in Saturation.
 const MONO = /^(Acros|B&W|Sepia|Monochrome)/i;
+
+// ExifTool reports some simulations by their internal names ("F2/Fujichrome
+// (Velvia)", "F1b/Studio Portrait Smooth Skin Tone (Astia)"): the names
+// photographers know, first match wins.
+const FILMS = [
+  [/bleach bypass/i, 'Eterna Bleach Bypass'], [/eterna|cinema/i, 'Eterna'], [/nostalgic/i, 'Nostalgic Neg.'],
+  [/classic neg/i, 'Classic Negative'], [/classic chrome/i, 'Classic Chrome'], [/reala/i, 'Reala Ace'],
+  [/pro neg\.? ?hi/i, 'Pro Neg. Hi'], [/pro neg\.? ?std/i, 'Pro Neg. Std'],
+  [/velvia|fujichrome|F2\b/i, 'Velvia'], [/astia|F1b|soft/i, 'Astia'], [/provia|F0\b|^standard$/i, 'Provia'],
+  [/acros/i, null], [/sepia/i, 'Sepia'], [/B&W|monochrome/i, null],
+];
+export function normalizeFilm(raw) {
+  if (!raw) return null;
+  const v = String(raw);
+  // Acros and Monochrome keep their filter: "Acros+R Filter" → "Acros · R filter".
+  const filter = v.match(/\+\s*([YRG])\s*Filter|([YRG])e?(?:llow|ed|reen)? Filter/i);
+  const f = filter ? ` · ${(filter[1] || filter[2]).toUpperCase()} filter` : '';
+  if (/acros/i.test(v)) return `Acros${f}`;
+  if (/B&W|monochrome/i.test(v)) return `Monochrome${f}`;
+  for (const [re, name] of FILMS) if (name && re.test(v)) return name;
+  return v;
+}
 export function filmSimulation(t) {
-  if (t.FilmMode) return String(t.FilmMode);
-  if (t.Saturation && MONO.test(String(t.Saturation))) return String(t.Saturation);
+  if (t.FilmMode) return normalizeFilm(t.FilmMode);
+  if (t.Saturation && MONO.test(String(t.Saturation))) return normalizeFilm(t.Saturation);
   return null;
 }
 

@@ -1,21 +1,3 @@
 # Authored layer for gallery/dolomites/incantato — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf0061:
-    caption: St. Veit - San Vito, Prags - Braies, South Tyrol
-  dscf0064:
-    caption: Via Monte Piana, Auronzo di Cadore, Belluno
-  dscf0065:
-    caption: Streda Rezia, Urtijëi - St. Ulrich in Gröden - Ortisei, South Tyrol
-  dscf0073:
-    caption: Via Monte Piana, Auronzo di Cadore, Belluno
-  dscf0076:
-    caption: Via Monte Piana, Auronzo di Cadore, Belluno
-  dscf0557:
-    caption: Hotel Adler Dolomiti, Urtijëi - St. Ulrich in Gröden - Ortisei, South Tyrol
-  dscf0863:
-    caption: Via Resciesa, Urtijëi - St. Ulrich in Gröden - Ortisei, South Tyrol
-  dscf9933:
-    caption: Hotel Pragser Wildsee - Hotel Lago di Braies, Prags - Braies, South Tyrol
-  dscf9936:
-    caption: St. Veit - San Vito, Prags - Braies, South Tyrol
+photos: {}

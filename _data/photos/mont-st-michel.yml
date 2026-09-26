@@ -1,13 +1,3 @@
 # Authored layer for gallery/mont-st-michel — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf4069:
-    caption: Route de la Caserne, Le Mont-Saint-Michel, France
-  dscf4168:
-    caption: Mont Saint-Michel, Le Mont-Saint-Michel, France
-  dscf4222:
-    caption: Route de la Rive, Pontorson, France
-  dscf4224:
-    caption: Route de la Rive, Pontorson, France
-  dscf4261:
-    caption: Chemin des Dits, Pontorson, France
+photos: {}

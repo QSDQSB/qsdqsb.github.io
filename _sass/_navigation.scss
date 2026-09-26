@@ -271,7 +271,8 @@
   }
 
   a.masthead__brand-logo,
-  a.masthead__brand-name {
+  a.masthead__brand-name,
+  a.masthead__back {
     padding: 0;
   }
 
@@ -499,6 +500,8 @@
   .greedy-nav {
     --nav-collapsed-width: #{($nav-shell-padding-x * 2) + $nav-brand-logo-shell-size-mobile};
     max-width: calc(100vw - 1.2rem);
+
+    &.greedy-nav--has-back { --nav-collapsed-width: #{($nav-shell-padding-x * 2) + $nav-brand-logo-shell-size-mobile * 2}; }
     gap: 0.1rem;
     padding: 0.18rem $nav-shell-padding-x;
 

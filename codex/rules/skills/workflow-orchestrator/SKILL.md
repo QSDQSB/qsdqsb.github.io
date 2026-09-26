@@ -12,7 +12,7 @@ description: Run and validate the canonical repository flow (`prepare -> serve/b
 ## Workflow
 1. Plan execution as `prepare -> serve/build -> verify`.
 2. Enforce `prepare` includes:
-   - `bundle exec rake generate_thumbnails`
+   - `npm run photos:fetch`
    - `npm run geocode`
 3. Execute `serve` or `build` path depending on task intent.
 4. Emit gate results for `WF-001`, `WF-002`, `WF-003` with evidence.

@@ -1,0 +1,129 @@
+# Suggested locations for gallery stoos, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf5150:
+    suggested: Stoos (Stoosbahn), Stoos
+    landmark: Stoos (Stoosbahn)
+    street: Stoosplatz
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5178:
+    suggested: Stoos (Stoosbahn), Morschach
+    landmark: Stoos (Stoosbahn)
+    street: Stoosplatz
+    city: Morschach
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5234:
+    suggested: Ringstrasse, Stoos
+    street: Ringstrasse
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5235:
+    suggested: Ringstrasse, Stoos
+    street: Ringstrasse
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5241:
+    suggested: Ringstrasse, Stoos
+    street: Ringstrasse
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5256:
+    suggested: Ringstrasse, Stoos
+    street: Ringstrasse
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5262:
+    suggested: Ringstrasse, Stoos
+    street: Ringstrasse
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5266:
+    suggested: Ringstrasse, Stoos
+    street: Ringstrasse
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5414:
+    suggested: Fronalpstock, Morschach
+    street: Fronalpstock
+    city: Morschach
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5534:
+    suggested: Fronalpstock, Stoos
+    landmark: Fronalpstock
+    street: Fronalpstock
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5563:
+    suggested: Fronalpstock, Stoos
+    landmark: Fronalpstock
+    street: Fronalpstock
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5672:
+    suggested: Fronalpstock, Stoos
+    street: Fronalpstock
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5673:
+    suggested: Fronalpstock, Stoos
+    street: Fronalpstock
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5679:
+    suggested: Fronalpstock, Stoos
+    street: Fronalpstock
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5683:
+    suggested: Fronalpstock, Stoos
+    street: Fronalpstock
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5690:
+    suggested: Fronalpstock, Stoos
+    landmark: Fronalpstock
+    street: Fronalpstock
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5715:
+    suggested: Fronalpstock, Stoos
+    landmark: Fronalpstock
+    street: Fronalpstock
+    city: Stoos
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode

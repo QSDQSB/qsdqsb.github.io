@@ -9,7 +9,7 @@ author_profile: true
 redirect_from:
   - /resume
 header:
-  overlay_image: "/gallery/mont-st-michel/DSCF4261_Chemin_des_Dits,_Pontorson,_France__XF90mm_f2.0_1:140s_ISO4000.jpg"
+  overlay_image: "cover/cv-mont-st-michel-chemin-des-dits.jpg"
 ---
 
 {% include base_path %}

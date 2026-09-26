@@ -19,7 +19,7 @@ Prerequisites: Ruby with Bundler, Node.js ≥ 18, and Python 3 (for the check sc
 ```bash
 bundle install
 npm install
-npm run serve        # generate gallery assets → fetch photo manifests → geocode → jekyll serve
+npm run serve        # fetch photo manifests → geocode → jekyll serve
 ```
 
 The site is then served at `http://localhost:4000`.
@@ -27,11 +27,11 @@ The site is then served at `http://localhost:4000`.
 | Command | What it does |
 |---|---|
 | `npm run build` / `npm run serve` | Full pipeline, then `jekyll build` / `jekyll serve` |
-| `npm run build:fast` / `npm run serve:fast` | Skip the gallery pipeline — for CSS/HTML/JS iteration |
+| `npm run build:fast` / `npm run serve:fast` | Aliases, now the same as `build` / `serve` |
 | `npm run build:js` | Minify `assets/js/_main.js` → `assets/js/main.min.js` (never hand-edit the `.min.js`) |
 | `npm test` | Node test suite in `tests/` |
 
-Gallery thumbnails are not tracked in git; they are regenerated from `gallery/**` on every build and deploy.
+Photographs are not tracked in git; they live in R2 and are served from `img.qsdqsb.com`. The build fetches only their manifests (`npm run photos:fetch`).
 
 ## Further reading
 

@@ -3,41 +3,101 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf7157:
-    gps: missing
-    source: awaiting original
-  dscf7257:
-    gps: missing
-    source: awaiting original
+    suggested: Elizabeth H. Berger Plaza, New York, US
+    landmark: Elizabeth H. Berger Plaza
+    street: Greenwich Street
+    city: New York
+    country: United States
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7411:
-    gps: missing
-    source: awaiting original
+    suggested: Times Square, New York, US
+    landmark: Times Square
+    street: Times Square
+    city: New York
+    country: United States
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7476:
-    gps: missing
-    source: awaiting original
+    suggested: Rockefeller Center, New York, US
+    landmark: Rockefeller Center
+    street: Rockefeller Plaza
+    city: New York
+    country: United States
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7543:
-    gps: missing
-    source: awaiting original
+    suggested: Rockefeller Center, New York, US
+    landmark: Rockefeller Center
+    street: Rockefeller Plaza
+    city: New York
+    country: United States
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7557:
+    suggested: Rockefeller Center, New York, US
+    landmark: Rockefeller Center
+    street: Rockefeller Plaza
+    city: New York
+    country: United States
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7602:
-    gps: missing
-    source: awaiting original
+    suggested: Exchange Place, Jersey City, US
+    landmark: Exchange Place
+    street: Exchange Place
+    city: Jersey City
+    country: United States
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7638:
-    gps: missing
-    source: awaiting original
+    suggested: Exchange Place, Jersey City, US
+    landmark: Exchange Place
+    street: Exchange Place
+    city: Jersey City
+    country: United States
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7663:
-    gps: missing
-    source: awaiting original
+    suggested: The High Line, New York, US
+    landmark: The High Line
+    street: Hudson Boulevard East
+    city: New York
+    country: United States
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7670:
-    gps: missing
-    source: awaiting original
+    suggested: Hudson River Park, New York, US
+    landmark: Hudson River Park
+    street: North Bridge
+    city: New York
+    country: United States
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7717:
-    gps: missing
-    source: awaiting original
+    suggested: One World Trade Center, New York, US
+    landmark: One World Trade Center
+    street: Greenwich Street
+    city: New York
+    country: United States
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7751:
-    gps: missing
-    source: awaiting original
+    suggested: One World Trade Center, New York, US
+    landmark: One World Trade Center
+    street: Greenwich Street
+    city: New York
+    country: United States
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7798:
     gps: missing
-    source: awaiting original
+    source: pending visual guess
   dscf7962:
-    gps: missing
-    source: awaiting original
+    suggested: John F. Kennedy International Airport, New York, US
+    landmark: John F. Kennedy International Airport
+    street: JFK Access Road
+    city: New York
+    country: United States
+    gps: present
+    source: OpenStreetMap reverse geocode

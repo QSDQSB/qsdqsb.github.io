@@ -2,15 +2,14 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
-  dscf3859:
-    gps: missing
-    source: awaiting original
-  dscf4204:
-    gps: missing
-    source: awaiting original
   dscf4826:
-    gps: missing
-    source: awaiting original
+    suggested: Petřín Gardens – Seminar Garden, Prague
+    landmark: Petřín Gardens – Seminar Garden
+    street: Hellichova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4837:
     suggested: Petřín Gardens – Seminar Garden, Prague
     landmark: Petřín Gardens – Seminar Garden
@@ -20,8 +19,21 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf4843:
-    gps: missing
-    source: awaiting original
+    suggested: Petřín Gardens – Seminar Garden, Prague
+    landmark: Petřín Gardens – Seminar Garden
+    street: Hellichova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4859:
+    suggested: Petřín Gardens – Seminar Garden, Prague
+    landmark: Petřín Gardens – Seminar Garden
+    street: Hellichova
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4861:
     suggested: Petřín Gardens – Seminar Garden, Prague
     landmark: Petřín Gardens – Seminar Garden
@@ -39,8 +51,13 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf4877:
-    gps: missing
-    source: awaiting original
+    suggested: Petrin Observation Tower, Prague
+    landmark: Petrin Observation Tower
+    street: Petřínské sady
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4893:
     suggested: Petrin Observation Tower, Prague
     landmark: Petrin Observation Tower

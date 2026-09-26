@@ -102,12 +102,6 @@ case "$file" in
 esac
 
 case "$file" in
-  *gallery/*/*)
-    echo "💡 Gallery image edited/added — run \`npm run generate:gallery\` if this is a new file."
-    ;;
-esac
-
-case "$file" in
   */_voyage/*.md|*/_subvoyage/*.md)
     echo "💡 Voyage frontmatter touched — if \`gallery_name\`, \`subgalleries\` or \`map:\` changed, run \`npm run geocode\`."
     ;;
