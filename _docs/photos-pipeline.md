@@ -454,13 +454,14 @@ npx wrangler@4 r2 bucket create qsdqsb-originals
 npx wrangler@4 r2 bucket create qsdqsb-photos
 npx wrangler@4 r2 bucket domain add qsdqsb-photos --domain img.qsdqsb.com --zone-id <zone-id> --min-tls 1.2 -y
 npx wrangler@4 r2 bucket lifecycle add qsdqsb-originals trash-30d trash/ --expire-days 30 -y
-npx wrangler@4 r2 bucket cors set qsdqsb-photos --file cors.json -y   # GET from qsdqsb.com and localhost:4000
+npx wrangler@4 r2 bucket cors set qsdqsb-photos --file cors.json -y   # GET from qsdqsb.com, its Pages previews, localhost:4000
 npx wrangler@4 queues create photos-uploads
 npx wrangler@4 r2 bucket notification create qsdqsb-originals --event-type object-create object-delete --queue photos-uploads
 npx wrangler@4 deploy
 ```
 
-CORS only matters once the browser fetches a manifest itself; the build
+CORS matters where the browser reads a photo's pixels: the hero's depth
+canvas (a WebGL texture) on qsdqsb.com and on preview deploys. The build
 reads manifests from Node, which ignores CORS.
 
 **2. In the dashboards** (no CLI or API covers these):
