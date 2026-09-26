@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
- * WebP renditions of the 3:1 voyage heroes (images/cover/), for the Photobook's cover srcset.
+ * WebP renditions of the 3:1 heroes still cut by hand (images/cover/): posts, pages and Venice.
+ * Voyage covers come from the photo pipeline instead (`cover:` in _data/photos, lib/cover.mjs).
  *
- *   images/cover/london-shard-3v1.jpg → images/cover/sized/london-shard-3v1-{1920,2880}.webp
+ *   images/cover/Greenwich-gallery-3v1.jpg → images/cover/sized/Greenwich-gallery-3v1-{1920,2880}.webp
  *
  * A 3:1 cover is drawn at least 26rem tall, so on a phone it is scaled to about 78rem wide and
  * cropped: the visible slice still wants nearly the original's pixels at 3x. The saving is for
@@ -11,8 +12,8 @@
  * The candidates for each cover go to _data/cover_sizes.json, which _includes/photobook/cover.html
  * reads; a cover with no entry keeps its original src.
  *
- * Generated on every build (npm run build / serve), skipped when up to date; both outputs are
- * gitignored.
+ * Generated on every build (npm run build / serve), skipped when up to date; a rendition whose
+ * source is gone is removed. Both outputs are gitignored.
  *
  * Usage: node scripts/generate-cover-sizes.mjs [--force]
  */
@@ -48,6 +49,9 @@ async function main() {
     }
     map[`cover/${f}`] = [...smaller.map((w) => ({ w, src: `/images/cover/sized/${stem}-${w}.webp` })), { w: width, src: `/images/cover/${f}` }];
   }
+  // Renditions of covers no longer in images/cover/.
+  const live = new Set(Object.values(map).flat().map((s) => path.basename(s.src)));
+  for (const f of fs.readdirSync(OUT)) if (f.endsWith('.webp') && !live.has(f)) fs.rmSync(path.join(OUT, f));
   fs.writeFileSync(DATA, JSON.stringify(map, null, 1));
   console.log(`covers: ${covers.length} heroes, ${made} rendition(s) written → images/cover/sized/`);
 }
