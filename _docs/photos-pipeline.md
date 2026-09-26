@@ -96,6 +96,9 @@ puts it in the middle of the box, as near as the photo's edges allow.
   generate:depth`), and the canvas keeps the focus central.
 - A voyage without `cover:` keeps its `header.overlay_image` everywhere, as
   before. Changing a focus needs a rebuild, never reprocessing.
+- `npm run covers:focus` (`scripts/cover-focus.mjs`, this machine only) draws
+  every shape's crop over the photo, previews each cut through the same
+  `cover.mjs`, and on Save writes the `cover:` block, keeping any `crops:`.
 
 ### Manifest entry (private; the build reads it with an R2 key)
 

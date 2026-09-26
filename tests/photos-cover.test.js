@@ -65,3 +65,12 @@ test('the book opens on the authored cover\'s photo', async () => {
   assert.strictEqual(coverIndex(photos, 'c'), 2, 'the named photo, even a portrait');
   assert.strictEqual(coverIndex(photos, 'gone'), 1, 'an unknown slug falls back');
 });
+
+test('the focus picker rewrites only the cover block, keeping crops and the rest', async () => {
+  const { writeCover } = await import('../scripts/cover-focus.mjs');
+  const before = '# London\norder: [a, b]\n# The cover\ncover:\n  photo: dscf1\n  focus: [0.5, 0.5]\n  crops:\n    "4:3": [0.4, 0.5]\nphotos:\n  dscf1:\n    caption: x\n';
+  const after = writeCover(before, { photo: 'dscf2', focus: [0.25, 0.7512] });
+  assert.strictEqual(after, '# London\norder: [a, b]\n# The cover\ncover:\n  photo: dscf2\n  focus: [0.25, 0.751]\n  crops:\n    "4:3": [0.4, 0.5]\nphotos:\n  dscf1:\n    caption: x\n');
+  assert.match(writeCover('order: [a]\nphotos:\n  a: {}\n', { photo: 'a', focus: [0.5, 0.5] }), /^order: \[a\]\n# The cover[^\n]*\ncover:\n  photo: a\n  focus: \[0.5, 0.5\]\nphotos:/);
+  assert.match(writeCover('# parent\n', { photo: 'sesto/dscf1', focus: [0.1, 0.9] }), /cover:\n  photo: sesto\/dscf1\n  focus: \[0.1, 0.9\]\n$/);
+});
