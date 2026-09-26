@@ -5,7 +5,7 @@
  * drive modes, shutter type, stabilisation, and the shutter count.
  *
  * Split in two:
- *   pub   settings for the public manifest and the database's columns
+ *   pub   settings for the manifest and the database's public columns
  *   priv  the whole tag dump, which only ever goes to the private manifest
  *
  * No serial number is kept anywhere: body, internal and lens serials are

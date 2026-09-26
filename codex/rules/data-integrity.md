@@ -25,7 +25,6 @@ Rules:
 Rules:
 - `gallery_name` values must be known to the photo pipeline: `_data/photos/<gallery_name>.yml` committed or `_data/photo_manifests/<key>.json` fetched (`<key>` = name with `/` → `_`). Neither is an error.
 - The gallery must be processed with photos in `_data/photo_manifests/_index.json`, or the Photobook renders empty (`npm run check:gallery`).
-- `gallery/` and `images/thumbnails/gallery/` are read by nothing; don't validate against them.
 - Parent/subgallery links should not produce orphaned references.
 
 ## Taxonomy Color Integrity
