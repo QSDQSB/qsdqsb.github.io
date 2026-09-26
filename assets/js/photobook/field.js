@@ -5,7 +5,8 @@
  * Under the pointer a dot lights its frame's twenty-four and names the frame; a click opens it.
  */
 
-const CELL = 9;
+// Each dot a tile half as tall as it is wide: the field lies as a slim band under the signature.
+const CELL = 9, ROW = 4.5;
 // Grey only below chroma 0.015, or 0.02 near black, where a hue is mostly noise (lib/palette.mjs isGrey):
 // OKLab's chroma shrinks towards black, so a higher line would take every dark navy for grey.
 const isGrey = (L, C) => C < 0.015 || (L < 0.18 && C < 0.02);
@@ -49,23 +50,23 @@ export function field(frames, onOpen) {
     }
     const dpr = Math.min(2, devicePixelRatio || 1);
     const used = Math.ceil(dots.length / H);
-    cv.width = used * CELL * dpr; cv.height = H * CELL * dpr;
-    cv.style.width = `${used * CELL}px`; cv.style.height = `${H * CELL}px`;
+    cv.width = used * CELL * dpr; cv.height = H * ROW * dpr;
+    cv.style.width = `${used * CELL}px`; cv.style.height = `${H * ROW}px`;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     paint();
   }
   function paint() {
-    ctx.clearRect(0, 0, W * CELL, H * CELL);
+    ctx.clearRect(0, 0, W * CELL, H * ROW);
     for (const d of dots) {
       if (d.x == null) continue;
       ctx.globalAlpha = on < 0 || d.i === on ? 1 : 0.2;
       ctx.fillStyle = `#${d.hex}`;
-      ctx.fillRect(d.x * CELL, d.y * CELL, CELL, CELL);
+      ctx.fillRect(d.x * CELL, d.y * ROW, CELL, ROW);
     }
     ctx.globalAlpha = 1;
   }
   const at = (e) => {
-    const r = cv.getBoundingClientRect(), x = Math.floor((e.clientX - r.left) / CELL), y = Math.floor((e.clientY - r.top) / CELL);
+    const r = cv.getBoundingClientRect(), x = Math.floor((e.clientX - r.left) / CELL), y = Math.floor((e.clientY - r.top) / ROW);
     const k = x >= 0 && y >= 0 && x < W && y < H ? grid[y * W + x] : -1;
     return k >= 0 ? dots[k].i : -1;
   };
@@ -74,8 +75,8 @@ export function field(frames, onOpen) {
     if (i === on) return;
     on = i; paint();
     if (i < 0) return;
-    const r = cv.getBoundingClientRect(), x = r.left + Math.floor((e.clientX - r.left) / CELL) * CELL, y = r.top + Math.floor((e.clientY - r.top) / CELL) * CELL;
-    cv.dispatchEvent(new CustomEvent('photobook:say', { bubbles: true, detail: { text: frames[i].name || '', rect: { left: x, right: x + CELL, top: y, bottom: y + CELL, width: CELL, height: CELL } } }));
+    const r = cv.getBoundingClientRect(), x = r.left + Math.floor((e.clientX - r.left) / CELL) * CELL, y = r.top + Math.floor((e.clientY - r.top) / ROW) * ROW;
+    cv.dispatchEvent(new CustomEvent('photobook:say', { bubbles: true, detail: { text: frames[i].name || '', rect: { left: x, right: x + CELL, top: y, bottom: y + ROW, width: CELL, height: ROW } } }));
   });
   cv.addEventListener('pointerleave', () => { on = -1; paint(); });
   cv.addEventListener('click', (e) => { const i = at(e); if (i >= 0) onOpen?.(i); });

@@ -15,11 +15,13 @@
 <style>
   :root { --ink: #e4e4e4; --ink-2: #b9b9b9; --ink-3: #8b9296; --line: #2e2e2e; --ground: #151515; }
   html, body { background: var(--ground); color: var(--ink); }
+  /* The site colours its h2 peach and its h3 pink; the lab's titles are ink, like the Photobook's. */
+  h1, h2, h3, h4 { color: var(--ink); }
   body { display: block; margin: 0; font-family: Barlow, system-ui, sans-serif; }
   .lab { max-width: 90rem; margin: 0 auto; padding: 3.5rem clamp(1rem, 3vw, 2.4rem) 5rem; }
   .kicker { margin: 0; font: 500 .62rem/1 Barlow, sans-serif; letter-spacing: .24em; text-transform: uppercase; color: var(--ink-3); }
-  h1 { margin: .8rem 0 0; font: 700 clamp(1.8rem, 3.2vw, 2.8rem)/1 "Playfair Display", serif; }
-  h2 { margin: 0; font: 700 1.5rem "Playfair Display", serif; }
+  h1 { margin: .8rem 0 0; font: 700 clamp(1.8rem, 3.2vw, 2.8rem)/1 "Playfair Display", serif; color: var(--ink); }
+  h2 { margin: 0; font: 700 1.5rem "Playfair Display", serif; color: var(--ink); } /* the site colours its h2; the lab's titles stay ink */
   .lede { margin: .8rem 0 0; max-width: 48rem; font: italic 400 1.1rem/1.4 Didot, "Playfair Display", serif; color: var(--ink-2); }
   .bar { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: .9rem 2rem; align-items: center; margin: 2.2rem 0 0; padding: .9rem 0; background: rgba(21,21,21,.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
   .group { display: flex; align-items: center; gap: .15rem; }
