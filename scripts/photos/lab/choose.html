@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choose a mood · lab</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/assets/css/main.css">
+<!--
+  Choosing the one image at the top of each voyage's palette page. For one voyage at a time: its
+  five colours painted in five styles (lab/paint.js), one of them large as it would sit on the page
+  under "QSD's Palette for <voyage>", and a pick per voyage kept in this browser, with a tally across
+  voyages so the choice rests on many, not one. Keys: ← → voyages, 1–5 pick, R random.
+  Local only: /lab/ is git-ignored; scripts/photos/dots-lab.mjs copies this page there.
+-->
+<style>
+  :root { --ink: #e4e4e4; --ink-2: #b9b9b9; --ink-3: #8b9296; --line: #2e2e2e; --ground: #151515; }
+  html, body { background: var(--ground); color: var(--ink); }
+  h1, h2, h3, h4 { color: var(--ink); }
+  body { display: block; margin: 0; font-family: Barlow, system-ui, sans-serif; }
+  .lab { max-width: 92rem; margin: 0 auto; padding: 3rem clamp(1rem, 3vw, 2.4rem) 5rem; }
+  .kicker { margin: 0; font: 500 .62rem/1 Barlow, sans-serif; letter-spacing: .24em; text-transform: uppercase; color: var(--ink-3); }
+  h1 { margin: .7rem 0 0; font: 700 clamp(1.6rem, 2.8vw, 2.4rem)/1 "Playfair Display", serif; }
+  .bar { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: .8rem 1.4rem; align-items: center; margin: 1.6rem 0 0; padding: .8rem 0; background: rgba(21,21,21,.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  button, select { padding: .4rem .7rem; border: 1px solid var(--line); border-radius: 5px; background: #1c1c1c; color: var(--ink-2); font: 500 .74rem Barlow, sans-serif; cursor: pointer; }
+  button:hover { color: var(--ink); border-color: #444; }
+  button[aria-pressed="true"] { color: #111; background: var(--ink); border-color: var(--ink); }
+  .tally { margin-left: auto; font: 400 .74rem Barlow, sans-serif; color: var(--ink-3); }
+  .tally b { color: var(--ink); font-weight: 500; }
+
+  /* the page as it would be */
+  .context { margin-top: 2.2rem; }
+  .context .k { margin: 0; font: 500 .62rem Barlow, sans-serif; letter-spacing: .24em; text-transform: uppercase; color: var(--ink-3); }
+  .context h2 { margin: .6rem 0 1.4rem; font: 700 clamp(1.6rem, 3vw, 2.6rem)/1 "Playfair Display", serif; }
+  .hero canvas { display: block; width: 100%; height: auto; }
+  .blocks { display: flex; margin-top: 1rem; }
+  .blocks > div { flex: 1 1 0; min-width: 0; }
+  .blocks i { display: grid; place-items: center; height: 2.2rem; background: var(--c); color: var(--on); font: 500 .62rem Barlow, sans-serif; font-style: normal; letter-spacing: .06em; }
+  .blocks b { display: block; margin-top: .3rem; font: 400 .68rem Barlow, sans-serif; color: var(--ink-2); }
+
+  /* the five candidates */
+  .cands { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: 1.8rem 1.4rem; margin-top: 2.6rem; padding-top: 1.6rem; border-top: 1px dotted var(--line); }
+  .cand { margin: 0; cursor: pointer; }
+  .cand canvas { display: block; width: 100%; height: auto; outline: 1px solid transparent; outline-offset: 4px; transition: outline-color .2s; }
+  .cand.is-shown canvas { outline-color: var(--ink-3); }
+  .cand figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: .6rem; margin-top: .7rem; }
+  .cand h3 { margin: 0; font: 500 .82rem Barlow, sans-serif; }
+  .cand small { display: block; margin-top: .2rem; font: 400 .68rem Barlow, sans-serif; color: var(--ink-3); }
+  .cand .num { font: 500 .6rem Barlow, sans-serif; letter-spacing: .18em; color: var(--ink-3); }
+</style>
+</head>
+<body>
+<main class="lab">
+  <p class="kicker">Lab · QSD's Palette</p>
+  <h1>Choose a mood</h1>
+  <div class="bar">
+    <button id="prev" title="Previous voyage (←)">‹</button>
+    <select id="voyage"></select>
+    <button id="next" title="Next voyage (→)">›</button>
+    <button id="random" title="Random voyage (R)">Random</button>
+    <span class="tally" id="tally"></span>
+    <button id="reset" title="Forget the picks">Reset</button>
+  </div>
+  <section class="context">
+    <p class="k">QSD's Palette</p>
+    <h2 id="title"></h2>
+    <div class="hero" id="hero"></div>
+    <div class="blocks" id="blocks"></div>
+  </section>
+  <div class="cands" id="cands"></div>
+</main>
+<script type="module">
+import { paint, STYLES, seedOf, oklab } from '../paint.js';
+
+const data = await (await fetch('/assets/palettes.json')).json();
+const voyages = data.voyages.filter((v) => data.pages[v.g] && v.palette?.length);
+const title = (v) => data.pages[v.g].title;
+const store = { get() { try { return JSON.parse(localStorage.getItem('mood-picks') || '{}'); } catch { return {}; } }, set(v) { try { localStorage.setItem('mood-picks', JSON.stringify(v)); } catch { /* this visit only */ } } };
+const ink = (h) => (oklab(h)[0] > 0.72 ? 'rgba(0,0,0,.72)' : 'rgba(255,255,255,.85)');
+const keys = Object.keys(STYLES);
+
+const sel = document.getElementById('voyage');
+sel.innerHTML = voyages.map((v, i) => `<option value="${i}">${title(v)}</option>`).join('');
+let at = Math.max(0, voyages.findIndex((v) => v.g === (location.hash.slice(1) || 'london')));
+let shown = null;
+
+function tally() {
+  const picks = store.get(), n = {};
+  for (const s of Object.values(picks)) n[s] = (n[s] || 0) + 1;
+  const done = Object.keys(picks).length;
+  document.getElementById('tally').innerHTML = done ? `${done} voyage${done === 1 ? '' : 's'} chosen · ${keys.filter((k) => n[k]).sort((a, b) => n[b] - n[a]).map((k) => `<b>${STYLES[k].name}</b> ${n[k]}`).join(' · ')}` : 'No picks yet: choose one per voyage, across several';
+}
+
+function hero(v, style) {
+  shown = style;
+  const box = document.getElementById('hero');
+  box.replaceChildren(paint(style, v.palette, { width: 1440, height: 520, seed: seedOf(v.g) }));
+  for (const f of document.querySelectorAll('.cand')) f.classList.toggle('is-shown', f.dataset.style === style);
+}
+
+function draw() {
+  const v = voyages[at], picks = store.get();
+  sel.value = String(at);
+  history.replaceState(null, '', `#${v.g}`);
+  document.getElementById('title').textContent = `QSD's Palette for ${title(v)}`;
+  document.getElementById('blocks').innerHTML = v.palette.map((p) => `<div><i style="--c:${p.hex};--on:${ink(p.hex)}">${p.hex.slice(1).toUpperCase()}</i><b>${p.pc}%${p.accent ? ' · accent' : ''}</b></div>`).join('');
+  const cands = document.getElementById('cands');
+  cands.replaceChildren(...keys.map((k, i) => {
+    const f = document.createElement('figure'); f.className = 'cand'; f.dataset.style = k;
+    f.appendChild(paint(k, v.palette, { width: 560, height: 350, seed: seedOf(v.g) }));
+    f.insertAdjacentHTML('beforeend', `<figcaption><div><h3>${STYLES[k].name}</h3><small>${STYLES[k].note}</small></div><div><span class="num">${i + 1}</span> <button type="button" aria-pressed="${picks[v.g] === k}">This one</button></div></figcaption>`);
+    f.addEventListener('click', (e) => { if (e.target.closest('button')) choose(k); else hero(v, k); });
+    return f;
+  }));
+  hero(v, picks[v.g] || shown || keys[0]);
+  tally();
+}
+
+function choose(k) {
+  const v = voyages[at], picks = store.get();
+  if (picks[v.g] === k) delete picks[v.g]; else picks[v.g] = k;
+  store.set(picks);
+  for (const f of document.querySelectorAll('.cand')) f.querySelector('button').setAttribute('aria-pressed', String(picks[v.g] === f.dataset.style));
+  hero(v, k); tally();
+}
+
+const go = (i) => { at = (i + voyages.length) % voyages.length; draw(); scrollTo({ top: 0, behavior: 'instant' }); };
+document.getElementById('prev').onclick = () => go(at - 1);
+document.getElementById('next').onclick = () => go(at + 1);
+document.getElementById('random').onclick = () => go(Math.floor(Math.random() * voyages.length));
+document.getElementById('reset').onclick = () => { store.set({}); draw(); };
+sel.onchange = () => go(Number(sel.value));
+addEventListener('keydown', (e) => {
+  if (e.target.closest('select')) return;
+  if (e.key === 'ArrowRight') go(at + 1); else if (e.key === 'ArrowLeft') go(at - 1);
+  else if (e.key.toLowerCase() === 'r') go(Math.floor(Math.random() * voyages.length));
+  else if (/^[1-5]$/.test(e.key)) choose(keys[Number(e.key) - 1]);
+});
+await document.fonts.ready;
+draw();
+</script>
+</body>
+</html>

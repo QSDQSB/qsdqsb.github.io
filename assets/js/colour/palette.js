@@ -3,8 +3,8 @@
  * voyage's palette in a column; with one (#london, #prague/twilight), "QSD's Palette for London":
  * its signature (no black or white) and its colour line, then every frame as a card (the lab's
  * design): the print, its colours as blocks with the hex inside (text to select) and the share
- * beneath, its name and light, its palette as the specs panel draws it, and its constellation: its
- * 24 dots on the wheel of hue. The voyage's own is every frame's, pooled into a nebula. The frames lie in the book's sequence or by colour: the order worked out at build time
+ * beneath, its name and light, and its palette as the specs panel draws it. The voyage's own sky
+ * is every frame's 24 dots on the wheel of hue, pooled into a nebula. The frames lie in the book's sequence or by colour: the order worked out at build time
  * from their 24 dots (lib/book.mjs colourOf), dark to light, like hues together. A print opens in
  * its book; ?at=<slug> marks the frame the reader came from.
  *
@@ -123,7 +123,7 @@ async function main() {
           <div class="palette-card__row"><div>
             <h3>${esc(p.name || '')}${p.light ? `<small>${esc(p.light)}</small>` : ''}</h3>
             ${p.sig?.length ? bar(p.sig) : ''}
-          </div>${p.dots ? constellation(dotsOf(p.dots), { label: `The colours of ${p.name || 'this frame'}, on the wheel of hue` }) : ''}</div>
+          </div></div>
         </article>`; }).join('')}</div>`;
     stage.querySelector('.palette-page__order').onclick = (e) => {
       const b = e.target.closest('button[data-order]'); if (!b || b.dataset.order === order) return;
