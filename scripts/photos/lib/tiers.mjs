@@ -12,18 +12,25 @@ import sharp from 'sharp';
 import { rgbaToThumbHash } from 'thumbhash';
 import { ALL_SIZES, FORMATS } from './config.mjs';
 import { paletteOf } from './palette.mjs';
+import { pointsOf, siteDots } from './dots.mjs';
+import { signatureOf, compactSignature } from './signature.mjs';
 
 // The palette is read from a small downsample: 96 px on the long edge is plenty for 32 colours.
 const PALETTE_SAMPLE = 96;
 
-/** A photograph's palette and grid, from the bytes of the original or of any tier. */
+/**
+ * A photograph's colours, from the bytes of the original or of any tier: the 32-colour palette and
+ * grid (lib/palette.mjs), its signature (three to five colours with shares, lib/signature.mjs) and
+ * its 24 dots (lib/dots.mjs).
+ */
 export async function paletteOfImage(buffer) {
   const { data, info } = await sharp(buffer).rotate().resize({ width: PALETTE_SAMPLE, height: PALETTE_SAMPLE, fit: 'inside' })
     .removeAlpha().raw().toBuffer({ resolveWithObject: true });
-  return paletteOf(data, info.width, info.height, info.channels);
+  const pts = pointsOf(data, info.width, info.height, info.channels);
+  return { ...paletteOf(data, info.width, info.height, info.channels), signature: compactSignature(signatureOf(pts)), dots: siteDots(pts) };
 }
 
-/** @returns {Promise<{w:number,h:number,thumbhash:string,tint:string,palette:string,grid:string}>} */
+/** @returns {Promise<{w:number,h:number,thumbhash:string,tint:string,palette:string,grid:string,signature:Array,dots:string}>} */
 export async function analyse(buffer) {
   const base = sharp(buffer).rotate(); // apply EXIF orientation, then forget it
   const meta = await sharp(buffer).metadata();
@@ -36,8 +43,8 @@ export async function analyse(buffer) {
 
   const { dominant } = await base.clone().stats();
   const hex = (n) => n.toString(16).padStart(2, '0');
-  const { palette, grid } = await paletteOfImage(buffer);
-  return { w, h, thumbhash, tint: `#${hex(dominant.r)}${hex(dominant.g)}${hex(dominant.b)}`, palette, grid };
+  const colours = await paletteOfImage(buffer);
+  return { w, h, thumbhash, tint: `#${hex(dominant.r)}${hex(dominant.g)}${hex(dominant.b)}`, ...colours };
 }
 
 /**

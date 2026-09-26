@@ -930,19 +930,77 @@ html.is-reordering::view-transition-group(*) {
   .photobook-barcode:hover button:not(:hover) { opacity: 0.45; }
 }
 
+.photobook-signature {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+// The voyage's signature: each swatch with its hex and share; a click copies the hex.
 .photobook-palette {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem 1.8rem;
-  font: 400 0.74rem $barlow-font-family;
-  letter-spacing: 0.08em;
-  color: var(--photobook-ink-2);
-  font-variant-numeric: tabular-nums;
 
-  span { display: flex; align-items: center; gap: 0.55rem; }
+  button {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: 400 0.74rem $barlow-font-family;
+    letter-spacing: 0.08em;
+    color: var(--photobook-ink-2);
+    font-variant-numeric: tabular-nums;
+    cursor: copy;
+    transition: color 0.3s $cubic-bezier-smooth;
+
+    &:hover { color: var(--photobook-ink); }
+    &:focus-visible { outline: 1px solid var(--photobook-ink); outline-offset: 3px; }
+  }
+
   i { width: 0.7rem; height: 0.7rem; border-radius: 1px; background: var(--c); }
   b { font-weight: 400; color: var(--photobook-ink); }
   b::after { content: "%"; color: var(--photobook-ink-3); }
+  small { font: 500 0.55rem $barlow-font-family; letter-spacing: 0.18em; text-transform: uppercase; color: var(--photobook-ink-3); }
+}
+
+// What the colours say, in the photographer's words.
+.photobook-reading {
+  margin: 0.9rem 0 0;
+  font: 500 0.6rem $barlow-font-family;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--photobook-ink-3);
+}
+
+// The colour line: the signature on the wheel of hue, joined dark to light.
+.photobook-wheel {
+  width: 5.5rem;
+  height: 5.5rem;
+  overflow: visible;
+}
+
+.photobook-wheel__rim { fill: none; stroke: var(--photobook-line); }
+.photobook-wheel__hue { opacity: 0.6; }
+.photobook-wheel__line { fill: none; stroke: var(--photobook-ink-3); stroke-width: 0.8; stroke-linejoin: round; }
+.photobook-wheel__dot { stroke: $background-color; stroke-width: 1; }
+
+// Every frame's twenty-four dots, gathered by colour (field.js).
+.photobook-field {
+  margin-top: 1.8rem;
+
+  &[hidden] { display: none; }
+
+  canvas { display: block; max-width: 100%; cursor: pointer; }
+}
+
+.photobook-field__note {
+  margin: 0.6rem 0 0;
+  font: 400 0.66rem $barlow-font-family;
+  color: var(--photobook-ink-3);
 }
 
 // Onward, to the pages that look across every voyage by colour.
@@ -1512,9 +1570,10 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 // The film simulation, set like the edge print along a negative.
 .photobook-specs__print { @include photobook-edge-print; }
 
-// The frame's five colours, the whole row beneath the film: bands of their share, each naming its
-// value under the pointer (tip.js). A band is drawn 6px tall in a taller box, so the pointer finds it.
-// Named as a highlight, since the highlights' own cells are grids.
+// The frame's signature, the whole row beneath the film: a thin bar of three to five colours, widths
+// tempered (lightbox.js). Each band is drawn 4px tall in a 14px button, so the pointer finds it; it
+// names its value under the pointer and copies it on a click (copy.js). Named as a highlight, since
+// the highlights' own cells are grids.
 .photobook-specs__highlights > .photobook-specs__palette {
   grid-column: 1 / -1;
   display: flex;
@@ -1522,7 +1581,17 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   min-width: 0;
   margin-top: -0.2rem;
 
-  i { min-width: 2px; height: 16px; padding-block: 5px; background: var(--c); background-clip: content-box; }
+  button {
+    min-width: 2px;
+    height: 14px;
+    padding: 5px 0;
+    border: 0;
+    background: var(--c);
+    background-clip: content-box;
+    cursor: copy;
+
+    &:focus-visible { outline: 1px solid var(--photobook-ink); outline-offset: 1px; }
+  }
 }
 
 .photobook-specs__gear {
@@ -1726,6 +1795,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-sheet__order button,
   .photobook-sheet__order button::after,
   .photobook-barcode button,
+  .photobook-palette button,
   .photobook-colophon__onward a,
   .photobook-tip,
   .photobook-lightbox__wash div,

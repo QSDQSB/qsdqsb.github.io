@@ -20,6 +20,7 @@
 import { thumbHashToDataURL, thumbHashToRGBA } from 'thumbhash';
 import { normalizeFilm } from './camera.mjs';
 import { parsePalette, parseGrid, swatchesOf, voyagePalette, emd, colourPath, oklabToRgb, rgbHex } from './palette.mjs';
+import { signatureOfColours } from './signature.mjs';
 // The rhythm is shared with the page, whose film filter re-lays the frames it keeps.
 import { bookRows, PORTRAIT } from '../../../assets/js/photobook/rows.mjs';
 export { bookRows };
@@ -218,14 +219,15 @@ export function lightboxOf(photos) {
     name: p.name, place: p.place?.name || null, city: p.place?.city || null,
     shots: p.shutterCount ?? null, focal: p.focal ?? null, aperture: p.aperture ?? null, shutter: p.shutter ?? null,
     iso: p.iso ?? null, bias: p.exposureBias ?? null, camera: cameraName(p.camera), lens: lensName(p.lens),
-    film: p.film ?? null, hue: p.filmHue ?? null, light: p.light, weather: p.aloft || weatherOf(p.weather, p.light), glow: p.glow, ph: p.ph, settings: settingsOf(p), swatches: p.swatches || null,
+    film: p.film ?? null, hue: p.filmHue ?? null, light: p.light, weather: p.aloft || weatherOf(p.weather, p.light), glow: p.glow, ph: p.ph, settings: settingsOf(p), signature: p.signature || null, dots: p.dots || null,
   }));
 }
 
 /**
  * The voyage in colour, from each photograph's palette and grid (scripts/photos/lib/palette.mjs):
  * per photo its five swatches and its strip (the grid's three rows, top to bottom); for the book,
- * the voyage's five colours, the barcode in reading order, and the colour order for the sheet: the
+ * the voyage's signature (lib/signature.mjs, pooled from the photographs' palettes) and its reading,
+ * the barcode in reading order, and the colour order for the sheet: the
  * shortest path through the frames under the picture distance, dark to light. Frames with no palette
  * yet close the colour order, in book order, and sit in the barcode as blanks. Null when no frame has one.
  */
@@ -247,12 +249,33 @@ export function colourOf(photos) {
   for (let a = 0; a < have.length; a++) for (let b = 0; b < a; b++) D[a][b] = D[b][a];
   const light = have.map(i => parsed[i].P.reduce((s, c) => s + c.w * c.lab[0], 0));
   const order = [...colourPath(D, light).map(k => have[k]), ...photos.map((_, i) => i).filter(i => !parsed[i]?.P.length)];
-  const merged = voyagePalette(have.map(i => parsed[i].P));
-  const palette = merged.map(s => ({ hex: s.hex, pc: Math.round(s.pc) }));
-  // The same five, dark to light: a ramp for anything drawn as one gradient.
-  const ramp = [...merged].sort((a, b) => a.lab[0] - b.lab[0]).map(s => s.hex);
+  // The voyage's signature, pooled from its photographs' palettes (each photograph counting once), with
+  // its reading; each swatch keeps its place on the plane of hue (a, b) for the colour line.
+  const sig = signatureOfColours(have.flatMap(i => parsed[i].P.map(c => ({ lab: c.lab, w: c.w / have.length }))));
+  const palette = sig.colours.map(c => ({ hex: c.hex, pc: Math.round(c.pc), accent: c.accent }));
+  const reading = sig.reading;
+  const wheel = wheelOf(sig.colours);
+  // The voyage's five merged colours, dark to light: a ramp for anything drawn as one gradient.
+  const ramp = [...voyagePalette(have.map(i => parsed[i].P))].sort((a, b) => a.lab[0] - b.lab[0]).map(s => s.hex);
   const barcode = out.map((p, i) => ({ i, strip: p.strip || null, name: p.name || null }));
-  return { photos: out, colour: { palette, ramp, barcode, order } };
+  return { photos: out, colour: { palette, reading, wheel, ramp, barcode, order } };
+}
+
+/**
+ * The colour line, drawn in an 88-unit box: the swatches on the plane of hue and chroma (OKLab a–b,
+ * chroma 0.2 at the rim), joined dark to light, each sized by its share; a ring of twenty-four faint
+ * hues marks the directions. A short line is one family of colour; a line through the centre, a pair
+ * of opposites.
+ */
+export function wheelOf(colours, { size = 88 } = {}) {
+  const c = size / 2, R = c - 6, k = R / 0.2;
+  const clamp = (x, y) => { const r = Math.hypot(x, y); return r > R ? [x * R / r, y * R / r] : [x, y]; };
+  const pts = colours.map(s => { const [x, y] = clamp(s.a * k, -s.b * k); return { x: +(c + x).toFixed(1), y: +(c + y).toFixed(1), r: +(1.8 + Math.sqrt(s.pc) * 0.55).toFixed(1), hex: s.hex }; });
+  const ring = Array.from({ length: 24 }, (_, i) => {
+    const t = (i / 24) * 2 * Math.PI, a = 0.1 * Math.cos(t), b = 0.1 * Math.sin(t);
+    return { x: +(c + R * Math.cos(t)).toFixed(1), y: +(c - R * Math.sin(t)).toFixed(1), hex: rgbHex(oklabToRgb(0.72, a, b)) };
+  });
+  return { size, c, R, pts, ring, line: pts.map(p => `${p.x},${p.y}`).join(' ') };
 }
 
 /** "prague/zizkov-tower" → "Zizkov Tower": a gallery's own name, for frames with no place yet. */

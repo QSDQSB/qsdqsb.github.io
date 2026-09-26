@@ -5,7 +5,7 @@
  *
  *   in   _data/photo_manifests/<key>.json          (npm run photos:fetch first)
  *   in   img.qsdqsb.com/t/<hash>/480.webp          public, read only
- *   out  .photos-local/palettes/<key>.json         { photos: { <hash>: { palette, grid } } } (gitignored)
+ *   out  .photos-local/palettes/<key>.json         { photos: { <hash>: { palette, grid, signature, dots } } } (gitignored)
  *   out  .photos-local/palettes/_kindred.json      every photo's nearest in other voyages (lib/atlas.mjs),
  *                                                  recomputed only when the set of photos changes
  *
@@ -67,7 +67,7 @@ async function main() {
     await Promise.all(Array.from({ length: PARALLEL }, async () => {
       for (let i = next++; i < todo.length; i = next++) {
         const p = todo[i];
-        if (have[p.hash]) { out[p.hash] = have[p.hash]; kept++; continue; }
+        if (have[p.hash]?.signature && have[p.hash]?.dots) { out[p.hash] = have[p.hash]; kept++; continue; }
         try {
           const r = await fetch(`${p.url}/480.webp`);
           if (!r.ok) throw new Error(`${r.status}`);

@@ -76,6 +76,7 @@ shape and reports slugs that no processed photo matches.
   "focal": 90, "focal35": 137, "aperture": 4.3, "shutter": "1/2000", "iso": 320, "exposureBias": 0,
   "thumbhash": "…base64…", "tint": "#1a1c20",
   "palette": "171123…ww × up to 32", "grid": "rrggbb × 9",
+  "signature": [["#261d35", 34.8], …, ["#790b05", 0.8, 1]], "dots": "rrggbbss × 24",
   "sizes": { "webp": [480, 960, 1280, 1920, 2560, 2880, 4096], "jpg": [480, 960, 1280, 1920, 2560, 2880, 4096], "avif": [480, 960, 1280, 1920] } }
 ```
 
@@ -97,6 +98,12 @@ thumbhash:
   `rrggbbww` each (sRGB, then the share out of 255), largest first. Deterministic: the same pixels,
   the same string.
 - `grid`: the mean colour of each ninth of the frame, row by row (`rrggbb` × 9): what sits above what.
+- `signature`: three to five colours with their shares, dark to light (`lib/signature.mjs`): near-black
+  and near-white once each and never in charge, a vivid accent (marked `1`) kept down to 0.3% of the
+  frame. The specs panel draws it as a thin bar; a band's hex is copied on a click.
+- `dots`: 24 colours by Maximin (`lib/dots.mjs`), darkest first, each with its true share out of 255
+  (`rrggbbss`): the steadiest of the methods tried across renditions, and the one that misses least.
+  The colophon's field gathers a voyage's.
 
 Everything else is derived at build time and can be re-derived: the picture distance between two
 photos (the exact earth mover's distance between palettes, in OKLab ΔE: how far, on average, a unit

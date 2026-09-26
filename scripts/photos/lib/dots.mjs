@@ -221,14 +221,14 @@ export const METHODS = { share: shareDots, balanced: balancedDots, median: media
 
 // ---------------------------------------------------------------- measures
 
-export function measure({ X, w, n }, C) {
+export function measure({ X, w, n }, C, { honest = true } = {}) {
   const ds = [], share = new Float64Array(C.length);
   let reach = 0, missed = 0;
   for (let i = 0; i < n; i++) { const [j, d] = nearest(X, i, C); ds.push([d, w[i]]); reach += w[i] * d; if (d > FAR) missed += w[i]; share[j] += w[i]; }
   ds.sort((a, b) => a[0] - b[0]);
   let acc = 0, worst = 0;
   for (const [d, m] of ds) { acc += m; if (acc >= 0.95) { worst = d; break; } }
-  const honesty = transport({ X, w, n }, C, Array(C.length).fill(1 / C.length), { eps: 5e-4, iters: 80 }).cost;
+  const honesty = honest ? transport({ X, w, n }, C, Array(C.length).fill(1 / C.length), { eps: 5e-4, iters: 80 }).cost : 0;
   const apart = C.reduce((s, c, a) => s + Math.min(...C.map((e, b) => (a === b ? Infinity : Math.hypot(c[0] - e[0], c[1] - e[1], c[2] - e[2])))), 0) / C.length;
   return { honesty: +(honesty * 100).toFixed(2), reach: +(reach * 100).toFixed(2), worst: +(worst * 100).toFixed(2), missed: +(missed * 100).toFixed(2), apart: +(apart * 100).toFixed(2), share: Array.from(share) };
 }
@@ -248,6 +248,18 @@ export function dotsOf(data, width, height, channels = 3, methods = METHODS) {
     out[name] = { dots: dots.map(d => rgbHex(oklabToRgb(...d.lab)).slice(1) + Math.min(255, Math.round(d.s * 255)).toString(16).padStart(2, '0')).join(''), ...m };
   }
   return out;
+}
+
+/**
+ * The site's 24 dots for one photograph: Maximin (the steadiest across renditions and the best at
+ * covering the picture's range), darkest first, each `rrggbb` with its true share out of 255
+ * (`rrggbbss`), so a pooling can weigh dots by area when it needs to.
+ */
+export function siteDots(pts) {
+  const C = maximinDots(pts);
+  const { share } = measure(pts, C, { honest: false });
+  return C.map((lab, j) => ({ lab, s: share[j] })).sort((a, b) => a.lab[0] - b.lab[0])
+    .map(d => rgbHex(oklabToRgb(...d.lab)).slice(1) + Math.min(255, Math.round(d.s * 255)).toString(16).padStart(2, '0')).join('');
 }
 
 export { deltaE };

@@ -101,14 +101,15 @@ async function mapLimited(items, limit, fn) {
 }
 
 /**
- * Palettes the machine manifest does not carry yet, from the local sidecar (scripts/photos/palettes.mjs),
+ * Colours (palette, grid, signature, dots) the machine manifest does not carry yet, from the local sidecar (scripts/photos/palettes.mjs),
  * matched by content hash. Where there is no sidecar (a Cloudflare build) this changes nothing.
  */
 function withPalettes(gallery, machine) {
   if (!machine?.photos) return machine;
   const side = readSidecar(gallery);
   if (!Object.keys(side).length) return machine;
-  return { ...machine, photos: machine.photos.map(p => (p.palette || !side[p.hash] ? p : { ...p, ...side[p.hash] })) };
+  // The manifest's own colours win; the sidecar fills only what it lacks.
+  return { ...machine, photos: machine.photos.map(p => ((p.palette && p.signature && p.dots) || !side[p.hash] ? p : { ...side[p.hash], ...p })) };
 }
 
 /** The locate sidecar's `photos` map (names only, never coordinates), or an empty one. */

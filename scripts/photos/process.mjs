@@ -128,7 +128,7 @@ async function processGallery(gallery, files, { originals, pub }) {
           taken: exif.taken, camera: exif.camera, lens: exif.lens, focal: exif.focal, focal35: exif.focal35,
           aperture: exif.aperture, shutter: exif.shutter, iso: exif.iso, exposureBias: exif.exposureBias,
           ...(cam ? cam.pub : {}),
-          thumbhash: facts.thumbhash, tint: facts.tint, palette: facts.palette, grid: facts.grid, sizes, formats, processed: new Date().toISOString(),
+          thumbhash: facts.thumbhash, tint: facts.tint, palette: facts.palette, grid: facts.grid, signature: facts.signature, dots: facts.dots, sizes, formats, processed: new Date().toISOString(),
         });
         priv.photos[slug] = {
           file, key: meta.key, hash, version, gps: exif.gps,
@@ -180,11 +180,11 @@ async function processGallery(gallery, files, { originals, pub }) {
   return { changed, failed, skipped, removed, lit };
 }
 
-/** Palettes for photos that have tiers but no palette yet, read from the 480 px WebP. Returns how many were added. */
+/** Colours (palette, grid, signature, dots) for photos that have tiers but not all of them yet, read from the 480 px WebP. Returns how many were added. */
 async function paletteGallery(photos, pub, gallery) {
   let n = 0;
   for (const p of photos) {
-    if (p.palette || !p.hash) continue;
+    if ((p.palette && p.signature && p.dots) || !p.hash) continue;
     const tier = (p.sizes?.webp || [])[0];
     if (!tier) continue;
     try {
