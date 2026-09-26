@@ -75,7 +75,7 @@
 <main class="lab">
   <p class="kicker">Lab · the colour of a photograph</p>
   <h1>Signature palettes</h1>
-  <p class="lede">Three to five colours for each photograph, with their shares: black and white allowed once each and never in charge, a vivid accent kept however small, then joined into a line and read.</p>
+  <p class="lede">Three to five colours for each photograph, with their shares: colour first, the greys no more than the ground it stands on, a vivid accent kept however small; then joined into a line and read.</p>
   <div class="bar">
     <label class="group"><span>Voyage</span><select id="voyage"></select></label>
     <div class="group" id="view"><span>Show</span><button data-v="voyage" aria-pressed="true">One voyage</button><button data-v="atlas">Every voyage</button></div>
@@ -140,14 +140,14 @@ function draw() {
       <div>${line(g.voyage.colours, 160)}</div>
       <div><p class="kicker" style="margin-bottom:.8rem">Its photographs, read</p>${tally(g.photos)}</div>
     </section>` : ''}
-    <p class="note">Under each photograph: its signature (hex, and its share of the picture), the colour line (the swatches on the wheel of hue, joined from dark to light: a short line is one family of colour, a line through the centre a pair of opposites), and the strips as the specs panel would draw them, <b>now</b> (five k-means colours, widths by share) against the <b>signature</b> (widths tempered).</p>
+    <p class="note">Under each photograph: its signature (hex, and its share of the picture), the colour line (the swatches on the wheel of hue, joined from dark to light: a short line is one family of colour, a line through the centre a pair of opposites), and the bar as the specs panel draws it (widths tempered).</p>
     <div class="pl-cards">${g.photos.map(p => `<article class="pl-card">
       <img class="print" loading="lazy" src="${p.url}/960.webp" alt="">
       ${blocks(p.colours)}
       <div class="pl-row"><div>
         <h3>${esc(p.name)}${p.light ? `<small>${esc(p.light)}</small>` : ''}</h3>
         ${reading(p.reading)}
-        <div class="strips"><span>Now</span>${strip(p.now, false)}<span>Signature</span>${strip(p.colours)}</div>
+        <div class="strips"><span>In the specs</span>${strip(p.colours)}</div>
       </div>${line(p.colours)}</div>
     </article>`).join('')}</div>`;
 }

@@ -172,3 +172,22 @@ test('grey means grey: dark navies and greens keep their colour, near-black nois
   for (const h of ['2a2a2c', '8b9296', 'e8e6ea', '080808', '0a0d14']) assert.ok(grey(h), `${h} is grey`);
   for (const h of ['0b1d33', '1a2a3c', '1c2a1e', '2e241c', 'b9a092', 'd8e0ea', '4a5a68']) assert.ok(!grey(h), `${h} has a colour`);
 });
+
+test('colour first: a grey city keeps its sky, its stone and its bus, and no more than two greys', async () => {
+  const { pointsOf } = await dotsLib();
+  const { signatureOf } = await sigLib();
+  const { rgbToOklab } = await lib();
+  const w = 100, h = 60, px = Buffer.alloc(w * h * 3);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const o = (y * w + x) * 3, n = (x * 3 + y * 7) % 5;
+    // Seventy per cent greys (charcoal, mid, pale), then a blue sky, a warm stone, and a small red.
+    const c = y < 8 ? [70, 105, 150] : y < 14 ? [196, 172, 152] : x < 4 && y > 50 ? [190, 40, 30] : y < 30 ? [40, 41, 42] : y < 45 ? [110, 110, 112] : [205, 205, 207];
+    px[o] = c[0] + n; px[o + 1] = c[1] + n; px[o + 2] = c[2] + n;
+  }
+  const { colours } = signatureOf(pointsOf(px, w, h));
+  const C = (c) => { const [, a, b] = rgbToOklab(parseInt(c.hex.slice(1, 3), 16), parseInt(c.hex.slice(3, 5), 16), parseInt(c.hex.slice(5, 7), 16)); return { a, b, c: Math.hypot(a, b) }; };
+  assert.ok(colours.filter((c) => C(c).c < 0.025).length <= 2, 'two greys at most');
+  assert.ok(colours.some((c) => C(c).b < -0.03), 'the blue sky');
+  assert.ok(colours.some((c) => C(c).b > 0.02 && C(c).c < 0.08), 'the warm stone');
+  assert.ok(colours.some((c) => C(c).a > 0.1), 'the red');
+});

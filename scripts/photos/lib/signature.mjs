@@ -2,20 +2,26 @@
  * A photograph's signature palette: three to five colours with their shares,
  * chosen the way a designer would, and what they say about the picture.
  *
- * Choosing
- *   1. Pixels near black (L < 0.2) or near white (L > 0.9, and grey: a pale sky is not) are tone, not
- *      colour: each group may give at most one swatch, its own tinted mean
- *      (a warm white stays warm), and counts for little in the choosing.
- *   2. The rest is reduced to twelve candidates (k-means in OKLab, large areas
- *      tempered), each with its true share.
- *   3. Swatches are taken greedily by share and by difference from those taken
- *      (up to 15 ΔE, beyond which a colour counts as fully different); the
- *      palette stops at five, or sooner when the next adds little.
- *   4. An accent: vivid pixels far from every swatch taken (a red bus, a lit
+ * Choosing: colour first, since a palette that could belong to any grey city
+ * says nothing about the place.
+ *   1. The pixels that read as grey (chroma under 0.025, or 0.04 near black)
+ *      are set apart from the pixels that read as a colour. Greys are the light
+ *      a place is seen in; colours are the place.
+ *   2. Colour candidates come from the coloured pixels alone (k-means in
+ *      OKLab, large areas tempered), so a sky that is a twentieth of a grey
+ *      city still makes a candidate; each keeps its true share.
+ *   3. Colours take the slots greedily, by share and by difference from those
+ *      taken (up to 25 ΔE: a warm stone beats a third blue); each needs 2% of
+ *      the picture and 9 ΔE from the rest. A mostly grey picture (a quarter or more) keeps one slot back.
+ *   4. The greys, each group's own tinted mean (a warm white stays warm):
+ *      at most two, the largest first, each holding 5% or more; three only
+ *      for a picture with no colour to speak of, whose palette stays tonal.
+ *   5. An accent: vivid pixels far from every swatch (a red bus, a lit
  *      window), if they make up at least 0.3% of the picture, earn a place
- *      for their main colour, at the cost of the weakest swatch.
- *   5. Shares are measured again against the swatches chosen: every pixel to
- *      its nearest. Ordered dark to light.
+ *      for their main colour, at the cost of the most redundant swatch (the
+ *      one nearest another), never of a lone grey.
+ *   6. Shares are measured again against the swatches chosen: every pixel to
+ *      its nearest, and told as they are. Ordered dark to light.
  *
  * Reading (over the whole picture, not just the swatches)
  *   harmony      Tonal (next to no colour), Monochrome (one 30° family of
@@ -42,48 +48,68 @@ const hueGap = (x, y) => { const d = Math.abs(x - y) % 360; return d > 180 ? 360
 /** @param {{X:Float64Array, w:Float64Array, n:number}} pts  weighted OKLab points (lib/dots.mjs pointsOf) */
 export function signatureOf({ X, w, n }, { most = 5, least = 3 } = {}) {
   const lab = (i) => [X[3 * i], X[3 * i + 1], X[3 * i + 2]];
-  const dark = [], light = [], mid = [];
-  for (let i = 0; i < n; i++) {
-    const l = lab(i);
-    (l[0] < 0.2 ? dark : l[0] > 0.9 && isGrey(l[0], chroma(l)) ? light : mid).push(i);
-  }
   const meanOf = (idx) => { const m = idx.reduce((s, i) => s + w[i], 0), c = [0, 0, 0]; for (const i of idx) for (let a = 0; a < 3; a++) c[a] += w[i] * X[3 * i + a]; return { lab: c.map(v => v / (m || 1)), share: m }; };
+  const subset = (idx) => { const S = new Float64Array(3 * idx.length); idx.forEach((i, k) => { S[3 * k] = X[3 * i]; S[3 * k + 1] = X[3 * i + 1]; S[3 * k + 2] = X[3 * i + 2]; }); return S; };
 
-  const cands = [];
-  if (mid.length) {
-    const mX = new Float64Array(3 * mid.length); mid.forEach((i, k) => { mX[3 * k] = X[3 * i]; mX[3 * k + 1] = X[3 * i + 1]; mX[3 * k + 2] = X[3 * i + 2]; });
-    for (const c of kmeans(mX, Float64Array.from(mid, i => Math.sqrt(w[i])), 12, { seed: 7, iterations: 16 })) cands.push({ lab: c.lab, kind: 'mid', share: 0 });
-    for (const i of mid) { let b = 0, d = Infinity; cands.forEach((c, j) => { const e = gap(lab(i), c.lab); if (e < d) { d = e; b = j; } }); cands[b].share += w[i]; }
+  // Colour first: the pixels that read as a colour, and the pixels that read as grey (at any
+  // lightness), apart. Greys are the light a place is seen in; colours are the place.
+  const hued = [], greys = { dark: [], mid: [], light: [] };
+  for (let i = 0; i < n; i++) {
+    const l = lab(i), c = chroma(l);
+    if (c < 0.025 || (l[0] < 0.15 && c < 0.04)) greys[l[0] < 0.35 ? 'dark' : l[0] > 0.7 ? 'light' : 'mid'].push(i);
+    else hued.push(i);
   }
-  if (dark.length) cands.push({ ...meanOf(dark), kind: 'dark' });
-  if (light.length) cands.push({ ...meanOf(light), kind: 'light' });
 
-  // Tone counts for little in the choosing, however much of the picture it fills.
-  const weight = (c) => (c.kind === 'mid' ? c.share : Math.min(c.share, 0.15) * 0.5);
-  const midMass = cands.filter(c => c.kind === 'mid').reduce((s, c) => s + c.share, 0);
-  const chosen = [];
-  const score = (c) => {
-    const apart = chosen.length ? Math.min(...chosen.map(t => gap(t.lab, c.lab))) : Infinity;
-    return Math.sqrt(weight(c)) * Math.min(1, apart / 0.15);
-  };
-  while (chosen.length < most) {
-    const pool = cands.filter(c => !chosen.includes(c) && (chosen.length || c.kind === 'mid' || midMass < 0.1));
+  // Colour candidates from the coloured pixels alone, so a sky that is a twentieth of a grey city
+  // still makes a candidate of its own; large areas tempered; near-twins merged.
+  let found = [];
+  if (hued.length) {
+    const cs = kmeans(subset(hued), Float64Array.from(hued, i => Math.sqrt(w[i])), Math.min(10, hued.length), { seed: 7, iterations: 16 }).map(c => ({ lab: c.lab, share: 0 }));
+    for (const i of hued) { let b = 0, d = Infinity; cs.forEach((c, j) => { const e = gap(lab(i), c.lab); if (e < d) { d = e; b = j; } }); cs[b].share += w[i]; }
+    found = cs.filter(c => c.share > 0).sort((x, y) => y.share - x.share);
+  }
+  const tones = Object.entries(greys).filter(([, idx]) => idx.length).map(([kind, idx]) => ({ ...meanOf(idx), kind }));
+  const greyMass = tones.reduce((s, t) => s + t.share, 0);
+
+  // Colours take the slots, by share and by difference from those taken; each needs 2% of the picture.
+  const taken = [];
+  const apart = (c) => (taken.length ? Math.min(...taken.map(t => gap(t.lab, c.lab))) : Infinity);
+  const colourSlots = most - (greyMass >= 0.25 ? 1 : 0);
+  while (taken.length < colourSlots) {
+    const pool = found.filter(c => !taken.includes(c) && c.share >= 0.02 && apart(c) >= 0.09);
     if (!pool.length) break;
-    const best = pool.reduce((a, b) => (score(b) > score(a) ? b : a));
-    if (chosen.length >= least && score(best) < 0.12) break;
-    if (score(best) <= 0) break;
-    chosen.push(best);
+    const score = (c) => Math.sqrt(c.share) * Math.min(1, apart(c) / 0.25);
+    taken.push(pool.reduce((x, y) => (score(y) > score(x) ? y : x)));
   }
+  // The greys: at most two (the ground the colours stand on), the largest first; more only when a
+  // picture has no colour to speak of, so a colourless frame keeps an honest, tonal palette.
+  const greySlots = Math.max(0, Math.min(taken.length ? 2 : 3, most - taken.length));
+  const chosen = [...taken, ...tones.filter(t => t.share >= 0.05 || !taken.length).sort((x, y) => y.share - x.share).slice(0, greySlots)];
+  while (chosen.length < Math.min(least, found.length + tones.length)) {
+    const rest = [...found, ...tones].filter(c => !chosen.includes(c)).sort((x, y) => y.share - x.share)[0];
+    if (!rest) break;
+    chosen.push(rest);
+  }
+  const weight = (c) => c.share;
+
   // The accent, found among the pixels themselves (a few pixels never make a cluster of their own):
-  // the vivid ones far from every swatch, if there are enough of them, gathered to their main colour.
+  // the vivid ones far from every swatch, if there are enough of them, gathered to their main colour;
+  // it takes the place of the weakest colour when the palette is full.
   const far = [];
   for (let i = 0; i < n; i++) { const l = lab(i); if (chroma(l) > 0.1 && Math.min(...chosen.map(t => gap(t.lab, l))) > 0.12) far.push(i); }
   const farMass = far.reduce((s, i) => s + w[i], 0);
   if (far.length && farMass >= 0.003) {
-    const fX = new Float64Array(3 * far.length); far.forEach((i, k) => { fX[3 * k] = X[3 * i]; fX[3 * k + 1] = X[3 * i + 1]; fX[3 * k + 2] = X[3 * i + 2]; });
-    const top = kmeans(fX, Float64Array.from(far, i => w[i] * chroma(lab(i))), 2, { seed: 7, iterations: 12 })[0];
-    if (chosen.length >= most) { const weakest = chosen.slice(1).reduce((a, b) => (weight(b) < weight(a) ? b : a)); chosen.splice(chosen.indexOf(weakest), 1); }
-    chosen.push({ lab: top.lab, kind: 'mid', share: 0, accent: true });
+    const top = kmeans(subset(far), Float64Array.from(far, i => w[i] * chroma(lab(i))), 2, { seed: 7, iterations: 12 })[0];
+    if (chosen.length >= most) {
+      // It displaces the most redundant swatch, the one nearest another, not the smallest: a third
+      // blue goes before the only warm stone. A lone grey stays, as the ground.
+      const greysIn = chosen.filter(c => c.kind).length;
+      const pool = chosen.filter(c => !c.kind || greysIn > 1);
+      const nearest = (c) => Math.min(...chosen.filter(o => o !== c).map(o => gap(o.lab, c.lab)));
+      const redundant = pool.reduce((x, y) => (nearest(y) < nearest(x) ? y : x));
+      chosen.splice(chosen.indexOf(redundant), 1);
+    }
+    chosen.push({ lab: top.lab, share: 0, accent: true });
   }
 
   // Shares against the palette itself: every pixel to its nearest swatch.
