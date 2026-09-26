@@ -55,6 +55,14 @@ const hex2 = (n) => n.toString(16).padStart(2, '0');
 export const rgbHex = ([r, g, b]) => `#${hex2(r)}${hex2(g)}${hex2(b)}`;
 const hexRgb = (h) => [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
 
+/**
+ * Whether a colour reads as grey. OKLab's chroma shrinks towards black, so a single line high enough
+ * to catch warm greys (0.03) also swallowed every dark navy and dark green: a colour is grey only
+ * below 0.015, or below 0.02 near black (L < 0.18), where a hue is mostly noise. Mirrored in
+ * assets/js/photobook/field.js and the lab pages.
+ */
+export const isGrey = (L, C) => C < 0.015 || (L < 0.18 && C < 0.02);
+
 /** ΔE in OKLab, scaled so 1 is about a just-noticeable difference. */
 export const deltaE = (p, q) => 100 * Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]);
 

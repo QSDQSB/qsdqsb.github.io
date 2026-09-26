@@ -6,6 +6,9 @@
  */
 
 const CELL = 10;
+// Grey only below chroma 0.015, or 0.02 near black, where a hue is mostly noise (lib/palette.mjs isGrey):
+// OKLab's chroma shrinks towards black, so a higher line would take every dark navy for grey.
+const isGrey = (L, C) => C < 0.015 || (L < 0.18 && C < 0.02);
 const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
 function lab(hex) {
   const r = lin(parseInt(hex.slice(0, 2), 16)), g = lin(parseInt(hex.slice(2, 4), 16)), b = lin(parseInt(hex.slice(4, 6), 16));
@@ -30,8 +33,8 @@ export function field(frames, onOpen) {
   let grid = null, W = 0, H = 0, on = -1;
 
   // The order, once: greys by how grey, then hue from the widest gap round.
-  const grey = dots.filter((d) => d.C < 0.03).sort((x, y) => x.C - y.C);
-  const hued = dots.filter((d) => d.C >= 0.03).sort((x, y) => x.h - y.h);
+  const grey = dots.filter((d) => isGrey(d.L, d.C)).sort((x, y) => x.C - y.C);
+  const hued = dots.filter((d) => !isGrey(d.L, d.C)).sort((x, y) => x.h - y.h);
   let from = 0, widest = -1;
   hued.forEach((d, k) => { const next = hued[(k + 1) % hued.length], g = (next.h - d.h + 360) % 360 || (hued.length === 1 ? 360 : 0); if (g > widest) { widest = g; from = (k + 1) % hued.length; } });
   const sequence = [...grey, ...hued.slice(from), ...hued.slice(0, from)];
