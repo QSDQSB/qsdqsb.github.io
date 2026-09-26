@@ -1,0 +1,5 @@
+# Authored layer for the voyage prague, in parts.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: petrin-hill/dscf4861
+  focus: [0.55, 0.5]
