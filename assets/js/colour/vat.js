@@ -7,8 +7,8 @@
  *
  * vat(palette, { size, width, height, seed, stir, label }) → a canvas. `palette` is [{hex, pc}] or
  * [[hex, pc]]; the vat is `size` across (or the smaller of width and height), centred, transparent
- * round it. Still by default, and then handed over as a plain 2D canvas, its WebGL context let go;
- * `stir` keeps the currents moving, unless motion is off. Used by the palette page
+ * round it. Still by default: painted on one shared WebGL canvas and copied out, so a page of frames
+ * costs one context; `stir` gives the vat its own and keeps the currents moving, unless motion is off. Used by the palette page
  * (assets/js/colour/palette.js) and the mood lab (scripts/photos/lab/paint.js).
  */
 
@@ -42,7 +42,6 @@ void main() {
     vec2 d = pw - pos[k]; ws[k] = gain[k] * exp(-dot(d, d) / 0.26); tot += ws[k]; }
   for (int k = 0; k < 5; k++) ws[k] /= tot;
   if (mode == 1) { gl_FragColor = vec4(ws[0], ws[1], ws[2], ws[3]); return; }
-  if (mode == 2) { gl_FragColor = vec4(ws[4], 1.0, 0.0, 1.0); return; }
   float L = 0.0, C = 0.0; vec2 ab = vec2(0.0);
   for (int k = 0; k < 5; k++) { if (k >= n) continue; L += ws[k] * col[k].x; ab += ws[k] * col[k].yz; C += ws[k] * length(col[k].yz); }
   float h = length(ab); if (h > 1e-4) ab *= mix(1.0, C / h, smoothstep(0.25, 0.75, h / max(C, 1e-4)));
@@ -64,24 +63,45 @@ function oklab(h) {
 /** A seed from text (a gallery key), so a voyage's vat is always poured the same way. */
 export const seedOf = (text) => { let h = 2166136261; for (const ch of String(text)) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return (h % 2147483646) + 1; };
 
+/** A WebGL renderer on `canvas`: the program compiled once, and one uniform setter. */
+function renderer(canvas) {
+  const gl = canvas.getContext('webgl', { preserveDrawingBuffer: true, premultipliedAlpha: true, antialias: true });
+  if (!gl) return null;
+  const sh = (type, src) => { const x = gl.createShader(type); gl.shaderSource(x, src); gl.compileShader(x); return x; };
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, 'attribute vec2 a; void main(){ gl_Position = vec4(a, 0.0, 1.0); }'));
+  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG)); gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+  gl.useProgram(prog);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  const at = gl.getAttribLocation(prog, 'a'); gl.enableVertexAttribArray(at); gl.vertexAttribPointer(at, 2, gl.FLOAT, false, 0, 0);
+  const loc = {}, u = (name) => (loc[name] ??= gl.getUniformLocation(prog, name));
+  return { gl, canvas, u };
+}
+
+// Still vats are all painted on one hidden canvas and copied out: a browser keeps only a few WebGL
+// contexts alive, and a page of frames wants one each.
+let shared;
+
+// The self-measuring grid: M × M pixels, the circle's pixels found once.
+const M = 48, INSIDE = (() => { const out = []; for (let y = 0; y < M; y++) for (let x = 0; x < M; x++) { const u = ((x + 0.5) / M) * 2 - 1, v = ((y + 0.5) / M) * 2 - 1; if (u * u + v * v <= 1) out.push(y * M + x); } return out; })();
+const px = new Uint8Array(M * M * 4);
+
 export function vat(palette, { size = 176, width = size, height = size, seed = 1, stir = false, label = '' } = {}) {
   let state = seed;
   const rand = () => { state = (state * 16807) % 2147483647; return state / 2147483647; };
   const gauss = () => { let v = 0; for (let i = 0; i < 6; i++) v += rand(); return v / 6 - 0.5; };
   const cs = palette.slice(0, 5).map((p) => (Array.isArray(p) ? { hex: p[0], pc: p[1] } : p)), n = cs.length;
-  const dpr = Math.min(2, devicePixelRatio || 1), c = document.createElement('canvas');
-  c.width = Math.round(width * dpr); c.height = Math.round(height * dpr);
-  const gl = n && c.getContext('webgl', { preserveDrawingBuffer: true, premultipliedAlpha: true, antialias: true });
-  if (!gl) return c;
-  const sh = (type, src) => { const x = gl.createShader(type); gl.shaderSource(x, src); gl.compileShader(x); return x; };
-  const prog = gl.createProgram();
-  gl.attachShader(prog, sh(gl.VERTEX_SHADER, 'attribute vec2 a; void main(){ gl_Position = vec4(a, 0.0, 1.0); }'));
-  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG)); gl.linkProgram(prog);
-  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return c;
-  gl.useProgram(prog);
-  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-  const at = gl.getAttribLocation(prog, 'a'); gl.enableVertexAttribArray(at); gl.vertexAttribPointer(at, 2, gl.FLOAT, false, 0, 0);
-  const u = (name) => gl.getUniformLocation(prog, name);
+  const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(width * dpr), H = Math.round(height * dpr);
+  const moving = stir && !(window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const out = document.createElement('canvas'); out.width = W; out.height = H;
+  out.className = 'colour-vat'; out.style.aspectRatio = `${width} / ${height}`;
+  if (label) { out.setAttribute('role', 'img'); out.setAttribute('aria-label', label); } else out.setAttribute('aria-hidden', 'true');
+  if (!n) return out;
+  const r = moving ? renderer(out) : (shared ||= renderer(document.createElement('canvas')));
+  if (!r) return out;
+  const { gl, canvas, u } = r;
+  if (canvas.width < Math.max(W, M) || canvas.height < Math.max(H, M)) { canvas.width = Math.max(W, M, canvas.width); canvas.height = Math.max(H, M, canvas.height); }
   const total = cs.reduce((s, p) => s + p.pc, 0), share = cs.map((p) => p.pc / total);
   gl.uniform1f(u('seed'), (seed % 1000) + 1); gl.uniform1i(u('n'), n); gl.uniform1f(u('t'), 0);
   // Where each colour is poured: evenly round the vat, a little astray, the largest in the middle.
@@ -91,40 +111,35 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
     gl.uniform3f(u(`col[${i}]`), lab[0], lab[1], lab[2]);
     gl.uniform2f(u(`pos[${i}]`), Math.cos(ang) * rad, Math.sin(ang) * rad);
   });
-  // Measure and adjust: how much of the vat each colour covers, until it is its share.
-  const gain = share.slice(), M = 64, px = new Uint8Array(M * M * 4), px2 = new Uint8Array(M * M * 4);
-  gl.viewport(0, 0, M, M); gl.uniform2f(u('res'), M, M); gl.uniform2f(u('org'), 0, 0);
+  // Measure and adjust: how much of the vat each colour covers, until it is its share. The fifth
+  // colour's share is what the other four leave.
+  const gain = share.slice();
+  gl.viewport(0, 0, M, M); gl.uniform2f(u('res'), M, M); gl.uniform2f(u('org'), 0, 0); gl.uniform1i(u('mode'), 1);
   let areas = [];
-  for (let it = 0; it < 24; it++) {
+  for (let it = 0; it < 16; it++) {
     for (let k = 0; k < 5; k++) gl.uniform1f(u(`gain[${k}]`), gain[k] || 0);
-    gl.uniform1i(u('mode'), 1); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); gl.readPixels(0, 0, M, M, gl.RGBA, gl.UNSIGNED_BYTE, px);
-    gl.uniform1i(u('mode'), 2); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); gl.readPixels(0, 0, M, M, gl.RGBA, gl.UNSIGNED_BYTE, px2);
-    const mass = [0, 0, 0, 0, 0]; let all = 0;
-    for (let j = 0; j < M * M; j++) { if (!px2[j * 4 + 1]) continue; all += 255; for (let k = 0; k < 4; k++) mass[k] += px[j * 4 + k]; mass[4] += px2[j * 4]; }
-    areas = mass.slice(0, n).map((m) => m / all);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); gl.readPixels(0, 0, M, M, gl.RGBA, gl.UNSIGNED_BYTE, px);
+    const mass = [0, 0, 0, 0];
+    for (const j of INSIDE) for (let k = 0; k < 4; k++) mass[k] += px[j * 4 + k];
+    const all = INSIDE.length * 255;
+    areas = [...mass.map((m) => m / all), 0].slice(0, n);
+    if (n === 5) areas[4] = Math.max(0, 1 - areas[0] - areas[1] - areas[2] - areas[3]);
     for (let k = 0; k < n; k++) gain[k] *= ((share[k] + 1e-3) / (areas[k] + 1e-3)) ** 0.8;
   }
   for (let k = 0; k < 5; k++) gl.uniform1f(u(`gain[${k}]`), gain[k] || 0);
   // Then the vat itself, centred.
-  const side = Math.round(Math.min(width, height) * dpr), ox = Math.round((c.width - side) / 2), oy = Math.round((c.height - side) / 2);
-  gl.uniform2f(u('res'), side, side); gl.uniform2f(u('org'), ox, oy); gl.uniform1i(u('mode'), 0);
-  const frame = (t) => { gl.viewport(0, 0, c.width, c.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.viewport(ox, oy, side, side); gl.uniform1f(u('t'), t); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
+  const side = Math.min(W, H), ox = Math.round((W - side) / 2), oy = Math.round((H - side) / 2);
+  const baseY = canvas.height - H; // drawing at the bottom-left of a larger shared canvas: the top-left of the copy
+  gl.uniform2f(u('res'), side, side); gl.uniform2f(u('org'), ox, baseY + oy); gl.uniform1i(u('mode'), 0);
+  const frame = (t) => { gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.viewport(ox, baseY + oy, side, side); gl.uniform1f(u('t'), t); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
   frame(0);
-  const still = window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let out = c;
-  if (stir && !still) {
+  out.dataset.areas = areas.map((x) => x.toFixed(3)).join(' '); // what the vat covers, to check against the shares
+  if (moving) {
     const t0 = performance.now();
-    const loop = (now) => { if (!c.isConnected && now - t0 > 1000) { gl.getExtension('WEBGL_lose_context')?.loseContext(); return; } frame((now - t0) / 1000); requestAnimationFrame(loop); };
+    const loop = (now) => { if (!out.isConnected && now - t0 > 1000) { gl.getExtension('WEBGL_lose_context')?.loseContext(); return; } frame((now - t0) / 1000); requestAnimationFrame(loop); };
     requestAnimationFrame(loop);
   } else {
-    // Still: copy it to a plain canvas and let the WebGL context go (a browser keeps only a few).
-    out = document.createElement('canvas'); out.width = c.width; out.height = c.height;
-    out.getContext('2d').drawImage(c, 0, 0);
-    gl.getExtension('WEBGL_lose_context')?.loseContext();
+    out.getContext('2d').drawImage(canvas, 0, 0, W, H, 0, 0, W, H);
   }
-  out.className = 'colour-vat';
-  out.style.aspectRatio = `${width} / ${height}`;
-  out.dataset.areas = areas.map((x) => x.toFixed(3)).join(' '); // what the vat covers, to check against the shares
-  if (label) { out.setAttribute('role', 'img'); out.setAttribute('aria-label', label); }
   return out;
 }

@@ -329,7 +329,7 @@
 
 .palette-card__row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 5.2rem;
   gap: 0.9rem;
   align-items: start;
   margin-top: 0.9rem;
@@ -352,6 +352,16 @@
   i { background: var(--c); border-radius: 1px; }
 }
 
+// The frame's own dye vat, beside its name and bar.
+.palette-card__vat {
+  aspect-ratio: 1;
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
 
 // The frame the reader came from, marked by a hairline beneath its print.
 .palette-card.is-from .palette-card__print { box-shadow: 0 6px 0 -5px var(--photobook-ink-3); }
