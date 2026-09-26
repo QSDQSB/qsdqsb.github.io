@@ -1,0 +1,30 @@
+{%- comment -%}
+  Sets `photobook_ready` for include.doc: false when its Photobook would open on "still on their
+  way" (no processed photos in its manifest), so the lists that lead to it can leave it out.
+  A voyage of parts is ready when any of its parts is.
+
+  When the build holds no processed photos at all (photos:fetch had no access, say), nothing is
+  known, and everything counts as ready: a failed fetch leaves the lists as they were rather than
+  emptying them. The site-wide check runs once per page (`photobook_data_known`).
+{%- endcomment -%}
+{%- if photobook_data_known == nil -%}
+  {%- assign photobook_data_known = false -%}
+  {%- for g in site.data.photo_manifests["_index"].galleries -%}
+    {%- if g[1].count > 0 %}{% assign photobook_data_known = true %}{% break %}{% endif -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- assign photobook_ready = true -%}
+{%- if photobook_data_known -%}
+  {%- assign photobook_ready = false -%}
+  {%- if include.doc.subgalleries -%}
+    {%- assign pr_folder = include.doc.path | split: "/" | last | split: "." | first | append: "/" -%}
+    {%- assign pr_parts = site.subvoyage | where_exp: "item", "item.path contains pr_folder" -%}
+    {%- for part in pr_parts -%}
+      {%- assign pr_key = part.gallery_name | replace: "/", "_" -%}
+      {%- if pr_key != "" and site.data.photo_manifests[pr_key].count > 0 %}{% assign photobook_ready = true %}{% break %}{% endif -%}
+    {%- endfor -%}
+  {%- elsif include.doc.gallery_name -%}
+    {%- assign pr_key = include.doc.gallery_name | replace: "/", "_" -%}
+    {%- if site.data.photo_manifests[pr_key].count > 0 %}{% assign photobook_ready = true %}{% endif -%}
+  {%- endif -%}
+{%- endif -%}

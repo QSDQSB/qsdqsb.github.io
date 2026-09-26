@@ -21,7 +21,9 @@
   {% assign teaser = teaser | prepend: "/images/" | prepend: base_path %}
 {% endif %}
 
-{% assign ovl_address = ")" | prepend: teaser | prepend: "--bg-img: url(" %}
+{% comment %} defer_cover=true parks the cover in --bg-later until assets/js/card-covers.js sees the card near. {% endcomment %}
+{% if include.defer_cover %}{% assign cover_var = "--bg-later: url(" %}{% else %}{% assign cover_var = "--bg-img: url(" %}{% endif %}
+{% assign ovl_address = ")" | prepend: teaser | prepend: cover_var %}
 
 
 {% if post.link %}
