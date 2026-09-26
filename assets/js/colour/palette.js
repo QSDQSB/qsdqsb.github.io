@@ -49,6 +49,9 @@ async function main() {
   const nameOf = (v) => pages[v.g].title;
   const sig = (v) => v.palette.map((c) => [c.hex, c.pc, c.accent ? 1 : 0]);
   let order = store.get('palette-order') === 'colour' ? 'colour' : 'sequence';
+  // The rail: every voyage as a small vat, by colour (dark to light, like with like), so the way
+  // from one voyage's palette to the next is a step to its neighbour.
+  const railed = voyages.every((v) => Number.isFinite(v.rank)) ? [...voyages].sort((a, b) => a.rank - b.rank) : voyages;
 
   function index() {
     document.title = document.title.replace(/^[^·]*·/, "QSD's Palette ·");
@@ -64,7 +67,13 @@ async function main() {
     title.textContent = `QSD's Palette for ${name}`;
     kicker.textContent = "QSD's Palette";
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
-    stage.innerHTML = `<section class="palette-voyage">
+    const at_ = railed.indexOf(v), prev = railed[(at_ - 1 + railed.length) % railed.length], next = railed[(at_ + 1) % railed.length];
+    stage.innerHTML = `<nav class="palette-rail" aria-label="Every voyage, by colour">
+        <a class="palette-rail__step" href="#${prev.g}" aria-label="${esc(nameOf(prev))}" data-tip="${esc(nameOf(prev))}" data-tip-side="top">‹</a>
+        <ol class="palette-rail__list">${railed.map((x) => `<li><a href="#${x.g}" data-g="${x.g}" data-tip="${esc(nameOf(x))}" data-tip-side="top" aria-label="${esc(nameOf(x))}"${x === v ? ' aria-current="page"' : ''}></a></li>`).join('')}</ol>
+        <a class="palette-rail__step" href="#${next.g}" aria-label="${esc(nameOf(next))}" data-tip="${esc(nameOf(next))}" data-tip-side="top">›</a>
+      </nav>
+      <section class="palette-voyage">
         <div>${blocks(sig(v))}
           <p class="palette-voyage__links"><a href="${page.url}">Open the book <span aria-hidden="true">→</span></a><a href="#">Every palette <span aria-hidden="true">→</span></a></p></div>
         <div class="palette-voyage__vat"></div>
@@ -82,6 +91,8 @@ async function main() {
           </div>${p.sig?.length ? `<div class="palette-card__vat" data-i="${i}"></div>` : ''}</div>
         </article>`; }).join('')}</div>`;
     stage.querySelector('.palette-voyage__vat').append(vat(v.palette, { size: 176, seed: seedOf(v.g), label: `The colours of ${name}, run together as in a dye vat` }));
+    queue = []; // a voyage left behind pours nothing more
+    rail();
     pour(v, stage.querySelectorAll('.palette-card__vat'));
     stage.querySelector('.palette-page__order').onclick = (e) => {
       const b = e.target.closest('button[data-order]'); if (!b || b.dataset.order === order) return;
@@ -95,20 +106,33 @@ async function main() {
   // Each frame's own vat, poured as its card nears the screen, one a frame so scrolling stays smooth;
   // kept once poured, so a change of order moves them rather than pouring them again.
   const poured = new Map();
-  let queue = [], seen = null;
-  function pour(v, slots) {
-    seen?.disconnect(); queue = [];
-    const fill = (slot) => {
-      const p = v.photos[slot.dataset.i], key = `${v.g}/${p.slug}`;
-      if (!poured.has(key)) poured.set(key, vat(p.sig, { size: 83, seed: seedOf(key) }));
-      slot.replaceChildren(poured.get(key));
-    };
-    const next = () => { const slot = queue.shift(); if (!slot) return; if (slot.isConnected) fill(slot); requestAnimationFrame(next); };
-    seen = new IntersectionObserver((entries) => {
-      for (const e of entries) if (e.isIntersecting) { seen.unobserve(e.target); if (queue.push(e.target) === 1) requestAnimationFrame(next); }
-    }, { rootMargin: '600px 0px' });
-    for (const slot of slots) { const p = v.photos[slot.dataset.i]; if (poured.has(`${v.g}/${p.slug}`)) fill(slot); else seen.observe(slot); }
+  let queue = [];
+  const next = () => { const job = queue.shift(); if (!job) return; if (job.slot.isConnected) job.fill(); requestAnimationFrame(next); };
+  /** Pour a vat into each slot as it nears view (`root`, `margin`), one a frame; a vat poured once is kept. */
+  function drip(slots, keyOf, make, { root = null, margin = '600px 0px' } = {}) {
+    const fill = (slot) => { const key = keyOf(slot); if (!poured.has(key)) poured.set(key, make(slot)); slot.replaceChildren(poured.get(key)); };
+    const seen = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { seen.unobserve(e.target); if (queue.push({ slot: e.target, fill: () => fill(e.target) }) === 1) requestAnimationFrame(next); }
+    }, { root, rootMargin: margin });
+    for (const slot of slots) if (poured.has(keyOf(slot))) fill(slot); else seen.observe(slot);
   }
+  function pour(v, slots) {
+    const key = (slot) => `${v.g}/${v.photos[slot.dataset.i].slug}`;
+    drip(slots, key, (slot) => vat(v.photos[slot.dataset.i].sig, { size: 44, seed: seedOf(key(slot)) }));
+  }
+
+  function rail() {
+    const list = stage.querySelector('.palette-rail__list'), here = list.querySelector('[aria-current]');
+    here?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' });
+    drip(list.querySelectorAll('a'), (a) => `rail/${a.dataset.g}`, (a) => vat(voyages.find((x) => x.g === a.dataset.g).palette, { size: 40, seed: seedOf(a.dataset.g) }), { root: list, margin: '0px 320px' });
+  }
+  // ← → step along the rail.
+  addEventListener('keydown', (e) => {
+    if (e.defaultPrevented || e.altKey || e.metaKey || e.ctrlKey || e.target.closest?.('input, textarea, select, [contenteditable]')) return;
+    const which = { ArrowLeft: 'first-child', ArrowRight: 'last-child' }[e.key];
+    const step = which && stage.querySelector(`.palette-rail__step:${which}`);
+    if (step) { e.preventDefault(); location.hash = step.getAttribute('href'); }
+  });
 
   function route() {
     const g = decodeURIComponent(location.hash.slice(1));

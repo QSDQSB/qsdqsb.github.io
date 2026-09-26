@@ -204,3 +204,18 @@ test('always coloured: a colour photo has no black or white swatch; a black-and-
   const mono = signatureOf(pointsOf(grey, 40, 30));
   assert.ok(mono.colours.length >= 2 && mono.colours.every((c) => c.hex.slice(1, 3) === c.hex.slice(3, 5)), 'a black-and-white frame stays tonal');
 });
+
+test('the rail of voyages lays like beside like, dark to light', async () => {
+  const { palettesOf } = await import('../scripts/photos/lib/atlas.mjs');
+  const book = (g, hexes) => ({ gallery: g, photos: [], book: { colour: { palette: hexes.map((hex, i) => ({ hex, pc: [40, 30, 20, 10][i] })), wheel: null, order: [] } } });
+  const { voyages } = palettesOf([
+    book('blue', ['#202a40', '#304868', '#4c668c', '#7c889c']),
+    book('amber', ['#c05030', '#e08040', '#f0b070', '#fae0c0']),
+    book('navy', ['#223050', '#35507a', '#5070a0', '#8090b0']),
+    book('rust', ['#b04a28', '#d07a3a', '#e8a868', '#f8d8b8']),
+  ]);
+  const rail = [...voyages].sort((a, b) => a.rank - b.rank).map(v => v.g);
+  assert.deepEqual([...rail].sort(), ['amber', 'blue', 'navy', 'rust']);
+  assert.ok(Math.abs(rail.indexOf('blue') - rail.indexOf('navy')) === 1 && Math.abs(rail.indexOf('amber') - rail.indexOf('rust')) === 1);
+  assert.ok(rail.indexOf('blue') < rail.indexOf('amber'), 'the darker family first');
+});

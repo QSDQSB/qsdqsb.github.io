@@ -15,18 +15,23 @@
  * No coordinates: place names and the sun's altitude only, as in the books.
  */
 
-import { parsePalette, vectorOf, chi2, emd, rgbToOklab, swatchesOf } from './palette.mjs';
+import { parsePalette, vectorOf, chi2, emd, colourPath, rgbToOklab, swatchesOf } from './palette.mjs';
 
 /**
  * QSD's Palette (_pages/palette.html): for every voyage with colours, its signature (no black or
- * white), its colour line, its colour order (24 dots, lib/book.mjs colourOf) and each frame's own
- * signature, in the book's order. Galleries are keyed as `gallery_name` says them (`prague/twilight`).
+ * white), its colour line, its colour order (24 dots, lib/book.mjs colourOf), each frame's own
+ * signature in the book's order, and its `rank` on the page's rail of voyages (by colour). Galleries are keyed as `gallery_name` says them (`prague/twilight`).
  */
 export function palettesOf(books) {
   const voyages = books.filter(m => m.book?.colour).map(m => ({
     g: m.gallery, palette: m.book.colour.palette, wheel: m.book.colour.wheel, order: m.book.colour.order,
     photos: m.photos.map(p => ({ slug: p.slug, name: p.name || null, light: p.light?.text || null, url: p.url, r: p.ratio, sizes: (p.sizes?.webp || []).filter(s => s <= 1280), sig: p.signature || null, dots: p.dots || null })),
   }));
+  // Each voyage's place on the rail of vats that leads from one to the next: its signature carried
+  // into every other's (the earth mover's distance), laid on one line dark to light, like with like.
+  const sigs = voyages.map(v => { const sum = v.palette.reduce((s, c) => s + c.pc, 0) || 1; return v.palette.map(c => ({ lab: rgbToOklab(...[1, 3, 5].map(i => parseInt(c.hex.slice(i, i + 2), 16))), w: c.pc / sum })); });
+  const D = sigs.map((a, i) => sigs.map((b, j) => (i === j ? 0 : emd(a, b))));
+  colourPath(D, sigs.map(P => P.reduce((s, c) => s + c.w * c.lab[0], 0))).forEach((k, rank) => { voyages[k].rank = rank; });
   return voyages.length ? { voyages } : null;
 }
 
