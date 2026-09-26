@@ -22,8 +22,10 @@
  *      one nearest another), never of a lone grey.
  *   6. Shares are measured again against the swatches chosen: every pixel to
  *      its nearest, and told as they are. Ordered dark to light.
- *   A voyage, pooled, is read without the ground (`ground: false`): no near-black
- *   or near-white swatch, since every trip has its nights and shadows.
+ *   Always coloured: a photograph's palette (and a voyage's, `ground: false`) has
+ *   no near-black or near-white swatch, nor a colour that only looks black or
+ *   white; its shares are then of the picture's colour, the greys left out. Only
+ *   a black-and-white frame (under 3% of it coloured) keeps a tonal palette.
  *
  * Reading (over the whole picture, not just the swatches)
  *   harmony      Tonal (next to no colour), Monochrome (one 30° family of
@@ -51,7 +53,7 @@ const looksBlackOrWhite = (l) => (l[0] < 0.25 && chroma(l) < 0.05) || (l[0] > 0.
 const hueGap = (x, y) => { const d = Math.abs(x - y) % 360; return d > 180 ? 360 - d : d; };
 
 /** @param {{X:Float64Array, w:Float64Array, n:number}} pts  weighted OKLab points (lib/dots.mjs pointsOf) */
-export function signatureOf({ X, w, n }, { most = 5, least = 3, ground = true } = {}) {
+export function signatureOf({ X, w, n }, { most = 5, least = 3, ground = 'auto' } = {}) {
   const lab = (i) => [X[3 * i], X[3 * i + 1], X[3 * i + 2]];
   const meanOf = (idx) => { const m = idx.reduce((s, i) => s + w[i], 0), c = [0, 0, 0]; for (const i of idx) for (let a = 0; a < 3; a++) c[a] += w[i] * X[3 * i + a]; return { lab: c.map(v => v / (m || 1)), share: m }; };
   const subset = (idx) => { const S = new Float64Array(3 * idx.length); idx.forEach((i, k) => { S[3 * k] = X[3 * i]; S[3 * k + 1] = X[3 * i + 1]; S[3 * k + 2] = X[3 * i + 2]; }); return S; };
@@ -64,6 +66,11 @@ export function signatureOf({ X, w, n }, { most = 5, least = 3, ground = true } 
     if (c < 0.025 || (l[0] < 0.15 && c < 0.04)) greys[l[0] < 0.35 ? 'dark' : l[0] > 0.7 ? 'light' : 'mid'].push(i);
     else hued.push(i);
   }
+
+  // Always coloured (ground 'auto', the default): no black or white swatch, unless the frame itself
+  // is black and white (under 3% of it coloured), whose palette stays tonal and true.
+  const huedMass = hued.reduce((m, i) => m + w[i], 0);
+  if (ground === 'auto') ground = huedMass < 0.03;
 
   // Colour candidates from the coloured pixels alone, so a sky that is a twentieth of a grey city
   // still makes a candidate of its own; large areas tempered; near-twins merged.
@@ -121,9 +128,18 @@ export function signatureOf({ X, w, n }, { most = 5, least = 3, ground = true } 
     chosen.push({ lab: top.lab, share: 0, accent: true });
   }
 
-  // Shares against the palette itself: every pixel to its nearest swatch.
+  // Shares against the palette itself: every pixel to its nearest swatch. Without the ground, shares
+  // are of the picture's colour: the grey pixels no swatch stands for are left out, rather than
+  // poured into whichever colour lies nearest (a night frame's black is not its lamps' amber).
   const share = new Float64Array(chosen.length);
-  for (let i = 0; i < n; i++) { let b = 0, d = Infinity; chosen.forEach((c, j) => { const e = gap(lab(i), c.lab); if (e < d) { d = e; b = j; } }); share[b] += w[i]; }
+  const skip = new Set(ground ? [] : Object.entries(greys).filter(([kind]) => !chosen.some(c => c.kind === kind)).flatMap(([, idx]) => idx));
+  let counted = 0;
+  for (let i = 0; i < n; i++) {
+    if (skip.has(i)) continue;
+    let b = 0, d = Infinity; chosen.forEach((c, j) => { const e = gap(lab(i), c.lab); if (e < d) { d = e; b = j; } });
+    share[b] += w[i]; counted += w[i];
+  }
+  for (let j = 0; j < share.length; j++) share[j] /= counted || 1;
   const colours = chosen.map((c, j) => ({ lab: c.lab, share: share[j], accent: !!c.accent }))
     .sort((a, b) => a.lab[0] - b.lab[0])
     .map(c => ({ hex: rgbHex(oklabToRgb(...c.lab)), pc: Math.round(c.share * 1000) / 10, accent: c.accent, a: +c.lab[1].toFixed(4), b: +c.lab[2].toFixed(4), L: +c.lab[0].toFixed(3) }));

@@ -35,7 +35,7 @@ export function tips() {
     wait = setTimeout(() => { if (cur === el && el.isConnected) show(el); }, 450);
   });
   for (const ev of ['pointerdown', 'scroll', 'keydown']) document.addEventListener(ev, hide, { capture: true, passive: true });
-  // Told to speak (field.js): the label shows at once, for this element, with this text, under
+  // Told to speak: the label shows at once, for this element, with this text, under
   // the element or under a given box within it (a dot on a canvas).
   document.addEventListener('photobook:say', (e) => {
     const { text, rect } = typeof e.detail === 'string' ? { text: e.detail } : e.detail;

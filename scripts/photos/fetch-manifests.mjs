@@ -103,7 +103,9 @@ function withPalettes(gallery, machine) {
   if (!machine?.photos) return machine;
   const side = readSidecar(gallery);
   if (!Object.keys(side).length) return machine;
-  // The manifest's own colours win; the sidecar fills only what it lacks.
+  // The manifest's own colours win; the sidecar fills only what it lacks. With PHOTOS_SIDECAR_WINS=1
+  // (local only: to see a changed colour algorithm before its manifests are refreshed) it wins.
+  if (process.env.PHOTOS_SIDECAR_WINS) return { ...machine, photos: machine.photos.map(p => (side[p.hash] ? { ...p, ...side[p.hash] } : p)) };
   return { ...machine, photos: machine.photos.map(p => ((p.palette && p.signature && p.dots) || !side[p.hash] ? p : { ...side[p.hash], ...p })) };
 }
 

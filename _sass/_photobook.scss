@@ -910,7 +910,7 @@ html.is-reordering::view-transition-group(*) {
 .photobook-barcode {
   display: flex;
   gap: 2px;
-  height: 3rem;
+  height: 1.5rem;
   margin-bottom: 1.1rem;
 
   > * { flex: 1 1 0; min-width: 0; border-radius: 1px; }
@@ -931,37 +931,7 @@ html.is-reordering::view-transition-group(*) {
   .photobook-barcode:hover button:not(:hover) { opacity: 0.45; }
 }
 
-.photobook-signature {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 1.5rem;
-  align-items: center;
-}
-
-// The voyage's signature: each swatch with its hex and share, as text to select.
-.photobook-palette {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem 1.8rem;
-  user-select: text;
-
-  span {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-    font: 400 0.74rem $barlow-font-family;
-    letter-spacing: 0.08em;
-    color: var(--photobook-ink-2);
-    font-variant-numeric: tabular-nums;
-  }
-
-  i { width: 0.7rem; height: 0.7rem; border-radius: 1px; background: var(--c); }
-  b { font-weight: 400; color: var(--photobook-ink); }
-  b::after { content: "%"; color: var(--photobook-ink-3); }
-  small { font: 500 0.55rem $barlow-font-family; letter-spacing: 0.18em; text-transform: uppercase; color: var(--photobook-ink-3); }
-}
-
-// The colour line: the signature on the wheel of hue, joined dark to light.
+// The colour line: a palette on the wheel of hue, joined dark to light (QSD's Palette).
 .photobook-wheel {
   width: 5.5rem;
   height: 5.5rem;
@@ -972,21 +942,6 @@ html.is-reordering::view-transition-group(*) {
 .photobook-wheel__hue { opacity: 0.6; }
 .photobook-wheel__line { fill: none; stroke: var(--photobook-ink-3); stroke-width: 0.8; stroke-linejoin: round; }
 .photobook-wheel__dot { stroke: $background-color; stroke-width: 1; }
-
-// Every frame's twenty-four dots, gathered by colour (field.js).
-.photobook-field {
-  margin-top: 1.8rem;
-
-  &[hidden] { display: none; }
-
-  canvas { display: block; max-width: 100%; cursor: pointer; }
-}
-
-.photobook-field__note {
-  margin: 0.6rem 0 0;
-  font: 400 0.66rem $barlow-font-family;
-  color: var(--photobook-ink-3);
-}
 
 // Onward, to the pages that look across every voyage by colour.
 .photobook-colophon__onward {
@@ -1614,6 +1569,8 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   transition: opacity 0.35s $cubic-bezier-smooth;
 
   span { display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap; }
+  b { margin-left: 0.15rem; font-weight: 400; color: var(--photobook-ink-3); }
+  small { margin-left: 0.2rem; font: 500 0.5rem $barlow-font-family; letter-spacing: 0.18em; text-transform: uppercase; color: var(--photobook-ink-3); }
   i { width: 5px; height: 5px; background: var(--c); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08); } // a hairline, so a near-black chip still shows
 }
 
@@ -1622,6 +1579,13 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 
 @include responsive-coarse-pointer {
   .palette-strip__hex { opacity: 1; }
+}
+
+// In the colophon, the voyage's palette under its barcode, a little heavier.
+.photobook-colophon__palette {
+  margin-top: 0.4rem;
+
+  .palette-strip__bar i { height: 8px; }
 }
 
 // In the specs panel it runs the whole row beneath the film. Named as a highlight, since the

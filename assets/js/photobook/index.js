@@ -10,7 +10,6 @@ import { glow } from './glow.js';
 import { book } from './book.js';
 import { lightbox } from './lightbox.js';
 import { tips } from './tip.js';
-import { field } from './field.js';
 
 tips();
 
@@ -27,7 +26,6 @@ if (dataEl) {
     onScreen: (order) => lb.screen(order),
     onPrefetch: (i) => lb.prefetch(i),
   });
-  field(frames, (i) => lb.open(i, frames.map((_, k) => k), null));
   lb.openFromHash();
 }
 

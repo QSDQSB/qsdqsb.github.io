@@ -191,3 +191,16 @@ test('colour first: a grey city keeps its sky, its stone and its bus, and no mor
   assert.ok(colours.some((c) => C(c).b > 0.02 && C(c).c < 0.08), 'the warm stone');
   assert.ok(colours.some((c) => C(c).a > 0.1), 'the red');
 });
+
+test('always coloured: a colour photo has no black or white swatch; a black-and-white one keeps its greys', async () => {
+  const { pointsOf } = await dotsLib();
+  const { signatureOf } = await sigLib();
+  const { rgbToOklab } = await lib();
+  const looksBW = (hex) => { const [L, a, b] = rgbToOklab(parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)); const C = Math.hypot(a, b); return (L < 0.25 && C < 0.05) || (L > 0.8 && C < 0.02); };
+  const colour = signatureOf(pointsOf(night(), 60, 40));
+  assert.ok(colour.colours.length >= 1 && !colour.colours.some((c) => looksBW(c.hex)), 'no black or white in a colour photo');
+  assert.ok(Math.abs(colour.colours.reduce((s, c) => s + c.pc, 0) - 100) < 1, 'shares of its colour sum to the whole');
+  const grey = Buffer.alloc(40 * 30 * 3); for (let i = 0; i < 40 * 30; i++) { const v = i % 40 < 20 ? 30 : 200; grey[3 * i] = grey[3 * i + 1] = grey[3 * i + 2] = v; }
+  const mono = signatureOf(pointsOf(grey, 40, 30));
+  assert.ok(mono.colours.length >= 2 && mono.colours.every((c) => c.hex.slice(1, 3) === c.hex.slice(3, 5)), 'a black-and-white frame stays tonal');
+});
