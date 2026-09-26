@@ -95,6 +95,18 @@ export function signatureOf({ X, w, n }, { most = 5, least = 3 } = {}) {
   return { colours, reading: readingOf({ X, w, n }) };
 }
 
+/** The signature as a manifest keeps it: [[hex, share %], …], dark to light, the accent marked with a third 1. */
+export const compactSignature = ({ colours }) => colours.map(c => (c.accent ? [c.hex, c.pc, 1] : [c.hex, c.pc]));
+
+/** The signature of weighted colours rather than pixels (a voyage pooled from its photos' 32-colour palettes). */
+export function signatureOfColours(list) {
+  const n = list.length, X = new Float64Array(3 * n), w = new Float64Array(n);
+  list.forEach((c, i) => { X[3 * i] = c.lab[0]; X[3 * i + 1] = c.lab[1]; X[3 * i + 2] = c.lab[2]; w[i] = c.w; });
+  const sum = w.reduce((a, b) => a + b, 0) || 1;
+  for (let i = 0; i < n; i++) w[i] /= sum;
+  return signatureOf({ X, w, n });
+}
+
 /** The picture read as a photographer might: harmony, key, contrast, temperature, saturation. */
 export function readingOf({ X, w, n }) {
   let L = 0, C = 0, warm = 0, cm = 0;

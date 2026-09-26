@@ -192,8 +192,10 @@ export function lightbox(frames) {
 
   const captionHTML = (p) => `${p.place ? `<h3>${esc(p.place)}</h3>` : ''}${p.city ? `<span class="photobook-lightbox__city">${esc(p.city)}</span>` : ''}<div class="photobook-lightbox__specs-line">${specsLine(p)}</div>`;
 
-  // The frame's five colours as bands of their share; each names its value under the pointer.
-  const paletteHTML = (p) => (p.swatches?.length ? `<div class="photobook-specs__palette" role="img" aria-label="Palette: ${p.swatches.map(([h, pc]) => `${h} ${Math.round(pc)}%`).join(', ')}">${p.swatches.map(([h, pc]) => `<i style="--c:${h};flex:${pc}" data-tip="${h.toUpperCase()} · ${Math.round(pc)}%"></i>`).join('')}</div>` : '');
+  // The frame's signature (three to five colours, lib/signature.mjs) as a thin bar, widths tempered
+  // (the square root of each share) so a black that fills the frame does not drown the rest. A band
+  // names its value under the pointer; a click copies it (copy.js).
+  const paletteHTML = (p) => (p.signature?.length ? `<div class="photobook-specs__palette" role="group" aria-label="Palette">${p.signature.map(([h, pc, accent]) => `<button type="button" style="--c:${h};flex:${Math.sqrt(pc).toFixed(2)}" data-hex="${h}" data-tip="${h.toUpperCase()} · ${Math.round(pc)}%${accent ? ' · accent' : ''}" aria-label="${h.toUpperCase()}, ${Math.round(pc)}%${accent ? ', accent' : ''}: copy"></button>`).join('')}</div>` : '');
 
   function specsHTML(p) {
     const ev = p.bias ? ` · ${p.bias > 0 ? '+' : '−'}${Math.abs(Math.round(p.bias * 100) / 100)} EV` : '';
