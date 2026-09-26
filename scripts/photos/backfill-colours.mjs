@@ -10,7 +10,10 @@
  * `photos:trash restore … --bucket-only` puts it back), re-read to be sure nothing else wrote it in
  * the meantime, then written. Through the local `r2:` rclone remote; no API keys.
  *
- * Usage: node scripts/photos/backfill-colours.mjs [--gallery london] [--write]
+ * `--refresh signature[,dots…]` also replaces those fields where the manifest already has them and the
+ * sidecar differs: for when an algorithm changes (as the signature did on 2026-09-26).
+ *
+ * Usage: node scripts/photos/backfill-colours.mjs [--gallery london] [--refresh signature] [--write]
  */
 
 import fs from 'node:fs';
@@ -24,6 +27,8 @@ const FIELDS = ['palette', 'grid', 'signature', 'dots'];
 const args = parseArgs(process.argv.slice(2));
 const remote = `${env.rcloneRemote}:${env.originalsBucket}`;
 const today = new Date().toISOString().slice(0, 10);
+const refresh = new Set(String(args.refresh || '').split(',').filter(f => FIELDS.includes(f)));
+const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
 
 const rclone = (a, input) => spawnSync('rclone', a, { encoding: 'utf8', input, maxBuffer: 64 << 20 });
 const readManifest = (g) => { const r = rclone(['cat', `${remote}/${g}/${MANIFEST_FILE}`]); return r.status === 0 && r.stdout.trim() ? r.stdout : null; };
@@ -41,7 +46,8 @@ for (const g of galleries) {
   const gained = { palette: 0, grid: 0, signature: 0, dots: 0 };
   let changed = 0, lacking = 0;
   for (const p of m.photos) {
-    const want = FIELDS.filter(f => p[f] == null);
+    const s0 = side[p.hash];
+    const want = FIELDS.filter(f => p[f] == null || (refresh.has(f) && s0?.[f] != null && !same(p[f], s0[f])));
     if (!want.length) continue;
     const s = side[p.hash];
     if (!s) { lacking++; continue; }

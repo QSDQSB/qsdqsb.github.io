@@ -5,8 +5,8 @@
  *   /lab/dots/     every photograph as 24 dots by each method in lib/dots.mjs, for comparing by
  *                  eye and trying layouts (a row of 24, a 3 × 8 block, a voyage's dots gathered)
  *   /lab/palette/  every photograph's signature palette (lib/signature.mjs): three to five
- *                  colours with their shares, its colour line and its reading, beside the specs
- *                  panel's current five swatches; and each voyage's own, pooled
+ *                  colours with their shares, its colour line and its reading; and each
+ *                  voyage's own, pooled
  *
  *   in   _data/photo_manifests/*.json, img.qsdqsb.com/t/<hash>/480.webp (public, read only)
  *   out  lab/{dots,palette}/index.html (from scripts/photos/lab/) and data.json
@@ -41,7 +41,7 @@ for (const g of names) {
         const { data, info } = await sharp(buf).resize({ width: SAMPLE, height: SAMPLE, fit: 'inside' }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
         photos[i] = { slug: p.slug, name: p.name, url: p.url, r: p.ratio, light: p.light?.text || null, m: dotsOf(data, info.width, info.height, 3) };
         pts[i] = pointsOf(data, info.width, info.height, 3);
-        sigs[i] = { slug: p.slug, name: p.name, url: p.url, r: p.ratio, light: p.light?.text || null, film: p.film || null, taken: p.taken || null, now: (p.swatches || []).map(([h, pc]) => ({ hex: h, pc })), ...signatureOf(pts[i]) };
+        sigs[i] = { slug: p.slug, name: p.name, url: p.url, r: p.ratio, light: p.light?.text || null, film: p.film || null, taken: p.taken || null, ...signatureOf(pts[i]) };
       } catch (e) { console.warn(`  ! ${g}/${p.slug}: ${e.message}`); }
     }
   }));
