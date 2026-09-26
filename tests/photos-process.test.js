@@ -36,6 +36,10 @@ test('processor renders tiers, skips unchanged, garbage-collects, and keeps EXIF
 
   let out = run(store);
   assert.match(out, /2 processed, 0 unchanged/);
+  // The kindred list (Drift) is kept beside the manifests, private, for every photo with a palette.
+  const kindred = JSON.parse(fs.readFileSync(path.join(store, 'originals', '_kindred.json'), 'utf8'));
+  assert.equal(Object.keys(kindred.photos).length, 2);
+  assert.ok(!fs.existsSync(path.join(store, 'public', '_kindred.json')), 'never in the public store');
 
   const pub = path.join(store, 'public', 'demo', 'nested');
   // The manifest is private: it lives beside the originals, never in the public store.
