@@ -165,3 +165,10 @@ test('the signature: three to five swatches, black allowed once, a half-percent 
   assert.ok(Math.abs(colours.reduce((s, c) => s + c.pc, 0) - 100) < 1);
   assert.equal(reading.key, 'Low-key');
 });
+
+test('grey means grey: dark navies and greens keep their colour, near-black noise does not', async () => {
+  const { isGrey, rgbToOklab } = await lib();
+  const grey = (h) => { const [L, a, b] = rgbToOklab(parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)); return isGrey(L, Math.hypot(a, b)); };
+  for (const h of ['2a2a2c', '8b9296', 'e8e6ea', '080808', '0a0d14']) assert.ok(grey(h), `${h} is grey`);
+  for (const h of ['0b1d33', '1a2a3c', '1c2a1e', '2e241c', 'b9a092', 'd8e0ea', '4a5a68']) assert.ok(!grey(h), `${h} has a colour`);
+});

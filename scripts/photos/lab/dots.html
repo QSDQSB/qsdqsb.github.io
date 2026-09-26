@@ -124,12 +124,14 @@ const LOWER = { honesty: true, reach: true, worst: true, missed: true, apart: fa
 const data = await (await fetch('data.json')).json();
 const all = { g: '*', title: 'All voyages', photos: data.galleries.flatMap(g => g.photos.map(p => ({ ...p, gallery: g.title }))) };
 data.galleries.forEach(g => g.photos.forEach(p => { p.gallery = g.title; }));
-const state = { voyage: data.galleries.find(g => g.g === 'london') ? 'london' : data.galleries[0].g, method: 'balanced', layout: 'rows', order: 'light', size: 'equal' };
+const state = { voyage: data.galleries.find(g => g.g === 'london') ? 'london' : data.galleries[0].g, method: 'maximin', layout: 'rows', order: 'light', size: 'equal' };
 
 // OKLab, for ordering and gathering. Hue runs from just before red (OKLab puts pure red near 28°,
 // orange 54°, yellow 102°, green 141°, cyan 210°, blue 256°, violet 300°, pink 355°), so the reds and
 // the oranges sit together at the start and the pinks close the wheel.
 const START = 15;
+// Grey only below chroma 0.015, or 0.02 near black (lib/palette.mjs isGrey).
+const isGrey = (d) => d.C < 0.015 || (d.L < 0.18 && d.C < 0.02);
 const NAMED = [['red', 28], ['orange', 54], ['yellow', 102], ['green', 141], ['cyan', 210], ['blue', 256], ['violet', 300], ['pink', 355]];
 const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
 function lab(hex) {
@@ -142,7 +144,7 @@ const dotsOf = (p, method = state.method) => {
   for (let i = 0; i < s.length; i += 8) { const hex = s.slice(i, i + 6); const L = lab(hex); out.push({ hex, w: parseInt(s.slice(i + 6, i + 8), 16) / 255, L: L[0], C: Math.hypot(L[1], L[2]), h: (Math.atan2(L[2], L[1]) * 180 / Math.PI + 360 - START) % 360 }); }
   return out;
 };
-const ordered = (ds) => state.order === 'light' ? ds : [...ds].sort((a, b) => ((a.C < 0.03) - (b.C < 0.03)) * -1 || (a.C < 0.03 ? a.L - b.L : a.h - b.h || a.L - b.L));
+const ordered = (ds) => state.order === 'light' ? ds : [...ds].sort((a, b) => (isGrey(a) - isGrey(b)) * -1 || (isGrey(a) ? a.L - b.L : a.h - b.h || a.L - b.L));
 const current = () => (state.voyage === '*' ? all : data.galleries.find(g => g.g === state.voyage));
 
 // Controls.
@@ -188,13 +190,13 @@ function field(ps) {
   const dots = ps.flatMap((p, i) => dotsOf(p).map(d => ({ ...d, i })));
   const width = stage.clientWidth, big = dots.length > 3000;
   const s = big ? 6 : 12, W = Math.floor(width / s), H = Math.ceil(dots.length / W * 1.25) + 2;
-  const neutral = dots.filter(d => d.C < 0.03).length / dots.length, nW = Math.max(2, Math.round(W * neutral));
+  const neutral = dots.filter(isGrey).length / dots.length, nW = Math.max(2, Math.round(W * neutral));
   const Ls = dots.map(d => d.L), lo = Math.min(...Ls), hi = Math.max(...Ls);
   const grid = new Int32Array(W * H).fill(-1);
   const order = dots.map((d, k) => k).sort((a, b) => dots[b].C - dots[a].C);
   for (const k of order) {
     const d = dots[k];
-    const gx = d.C < 0.03 ? Math.min(nW - 1, Math.floor((d.C / 0.03) * nW)) : nW + Math.floor(d.h / 360 * (W - nW));
+    const gx = isGrey(d) ? Math.min(nW - 1, Math.floor((d.C / 0.02) * nW)) : nW + Math.floor(d.h / 360 * (W - nW));
     const gy = Math.round((1 - (d.L - lo) / (hi - lo || 1)) * (H - 1));
     for (let r = 0; r < Math.max(W, H); r++) {
       let placed = false;

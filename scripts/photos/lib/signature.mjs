@@ -3,7 +3,7 @@
  * chosen the way a designer would, and what they say about the picture.
  *
  * Choosing
- *   1. Pixels near black (L < 0.2) or near white (L > 0.9, grey) are tone, not
+ *   1. Pixels near black (L < 0.2) or near white (L > 0.9, and grey: a pale sky is not) are tone, not
  *      colour: each group may give at most one swatch, its own tinted mean
  *      (a warm white stays warm), and counts for little in the choosing.
  *   2. The rest is reduced to twelve candidates (k-means in OKLab, large areas
@@ -32,7 +32,7 @@
  * centre is a pair of opposites.
  */
 
-import { kmeans, oklabToRgb, rgbHex } from './palette.mjs';
+import { kmeans, oklabToRgb, rgbHex, isGrey } from './palette.mjs';
 
 const chroma = (l) => Math.hypot(l[1], l[2]);
 const hueOf = (l) => (Math.atan2(l[2], l[1]) * 180 / Math.PI + 360) % 360;
@@ -45,7 +45,7 @@ export function signatureOf({ X, w, n }, { most = 5, least = 3 } = {}) {
   const dark = [], light = [], mid = [];
   for (let i = 0; i < n; i++) {
     const l = lab(i);
-    (l[0] < 0.2 ? dark : l[0] > 0.9 && chroma(l) < 0.05 ? light : mid).push(i);
+    (l[0] < 0.2 ? dark : l[0] > 0.9 && isGrey(l[0], chroma(l)) ? light : mid).push(i);
   }
   const meanOf = (idx) => { const m = idx.reduce((s, i) => s + w[i], 0), c = [0, 0, 0]; for (const i of idx) for (let a = 0; a < 3; a++) c[a] += w[i] * X[3 * i + a]; return { lab: c.map(v => v / (m || 1)), share: m }; };
 
@@ -114,7 +114,7 @@ export function readingOf({ X, w, n }) {
   for (let i = 0; i < n; i++) {
     const l = [X[3 * i], X[3 * i + 1], X[3 * i + 2]], c = chroma(l);
     L += w[i] * l[0]; C += w[i] * c; Ls.push([l[0], w[i]]);
-    if (c > 0.03) { warm += w[i] * (l[2] + 0.4 * l[1]); cm += w[i]; hues[Math.floor(hueOf(l) / 30)] += w[i] * c; }
+    if (!isGrey(l[0], c)) { warm += w[i] * (l[2] + 0.4 * l[1]); cm += w[i]; hues[Math.floor(hueOf(l) / 30)] += w[i] * c; }
   }
   Ls.sort((a, b) => a[0] - b[0]);
   const at = (q) => { let s = 0; for (const [v, m] of Ls) { s += m; if (s >= q) return v; } return Ls[Ls.length - 1][0]; };
