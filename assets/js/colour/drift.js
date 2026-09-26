@@ -23,7 +23,7 @@ const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-mo
 const deg = (d) => `${d < 0 ? '−' : ''}${Math.abs(d)}°`;
 const GROUND = [16, 16, 18];
 /** A colour taken most of the way back to the dark ground, as the Photobook's glow does. */
-const soften = (h, k = 0.42) => { const n = parseInt(h.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255]; return `rgb(${c.map((v, i) => Math.round(GROUND[i] + (v - GROUND[i]) * k)).join(',')})`; };
+const soften = (h, k = 0.58) => { const n = parseInt(h.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255]; return `rgb(${c.map((v, i) => Math.round(GROUND[i] + (v - GROUND[i]) * k)).join(',')})`; };
 
 const root = document.getElementById('colour-drift');
 
@@ -113,7 +113,7 @@ async function main() {
     washed = p;
     const w = washes[washOn = 1 - washOn];
     const [a, b, c] = [p.sw[0], p.sw[1] || p.sw[0], p.sw[2] || p.sw[0]];
-    w.style.background = `radial-gradient(60% 70% at 20% 20%, ${soften(a)}, transparent 70%), radial-gradient(60% 70% at 80% 30%, ${soften(b)}, transparent 70%), radial-gradient(80% 60% at 50% 100%, ${soften(c, 0.3)}, transparent 70%)`;
+    w.style.background = `radial-gradient(60% 70% at 20% 20%, ${soften(a)}, transparent 70%), radial-gradient(60% 70% at 80% 30%, ${soften(b)}, transparent 70%), radial-gradient(80% 60% at 50% 100%, ${soften(c, 0.42)}, transparent 70%)`;
     w.classList.add('is-on'); washes[1 - washOn].classList.remove('is-on');
   }
 
