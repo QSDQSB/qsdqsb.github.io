@@ -7,7 +7,7 @@
  *   local      files in photos/<gallery>/
  *   bucket     originals in the private bucket (rclone listing)
  *   pending    local files the bucket does not have yet, or has at another size
- *   processed  photos in the public manifest, hidden ones included
+ *   processed  photos in the manifest, hidden ones included
  *   captioned  processed photos whose YAML entry has words in it
  *   unlisted   processed photos with no YAML entry at all
  *

@@ -124,7 +124,7 @@ the record can't be recovered and the photo simply shows without it.
 |---|---|---|
 | Voyage page says the photographs are "still on their way" | `gallery_name` matches no processed gallery, or processing hasn't finished | `npm run photos:status -- --gallery <g>`; `npm run check:gallery` |
 | A new photo is missing | not pushed, or the workflow is still running or failed | `photos:status`; `gh run list --workflow photos-process.yml` |
-| Build log: `photo manifests: … (no private access …)` | no R2 key in that environment, so it fell back to older public copies (no weather) | set `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` for that Cloudflare Pages environment (Production and Preview are separate) |
+| Build log: `photo manifests: … no access to the private manifests` or `the private read failed (…)` | no R2 key there, or a wrong one (the Access Key ID is 32 characters, the secret 64). On Cloudflare the build then fails and the last good site stays live; elsewhere each gallery keeps its previous merge | set `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` for that Cloudflare Pages environment (Production and Preview are separate), or configure the `r2:` rclone remote locally |
 | Wrong place under a photo | stale GPS | `place:` override in the YAML |
 | `photos:import` refuses a file | not a camera original, the wrong picture for that frame, or it would overwrite an original | read its reason; `--replace-originals` only for a deliberate re-edit |
 | Sun or weather missing on a photo | no GPS within 6 h of a sibling, or an aerial set | expected; nothing to type |

@@ -47,7 +47,6 @@ siblings must live under `_subvoyage/parent/` and use
 - **`gallery_name: <name>`** must be a gallery the photo pipeline knows:
   - `_data/photos/<name>.yml` committed, or `_data/photo_manifests/<key>.json` fetched (`<key>` = name with `/` → `_`) — **error** if neither.
   - A known gallery with 0 processed photos is a **warn**: the page renders an empty Photobook until its photos are pushed and processed.
-  - `gallery/` and `images/thumbnails/gallery/` are read by nothing; don't check them.
 - **`subgalleries: true`** does two things:
   1. Puts the voyage in index-of-parts mode (sub-voyage card list, no Photobook). Parent voyage basename must align with `_subvoyage/<basename>/` so the enumerator can discover children — matched by path substring.
   2. Auto-derives an atlas-style map at `assets/maps/voyage-<basename>.geojson`, one feature per child of `_subvoyage/<basename>/*.md`.
