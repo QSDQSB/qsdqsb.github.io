@@ -27,7 +27,7 @@ export { bookRows };
 
 // Film simulations take a hue from the site's palette: an original mark, not Fujifilm's artwork.
 const FILMS = {
-  'Provia': '#8fb0a0', 'Velvia': '#d08a86', 'Astia': '#b7a6c6', 'Classic Chrome': '#c9b98f', 'Classic Negative': '#7fbcbc',
+  'Provia': '#8fb0a0', 'Velvia': '#d08a86', 'Astia': '#b7a6c6', 'Classic Chrome': '#c9b98f', 'Classic Negative': '#3e7658',
   'Nostalgic Neg.': '#e4b181', 'Eterna Bleach Bypass': '#a8adae', 'Eterna': '#93a6b3', 'Pro Neg. Hi': '#e5cfa9', 'Pro Neg. Std': '#cdbfa6',
   'Reala Ace': '#9fc3a0', 'Sepia': '#c7a27c',
 };

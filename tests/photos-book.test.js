@@ -81,7 +81,7 @@ test('the colophon counts films, lenses and the half hours of the day', async ()
     { taken: '2023-07-12T21:14:00+01:00', lens: 'XF16', settings: { filmSimulation: 'Classic Negative' }, light: { phase: 'golden' } },
   ]);
   assert.deepEqual(c.films.map(f => [f.name, f.n, f.pc]), [['Classic Negative', 2, 67], ['Astia', 1, 33]]);
-  assert.equal(c.films[0].hue, '#7fbcbc');
+  assert.equal(c.films[0].hue, '#3e7658');
   assert.deepEqual(c.lenses.map(l => l.name), ['XF 90', 'XF 16']);
   assert.deepEqual(c.hours.map(h => h.stack), [0, 1, 0], 'two frames in the 18:00 half hour stack');
   assert.deepEqual(c.phases, { day: 2, golden: 1, night: 0 });
