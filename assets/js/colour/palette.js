@@ -1,9 +1,9 @@
 /**
  * QSD's Palette (_pages/palette.html). One page, a voyage to each anchor: without one, every
  * voyage's palette in a column; with one (#london, #prague/twilight), "QSD's Palette for London":
- * its signature (no black or white) and its colour line, then every frame as a print with its own
- * palette, set like a wall label (.palette-strip): a thin bar, and the hex codes beneath as text to
- * select. The frames lie in the book's sequence or by colour: the order worked out at build time
+ * its signature (no black or white) and its colour line, then every frame as a card (the lab's
+ * design): the print, its colours as blocks with the hex inside (text to select) and the share
+ * beneath, its name and light, its palette as the specs panel draws it, and its own colour line. The frames lie in the book's sequence or by colour: the order worked out at build time
  * from their 24 dots (lib/book.mjs colourOf), dark to light, like hues together. A print opens in
  * its book; ?at=<slug> marks the frame the reader came from.
  *
@@ -25,6 +25,31 @@ function strip(colours, { href = null, label = '', shares = false } = {}) {
   const bar = href ? `<a class="palette-strip__bar" href="${href}" aria-label="${esc(label)}">${bands}</a>` : `<div class="palette-strip__bar" aria-hidden="true">${bands}</div>`;
   const hex = colours.map(([h, pc, accent]) => `<span title="${Math.round(pc)}%${accent ? ', accent' : ''}"><i style="--c:${h}"></i>${h.slice(1).toUpperCase()}${shares ? `<b>${Math.round(pc)}%</b>` : ''}</span>`).join('');
   return `<div class="palette-strip">${bar}<p class="palette-strip__hex">${hex}</p></div>`;
+}
+
+const lum = (h) => { const n = parseInt(h.slice(1), 16); return (0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255)) / 255; };
+const ink = (h) => (lum(h) > 0.55 ? 'rgba(0,0,0,.72)' : 'rgba(255,255,255,.82)');
+const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
+function oklab(h) {
+  const r = lin(parseInt(h.slice(1, 3), 16)), g = lin(parseInt(h.slice(3, 5), 16)), b = lin(parseInt(h.slice(5, 7), 16));
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b), m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b), s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  return [0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s, 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s];
+}
+
+/** A palette as blocks: equal widths, the hex inside (text to select), the share beneath. */
+const blocks = (cs) => `<div class="palette-blocks">${cs.map(([h, pc, accent]) => `<div class="${accent ? 'is-accent' : ''}"><i style="--c:${h};--on:${ink(h)}">${h.slice(1).toUpperCase()}</i><b>${Math.round(pc * 10) / 10}%</b></div>`).join('')}</div>`;
+
+/** A palette as the specs panel draws it: a thin bar, widths tempered. */
+const bar = (cs) => `<div class="palette-card__bar" aria-hidden="true">${cs.map(([h, pc]) => `<i style="--c:${h};flex:${Math.sqrt(pc).toFixed(2)}"></i>`).join('')}</div>`;
+
+/** A palette's colour line: its colours on the wheel of hue (OKLab a–b), joined from dark to light. */
+function line(cs, size = 88) {
+  const c = size / 2, R = c - 6, k = R / 0.2;
+  const ring = Array.from({ length: 24 }, (_, i) => { const t = (i / 24) * 2 * Math.PI; return `<circle cx="${(c + R * Math.cos(t)).toFixed(1)}" cy="${(c - R * Math.sin(t)).toFixed(1)}" r="1.1" class="photobook-wheel__hue" fill="hsl(${Math.round(20 - (i / 24) * 360 + 720) % 360} 30% 62%)"/>`; }).join('');
+  const pts = cs.map(([h, pc]) => { const [, a, b] = oklab(h), r = Math.hypot(a, b) * k, f = r > R ? R / r : 1; return [c + a * k * f, c - b * k * f, h, pc]; });
+  return `<svg class="photobook-wheel palette-card__wheel" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${c}" cy="${c}" r="${R}" class="photobook-wheel__rim"/>${ring}
+    <polyline points="${pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ')}" class="photobook-wheel__line"/>
+    ${pts.map(([x, y, h, pc]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(1.8 + Math.sqrt(pc) * 0.55).toFixed(1)}" fill="${h}" class="photobook-wheel__dot"/>`).join('')}</svg>`;
 }
 
 /** The colour line: the voyage's colours on the wheel of hue, joined from dark to light. */
@@ -62,7 +87,7 @@ async function main() {
     kicker.textContent = "QSD's Palette";
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
     stage.innerHTML = `<section class="palette-voyage">
-        <div>${strip(sig(v), { shares: true })}
+        <div>${blocks(sig(v))}
           <p class="palette-voyage__links"><a href="${page.url}">Open the book <span aria-hidden="true">→</span></a><a href="#">Every palette <span aria-hidden="true">→</span></a></p></div>
         ${wheel(v.wheel)}
       </section>
@@ -70,10 +95,14 @@ async function main() {
         <button type="button" aria-pressed="${order === 'sequence'}" data-order="sequence">Sequence</button>
         <button type="button" aria-pressed="${order === 'colour'}" data-order="colour">Colour</button>
       </div>
-      <div class="palette-frames">${seq.map((i) => { const p = v.photos[i]; return `<figure class="palette-frame${p.slug === at ? ' is-from' : ''}" id="f-${esc(p.slug)}" style="view-transition-name:palette-f${i}">
-          <a class="palette-frame__print" href="${page.url}#${encodeURIComponent(p.slug)}" aria-label="${esc(p.name || p.slug)}, in its book"><img src="${p.url}/${p.sizes.find((s) => s >= 960) || p.sizes[p.sizes.length - 1] || 480}.webp" alt="" loading="lazy" decoding="async"></a>
-          <figcaption>${p.sig?.length ? strip(p.sig) : ''}<span class="palette-frame__name">${esc(p.name || '')}</span></figcaption>
-        </figure>`; }).join('')}</div>`;
+      <div class="palette-cards">${seq.map((i) => { const p = v.photos[i]; return `<article class="palette-card${p.slug === at ? ' is-from' : ''}" id="f-${esc(p.slug)}" style="view-transition-name:palette-f${i}">
+          <a class="palette-card__print" href="${page.url}#${encodeURIComponent(p.slug)}" aria-label="${esc(p.name || p.slug)}, in its book"><img src="${p.url}/${p.sizes.find((s) => s >= 960) || p.sizes[p.sizes.length - 1] || 480}.webp" alt="" loading="lazy" decoding="async"></a>
+          ${p.sig?.length ? blocks(p.sig) : ''}
+          <div class="palette-card__row"><div>
+            <h3>${esc(p.name || '')}${p.light ? `<small>${esc(p.light)}</small>` : ''}</h3>
+            ${p.sig?.length ? bar(p.sig) : ''}
+          </div>${p.sig?.length ? line(p.sig) : ''}</div>
+        </article>`; }).join('')}</div>`;
     stage.querySelector('.palette-page__order').onclick = (e) => {
       const b = e.target.closest('button[data-order]'); if (!b || b.dataset.order === order) return;
       order = b.dataset.order; store.set('palette-order', order);

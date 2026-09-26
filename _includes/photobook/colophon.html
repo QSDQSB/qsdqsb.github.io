@@ -1,13 +1,11 @@
 {%- comment -%}
   Three bars on one baseline: the films, the lenses, and the hours the frames were made (one dot
   per frame at its local time, stacked where frames gather; gold for a low sun, blue after dusk).
-  Beneath them, when the frames' palettes are known, the voyage's colours: its barcode, a sliver
-  per frame in the book's order, each shaded top to bottom as its frame is (a sliver opens its
-  frame), the voyage's signature (three to five colours pooled from its frames, each copied on a
-  hex selectable as text) and its colour line on the wheel of hue, the field of every frame's
-  twenty-four dots gathered by colour (assets/js/photobook/field.js), and the way on to the pages that
-  look across every voyage by colour (QSD's Palette for this voyage; Drift, from this book's cover;
-  The Colour of Light).
+  Beneath them, when the frames' palettes are known, QSD's Palette for the voyage: its barcode, a
+  sliver per frame in the book's order, each shaded top to bottom as its frame is (a sliver opens
+  its frame); the voyage's own colours as a bar, like the specs panel's (no black or white; the bar
+  leads to the voyage's palette page; the hex codes beneath are text to select); and the way on to
+  the pages that look across every voyage by colour.
 {%- endcomment -%}
 {%- assign c = include.book.book.colophon -%}
 {%- assign colour = include.book.book.colour -%}
@@ -43,27 +41,15 @@
     {%- endif %}
     {%- if colour %}
     <div class="photobook-colophon__colours">
-      <h3>Colours</h3>
+      <h3>QSD's Palette for {{ page.title | strip_html }}</h3>
       <div class="photobook-barcode" role="group" aria-label="Every frame's colours, in the book's order">
         {%- for b in colour.barcode -%}
         {%- if b.strip %}<button type="button" data-i="{{ b.i }}" style="--t:{{ b.strip[0] }};--m:{{ b.strip[1] }};--b:{{ b.strip[2] }}" aria-label="Frame {{ b.i | plus: 1 }}: {{ b.name | escape }}" data-tip="{{ b.name | escape }}"></button>{% else %}<span></span>{% endif -%}
         {%- endfor -%}
       </div>
-      {%- assign w = colour.wheel %}
-      <div class="photobook-signature">
-        <div>
-          <div class="photobook-palette">{% for s in colour.palette %}<span style="--c:{{ s.hex }}"><i></i>{{ s.hex | remove: "#" | upcase }}<b>{{ s.pc }}</b>{% if s.accent %}<small>accent</small>{% endif %}</span>{% endfor %}</div>
-        </div>
-        <svg class="photobook-wheel" viewBox="0 0 {{ w.size }} {{ w.size }}" role="img" aria-label="The voyage's colours on the wheel of hue, joined from dark to light">
-          <circle cx="{{ w.c }}" cy="{{ w.c }}" r="{{ w.R }}" class="photobook-wheel__rim"/>
-          {%- for r in w.ring %}<circle cx="{{ r.x }}" cy="{{ r.y }}" r="1.1" fill="{{ r.hex }}" class="photobook-wheel__hue"/>{% endfor %}
-          <polyline points="{{ w.line }}" class="photobook-wheel__line"/>
-          {%- for p in w.pts %}<circle cx="{{ p.x }}" cy="{{ p.y }}" r="{{ p.r }}" fill="{{ p.hex }}" class="photobook-wheel__dot"/>{% endfor %}
-        </svg>
-      </div>
-      <div class="photobook-field">
-        <canvas role="img" aria-label="Every colour of the voyage, twenty-four from each frame, gathered by colour"></canvas>
-        <p class="photobook-field__note">Twenty-four colours from every frame, woven together: the greys first, then the colours in the order of the wheel; light above, dark below.</p>
+      <div class="palette-strip photobook-colophon__palette">
+        <a class="palette-strip__bar" href="{{ '/palette/' | relative_url }}#{{ include.book.gallery }}" data-tip="QSD's Palette for {{ page.title | strip_html | escape }}" data-tip-side="top" aria-label="QSD's Palette for {{ page.title | strip_html | escape }}">{% for s in colour.palette %}<i style="--c:{{ s.hex }};flex:{{ s.pc | at_least: 1 }}"></i>{% endfor %}</a>
+        <p class="palette-strip__hex">{% for s in colour.palette %}<span><i style="--c:{{ s.hex }}"></i>{{ s.hex | remove: "#" | upcase }}<b>{{ s.pc }}%</b>{% if s.accent %}<small>accent</small>{% endif %}</span>{% endfor %}</p>
       </div>
       {%- assign drift_from = include.book.photos[include.book.book.cover] | default: include.book.photos.first %}
       <p class="photobook-colophon__onward"><a href="{{ '/palette/' | relative_url }}#{{ include.book.gallery }}">QSD's Palette for {{ page.title | strip_html }} <span aria-hidden="true">→</span></a><a href="{{ '/drift/' | relative_url }}?from={{ include.book.gallery | append: '/' | append: drift_from.slug | url_encode }}">Drift from here <span aria-hidden="true">→</span></a><a href="{{ '/light/' | relative_url }}">The colour of light <span aria-hidden="true">→</span></a></p>
