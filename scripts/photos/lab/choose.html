@@ -58,6 +58,7 @@
     <select id="voyage"></select>
     <button id="next" title="Next voyage (→)">›</button>
     <button id="random" title="Random voyage (R)">Random</button>
+    <button id="stir" aria-pressed="false" title="Stir the vat slowly (S)">Stir</button>
     <span class="tally" id="tally"></span>
     <button id="reset" title="Forget the picks">Reset</button>
   </div>
@@ -82,7 +83,7 @@ const keys = Object.keys(STYLES);
 const sel = document.getElementById('voyage');
 sel.innerHTML = voyages.map((v, i) => `<option value="${i}">${title(v)}</option>`).join('');
 let at = Math.max(0, voyages.findIndex((v) => v.g === (location.hash.slice(1) || 'london')));
-let shown = null;
+let shown = null, stirring = false;
 
 function tally() {
   const picks = store.get(), n = {};
@@ -94,7 +95,7 @@ function tally() {
 function hero(v, style) {
   shown = style;
   const box = document.getElementById('hero');
-  box.replaceChildren(paint(style, v.palette, { width: 1440, height: 520, seed: seedOf(v.g) }));
+  box.replaceChildren(paint(style, v.palette, { width: 1440, height: 520, seed: seedOf(v.g), stir: stirring }));
   for (const f of document.querySelectorAll('.cand')) f.classList.toggle('is-shown', f.dataset.style === style);
 }
 
@@ -129,12 +130,16 @@ document.getElementById('prev').onclick = () => go(at - 1);
 document.getElementById('next').onclick = () => go(at + 1);
 document.getElementById('random').onclick = () => go(Math.floor(Math.random() * voyages.length));
 document.getElementById('reset').onclick = () => { store.set({}); draw(); };
+const stirBtn = document.getElementById('stir');
+const toggleStir = () => { stirring = !stirring; stirBtn.setAttribute('aria-pressed', String(stirring)); hero(voyages[at], shown); };
+stirBtn.onclick = toggleStir;
 sel.onchange = () => go(Number(sel.value));
 addEventListener('keydown', (e) => {
   if (e.target.closest('select')) return;
   if (e.key === 'ArrowRight') go(at + 1); else if (e.key === 'ArrowLeft') go(at - 1);
   else if (e.key.toLowerCase() === 'r') go(Math.floor(Math.random() * voyages.length));
-  else if (/^[1-5]$/.test(e.key)) choose(keys[Number(e.key) - 1]);
+  else if (e.key.toLowerCase() === 's') toggleStir();
+  else if (/^[1-6]$/.test(e.key)) choose(keys[Number(e.key) - 1]);
 });
 await document.fonts.ready;
 draw();
