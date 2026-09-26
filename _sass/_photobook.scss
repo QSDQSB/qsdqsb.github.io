@@ -1442,7 +1442,6 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 
   .photobook-lightbox__caption,
   .photobook-lightbox__rail,
-  .photobook-lightbox__zone,
   .photobook-specs { opacity: 0; visibility: hidden; pointer-events: none; }
 
   .photobook-lightbox__top { background: linear-gradient(rgba(0, 0, 0, 0.45), transparent); }
@@ -1450,6 +1449,9 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 
 .photobook-lightbox.is-bare.is-idle {
   cursor: none;
+
+  // The side zones still turn the page in picture only; idle, their arrow hides with the pointer.
+  .photobook-lightbox__zone { cursor: none; }
 
   .photobook-lightbox__top { opacity: 0; }
 }
