@@ -48,7 +48,7 @@ for (const g of names) {
   const title = m.title || g.split('/').map(s => s[0].toUpperCase() + s.slice(1).replace(/-/g, ' ')).join(' · ');
   galleries.push({ g, title, photos: photos.filter(Boolean) });
   const kept = pts.filter(Boolean);
-  signatures.push({ g, title, voyage: kept.length ? signatureOf(poolPoints(kept)) : null, photos: sigs.filter(Boolean) });
+  signatures.push({ g, title, voyage: kept.length ? signatureOf(poolPoints(kept), { ground: false }) : null, photos: sigs.filter(Boolean) });
   process.stdout.write('.');
 }
 fs.mkdirSync(OUT, { recursive: true });

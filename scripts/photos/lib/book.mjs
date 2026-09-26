@@ -251,7 +251,7 @@ export function colourOf(photos) {
   const order = [...colourPath(D, light).map(k => have[k]), ...photos.map((_, i) => i).filter(i => !parsed[i]?.P.length)];
   // The voyage's signature, pooled from its photographs' palettes (each photograph counting once), with
   // its reading; each swatch keeps its place on the plane of hue (a, b) for the colour line.
-  const sig = signatureOfColours(have.flatMap(i => parsed[i].P.map(c => ({ lab: c.lab, w: c.w / have.length }))));
+  const sig = signatureOfColours(have.flatMap(i => parsed[i].P.map(c => ({ lab: c.lab, w: c.w / have.length }))), { ground: false });
   const palette = sig.colours.map(c => ({ hex: c.hex, pc: Math.round(c.pc), accent: c.accent }));
   const reading = sig.reading;
   const wheel = wheelOf(sig.colours);

@@ -9,8 +9,8 @@
 <!--
   The signature-palette lab (scripts/photos/dots-lab.mjs writes this page and data.json beside it).
   Each photograph's three to five colours with their shares (scripts/photos/lib/signature.mjs), its
-  colour line, and its reading, beside the specs panel's current five swatches; each voyage's own,
-  pooled; and every voyage read side by side. Local only: /lab/ is git-ignored.
+  colour line and the bar as the specs panel draws it; each voyage's own, pooled, without black or
+  white; and every voyage side by side. Local only: /lab/ is git-ignored.
 -->
 <style>
   :root { --ink: #e4e4e4; --ink-2: #b9b9b9; --ink-3: #8b9296; --line: #2e2e2e; --ground: #151515; }
@@ -34,24 +34,17 @@
   /* the palette, as blocks: equal width, the hex inside, the share beneath */
   .swatches { display: flex; gap: 0; }
   .swatches > div { flex: 1 1 0; min-width: 0; }
-  .swatches i { display: grid; place-items: center; height: var(--h, 3.2rem); background: var(--c); font: 500 .62rem Barlow, sans-serif; font-style: normal; letter-spacing: .06em; color: var(--on); }
+  .swatches i { display: grid; place-items: center; height: var(--h, 1.6rem); background: var(--c); font: 500 .62rem Barlow, sans-serif; font-style: normal; letter-spacing: .06em; color: var(--on); }
   .swatches b { display: block; margin-top: .3rem; font: 400 .68rem Barlow, sans-serif; color: var(--ink-2); font-variant-numeric: tabular-nums; }
   .swatches .acc b::after { content: " · accent"; color: var(--ink-3); }
-  .strip { display: flex; gap: 2px; height: 6px; }
+  .strip { display: flex; gap: 2px; height: 12px; }
   .strip i { background: var(--c); border-radius: 1px; }
   .strips { display: grid; grid-template-columns: 4.6rem 1fr; gap: .45rem .6rem; align-items: center; margin-top: .9rem; font: 500 .55rem Barlow, sans-serif; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); }
 
-  .reading { display: flex; flex-wrap: wrap; gap: .3rem .35rem; margin-top: .8rem; }
-  .reading span { padding: .22rem .45rem; border: 1px solid var(--line); border-radius: 3px; font: 500 .6rem Barlow, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
-  .reading span:first-child { color: var(--ink); border-color: #444; }
 
   /* the voyage */
-  .pl-voyage { display: grid; grid-template-columns: minmax(0, 1.4fr) 10rem minmax(0, 1fr); gap: 2rem; align-items: start; margin-top: 2rem; padding-bottom: 2.4rem; border-bottom: 1px dotted var(--line); }
-  .pl-voyage .swatches i { --h: 5rem; }
-  .tally { display: grid; gap: .5rem; }
-  .tally div { display: grid; grid-template-columns: 6.5rem 1fr; gap: .6rem; align-items: center; font: 400 .66rem Barlow, sans-serif; color: var(--ink-3); }
-  .tally .bars { display: flex; gap: 2px; height: 16px; }
-  .tally .bars i { display: grid; place-items: center; background: #262626; font: 500 .56rem Barlow, sans-serif; font-style: normal; color: var(--ink-2); white-space: nowrap; overflow: hidden; }
+  .pl-voyage { display: grid; grid-template-columns: minmax(0, 1fr) 10rem; gap: 2rem; align-items: start; margin-top: 2rem; padding-bottom: 2.4rem; border-bottom: 1px dotted var(--line); }
+  .pl-voyage .swatches i { --h: 2.5rem; }
 
   /* the photographs */
   .pl-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); gap: 2.6rem 1.6rem; margin-top: 2.4rem; }
@@ -67,7 +60,7 @@
   .pl-atlas table { width: 100%; border-collapse: collapse; font: 400 .72rem Barlow, sans-serif; color: var(--ink-2); }
   .pl-atlas td, .pl-atlas th { padding: .55rem .6rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
   .pl-atlas th { font: 500 .55rem Barlow, sans-serif; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); }
-  .pl-atlas .strip { width: 14rem; height: 12px; }
+  .pl-atlas .strip { width: 28rem; height: 16px; }
   .pl-atlas tr { cursor: pointer; }
   .pl-atlas tr:hover td { background: #1b1b1b; }
   @media (max-width: 760px) { .pl-voyage { grid-template-columns: 1fr; } .pl-atlas .strip { width: 8rem; } }
@@ -77,7 +70,7 @@
 <main class="lab">
   <p class="kicker">Lab · the colour of a photograph</p>
   <h1>Signature palettes</h1>
-  <p class="lede">Three to five colours for each photograph, with their shares: colour first, the greys no more than the ground it stands on, a vivid accent kept however small; then joined into a line and read.</p>
+  <p class="lede">Three to five colours for each photograph, with their shares: colour first, the greys no more than the ground it stands on, a vivid accent kept however small; and for each voyage, its own, without black or white.</p>
   <div class="bar">
     <label class="group"><span>Voyage</span><select id="voyage"></select></label>
     <div class="group" id="view"><span>Show</span><button data-v="voyage" aria-pressed="true">One voyage</button><button data-v="atlas">Every voyage</button></div>
@@ -95,7 +88,6 @@ const blocks = (cs) => `<div class="swatches">${cs.map(c => `<div class="${c.acc
 // As the specs panel would draw it: widths tempered (the square root of each share), so a black that
 // fills most of the frame still shows as the largest band without drowning the rest.
 const strip = (cs, temper = true) => `<div class="strip">${cs.map(c => `<i style="--c:${c.hex};flex:${temper ? Math.sqrt(c.pc) : c.pc}"></i>`).join('')}</div>`;
-const reading = (r) => `<div class="reading">${[r.harmony, r.key, `${r.contrast} contrast`, r.temperature, r.saturation].map(t => `<span>${t}</span>`).join('')}</div>`;
 
 // The colour line: the swatches on the plane of hue and chroma (OKLab a–b), dark to light, joined.
 function line(cs, size = 120) {
@@ -113,8 +105,6 @@ function hexOfLab(L, a, b) {
   return `#${g(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s)}${g(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s)}${g(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s)}`;
 }
 
-const FACETS = { harmony: ['Tonal', 'Monochrome', 'Analogous', 'Complementary', 'Contrasting'], key: ['Low-key', 'Mid-key', 'High-key'], contrast: ['Soft', 'Moderate', 'Hard'], temperature: ['Cool', 'Neutral', 'Warm'], saturation: ['Muted', 'Moderate', 'Vivid'] };
-const tally = (photos) => `<div class="tally">${Object.entries(FACETS).map(([f, vs]) => { const n = vs.map(v => photos.filter(p => p.reading[f] === v).length); return `<div><span>${f[0].toUpperCase() + f.slice(1)}</span><div class="bars">${vs.map((v, i) => n[i] ? `<i style="flex:${n[i]}" title="${v}: ${n[i]}">${v} ${n[i]}</i>` : '').join('')}</div></div>`; }).join('')}</div>`;
 
 const sel = document.getElementById('voyage');
 sel.innerHTML = data.galleries.map(g => `<option value="${g.g}">${esc(g.title)} (${g.photos.length})</option>`).join('');
@@ -128,19 +118,17 @@ const stage = document.getElementById('stage');
 function draw() {
   if (state.view === 'atlas') {
     const gs = data.galleries.filter(g => g.voyage);
-    stage.innerHTML = `<section class="pl-atlas"><h2>Every voyage, read</h2><p class="note">Each voyage's pooled signature (every photograph counting once) and its reading; the counts are its photographs' own readings. A row opens the voyage.</p>
-      <table><thead><tr><th>Voyage</th><th>Signature</th><th>Harmony</th><th>Key</th><th>Contrast</th><th>Temperature</th><th>Saturation</th><th>Photos</th></tr></thead><tbody>
-      ${gs.map(g => { const r = g.voyage.reading, most = (f) => { const c = {}; g.photos.forEach(p => { c[p.reading[f]] = (c[p.reading[f]] || 0) + 1; }); const [v, n] = Object.entries(c).sort((a, b) => b[1] - a[1])[0]; return `${v} <span style="color:var(--ink-3)">${Math.round(n / g.photos.length * 100)}%</span>`; };
-        return `<tr data-g="${g.g}"><td>${esc(g.title)}</td><td>${strip(g.voyage.colours)}</td>${Object.keys(FACETS).map(f => `<td>${most(f)}</td>`).join('')}<td>${g.photos.length}</td></tr>`; }).join('')}
+    stage.innerHTML = `<section class="pl-atlas"><h2>Every voyage</h2><p class="note">Each voyage's pooled signature: every photograph counting once, and no black or white, since every trip has its nights and shadows. A row opens the voyage.</p>
+      <table><thead><tr><th>Voyage</th><th>Signature</th><th>Photos</th></tr></thead><tbody>
+      ${gs.map(g => `<tr data-g="${g.g}"><td>${esc(g.title)}</td><td>${strip(g.voyage.colours)}</td><td>${g.photos.length}</td></tr>`).join('')}
       </tbody></table></section>`;
     stage.querySelector('tbody').onclick = (e) => { const tr = e.target.closest('tr'); if (!tr) return; state.g = sel.value = tr.dataset.g; state.view = 'voyage'; sync(); draw(); scrollTo(0, 0); };
     return;
   }
   const g = data.galleries.find(x => x.g === state.g);
   stage.innerHTML = `${g.voyage ? `<section class="pl-voyage">
-      <div><p class="kicker">The voyage, pooled</p><h2 style="margin:.5rem 0 1rem">${esc(g.title)}</h2>${blocks(g.voyage.colours)}${reading(g.voyage.reading)}</div>
+      <div><p class="kicker">The voyage, pooled</p><h2 style="margin:.5rem 0 1rem">${esc(g.title)}</h2>${blocks(g.voyage.colours)}</div>
       <div>${line(g.voyage.colours, 160)}</div>
-      <div><p class="kicker" style="margin-bottom:.8rem">Its photographs, read</p>${tally(g.photos)}</div>
     </section>` : ''}
     <p class="note">Under each photograph: its signature (hex, and its share of the picture), the colour line (the swatches on the wheel of hue, joined from dark to light: a short line is one family of colour, a line through the centre a pair of opposites), and the bar as the specs panel draws it (widths tempered).</p>
     <div class="pl-cards">${g.photos.map(p => `<article class="pl-card">
@@ -148,7 +136,6 @@ function draw() {
       ${blocks(p.colours)}
       <div class="pl-row"><div>
         <h3>${esc(p.name)}${p.light ? `<small>${esc(p.light)}</small>` : ''}</h3>
-        ${reading(p.reading)}
         <div class="strips"><span>In the specs</span>${strip(p.colours)}</div>
       </div>${line(p.colours)}</div>
     </article>`).join('')}</div>`;

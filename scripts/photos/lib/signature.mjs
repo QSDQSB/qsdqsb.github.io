@@ -22,6 +22,8 @@
  *      one nearest another), never of a lone grey.
  *   6. Shares are measured again against the swatches chosen: every pixel to
  *      its nearest, and told as they are. Ordered dark to light.
+ *   A voyage, pooled, is read without the ground (`ground: false`): no near-black
+ *   or near-white swatch, since every trip has its nights and shadows.
  *
  * Reading (over the whole picture, not just the swatches)
  *   harmony      Tonal (next to no colour), Monochrome (one 30° family of
@@ -43,10 +45,13 @@ import { kmeans, oklabToRgb, rgbHex, isGrey } from './palette.mjs';
 const chroma = (l) => Math.hypot(l[1], l[2]);
 const hueOf = (l) => (Math.atan2(l[2], l[1]) * 180 / Math.PI + 360) % 360;
 const gap = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]);
+// Black or white to the eye, whatever trace of hue a cluster's mean keeps: very dark and barely
+// coloured, or very light and barely coloured. Deep navies and warm stone are not.
+const looksBlackOrWhite = (l) => (l[0] < 0.25 && chroma(l) < 0.05) || (l[0] > 0.8 && chroma(l) < 0.02);
 const hueGap = (x, y) => { const d = Math.abs(x - y) % 360; return d > 180 ? 360 - d : d; };
 
 /** @param {{X:Float64Array, w:Float64Array, n:number}} pts  weighted OKLab points (lib/dots.mjs pointsOf) */
-export function signatureOf({ X, w, n }, { most = 5, least = 3 } = {}) {
+export function signatureOf({ X, w, n }, { most = 5, least = 3, ground = true } = {}) {
   const lab = (i) => [X[3 * i], X[3 * i + 1], X[3 * i + 2]];
   const meanOf = (idx) => { const m = idx.reduce((s, i) => s + w[i], 0), c = [0, 0, 0]; for (const i of idx) for (let a = 0; a < 3; a++) c[a] += w[i] * X[3 * i + a]; return { lab: c.map(v => v / (m || 1)), share: m }; };
   const subset = (idx) => { const S = new Float64Array(3 * idx.length); idx.forEach((i, k) => { S[3 * k] = X[3 * i]; S[3 * k + 1] = X[3 * i + 1]; S[3 * k + 2] = X[3 * i + 2]; }); return S; };
@@ -66,7 +71,7 @@ export function signatureOf({ X, w, n }, { most = 5, least = 3 } = {}) {
   if (hued.length) {
     const cs = kmeans(subset(hued), Float64Array.from(hued, i => Math.sqrt(w[i])), Math.min(10, hued.length), { seed: 7, iterations: 16 }).map(c => ({ lab: c.lab, share: 0 }));
     for (const i of hued) { let b = 0, d = Infinity; cs.forEach((c, j) => { const e = gap(lab(i), c.lab); if (e < d) { d = e; b = j; } }); cs[b].share += w[i]; }
-    found = cs.filter(c => c.share > 0).sort((x, y) => y.share - x.share);
+    found = cs.filter(c => c.share > 0).filter(c => ground || !looksBlackOrWhite(c.lab)).sort((x, y) => y.share - x.share);
   }
   const tones = Object.entries(greys).filter(([, idx]) => idx.length).map(([kind, idx]) => ({ ...meanOf(idx), kind }));
   const greyMass = tones.reduce((s, t) => s + t.share, 0);
@@ -74,7 +79,7 @@ export function signatureOf({ X, w, n }, { most = 5, least = 3 } = {}) {
   // Colours take the slots, by share and by difference from those taken; each needs 2% of the picture.
   const taken = [];
   const apart = (c) => (taken.length ? Math.min(...taken.map(t => gap(t.lab, c.lab))) : Infinity);
-  const colourSlots = most - (greyMass >= 0.25 ? 1 : 0);
+  const colourSlots = most - (ground && greyMass >= 0.25 ? 1 : 0);
   while (taken.length < colourSlots) {
     const pool = found.filter(c => !taken.includes(c) && c.share >= 0.02 && apart(c) >= 0.09);
     if (!pool.length) break;
@@ -83,10 +88,14 @@ export function signatureOf({ X, w, n }, { most = 5, least = 3 } = {}) {
   }
   // The greys: at most two (the ground the colours stand on), the largest first; more only when a
   // picture has no colour to speak of, so a colourless frame keeps an honest, tonal palette.
-  const greySlots = Math.max(0, Math.min(taken.length ? 2 : 3, most - taken.length));
-  const chosen = [...taken, ...tones.filter(t => t.share >= 0.05 || !taken.length).sort((x, y) => y.share - x.share).slice(0, greySlots)];
-  while (chosen.length < Math.min(least, found.length + tones.length)) {
-    const rest = [...found, ...tones].filter(c => !chosen.includes(c)).sort((x, y) => y.share - x.share)[0];
+  // Without the ground (a voyage, pooled: every trip has its nights and its shadows, so black and
+  // white say nothing about this one), no near-black or near-white at all, and a mid grey only to
+  // make up three swatches when there is too little colour.
+  const usable = ground ? tones : tones.filter(t => t.kind === 'mid');
+  const greySlots = ground ? Math.max(0, Math.min(taken.length ? 2 : 3, most - taken.length)) : Math.max(0, least - taken.length);
+  const chosen = [...taken, ...usable.filter(t => t.share >= 0.05 || !taken.length).sort((x, y) => y.share - x.share).slice(0, greySlots)];
+  while (chosen.length < Math.min(least, found.length + usable.length)) {
+    const rest = [...found, ...usable].filter(c => !chosen.includes(c)).sort((x, y) => y.share - x.share)[0];
     if (!rest) break;
     chosen.push(rest);
   }
@@ -125,12 +134,12 @@ export function signatureOf({ X, w, n }, { most = 5, least = 3 } = {}) {
 export const compactSignature = ({ colours }) => colours.map(c => (c.accent ? [c.hex, c.pc, 1] : [c.hex, c.pc]));
 
 /** The signature of weighted colours rather than pixels (a voyage pooled from its photos' 32-colour palettes). */
-export function signatureOfColours(list) {
+export function signatureOfColours(list, opts = {}) {
   const n = list.length, X = new Float64Array(3 * n), w = new Float64Array(n);
   list.forEach((c, i) => { X[3 * i] = c.lab[0]; X[3 * i + 1] = c.lab[1]; X[3 * i + 2] = c.lab[2]; w[i] = c.w; });
   const sum = w.reduce((a, b) => a + b, 0) || 1;
   for (let i = 0; i < n; i++) w[i] /= sum;
-  return signatureOf({ X, w, n });
+  return signatureOf({ X, w, n }, opts);
 }
 
 /** The picture read as a photographer might: harmony, key, contrast, temperature, saturation. */
