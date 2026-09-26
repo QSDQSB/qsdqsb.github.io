@@ -10,6 +10,8 @@
  * Data: /assets/palettes.json (scripts/photos/lib/atlas.mjs palettesOf).
  */
 
+import { tips } from '../photobook/tip.js';
+
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* this visit only */ } } };
@@ -36,6 +38,16 @@ function oklab(h) {
   return [0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s, 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s];
 }
 
+/** OKLab → an sRGB hex, clipped into gamut. */
+function srgb(L, a, b) {
+  const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3, m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3, s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
+  const g = (v) => { const x = v <= 0.0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055; return Math.round(Math.min(1, Math.max(0, x)) * 255).toString(16).padStart(2, '0'); };
+  return `#${g(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s)}${g(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s)}${g(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s)}`;
+}
+
+// What the wheel shows, said once under the voyage's and on the pointer over each frame's.
+const WHEEL_NOTE = 'Its colours on the wheel of hue: the further out, the more vivid; joined from dark to light.';
+
 /** A palette as blocks: equal widths, the hex inside (text to select), the share beneath. */
 const blocks = (cs) => `<div class="palette-blocks">${cs.map(([h, pc, accent]) => `<div class="${accent ? 'is-accent' : ''}"><i style="--c:${h};--on:${ink(h)}">${h.slice(1).toUpperCase()}</i><b>${Math.round(pc * 10) / 10}%</b></div>`).join('')}</div>`;
 
@@ -45,9 +57,11 @@ const bar = (cs) => `<div class="palette-card__bar" aria-hidden="true">${cs.map(
 /** A palette's colour line: its colours on the wheel of hue (OKLab a–b), joined from dark to light. */
 function line(cs, size = 88) {
   const c = size / 2, R = c - 6, k = R / 0.2;
-  const ring = Array.from({ length: 24 }, (_, i) => { const t = (i / 24) * 2 * Math.PI; return `<circle cx="${(c + R * Math.cos(t)).toFixed(1)}" cy="${(c - R * Math.sin(t)).toFixed(1)}" r="1.1" class="photobook-wheel__hue" fill="hsl(${Math.round(20 - (i / 24) * 360 + 720) % 360} 30% 62%)"/>`; }).join('');
+  // The rim: each dot the hue that lies at its angle (lightness 0.72, chroma 0.1), so a colour sits
+  // beside its own hue.
+  const ring = Array.from({ length: 24 }, (_, i) => { const t = (i / 24) * 2 * Math.PI; return `<circle cx="${(c + R * Math.cos(t)).toFixed(1)}" cy="${(c - R * Math.sin(t)).toFixed(1)}" r="1.1" class="photobook-wheel__hue" fill="${srgb(0.72, 0.1 * Math.cos(t), 0.1 * Math.sin(t))}"/>`; }).join('');
   const pts = cs.map(([h, pc]) => { const [, a, b] = oklab(h), r = Math.hypot(a, b) * k, f = r > R ? R / r : 1; return [c + a * k * f, c - b * k * f, h, pc]; });
-  return `<svg class="photobook-wheel palette-card__wheel" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${c}" cy="${c}" r="${R}" class="photobook-wheel__rim"/>${ring}
+  return `<svg class="photobook-wheel palette-card__wheel" viewBox="0 0 ${size} ${size}" role="img" aria-label="${WHEEL_NOTE}" data-tip="${WHEEL_NOTE}"><circle cx="${c}" cy="${c}" r="${R}" class="photobook-wheel__rim"/>${ring}
     <polyline points="${pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ')}" class="photobook-wheel__line"/>
     ${pts.map(([x, y, h, pc]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(1.8 + Math.sqrt(pc) * 0.55).toFixed(1)}" fill="${h}" class="photobook-wheel__dot"/>`).join('')}</svg>`;
 }
@@ -89,7 +103,7 @@ async function main() {
     stage.innerHTML = `<section class="palette-voyage">
         <div>${blocks(sig(v))}
           <p class="palette-voyage__links"><a href="${page.url}">Open the book <span aria-hidden="true">→</span></a><a href="#">Every palette <span aria-hidden="true">→</span></a></p></div>
-        ${wheel(v.wheel)}
+        <figure class="palette-voyage__wheel">${wheel(v.wheel)}<figcaption>${WHEEL_NOTE}</figcaption></figure>
       </section>
       <div class="photobook-sheet__order palette-page__order" role="group" aria-label="Order">
         <button type="button" aria-pressed="${order === 'sequence'}" data-order="sequence">Sequence</button>
@@ -123,4 +137,4 @@ async function main() {
   route();
 }
 
-if (stage) main();
+if (stage) { tips(); main(); }
