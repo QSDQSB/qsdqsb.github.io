@@ -134,7 +134,10 @@
   --bg-filter-opacity: 0.32;
   background-size: cover;
   background-position: center;
-  background-image: linear-gradient(rgba(12,12,12,var(--bg-filter-opacity)),rgba(0,0,0,var(--bg-filter-opacity))), var(--bg-img);
+  // A cover parked in --bg-later (_includes/archive-single.html defer_cover) waits on
+  // assets/js/card-covers.js with only the scrim; without JS it takes the cover at once.
+  background-image: linear-gradient(rgba(12,12,12,var(--bg-filter-opacity)),rgba(0,0,0,var(--bg-filter-opacity))), var(--bg-img, none);
+  .no-js & { --bg-img: var(--bg-later); }
 	position: relative;
   // aspect-ratio: hover 3.5→3.3 is intended motion; a ratio is immune to the
   // Safari load-time re-resolution that bans geometry from the shared tokens.

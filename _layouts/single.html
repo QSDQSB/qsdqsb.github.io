@@ -33,7 +33,7 @@ layout: default
     {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
     {% if page.excerpt %}<meta itemprop="description" content="{{ page.excerpt | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
     {% if page.date %}<meta itemprop="datePublished" content="{{ page.date | date: "%B %d, %Y" }}">{% endif %}
-    {% if page.last_modified_at %}<meta itemprop="dateModified" content="{{ page.last_modified_at | date: "%B %d, %Y" }}">{% endif %}
+    {% if page.updated %}<meta itemprop="dateModified" content="{{ page.updated | date: "%B %d, %Y" }}">{% endif %}
 
     {% if has_right_toc %}
       <aside class="sidebar__right {% if page.toc_sticky %}sticky{% endif %}">

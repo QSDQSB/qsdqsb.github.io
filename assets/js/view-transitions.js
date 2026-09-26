@@ -88,6 +88,12 @@
   function initViewTransitions() {
     // Use event delegation for better performance and to catch dynamically added links
     document.addEventListener('click', function(e) {
+      // A held modifier asks the browser for a new tab or window (Cmd/Ctrl, Shift, Alt):
+      // leave it to the browser, or the reader's page is replaced instead.
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+        return;
+      }
+
       // Find the closest anchor tag
       const link = e.target.closest('a');
       
