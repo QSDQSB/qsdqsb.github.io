@@ -31,6 +31,7 @@ import { storesFrom } from './lib/store.mjs';
 import { readExif } from './lib/exif.mjs';
 import { assignSlugs } from './lib/slug.mjs';
 import { analyse, renderTiers, paletteOfImage } from './lib/tiers.mjs';
+import { kindredOf, KINDRED_KEY } from './lib/atlas.mjs';
 import { emptyManifest, sortPhotos } from './lib/manifest.mjs';
 import { lightGallery } from './lib/sun.mjs';
 import { weatherGallery } from './lib/weather.mjs';
@@ -75,6 +76,7 @@ async function main() {
 
   await closeCamera();
   log(`\ndone: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed, ${lit} given their sun across ${byGallery.size} galleries`);
+  if (changed + removed + lit > 0 && !DRY) await refreshKindred(originals);
   if (args.gc) await collectGarbage(pub, originals);
   if (changed + removed + lit > 0 && env.deployHook && !DRY) {
     const r = await fetch(env.deployHook, { method: 'POST' });
@@ -194,6 +196,23 @@ async function paletteGallery(photos, pub, gallery) {
     } catch (e) { log(`  ${gallery}/${p.slug}: palette unread (${e.message})`); }
   }
   return n;
+}
+
+/**
+ * Every photo's nearest in colour from other voyages (lib/atlas.mjs kindredOf), for Drift: worked out
+ * across all galleries' manifests and kept beside them in the originals bucket, since one new photo
+ * can be kindred to any other. Seconds of arithmetic, no images.
+ */
+async function refreshKindred(originals) {
+  const items = [];
+  for (const o of (await originals.list('')).filter((x) => x.key.endsWith(`/${MANIFEST_FILE}`) && !x.key.startsWith('trash/'))) {
+    const m = await originals.getJson(o.key);
+    for (const p of m?.photos || []) if (p.hash && p.palette) items.push({ hash: p.hash, gallery: m.gallery, palette: p.palette });
+  }
+  if (!items.length) return;
+  const t = Date.now();
+  await originals.putJson(KINDRED_KEY, { generated: new Date().toISOString(), photos: kindredOf(items) });
+  log(`kindred: ${items.length} photos in ${((Date.now() - t) / 1000).toFixed(1)} s`);
 }
 
 /**

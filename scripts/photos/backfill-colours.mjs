@@ -14,7 +14,12 @@
  * `--refresh signature[,dots…]` also replaces those fields where the manifest already has them and the
  * sidecar differs: for when an algorithm changes (as the signature did on 2026-09-26).
  *
+ * `--kindred` instead uploads the local kindred list (.photos-local/palettes/_kindred.json, for Drift)
+ * to the bucket's root, beside the galleries, backing up any list already there. From then on the
+ * processor keeps it fresh.
+ *
  * Usage: node scripts/photos/backfill-colours.mjs [--gallery london] [--refresh signature] [--write]
+ *        node scripts/photos/backfill-colours.mjs --kindred [--write]
  */
 
 import fs from 'node:fs';
@@ -22,7 +27,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { env, PATHS, MANIFEST_FILE, parseArgs } from './lib/config.mjs';
-import { readSidecar } from './palettes.mjs';
+import { readSidecar, PALETTES_DIR } from './palettes.mjs';
+import { KINDRED_KEY } from './lib/atlas.mjs';
 
 const FIELDS = ['palette', 'grid', 'signature', 'dots'];
 const args = parseArgs(process.argv.slice(2));
@@ -33,6 +39,19 @@ const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
 
 const rclone = (a, input) => spawnSync('rclone', a, { encoding: 'utf8', input, maxBuffer: 64 << 20 });
 const readManifest = (g) => { const r = rclone(['cat', `${remote}/${g}/${MANIFEST_FILE}`]); return r.status === 0 && r.stdout.trim() ? r.stdout : null; };
+
+if (args.kindred) {
+  const file = path.join(PALETTES_DIR, '_kindred.json');
+  const list = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const n = Object.keys(list.photos || {}).length, size = fs.statSync(file).size;
+  const there = rclone(['lsf', `${remote}/${KINDRED_KEY}`]).stdout.trim() !== '';
+  console.log(`kindred list: ${n} photos, ${(size / 1024).toFixed(0)} KB, computed ${list.generated}; the bucket ${there ? 'has one (it would go to trash first)' : 'has none yet'}`);
+  if (!args.write) { console.log(`Dry run: nothing written. It would go to ${remote}/${KINDRED_KEY}.`); process.exit(0); }
+  if (there) { const b = rclone(['copyto', `${remote}/${KINDRED_KEY}`, `${remote}/trash/${today}/${KINDRED_KEY}`]); if (b.status !== 0) { console.log('! backup failed, not written'); process.exit(1); } }
+  const put = rclone(['copyto', file, `${remote}/${KINDRED_KEY}`]);
+  console.log(put.status === 0 ? `written: ${remote}/${KINDRED_KEY}` : `! write failed: ${put.stderr.trim().split('\n').pop()}`);
+  process.exit(put.status === 0 ? 0 : 1);
+}
 
 const index = JSON.parse(fs.readFileSync(path.join(PATHS.mergedDir, '_index.json'), 'utf8'));
 const galleries = args.gallery ? [String(args.gallery)] : Object.keys(index.galleries);

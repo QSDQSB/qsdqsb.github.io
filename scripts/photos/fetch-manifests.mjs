@@ -45,7 +45,7 @@ import { rcloneVersion, remoteExists } from './lib/rclone.mjs';
 import { mergeManifest, validateAuthored } from './lib/manifest.mjs';
 import { bookOf } from './lib/book.mjs';
 import { readSidecar, readKindred } from './palettes.mjs';
-import { atlasOf } from './lib/atlas.mjs';
+import { atlasOf, KINDRED_KEY } from './lib/atlas.mjs';
 
 const require = createRequire(import.meta.url);
 const { referencedGalleries } = require('../check-gallery-integrity.js');
@@ -64,7 +64,10 @@ let privateError = null;
 const NO_ACCESS = 'no access to the private manifests: set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY, or the rclone remote';
 
 async function privateManifest(gallery) {
-  const key = `${gallery}/${MANIFEST_FILE}`;
+  return privateJson(`${gallery}/${MANIFEST_FILE}`);
+}
+
+async function privateJson(key) {
   if (r2) return r2.getJson(key);
   if (viaRclone) {
     const r = spawnSync('rclone', ['cat', `${env.rcloneRemote}:${env.originalsBucket}/${key}`], { encoding: 'utf8', timeout: TIMEOUT_MS * 2 });
@@ -150,7 +153,10 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
   });
   // Across voyages: only when colours are known; otherwise no atlas, and its pages say so.
   const atlasFile = path.join(PATHS.mergedDir, 'colour-atlas.json');
-  const atlas = atlasOf(books, readKindred());
+  // Kindred frames (Drift, lib/atlas.mjs): the local sidecar while developing, else the bucket's list.
+  let kindred = readKindred();
+  if (!local && !Object.keys(kindred).length) kindred = (await privateJson(KINDRED_KEY).catch(() => null))?.photos || {};
+  const atlas = atlasOf(books, kindred);
   if (atlas) fs.writeFileSync(atlasFile, JSON.stringify(atlas) + '\n'); else fs.rmSync(atlasFile, { force: true });
   fs.writeFileSync(path.join(PATHS.mergedDir, '_index.json'), JSON.stringify(index, null, 2) + '\n');
   return { index, unreachable };

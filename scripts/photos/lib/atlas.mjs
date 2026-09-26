@@ -17,6 +17,9 @@
 
 import { parsePalette, vectorOf, chi2, emd, rgbToOklab, swatchesOf } from './palette.mjs';
 
+/** Where the kindred list lives in the originals bucket, beside the galleries' manifests (private). */
+export const KINDRED_KEY = '_kindred.json';
+
 /** The voyage a gallery belongs to: "prague/twilight" and "prague/portraits" are one trip. */
 export const voyageOf = (gallery) => String(gallery).split('/')[0];
 
