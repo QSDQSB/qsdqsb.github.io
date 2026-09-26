@@ -39,7 +39,7 @@ export function book({ frames, onOpen, onLayout, onScreen, onPrefetch }) {
     const keep = new Set(shown().map((f) => Number(f.dataset.i)));
     if (!sheetEl.childElementCount) {
       sheetEl.innerHTML = frames.map((p, i) => `<figure class="photobook-frame" data-i="${i}"${p.film ? ` data-film="${esc(p.film)}"` : ''} style="--ratio:${p.ratio}">
-        <button class="photobook-frame__print" type="button" aria-label="${esc(p.name)}"><img src="${p.url}/${p.sizes[0] || 480}.webp" srcset="${srcset(p)}" sizes="(min-width: 768px) 18rem, 45vw" width="480" height="${Math.round(480 / (p.ratio || 1.5))}" alt="" loading="lazy" decoding="async"></button>
+        <button class="photobook-frame__print" type="button" aria-label="${esc(p.name)}"><img src="${p.url}/${p.sizes[0] || 480}.webp" srcset="${srcset(p)}" sizes="(min-width: 768px) 18rem, 45vw" width="480" height="${Math.round(480 / (p.ratio || 1.5))}" alt="${esc(p.alt || p.name)}" loading="lazy" decoding="async"></button>
         <figcaption class="photobook-frame__caption"><span class="photobook-sheet__frame-no">${esc(p.frame)}</span>${p.film ? `<span class="photobook-film" style="--film:${p.hue}" title="${esc(p.film)}"><i></i><span>${esc(p.film)}</span></span>` : ''}</figcaption></figure>`).join('');
     }
     for (const f of sheetEl.children) f.hidden = !keep.has(Number(f.dataset.i));
