@@ -43,8 +43,18 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf4296:
-    gps: missing
-    source: awaiting original
+    suggested: Křižovnické náměstí, Prague
+    landmark: Křižovnické náměstí
+    street: Křižovnické náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5410:
-    gps: missing
-    source: awaiting original
+    suggested: Prague Castle, Prague
+    landmark: Prague Castle
+    street: 3rd Courtyard
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode

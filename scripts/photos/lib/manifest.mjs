@@ -10,7 +10,9 @@
  *   order:    [slug, …]   pinned first, in this sequence; the rest follow by capture time
  *   photos:
  *     <slug>:
- *       caption, caption_zh, alt, story, featured, hidden
+ *       place, caption, caption_zh, alt, story, featured, hidden
+ *   place: "Tower Bridge, London" names the frame over what its GPS says (a stale fix, a
+ *   spot where the camera stood rather than what it saw)
  *
  * Merged (repo, _data/photo_manifests/<key>.json, gitignored, what Liquid reads)
  *   { gallery, key, base, title, count, photos: [ machine ∪ authored, ordered ] ,
@@ -19,8 +21,8 @@
 
 import { MANIFEST_VERSION, galleryKey } from './config.mjs';
 
-export const AUTHORED_PHOTO_KEYS = ['caption', 'caption_zh', 'alt', 'story', 'story_zh', 'featured', 'hidden'];
-export const AUTHORED_TOP_KEYS = ['title', 'order', 'photos'];
+export const AUTHORED_PHOTO_KEYS = ['place', 'caption', 'caption_zh', 'alt', 'story', 'story_zh', 'featured', 'hidden'];
+export const AUTHORED_TOP_KEYS = ['title', 'order', 'aerial', 'photos'];
 
 export function emptyManifest(gallery) {
   return { version: MANIFEST_VERSION, gallery, generated: null, photos: [] };
@@ -86,13 +88,13 @@ export function mergeManifest(gallery, machine, authored, base) {
   // Every processed photo, hidden ones included, for the management scripts
   // (photos:status, photos:recollect) that compare the bucket with the YAML.
   const inventory = sortPhotos(m.photos).map(p => ({
-    slug: p.slug, file: p.file, taken: p.taken || null, camera: p.camera || null, compressed: !!p.compressed,
+    slug: p.slug, file: p.file, taken: p.taken || null, camera: p.camera || null,
     formats: p.formats || Object.keys(p.sizes || {}), processed: p.processed || null,
   }));
 
   return {
     gallery, key: galleryKey(gallery), base: `${base}/${gallery}`,
-    title: a.title || null, generated: m.generated, count: photos.length, unlisted, photos, inventory, warnings,
+    title: a.title || null, aerial: a.aerial || null, generated: m.generated, count: photos.length, unlisted, photos, inventory, warnings,
   };
 }
 

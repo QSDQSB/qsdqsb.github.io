@@ -23,8 +23,9 @@ Rules:
 ## Gallery Integrity
 
 Rules:
-- `gallery_name` values must resolve to expected `gallery/<gallery_name>/` structure.
-- Thumbnail structure should match `images/thumbnails/gallery/<gallery_name>/` expectations.
+- `gallery_name` values must be known to the photo pipeline: `_data/photos/<gallery_name>.yml` committed or `_data/photo_manifests/<key>.json` fetched (`<key>` = name with `/` → `_`). Neither is an error.
+- The gallery must be processed with photos in `_data/photo_manifests/_index.json`, or the Photobook renders empty (`npm run check:gallery`).
+- `gallery/` and `images/thumbnails/gallery/` are read by nothing; don't validate against them.
 - Parent/subgallery links should not produce orphaned references.
 
 ## Taxonomy Color Integrity
@@ -36,6 +37,6 @@ Rules:
 ## Related Checks
 
 - `DATA-001` map dataset-to-cache consistency (both sources)
-- `DATA-002` gallery_name path consistency
+- `DATA-002` gallery_name ↔ photo manifest consistency
 - `DATA-003` tag-to-color mapping consistency
 - `DATA-004` parent voyage / sub-voyage coords alignment (geocodable title or explicit `map:`)

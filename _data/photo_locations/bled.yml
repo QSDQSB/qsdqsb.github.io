@@ -3,44 +3,97 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf4443:
-    gps: missing
-    source: awaiting original
+    suggested: Cesta svobode, Bled, Slovenia
+    street: Cesta svobode
+    city: Bled
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4479:
-    gps: missing
-    source: awaiting original
+    suggested: Cesta svobode, Bled, Slovenia
+    street: Cesta svobode
+    city: Bled
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4481:
-    gps: missing
-    source: awaiting original
+    suggested: Cesta svobode, Bled, Slovenia
+    street: Cesta svobode
+    city: Bled
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4495:
-    gps: missing
-    source: awaiting original
+    suggested: Kidričeva Cesta, Bled, Slovenia
+    street: Kidričeva Cesta
+    city: Bled
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4519:
-    gps: missing
-    source: awaiting original
+    suggested: Bled Castle, Bled, Slovenia
+    landmark: Bled Castle
+    street: Pot okoli jezera
+    city: Bled
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4533:
-    gps: missing
-    source: awaiting original
+    suggested: Bled Castle, Bled, Slovenia
+    landmark: Bled Castle
+    city: Bled
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4562:
-    gps: missing
-    source: awaiting original
+    suggested: Cesta svobode, Bled, Slovenia
+    street: Cesta svobode
+    city: Bled
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4610:
-    gps: missing
-    source: awaiting original
+    suggested: Pot okoli jezera, Bled, Slovenia
+    street: Pot okoli jezera
+    city: Bled
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4625:
-    gps: missing
-    source: awaiting original
+    suggested: Mlinska cesta, Bled, Slovenia
+    street: Mlinska cesta
+    city: Bled
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4664:
-    gps: missing
-    source: awaiting original
+    suggested: Mlinska cesta, Bled, Slovenia
+    street: Mlinska cesta
+    city: Bled
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4672:
-    gps: missing
-    source: awaiting original
+    suggested: Cesta V Megre, Bled, Slovenia
+    street: Cesta V Megre
+    city: Bled
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4684:
-    gps: missing
-    source: awaiting original
+    suggested: Ulica padlih Borcev, Tolmin, Slovenia
+    street: Ulica padlih Borcev
+    city: Tolmin
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4685:
-    gps: missing
-    source: awaiting original
+    suggested: Mestni trg, Tolmin, Slovenia
+    street: Mestni trg
+    city: Tolmin
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4691:
     suggested: Italian charnel house, Kobarid, Slovenia
     landmark: Italian charnel house
@@ -49,14 +102,30 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf4703:
-    gps: missing
-    source: awaiting original
+    suggested: Italian charnel house, Kobarid, Slovenia
+    landmark: Italian charnel house
+    city: Kobarid
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4707:
-    gps: missing
-    source: awaiting original
+    suggested: Italian charnel house, Kobarid, Slovenia
+    landmark: Italian charnel house
+    city: Kobarid
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4724:
-    gps: missing
-    source: awaiting original
+    suggested: Soča, Bovec, Slovenia
+    street: Soča
+    city: Bovec
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4753:
-    gps: missing
-    source: awaiting original
+    suggested: Cigaletova ulica, Ljubljana, Slovenia
+    street: Cigaletova ulica
+    city: Ljubljana
+    country: Slovenia
+    gps: present
+    source: OpenStreetMap reverse geocode

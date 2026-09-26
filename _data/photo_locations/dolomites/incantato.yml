@@ -2,15 +2,21 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
-  dscf0061:
-    gps: missing
-    source: awaiting original
   dscf0064:
-    gps: missing
-    source: awaiting original
+    suggested: Via Monte Piana, South Tyrol
+    street: Via Monte Piana
+    city: Auronzo di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0065:
-    gps: missing
-    source: awaiting original
+    suggested: Plaza Sant'Antone, South Tyrol
+    landmark: Plaza Sant'Antone
+    street: Streda Rezia
+    city: Urtijëi - St. Ulrich in Gröden - Ortisei
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0073:
     suggested: Via Guide Alpine, South Tyrol
     street: Via Guide Alpine
@@ -19,14 +25,23 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf0076:
-    gps: missing
-    source: awaiting original
+    suggested: Via Guide Alpine, South Tyrol
+    street: Via Guide Alpine
+    city: Auronzo di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0557:
-    gps: missing
-    source: awaiting original
+    suggested: Dlieja de San Durich - Pfarrkirche von St. Ulrich - Chiesa parrocchiale di Ortisei, South Tyrol
+    landmark: Dlieja de San Durich - Pfarrkirche von St. Ulrich - Chiesa parrocchiale di Ortisei
+    street: Via Rezia
+    city: Urtijëi
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0863:
     gps: missing
-    source: awaiting original
+    source: pending visual guess
   dscf9933:
     suggested: Sankt Veit - Via San Vito, South Tyrol
     street: Sankt Veit - Via San Vito
@@ -38,6 +53,14 @@ photos:
     suggested: Sankt Veit - Via San Vito, South Tyrol
     street: Sankt Veit - Via San Vito
     city: Prags - Braies
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf9961:
+    suggested: Marienkapelle Pragser Wildsee - Cappella di Santa Maria al Lago di Braies, South Tyrol
+    landmark: Marienkapelle Pragser Wildsee - Cappella di Santa Maria al Lago di Braies
+    street: Via San Vito
+    city: Prags
     country: Italy
     gps: present
     source: OpenStreetMap reverse geocode

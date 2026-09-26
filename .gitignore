@@ -10,18 +10,16 @@ for_agents/
 .claude/settings.local.json
 .claude/worktrees/
 
-# Generated gallery thumbnails — produced by scripts/generate-gallery-assets.mjs.
-# CI generates a fresh set on every push; locally, `npm run build|serve` runs
-# the same script as a prerequisite. No thumbnail format is tracked in git.
-images/thumbnails/gallery/**/*.[jJ][pP][gG]
-images/thumbnails/gallery/**/*.[jJ][pP][eE][gG]
-images/thumbnails/gallery/**/*.[wW][eE][bB][pP]
-_data/gallery_meta/
-
-# Photo pipeline (see _docs/photos-pipeline.md). Local originals are never
-# committed; they go to R2 with `npm run photos:push`. The merged manifests
-# are rebuilt from the bucket on every build. `gallery/` stays tracked until
-# the bootstrap has been verified live — removing it is a separate, local step.
+# Photo pipeline (see _docs/photos-pipeline.md). Photographs live in R2, never
+# in git: local originals go there with `npm run photos:push`, and the merged
+# manifests are rebuilt from the bucket on every build. The old gallery/ tree
+# and its generated thumbnails are no longer read by anything.
+/gallery/
+/images/thumbnails/gallery/
+/_data/gallery_meta/
+# WebP renditions of the 3:1 heroes, made on every build (scripts/generate-cover-sizes.mjs).
+/images/cover/sized/
+/_data/cover_sizes.json
 /photos/
 /_data/photo_manifests/
 /.photos-local/

@@ -3,8 +3,19 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf0142:
-    gps: missing
-    source: awaiting original
+    suggested: Troi Paian, Urtijëi - St. Ulrich in Gröden - Ortisei, Italy
+    street: Troi Paian
+    city: Urtijëi - St. Ulrich in Gröden - Ortisei
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf0148:
+    suggested: Troi di Tuei, Santa Cristina Gherdëina - St. Christina in Gröden - Santa Cristina Valgardena, Italy
+    street: Troi di Tuei
+    city: Santa Cristina Gherdëina - St. Christina in Gröden - Santa Cristina Valgardena
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0152:
     suggested: Secëda - Monte Seceda, Villnöß - Funes, Italy
     landmark: Secëda - Monte Seceda
@@ -14,26 +25,66 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf0153:
-    gps: missing
-    source: awaiting original
+    suggested: Troi di Tuei, Santa Cristina Gherdëina - St. Christina in Gröden - Santa Cristina Valgardena, Italy
+    street: Troi di Tuei
+    city: Santa Cristina Gherdëina - St. Christina in Gröden - Santa Cristina Valgardena
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf0159:
+    suggested: Secëda - Monte Seceda, Santa Cristina Valgardena, Italy
+    landmark: Secëda - Monte Seceda
+    street: Str. Mastle'
+    city: Santa Cristina Valgardena
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0197:
-    gps: missing
-    source: awaiting original
+    suggested: Secëda - Monte Seceda, Villnöß - Funes, Italy
+    landmark: Secëda - Monte Seceda
+    street: Adolf-Munkel-Weg
+    city: Villnöß - Funes
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0357:
-    gps: missing
-    source: awaiting original
+    suggested: Secëda - Monte Seceda, Villnöß - Funes, Italy
+    landmark: Secëda - Monte Seceda
+    street: Adolf-Munkel-Weg
+    city: Villnöß - Funes
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0411:
-    gps: missing
-    source: awaiting original
+    suggested: Secëda - Monte Seceda, Villnöß - Funes, Italy
+    landmark: Secëda - Monte Seceda
+    street: Adolf-Munkel-Weg
+    city: Villnöß - Funes
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0414:
-    gps: missing
-    source: awaiting original
+    suggested: Secëda - Monte Seceda, Santa Cristina Valgardena, Italy
+    landmark: Secëda - Monte Seceda
+    street: Str. Mastle'
+    city: Santa Cristina Valgardena
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0500:
-    gps: missing
-    source: awaiting original
+    suggested: Adolf-Munkel-Weg, Villnöß - Funes, Italy
+    street: Adolf-Munkel-Weg
+    city: Villnöß - Funes
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0504:
-    gps: missing
-    source: awaiting original
+    suggested: Adolf-Munkel-Weg, Villnöß - Funes, Italy
+    street: Adolf-Munkel-Weg
+    city: Villnöß - Funes
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0513:
     suggested: Adolf-Munkel-Weg, Villnöß - Funes, Italy
     street: Adolf-Munkel-Weg
@@ -42,14 +93,12 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf0531:
-    gps: missing
-    source: awaiting original
-  dscf0648:
-    gps: missing
-    source: awaiting original
-  dscf5177:
-    gps: missing
-    source: awaiting original
+    suggested: Adolf-Munkel-Weg, Villnöß - Funes, Italy
+    street: Adolf-Munkel-Weg
+    city: Villnöß - Funes
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6291:
     suggested: Adolf-Munkel-Weg, Villnöß - Funes, Italy
     street: Adolf-Munkel-Weg
@@ -65,6 +114,11 @@ photos:
     country: Italy
     gps: present
     source: OpenStreetMap reverse geocode
-  dscf8259:
-    gps: missing
-    source: awaiting original
+  dscf8177:
+    suggested: Secëda - Monte Seceda, Villnöß - Funes, Italy
+    landmark: Secëda - Monte Seceda
+    street: Adolf-Munkel-Weg
+    city: Villnöß - Funes
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode

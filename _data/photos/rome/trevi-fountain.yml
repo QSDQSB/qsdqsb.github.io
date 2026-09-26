@@ -1,11 +1,3 @@
 # Authored layer for gallery/rome/trevi-fountain — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf2296:
-    caption: lantico forno, Piazza di Trevi, Rome
-  dscf2345:
-    caption: lantico forno, Piazza di Trevi, Rome
-  dscf2346:
-    caption: lantico forno, Piazza di Trevi, Rome
-  dscf2349:
-    caption: Hotel Fontana, Piazza di Trevi, Rome
+photos: {}

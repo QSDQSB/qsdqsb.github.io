@@ -1,0 +1,24 @@
+{%- comment -%}
+  The lightbox, a matted print: the photograph over a wash of its own colours, a caption band
+  beneath, a scrubber, and the specs panel. Filled by assets/js/photobook/lightbox.js.
+{%- endcomment -%}
+<dialog class="photobook-lightbox" id="photobook-lightbox" aria-label="{{ page.title | strip_html | escape }}, photographs">
+  <div class="photobook-lightbox__wash" aria-hidden="true"></div>
+  <div class="photobook-lightbox__mat" tabindex="-1" autofocus></div>
+  <button class="photobook-lightbox__zone photobook-lightbox__zone--prev" type="button" data-act="prev" tabindex="-1" aria-label="Previous photograph"></button>
+  <button class="photobook-lightbox__zone photobook-lightbox__zone--next" type="button" data-act="next" tabindex="-1" aria-label="Next photograph"></button>
+  <div class="photobook-lightbox__progress" aria-hidden="true"></div>
+  <header class="photobook-lightbox__top photobook-lightbox__chrome">
+    <button class="photobook-lightbox__back" type="button" data-act="close" aria-label="Back to {{ page.title | strip_html | escape }}" data-tip="Back to the book · Esc"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>{{ page.title | strip_html }}</button>
+    <span class="photobook-lightbox__count" aria-hidden="true"></span>
+    <div class="photobook-lightbox__tools">
+      <button class="photobook-lightbox__tool" type="button" data-act="specs" data-tip="Specs · I" aria-label="Specs" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5h14M5 12h14M5 17.5h9"/></svg></button>
+      <button class="photobook-lightbox__tool" type="button" data-act="play" data-tip="Slideshow · Space" aria-label="Slideshow" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="photobook-lightbox__play" d="M8 5.5v13l10.5-6.5z"/></svg></button>
+      <button class="photobook-lightbox__tool" type="button" data-act="bare" data-tip="Picture only · F" aria-label="Picture only" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    </div>
+  </header>
+  <footer class="photobook-lightbox__caption photobook-lightbox__chrome" aria-hidden="true"></footer>
+  <nav class="photobook-lightbox__rail photobook-lightbox__chrome" aria-label="All frames"></nav>
+  <aside class="photobook-specs" aria-label="Specs"><div class="photobook-specs__inner"></div></aside>
+  <p class="photobook-lightbox__live screen-reader-text" aria-live="polite"></p>
+</dialog>

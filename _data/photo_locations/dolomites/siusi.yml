@@ -3,11 +3,19 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf0608:
-    gps: missing
-    source: awaiting original
+    suggested: Troi Paian, Urtijëi - St. Ulrich in Gröden - Ortisei, Italy
+    street: Troi Paian
+    city: Urtijëi - St. Ulrich in Gröden - Ortisei
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf0634:
-    gps: missing
-    source: awaiting original
+    suggested: Piz, Kastelruth - Castelrotto, Italy
+    street: Piz
+    city: Kastelruth - Castelrotto
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7698:
     suggested: Streda J. Skasa, Urtijëi - St. Ulrich in Gröden - Ortisei, Italy
     street: Streda J. Skasa

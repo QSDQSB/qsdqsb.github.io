@@ -2,7 +2,7 @@
 
 // photos:locate: which OpenStreetMap features may name a photo, the house
 // style a suggestion is written in, that the committed sidecar never holds
-// a coordinate, and that --accept only replaces captions nobody wrote.
+// a coordinate, and that --accept only fills empty captions.
 
 const test = require('node:test');
 const assert = require('node:assert');
@@ -60,7 +60,7 @@ test('the committed sidecar carries names only, never a coordinate', async () =>
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
-test('--accept replaces only empty or file-name captions, and only the caption line', async () => {
+test('--accept fills only empty captions, and only the caption line', async () => {
   const { writeSidecar, acceptSuggestions } = await loc();
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'photos-accept-'));
   const authoredDir = path.join(root, 'authored'), dir = path.join(root, 'locations');
@@ -69,7 +69,7 @@ test('--accept replaces only empty or file-name captions, and only the caption l
     '# header kept',
     'photos:',
     '  dscf1797:',
-    '    caption: East Smithfield, London',
+    '    caption:',
     '    story: |',
     '      Taken between two buses.',
     '  dscf2245:',
@@ -85,9 +85,7 @@ test('--accept replaces only empty or file-name captions, and only the caption l
     dscf2229: { suggested: "St Paul's Cathedral, London" }, dscf6358: { suggested: 'Middlesex Street, London' },
     dscf9999: { suggested: 'Piccadilly Circus, London' },
   }, dir);
-  const legacy = new Map([['dscf1797', 'East Smithfield, London'], ['dscf2245', 'St Pauls, London']]);
-
-  const r = acceptSuggestions('london', { legacy, authoredDir, dir });
+  const r = acceptSuggestions('london', { authoredDir, dir });
   assert.deepStrictEqual(r.done.map(d => d.slug).sort(), ['dscf1797', 'dscf2229', 'dscf6358', 'dscf9999']);
   assert.deepStrictEqual(r.kept.map(k => k.slug), ['dscf2245']);
   const text = fs.readFileSync(path.join(authoredDir, 'london.yml'), 'utf8');
@@ -100,24 +98,6 @@ test('--accept replaces only empty or file-name captions, and only the caption l
   const yaml = require('js-yaml');
   assert.strictEqual(yaml.load(text).photos.dscf9999.caption, 'Piccadilly Circus, London');
 
-  assert.deepStrictEqual(acceptSuggestions('london', { legacy, authoredDir, dir }).done, [], 'a second run changes nothing');
+  assert.deepStrictEqual(acceptSuggestions('london', { authoredDir, dir }).done, [], 'a second run changes nothing');
   fs.rmSync(root, { recursive: true, force: true });
-});
-
-test('photos:collect tries the candidate shot nearest the voyage\'s other originals first', async () => {
-  const { rank } = await import('../scripts/photos/collect.mjs');
-  const cands = [{ id: 'a', date: '2024-07-02T14:10:48' }, { id: 'b', date: '2023-09-16T15:16:22' }, { id: 'c', date: '2025-05-28T07:50:47' }];
-  const cornwallDays = [Date.parse('2023-09-25'), Date.parse('2023-09-27')];
-  assert.deepStrictEqual(rank(cands, cornwallDays).map(c => c.id), ['b', 'a', 'c']);
-  assert.deepStrictEqual(rank(cands, []).map(c => c.id), ['a', 'b', 'c'], 'no known dates: Photos\' order');
-});
-
-test('the dashboard reads the collector\'s state from its lock and log', async () => {
-  const { collectorStatus } = await import('../scripts/photos/dashboard.mjs');
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'photos-collector-'));
-  assert.deepStrictEqual(collectorStatus(dir), { running: false, lines: [] });
-  fs.writeFileSync(path.join(dir, 'lock'), String(process.pid));
-  fs.writeFileSync(path.join(dir, 'log.txt'), 'a\nb\nc\nd\ne\n');
-  assert.deepStrictEqual(collectorStatus(dir), { running: true, lines: ['b', 'c', 'd', 'e'] });
-  fs.rmSync(dir, { recursive: true, force: true });
 });

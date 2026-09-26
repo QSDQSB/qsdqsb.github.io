@@ -2,51 +2,128 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
-  dscf5834:
-    gps: missing
-    source: awaiting original
   dscf5838:
-    gps: missing
-    source: awaiting original
+    suggested: Ferris Wheel of Budapest, Budapest, Hungary
+    landmark: Ferris Wheel of Budapest
+    street: Bécsi utca
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5857:
-    gps: missing
-    source: awaiting original
+    suggested: St. Stephen's Basilica, Budapest, Hungary
+    landmark: St. Stephen's Basilica
+    street: St. Stephen's square
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5870:
-    gps: missing
-    source: awaiting original
+    suggested: St. Stephen's Basilica, Budapest, Hungary
+    landmark: St. Stephen's Basilica
+    street: St. Stephen's square
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5897:
-    gps: missing
-    source: awaiting original
+    suggested: St. Stephen's Basilica, Budapest, Hungary
+    landmark: St. Stephen's Basilica
+    street: Szent István tér
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5915:
-    gps: missing
-    source: awaiting original
+    suggested: St. Stephen's Basilica, Budapest, Hungary
+    landmark: St. Stephen's Basilica
+    street: Zrínyi utca
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6084:
-    gps: missing
-    source: awaiting original
+    suggested: Buda Castle, Budapest, Hungary
+    landmark: Buda Castle
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6363:
-    gps: missing
-    source: awaiting original
+    suggested: Margaret Bridge, Budapest, Hungary
+    landmark: Margaret Bridge
+    street: Jászai Mari tér
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6499:
+    suggested: Fisherman's Bastion, Budapest, Hungary
+    landmark: Fisherman's Bastion
+    street: Szentháromság tér
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6552:
-    gps: missing
-    source: awaiting original
+    suggested: Fisherman's Bastion, Budapest, Hungary
+    landmark: Fisherman's Bastion
+    street: Szentháromság tér
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6582:
-    gps: missing
-    source: awaiting original
-  dscf6599:
-    gps: missing
-    source: awaiting original
+    suggested: Buda Castle, Budapest, Hungary
+    landmark: Buda Castle
+    street: Szent György tér
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6608:
-    gps: missing
-    source: awaiting original
+    suggested: Castle District, Budapest, Hungary
+    landmark: Castle District
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6621:
-    gps: missing
-    source: awaiting original
+    suggested: Castle District, Budapest, Hungary
+    landmark: Castle District
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6634:
+    suggested: Széchenyi Chain Bridge, Budapest, Hungary
+    landmark: Széchenyi Chain Bridge
+    street: Jane Haining rakpart
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6638:
-    gps: missing
-    source: awaiting original
+    suggested: Széchenyi Chain Bridge, Budapest, Hungary
+    landmark: Széchenyi Chain Bridge
+    street: Széchenyi lánchíd
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6666:
-    gps: missing
-    source: awaiting original
+    suggested: Pesti Vigadó, Budapest, Hungary
+    landmark: Pesti Vigadó
+    street: Dunakorzó
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6671:
-    gps: missing
-    source: awaiting original
+    suggested: Széchenyi Chain Bridge, Budapest, Hungary
+    landmark: Széchenyi Chain Bridge
+    street: Apáczai Csere János utca
+    city: Budapest
+    country: Hungary
+    gps: present
+    source: OpenStreetMap reverse geocode

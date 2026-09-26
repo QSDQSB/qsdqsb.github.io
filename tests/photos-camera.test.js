@@ -11,8 +11,14 @@ const cam = () => import('../scripts/photos/lib/camera.mjs');
 test('film simulation reads FilmMode, or Saturation for the monochrome ones', async () => {
   const { filmSimulation } = await cam();
   assert.strictEqual(filmSimulation({ FilmMode: 'Classic Negative', Saturation: 'Film Simulation' }), 'Classic Negative');
-  assert.strictEqual(filmSimulation({ Saturation: 'Acros+R Filter' }), 'Acros+R Filter');
-  assert.strictEqual(filmSimulation({ Saturation: 'B&W' }), 'B&W');
+  assert.strictEqual(filmSimulation({ Saturation: 'Acros+R Filter' }), 'Acros · R filter');
+  assert.strictEqual(filmSimulation({ Saturation: 'B&W' }), 'Monochrome');
+  // ExifTool's internal names, as London's originals report them.
+  assert.strictEqual(filmSimulation({ FilmMode: 'F2/Fujichrome (Velvia)' }), 'Velvia');
+  assert.strictEqual(filmSimulation({ FilmMode: 'F1b/Studio Portrait Smooth Skin Tone (Astia)' }), 'Astia');
+  assert.strictEqual(filmSimulation({ FilmMode: 'F0/Standard (Provia)' }), 'Provia');
+  assert.strictEqual(filmSimulation({ FilmMode: 'Pro Neg. Hi' }), 'Pro Neg. Hi');
+  assert.strictEqual(filmSimulation({ FilmMode: 'Bleach Bypass' }), 'Eterna Bleach Bypass');
   assert.strictEqual(filmSimulation({ Saturation: '+1 (medium high)' }), null, 'a colour saturation is not a film simulation');
   assert.strictEqual(filmSimulation({}), null);
 });

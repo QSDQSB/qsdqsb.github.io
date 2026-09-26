@@ -86,6 +86,49 @@ end tell`;
 }
 
 /**
+ * Candidates for each capture time, found by date alone: every item Photos dates within 14 hours
+ * of it (the most a time zone can move a clock). For a file whose name Photos does not know (a
+ * renamed export); sameMoment then picks the one taken at the same second. Photos cannot filter
+ * items by date, so the library's ids, names and dates are read once, as three lists.
+ * @param {string[]} takens  capture times as the camera wrote them (local, offset optional)
+ * @returns {Map<string, {id, filename, date}[]>}
+ */
+export function findByMoment(takens) {
+  const script = `tell application "Photos"
+  set ids to id of every media item
+  set names to filename of every media item
+  set ds to date of every media item
+end tell
+set out to ""
+repeat with i from 1 to count of ids
+  set out to out & (item i of ids) & tab & (item i of names) & tab & (((item i of ds) as «class isot») as string) & linefeed
+end repeat
+return out`;
+  const all = parse(osa(script, 1800));
+  const out = new Map();
+  for (const taken of takens) {
+    const local = Date.parse(`${taken.slice(0, 19)}Z`); // the wall clock as written, read as if UTC
+    out.set(taken, all.filter((it) => Math.abs(Date.parse(`${it.date.slice(0, 19)}Z`) - local) <= 14 * 3600e3));
+  }
+  return out;
+}
+
+/**
+ * Whether a Photos item's date and a file's capture time name the same
+ * moment. Photos gives its dates on this Mac's clock; the camera records
+ * the local time where the photograph was taken, with its UTC offset when
+ * it knows it. Without an offset, the two can only differ by a whole
+ * number of quarter hours (a time zone), at the same minute and second.
+ */
+export function sameMoment(photosDate, taken) {
+  if (!photosDate || !taken) return false;
+  const here = new Date(photosDate.slice(0, 19)).getTime();
+  if (/(Z|[+-]\d\d:?\d\d)$/.test(taken)) return Math.abs(here - new Date(taken).getTime()) < 1000;
+  const gap = Math.abs(here - new Date(taken.slice(0, 19)).getTime());
+  return gap <= 14 * 3600e3 && gap % 900e3 < 1000;
+}
+
+/**
  * Export photos as they are in Photos now: the edited version, crop and
  * all, full size, camera EXIF kept. That is what the site publishes (an
  * unedited original of a cropped photo fails the aspect check), and what

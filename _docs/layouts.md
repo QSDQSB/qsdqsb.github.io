@@ -1,37 +1,89 @@
 # Layouts & Gallery System
 
 Reference for the 9 layouts in `_layouts/`. Linked from CLAUDE.md; read this
-when touching a layout, the gallery viewer, or the hero.
+when touching a layout, the Photobook, or the hero.
 
 The two with real behaviour are `gallery.html` and the page hero overlay.
 Everything else is a thin wrapper.
 
-## `gallery.html` — two execution modes
+## `gallery.html` — a router
 
 Mutually exclusive. The branch is decided by frontmatter:
 
 | Condition | Mode | What renders |
 |---|---|---|
-| `page.subgalleries == true` | **Enumerator** | Sub-voyage card list via `_includes/archive-single.html`. No thumbnail grid, no JS viewer. |
-| Otherwise (default) | **Gallery viewer** | Thumbnail grid + fullscreen JS viewer (`assets/js/gallery.js`). |
+| `page.subgalleries == true` | **Index of parts** | Hero, sub-voyage cards via `_includes/archive-single.html`, the atlas. |
+| Otherwise (default) | **Photobook** | `_includes/photobook.html`, built from the gallery's manifest. |
 
-Enumerator children are discovered by path-substring match on the parent voyage
-basename — the `frontmatter-contract-enforcer` skill owns the alignment rules.
+Index-of-parts children are discovered by path-substring match on the parent
+voyage basename — the `frontmatter-contract-enforcer` skill owns the alignment
+rules.
 
-Gallery viewer asset contracts:
+Map block (`_includes/map.html`) is included after the part cards for any
+voyage with `subgalleries: true` — the layout passes
+`dataset="voyage-<basename>"` and the renderer loads the auto-derived
+`assets/maps/voyage-<basename>.geojson` (one feature per child, atlas renderer
++ tag legend + editorial popups), through the same Leaflet + `map.js` engine as
+the global atlas.
 
-- Full images: `gallery/<gallery_name>/<file>`
-- Thumbnails: `images/thumbnails/gallery/<gallery_name>/<file>`
-- Filenames must match between the two directories.
+### The Photobook
 
-Map block (`_includes/map.html`) is included after main content for any voyage
-with `subgalleries: true` — the layout passes `dataset="voyage-<basename>"` and
-the renderer loads the auto-derived `assets/maps/voyage-<basename>.geojson`
-(one feature per child, atlas renderer + tag legend + editorial popups), through
-the same Leaflet + `map.js` engine as the global atlas.
+`_includes/photobook.html` assembles `_includes/photobook/`: `cover`,
+`filmbar`, `book`, `frame`, `sun`, `colophon`, `lightbox`, `end` (the voyage's
+other parts — up to 3 siblings sampled from `gallery_name`'s first segment —
+then random voyages, tags, sign-off). Styles: `_sass/_photobook.scss`. Script:
+`assets/js/photobook/` ES modules (`index.js`, `book.js`, `dial.js`, `glow.js`,
+`lightbox.js`, `rows.mjs`), loaded only on these pages; every frame is plain
+HTML without it.
 
-**Gallery viewer keyboard:** Backspace = parent, Shift = cover/contain toggle,
-Esc = fullscreen, arrows = navigate.
+Data contract — no files on disk, only the manifest:
+
+- Liquid reads `site.data.photo_manifests[<gallery_name, / → _>]`, the merged
+  manifest `npm run photos:fetch` writes before every build.
+- The book's layer is worked out there by `scripts/photos/lib/book.mjs`: rows
+  (spread / pair / three; a portrait never takes a spread), cover (first
+  featured landscape, else first landscape), colophon (films, lenses, hours),
+  and per photo the place (`_data/photo_locations/<gallery>.yml`, else the
+  caption), the light (sun phrase + glyph), glow colours, placeholder, film,
+  and the lightbox record.
+- The row rule lives once, in `assets/js/photobook/rows.mjs`, so the film
+  filter re-lays the page by the same rule the build used.
+- Images: `https://img.qsdqsb.com/t/<hash>/<width>.<webp|avif|jpg>`, with
+  srcset.
+- No manifest, or no processed photos → the page renders an empty Photobook
+  ("still on their way"). `check:frontmatter` and `check:gallery` catch it.
+
+**The controls** (`filmbar.html`, `dial.js`, the bar section of `book.js`): a
+film dial and a Book/Sheet switch of the same height, mounted on the seam of
+cover and book (their centre on the cover's lower edge).
+
+- The dial: a glass disc, a red index above; at rest a dot per film (white for
+  ALL), in hand (hover on a real pointer, keyboard focus, a finger turning it,
+  a first tap, the first-visit hint) the films' letters (`filmCode()` in
+  `book.mjs`) and the setting named underneath. Click, drag with detents, or
+  arrow keys. On touch the first tap only opens it. No dial for one film.
+- Over the book both step away; scrolling up about 24 px calls them back
+  drawn in to 58 px (`is-stuck` / `is-summoned`). While a film is chosen the
+  corner keeps the dial's index over that film's colour (`.photobook-bar__mark`).
+- A film change re-lays the book where the reader is: the frame they were at
+  keeps its place on screen, or the nearest kept frame after it takes that
+  place (`placeOf` / `holdPlace` in `book.js`); with the cover in view nothing
+  scrolls. Staying frames move, others dissolve (view transition; crossfade
+  without the API; nothing with motion off); the filtered book is headed by
+  the film's edge print (`.photobook-book__film`). Book ⇄ Sheet jumps to the top.
+- The first-visit hint turns the dial ~10° and back once per voyage
+  (`localStorage` `qsd.dial.hinted:<path>`).
+- The switch has a third stop, the full-screen corners: **Screening**, the book
+  full screen as a slideshow from the first frame of the current filter
+  (`lightbox.js` `screen()`); a tap, click or Esc ends it where it started.
+  Book or Sheet is remembered (`localStorage` `photobook-view`).
+- **The way back** is the masthead's ‹ before the logo (`_includes/photobook.html`
+  passes `back_url` / `back_label` to `masthead.html`, cached per destination):
+  a part's to its voyage, a voyage's to all voyages. Nothing sits on the cover.
+
+**Lightbox keyboard:** arrows = navigate, Space / S = slideshow, I = specs,
+F = bare print, Z (or double-click) = loupe, pinch (trackpad or two fingers) = zoom 1–4×, two-finger sideways swipe = next/previous, swipe down on a phone = close; closing morphs the print back into the book, and a print the pointer rests on is prefetched, Esc = back out
+(loupe, then bare, then close).
 
 ## Page hero overlay (`_includes/page__hero.html`)
 

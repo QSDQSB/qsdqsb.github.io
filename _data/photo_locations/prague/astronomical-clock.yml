@@ -3,11 +3,21 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf4349:
-    gps: missing
-    source: awaiting original
+    suggested: Old Town Square, Prague
+    landmark: Old Town Square
+    street: Old Town Square
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4522:
-    gps: missing
-    source: awaiting original
+    suggested: Celetná, Prague
+    landmark: Celetná
+    street: Celetná
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4523:
     suggested: Celetná, Prague
     landmark: Celetná
@@ -17,11 +27,26 @@ photos:
     gps: present
     source: OpenStreetMap reverse geocode
   dscf4525:
-    gps: missing
-    source: awaiting original
+    suggested: Celetná, Prague
+    landmark: Celetná
+    street: Celetná
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4526:
-    gps: missing
-    source: awaiting original
+    suggested: Celetná, Prague
+    landmark: Celetná
+    street: Celetná
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4531:
-    gps: missing
-    source: awaiting original
+    suggested: Old Town Square, Prague
+    landmark: Old Town Square
+    street: Staroměstské náměstí
+    city: Prague
+    country: Czechia
+    gps: present
+    source: OpenStreetMap reverse geocode

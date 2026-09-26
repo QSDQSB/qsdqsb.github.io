@@ -161,6 +161,12 @@ pre {
   overflow-x: auto; /* add scrollbars to wide code blocks*/
 }
 
+pre code {
+  display: block;
+  padding: 1em 1.5em;
+  overflow-x: auto;
+}
+
 p > code,
 a > code,
 li > code,
@@ -168,7 +174,7 @@ figcaption > code,
 td > code {
   padding-top: 0.2rem 0.2rem 0;
   margin: 0 0.2rem;
-  color: #f92472;
+  color: #d08a86; // a muted rose from the palette, not the Monokai pink
   font-size: $type-code-size;
   background: $code-background-color;
   border: 1px solid $light-gray;
@@ -194,6 +200,29 @@ hr {
 }
 
 /* lists */
+
+/* The site's list rhythm. These once reached every page from the gallery viewer's stylesheet,
+   by an early-closed block; they live here now that the viewer is gone. `ol` comes first so
+   `ul li` still wins on an `ol` nested in a `ul`. */
+ol {
+  list-style: decimal;
+  margin: 0 0 1.25em 0;
+  padding-left: 1.25em;
+}
+
+ol li {
+  padding-left: 0.25em;
+}
+
+ul {
+  list-style: disc;
+  margin: 0 0 1.25em 0;
+  padding-left: 1em;
+}
+
+ul li {
+  padding-left: 0.5em;
+}
 
 ul li,
 ol li {

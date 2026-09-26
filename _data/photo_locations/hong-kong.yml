@@ -3,29 +3,71 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf4610:
-    gps: missing
-    source: awaiting original
+    suggested: Central and Western District Promenade – Central Section, Hong Kong
+    landmark: Central and Western District Promenade – Central Section
+    street: Man Kwong Street
+    city: Hong Kong
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4672:
-    gps: missing
-    source: awaiting original
-  dscf4699:
-    gps: missing
-    source: awaiting original
+    suggested: Lugard Road, Hong Kong
+    street: Lugard Road
+    city: Hong Kong
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4728:
-    gps: missing
-    source: awaiting original
+    suggested: Tsim Sha Tsui Promenade, Hong Kong
+    landmark: Tsim Sha Tsui Promenade
+    street: Mody Road
+    city: Hong Kong
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5028:
-    gps: missing
-    source: awaiting original
-  dscf5233:
-    gps: missing
-    source: awaiting original
+    suggested: Yuk Choi Road, Hong Kong
+    street: Yuk Choi Road
+    city: Hong Kong
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5290:
-    gps: missing
-    source: awaiting original
+    suggested: Sam Ka Tsuen Recreation Ground, Hong Kong
+    landmark: Sam Ka Tsuen Recreation Ground
+    street: 崇信街
+    city: Hong Kong
+    country: Hong Kong S.A.R.
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf5391:
-    gps: missing
-    source: awaiting original
+    suggested: Tai Au Mun Road, Hong Kong
+    street: Tai Au Mun Road
+    city: Hong Kong
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6099:
+    suggested: Cherry Street Park, Hong Kong
+    landmark: Cherry Street Park
+    street: 新填地街 Reclamation Street
+    city: Hong Kong
+    country: Hong Kong S.A.R.
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6233:
+    suggested: Ma Wan Tung Wan Beach, Hong Kong
+    landmark: Ma Wan Tung Wan Beach
+    street: Pak Lai Road
+    city: Hong Kong
+    country: Hong Kong S.A.R.
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6675:
-    gps: missing
-    source: awaiting original
+    suggested: Hong Kong International Airport, Hong Kong
+    landmark: Hong Kong International Airport
+    street: South Runway Road
+    city: Hong Kong
+    country: China
+    gps: present
+    source: OpenStreetMap reverse geocode

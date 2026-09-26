@@ -6,14 +6,12 @@ permalink: /sitemap.xml
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   {%- comment -%}
-    Image entries: Googlebot never drives the fullscreen JS viewer, so the
-    full-size images under gallery/** are invisible to Google Images unless
-    listed here. Prefix-match on file.path (slice, not contains) so the
-    generated thumbnails under /images/thumbnails/gallery/ never leak in.
-    lastmod comes from jekyll-last-modified-at (real git dates — CI checks
-    out with full history), falling back to the publish date.
+    Image entries: every photograph of a voyage, from its merged manifest
+    (_data/photo_manifests/, written by `npm run photos:fetch`), at the 1920 px
+    JPEG on img.qsdqsb.com, captioned with its place. lastmod comes from
+    jekyll-last-modified-at (real git dates — CI checks out with full
+    history), falling back to the publish date.
   {%- endcomment -%}
-  {%- assign gallery_files = site.static_files | where_exp: "f", "f.path contains '/gallery/'" %}
   <url>
     <loc>{{ site.url }}/year-archive/</loc>
   </url>
@@ -50,15 +48,17 @@ permalink: /sitemap.xml
       <loc>{{ site.url }}{{ post.url }}</loc>
       <lastmod>{{ post.last_modified_at | default: post.date | date: "%Y-%m-%d" }}</lastmod>
       {%- if post.gallery_name %}
-        {%- assign gallery_prefix = "/gallery/" | append: post.gallery_name | append: "/" %}
-        {%- assign prefix_len = gallery_prefix | size %}
-        {%- for file in gallery_files %}
-          {%- assign file_head = file.path | slice: 0, prefix_len %}
-          {%- if file_head == gallery_prefix %}
+        {%- assign sitemap_key = post.gallery_name | replace: "/", "_" %}
+        {%- assign sitemap_book = site.data.photo_manifests[sitemap_key] %}
+        {%- for photo in sitemap_book.photos %}
+          {%- assign photo_jpg = photo.sizes.jpg | where_exp: "w", "w <= 1920" | last | default: photo.sizes.jpg.first %}
       <image:image>
-        <image:loc>{{ site.url }}{{ file.path | uri_escape | escape }}</image:loc>
+        <image:loc>{{ photo.url }}/{{ photo_jpg }}.jpg</image:loc>
+        {%- assign photo_title = photo.place.name | default: photo.caption %}
+        {%- if photo_title %}
+        <image:title>{{ photo_title | xml_escape }}</image:title>
+        {%- endif %}
       </image:image>
-          {%- endif %}
         {%- endfor %}
       {%- endif %}
     </url>

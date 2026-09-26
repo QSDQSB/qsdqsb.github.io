@@ -2,69 +2,180 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
-  dscf1041:
-    gps: missing
-    source: awaiting original
-  dscf1213:
-    gps: missing
-    source: awaiting original
   dscf1395:
-    gps: missing
-    source: awaiting original
+    suggested: The Queen's College, Oxford, UK
+    landmark: The Queen's College
+    street: High Street
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1405:
-    gps: missing
-    source: awaiting original
-  dscf1439:
-    gps: missing
-    source: awaiting original
-  dscf1441:
-    gps: missing
-    source: awaiting original
+    suggested: The Queen's College, Oxford, UK
+    landmark: The Queen's College
+    street: High Street
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1458:
-    gps: missing
-    source: awaiting original
+    suggested: Magdalen College, Oxford, UK
+    landmark: Magdalen College
+    street: Saint John's Quad
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1464:
-    gps: missing
-    source: awaiting original
+    suggested: Magdalen College, Oxford, UK
+    landmark: Magdalen College
+    street: Saint John's Quad
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1504:
+    suggested: Magdalen College, Oxford, UK
+    landmark: Magdalen College
+    street: The Plain
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1857:
-    gps: missing
-    source: awaiting original
+    suggested: Jesus College, Oxford, UK
+    landmark: Jesus College
+    street: Avenue 2
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1872:
+    suggested: Jesus College, Oxford, UK
+    landmark: Jesus College
+    street: Avenue 2
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1887:
-    gps: missing
-    source: awaiting original
+    suggested: Jesus College, Oxford, UK
+    landmark: Jesus College
+    street: Avenue 2
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1939:
-    gps: missing
-    source: awaiting original
+    suggested: Magdalen College, Oxford, UK
+    landmark: Magdalen College
+    street: Bath Street
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2428:
+    suggested: Christ Church Meadow, Oxford, UK
+    landmark: Christ Church Meadow
+    street: Masters Garden
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2439:
+    suggested: Christ Church Meadow, Oxford, UK
+    landmark: Christ Church Meadow
+    street: Broad Walk
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2676:
     gps: missing
-    source: awaiting original
+    source: pending visual guess
   dscf4449:
-    gps: missing
-    source: awaiting original
+    suggested: The Queen's College, Oxford, UK
+    landmark: The Queen's College
+    street: High Street
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4468:
-    gps: missing
-    source: awaiting original
+    suggested: The Queen's College, Oxford, UK
+    landmark: The Queen's College
+    street: High Street
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4486:
-    gps: missing
-    source: awaiting original
+    suggested: The Queen's College, Oxford, UK
+    landmark: The Queen's College
+    street: High Street
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4893:
-    gps: missing
-    source: awaiting original
+    suggested: South Park, Oxford, UK
+    landmark: South Park
+    street: Morrell Avenue
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf4903:
-    gps: missing
-    source: awaiting original
-  dscf6676:
-    gps: missing
-    source: awaiting original
+    suggested: Christ Church Meadow, Oxford, UK
+    landmark: Christ Church Meadow
+    street: Rose Lane
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5636:
+    suggested: Oxford, UK
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6723:
+    suggested: Christ Church Meadow, Oxford, UK
+    landmark: Christ Church Meadow
+    street: Cowley Place
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6728:
-    gps: missing
-    source: awaiting original
+    suggested: Christ Church Meadow, Oxford, UK
+    landmark: Christ Church Meadow
+    street: Christ Church Meadow Walk
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6742:
-    gps: missing
-    source: awaiting original
+    suggested: Christ Church Meadow, Oxford, UK
+    landmark: Christ Church Meadow
+    street: Christ Church Meadow Walk
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6763:
-    gps: missing
-    source: awaiting original
+    suggested: Christ Church Meadow, Oxford, UK
+    landmark: Christ Church Meadow
+    street: Christ Church Meadow Walk
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7615:
-    gps: missing
-    source: awaiting original
+    suggested: The Queen's College, Oxford, UK
+    landmark: The Queen's College
+    street: High Street
+    city: Oxford
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode

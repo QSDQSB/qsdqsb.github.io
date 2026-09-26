@@ -18,6 +18,12 @@
       "runtimeExecutable": "/bin/bash",
       "runtimeArgs": ["-c", "cd design/opening-scene && exec python3 -m http.server 8137"],
       "port": 8137
+    },
+    {
+      "name": "site",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["-c", "RUBYOPT='-E utf-8:utf-8' exec /opt/homebrew/bin/bundle exec jekyll serve --port 4000 --skip-initial-build --config _config.yml,_config_dev.yml"],
+      "port": 4000
     }
   ]
 }

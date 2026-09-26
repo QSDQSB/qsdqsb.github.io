@@ -42,7 +42,7 @@
         produced a depth map for this hero image, emit data attributes for
         assets/js/hero-depth-parallax.js. The mapping must mirror the
         generator: /images/<rest> → /images/depth/<rest>.depth.jpg, any other
-        site-root path (e.g. /gallery/…) mirrored in full under /images/depth/.
+        site-root path (e.g. /assets/…) mirrored in full under /images/depth/.
       {% endcomment %}
       {% assign depth_file = nil %}
       {% unless page.header.overlay_image contains "://" or page.header.depth_parallax == false %}

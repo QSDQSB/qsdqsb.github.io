@@ -96,7 +96,7 @@ $navicon-height: 0.25rem;
 // `all` makes font-size/box geometry animatable, and Safari re-resolves styles
 // after first paint (page zoom / text proportion, root font-size step, vw
 // settling), so armed geometry transitions play out as visible size ramps on
-// load. Same rationale as the gallery viewer's explicit lists (_gallery_view.scss).
+// load.
 // The seven properties below are the union every consumer's interactive states
 // actually change; intended geometry animations (card aspect-ratio, tag-grid
 // height, navicon morph, underline sweep) are declared per-selector instead.

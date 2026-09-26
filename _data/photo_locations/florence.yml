@@ -3,11 +3,26 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf2732:
-    gps: missing
-    source: awaiting original
+    suggested: Michelangelo Square, Florence
+    landmark: Michelangelo Square
+    street: Viale Giuseppe Poggi
+    city: Florence
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2758:
-    gps: missing
-    source: awaiting original
+    suggested: Basilica di San Lorenzo, Florence
+    landmark: Basilica di San Lorenzo
+    street: Piazza San Lorenzo
+    city: Florence
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2809:
-    gps: missing
-    source: awaiting original
+    suggested: Boboli Gardens, Florence
+    landmark: Boboli Gardens
+    street: il Viottolone
+    city: Florence
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode

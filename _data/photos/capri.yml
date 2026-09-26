@@ -1,27 +1,3 @@
 # Authored layer for gallery/capri — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf3921:
-    caption: Monte Solaro Punto Panoramico, Via Migliara, Italy
-  dscf3930:
-    caption: Monte Solaro Punto Panoramico, Via Migliara, Italy
-  dscf3938:
-    caption: Via Migliara, Italy
-  dscf4047:
-    caption: Via Krupp, Italy
-  dscf4051:
-    caption: Via Krupp, Italy
-  dscf4107:
-    caption: Via Krupp, Italy
-  dscf4115:
-    caption: Via Krupp, Italy
-  dscf4125:
-    caption: Via Krupp, Italy
-  dscf4150:
-    caption: Traversa Calata Punta del Capo, Capo di Sorrento, Italy
-  dscf4162:
-    caption: Traversa Calata Punta del Capo, Capo di Sorrento, Italy
-  dscf4193:
-    caption: Salumeria Capri Rosticceria, Via Roma, Capri
-  dscf4279:
-    caption: Piazza Francesco Saverio Gargiulo, Sorrento, Italy
+photos: {}

@@ -151,7 +151,7 @@
   scroll-margin-top: 2rem; /* Account for sticky header if any */
 }
 
-/* Enhanced active state with subtle animation */
+/* The current section's entry breathes slowly (opacity 1 → 0.8 → 1, 2 s). */
 @keyframes toc-pulse {
   0%, 100% {
     opacity: 1;

@@ -3,23 +3,56 @@
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
   dscf2006:
-    gps: missing
-    source: awaiting original
+    suggested: Castle of the Holy Angel, Rome
+    landmark: Castle of the Holy Angel
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2015:
-    gps: missing
-    source: awaiting original
+    suggested: Castle of the Holy Angel, Rome
+    landmark: Castle of the Holy Angel
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2050:
-    gps: missing
-    source: awaiting original
+    suggested: Castle of the Holy Angel, Rome
+    landmark: Castle of the Holy Angel
+    street: Lungotevere Castello
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2098:
-    gps: missing
-    source: awaiting original
+    suggested: Castle of the Holy Angel, Rome
+    landmark: Castle of the Holy Angel
+    street: Lungotevere Castello
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2101:
-    gps: missing
-    source: awaiting original
+    suggested: Castle of the Holy Angel, Rome
+    landmark: Castle of the Holy Angel
+    street: Lungotevere Castello
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2105:
-    gps: missing
-    source: awaiting original
+    suggested: Castle of the Holy Angel, Rome
+    landmark: Castle of the Holy Angel
+    street: Lungotevere Castello
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2108:
-    gps: missing
-    source: awaiting original
+    suggested: Castle of the Holy Angel, Rome
+    landmark: Castle of the Holy Angel
+    street: Lungotevere Castello
+    city: Rome
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode

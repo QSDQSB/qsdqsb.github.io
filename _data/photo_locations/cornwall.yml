@@ -2,18 +2,20 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
-  dscf1148:
-    gps: missing
-    source: awaiting original
-  dscf1357:
-    gps: missing
-    source: awaiting original
-  dscf1361:
-    gps: missing
-    source: awaiting original
-  dscf1364:
-    gps: missing
-    source: awaiting original
+  dscf1321:
+    suggested: Porthmeor Road, St. Ives, UK
+    street: Porthmeor Road
+    city: St. Ives
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf1324:
+    suggested: Porthmeor Road, St. Ives, UK
+    street: Porthmeor Road
+    city: St. Ives
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1422:
     suggested: The Pilgrim's Steps, Marazion, UK
     street: The Pilgrim's Steps
@@ -23,14 +25,11 @@ photos:
     source: OpenStreetMap reverse geocode
   dscf1559:
     gps: missing
-    source: awaiting original
+    source: pending visual guess
   dscf1686:
     suggested: Porthcurno Beach, Penzance, UK
     gps: missing
     source: visual guess
-  dscf1706:
-    gps: missing
-    source: awaiting original
   dscf1724:
     suggested: Porthcurno Beach, Penzance, UK
     gps: missing
@@ -39,9 +38,21 @@ photos:
     suggested: Porthcurno Beach, Penzance, UK
     gps: missing
     source: visual guess
+  dscf1848:
+    suggested: Minack Theatre, Penzance, UK
+    landmark: Minack Theatre
+    street: The Valley
+    city: Penzance
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1859:
-    gps: missing
-    source: awaiting original
+    suggested: The Cornish Way, Sennen Cove, UK
+    street: The Cornish Way
+    city: Sennen Cove
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf1910:
     suggested: Primrose Valley Road Overbridge, St. Ives, UK
     street: Primrose Valley Road Overbridge
@@ -69,6 +80,12 @@ photos:
     suggested: The Cornish Way, Sennen Cove, UK
     street: The Cornish Way
     city: Sennen Cove
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2206:
+    suggested: Sennen, UK
+    city: Sennen
     country: United Kingdom
     gps: present
     source: OpenStreetMap reverse geocode

@@ -8,21 +8,14 @@ exists and when to reach for it.
 
 ```bash
 # Canonical local flow — both run the full pipeline:
-#   1. npm run generate:gallery   (Sharp: 1×/2× JPEG + WebP + LQIP)
+#   1. npm run photos:fetch       (R2 manifests + _data/photos/*.yml → _data/photo_manifests/)
 #   2. npm run geocode            (map data → geojson cache)
 #   3. jekyll build/serve         (with RUBYOPT=-E utf-8:utf-8)
 npm run build
 npm run serve
 
-# Faster iteration — generates only LQIPs + meta YAML, skips JPEG/WebP/2×.
-# Useful when you don't need the full image-format matrix locally.
-npm run generate:gallery:lqip
-
-# Skip the gallery pipeline entirely — for CSS/HTML/JS iteration when
-# `gallery/**` hasn't changed. Still runs `geocode` + jekyll. The thumbnail
-# generator is also incremental: warm runs over an unchanged gallery tree
-# finish in < 1 s (per-image work skipped when meta YAML is fresher than
-# the source), so plain `npm run serve` is also cheap on warm trees.
+# Kept as aliases. Since the gallery pipeline left, they run the same steps
+# as build/serve; photos:fetch is one HTTP pass and never fails a build.
 npm run serve:fast
 npm run build:fast
 
@@ -49,6 +42,8 @@ npm run check:seo                 # meta-description coverage per page
 npm run check:house-style         # generic-AI register in prose + code
 npm run check:js-sync             # main.min.js rebuilt from its sources?
 npm run check:important           # !important count vs HEAD (ratchet, the stylesheet uses none); `--list`
+npm run check:frontmatter         # collection contracts; gallery_name must be known to the photo pipeline
+npm run check:gallery             # every gallery_name has a processed manifest; orphans under photos/
 python3 scripts/check-single-use-variables.py --all
 ```
 
@@ -91,23 +86,21 @@ component file. Add one, run the audit.
 
 ## Rake shim
 
-`bundle exec rake generate_thumbnails`, `bundle exec rake build`, and
-`bundle exec rake serve` all still work — they delegate to the corresponding
-`npm run …` scripts (compatibility shim in `Rakefile`). New code / docs should
-call `npm run` directly.
+`bundle exec rake build` and `bundle exec rake serve` still work — they
+delegate to the corresponding `npm run …` scripts (compatibility shim in
+`Rakefile`). The old `generate_thumbnails` task is gone. New code / docs
+should call `npm run` directly.
 
-## Thumbnails are not tracked
+## Photographs are not in the repo
 
-Every variant (1×/2× JPEG, 1×/2× WebP) plus per-image LQIP + dimensions YAML is
-produced from `gallery/**` by `scripts/generate-gallery-assets.mjs` and
-gitignored.
-
-The hosting build (Cloudflare Pages) regenerates the full set on every deploy,
-running the generator before `jekyll build`. Locally the same script runs as a
-prerequisite of `npm run build|serve`; subsequent local runs are near-instant
-due to mtime checks.
-
-AVIF is intentionally skipped — see the script header for rationale.
+Photographs live in R2 and reach the page from `img.qsdqsb.com`. The build
+only fetches their manifests (`npm run photos:fetch`) and merges them with the
+committed captions; the Photobook's rows, cover, colophon and per-photo layer
+are worked out at that step by `scripts/photos/lib/book.mjs`. The sitemap's
+image entries come from the same manifests (the 1920 px JPEG, titled with the
+place). The old `gallery/` tree is retired and no thumbnails are generated;
+`gallery/`, `images/thumbnails/gallery/` and `_data/gallery_meta/` stay in
+`.gitignore` so a stale copy never comes back. → `_docs/photos-pipeline.md`.
 
 ## Slash commands
 

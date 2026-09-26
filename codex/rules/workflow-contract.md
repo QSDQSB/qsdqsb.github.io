@@ -13,17 +13,17 @@ Defines the canonical AI workflow for this repository.
 
 `prepare` must include both preprocessing pipelines:
 - Map geocoding: `node scripts/geocode-maps.js` (or `npm run geocode`)
-- Gallery thumbnails: `bundle exec rake generate_thumbnails`
+- Photo manifests: `npm run photos:fetch` (merges R2 manifests with `_data/photos/*.yml`; never fails a build)
 
 ## Build/Serve Requirements
 
-- Preferred build command sequence:
-  1. `bundle exec rake generate_thumbnails`
+- Preferred build command sequence (`npm run build` runs all three):
+  1. `npm run photos:fetch`
   2. `npm run geocode`
   3. `bundle exec jekyll build`
 
-- Preferred serve command sequence:
-  1. `bundle exec rake generate_thumbnails`
+- Preferred serve command sequence (`npm run serve` runs all three):
+  1. `npm run photos:fetch`
   2. `npm run geocode`
   3. `bundle exec jekyll serve`
 

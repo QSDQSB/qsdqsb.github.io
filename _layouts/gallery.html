@@ -1,7 +1,7 @@
 ---
 layout: compress
 ---
-<!-- © Base Layout for Voyages and Subvoyages -->
+<!-- © Base Layout for Voyages and Subvoyages: an index of parts when `subgalleries: true`, else the Photobook -->
 {% include base_path %}
 
 <html lang="{{ site.locale | slice: 0,2 }}" class="no-js">
@@ -14,9 +14,15 @@ layout: compress
 {% if page.subgalleries %}
   {% assign body_class = "" %}
 {% else %}
-  {% assign body_class = "is-loading-1 is-loading-2 gallery-viewer" %}
+  {% assign body_class = "photobook" %}
 {% endif %}
 <body{% if body_class != "" %} class="{{ body_class }}"{% endif %}>
+{%- comment -%} The masthead's search opens this panel, as on every other page (_layouts/default.html). {%- endcomment -%}
+{% if site.search == true %}
+<div class="search-content">
+  {% include_cached search/search_form.html %}
+</div>
+{% endif %}
 
 {% if page.subgalleries %}
   <!-- Enumerate sub-galleries with single view -->
@@ -77,123 +83,8 @@ layout: compress
   {% include presented-by-qsd.html %}
   {% include random_voyage_anchor.html posts = subs %}
 {% else %}
-<!-- Display gallery -->
-{% include_cached gallery-svg-preloads.html %}
-<noscript><link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
-
-<div id="gallery_main" role="main">
-        <div class="gallery_view">
-            <header id="header">
-
-              {% if page.title %}
-                <h1>{{ page.title | markdownify | remove: "<p>" | remove: "</p>" }}</h1>
-              {% endif %}
-              {% if page.subtitle %}
-                <h2>{{ page.subtitle | markdownify | remove: "<p>" | remove: "</p>" }}</h2>
-              {% endif %}
-              {% if page.description or page.excerpt %}
-                <p>{{ page.description | default: page.excerpt | markdownify }}</p>
-              {% endif %}
-            </header>
-            <section id="thumbnails">
-              {% assign folderpath = "/" | append: page.gallery_name | append: "/" %}
-              {% assign gallery = site.static_files | where: "image", true | where_exp: "file", "file.path contains folderpath" %}
-              {% assign meta_key = page.gallery_name | replace: "/", "_" %}
-              {% assign gallery_meta = site.data.gallery_meta[meta_key] %}
-              {% for image in gallery %}
-                {% assign image_meta = gallery_meta[image.name] %}
-                {% assign thumb_dir  = "/images/thumbnails/gallery/" | append: page.gallery_name | append: "/" %}
-                {% assign thumb_stem = image.basename %}
-                {% assign thumb_w    = image_meta.width  | default: 480 %}
-                {% assign thumb_h    = image_meta.height | default: 270 %}
-                <article>
-                  <a class="thumbnail" href="{{ site.gallery_d }}/{{ page.gallery_name }}/{{ image.name }}"{% if image_meta.lqip %} data-lqip="{{ image_meta.lqip }}"{% endif %} data-ar="{{ thumb_w }}/{{ thumb_h }}">
-                    <div class="thumb-wrap">
-                      {% if image_meta.lqip %}<div class="thumb-lqip" style="background-image:url('{{ image_meta.lqip }}')"></div>{% endif %}
-                      <picture>
-                        {% if image_meta.webp %}<source type="image/webp" srcset="{{ thumb_dir }}{{ thumb_stem }}.webp{% if image_meta.webp2x %}, {{ thumb_dir }}{{ thumb_stem }}@2x.webp 2x{% endif %}">{% endif %}
-                        <img class="thumb-img"
-                             src="{{ thumb_dir }}{{ image.name }}"
-                             {% if image_meta.jpeg2x %}srcset="{{ thumb_dir }}{{ image.name }}, {{ thumb_dir }}{{ thumb_stem }}@2x.jpg 2x"{% endif %}
-                             alt="{{ page.title }} — {{ image.basename | replace: '__', ' | ' | replace: '_', ' ' | replace: ':', '/' }}"
-                             width="{{ thumb_w }}"
-                             height="{{ thumb_h }}"
-                             loading="lazy"
-                             decoding="async">
-                      </picture>
-                    </div>
-                  </a>
-                  <div class="image_title">
-                    <h3>{{ image.basename | replace: "__", " | " | replace: "_", " " | replace: ":", "/" }}</h3>
-                  </div>
-                </article>
-              {% endfor %}
-            </section>
-            <p style="text-align: right; font-size: 100%; border-bottom: 0.5px dotted gainsboro;pointer-events: none; margin: 0.5em 0.1em; padding-right: 0.25em;" class="barlow">Shot by QSD.  </p>
-            {{ content }}
-            {% if page.gallery_name contains "/" %}
-              {% assign parent_name = page.gallery_name | split: '/' | first %}
-              {% assign related_posts = site.subvoyage | where_exp: "post", "post.url != page.url" %}
-              {% assign related_posts = related_posts | where_exp: "post", "post.gallery_name contains parent_name" %}
-              {% if related_posts.size > 3 %}
-                {% assign related_posts = related_posts | sample: 3 %}
-              {% endif %}
-              {% if related_posts.size > 0 %}
-                {% assign default_logo = "fa-cable-car" %}
-                {% if parent_name == "prague" %}
-                  {% assign default_logo = "fa-cable-car" %}
-                {% elsif parent_name == "japan" %}
-                  {% assign default_logo = "fa-mountain-city" %}
-                {% elsif parent_name == "rome" %}
-                  {% assign default_logo = "fa-chess-rook" %}
-                {% endif %}
-                <div class="archive">
-                    <h2 class="barlow"><i class="fa-solid {{ default_logo }}"></i> Other {{ parent_name | capitalize }}</h2>
-                  {% for post in related_posts %}
-                    {% include archive-single.html %}
-                  {% endfor %}
-                </div>
-              {% endif %}
-            {% endif %}
-            <div class="archive">
-              <h2 class="barlow"><i class="fa-solid fa-shuffle"></i> Fancy a Markov Chain...?</h2>
-                {% assign random_posts = site.voyage | where_exp: "post", "post.path != page.path" %}
-                {% assign random_posts = random_posts | sample: 4 %}
-                {% assign updated_random_posts = "" | split: "" %}
-                {% for post in random_posts %}
-                  {% if post.subgalleries %}
-                    {% assign voyage_name = post.path | split: '/' | last | split: '.' | first %}
-                    {% assign subvoyage_folder = voyage_name | append: "/" %}
-                    {% assign subs = site.subvoyage | where_exp: "item", "item.gallery_name contains subvoyage_folder" %}
-                    {% assign subs = subs | where_exp: "item", "item.path != page.path" %}
-                    {% if subs.size > 0 %}
-                      {% assign sampled_sub = subs | sample: 1 %}
-                      {% assign updated_random_posts = updated_random_posts | push: sampled_sub %}
-                    {% endif %}
-                  {% else %}
-                    {% assign updated_random_posts = updated_random_posts | push: post %}
-                  {% endif %}
-                {% endfor %}
-                {% for post in updated_random_posts %}
-                  {% include archive-single.html %}
-                {% endfor %}
-                {% if site.tag_voyage.type and page.tags[0] %}
-                  <div class="center-wrapper">
-                  {% include tag-list.html %}
-                  </div>
-                {% endif %}
-            </div>
-            {% if page.subscribe != false %}
-              {% include subscribe.html %}
-            {% endif %}
-            <footer class="page__meta">
-              {% include page__dates.html %}
-            </footer>
-            {% include scripts.html %}
-            <script type="module" src="{{ '/assets/js/gallery/index.js' | relative_url }}"></script>
-        </div>
-</div>
-
+  {%- comment -%} A voyage with its own gallery: the Photobook. {%- endcomment -%}
+  {% include photobook.html %}
 {% endif %}
 
 {% include tarots.html %}

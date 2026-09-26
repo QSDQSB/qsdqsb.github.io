@@ -1,31 +1,3 @@
 # Authored layer for gallery/rome/vatican-museum-vol-2 — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
-photos:
-  dscf1400:
-    caption: Square Garden, Leo XIII Avenue, Vatican City
-  dscf1407:
-    caption: Square Garden, Leo XIII Avenue, Vatican City
-  dscf1414:
-    caption: Square Garden, Leo XIII Avenue, Vatican City
-  dscf1417:
-    caption: Apostolic Palace, Via Fontenelle, Vatican City
-  dscf1418:
-    caption: Apostolic Palace, Via Fontenelle, Vatican City
-  dscf1421:
-    caption: Apostolic Palace, Via Fontenelle, Vatican City
-  dscf1422:
-    caption: Apostolic Palace, Via Fontenelle, Vatican City
-  dscf1428:
-    caption: Vatican Museums, Leo XIII Avenue, Vatican City
-  dscf1476:
-    caption: Vatican Museums, Leo XIII Avenue, Vatican City
-  dscf1501:
-    caption: Vatican Art Gallery, Viale della Zitella, Vatican City
-  dscf1503:
-    caption: Square Garden, Leo XIII Avenue, Vatican City
-  dscf1506:
-    caption: Stradone dei Giardini, Vatican City, Vatican City
-  dscf1572:
-    caption: Octagonal Courtyard, Vatican City, Vatican City
-  dscf1588:
-    caption: Le Scalette, Via Vittor Pisani, Rome
+photos: {}
