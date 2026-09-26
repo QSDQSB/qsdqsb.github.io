@@ -19,18 +19,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { PATHS, galleryKey, parseArgs } from './lib/config.mjs';
-import { paletteOf } from './lib/palette.mjs';
 import { kindredOf } from './lib/atlas.mjs';
 
 export const PALETTES_DIR = path.join(PATHS.localStore, 'palettes');
-const SAMPLE = 96, PARALLEL = 12;
+const PARALLEL = 12;
 
-/** One photo's palette and grid from the bytes of any tier. */
+/** One photo's palette and grid (lib/tiers.mjs), loaded only here: the build reads the sidecar without Sharp. */
 export async function paletteOfImage(buffer) {
-  const { default: sharp } = await import('sharp'); // only here: the build reads the sidecar without it
-  const { data, info } = await sharp(buffer).rotate().resize({ width: SAMPLE, height: SAMPLE, fit: 'inside' })
-    .removeAlpha().raw().toBuffer({ resolveWithObject: true });
-  return paletteOf(data, info.width, info.height, info.channels);
+  return (await import('./lib/tiers.mjs')).paletteOfImage(buffer);
 }
 
 export function readKindred() {

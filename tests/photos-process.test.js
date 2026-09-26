@@ -48,6 +48,8 @@ test('processor renders tiers, skips unchanged, garbage-collects, and keeps EXIF
   assert.strictEqual(p1.aperture, 2.8); assert.strictEqual(p1.shutter, '1/125'); assert.strictEqual(p1.iso, 200);
   assert.strictEqual(p1.taken, '2024-05-01T09:00:00+01:00');
   assert.ok(p1.thumbhash.length > 10); assert.match(p1.tint, /^#[0-9a-f]{6}$/);
+  // The palette: a flat frame is one colour, the whole of it; the grid, nine cells.
+  assert.match(p1.palette, /^[0-9a-f]{6}ff$/); assert.match(p1.grid, /^[0-9a-f]{54}$/);
   // 1600px long edge: 480, 960, 1280 rendered; 1920+ skipped (no upscaling).
   assert.deepStrictEqual(p1.sizes.webp, [480, 960, 1280]);
   // Tiers live under the original's content hash, not the gallery path.
@@ -72,6 +74,16 @@ test('processor renders tiers, skips unchanged, garbage-collects, and keeps EXIF
 
   out = run(store);
   assert.match(out, /0 processed, 2 unchanged, 0 removed/);
+
+  // A photo processed before palettes were kept gets one on the next run, from its tier, unrendered.
+  const bare = JSON.parse(fs.readFileSync(manifestAt, 'utf8'));
+  delete bare.photos[0].palette; delete bare.photos[0].grid;
+  fs.writeFileSync(manifestAt, JSON.stringify(bare));
+  out = run(store);
+  assert.match(out, /0 processed, 2 unchanged, 0 removed, 0 failed, 1 given their sun, weather or palette/);
+  const back = JSON.parse(fs.readFileSync(manifestAt, 'utf8')).photos[0];
+  assert.match(back.palette, /^[0-9a-f]{6}ff$/);
+  assert.strictEqual(back.sizes.webp.length, 3, 'nothing re-rendered');
 
   const h2 = manifest.photos[1].hash;
   fs.unlinkSync(path.join(originals, 'DSCF0002_old_name,_Place__XF90mm_f2.0_1:270s_ISO800.jpg'));
