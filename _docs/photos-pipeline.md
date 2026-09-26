@@ -28,7 +28,7 @@ every step is re-runnable and idempotent.
 |---|---|---|---|
 | Originals | `photos/<gallery>/<FRAME>.jpg` locally, mirrored to the private bucket | you, via `photos:push` | camera files, EXIF intact |
 | Machine | `<gallery>/manifest.json` and `<gallery>/.private.json`, both in the private originals bucket (the public bucket serves image tiers only) | the processor | dimensions, EXIF fields, thumbhash, tint, tier list, sun, weather; GPS and full EXIF only in `.private.json` |
-| Authored | `_data/photos/<gallery>.yml` (nested for sub-voyages: `_data/photos/prague/twilight.yml`) | you, by hand | captions, order, stories, featured, hidden |
+| Authored | `_data/photos/<gallery>.yml` (nested for sub-voyages: `_data/photos/prague/twilight.yml`) | you, by hand | captions, order, stories, featured, hidden, the voyage's cover |
 
 The site build merges machine + authored into `_data/photo_manifests/<key>.json`
 (gitignored) where `<key>` is the gallery with `/` replaced by `_`. Liquid reads
@@ -51,6 +51,10 @@ processor log.
 ```yaml
 title: London                # optional display override
 order: [dscf1797, dscf0958]  # pinned first, in this sequence; the rest follow by capture time
+cover:                       # the voyage's cover: a photo of this gallery and where its subject sits
+  photo: dscf7406
+  focus: [0.5, 0.483]        # x, y, 0–1 from the photo's top-left
+  # crops: { "4:3": [0.45, 0.6] }   only for a shape whose subject sits elsewhere
 photos:
   dscf1797:
     caption: East Smithfield, London
@@ -66,6 +70,32 @@ photos:
 Every key is optional. A photograph with no entry still shows, sorted by
 capture time, captioned by nothing. `npm run photos:fetch` validates the
 shape and reports slugs that no processed photo matches.
+
+### The voyage cover
+
+One photograph, one focal point. The cover is shown at 3.5:1 (cards), 3:1
+(the Photobook on a desktop), about 2.4:1 (the page hero), 1.91:1 (the link
+preview), 16:9, 4:3 and near-square (tablets and phones), always as a
+cover-fit crop, so a single 3:1 rectangle would leave every other shape
+wrong. The focus is where the subject sits; for each shape
+`scripts/photos/lib/cover.mjs` works out the object-/background-position that
+puts it in the middle of the box, as near as the photo's edges allow.
+
+- `photos:fetch` resolves every `cover:` into
+  `_data/photo_manifests/_covers.json` (the photo's tiers, placeholder and a
+  position per shape), keyed as the pages look it up: the gallery's key, or the
+  name of a voyage in parts, whose cover lives in `_data/photos/<parent>.yml`
+  beside the parts' folder and names a part's photo as `part/slug`.
+- `_includes/voyage-cover.html` is the only reader: the Photobook cover, the
+  page hero, the cards, Home's recent updates and the link preview all go
+  through it. The book opens on the cover's photo too (`coverIndex`).
+- The link preview is a 1200 × 630 JPEG cut around the focus at build time
+  (`scripts/generate-cover-og.mjs`, part of `npm run covers`, gitignored).
+- A voyage in parts shows the cover in its hero; its depth map belongs to the
+  photo (`images/depth/photos/<gallery>/<slug>.depth.jpg`, `npm run
+  generate:depth`), and the canvas keeps the focus central.
+- A voyage without `cover:` keeps its `header.overlay_image` everywhere, as
+  before. Changing a focus needs a rebuild, never reprocessing.
 
 ### Manifest entry (private; the build reads it with an R2 key)
 
