@@ -118,6 +118,13 @@ reads its unedited camera file, and copies the record into our edited file. Then
 go). If the library holds no camera original for a photo (only an edited export was ever imported),
 the record can't be recovered and the photo simply shows without it.
 
+### Photos show no colours
+
+The colophon's Colours row, the specs palette, the sheet's colour order, `/light/` and `/drift/` need
+each photo's `palette`. The processor adds it (on the next run for older photos: owner's go, it
+writes the manifest). To see colours locally before that, `node scripts/photos/palettes.mjs`, then
+`npm run photos:fetch`: a git-ignored sidecar, nothing written to R2.
+
 ## When something looks wrong
 
 | Symptom | Likely cause | Do |
@@ -136,6 +143,7 @@ the record can't be recovered and the photo simply shows without it.
 | Scripts | `scripts/photos/` (`ingest`, `import`, `enrich`, `locate`, `recollect`, `push`, `plan`, `prune`, `trash`, `status`, `captions`, `process`, `fetch-manifests`) |
 | Authored words | `_data/photos/<g>.yml`; places `_data/photo_locations/<g>.yml` |
 | Page templates | `_includes/photobook/*.html`, `_sass/_photobook.scss`, `assets/js/photobook/` (see `_docs/layouts.md`) |
-| Book logic at build | `scripts/photos/lib/book.mjs` (rows, cover, colophon, sun and weather phrases, film letters) |
+| Book logic at build | `scripts/photos/lib/book.mjs` (rows, cover, colophon, sun and weather phrases, film letters, colours) |
+| Colours | `scripts/photos/lib/palette.mjs` (palette, distance, swatches), `lib/atlas.mjs` (across voyages); pages `_pages/light.html`, `_pages/drift.html`, `assets/js/colour/`, `_sass/_colour.scss` |
 | Database | D1 `qsdqsb-photos`, worker `workers/photos-db/` (api.qsdqsb.com) |
 | Full reference | `_docs/photos-pipeline.md` |

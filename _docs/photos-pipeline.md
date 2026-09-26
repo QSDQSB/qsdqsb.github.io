@@ -75,6 +75,7 @@ shape and reports slugs that no processed photo matches.
   "taken": "2023-06-16T18:22:01+01:00", "camera": "FUJIFILM X-T5", "lens": "XF90mmF2 R LM WR",
   "focal": 90, "focal35": 137, "aperture": 4.3, "shutter": "1/2000", "iso": 320, "exposureBias": 0,
   "thumbhash": "…base64…", "tint": "#1a1c20",
+  "palette": "171123…ww × up to 32", "grid": "rrggbb × 9",
   "sizes": { "webp": [480, 960, 1280, 1920, 2560, 2880, 4096], "jpg": [480, 960, 1280, 1920, 2560, 2880, 4096], "avif": [480, 960, 1280, 1920] } }
 ```
 
@@ -86,6 +87,28 @@ first 16 hex of the original's SHA-256 (a replaced original is a new URL, so
 (`<base>/t/<hash>`) and its `sizes`. Sizes are the long edge.
 Nothing public is larger than 4096 px. Every tier is re-encoded, so no EXIF
 and no GPS ever reaches the public bucket.
+
+### Colours
+
+Every photo's colours are compressed once (`scripts/photos/lib/palette.mjs`) and kept beside the
+thumbhash:
+
+- `palette`: up to 32 colours found by seeded k-means in OKLab on a 96 px downsample, stored as
+  `rrggbbww` each (sRGB, then the share out of 255), largest first. Deterministic: the same pixels,
+  the same string.
+- `grid`: the mean colour of each ninth of the frame, row by row (`rrggbb` × 9): what sits above what.
+
+Everything else is derived at build time and can be re-derived: the picture distance between two
+photos (the exact earth mover's distance between palettes, in OKLab ΔE: how far, on average, a unit
+of colour must travel), a fixed 32-anchor vector for quick shortlists, five display swatches, each
+voyage's barcode and colour order (`book.mjs colourOf`), and, across voyages, kindred frames and the
+light in bands of the sun's altitude (`lib/atlas.mjs`), which feed `/light/` and `/drift/`.
+
+The processor computes both for a new photo, and for an old one on its next run from the 480 px tier
+(nothing re-rendered). Until that run, `node scripts/photos/palettes.mjs` computes them from the
+public tiers into a local, git-ignored sidecar (`.photos-local/palettes/`, plus `_kindred.json`),
+which `photos:fetch` folds in by hash. With neither, pages simply show no colours.
+`node scripts/photos/palette-sheet.mjs` draws a contact sheet of nearest neighbours for judging by eye.
 
 ## Commands
 
@@ -100,7 +123,9 @@ and no GPS ever reaches the public bucket.
 | `npm run photos:plan [-- --gallery x]` | Reports new, changed, orphaned files; refuses orphans still named in YAML. | read |
 | `npm run photos:prune -- --all` / `--gallery x [--gallery y]…` `[--dry-run]` | Moves orphans to `trash/<date>/…` in the originals bucket. Lists every file first; one confirmation (type `QSD`) covers them all. `--all` skips galleries this machine has no `photos/` folder for. | write |
 | `npm run photos:process [-- --gallery x] [--force] [--dry-run] [--local dir] [--no-avif]` | The processor. Runs in Actions; runs locally against a directory with `--local`. | read + write |
-| `npm run photos:fetch [-- --local dir] [--strict]` | Pre-build merge into `_data/photo_manifests/`. Never fails a build. | read (HTTP, public) |
+| `npm run photos:fetch [-- --local dir] [--strict]` | Pre-build merge into `_data/photo_manifests/`, and `colour-atlas.json` when colours are known. Never fails a build. | read (HTTP, public) |
+| `node scripts/photos/palettes.mjs [--gallery x] [--force]` | Every photo's palette from its public 480 px tier into the local sidecar, and kindred frames across voyages (cached; ~6 s for 600 photos). | read (HTTP, public) |
+| `node scripts/photos/palette-sheet.mjs [--gallery x] [--seeds 10] [--out f.html]` | A contact sheet: photos and their nearest under three measures. | none |
 | `npm run photos:status [-- --gallery x] [--offline] [--no-fetch] [--json]` | One row per gallery: local, bucket, pending, processed, captioned, unlisted, orphans, last processed, formats. Exits 1 on anything out of place. | read |
 | `npm run photos:captions -- --gallery x [--dry-run]` | Appends an empty `caption:` entry for every slug the YAML lacks, in capture-time order. Never rewrites what is there. | none |
 | `npm run photos:recollect -- --gallery x [--rename] [--allow-drop] [--push] [--offline]` | The check before pushing imported files: matched, new, renamed, vanishing. Refuses while captioned work would vanish. | read (+ write with `--push`) |
