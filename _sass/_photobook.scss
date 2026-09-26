@@ -880,6 +880,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   --top: var(--bar);     // the print's top margin: the band, except in picture only
   --bot: 5.4rem;
   --side: clamp(1rem, 1.6vw, 1.5rem);   // the print as large as the screen allows
+  --specs-w: clamp(15.5rem, 25vw, 20rem); // the panel narrows in smaller windows, for the print
   --right: var(--side);
   transition: --pr 0.55s $cubic-bezier-standard;
   width: 100vw;
@@ -1245,7 +1246,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   top: var(--top);
   right: 1rem;
   z-index: 9;
-  width: 20rem;
+  width: var(--specs-w);
   max-height: calc(100% - var(--top) - 1rem);
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -1271,12 +1272,48 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 // They share a top line: the print hangs from the panel's top, as a label hangs beside a frame, and
 // the panel is never taller than the print (it scrolls within it). Closed, the print is centred.
 .photobook-lightbox.has-specs.is-pinned {
-  --right: calc(21rem + var(--side));
+  --right: calc(var(--specs-w) + 1rem + var(--side));
   --bot: 3rem;
 
   .photobook-lightbox__mat img { object-position: 50% 0; }
   .photobook-lightbox__mount { top: 0; translate: -50% 0; }
-  .photobook-specs { max-height: min(100dvh - var(--top) - var(--bot), (100vw - var(--side) - var(--right)) / var(--pr)); }
+  // It may run on below the print's foot into the free room there, rather than be clipped.
+  .photobook-specs { max-height: calc(100dvh - var(--top) - 1rem); }
+}
+
+// Beneath the print (lightbox.js placeSpecs, when that leaves the print larger): the specs run as a
+// low band across the width, in three columns: the place and the camera; the figures in one row
+// with the film strip; the settings, flowing into as many columns as fit.
+.photobook-lightbox.has-specs.is-pinned.is-specs-below {
+  .photobook-specs {
+    top: var(--band-top, auto);
+    left: var(--side);
+    right: var(--side);
+    width: auto;
+    max-height: calc(100dvh - var(--band-top, 0px) - var(--side));
+  }
+
+  .photobook-specs__inner {
+    grid-template-columns: minmax(12rem, 1fr) minmax(0, 2.3fr) minmax(0, 1.9fr);
+    align-items: start;
+    column-gap: 1.6rem;
+    padding: 1rem 1.3rem;
+
+    > * { padding: 0; border-top: 0; }
+  }
+
+  .photobook-specs__head { grid-column: 1; grid-row: 1; }
+  .photobook-specs__gear { grid-column: 1; grid-row: 2; padding-top: 0.9rem; }
+
+  .photobook-specs__highlights,
+  .photobook-specs__settings {
+    grid-row: 1 / span 2;
+    padding-left: 1.6rem;
+    border-left: 1px dotted var(--photobook-line);
+  }
+
+  .photobook-specs__highlights { grid-column: 2; grid-template-columns: repeat(auto-fit, minmax(5.2rem, 1fr)); gap: 0.9rem 0.6rem; }
+  .photobook-specs__settings { grid-column: 3; grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr)); }
 }
 
 .photobook-specs__inner {
@@ -1320,9 +1357,10 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   gap: 1rem 0.6rem;
   font-variant-numeric: tabular-nums;
 
-  > div { display: grid; align-content: start; gap: 0.4rem; min-width: 0; }
+  // A long figure (−50°C, 1/22000s) widens its column rather than running into the next.
+  > div { display: grid; align-content: start; gap: 0.4rem; min-width: auto; }
 
-  b { font: 400 1.45rem/1 $didot-family; white-space: nowrap; }
+  b { font: 400 clamp(1.1rem, 1.8vw, 1.45rem)/1 $didot-family; white-space: nowrap; } // smaller with a narrower panel
   b small { margin-left: 0.1rem; font: 400 0.7rem $barlow-font-family; color: var(--photobook-ink-3); }
 
   > div > span {
@@ -1340,10 +1378,6 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 .photobook-specs__sun {
   b { display: flex; align-items: center; gap: 0.2em; }
 }
-
-// A frost like −50°C is wider than a third of the panel: that column takes what it needs from the others.
-.photobook-specs__highlights > .photobook-specs__weather,
-.photobook-specs__highlights > .photobook-specs__sun { min-width: auto; }
 
 .photobook-specs__sun .photobook-sun__glyph { width: 1.375em; height: 1.1em; color: var(--photobook-ink-3); }
 
@@ -1445,7 +1479,10 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
     max-height: $height;
     border-radius: 14px 14px 0 0;
     transform: translateY(100%);
+    --sheet: 1;   // lightbox.js leaves a sheet where it is (placeSpecs)
   }
+
+  .photobook-specs__highlights b { font-size: 1.45rem; } // a sheet has the screen's width
 
   // The rail stands on the sheet's top edge, and the print makes room for both.
   .photobook-lightbox.has-specs { --bot: calc(#{$height} + 3.4rem); }

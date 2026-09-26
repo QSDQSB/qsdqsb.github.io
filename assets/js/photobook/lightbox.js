@@ -115,7 +115,7 @@ export function lightbox(frames) {
     const here = !screening && pos >= 0 && [...document.querySelectorAll(`.photobook-frame[data-i="${order[pos]}"] .photobook-frame__print`)].find((b) => b.offsetParent);
     const was = screening ? screenFrom : null;
     stop(); screening = false; lb.classList.remove('is-screening');
-    lb.classList.remove('has-specs', 'is-pinned', 'is-bare', 'is-idle'); pressed('bare', false); setZoom(1);
+    lb.classList.remove('has-specs', 'is-pinned', 'is-bare', 'is-idle'); pressed('bare', false); setZoom(1); placeSpecs();
     if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
     mat.replaceChildren(); wash.replaceChildren(); pos = -1;
     const back = here || lastFocus;
@@ -168,6 +168,7 @@ export function lightbox(frames) {
     $('.photobook-lightbox__count').innerHTML = `<b>${String(pos + 1).padStart(2, '0')}</b> / ${String(order.length).padStart(2, '0')}`;
     $('.photobook-lightbox__caption').innerHTML = captionHTML(p);
     specsIn.innerHTML = specsHTML(p);
+    placeSpecs();
     const railHadFocus = rail.contains(document.activeElement);
     for (const [k, b] of [...rail.children].entries()) {
       const on = k === pos;
@@ -266,6 +267,31 @@ export function lightbox(frames) {
     lb.classList.toggle('is-pinned', specOpen && !bare);
     lb.classList.toggle('has-specs', specOpen && !bare);
     pressed('specs', specOpen);
+    placeSpecs();
+  }
+
+  // Where the open specs stand: beside the print, or beneath it as a low band of columns, whichever
+  // leaves the print larger for this frame's shape and this window (a landscape in a laptop window
+  // goes full width with the specs under it; a portrait keeps them beside). The band's height is
+  // measured as laid out; print and band are centred together in the room below the tools.
+  // A phone's sheet (--sheet on the panel) has its own place and is left alone.
+  function placeSpecs() {
+    const clear = () => { lb.classList.remove('is-specs-below'); for (const v of ['--top', '--right', '--bot', '--band-top']) lb.style.removeProperty(v); };
+    clear();
+    if (!lb.classList.contains('is-pinned') || pos < 0 || getComputedStyle(specsEl).getPropertyValue('--sheet').trim()) return;
+    const W = window.innerWidth, H = window.innerHeight, rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const r = cur().ratio || 1.5, side = Math.min(1.5 * rem, Math.max(rem, 0.016 * W)), bar = 4 * rem, gap = rem;
+    const area = (w, h) => { const pw = Math.max(0, Math.min(w, h * r)); return pw * pw / r; };
+    const besideArea = area(W - side - (specsEl.offsetWidth + rem + side), H - bar - 3 * rem);
+    lb.classList.add('is-specs-below');
+    const band = specsEl.scrollHeight;
+    const bw = W - 2 * side, bh = H - bar - gap - band - side;
+    if (area(bw, bh) <= besideArea * 1.08) return clear();   // beside, unless beneath is clearly larger
+    const ph = Math.min(bw, bh * r) / r, top = bar + Math.max(0, (H - bar - side - (ph + gap + band)) / 2);
+    lb.style.setProperty('--top', `${top}px`);
+    lb.style.setProperty('--right', `${side}px`);
+    lb.style.setProperty('--bot', `${H - top - ph}px`);
+    lb.style.setProperty('--band-top', `${top + ph + gap}px`);
   }
   const revealSpecs = () => { if (specOpen && !lb.classList.contains('is-bare')) { lb.classList.add('has-specs'); applySpecs(); } };
   // In picture only the panel is out of sight whatever its setting, so the button always brings it out.
@@ -277,7 +303,7 @@ export function lightbox(frames) {
   }
   function bare(on = !lb.classList.contains('is-bare')) {
     lb.classList.toggle('is-bare', on); pressed('bare', on);
-    if (on) lb.classList.remove('has-specs', 'is-pinned'); else applySpecs();
+    if (on) { lb.classList.remove('has-specs', 'is-pinned'); placeSpecs(); } else applySpecs();
     // Picture only asks for the whole screen where the browser allows it; the page never depends on it.
     if (on && !document.fullscreenElement) lb.requestFullscreen?.().catch(() => {});
     if (!on && document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
@@ -328,7 +354,7 @@ export function lightbox(frames) {
     else if (k === 'z') setZoom(zoom > 1.02 ? 1 : 2.2); else return;
     e.preventDefault(); wake();
   });
-  window.addEventListener('resize', () => { if (lb.open && pos >= 0) { fitFor(cur()); upgrade(); } });
+  window.addEventListener('resize', () => { if (lb.open && pos >= 0) { fitFor(cur()); placeSpecs(); upgrade(); } });
 
   // Loupe: double-click (or Z) to look closer, or pinch on a trackpad for any depth from 1× to 4×,
   // about the point between the fingers; the print follows the pointer.
