@@ -6,6 +6,8 @@
  *   in   _data/photo_manifests/<key>.json          (npm run photos:fetch first)
  *   in   img.qsdqsb.com/t/<hash>/480.webp          public, read only
  *   out  .photos-local/palettes/<key>.json         { photos: { <hash>: { palette, grid } } } (gitignored)
+ *   out  .photos-local/palettes/_kindred.json      every photo's nearest in other voyages (lib/atlas.mjs),
+ *                                                  recomputed only when the set of photos changes
  *
  * Keyed by content hash, so a reorder or a caption never costs a re-run and
  * a replaced photograph is computed afresh. `photos:fetch` folds the sidecar
@@ -18,6 +20,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { PATHS, galleryKey, parseArgs } from './lib/config.mjs';
 import { paletteOf } from './lib/palette.mjs';
+import { kindredOf } from './lib/atlas.mjs';
 
 export const PALETTES_DIR = path.join(PATHS.localStore, 'palettes');
 const SAMPLE = 96, PARALLEL = 12;
@@ -28,6 +31,25 @@ export async function paletteOfImage(buffer) {
   const { data, info } = await sharp(buffer).rotate().resize({ width: SAMPLE, height: SAMPLE, fit: 'inside' })
     .removeAlpha().raw().toBuffer({ resolveWithObject: true });
   return paletteOf(data, info.width, info.height, info.channels);
+}
+
+export function readKindred() {
+  try { return JSON.parse(fs.readFileSync(path.join(PALETTES_DIR, '_kindred.json'), 'utf8')).photos || {}; } catch { return {}; }
+}
+
+/** Kindred frames for every photo in the sidecars; skipped when the same photos were done last time. */
+function writeKindred({ force = false } = {}) {
+  const items = [];
+  for (const f of fs.readdirSync(PALETTES_DIR).filter(f => f.endsWith('.json') && !f.startsWith('_'))) {
+    const side = JSON.parse(fs.readFileSync(path.join(PALETTES_DIR, f), 'utf8'));
+    for (const [hash, v] of Object.entries(side.photos || {})) items.push({ hash, gallery: side.gallery, palette: v.palette });
+  }
+  const signature = items.map(x => x.hash).sort().join('');
+  const file = path.join(PALETTES_DIR, '_kindred.json');
+  try { if (!force && JSON.parse(fs.readFileSync(file, 'utf8')).signature === signature) return 'kept'; } catch { /* compute */ }
+  const t = Date.now();
+  fs.writeFileSync(file, JSON.stringify({ generated: new Date().toISOString(), signature, photos: kindredOf(items) }) + '\n');
+  return `${items.length} photos in ${((Date.now() - t) / 1000).toFixed(1)} s`;
 }
 
 export function readSidecar(gallery) {
@@ -62,6 +84,7 @@ async function main() {
     }));
     fs.writeFileSync(path.join(PALETTES_DIR, `${galleryKey(gallery)}.json`), JSON.stringify({ gallery, generated: new Date().toISOString(), photos: out }) + '\n');
   }
+  console.log(`kindred: ${writeKindred({ force: !!args.force })}`);
   console.log(`palettes: ${done} computed, ${kept} kept, ${failed} failed, ${galleries.length} galleries in ${((Date.now() - t0) / 1000).toFixed(1)} s (${done ? (busy / done).toFixed(0) : 0} ms of compute per photo)`);
   return failed ? 1 : 0;
 }
