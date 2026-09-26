@@ -9,6 +9,8 @@
  *   in   _data/photo_locations/<gallery>.yml               place names, when located
  *   out  _data/photo_manifests/<key>.json                  (gitignored)
  *   out  _data/photo_manifests/_index.json                 summary + warnings
+ *   out  _data/photo_manifests/colour-atlas.json           every coloured photo across voyages, when
+ *                                                          palettes are known (lib/atlas.mjs)
  *
  * Galleries are the `gallery_name` values referenced by _voyage and
  * _subvoyage frontmatter, so a voyage with no processed photos still gets
@@ -42,7 +44,8 @@ import { FsStore, R2Store } from './lib/store.mjs';
 import { rcloneVersion, remoteExists } from './lib/rclone.mjs';
 import { mergeManifest, validateAuthored } from './lib/manifest.mjs';
 import { bookOf } from './lib/book.mjs';
-import { readSidecar } from './palettes.mjs';
+import { readSidecar, readKindred } from './palettes.mjs';
+import { atlasOf } from './lib/atlas.mjs';
 
 const require = createRequire(import.meta.url);
 const { referencedGalleries } = require('../check-gallery-integrity.js');
@@ -128,6 +131,7 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
   fs.mkdirSync(PATHS.mergedDir, { recursive: true });
   const index = { generated: new Date().toISOString(), base: env.publicBase, galleries: {} };
   let unreachable = 0;
+  const books = [];
 
   // One budget for the whole run: when it expires, every fetch still in
   // flight aborts and those galleries fall back like any unreachable one.
@@ -155,7 +159,12 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
     if (note) merged.warnings.push(note);
     fs.writeFileSync(out, JSON.stringify(merged, null, 2) + '\n');
     index.galleries[gallery] = summary(merged);
+    books.push(merged);
   });
+  // Across voyages: only when colours are known; otherwise no atlas, and its pages say so.
+  const atlasFile = path.join(PATHS.mergedDir, 'colour-atlas.json');
+  const atlas = atlasOf(books, readKindred());
+  if (atlas) fs.writeFileSync(atlasFile, JSON.stringify(atlas) + '\n'); else fs.rmSync(atlasFile, { force: true });
   fs.writeFileSync(path.join(PATHS.mergedDir, '_index.json'), JSON.stringify(index, null, 2) + '\n');
   return { index, unreachable };
 }

@@ -95,3 +95,35 @@ test('swatches merge to five at most, and a colour path visits every frame once'
   assert.deepEqual([...path].sort(), [0, 1, 2, 3]);
   assert.deepEqual(path, [3, 2, 1, 0], 'dark to light along the shortest line');
 });
+
+const atlas = () => import('../scripts/photos/lib/atlas.mjs');
+
+test('kindred frames come from other voyages only, nearest first', async () => {
+  const { paletteOf } = await lib();
+  const { kindredOf } = await atlas();
+  const pal = (tint) => paletteOf(frame(48, 48, tint), 48, 48).palette;
+  const items = [
+    { hash: 'a', gallery: 'prague/twilight', palette: pal([0, 0, 0]) },
+    { hash: 'b', gallery: 'prague/portraits', palette: pal([1, 0, 0]) },   // same voyage: never kindred
+    { hash: 'c', gallery: 'london', palette: pal([6, 0, -6]) },
+    { hash: 'd', gallery: 'porto', palette: pal([40, 20, -40]) },
+  ];
+  const k = kindredOf(items, { k: 3 });
+  assert.deepEqual(k.a.map(([h]) => h), ['c', 'd']);
+  assert.ok(k.a[0][1] <= k.a[1][1]);
+  assert.ok(!k.b.some(([h]) => h === 'a'));
+});
+
+test('the atlas pools each band of the sun, and is nothing without colours', async () => {
+  const { atlasOf } = await atlas();
+  const ph = (slug, alt, sw) => ({ slug, hash: slug, url: `u/${slug}`, ratio: 1.5, light: { alt, phase: 'day', text: 'x' }, strip: ['#111111', '#222222', '#333333'], swatches: sw });
+  const book = { gallery: 'london', photos: [ph('p1', -4, [['#a96e6e', 60], ['#242b44', 40]]), ph('p2', -3, [['#cb9286', 100]]), ph('p3', 30, [['#908e8e', 100]])] };
+  const a = atlasOf([book], { p1: [['p3', 5]] });
+  const blue = a.bands.find((b) => b.key === 'blue'), day = a.bands.find((b) => b.key === 'day');
+  assert.equal(blue.n, 2);
+  assert.equal(day.n, 1);
+  assert.ok(blue.rose > day.rose, 'the blue hour leans rose');
+  assert.deepEqual(a.photos[0].k, [2]);
+  assert.ok(!('hash' in a.photos[0]));
+  assert.equal(atlasOf([{ gallery: 'x', photos: [{ slug: 's', hash: 'h' }] }]), null);
+});
