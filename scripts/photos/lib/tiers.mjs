@@ -1,7 +1,8 @@
 /**
  * Renders the public tiers for one original and computes the small
  * per-photo facts the grid needs before any tier loads: oriented size,
- * a thumbhash placeholder, and the dominant colour.
+ * a thumbhash placeholder, the dominant colour, and the palette (32 colours
+ * with their shares, and the 3×3 grid: lib/palette.mjs).
  *
  * Every output is re-encoded through Sharp, which drops metadata by
  * default, so no EXIF (and no GPS) ever reaches the public bucket.
@@ -10,8 +11,19 @@
 import sharp from 'sharp';
 import { rgbaToThumbHash } from 'thumbhash';
 import { ALL_SIZES, FORMATS } from './config.mjs';
+import { paletteOf } from './palette.mjs';
 
-/** @returns {Promise<{w:number,h:number,thumbhash:string,tint:string}>} */
+// The palette is read from a small downsample: 96 px on the long edge is plenty for 32 colours.
+const PALETTE_SAMPLE = 96;
+
+/** A photograph's palette and grid, from the bytes of the original or of any tier. */
+export async function paletteOfImage(buffer) {
+  const { data, info } = await sharp(buffer).rotate().resize({ width: PALETTE_SAMPLE, height: PALETTE_SAMPLE, fit: 'inside' })
+    .removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  return paletteOf(data, info.width, info.height, info.channels);
+}
+
+/** @returns {Promise<{w:number,h:number,thumbhash:string,tint:string,palette:string,grid:string}>} */
 export async function analyse(buffer) {
   const base = sharp(buffer).rotate(); // apply EXIF orientation, then forget it
   const meta = await sharp(buffer).metadata();
@@ -24,7 +36,8 @@ export async function analyse(buffer) {
 
   const { dominant } = await base.clone().stats();
   const hex = (n) => n.toString(16).padStart(2, '0');
-  return { w, h, thumbhash, tint: `#${hex(dominant.r)}${hex(dominant.g)}${hex(dominant.b)}` };
+  const { palette, grid } = await paletteOfImage(buffer);
+  return { w, h, thumbhash, tint: `#${hex(dominant.r)}${hex(dominant.g)}${hex(dominant.b)}`, palette, grid };
 }
 
 /**
