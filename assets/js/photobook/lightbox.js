@@ -192,6 +192,9 @@ export function lightbox(frames) {
 
   const captionHTML = (p) => `${p.place ? `<h3>${esc(p.place)}</h3>` : ''}${p.city ? `<span class="photobook-lightbox__city">${esc(p.city)}</span>` : ''}<div class="photobook-lightbox__specs-line">${specsLine(p)}</div>`;
 
+  // The frame's five colours as bands of their share; each names its value under the pointer.
+  const paletteHTML = (p) => (p.swatches?.length ? `<div class="photobook-specs__palette" role="img" aria-label="Palette: ${p.swatches.map(([h, pc]) => `${h} ${Math.round(pc)}%`).join(', ')}">${p.swatches.map(([h, pc]) => `<i style="--c:${h};flex:${pc}" data-tip="${h.toUpperCase()} · ${Math.round(pc)}%"></i>`).join('')}</div>` : '');
+
   function specsHTML(p) {
     const ev = p.bias ? ` · ${p.bias > 0 ? '+' : '−'}${Math.abs(Math.round(p.bias * 100) / 100)} EV` : '';
     const sun = p.light ? `<div class="photobook-specs__sun"><b>${String(p.light.alt).replace('-', '−')}°${sunGlyph(p.light)}</b><span>${esc(p.light.text)}</span></div>` : '';
@@ -207,6 +210,7 @@ export function lightbox(frames) {
         ${p.weather ? `<div class="photobook-specs__weather"><b>${String(p.weather.t).replace('-', '−')}°C</b><span>${weatherGlyph(p.weather)}${esc(p.weather.text)}</span></div>` : ''}
         ${sun}
         ${p.film ? `<div class="photobook-specs__film"><div class="photobook-specs__print" style="--film:${p.hue}">${esc(p.film)}</div></div>` : ''}
+        ${paletteHTML(p)}
       </div>
       ${p.camera || p.lens ? `<p class="photobook-specs__gear"><b>${esc(p.camera || '')}</b>${p.lens ? ` · ${esc(p.lens)}` : ''}</p>` : ''}
       ${settings}`;

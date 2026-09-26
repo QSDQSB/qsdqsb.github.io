@@ -11,4 +11,12 @@
   </div>
   {%- endfor %}
 </div>
-<div class="photobook-sheet" id="photobook-sheet" hidden></div>
+{%- comment -%} On the sheet the frames can also lie by colour: one gradient, dark to light (book.mjs colourOf). {%- endcomment -%}
+{%- assign colour = include.book.book.colour -%}
+{%- if colour %}
+<div class="photobook-sheet__order" role="group" aria-label="Order of the sheet" hidden>
+  <button type="button" aria-pressed="true" data-order="sequence">Sequence</button>
+  <button type="button" aria-pressed="false" data-order="colour" style="--ramp:linear-gradient(90deg,{{ colour.ramp | join: ',' }})">Colour</button>
+</div>
+{%- endif %}
+<div class="photobook-sheet" id="photobook-sheet"{% if colour %} data-colour="{{ colour.order | join: ',' }}"{% endif %} hidden></div>

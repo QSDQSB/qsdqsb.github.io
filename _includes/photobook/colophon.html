@@ -1,8 +1,12 @@
 {%- comment -%}
   Three bars on one baseline: the films, the lenses, and the hours the frames were made (one dot
   per frame at its local time, stacked where frames gather; gold for a low sun, blue after dusk).
+  Beneath them, when the frames' palettes are known, the voyage's colours: its barcode, a sliver
+  per frame in the book's order, each shaded top to bottom as its frame is (a sliver opens its
+  frame), and the five colours of the whole voyage.
 {%- endcomment -%}
 {%- assign c = include.book.book.colophon -%}
+{%- assign colour = include.book.book.colour -%}
 {%- assign lens_shades = "var(--photobook-ink),var(--photobook-ink-2),var(--photobook-ink-3),var(--photobook-line)" | split: "," -%}
 <section class="photobook-colophon" aria-labelledby="photobook-colophon-title">
   <h2 class="photobook-kicker" id="photobook-colophon-title">Colophon</h2>
@@ -31,6 +35,17 @@
         {%- if c.phases.golden > 0 %}<i class="photobook-hours__dot photobook-hours__dot--golden"></i><span>Low sun</span><span class="photobook-legend__n">{{ c.phases.golden }}</span>{% endif -%}
         {%- if c.phases.night > 0 %}<i class="photobook-hours__dot photobook-hours__dot--night"></i><span>Blue hour, night</span><span class="photobook-legend__n">{{ c.phases.night }}</span>{% endif -%}
       </div>
+    </div>
+    {%- endif %}
+    {%- if colour %}
+    <div class="photobook-colophon__colours">
+      <h3>Colours</h3>
+      <div class="photobook-barcode" role="group" aria-label="Every frame's colours, in the book's order">
+        {%- for b in colour.barcode -%}
+        {%- if b.strip %}<button type="button" data-i="{{ b.i }}" style="--t:{{ b.strip[0] }};--m:{{ b.strip[1] }};--b:{{ b.strip[2] }}" aria-label="Frame {{ b.i | plus: 1 }}: {{ b.name | escape }}" data-tip="{{ b.name | escape }}"></button>{% else %}<span></span>{% endif -%}
+        {%- endfor -%}
+      </div>
+      <div class="photobook-palette">{% for s in colour.palette %}<span style="--c:{{ s.hex }}"><i></i>{{ s.hex | remove: "#" | upcase }}<b>{{ s.pc }}</b></span>{% endfor %}</div>
     </div>
     {%- endif %}
   </div>
