@@ -276,9 +276,12 @@ export function lightbox(frames) {
   // measured as laid out; print and band are centred together in the room below the tools.
   // A phone's sheet (--sheet on the panel) has its own place and is left alone.
   function placeSpecs() {
+    lb.classList.remove('is-compact');
     const clear = () => { lb.classList.remove('is-specs-below'); for (const v of ['--top', '--right', '--bot', '--band-top']) lb.style.removeProperty(v); };
     clear();
     if (!lb.classList.contains('is-pinned') || pos < 0 || getComputedStyle(specsEl).getPropertyValue('--sheet').trim()) return;
+    // A panel taller than its window sets itself tighter, so all of it shows without scrolling.
+    const fitPanel = () => { if (specsEl.scrollHeight > specsEl.clientHeight + 1) lb.classList.add('is-compact'); };
     const W = window.innerWidth, H = window.innerHeight, rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
     const r = cur().ratio || 1.5, side = Math.min(1.5 * rem, Math.max(rem, 0.016 * W)), bar = 4 * rem, gap = rem;
     const area = (w, h) => { const pw = Math.max(0, Math.min(w, h * r)); return pw * pw / r; };
@@ -286,7 +289,7 @@ export function lightbox(frames) {
     lb.classList.add('is-specs-below');
     const band = specsEl.scrollHeight;
     const bw = W - 2 * side, bh = H - bar - gap - band - side;
-    if (area(bw, bh) <= besideArea * 1.08) return clear();   // beside, unless beneath is clearly larger
+    if (area(bw, bh) <= besideArea * 1.08) { clear(); return fitPanel(); }   // beside, unless beneath is clearly larger
     const ph = Math.min(bw, bh * r) / r, top = bar + Math.max(0, (H - bar - side - (ph + gap + band)) / 2);
     lb.style.setProperty('--top', `${top}px`);
     lb.style.setProperty('--right', `${side}px`);

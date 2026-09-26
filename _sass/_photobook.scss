@@ -1281,6 +1281,18 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-specs { max-height: calc(100dvh - var(--top) - 1rem); }
 }
 
+// Compact (lightbox.js placeSpecs, when the panel is taller than its window): the same panel set
+// tighter, smaller figures and less air between the sections, so all of it shows at once.
+.photobook-lightbox.is-compact .photobook-specs {
+  .photobook-specs__inner { padding: 0.8rem 0.95rem 0.9rem; > * { padding: 0.6rem 0; } }
+  .photobook-specs__head { gap: 0.15rem 0.6rem; h3 { font-size: 1.05rem; } }
+  .photobook-specs__highlights { gap: 0.55rem 0.5rem; > div { gap: 0.25rem; } }
+  .photobook-specs__highlights b { font-size: 1.12rem; }
+  .photobook-specs__print { padding: 0.42rem 0.6rem; font-size: 0.6rem; }
+  .photobook-specs__gear { font-size: 0.68rem; }
+  .photobook-specs__settings { gap: 0.45rem 0.4rem; > div { gap: 0.15rem; } dd { font-size: 0.66rem; } }
+}
+
 // Beneath the print (lightbox.js placeSpecs, when that leaves the print larger): the specs run as a
 // low band across the width, in three columns: the place and the camera; the figures in one row
 // with the film strip; the settings, flowing into as many columns as fit.
