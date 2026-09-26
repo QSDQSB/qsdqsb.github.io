@@ -127,3 +127,41 @@ test('the atlas pools each band of the sun, and is nothing without colours', asy
   assert.ok(!('hash' in a.photos[0]));
   assert.equal(atlasOf([{ gallery: 'x', photos: [{ slug: 's', hash: 'h' }] }]), null);
 });
+
+const dotsLib = () => import('../scripts/photos/lib/dots.mjs');
+const sigLib = () => import('../scripts/photos/lib/signature.mjs');
+
+// A night frame: mostly black, a band of lamplight, and a red of half a percent.
+function night(w = 60, h = 40) {
+  const px = Buffer.alloc(w * h * 3);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const o = (y * w + x) * 3, n = (x * 5 + y * 3) % 7;
+    const c = y > 26 && y < 34 ? [220 + n, 150 + n, 60] : x < 3 && y < 4 ? [200, 20, 15] : [4 + n, 4 + n, 6 + n];
+    px[o] = c[0]; px[o + 1] = c[1]; px[o + 2] = c[2];
+  }
+  return px;
+}
+
+test('24 dots: every method gives 24, the same each time; balanced gives the dark fewer than equal shares', async () => {
+  const { dotsOf } = await dotsLib();
+  const a = dotsOf(night(), 60, 40), b = dotsOf(night(), 60, 40);
+  for (const [k, v] of Object.entries(a)) {
+    assert.equal(v.dots.length, 24 * 8, k);
+    assert.equal(v.dots, b[k].dots, `${k} is deterministic`);
+  }
+  const dark = (s) => s.match(/.{8}/g).filter((d) => parseInt(d.slice(0, 2), 16) < 40).length;
+  assert.ok(dark(a.balanced.dots) < dark(a.share.dots), 'balanced gives the black fewer dots');
+  assert.ok(a.share.honesty <= a.distinct.honesty, 'equal shares pool most honestly');
+});
+
+test('the signature: three to five swatches, black allowed once, a half-percent red kept', async () => {
+  const { pointsOf } = await dotsLib();
+  const { signatureOf } = await sigLib();
+  const { colours, reading } = signatureOf(pointsOf(night(), 60, 40));
+  assert.ok(colours.length >= 2 && colours.length <= 5);
+  const darks = colours.filter((c) => c.L < 0.2);
+  assert.ok(darks.length <= 1, 'one black at most');
+  assert.ok(colours.some((c) => parseInt(c.hex.slice(1, 3), 16) > 150 && parseInt(c.hex.slice(3, 5), 16) < 80), 'the half-percent red is kept');
+  assert.ok(Math.abs(colours.reduce((s, c) => s + c.pc, 0) - 100) < 1);
+  assert.equal(reading.key, 'Low-key');
+});
