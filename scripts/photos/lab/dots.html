@@ -183,46 +183,45 @@ function draw() {
   } else field(ps);
 }
 
-// Gathered: every dot on one field, the neutrals at the left by lightness, the colours round the
-// wheel from red, light at the top; each dot takes the free cell nearest where its colour belongs.
+// Gathered: every dot woven into one seamless carpet of squares, as the colophon draws it
+// (assets/js/photobook/field.js): the greys first, then the colours in order of hue, starting after
+// the widest gap in these hues so no family is split; each column light above and dark below.
 let hit = null;
 function field(ps) {
   const dots = ps.flatMap((p, i) => dotsOf(p).map(d => ({ ...d, i })));
   const width = stage.clientWidth, big = dots.length > 3000;
-  const s = big ? 6 : 12, W = Math.floor(width / s), H = Math.ceil(dots.length / W * 1.25) + 2;
-  const neutral = dots.filter(isGrey).length / dots.length, nW = Math.max(2, Math.round(W * neutral));
-  const Ls = dots.map(d => d.L), lo = Math.min(...Ls), hi = Math.max(...Ls);
+  const s = big ? 5 : 11, W = Math.floor(width / s), H = Math.max(1, Math.ceil(dots.length / W));
+  const grey = dots.filter(isGrey).sort((x, y) => x.C - y.C);
+  const hued = dots.filter(d => !isGrey(d)).sort((x, y) => x.h - y.h);
+  let from = 0, widest = -1;
+  hued.forEach((d, k) => { const next = hued[(k + 1) % hued.length], g = (next.h - d.h + 360) % 360 || (hued.length === 1 ? 360 : 0); if (g > widest) { widest = g; from = (k + 1) % hued.length; } });
+  const sequence = [...grey, ...hued.slice(from), ...hued.slice(0, from)];
+  const cols = Math.ceil(dots.length / H);
   const grid = new Int32Array(W * H).fill(-1);
-  const order = dots.map((d, k) => k).sort((a, b) => dots[b].C - dots[a].C);
-  for (const k of order) {
-    const d = dots[k];
-    const gx = isGrey(d) ? Math.min(nW - 1, Math.floor((d.C / 0.02) * nW)) : nW + Math.floor(d.h / 360 * (W - nW));
-    const gy = Math.round((1 - (d.L - lo) / (hi - lo || 1)) * (H - 1));
-    for (let r = 0; r < Math.max(W, H); r++) {
-      let placed = false;
-      for (let dy = -r; dy <= r && !placed; dy++) for (let dx = -r; dx <= r && !placed; dx++) {
-        if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
-        const x = gx + dx, y = gy + dy;
-        if (x < 0 || y < 0 || x >= W || y >= H || grid[y * W + x] >= 0) continue;
-        grid[y * W + x] = k; d.x = x; d.y = y; placed = true;
-      }
-      if (placed) break;
-    }
-  }
+  const at = new Map(dots.map((d, k) => [d, k]));
+  for (let c = 0; c < cols; c++) sequence.slice(c * H, (c + 1) * H).sort((x, y) => y.L - x.L).forEach((d, r) => { d.x = c; d.y = r; grid[r * W + c] = at.get(d); });
   const dpr = devicePixelRatio || 1;
-  // Each name at the place its hue actually takes on this field, the greys at the middle of theirs.
-  const xOf = (deg) => (nW + (((deg - START + 360) % 360) / 360) * (W - nW)) * s;
-  const labels = [['greys', (nW / 2) * s], ...NAMED.map(([n, d]) => [n, xOf(d)])];
+  // Each name under the column where its family begins (the nearest named hue to each column's
+  // colours), the greys under the middle of theirs; a name the voyage has no colour of is left out.
+  const named = (h) => NAMED.reduce((best, [n, d]) => { const g = Math.min(Math.abs(h - ((d - START + 360) % 360)), 360 - Math.abs(h - ((d - START + 360) % 360))); return g < best[1] ? [n, g] : best; }, ['', Infinity])[0];
+  const labels = grey.length ? [['greys', (Math.ceil(grey.length / H) / 2) * s]] : [];
+  let lastName = '';
+  for (let c = Math.floor(grey.length / H); c < cols; c++) {
+    const colHued = sequence.slice(c * H, (c + 1) * H).filter(d => !isGrey(d));
+    if (colHued.length < H / 2) continue;
+    const n = named(colHued[Math.floor(colHued.length / 2)].h);
+    // A name too near the last one would run into it: the family is named once, where there is room.
+    if (n !== lastName && (c + 0.5) * s - (labels.length ? labels[labels.length - 1][1] : -Infinity) >= 48) { labels.push([n, (c + 0.5) * s]); lastName = n; }
+  }
   stage.innerHTML = `<div class="field"><canvas></canvas><div class="legend">${labels.map(([n, x]) => `<span style="left:${x.toFixed(0)}px">${n}</span>`).join('')}</div></div>`;
-  const cv = stage.querySelector('canvas'); cv.width = W * s * dpr; cv.height = H * s * dpr; cv.style.height = `${H * s}px`; cv.style.width = `${W * s}px`;
+  const cv = stage.querySelector('canvas'); cv.width = cols * s * dpr; cv.height = H * s * dpr; cv.style.height = `${H * s}px`; cv.style.width = `${cols * s}px`;
   const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
   const paint = (on = -1) => {
-    ctx.clearRect(0, 0, W * s, H * s);
+    ctx.clearRect(0, 0, cols * s, H * s);
     for (const d of dots) {
       if (d.x == null) continue;
       ctx.globalAlpha = on < 0 || d.i === on ? 1 : 0.18;
-      ctx.fillStyle = `#${d.hex}`; ctx.beginPath(); ctx.arc(d.x * s + s / 2, d.y * s + s / 2, s * 0.42, 0, 7); ctx.fill();
-      if (d.i === on) { ctx.globalAlpha = 1; ctx.strokeStyle = '#e4e4e4'; ctx.lineWidth = 1; ctx.stroke(); }
+      ctx.fillStyle = `#${d.hex}`; ctx.fillRect(d.x * s, d.y * s, s, s);
     }
   };
   paint();
