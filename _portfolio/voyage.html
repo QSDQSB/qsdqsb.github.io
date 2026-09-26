@@ -19,9 +19,11 @@ header:
 
   <div class="container">
     {% for post in site.voyage reversed%}
+      {% include photobook-ready.html doc=post %}
+      {% unless photobook_ready %}{% continue %}{% endunless %}
       {% assign title = post.title %}
       <div id="{{ title | slugify }}" style="width: 0; height: 0" aria-hidden="true"></div>
-      {% include archive-single.html %}
+      {% include archive-single.html defer_cover=true %}
     {% endfor %}
   </div>
 
