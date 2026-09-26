@@ -2,6 +2,6 @@
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
 # The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
 cover:
-  photo: dscf4486
-  focus: [0.5, 0.45]
+  photo: dscf2428
+  focus: [0.5, 0.5]
 photos: {}
