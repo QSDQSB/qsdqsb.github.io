@@ -534,6 +534,12 @@ html.is-refiltering::view-transition-group(*) {
 html.is-refiltering::view-transition-old(*),
 html.is-refiltering::view-transition-new(*) { animation-duration: 0.35s; }
 
+// Laying the sheet by colour, or back in sequence: every frame travels, so the move takes a little longer.
+html.is-reordering::view-transition-group(*) {
+  animation-duration: 0.7s;
+  animation-timing-function: $cubic-bezier-smooth;
+}
+
 .photobook-book,
 .photobook-sheet { transition: opacity 0.32s $cubic-bezier-smooth; }
 
@@ -744,6 +750,45 @@ html.is-refiltering::view-transition-new(*) { animation-duration: 0.35s; }
   .photobook-frame:hover .photobook-film span { max-width: 12rem; opacity: 1; }
 }
 
+// The sheet's order, above it at the left: the book's sequence, or one gradient by colour. The chosen
+// one is underlined, the colour order in the voyage's own colours, dark to light.
+.photobook-sheet__order {
+  display: flex;
+  gap: 1.4rem;
+  margin: 0 var(--photobook-gutter) clamp(1.2rem, 2.4vw, 2rem);
+
+  &[hidden] { display: none; }
+
+  button {
+    position: relative;
+    padding: 0.35rem 0;
+    border: 0;
+    background: none;
+    font: 500 0.62rem $barlow-font-family;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--photobook-ink-3);
+    cursor: pointer;
+    transition: color 0.3s $cubic-bezier-smooth;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0.22em; // the tracking after the last letter
+      bottom: 0;
+      height: 1px;
+      background: var(--ramp, var(--photobook-ink-3));
+      opacity: 0;
+      transition: opacity 0.3s $cubic-bezier-smooth;
+    }
+
+    &:hover { color: var(--photobook-ink); }
+    &[aria-pressed="true"] { color: var(--photobook-ink); }
+    &[aria-pressed="true"]::after { opacity: 1; }
+  }
+}
+
 .photobook-sheet__frame-no {
   font: 500 0.6rem $barlow-font-family;
   letter-spacing: 0.18em;
@@ -856,6 +901,49 @@ html.is-refiltering::view-transition-new(*) { animation-duration: 0.35s; }
 }
 
 .photobook-legend__n { color: var(--photobook-ink); }
+
+// The voyage's colours, the whole width beneath the three bars: the barcode (a sliver per frame in the
+// book's order, shaded top to bottom as its frame is), then the five colours of the whole voyage.
+.photobook-colophon__colours { grid-column: 1 / -1; }
+
+.photobook-barcode {
+  display: flex;
+  gap: 2px;
+  height: 3rem;
+  margin-bottom: 1.1rem;
+
+  > * { flex: 1 1 0; min-width: 0; border-radius: 1px; }
+  > span { background: var(--photobook-line); }
+
+  button {
+    padding: 0;
+    border: 0;
+    background: linear-gradient(var(--t), var(--m), var(--b));
+    cursor: pointer;
+    transition: opacity 0.3s $cubic-bezier-smooth;
+
+    &:focus-visible { outline: 1px solid var(--photobook-ink); outline-offset: 2px; }
+  }
+}
+
+@include responsive-hover {
+  .photobook-barcode:hover button:not(:hover) { opacity: 0.45; }
+}
+
+.photobook-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.8rem;
+  font: 400 0.74rem $barlow-font-family;
+  letter-spacing: 0.08em;
+  color: var(--photobook-ink-2);
+  font-variant-numeric: tabular-nums;
+
+  span { display: flex; align-items: center; gap: 0.55rem; }
+  i { width: 0.7rem; height: 0.7rem; border-radius: 1px; background: var(--c); }
+  b { font-weight: 400; color: var(--photobook-ink); }
+  b::after { content: "%"; color: var(--photobook-ink-3); }
+}
 
 /* ── the end of the page ──────────────────────────────────────────────── */
 .photobook-end {
@@ -1403,6 +1491,19 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 // The film simulation, set like the edge print along a negative.
 .photobook-specs__print { @include photobook-edge-print; }
 
+// The frame's five colours, the whole row beneath the film: bands of their share, each naming its
+// value under the pointer (tip.js). A band is drawn 6px tall in a taller box, so the pointer finds it.
+// Named as a highlight, since the highlights' own cells are grids.
+.photobook-specs__highlights > .photobook-specs__palette {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 2px;
+  min-width: 0;
+  margin-top: -0.2rem;
+
+  i { min-width: 2px; height: 16px; padding-block: 5px; background: var(--c); background-clip: content-box; }
+}
+
 .photobook-specs__gear {
   font: 400 0.74rem $barlow-font-family;
   color: var(--photobook-ink-2);
@@ -1601,6 +1702,9 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-book,
   .photobook-sheet,
   .photobook-sheet .photobook-film span,
+  .photobook-sheet__order button,
+  .photobook-sheet__order button::after,
+  .photobook-barcode button,
   .photobook-tip,
   .photobook-lightbox__wash div,
   .photobook-lightbox__mat,
