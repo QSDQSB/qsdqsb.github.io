@@ -1,4 +1,6 @@
-{% if page.header.overlay_color or page.header.overlay_image or page.header.image %}
+{% comment %} A voyage's cover (voyage-cover.html) turns the overlay hero on, as header.overlay_image does for other pages. {% endcomment %}
+{% include voyage-cover.html doc=page %}
+{% if page.header.overlay_color or page.header.overlay_image or page.header.image or vc %}
 {% include base_path %}
 
 {% if page.header.image contains "://" %}
@@ -32,11 +34,10 @@
 {% endif %}
 
 
-<div class="page__hero{% if page.header.overlay_color or page.header.overlay_image %}--overlay{% endif %}"
+<div class="page__hero{% if page.header.overlay_color or page.header.overlay_image or vc %}--overlay{% endif %}"
   style="{% if page.header.overlay_color %}background-color: {{ page.header.overlay_color | default: 'transparent' }};{% endif %}"
 >
-  {% if page.header.overlay_color or page.header.overlay_image %}
-    {% include voyage-cover.html doc=page %}
+  {% if page.header.overlay_color or page.header.overlay_image or vc %}
     {% if vc %}
       {% comment %}
         A voyage's cover (voyage-cover.html): the photo's tiers, 2880 on a desktop and 1920 on a

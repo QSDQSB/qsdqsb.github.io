@@ -94,8 +94,10 @@ puts it in the middle of the box, as near as the photo's edges allow.
 - A voyage in parts shows the cover in its hero; its depth map belongs to the
   photo (`images/depth/photos/<gallery>/<slug>.depth.jpg`, `npm run
   generate:depth`), and the canvas keeps the focus central.
-- A voyage without `cover:` keeps its `header.overlay_image` everywhere, as
-  before. Changing a focus needs a rebuild, never reprocessing.
+- The cover also turns the page's overlay hero on; a voyage names no picture
+  in its frontmatter. Only a voyage with no processed gallery (Venice) still
+  uses `header.overlay_image`. Changing a focus needs a rebuild, never
+  reprocessing. `check:frontmatter` reports a voyage with neither.
 - `npm run covers:focus` (`scripts/cover-focus.mjs`, this machine only) draws
   every shape's crop over the photo, previews each cut through the same
   `cover.mjs`, and on Save writes the `cover:` block, keeping any `crops:`.

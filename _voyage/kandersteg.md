@@ -8,6 +8,4 @@ tags:
   - 🚞Switzerland
   - 🥾Hiking
   - 🛥️Lake
-header:
-  overlay_image: cover/kandersteg-3v1.jpg
 ---

@@ -146,3 +146,16 @@ test('tag palettes are collection-specific', () => {
     assert.ok(hasWarn(checkFile(abs, palettes), /tag "📘Diary"/), 'post tag on a voyage should warn');
   });
 });
+
+test('a voyage needs a cover: its photo YAML\'s cover:, else header.overlay_image', () => {
+  withFixture('_voyage/fixture-coverless.md', '---\ntitle: T\ndate: 2024-01-01\ngallery_name: fixture-nowhere\n---\n', (abs) => {
+    assert.ok(hasError(checkFile(abs, null), /no cover/));
+  });
+  withFixture('_voyage/fixture-overlay.md', '---\ntitle: T\ndate: 2024-01-01\ngallery_name: fixture-nowhere\nheader:\n  overlay_image: x.jpg\n---\n', (abs) => {
+    assert.ok(!hasError(checkFile(abs, null), /no cover/));
+  });
+  // London's YAML names its cover, so its page needs no header at all.
+  withFixture('_voyage/fixture-london.md', '---\ntitle: T\ndate: 2024-01-01\ngallery_name: london\n---\n', (abs) => {
+    assert.ok(!hasError(checkFile(abs, null), /no cover|missing required key/));
+  });
+});

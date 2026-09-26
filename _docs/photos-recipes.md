@@ -58,10 +58,10 @@ Once the workflow finishes (`gh run list --workflow photos-process.yml -L 3`), r
 1. Photos: an inbox folder named for the new gallery (kebab-case, e.g. `lake-como`), then
    `npm run photos:ingest` as above.
 2. Page: use the **voyage-scaffolder** agent, or write `_voyage/<g>.md` with `title`, `date`, `excerpt`,
-   `tags`, `gallery_name: "<g>"` and `header.overlay_image: cover/<name>-3v1.jpg` (the layouts still
-   switch the overlay hero on it, and it is the fallback until the cover below is set).
-3. Cover: a photo of the voyage and where its subject sits, in `_data/photos/<g>.yml`:
-   `cover: { photo: dscf…, focus: [x, y] }` (see *Set or move the cover* below). No image file is needed.
+   `tags` and `gallery_name: "<g>"`.
+3. Cover: once the photos are processed, `npm run covers:focus`: pick the photo, click where its subject
+   sits, Save. That writes `cover: { photo: dscf…, focus: [x, y] }` into `_data/photos/<g>.yml`; no image
+   file, no frontmatter. `check:frontmatter` reports a voyage with no cover.
 4. Optional words: `npm run photos:captions -- --gallery <g>` adds an empty entry per slug to fill in.
    Pin the opening frames with `order: [dscf…, dscf…]`.
 5. `npm run check:frontmatter` and `npm run check:gallery`, then commit the `.md`, the YAML and the cover.

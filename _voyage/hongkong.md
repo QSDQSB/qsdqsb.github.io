@@ -6,6 +6,4 @@ gallery_name: "hong-kong"
 tags:
   - 🌆Metropolis
   - 🌴Tropical (≈hot as hell)
-header:
-  overlay_image: cover/hongkong-3v1.jpg
 ---

@@ -6,6 +6,4 @@ date: 2025-05-31
 tags:
   - 🍝Italy
   - 🏛️Historic
-header:
-  overlay_image: cover/florence-3v1.jpg
 ---
