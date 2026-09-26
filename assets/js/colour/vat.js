@@ -5,8 +5,12 @@
  * so it tells the truth the colour bar tells. Mixed in OKLab with the chroma kept, so two colours make
  * a clean third, not a grey (across nearly opposite hues it settles, as paint does).
  *
- * vat(palette, { size, width, height, seed, stir, label }) → a canvas. `palette` is [{hex, pc}] or
- * [[hex, pc]]; the vat is `size` across (or the smaller of width and height), centred, transparent
+ * How it pours follows how the colours sit together: a palette of one family (a misty evening, all
+ * blues) settles in layers, light above deep, edges misted; a palette of contrasts is stirred into
+ * broad currents; most lie between. An accent is always a drop, never a layer.
+ *
+ * vat(palette, { size, width, height, seed, stir, label, calm }) → a canvas. `palette` is
+ * [{hex, pc, accent}] or [[hex, pc, accent]]; `calm` (0 stirred … 1 layered) overrides the choice; the vat is `size` across (or the smaller of width and height), centred, transparent
  * round it. Still by default: painted on one shared WebGL canvas and copied out, so a page of frames
  * costs one context; `stir` gives the vat its own and keeps the currents moving, unless motion is off. Used by the palette page
  * (assets/js/colour/palette.js) and the mood lab (scripts/photos/lab/paint.js).
@@ -14,8 +18,8 @@
 
 const FRAG = `
 precision highp float;
-uniform vec2 res, org; uniform float seed, t; uniform int mode;
-uniform vec3 col[5]; uniform float gain[5]; uniform vec2 pos[5]; uniform int n;
+uniform vec2 res, org; uniform float seed, t, calm, tilt; uniform int mode;
+uniform vec3 col[5]; uniform float gain[5], drop[5]; uniform vec2 pos[5]; uniform int n;
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7)) + seed * 0.013) * 43758.5453); }
 float noise(vec2 p) { vec2 i = floor(p), f = fract(p); vec2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
   return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y); }
@@ -28,18 +32,23 @@ void main() {
   vec2 uv = ((gl_FragCoord.xy - org) / res) * 2.0 - 1.0; uv.y = -uv.y;
   float r = length(uv), aa = 2.0 / res.x;
   if (r > 1.0 + aa || (mode > 0 && r > 1.0)) { gl_FragColor = vec4(0.0); return; }
-  // The currents: broad, warped twice, drifting slowly with t; and one long sweep across the vat,
-  // so the colours draw out in ribbons rather than sit in patches.
+  // The currents: broad, warped twice, drifting slowly with t; and, where the colours contrast, one
+  // long sweep across the vat, so they draw out in ribbons rather than sit in patches. Where they are
+  // of one family (calm), no sweep: they settle in layers, light over deep, their edges misted.
   vec2 o = vec2(seed * 0.0071, seed * 0.0037);
   vec2 q = vec2(fbm(uv + o + t * 0.012), fbm(uv + o + vec2(5.2, 1.3) - t * 0.01));
   vec2 w = vec2(fbm(uv * 1.2 + 2.2 * q + vec2(1.7, 9.2)), fbm(uv * 1.2 + 2.2 * q + vec2(8.3, 2.8)));
-  vec2 pw = uv + 0.7 * (w - 0.5);
+  vec2 pw = uv + mix(0.7, 0.42, calm) * (w - 0.5) + calm * 0.1 * (vec2(fbm(uv * 4.0 + 3.1), fbm(uv * 4.0 + 7.7)) - 0.5);
   vec2 along = vec2(cos(seed * 0.37), sin(seed * 0.37)), across = vec2(-along.y, along.x);
-  pw += along * 0.28 * sin(dot(pw, across) * 2.4 + seed * 0.11 + t * 0.03);
+  pw += (1.0 - calm) * along * 0.28 * sin(dot(pw, across) * 2.4 + seed * 0.11 + t * 0.03);
+  mat2 lean = mat2(cos(tilt), -sin(tilt), sin(tilt), cos(tilt));
   // Each colour's hold here: its gain (set so its area is its share), fading softly from where it was poured.
   float ws[5]; float tot = 0.0;
   for (int k = 0; k < 5; k++) { ws[k] = 0.0; if (k >= n) continue;
-    vec2 d = pw - pos[k]; ws[k] = gain[k] * exp(-dot(d, d) / 0.26); tot += ws[k]; }
+    vec2 d = lean * (pw - pos[k]);
+    // A layer reaches across the vat; a drop (the accent) stays a drop.
+    float layer = calm * (1.0 - drop[k]);
+    ws[k] = gain[k] * exp(-(d.x * d.x * (1.0 - 0.94 * layer) + d.y * d.y) / mix(0.26, 0.1, calm)); tot += ws[k]; }
   for (int k = 0; k < 5; k++) ws[k] /= tot;
   if (mode == 1) { gl_FragColor = vec4(ws[0], ws[1], ws[2], ws[3]); return; }
   float L = 0.0, C = 0.0; vec2 ab = vec2(0.0);
@@ -87,11 +96,11 @@ let shared;
 const M = 48, INSIDE = (() => { const out = []; for (let y = 0; y < M; y++) for (let x = 0; x < M; x++) { const u = ((x + 0.5) / M) * 2 - 1, v = ((y + 0.5) / M) * 2 - 1; if (u * u + v * v <= 1) out.push(y * M + x); } return out; })();
 const px = new Uint8Array(M * M * 4);
 
-export function vat(palette, { size = 176, width = size, height = size, seed = 1, stir = false, label = '' } = {}) {
+export function vat(palette, { size = 176, width = size, height = size, seed = 1, stir = false, label = '', calm: calmFor = null } = {}) {
   let state = seed;
   const rand = () => { state = (state * 16807) % 2147483647; return state / 2147483647; };
   const gauss = () => { let v = 0; for (let i = 0; i < 6; i++) v += rand(); return v / 6 - 0.5; };
-  const cs = palette.slice(0, 5).map((p) => (Array.isArray(p) ? { hex: p[0], pc: p[1] } : p)), n = cs.length;
+  const cs = palette.slice(0, 5).map((p) => (Array.isArray(p) ? { hex: p[0], pc: p[1], accent: !!p[2] } : p)), n = cs.length;
   const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(width * dpr), H = Math.round(height * dpr);
   const moving = stir && !(window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches);
   const out = document.createElement('canvas'); out.width = W; out.height = H;
@@ -103,13 +112,27 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
   const { gl, canvas, u } = r;
   if (canvas.width < Math.max(W, M) || canvas.height < Math.max(H, M)) { canvas.width = Math.max(W, M, canvas.width); canvas.height = Math.max(H, M, canvas.height); }
   const total = cs.reduce((s, p) => s + p.pc, 0), share = cs.map((p) => p.pc / total);
+  const labs = cs.map((p) => oklab(p.hex));
+  // How the colours sit together: the widest gap of hue between any two (the accent aside). One
+  // family (under 0.08 on the plane of hue) settles in layers; a contrast (over 0.13) is stirred.
+  const main = cs.map((p, i) => i).filter((i) => !cs[i].accent);
+  let gap = 0; for (const i of main) for (const j of main) gap = Math.max(gap, Math.hypot(labs[i][1] - labs[j][1], labs[i][2] - labs[j][2]));
+  const calm = calmFor ?? Math.min(1, Math.max(0, (0.13 - gap) / 0.05));
   gl.uniform1f(u('seed'), (seed % 1000) + 1); gl.uniform1i(u('n'), n); gl.uniform1f(u('t'), 0);
-  // Where each colour is poured: evenly round the vat, a little astray, the largest in the middle.
+  gl.uniform1f(u('calm'), calm); gl.uniform1f(u('tilt'), gauss() * 0.5);
+  // Where each colour is poured. Stirred: evenly round the vat, a little astray, the largest in the
+  // middle. Layered: light above deep, each as deep as its share; the accent a drop at its own level.
   const order = cs.map((p, i) => i).sort((x, y) => share[y] - share[x]), turn = rand() * 2 * Math.PI;
+  const layers = [...main].sort((x, y) => labs[y][0] - labs[x][0]), mainShare = main.reduce((s, i) => s + share[i], 0) || 1;
+  const level = {}; let run = 0;
+  for (const i of layers) { level[i] = -0.8 + 1.6 * (run + share[i] / 2) / mainShare; run += share[i]; }
+  for (const i of cs.keys()) if (!(i in level)) { const deeper = layers.filter((j) => labs[j][0] > labs[i][0]).length; level[i] = -0.8 + 1.6 * deeper / Math.max(1, layers.length); }
   order.forEach((i, rank) => {
-    const lab = oklab(cs[i].hex), ang = turn + (rank / Math.max(1, n - 1)) * 2 * Math.PI + gauss() * 0.6, rad = rank === 0 ? 0.1 * rand() : 0.45 + gauss() * 0.2;
-    gl.uniform3f(u(`col[${i}]`), lab[0], lab[1], lab[2]);
-    gl.uniform2f(u(`pos[${i}]`), Math.cos(ang) * rad, Math.sin(ang) * rad);
+    const ang = turn + (rank / Math.max(1, n - 1)) * 2 * Math.PI + gauss() * 0.6, rad = rank === 0 ? 0.1 * rand() : 0.45 + gauss() * 0.2;
+    const stirred = [Math.cos(ang) * rad, Math.sin(ang) * rad], layered = [cs[i].accent ? (rand() - 0.5) * 0.9 : gauss() * 0.3, level[i]];
+    gl.uniform3f(u(`col[${i}]`), labs[i][0], labs[i][1], labs[i][2]);
+    gl.uniform1f(u(`drop[${i}]`), cs[i].accent ? 1 : 0);
+    gl.uniform2f(u(`pos[${i}]`), stirred[0] + (layered[0] - stirred[0]) * calm, stirred[1] + (layered[1] - stirred[1]) * calm);
   });
   // Measure and adjust: how much of the vat each colour covers, until it is its share. The fifth
   // colour's share is what the other four leave.
@@ -134,6 +157,7 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
   const frame = (t) => { gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.viewport(ox, baseY + oy, side, side); gl.uniform1f(u('t'), t); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
   frame(0);
   out.dataset.areas = areas.map((x) => x.toFixed(3)).join(' '); // what the vat covers, to check against the shares
+  out.dataset.calm = calm.toFixed(2);
   if (moving) {
     const t0 = performance.now();
     const loop = (now) => { if (!out.isConnected && now - t0 > 1000) { gl.getExtension('WEBGL_lose_context')?.loseContext(); return; } frame((now - t0) / 1000); requestAnimationFrame(loop); };

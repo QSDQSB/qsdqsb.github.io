@@ -241,6 +241,59 @@
   &:hover { color: #fff; }
 }
 
+// The rail: every voyage as a small vat, by colour; the one on the page ringed, a step either side.
+.palette-rail {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 clamp(1.8rem, 3.5vw, 2.4rem);
+}
+
+.palette-rail__list {
+  display: flex;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0.45rem 0.4rem;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+  mask-image: linear-gradient(90deg, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent);
+
+  &::-webkit-scrollbar { display: none; }
+
+  li { flex: none; margin: 0; }
+
+  a {
+    display: block;
+    width: 2.5rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #1d1d1f; // until its vat is poured
+    outline: 1px solid transparent;
+    outline-offset: 3px;
+    transition: outline-color 0.2s ease, opacity 0.2s ease;
+  }
+
+  a:hover,
+  a:focus-visible { outline-color: var(--photobook-ink-3); }
+
+  a[aria-current] { outline-color: var(--photobook-ink); }
+
+  canvas { display: block; width: 100%; height: auto; }
+}
+
+.palette-rail__step {
+  padding: 0.3rem 0.5rem;
+  font: 400 1.3rem/1 $barlow-font-family;
+  color: var(--photobook-ink-3);
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover,
+  &:focus-visible { color: var(--photobook-ink); }
+}
+
 // One voyage: its palette as blocks, beside its dye vat.
 .palette-voyage {
   display: grid;
@@ -329,7 +382,7 @@
 
 .palette-card__row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 5.2rem;
+  grid-template-columns: minmax(0, 1fr) 2.7rem;
   gap: 0.9rem;
   align-items: start;
   margin-top: 0.9rem;
@@ -352,9 +405,10 @@
   i { background: var(--c); border-radius: 1px; }
 }
 
-// The frame's own dye vat, beside its name and bar.
+// The frame's own dye vat, beside its name and bar and as tall as the two together.
 .palette-card__vat {
   aspect-ratio: 1;
+  margin-top: 0.8rem; // level with the name
 
   canvas {
     display: block;
