@@ -253,17 +253,20 @@
   .palette-blocks i { height: 2.5rem; }
 }
 
-.palette-voyage__wheel {
-  display: grid;
-  justify-items: center;
-  gap: 0.6rem;
-  width: 10rem;
-  margin: 0;
+.palette-voyage__sky { width: 11rem; }
 
-  figcaption { font: 400 0.64rem/1.45 $barlow-font-family; color: var(--photobook-ink-3); text-align: center; }
+// A constellation of colour on a dark disc, ringed by hue.
+.palette-sky {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
 }
 
-.palette-page__wheel { width: 8rem; height: 8rem; }
+.palette-sky__disc { fill: #111113; }
+.palette-sky__rim { opacity: 0.55; }
+
+
 
 .palette-voyage__links {
   display: flex;
@@ -353,7 +356,6 @@
   i { background: var(--c); border-radius: 1px; }
 }
 
-.palette-card__wheel { width: 100%; height: auto; }
 
 // The frame the reader came from, marked by a hairline beneath its print.
 .palette-card.is-from .palette-card__print { box-shadow: 0 6px 0 -5px var(--photobook-ink-3); }

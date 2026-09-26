@@ -25,7 +25,7 @@ import { parsePalette, vectorOf, chi2, emd, rgbToOklab, swatchesOf } from './pal
 export function palettesOf(books) {
   const voyages = books.filter(m => m.book?.colour).map(m => ({
     g: m.gallery, palette: m.book.colour.palette, wheel: m.book.colour.wheel, order: m.book.colour.order,
-    photos: m.photos.map(p => ({ slug: p.slug, name: p.name || null, light: p.light?.text || null, url: p.url, r: p.ratio, sizes: (p.sizes?.webp || []).filter(s => s <= 1280), sig: p.signature || null })),
+    photos: m.photos.map(p => ({ slug: p.slug, name: p.name || null, light: p.light?.text || null, url: p.url, r: p.ratio, sizes: (p.sizes?.webp || []).filter(s => s <= 1280), sig: p.signature || null, dots: p.dots || null })),
   }));
   return voyages.length ? { voyages } : null;
 }
