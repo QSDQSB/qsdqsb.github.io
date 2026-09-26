@@ -17,13 +17,13 @@
  * The manifests are private, so reading them needs credentials: R2_ACCOUNT_ID,
  * R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY in the environment (a read-only
  * key, set in the Cloudflare Pages build settings), else the local `r2:`
- * rclone remote. Until every gallery has been processed since the move, a
- * gallery with no private manifest falls back to its old public copy, and
- * says so.
+ * rclone remote. Nothing is read from the public host.
  *
- * Never fails the build: an unreachable bucket keeps the previously merged
- * file when there is one and reports it. `--strict` turns warnings into a
- * non-zero exit for CI.
+ * Without access (a fresh clone, a sandbox), or when the read fails, each
+ * gallery keeps its previously merged file when there is one, and the
+ * summary says why. On Cloudflare Pages (CF_PAGES) a failed read fails the
+ * build instead, so the last good deploy stays live rather than an empty
+ * one going out. `--strict` turns warnings into a non-zero exit for CI.
  *
  * Usage: npm run photos:fetch [-- --local <dir>] [--strict] [--quiet]
  *        npm run photos:fetch -- --shape _data/photos/<gallery>.yml [--strict]
@@ -47,20 +47,17 @@ const require = createRequire(import.meta.url);
 const { referencedGalleries } = require('../check-gallery-integrity.js');
 
 const args = parseArgs(process.argv.slice(2));
-// Per-request and whole-run ceilings. Galleries are fetched in parallel, so
-// an unreachable or slow host costs the build seconds, never minutes.
+// The rclone read's ceiling; galleries are fetched in parallel.
 const TIMEOUT_MS = 5000;
-const BUDGET_MS = 30000;
 const PARALLEL = 8;
 
 // The private manifests: through the S3 API with the build's key, or the local rclone remote.
 const creds = { accountId: env.accountId, accessKeyId: env.accessKeyId, secretAccessKey: env.secretAccessKey };
 const r2 = creds.accountId && creds.accessKeyId && creds.secretAccessKey ? new R2Store(env.originalsBucket, creds) : null;
 const viaRclone = !r2 && rcloneVersion() && remoteExists(env.rcloneRemote);
-export const fellBack = new Set();
-// Why the private read failed, when it did (a key without access, a wrong secret…): said once in
-// the summary, since the build falls back rather than failing.
+// Why the private read failed, when it did (a key without access, a wrong secret…): said once.
 let privateError = null;
+const NO_ACCESS = 'no access to the private manifests: set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY, or the rclone remote';
 
 async function privateManifest(gallery) {
   const key = `${gallery}/${MANIFEST_FILE}`;
@@ -72,19 +69,13 @@ async function privateManifest(gallery) {
   return null;
 }
 
-async function fetchMachine(gallery, local, signal) {
+// A manifest not there (a gallery nothing processed yet) is null; no access, or a read that fails,
+// is an error, so the gallery keeps its previous merge rather than going empty.
+async function fetchMachine(gallery, local) {
   if (local) return local.getJson(`${gallery}/${MANIFEST_FILE}`);
-  // A private read that fails (not merely a manifest not there yet) falls back like one that is
-  // missing: a key that cannot read must never leave a voyage empty.
-  const own = await privateManifest(gallery).catch((e) => { privateError ||= `${e.name || 'Error'}: ${e.message}`.slice(0, 160); return null; });
-  if (own) return own;
-  // Not yet processed since the manifests moved: the old public copy, while it lasts.
-  fellBack.add(gallery);
-  const url = `${env.publicBase}/${gallery}/${MANIFEST_FILE}`;
-  const r = await fetch(url, { signal: AbortSignal.any([signal, AbortSignal.timeout(TIMEOUT_MS)]) });
-  if (r.status === 404) return null;
-  if (!r.ok) throw new Error(`${r.status} from ${url}`);
-  return r.json();
+  if (!r2 && !viaRclone) { privateError ||= NO_ACCESS; throw new Error(NO_ACCESS); }
+  try { return await privateManifest(gallery); }
+  catch (e) { privateError ||= `the private read failed (${`${e.name || 'Error'}: ${e.message}`.slice(0, 160)})`; throw e; }
 }
 
 /** Run `fn` over `items` with at most `limit` in flight; results keep input order. */
@@ -117,15 +108,10 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
   const index = { generated: new Date().toISOString(), base: env.publicBase, galleries: {} };
   let unreachable = 0;
 
-  // One budget for the whole run: when it expires, every fetch still in
-  // flight aborts and those galleries fall back like any unreachable one.
-  const budget = new AbortController();
-  const budgetTimer = setTimeout(() => budget.abort(new Error(`fetch budget of ${BUDGET_MS} ms exhausted`)), BUDGET_MS);
   const fetched = await mapLimited(names, PARALLEL, async (gallery) => {
-    try { return { machine: await fetchMachine(gallery, local, budget.signal), error: null }; }
+    try { return { machine: await fetchMachine(gallery, local), error: null }; }
     catch (e) { return { machine: null, error: e.cause?.message || e.message }; }
   });
-  clearTimeout(budgetTimer);
 
   names.forEach((gallery, i) => {
     const out = path.join(PATHS.mergedDir, `${galleryKey(gallery)}.json`);
@@ -176,8 +162,12 @@ async function main() {
     }
   } else warned = rows.reduce((n, [, s]) => n + s.warnings.length, 0);
   const source = local ? 'local store' : r2 ? 'private, R2 key' : viaRclone ? 'private, rclone' : 'no private access';
-  console.log(`photo manifests: ${rows.length} galleries → ${path.relative(process.cwd(), PATHS.mergedDir)}/ (${source}; ${warned} warning(s)${unreachable ? `, ${unreachable} unreachable` : ''}${fellBack.size ? `, ${fellBack.size} from the old public copies` : ''})`);
-  if (privateError) console.log(`photo manifests: the private read failed (${privateError}); the public copies stood in`);
+  console.log(`photo manifests: ${rows.length} galleries → ${path.relative(process.cwd(), PATHS.mergedDir)}/ (${source}; ${warned} warning(s)${unreachable ? `, ${unreachable} unreachable` : ''})`);
+  if (privateError) {
+    console.log(`photo manifests: ${privateError}; each gallery kept its previous merge where there was one`);
+    // On Cloudflare a build without its photographs must not go live: failing keeps the last good deploy.
+    if (process.env.CF_PAGES) { console.error('photo manifests: failing the build so the site stays as it was'); return 1; }
+  }
   return args.strict && warned ? 1 : 0;
 }
 
