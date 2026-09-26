@@ -2,7 +2,7 @@
   The lightbox, a matted print: the photograph over a wash of its own colours, a caption band
   beneath, a scrubber, and the specs panel. Filled by assets/js/photobook/lightbox.js.
 {%- endcomment -%}
-<dialog class="photobook-lightbox" id="photobook-lightbox" aria-label="{{ page.title | strip_html | escape }}, photographs">
+<dialog class="photobook-lightbox" id="photobook-lightbox" aria-label="{{ page.title | strip_html | escape }}, photographs" data-palette="{{ '/palette/' | relative_url }}" data-gallery="{{ page.gallery_name | escape }}" data-palette-title="QSD's Palette for {{ page.title | strip_html | escape }}">
   <div class="photobook-lightbox__wash" aria-hidden="true"></div>
   <div class="photobook-lightbox__mat" tabindex="-1" autofocus></div>
   <button class="photobook-lightbox__zone photobook-lightbox__zone--prev" type="button" data-act="prev" tabindex="-1" aria-label="Previous photograph"></button>

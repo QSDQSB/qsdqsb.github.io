@@ -938,28 +938,21 @@ html.is-reordering::view-transition-group(*) {
   align-items: center;
 }
 
-// The voyage's signature: each swatch with its hex and share; a click copies the hex.
+// The voyage's signature: each swatch with its hex and share, as text to select.
 .photobook-palette {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem 1.8rem;
+  user-select: text;
 
-  button {
+  span {
     display: flex;
     align-items: center;
     gap: 0.55rem;
-    padding: 0;
-    border: 0;
-    background: none;
     font: 400 0.74rem $barlow-font-family;
     letter-spacing: 0.08em;
     color: var(--photobook-ink-2);
     font-variant-numeric: tabular-nums;
-    cursor: copy;
-    transition: color 0.3s $cubic-bezier-smooth;
-
-    &:hover { color: var(--photobook-ink); }
-    &:focus-visible { outline: 1px solid var(--photobook-ink); outline-offset: 3px; }
   }
 
   i { width: 0.7rem; height: 0.7rem; border-radius: 1px; background: var(--c); }
@@ -1584,28 +1577,58 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 // The film simulation, set like the edge print along a negative.
 .photobook-specs__print { @include photobook-edge-print; }
 
-// The frame's signature, the whole row beneath the film: a thin bar of three to five colours, widths
-// tempered (lightbox.js). Each band is drawn 4px tall in a 14px button, so the pointer finds it; it
-// names its value under the pointer and copies it on a click (copy.js). Named as a highlight, since
-// the highlights' own cells are grids.
-.photobook-specs__highlights > .photobook-specs__palette {
-  grid-column: 1 / -1;
+// A palette set like a wall label in a gallery (the specs panel, QSD's Palette): a thin bar of three
+// to five colours, drawn 4px tall in a taller hit area, and beneath it the colours' hex codes, each
+// behind a chip of its colour, in finely tracked capitals. The codes are plain text, to select and
+// copy; they come in with the pointer (their room is kept, so nothing moves) and stay on a touch
+// screen, where there is no pointer to rest.
+.palette-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr); // never wider than what it labels
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.palette-strip__bar {
   display: flex;
   gap: 2px;
-  min-width: 0;
+  padding-block: 5px;
+
+  i { min-width: 2px; height: 4px; background: var(--c); }
+
+  &:focus-visible { outline: 1px solid var(--photobook-ink); outline-offset: 3px; }
+}
+
+.palette-strip__hex {
+  display: flex;
+  flex-wrap: wrap; // a narrow label takes two lines rather than running past its bar
+  justify-content: space-between;
+  gap: 0.35rem 0.5rem;
+  margin: 0;
+  font: 500 0.58rem/1 $barlow-font-family;
+  letter-spacing: 0.1em;
+  color: var(--photobook-ink-2);
+  font-variant-numeric: tabular-nums;
+  user-select: text;
+  opacity: 0;
+  transition: opacity 0.35s $cubic-bezier-smooth;
+
+  span { display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap; }
+  i { width: 5px; height: 5px; background: var(--c); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08); } // a hairline, so a near-black chip still shows
+}
+
+.palette-strip:hover .palette-strip__hex,
+.palette-strip:focus-within .palette-strip__hex { opacity: 1; }
+
+@include responsive-coarse-pointer {
+  .palette-strip__hex { opacity: 1; }
+}
+
+// In the specs panel it runs the whole row beneath the film. Named as a highlight, since the
+// highlights' own cells are grids.
+.photobook-specs__highlights > .photobook-specs__palette {
+  grid-column: 1 / -1;
   margin-top: -0.2rem;
-
-  button {
-    min-width: 2px;
-    height: 14px;
-    padding: 5px 0;
-    border: 0;
-    background: var(--c);
-    background-clip: content-box;
-    cursor: copy;
-
-    &:focus-visible { outline: 1px solid var(--photobook-ink); outline-offset: 1px; }
-  }
 }
 
 .photobook-specs__gear {
@@ -1812,7 +1835,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-sheet__order button,
   .photobook-sheet__order button::after,
   .photobook-barcode button,
-  .photobook-palette button,
+  .palette-strip__hex,
   .photobook-colophon__onward a,
   .photobook-tip,
   .photobook-lightbox__wash div,

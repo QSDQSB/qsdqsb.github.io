@@ -11,6 +11,7 @@
  *   out  _data/photo_manifests/_index.json                 summary + warnings
  *   out  _data/photo_manifests/colour-atlas.json           every coloured photo across voyages, when
  *                                                          palettes are known (lib/atlas.mjs)
+ *   out  _data/photo_manifests/palettes.json               every voyage's palette, for QSD's Palette
  *
  * Galleries are the `gallery_name` values referenced by _voyage and
  * _subvoyage frontmatter, so a voyage with no processed photos still gets
@@ -45,7 +46,7 @@ import { rcloneVersion, remoteExists } from './lib/rclone.mjs';
 import { mergeManifest, validateAuthored } from './lib/manifest.mjs';
 import { bookOf } from './lib/book.mjs';
 import { readSidecar, readKindred } from './palettes.mjs';
-import { atlasOf, KINDRED_KEY } from './lib/atlas.mjs';
+import { atlasOf, palettesOf, KINDRED_KEY } from './lib/atlas.mjs';
 
 const require = createRequire(import.meta.url);
 const { referencedGalleries } = require('../check-gallery-integrity.js');
@@ -158,6 +159,10 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
   if (!local && !Object.keys(kindred).length) kindred = (await privateJson(KINDRED_KEY).catch(() => null))?.photos || {};
   const atlas = atlasOf(books, kindred);
   if (atlas) fs.writeFileSync(atlasFile, JSON.stringify(atlas) + '\n'); else fs.rmSync(atlasFile, { force: true });
+  // QSD's Palette, every voyage's colours on one page.
+  const palettesFile = path.join(PATHS.mergedDir, 'palettes.json');
+  const palettes = palettesOf(books);
+  if (palettes) fs.writeFileSync(palettesFile, JSON.stringify(palettes) + '\n'); else fs.rmSync(palettesFile, { force: true });
   fs.writeFileSync(path.join(PATHS.mergedDir, '_index.json'), JSON.stringify(index, null, 2) + '\n');
   return { index, unreachable };
 }

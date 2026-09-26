@@ -109,7 +109,10 @@ Everything else is derived at build time and can be re-derived: the picture dist
 photos (the exact earth mover's distance between palettes, in OKLab ΔE: how far, on average, a unit
 of colour must travel), a fixed 32-anchor vector for quick shortlists, five display swatches, each
 voyage's barcode and colour order (`book.mjs colourOf`), and, across voyages, kindred frames and the
-light in bands of the sun's altitude (`lib/atlas.mjs`), which feed `/light/` and `/drift/`.
+light in bands of the sun's altitude (`lib/atlas.mjs`), which feed `/light/` and `/drift/`; and QSD's
+Palette (`/palette/#<gallery>`): every voyage's signature without black or white, each frame's own,
+in the book's sequence or by colour (the earth mover's distance between two frames' 24 dots, laid dark
+to light). The specs panel's palette leads there; its hex codes are text to select.
 
 The processor computes both for a new photo, and for an old one on its next run from the 480 px tier
 (nothing re-rendered). Until that run, `node scripts/photos/palettes.mjs` computes them from the
