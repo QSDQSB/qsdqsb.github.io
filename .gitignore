@@ -20,6 +20,8 @@ for_agents/
 # WebP renditions of the 3:1 heroes, made on every build (scripts/generate-cover-sizes.mjs).
 /images/cover/sized/
 /_data/cover_sizes.json
+# Link previews cut around each voyage cover's focus, made on every build (scripts/generate-cover-og.mjs).
+/images/og/
 /photos/
 /_data/photo_manifests/
 /.photos-local/

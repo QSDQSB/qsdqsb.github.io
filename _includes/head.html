@@ -3,6 +3,19 @@
 <meta charset="utf-8">
 
 {% include seo.html %}
+{% if vc %}
+{% comment %}
+  seo.html resolved this page's voyage cover (voyage-cover.html): it is the largest paint, served
+  from the photo host, so the connection opens now. A voyage in parts shows it as the hero's CSS
+  background, which the browser finds late: that one is fetched ahead, at the width each side of
+  the tablet line takes (_sass/_page.scss).
+{% endcomment %}
+<link rel="preconnect" href="{{ vc.url | split: '/t/' | first }}">
+{% if page.subgalleries %}
+<link rel="preload" as="image" href="{{ vc.url }}/2880.webp" media="(min-width: 48em)" fetchpriority="high">
+<link rel="preload" as="image" href="{{ vc.url }}/1920.webp" media="(max-width: 47.98em)" fetchpriority="high">
+{% endif %}
+{% endif %}
 <!-- <base target="_blank"> -->
 <link href="{% if site.atom_feed.path %}{{ site.atom_feed.path }}{% else %}{{ site.url | append: site.baseurl }}/feed.xml{% endif %}" type="application/atom+xml" rel="alternate" title="{{ site.title }} Feed">
 

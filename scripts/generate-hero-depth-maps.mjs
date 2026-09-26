@@ -8,6 +8,16 @@
  *   images/cover/venice-3v1.jpg  →  images/depth/cover/venice-3v1.jpg.depth.jpg
  *   gallery/foo/bar.jpg          →  images/depth/gallery/foo/bar.jpg.depth.jpg
  *
+ * A voyage in parts shows its cover photo in the hero (`cover:` in its YAML,
+ * resolved by photos:fetch into _data/photo_manifests/_covers.json). Its map
+ * belongs to the photo, the whole frame, read from the 1920 JPEG tier:
+ *
+ *   cover dolomites → sesto/dscf9474 → images/depth/photos/dolomites/sesto/dscf9474.depth.jpg
+ *
+ * The canvas keeps the cover's focus central (data-depth-centre), as the
+ * static background does. Such a map is kept until --force: a new cover photo
+ * is a new path, but a re-edit of the same frame needs --force --only <slug>.
+ *
  * The `.depth.jpg` suffix is appended to the FULL source filename (dots occur
  * mid-name in EXIF-style gallery filenames, so extension swapping is unsafe).
  * `_includes/page__hero.html` derives the same path in Liquid and checks
@@ -88,6 +98,20 @@ function depthPathFor(srcRel) {
 }
 
 const jobs = [];
+// Voyages in parts: their cover's photo, fetched from the photo host.
+const COVERS = path.join(ROOT, '_data', 'photo_manifests', '_covers.json');
+const covers = fs.existsSync(COVERS) ? JSON.parse(fs.readFileSync(COVERS, 'utf8')) : {};
+for (const file of walk(path.join(ROOT, '_voyage'))) {
+  const fm = (fs.readFileSync(file, 'utf8').match(/^---\n([\s\S]*?)\n---/) || [])[1] || '';
+  if (!/^subgalleries:\s*true\s*$/m.test(fm)) continue;
+  const c = covers[path.basename(file).replace(/\.[^.]+$/, '')];
+  if (!c) continue;
+  const outRel = path.posix.join('images', 'depth', 'photos', c.gallery, `${c.slug}.depth.jpg`);
+  if (only && !outRel.includes(only)) continue;
+  const out = path.join(ROOT, outRel);
+  if (!force && fs.existsSync(out)) continue;
+  jobs.push({ url: `${c.url}/1920.jpg`, srcRel: `${c.gallery}/${c.slug}`, out, outRel });
+}
 for (const value of [...sources].sort()) {
   const srcRel = resolveSource(value);
   if (!srcRel) continue;
@@ -121,7 +145,8 @@ let done = 0;
 for (const job of jobs) {
   const t0 = Date.now();
   // Inference input mirrors the display orientation/scale of the hero photo.
-  const prepared = await sharp(job.src).rotate().resize({ width: MAX_WIDTH, withoutEnlargement: true })
+  const input = job.url ? Buffer.from(await (await fetch(job.url)).arrayBuffer()) : job.src;
+  const prepared = await sharp(input).rotate().resize({ width: MAX_WIDTH, withoutEnlargement: true })
     .jpeg({ quality: 92 }).toBuffer();
   const image = await RawImage.fromBlob(new Blob([prepared]));
   const { depth } = await estimator(image);

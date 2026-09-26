@@ -1,7 +1,13 @@
 {% include base_path %}
 
+{% comment %} A voyage's cover (voyage-cover.html) comes as its 1280 tier, placed on its focus for the card's 3.5:1. {% endcomment %}
+{% include voyage-cover.html doc=post %}
+{% assign card_pos = nil %}
 {% if post.header.teaser %}
   {% capture teaser %}{{ post.header.teaser }}{% endcapture %}
+{% elsif vc %}
+  {% capture teaser %}{{ vc.url }}/1280.webp{% endcapture %}
+  {% assign card_pos = vc.pos.card %}
 {% else %}
   {% if post.header.overlay_image %}
     {% capture teaser %}{{ post.header.overlay_image }}{% endcapture %}
@@ -15,11 +21,10 @@
 {% else %}
   {% assign title = post.title %}
 {% endif %}
-{% if teaser contains "://" %}
-  {% assign teaser = {{ teaser }} %}
-{% else %}
+{% comment %} An absolute URL (a voyage cover's tier, an external teaser) stays as it is. {% endcomment %}
+{% unless teaser contains "://" %}
   {% assign teaser = teaser | prepend: "/images/" | prepend: base_path %}
-{% endif %}
+{% endunless %}
 
 {% comment %} defer_cover=true parks the cover in --bg-later until assets/js/card-covers.js sees the card near. {% endcomment %}
 {% if include.defer_cover %}{% assign cover_var = "--bg-later: url(" %}{% else %}{% assign cover_var = "--bg-img: url(" %}{% endif %}
@@ -32,7 +37,7 @@
   {% assign post_link = post.url | prepend: base_path %}
 {% endif %}
 
-<a class="card" id="{{ title | slugify }}" href={{ post_link }} style="{{ ovl_address }}">
+<a class="card" id="{{ title | slugify }}" href={{ post_link }} style="{{ ovl_address }}{% if card_pos %}; --bg-pos: {{ card_pos }}{% endif %}">
     <div class="content">
       <h3>{{ title }}</h3>
           {% if post.read_time %}

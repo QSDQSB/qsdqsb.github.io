@@ -45,8 +45,10 @@ export function filmCode(name) {
   return k ? CODES[k] : name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
 }
 
-/** The opening frame: the first featured landscape, else the first landscape, else the first. */
-export function coverIndex(photos) {
+/** The opening frame: the authored cover's photo, else the first featured landscape, else the first landscape, else the first. */
+export function coverIndex(photos, slug = null) {
+  const own = slug ? photos.findIndex(p => p.slug === slug) : -1;
+  if (own >= 0) return own;
   const land = (p) => (p.ratio || 1.5) >= PORTRAIT;
   const i = photos.findIndex(p => p.featured && land(p));
   if (i >= 0) return i;
@@ -262,5 +264,5 @@ export function bookOf(merged, locations = {}) {
     const name = place?.name || p.caption || merged.title || titleOf(merged.gallery) || p.frame;
     return { ...p, name, film, place, light, glow: glowOf(p.thumbhash), ph: placeholderOf(p.thumbhash), filmHue: filmHue(film) };
   }
-  return { ...merged, photos, book: { rows: bookRows(photos), cover: coverIndex(photos), colophon: colophonOf(photos), lightbox: lightboxOf(photos) } };
+  return { ...merged, photos, book: { rows: bookRows(photos), cover: coverIndex(photos, merged.cover?.photo), colophon: colophonOf(photos), lightbox: lightboxOf(photos) } };
 }
