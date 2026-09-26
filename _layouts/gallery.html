@@ -46,6 +46,8 @@ layout: compress
       {% assign subvoyage_folder = voyage_name | append: "/" %}
       {% assign subs = site.subvoyage | where_exp: "item", "item.path contains subvoyage_folder" %}
       {% for post in subs %}
+        {% include photobook-ready.html doc=post %}
+        {% unless photobook_ready %}{% continue %}{% endunless %}
         {% assign title = post.title %}
         <div id="{{ title | slugify }}" style="width: 0; height: 0" aria-hidden="true"></div>
         {% include archive-single.html defer_cover=true %}
