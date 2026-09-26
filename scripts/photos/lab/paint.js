@@ -1,6 +1,7 @@
 /**
- * Painting a voyage's mood from its five colours (QSD's Palette), for the lab pages: watercolour
- * splashes, oil in the manner of Monet, oil in swirls, bokeh circles, and soft fields. Each painting
+ * Painting a voyage's mood from its five colours (QSD's Palette), for the lab pages: the dye vat (the
+ * colours stirred together in one round vessel), watercolour splashes, oil in the manner of Monet, oil
+ * in swirls, bokeh circles, and soft fields. Each painting
  * is seeded by the voyage, so a voyage always gets the same picture. Pure canvas, no dependencies.
  *
  *   paint(style, palette, { width, height, seed }) → <canvas>
@@ -155,7 +156,90 @@ function fields(palette, W, H) {
   return c;
 }
 
+// ── the dye vat (染缸) ─────────────────────────────────────────────────────
+// A round vat seen from above: each colour poured in at its own place, as much as its share, then the
+// liquid stirred (a slow swirl about the centre, and a broad flow warped twice over), so the colours
+// run into one another in long soft currents. Mixed in OKLab with the chroma kept, so where two colours
+// meet they make a clean third, never a grey. No seams, no grain: it should blend. WebGL; `t` stirs it on.
+const VAT_FRAG = `
+precision highp float;
+uniform vec2 res, org; uniform float seed, t;
+uniform vec3 col[5]; uniform float wt[5]; uniform vec2 pos[5]; uniform int n;
+float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7)) + seed * 0.013) * 43758.5453); }
+float noise(vec2 p) { vec2 i = floor(p), f = fract(p); vec2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
+  return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y); }
+float fbm(vec2 p) { float v = 0.0, a = 0.55; for (int i = 0; i < 3; i++) { v += a * noise(p); p = p * 1.9 + 11.0; a *= 0.45; } return v / 0.85; }
+vec3 toRgb(vec3 c) { float l = c.x + 0.3963377774 * c.y + 0.2158037573 * c.z, m = c.x - 0.1055613458 * c.y - 0.0638541728 * c.z, s = c.x - 0.0894841775 * c.y - 1.2914855480 * c.z;
+  l = l * l * l; m = m * m * m; s = s * s * s;
+  vec3 lin = vec3(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s, -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s, -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s);
+  lin = clamp(lin, 0.0, 1.0); return mix(12.92 * lin, 1.055 * pow(lin, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, lin)); }
+void main() {
+  vec2 uv = ((gl_FragCoord.xy - org) / res) * 2.0 - 1.0; uv.y = -uv.y;
+  float r = length(uv);
+  vec3 ground = vec3(0.078, 0.078, 0.082);
+  float aa = 2.0 / res.x;
+  if (r > 1.0 + aa) { gl_FragColor = vec4(ground, 1.0); return; }
+  // Stir: a slow swirl about the centre, stronger inside.
+  float ang = 2.2 * pow(1.0 - min(r, 1.0), 1.5) + t * 0.05;
+  vec2 p = mat2(cos(ang), -sin(ang), sin(ang), cos(ang)) * uv;
+  // The flow: broad currents, warped twice, so the colours draw out in long soft ribbons.
+  vec2 o = vec2(seed * 0.0071, seed * 0.0037);
+  vec2 q = vec2(fbm(p * 1.1 + o), fbm(p * 1.1 + o + vec2(5.2, 1.3)));
+  vec2 w = vec2(fbm(p * 1.3 + 2.4 * q + vec2(1.7, 9.2) + t * 0.02), fbm(p * 1.3 + 2.4 * q + vec2(8.3, 2.8) - t * 0.017));
+  vec2 pw = p + 0.7 * (w - 0.5);
+  // Each colour's hold here: as much liquid as its share, nearer where it was poured the stronger.
+  float ws[5]; float tot = 0.0;
+  for (int k = 0; k < 5; k++) { ws[k] = 0.0; if (k >= n) continue;
+    vec2 d = pw - pos[k]; ws[k] = pow(exp(-dot(d, d) / (0.12 + 0.6 * wt[k])) * (0.25 + wt[k]), 1.7); tot += ws[k]; }
+  float L = 0.0, C = 0.0; vec2 ab = vec2(0.0);
+  for (int k = 0; k < 5; k++) { if (k >= n) continue; float a = ws[k] / tot;
+    L += a * col[k].x; ab += a * col[k].yz; C += a * length(col[k].yz); }
+  // Keep the chroma: a mixture of two colours is a colour, not the grey their average would be; but
+  // across nearly opposite hues let it settle, as paint does, rather than pass through a rainbow.
+  float h = length(ab); if (h > 1e-4) ab *= mix(1.0, C / h, smoothstep(0.25, 0.75, h / max(C, 1e-4)));
+  vec3 rgb = toRgb(vec3(L, ab));
+  // The vessel, lightly: a faint sheen above left, a hairline of light at the rim.
+  rgb += 0.045 * smoothstep(0.7, 0.0, length(uv - vec2(-0.4, -0.45)));
+  rgb = mix(rgb, rgb + 0.08, smoothstep(0.975, 1.0, r));
+  gl_FragColor = vec4(mix(rgb, ground, smoothstep(1.0 - aa, 1.0 + aa, r)), 1.0);
+}`;
+
+function vat(palette, W, H, { stir = false } = {}) {
+  const c = document.createElement('canvas'), dpr = Math.min(2, devicePixelRatio || 1), S = Math.min(W, H);
+  c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); c.style.aspectRatio = `${W} / ${H}`;
+  const gl = c.getContext('webgl', { preserveDrawingBuffer: true, antialias: true });
+  if (!gl) return fields(palette, W, H);
+  const sh = (type, src) => { const x = gl.createShader(type); gl.shaderSource(x, src); gl.compileShader(x); if (!gl.getShaderParameter(x, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(x)); return x; };
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, 'attribute vec2 a; void main(){ gl_Position = vec4(a, 0.0, 1.0); }'));
+  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, VAT_FRAG)); gl.linkProgram(prog); gl.useProgram(prog);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  const a = gl.getAttribLocation(prog, 'a'); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a, 2, gl.FLOAT, false, 0, 0);
+  // The vat is a square in the middle of the canvas.
+  const side = Math.round(S * dpr), ox = Math.round((c.width - side) / 2), oy = Math.round((c.height - side) / 2);
+  gl.clearColor(0.078, 0.078, 0.082, 1); gl.clear(gl.COLOR_BUFFER_BIT); gl.viewport(ox, oy, side, side);
+  const cs = colours(palette).slice(0, 5), total = cs.reduce((s2, x) => s2 + x.w, 0);
+  const u = (name) => gl.getUniformLocation(prog, name);
+  gl.uniform2f(u('res'), side, side); gl.uniform2f(u('org'), ox, oy); gl.uniform1f(u('seed'), (state % 1000) + 1); gl.uniform1i(u('n'), cs.length);
+  // Where each colour is poured: spread round the vat, the largest nearest the middle.
+  const order = cs.map((x, i) => i).sort((x, y) => cs[y].w - cs[x].w);
+  order.forEach((i, rank) => {
+    const col = cs[i], lab = oklab(col.hex), ang = rand() * 2 * Math.PI, rad = rank === 0 ? 0.12 * rand() : 0.32 + rand() * 0.28;
+    gl.uniform3f(u(`col[${i}]`), lab[0], lab[1], lab[2]);
+    gl.uniform1f(u(`wt[${i}]`), col.w / total);
+    gl.uniform2f(u(`pos[${i}]`), Math.cos(ang) * rad, Math.sin(ang) * rad);
+  });
+  const frame = (t) => { gl.uniform1f(u('t'), t); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
+  frame(0);
+  if (stir) {
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!still) { const t0 = performance.now(); const loop = (now) => { if (!c.isConnected && now - t0 > 1000) return; frame((now - t0) / 1000); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+  }
+  return c;
+}
+
 export const STYLES = {
+  vat: { name: 'Dye vat', note: 'The colours poured into one round vat and stirred, blending like dye in water', draw: vat },
   watercolour: { name: 'Watercolour', note: 'Splashes on warm paper, bleeding and pooling', draw: watercolour },
   monet: { name: 'Oil · Monet', note: 'Short level strokes, like water and sky', draw: monet },
   swirl: { name: 'Oil · swirls', note: 'Strokes caught in a moving air', draw: swirl },
@@ -163,7 +247,7 @@ export const STYLES = {
   fields: { name: 'Fields', note: 'Soft bands, light above dark, a sky over its land', draw: fields },
 };
 
-export function paint(style, palette, { width = 640, height = 400, seed = 1 } = {}) {
+export function paint(style, palette, { width = 640, height = 400, seed = 1, stir = false } = {}) {
   state = seed;
-  return STYLES[style].draw(palette, width, height);
+  return STYLES[style].draw(palette, width, height, { stir });
 }
