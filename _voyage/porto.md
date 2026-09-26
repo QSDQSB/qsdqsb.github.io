@@ -6,6 +6,4 @@ date: 2023-08-01
 tags:
   - 🌉Bridges
   - 🌊Coastal
-header:
-  overlay_image: cover/porto-luis-i-bridge-3v1.jpg
 ---

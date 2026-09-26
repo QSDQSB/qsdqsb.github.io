@@ -6,6 +6,4 @@ date: 2023-04-17
 tags:
   - 🏛️Historic
   - 🌊Coastal
-header:
-  overlay_image: cover/mont-st-michel-twilight-3v1.jpg
 ---

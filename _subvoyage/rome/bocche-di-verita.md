@@ -6,8 +6,6 @@ date: 2025-05-31
 map:
   lat: 41.8882
   lng: 12.4814
-header:
-  overlay_image: cover/rome/mouths-of-truths-3v1.jpg
 ---
 
 As Nietzsche wrote, “We have art so that we shall not die of the truth.”

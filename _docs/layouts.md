@@ -68,8 +68,9 @@ narrows, `_sass/_photobook.scss`), `page__hero.html` (`.page__hero-media--cover`
 2880 / 1920 WebP, `_sass/_page.scss`), `archive-single.html` (the 1280 tier and
 `--bg-pos`), `home/whats-new.html` and `seo.html` (the 1200 × 630 link
 preview, `og:image` and `twitter:image`). `head.html` preconnects to the photo
-host on such a page and preloads a hero's background. A voyage without one
-keeps `header.overlay_image` throughout.
+host on such a page and preloads a hero's background. The cover also turns the
+overlay hero on (`page__hero.html`), as `header.overlay_image` does for posts
+and pages; only Venice, with no processed gallery, still uses that key.
 
 **Card covers.** `archive-single.html defer_cover=true` parks a card's cover in
 `--bg-later`; `assets/js/card-covers.js` sets `--bg-img` as the card comes within

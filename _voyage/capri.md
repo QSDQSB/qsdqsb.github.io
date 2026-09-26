@@ -6,6 +6,4 @@ date: 2024-08-04
 tags:
   - 🍝Italy
   - 🌊Coastal
-header:
-  overlay_image: cover/capri-3v1.jpg
 ---

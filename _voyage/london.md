@@ -7,6 +7,4 @@ tags:
   - 🌆Metropolis
   - 🏛️Historic
   - 🌉Bridges
-header:
-  overlay_image: cover/london-shard-3v1.jpg
 ---
