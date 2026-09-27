@@ -222,14 +222,16 @@
   overflow: hidden;
   pointer-events: none;
   mask-image: linear-gradient(to bottom, #000 30%, rgba(0, 0, 0, 0.55));
+  opacity: 0.36; // held here, so a layer fading in can never light the page past it
 
+  // Its layers crossfade as the book's wash does.
   > * {
     position: absolute;
     inset: -20% -10% 0;
     width: 120%;
     height: 120%;
-    opacity: 0.36;
     filter: blur(70px) saturate(115%);
+    @include photobook-wash-layer;
   }
 }
 
@@ -371,6 +373,7 @@
     grid-area: 1 / 1;
     width: 100%;
     height: auto;
+    @include photobook-wash-layer;
   }
 }
 
@@ -639,7 +642,9 @@
   .colour-drift__foot,
   .colour-drift__print,
   .colour-drift__tool,
-  .colour-drift__thread button { transition: none; }
+  .colour-drift__thread button,
+  .palette-ambience > *,
+  .palette-voyage__vat canvas { transition: none; }
 }
 
 @include responsive-reduced-motion {

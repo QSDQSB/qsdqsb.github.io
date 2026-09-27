@@ -14,6 +14,7 @@
 
 import { tips } from '../photobook/tip.js';
 import { vat, seedOf } from './vat.js';
+import { crossfade } from '../photobook/wash.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -131,19 +132,19 @@ async function main() {
   const ambience = Object.assign(document.createElement('div'), { className: 'palette-ambience' });
   ambience.setAttribute('aria-hidden', 'true');
   root.prepend(ambience);
-  /** Pour `fresh` into `box` over whatever it held, the old let go once covered. */
-  const pourInto = (box, fresh) => {
-    const old = [...box.children];
-    box.append(fresh);
-    if (!old.length || still()) { old.forEach((c) => c.remove()); return; }
-    fresh.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 600, easing: 'cubic-bezier(.3,.1,.2,1)' }).finished.then(() => old.forEach((c) => c.remove()), () => {});
-  };
+  // Both change as the book's wash does (../photobook/wash.js): the new laid over the old and faded
+  // in. The light turns as the words leave; the vat once it is back among the new ones (moving an
+  // element cuts its fade short).
+  function light(v) {
+    const g = v?.g ?? '';
+    if (ambience.dataset.g === g) return;
+    ambience.dataset.g = g;
+    crossfade(ambience, v ? vat(v.palette, { size: 160, seed: seedOf(v.g) }) : document.createElement('i'));
+  }
   function fillVat(v) {
-    if (vatBox.dataset.g === v?.g) return;
-    vatBox.dataset.g = v?.g ?? '';
-    if (!v) { pourInto(ambience, document.createElement('i')); return; }
-    pourInto(vatBox, vat(v.palette, { size: 176, seed: seedOf(v.g), label: `The colours of ${nameOf(v)}, run together as in a dye vat` }));
-    pourInto(ambience, vat(v.palette, { size: 160, seed: seedOf(v.g) }));
+    if (vatBox.dataset.g === v.g) return;
+    vatBox.dataset.g = v.g;
+    crossfade(vatBox, vat(v.palette, { size: 176, seed: seedOf(v.g), label: `The colours of ${nameOf(v)}, run together as in a dye vat` }));
   }
 
   // The rail, above the title: built once, every voyage's dye vat by colour. Moving from one voyage
@@ -180,7 +181,7 @@ async function main() {
   });
 
   // From one voyage to the next: the words and frames fade out, the page returns to the top unseen,
-  // the new ones rise in; the dye vat meanwhile takes its new colours, starting as the words leave.
+  // the new ones rise in; the light and the dye vat meanwhile take the new colours.
   const parts = () => [title, ...stage.querySelectorAll('.palette-voyage__blocks, .palette-voyage__links, .palette-page__order, .palette-cards, .colour-lede, .palette-index')];
   let shown = null, routing = 0;
   async function route() {
@@ -189,13 +190,13 @@ async function main() {
     const at = new URLSearchParams(location.search).get('at');
     const token = ++routing, gliding = shown !== null && shown !== (v?.g ?? '') && !still();
     railTo(v);
-    if (gliding) fillVat(v); // the new colours start to pour as the old words leave
+    light(v);
     if (gliding) {
       await Promise.all(parts().map((el) => el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }], { duration: 180, easing: 'ease-in', fill: 'forwards' }).finished.catch(() => {})));
       if (token !== routing) return;
     }
     shown = v?.g ?? '';
-    if (v) voyage(v, at); else { index(); fillVat(null); }
+    if (v) voyage(v, at); else index();
     if (!v || !at) scrollTo({ top: 0, behavior: 'instant' });
     for (const el of parts()) el.getAnimations().forEach((a) => a.cancel());
     if (gliding) for (const el of parts()) el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });

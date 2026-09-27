@@ -8,6 +8,8 @@
  * Markup: _includes/photobook/lightbox.html. Styles: _sass/_photobook.scss.
  */
 
+import { crossfade } from './wash.js';
+
 const DWELL = 7000, MAX_CROP = 0.15;
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const store = {
@@ -162,8 +164,8 @@ export function lightbox(frames) {
     if (instant || im.complete) reveal(); else im.decode().then(reveal, reveal);
     // The room takes the print's colour, from its placeholder (already soft, so no blur).
     if (p.ph) {
-      const a = document.createElement('div'); a.style.backgroundImage = `url(${p.ph})`; wash.appendChild(a);
-      requestAnimationFrame(() => { a.classList.add('is-on'); for (const x of [...wash.children]) if (x !== a) { x.classList.remove('is-on'); setTimeout(() => x.remove(), 1300); } });
+      const a = document.createElement('div'); a.style.backgroundImage = `url(${p.ph})`;
+      crossfade(wash, a);
     }
     // Fewer frames than the book holds means one film was chosen: the count names it, in its colour
     // (where the bar has room: _photobook.scss hides it on phones).
