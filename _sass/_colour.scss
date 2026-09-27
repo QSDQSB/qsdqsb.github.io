@@ -231,11 +231,10 @@
 // the masthead, so the sheet does too.
 .palette-page:has(.palette-voyages.is-open) { z-index: 61; }
 
-// Held just under the masthead as the page goes by: below the rail breakpoint the way to every
-// voyage (a pill), and, once the palette has scrolled away, the pinned strip. On a laptop only the
-// strip, taking no room until it shows. (The way back is the masthead's ‹.)
+// Below the rail breakpoint, the way to every voyage: a pill held just under the masthead as the page
+// goes by. (The way back is the masthead's ‹.)
 .palette-page__bar {
-  @include responsive-up($responsive-left-rail-breakpoint) { height: 0; margin: 0; }
+  @include responsive-up($responsive-left-rail-breakpoint) { display: none; }
 
   position: sticky;
   top: calc(5.2rem + env(safe-area-inset-top, 0px));
@@ -245,48 +244,6 @@
   gap: 0.6rem;
   width: fit-content;
   margin-bottom: clamp(1rem, 2.4vw, 1.6rem);
-}
-
-// The pinned strip: the voyage's vat, its name, its bar, in one slim glass pill. Near-solid, so no
-// live blur follows the page. Not on a phone held on its side, where every line counts.
-.palette-pin {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  height: 2.5rem;
-  padding: 0 1rem 0 0.4rem;
-  border: 1px solid var(--photobook-glass-edge);
-  border-radius: 999px;
-  background: rgba(14, 14, 18, 0.92);
-  box-shadow: $shadow-soft;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-0.3rem);
-  transition: opacity 0.25s $cubic-bezier-smooth, transform 0.3s $cubic-bezier-smooth, visibility 0s linear 0.3s;
-  pointer-events: none;
-
-  &:empty { display: none; }
-
-  .is-pinned & { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
-
-  i { flex: none; width: 1.7rem; aspect-ratio: 1; }
-  i canvas { display: block; width: 100%; height: auto; }
-
-  span {
-    font: 500 max(0.8rem, 13px) $barlow-font-family;
-    color: var(--photobook-ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
-  }
-
-  b { display: flex; gap: 2px; flex: none; width: 6.5rem; height: 6px; }
-  em { background: var(--c); border-radius: 1px; }
-
-  @include responsive-landscape {
-    @include responsive-down(desktop) { display: none; }
-  }
 }
 
 .palette-page__menu {
@@ -861,7 +818,6 @@
   .colour-drift__tool,
   .colour-drift__thread button,
   .palette-ambience > *,
-  .palette-pin,
   .palette-voyages,
   .palette-page,
   .palette-voyage__vat canvas { transition: none; }
