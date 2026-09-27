@@ -132,7 +132,18 @@ async function main() {
     return seen;
   }
   let cards = null; // the cards' watcher, let go when the cards are drawn again
+  // The frames rise into view as content does across the site (_scroll-animations.scss: the same
+  // classes, the same 12 px and timing), unless motion is off.
+  let reveal = null;
+  function rise(els) {
+    reveal?.disconnect();
+    if (still()) return;
+    document.documentElement.classList.add('scroll-reveal-ready');
+    reveal = new IntersectionObserver((entries) => { for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-visible'); reveal.unobserve(e.target); } }, { rootMargin: '0px 0px -8% 0px' });
+    for (const el of els) { el.classList.add('reveal-on-scroll'); reveal.observe(el); }
+  }
   function pour(v, slots) {
+    rise(stage.querySelectorAll('.palette-card'));
     cards?.disconnect();
     const key = (slot) => `${v.g}/${v.photos[slot.dataset.i].slug}`;
     cards = drip(slots, key, (slot) => vat(v.photos[slot.dataset.i].sig, { size: 44, seed: seedOf(key(slot)) }));
@@ -172,7 +183,10 @@ async function main() {
   // A change of voyage is one gesture, one tempo: the palette's blocks take the new dye in a wave
   // from the left, and the vat beside them changes its dye whole in the same time and on the same
   // curve (the site's standard ease). The room's light turns alongside.
-  const CHANGE = 1100, EASE = 'cubic-bezier(.4,0,.2,1)';
+  // The site's own curves (_components.scss), not this page's: one vocabulary of motion.
+  const css = getComputedStyle(document.documentElement);
+  const EASE = css.getPropertyValue('--ease-standard').trim() || 'ease', SMOOTH = css.getPropertyValue('--ease-smooth').trim() || 'ease-out';
+  const CHANGE = 1100; // the dye's own time, longer than a page's: the one signature moment
   function fillVat(v) {
     if (vatBox.dataset.g === v.g) return;
     vatBox.dataset.g = v.g;
@@ -360,16 +374,16 @@ async function main() {
     light(v);
     const before = gliding && v ? blocksNow() : [];
     if (gliding) {
-      // The old voyage lifts away (an even sine, a few pixels up), not a blink.
-      await Promise.all(parts().map((el) => el.animate([{ opacity: getComputedStyle(el).opacity, transform: 'none' }, { opacity: 0, transform: 'translateY(-4px)' }], { duration: 320, easing: 'cubic-bezier(.37,0,.63,1)', fill: 'forwards' }).finished.catch(() => {})));
+      // The old voyage lifts away as a page leaves the site (0.3 s, the standard curve), not a blink.
+      await Promise.all(parts().map((el) => el.animate([{ opacity: getComputedStyle(el).opacity, transform: 'none' }, { opacity: 0, transform: 'translateY(-4px)' }], { duration: 300, easing: EASE, fill: 'forwards' }).finished.catch(() => {})));
       if (token !== routing) return;
     }
     shown = v?.g ?? '';
     if (v) voyage(v, at); else index();
     if (!v || !at) scrollTo({ top: 0, behavior: 'instant' });
     for (const el of parts()) el.getAnimations().forEach((a) => a.cancel());
-    // …and the new one settles in from just below, a touch slower, so the two read as one movement.
-    if (gliding) for (const el of parts()) el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 560, easing: 'cubic-bezier(.22,1,.36,1)' });
+    // …and the new one settles in as a page arrives (0.4 s, the smooth curve).
+    if (gliding) for (const el of parts()) el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 400, easing: SMOOTH });
     if (gliding && v) morph(before);
   }
   addEventListener('hashchange', () => { if (location.search) history.replaceState(null, '', location.pathname + location.hash); route(); });
