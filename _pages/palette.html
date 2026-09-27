@@ -8,20 +8,34 @@ seo_description: "The colours of every voyage, and of every photograph in it: QS
 ---
 {%- comment -%}
   QSD's Palette: one page, a voyage to each anchor (/palette/#london, /palette/#prague/twilight).
-  At the top, the way back to the voyage's book, as the picture view's; then the rail: every voyage's dye vat, by colour, to step from one to the next. Without an
+  Beside it all, every voyage by place, to find one by name: a column on a laptop, a sheet on a
+  phone (opened from "Voyages"). At the top, the way back to the voyage's book, as the picture
+  view's; then the rail: every voyage's dye vat, by colour, to step from one to the next. Without an
   anchor, every voyage's palette in a column; with one, "QSD's Palette for <voyage>":
   its signature and colour line, then every frame as a print with its own palette, in the book's
   sequence or by colour (24 dots, dark to light). ?at=<slug> marks the frame a reader came from.
   Data: /assets/palettes.json. Script: assets/js/colour/palette.js. Styles: _sass/_colour.scss.
 {%- endcomment -%}
 <main class="palette-page" id="palette-page">
-  <a class="palette-page__back" hidden data-tip="Back to the book" data-tip-side="top"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg><span></span></a>
-  <nav class="palette-rail" aria-label="Every voyage's dye vat, by colour"></nav>
-  <header class="colour-head palette-page__head">
-    <p class="colour-kicker"><a href="{{ '/palette/' | relative_url }}" class="palette-page__home">QSD's Palette</a></p>
-    <h1>QSD's Palette</h1>
-  </header>
-  <div class="palette-page__stage" aria-live="polite"></div>
-  <noscript><p class="colour-empty">The palettes are drawn by a script; with it off, the photographs are in the <a href="{{ '/voyage/' | relative_url }}">voyages</a>.</p></noscript>
+  <aside class="palette-voyages" id="palette-voyages" aria-label="Every voyage, by place">
+    <div class="palette-voyages__find">
+      <input type="search" placeholder="Find a voyage" aria-label="Find a voyage" autocomplete="off" spellcheck="false">
+      <button type="button" class="palette-voyages__close" aria-label="Close the list of voyages"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+    </div>
+    <div class="palette-voyages__list"></div>
+  </aside>
+  <div class="palette-page__body">
+    <div class="palette-page__bar">
+      <a class="palette-page__back" hidden data-tip="Back to the book" data-tip-side="top"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg><span></span></a>
+      <button type="button" class="palette-page__menu" aria-controls="palette-voyages" aria-expanded="false"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4.5h10M3 8h10M3 11.5h10"/></svg>Voyages</button>
+    </div>
+    <nav class="palette-rail" aria-label="Every voyage's dye vat, by colour"></nav>
+    <header class="colour-head palette-page__head">
+      <p class="colour-kicker"><a href="{{ '/palette/' | relative_url }}" class="palette-page__home">QSD's Palette</a></p>
+      <h1>QSD's Palette</h1>
+    </header>
+    <div class="palette-page__stage" aria-live="polite"></div>
+    <noscript><p class="colour-empty">The palettes are drawn by a script; with it off, the photographs are in the <a href="{{ '/voyage/' | relative_url }}">voyages</a>.</p></noscript>
+  </div>
 </main>
 <script type="module" src="{{ '/assets/js/colour/palette.js' | relative_url }}"></script>
