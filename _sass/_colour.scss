@@ -377,10 +377,6 @@
 
   > * { width: 124%; height: 124%; } // a canvas is not stretched by its insets alone
 
-  // The living room (vat.js field): already soft and already dimmed in its shader, so the view is
-  // simply filled, with nothing filtered per frame.
-  > .colour-field { inset: 0; width: 100%; height: 100%; filter: none; }
-
   &::after { content: none; }
 }
 
