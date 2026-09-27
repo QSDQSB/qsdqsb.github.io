@@ -164,12 +164,30 @@ async function main() {
     ambience.dataset.g = g;
     crossfade(ambience, v ? room(v) : document.createElement('i'));
   }
+  // A change of voyage is one gesture, one tempo: the palette's blocks take the new dye in a wave
+  // from the left, and the vat beside them fills from the left in the same time and on the same curve
+  // (the site's standard ease), as if the dye ran on into it. The room's light turns alongside.
+  const CHANGE = 1100, EASE = 'cubic-bezier(.4,0,.2,1)';
   function fillVat(v) {
     if (vatBox.dataset.g === v.g) return;
     vatBox.dataset.g = v.g;
-    for (const old of vatBox.children) setTimeout(() => old.release?.(), 1400); // once faded, its context goes
+    const old = [...vatBox.children];
     // Stirred while the pointer rests on it; settled back, true to its shares, when it leaves.
-    crossfade(vatBox, vat(v.palette, { size: 176, seed: seedOf(v.g), stir: 'hover', label: `The colours of ${nameOf(v)}, run together as in a dye vat` }));
+    const fresh = vat(v.palette, { size: 176, seed: seedOf(v.g), stir: 'hover', label: `The colours of ${nameOf(v)}, run together as in a dye vat` });
+    vatBox.append(fresh);
+    const done = () => old.forEach((c) => { c.release?.(); c.remove(); });
+    if (!old.length || still()) { done(); return; }
+    // A soft edge swept left to right: the mask is three times as wide as the vat, opaque on its left
+    // half, and slides from showing its clear end to showing its opaque one.
+    const edge = 'linear-gradient(90deg, #000 44%, transparent 56%)';
+    Object.assign(fresh.style, { maskImage: edge, webkitMaskImage: edge, maskSize: '300% 100%', webkitMaskSize: '300% 100%', maskRepeat: 'no-repeat', webkitMaskRepeat: 'no-repeat' });
+    fresh.animate([
+      { maskPosition: '100% 0', webkitMaskPosition: '100% 0', transform: 'scale(1.02)' },
+      { maskPosition: '0% 0', webkitMaskPosition: '0% 0', transform: 'none' },
+    ], { duration: CHANGE, easing: EASE }).finished.then(() => {
+      for (const k of ['maskImage', 'webkitMaskImage', 'maskSize', 'webkitMaskSize', 'maskRepeat', 'webkitMaskRepeat']) fresh.style[k] = '';
+      done();
+    }, done);
   }
 
   // The rail, above the title: built once, every voyage's dye vat by colour, without end: the run is
@@ -307,20 +325,22 @@ async function main() {
     const g = (x) => Math.round(Math.min(1, Math.max(0, x <= 0.0031308 ? 12.92 * x : 1.055 * x ** (1 / 2.4) - 0.055)) * 255).toString(16).padStart(2, '0');
     return `#${g(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s)}${g(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s)}${g(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s)}`;
   };
-  const smooth = (t) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2); // in and out: the blend is given its time
-  const flow = (from, to, steps = 12) => { const A = oklab(from), B = oklab(to); return Array.from({ length: steps + 1 }, (_, k) => { const t = smooth(k / steps); return { backgroundColor: toHex(A.map((x, i) => x + (B[i] - x) * t)), offset: k / steps }; }); };
+  // Evenly spaced through OKLab; the animation's own easing (the vat's) paces it.
+  const flow = (from, to, steps = 12) => { const A = oklab(from), B = oklab(to); return Array.from({ length: steps + 1 }, (_, k) => ({ backgroundColor: toHex(A.map((x, i) => x + (B[i] - x) * (k / steps))), offset: k / steps })); };
   const blocksNow = () => [...root.querySelectorAll('.palette-voyage .palette-blocks > div')].map((d) => d.querySelector('i').style.getPropertyValue('--c').trim());
   function morph(before) {
     const row = root.querySelector('.palette-voyage .palette-blocks');
     if (!row || !before.length) return;
-    const now = [...row.children], wash = 1000, wave = 90, grow = 'cubic-bezier(.65,0,.35,1)';
+    // The whole wave, first block to last, inside the vat's time.
+    const now = [...row.children], count = Math.max(now.length, before.length), spread = 280;
+    const wave = count > 1 ? spread / (count - 1) : 0, wash = CHANGE - spread, grow = EASE;
     now.forEach((d, i) => {
       const to = d.querySelector('i').style.getPropertyValue('--c').trim(), from = before[Math.min(i, before.length - 1)], delay = i * wave;
-      d.querySelector('i').animate(flow(from, to), { duration: wash, delay, easing: 'linear', fill: 'backwards' });
+      d.querySelector('i').animate(flow(from, to), { duration: wash, delay, easing: EASE, fill: 'backwards' });
       if (i >= before.length) d.animate([{ flexGrow: 0 }, { flexGrow: 1 }], { duration: wash, delay, easing: grow, fill: 'backwards' });
       for (const [k, el] of [d.querySelector('i'), d.querySelector('b')].entries()) {
         // The words rise in as the dye settles: only the text, so the colour beneath keeps flowing.
-        el.animate([{ color: 'transparent' }, { color: 'transparent', offset: 0.6 }, {}], { duration: wash + 120, delay: delay + k * 40, easing: 'ease-out', fill: 'backwards' });
+        el.animate([{ color: 'transparent' }, { color: 'transparent', offset: 0.6 }, {}], { duration: wash, delay: delay + k * 40, easing: EASE, fill: 'backwards' });
       }
     });
     // Colours the new palette lacks: their blocks narrow away at the right, carrying their old dye.
