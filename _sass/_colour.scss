@@ -10,7 +10,7 @@
 
 .colour-kicker {
   margin: 0;
-  font: 500 0.62rem/1 $barlow-font-family;
+  font: 500 max(0.62rem, 11px)/1 $barlow-font-family; // never below 11px, as on a phone
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--photobook-ink-3);
@@ -333,14 +333,21 @@
   a:hover,
   a:focus-visible { outline-color: var(--photobook-ink-3); }
 
+  // The other voyages step back, so the title and this voyage's own colours lead; each comes forward
+  // under the pointer.
+  a { opacity: 0.55; }
+  a:is(:hover, :focus-visible, [aria-current]) { opacity: 1; }
+
   a[aria-current] { outline-color: var(--photobook-ink); }
 
   canvas { display: block; width: 100%; height: auto; }
 }
 
 .palette-rail__step {
-  display: block;
-  padding: 0.3rem 0.5rem;
+  display: grid;
+  place-items: center;
+  min-width: 2.5rem;
+  min-height: 2.5rem; // a target the size of a vat
   font: 400 1.3rem/1 $barlow-font-family;
   color: var(--photobook-ink-3);
   text-decoration: none;
@@ -397,7 +404,11 @@
   }
 }
 
-.palette-page__order { margin: clamp(2rem, 4vw, 2.6rem) 0 1.4rem; }
+.palette-page__order {
+  margin: clamp(2rem, 4vw, 2.6rem) 0 1.4rem;
+
+  button { min-height: 1.75rem; } // at least 24px to tap, on a phone too
+}
 
 // A palette as blocks: equal widths, the hex inside, the share beneath.
 .palette-blocks {
@@ -412,7 +423,7 @@
     height: 1.6rem;
     background: var(--c);
     color: var(--on);
-    font: 500 0.62rem $barlow-font-family;
+    font: 500 max(0.62rem, 11px) $barlow-font-family;
     font-style: normal;
     letter-spacing: 0.06em;
   }
@@ -420,7 +431,7 @@
   b {
     display: block;
     margin-top: 0.3rem;
-    font: 400 0.68rem $barlow-font-family;
+    font: 400 max(0.68rem, 11px) $barlow-font-family;
     color: var(--photobook-ink-2);
     font-variant-numeric: tabular-nums;
   }
@@ -454,7 +465,7 @@
     color: var(--photobook-ink); // the site colours its h3
   }
 
-  h3 small { margin-left: 0.5rem; font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--photobook-ink-3); }
+  h3 small { margin-left: 0.5rem; font-size: max(0.66rem, 11px); letter-spacing: 0.1em; text-transform: uppercase; color: var(--photobook-ink-3); }
 }
 
 .palette-card__bar {
@@ -469,7 +480,8 @@
 // The frame's own dye vat, beside its name and bar and as tall as the two together.
 .palette-card__vat {
   aspect-ratio: 1;
-  margin-top: 0.8rem; // level with the name
+  align-self: center; // centred on the name and bar, however many lines the name takes
+  margin-top: 0.8rem; // the name's own top margin, so the centre is the words'
 
   canvas {
     display: block;

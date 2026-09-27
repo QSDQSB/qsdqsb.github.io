@@ -12,7 +12,10 @@
  * vat(palette, { size, width, height, seed, stir, label, calm }) → a canvas. `palette` is
  * [{hex, pc, accent}] or [[hex, pc, accent]]; `calm` (0 stirred … 1 layered) overrides the choice; the vat is `size` across (or the smaller of width and height), centred, transparent
  * round it. Still by default: painted on one shared WebGL canvas and copied out, so a page of frames
- * costs one context; `stir` gives the vat its own and keeps the currents moving, unless motion is off. Used by the palette page
+ * costs one context. `stir: true` gives the vat its own and keeps the currents moving (the lab);
+ * `stir: 'hover'` stirs only while a pointer rests on it, and on leaving lets the dye settle back to
+ * where it was poured, so at rest it is always true to its shares. Neither moves with motion off;
+ * a live vat's `release()` lets its context go. Used by the palette page
  * (assets/js/colour/palette.js) and the mood lab (scripts/photos/lab/paint.js).
  */
 
@@ -108,7 +111,7 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
   const gauss = () => { let v = 0; for (let i = 0; i < 6; i++) v += rand(); return v / 6 - 0.5; };
   const cs = palette.slice(0, 5).map((p) => (Array.isArray(p) ? { hex: p[0], pc: p[1], accent: !!p[2] } : p)), n = cs.length;
   const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(width * dpr), H = Math.round(height * dpr);
-  const moving = stir && !(window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const moving = !!stir && !(window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches);
   const out = document.createElement('canvas'); out.width = W; out.height = H;
   out.className = 'colour-vat'; out.style.aspectRatio = `${width} / ${height}`;
   if (label) { out.setAttribute('role', 'img'); out.setAttribute('aria-label', label); } else out.setAttribute('aria-hidden', 'true');
@@ -166,9 +169,23 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
   frame(0);
   out.dataset.areas = areas.map((x) => x.toFixed(3)).join(' '); // what the vat covers, to check against the shares
   out.dataset.calm = calm.toFixed(2);
-  if (moving) {
+  if (moving) out.release = () => gl.getExtension('WEBGL_lose_context')?.loseContext();
+  if (moving && stir === 'hover') {
+    // Drawn only while it moves: stirred under the pointer, then eased back to rest (t = 0).
+    let t = 0, on = false, raf = 0, last = 0;
+    const tick = (now) => {
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      t = on ? t + dt * 6 : t * Math.exp(-dt * 2.4);
+      if (!on && t < 0.02) t = 0;
+      frame(t);
+      raf = on || t ? requestAnimationFrame(tick) : 0;
+    };
+    const wake = () => { if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } };
+    out.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') { on = true; wake(); } });
+    out.addEventListener('pointerleave', () => { on = false; wake(); });
+  } else if (moving) {
     const t0 = performance.now();
-    const loop = (now) => { if (!out.isConnected && now - t0 > 1000) { gl.getExtension('WEBGL_lose_context')?.loseContext(); return; } frame((now - t0) / 1000); requestAnimationFrame(loop); };
+    const loop = (now) => { if (!out.isConnected && now - t0 > 1000) { out.release(); return; } frame((now - t0) / 1000); requestAnimationFrame(loop); };
     requestAnimationFrame(loop);
   } else {
     out.getContext('2d').drawImage(canvas, 0, 0, W, H, 0, 0, W, H);
