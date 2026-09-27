@@ -71,7 +71,7 @@ async function main() {
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
     stage.innerHTML = `<section class="palette-voyage">
         <div class="palette-voyage__blocks">${blocks(sig(v))}</div>
-        <p class="palette-voyage__links"><a href="${page.url}">Open the book <span aria-hidden="true">→</span></a><a href="#">Every palette <span aria-hidden="true">→</span></a></p>
+        <p class="palette-voyage__links"><a href="${page.url}">Open the book <span aria-hidden="true">→</span></a></p>
         <div data-vat></div>
       </section>
       <div class="photobook-sheet__order palette-page__order" role="group" aria-label="Order">
