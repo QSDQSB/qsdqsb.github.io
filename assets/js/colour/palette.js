@@ -25,6 +25,7 @@ const stage = root?.querySelector('.palette-page__stage');
 const title = root?.querySelector('h1');
 const kicker = root?.querySelector('.palette-page__home');
 const railNav = root?.querySelector('.palette-rail');
+const back = root?.querySelector('.palette-page__back');
 
 /** A palette as a wall label: the bar (a link when `href`), the hex codes beneath. Widths tempered. */
 function strip(colours, { href = null, label = '', shares = false } = {}) {
@@ -62,6 +63,7 @@ async function main() {
   function index() {
     document.title = document.title.replace(/^[^·]*·/, "QSD's Palette ·");
     title.textContent = "QSD's Palette";
+    back.hidden = true;
     kicker.textContent = 'From the voyages';
     stage.innerHTML = `<p class="colour-lede">The colours of every voyage: each one's own, pooled from its photographs, without the black and white that every journey has.</p>
       <ol class="palette-index">${voyages.map((v) => `<li><a href="#${v.g}" class="palette-index__name">${esc(nameOf(v))}</a>${strip(sig(v), { href: `#${v.g}`, label: `QSD's Palette for ${nameOf(v)}` })}</li>`).join('')}</ol>`;
@@ -70,8 +72,12 @@ async function main() {
   function voyage(v, at) {
     const name = nameOf(v), page = pages[v.g];
     document.title = document.title.replace(/^[^·]*·/, `QSD's Palette for ${name} ·`);
-    // The voyage's name is the way back to its book, to the frame the reader came from when there was one.
-    title.innerHTML = `QSD's Palette for <a class="palette-page__voyage" href="${page.url}${at ? `#${encodeURIComponent(at)}` : ''}" data-tip="Open the book" data-tip-side="top">${esc(name)}</a>`;
+    // The way back to the voyage's book, to the frame the reader came from when there was one: the
+    // pill at the top, as the picture view's, and the voyage's name in the title.
+    const home = `${page.url}${at ? `#${encodeURIComponent(at)}` : ''}`;
+    back.href = home; back.hidden = false; back.querySelector('span').textContent = name;
+    back.setAttribute('aria-label', `Back to ${name}`);
+    title.innerHTML = `QSD's Palette for <a class="palette-page__voyage" href="${home}">${esc(name)}</a>`;
     kicker.textContent = "QSD's Palette";
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
     stage.innerHTML = `<section class="palette-voyage">
