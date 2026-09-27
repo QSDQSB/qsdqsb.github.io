@@ -207,7 +207,7 @@ test('always coloured: a colour photo has no black or white swatch; a black-and-
 
 test('the rail of voyages lays like beside like, dark to light', async () => {
   const { palettesOf } = await import('../scripts/photos/lib/atlas.mjs');
-  const book = (g, hexes) => ({ gallery: g, photos: [], book: { colour: { palette: hexes.map((hex, i) => ({ hex, pc: [40, 30, 20, 10][i] })), wheel: null, order: [] } } });
+  const book = (g, hexes) => ({ gallery: g, photos: [], book: { colour: { palette: hexes.map((hex, i) => ({ hex, pc: [40, 30, 20, 10][i] })), order: [] } } });
   const { voyages } = palettesOf([
     book('blue', ['#202a40', '#304868', '#4c668c', '#7c889c']),
     book('amber', ['#c05030', '#e08040', '#f0b070', '#fae0c0']),
@@ -218,4 +218,20 @@ test('the rail of voyages lays like beside like, dark to light', async () => {
   assert.deepEqual([...rail].sort(), ['amber', 'blue', 'navy', 'rust']);
   assert.ok(Math.abs(rail.indexOf('blue') - rail.indexOf('navy')) === 1 && Math.abs(rail.indexOf('amber') - rail.indexOf('rust')) === 1);
   assert.ok(rail.indexOf('blue') < rail.indexOf('amber'), 'the darker family first');
+});
+
+test('the palette page is sent only what it draws', async () => {
+  const { palettesOf } = await import('../scripts/photos/lib/atlas.mjs');
+  const photo = { slug: 'a', name: 'A', light: { text: 'Golden hour' }, url: 'https://img/x', ratio: 1.5, sizes: { webp: [480, 960, 1920] }, signature: [['#304868', 60, 0], ['#e1cbbc', 40, 0]], dots: 'ff0000ff'.repeat(24), palette: 'x', grid: 'y' };
+  const { voyages } = palettesOf([{ gallery: 'g', photos: [photo], book: { colour: { palette: [{ hex: '#304868', pc: 60 }, { hex: '#e1cbbc', pc: 40 }], ramp: [], barcode: [], order: [0] } } }]);
+  assert.deepEqual(Object.keys(voyages[0]).sort(), ['g', 'order', 'palette', 'photos', 'rank']);
+  assert.deepEqual(Object.keys(voyages[0].photos[0]).sort(), ['light', 'name', 'sig', 'sizes', 'slug', 'url']);
+  assert.deepEqual(voyages[0].photos[0].sizes, [480, 960], 'no size above 1280');
+});
+
+test('a dye vat is poured the same way for the same gallery, and differently for another', async () => {
+  const { seedOf } = await import('../assets/js/colour/vat.js');
+  assert.equal(seedOf('london'), seedOf('london'));
+  assert.notEqual(seedOf('london'), seedOf('oxford'));
+  for (const g of ['london', 'prague/twilight', 'japan/kyoto']) assert.ok(seedOf(g) >= 1 && seedOf(g) < 2147483647);
 });

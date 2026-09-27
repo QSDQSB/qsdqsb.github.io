@@ -8,7 +8,9 @@
  *   palette: [{ hex, pc }], its shares in per cent.
  */
 
-import { vat as vatOf } from '/assets/js/colour/vat.js';
+import { vat as vatOf, seedOf } from '/assets/js/colour/vat.js';
+
+export { seedOf };
 
 // ── colour ────────────────────────────────────────────────────────────────
 const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
@@ -28,7 +30,6 @@ const shade = (hex, dL = 0, k = 1) => { const [L, a, b] = oklab(hex); return srg
 let state = 1;
 const rand = () => { state = (state * 16807) % 2147483647; return state / 2147483647; };
 const gauss = () => { let u = 0; for (let i = 0; i < 6; i++) u += rand(); return u / 6 - 0.5; };
-export const seedOf = (text) => { let h = 2166136261; for (const ch of String(text)) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return (h % 2147483646) + 1; };
 const pick = (cs) => { let r = rand() * cs.reduce((s, c) => s + c.w, 0); for (const c of cs) if ((r -= c.w) <= 0) return c; return cs[cs.length - 1]; };
 const vary = (hex, dl = 0.03, dc = 0.012) => { const [L, a, b] = oklab(hex); return srgb(L + gauss() * dl * 2, a + gauss() * dc * 2, b + gauss() * dc * 2); };
 

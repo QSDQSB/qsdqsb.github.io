@@ -143,7 +143,14 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
     let note = null;
     if (error) {
       unreachable++;
-      if (fs.existsSync(out)) { note = `bucket unreachable (${error}); kept the previous merge`; index.galleries[gallery] = { ...summary(JSON.parse(fs.readFileSync(out, 'utf8'))), note }; return; }
+      if (fs.existsSync(out)) {
+        // The previous merge stands in, on the colour pages too: one bad read must not drop a voyage.
+        const kept = JSON.parse(fs.readFileSync(out, 'utf8'));
+        note = `bucket unreachable (${error}); kept the previous merge`;
+        index.galleries[gallery] = { ...summary(kept), note };
+        books.push(kept);
+        return;
+      }
       note = `bucket unreachable (${error}); no previous merge`;
     }
     // The Photobook's layer (rows, cover, colophon, place, light, glow) is worked out here, once.
