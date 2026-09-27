@@ -34,8 +34,12 @@ function strip(colours, { href = null, label = '', shares = false } = {}) {
   return `<div class="palette-strip">${bar}<p class="palette-strip__hex">${hex}</p></div>`;
 }
 
-const lum = (h) => { const n = parseInt(h.slice(1), 16); return (0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255)) / 255; };
-const ink = (h) => (lum(h) > 0.55 ? 'rgba(0,0,0,.72)' : 'rgba(255,255,255,.82)');
+/** Black or white for the hex on a block, whichever reads better against it (WCAG contrast). */
+const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
+const ink = (h) => {
+  const n = parseInt(h.slice(1), 16), L = 0.2126 * lin(n >> 16) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
+  return (L + 0.05) / 0.05 > 1.05 / (L + 0.05) ? '#000' : '#fff'; // pure, so even a middling colour reads at 4.5:1 or better
+};
 /** A palette as blocks: equal widths, the hex inside (text to select), the share beneath. */
 const blocks = (cs) => `<div class="palette-blocks">${cs.map(([h, pc, accent]) => `<div class="${accent ? 'is-accent' : ''}"><i style="--c:${h};--on:${ink(h)}">${h.slice(1).toUpperCase()}</i><b>${Math.round(pc * 10) / 10}%</b></div>`).join('')}</div>`;
 
@@ -78,6 +82,7 @@ async function main() {
         <button type="button" aria-pressed="${order === 'sequence'}" data-order="sequence">Sequence</button>
         <button type="button" aria-pressed="${order === 'colour'}" data-order="colour">Colour</button>
       </div>
+      <h2 class="visually-hidden">The frames</h2>
       <div class="palette-cards">${seq.map((i) => { const p = v.photos[i]; return `<article class="palette-card${p.slug === at ? ' is-from' : ''}" id="f-${esc(p.slug)}" data-n="${i}">
           <a class="palette-card__print" href="${page.url}#${encodeURIComponent(p.slug)}" aria-label="${esc(p.name || p.slug)}, in its book"><img src="${p.url}/${p.sizes.find((s) => s >= 960) || p.sizes[p.sizes.length - 1] || 480}.webp" alt="" loading="lazy" decoding="async"></a>
           ${p.sig?.length ? blocks(p.sig) : ''}
@@ -153,7 +158,9 @@ async function main() {
   function fillVat(v) {
     if (vatBox.dataset.g === v.g) return;
     vatBox.dataset.g = v.g;
-    crossfade(vatBox, vat(v.palette, { size: 176, seed: seedOf(v.g), label: `The colours of ${nameOf(v)}, run together as in a dye vat` }));
+    for (const old of vatBox.children) setTimeout(() => old.release?.(), 1400); // once faded, its context goes
+    // Stirred while the pointer rests on it; settled back, true to its shares, when it leaves.
+    crossfade(vatBox, vat(v.palette, { size: 176, seed: seedOf(v.g), stir: 'hover', label: `The colours of ${nameOf(v)}, run together as in a dye vat` }));
   }
 
   // The rail, above the title: built once, every voyage's dye vat by colour. Moving from one voyage
