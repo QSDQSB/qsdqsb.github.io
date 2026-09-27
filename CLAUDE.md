@@ -123,7 +123,9 @@ Four rules that bite silently:
 
 `_sass/vendor/**` is exempt from all of the above.
 
-→ `css-token-steward` skill (authoring, token families, `// @keep`), `css-scss-janitor` skill (cleanup), `scss-auditor` agent (full audit).
+**Reuse before you create.** The Photobook's design is the site's canonical system. Its shared pieces (eyebrow, display title, lede, onward links, pill, quiet icon button, glass, wash, motion curves) live in `_sass/_components.scss`. A new page uses them rather than restyling its own, and adds a piece there only for a need none of them meets.
+
+→ `css-token-steward` skill (authoring, token families, `// @keep`), `css-scss-janitor` skill (cleanup), `scss-auditor` agent (full audit), `_docs/components.md` (the catalogue).
 
 ---
 
@@ -182,6 +184,7 @@ Mechanical checks, all scoped to **changes vs `HEAD`** — never the existing ba
 | `check-important-ratchet.py` | `check:important` | Any `!important` growth — the stylesheet uses none |
 | `check-responsive-policy.sh` | `check:responsive-policy` | Raw breakpoints outside `_responsive-policy.scss` |
 | `check-seo-descriptions.py` | `check:seo` | Pages with no real meta description |
+| `check-new-components.sh` | — | A new component family styled in a page's partial instead of reusing `_components.scss` (a nudge, never a failure) |
 
 **Hooks.** PostToolUse (`post-tool-edit-nudges.sh`) runs whichever checks match the edited file and prints findings inline, non-blocking. Stop (`stop-variables-check.sh`, `stop-house-guards.sh`) exits 2 on violations introduced this session.
 
