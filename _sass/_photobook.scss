@@ -1181,8 +1181,9 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   &::after { content: ""; position: absolute; inset: -6px; }
 }
 
-.photobook-lightbox__back {
-  flex: none;
+// The way back: a glass pill, a chevron and the voyage's name. The lightbox's, and the palette
+// page's (_colour.scss), so going back looks the same wherever one is.
+@mixin photobook-back-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -1198,6 +1199,11 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   cursor: pointer;
 
   svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+}
+
+.photobook-lightbox__back {
+  flex: none;
+  @include photobook-back-pill;
 }
 
 .photobook-lightbox__count {
