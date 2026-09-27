@@ -135,11 +135,20 @@ async function main() {
   // Both change as the book's wash does (../photobook/wash.js): the new laid over the old and faded
   // in. The light turns as the words leave; the vat once it is back among the new ones (moving an
   // element cuts its fade short).
+  /** The room's light: the square inside the voyage's vat, 48 px, for the page to spread and soften
+   *  (a small picture scaled up is already soft, and costs next to nothing to hold). */
+  function room(v) {
+    const c = vat(v.palette, { size: 96, seed: seedOf(v.g) }), out = document.createElement('canvas');
+    const side = c.width / Math.SQRT2, at = (c.width - side) / 2;
+    out.width = out.height = 48;
+    out.getContext('2d').drawImage(c, at, at, side, side, 0, 0, 48, 48);
+    return out;
+  }
   function light(v) {
     const g = v?.g ?? '';
     if (ambience.dataset.g === g) return;
     ambience.dataset.g = g;
-    crossfade(ambience, v ? vat(v.palette, { size: 160, seed: seedOf(v.g) }) : document.createElement('i'));
+    crossfade(ambience, v ? room(v) : document.createElement('i'));
   }
   function fillVat(v) {
     if (vatBox.dataset.g === v.g) return;

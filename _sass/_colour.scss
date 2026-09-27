@@ -213,21 +213,32 @@
   padding: clamp(6.5rem, 12vw, 9rem) var(--photobook-gutter) clamp(4rem, 8vw, 6rem);
 }
 
-// The voyage's colours as the room the page stands in, as the lightbox's room takes a print's
-// (@mixin photobook-wash): its dye vat, drawn large enough that no edge of it shows, fixed as the page
-// moves (palette.js pours it). No vignette, as the lightbox needs to frame a print: the whole page is
-// held close to the ground instead.
+// The page as frosted glass over the voyage's light. The light: as the lightbox's room takes a
+// print's (@mixin photobook-wash), a small square of the voyage's dye vat (palette.js) spread over
+// the view and softened, held close to the ground, and faintly milky. No vignette, as the lightbox
+// needs to frame a print. The frost: the site's film grain (the Home backdrop's), over it all. All
+// of it fixed and drawn once; nothing blurs what moves.
 .palette-ambience {
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
   opacity: 0.25;
+  background: rgba(255, 255, 255, 0.1);
   @include photobook-wash;
 
-  > * { inset: -30%; width: 160%; height: 160%; } // a canvas is not stretched by its insets alone
+  > * { width: 124%; height: 124%; } // a canvas is not stretched by its insets alone
 
   &::after { content: none; }
+}
+
+.palette-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  @include film-grain;
 }
 
 // The way back to every palette, in the kicker's ink. `a:visited` / `a:hover` (0,1,1) would turn it
@@ -329,10 +340,8 @@
   &[hidden] { visibility: hidden; } // keeps the rail where it is on the page of every palette
 }
 
-// One voyage: its palette as blocks and the way on beneath, beside its dye vat, on clear glass: a
-// faint pale fill over a blur of the voyage's light, a hairline edge and a highlight along its top,
-// as light catches glass, so it stands apart from the dark room while the blocks (solid) keep their
-// colours true. On a phone the blocks take the full width, and the vat, smaller, sits beside the
+// One voyage: its palette as blocks and the way on beneath, beside its dye vat, straight on the
+// frosted room. On a phone the blocks take the full width, and the vat, smaller, sits beside the
 // links.
 .palette-voyage {
   display: grid;
@@ -341,15 +350,8 @@
   grid-template-rows: 1fr auto auto 1fr;
   column-gap: 2rem;
   align-items: start;
-  padding: clamp(1rem, 2.4vw, 1.8rem);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 1.5em;
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.035) 45%, rgba(255, 255, 255, 0.055));
-  @include backdrop-blur(blur(22px) saturate(160%));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
-    0 18px 42px rgba(0, 0, 0, 0.22);
+  padding-bottom: clamp(1.6rem, 3.5vw, 2.2rem);
+  border-bottom: 1px dotted var(--photobook-line);
 
   .palette-blocks i { height: 2.5rem; }
 
