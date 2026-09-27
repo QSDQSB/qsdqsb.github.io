@@ -16,7 +16,7 @@
  * `stir: 'hover'` stirs only while a pointer rests on it, and on leaving lets the dye settle back to
  * where it was poured, so at rest it is always true to its shares. Neither moves with motion off;
  * a live vat's `release()` lets its context go. Used by the palette page
- * (assets/js/colour/palette.js) and the mood lab (scripts/photos/lab/paint.js).
+ * (assets/js/colour/palette.js) and the book's colophon (assets/js/photobook/index.js).
  */
 
 const FRAG = `
