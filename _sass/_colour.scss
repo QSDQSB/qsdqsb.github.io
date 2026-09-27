@@ -230,7 +230,13 @@
   &::after { content: none; }
 }
 
-.palette-page__home { color: inherit; text-decoration: none; }
+// The way back to every palette, in the kicker's ink. `a:visited` / `a:hover` (0,1,1) would turn it
+// the site's link blue, so its states are stated here at (0,2,0).
+.palette-page__home,
+.palette-page__home:visited { color: inherit; text-decoration: none; }
+
+.palette-page__home:hover,
+.palette-page__home:focus-visible { color: var(--photobook-ink); text-decoration: none; }
 
 .palette-page__stage { margin-top: clamp(2rem, 5vw, 3.5rem); }
 
@@ -314,8 +320,11 @@
   text-decoration: none;
   transition: color 0.2s ease;
 
+  // Stated against `a:visited` / `a:hover` (0,1,1), which would make it link blue, underlined.
+  &:visited { color: var(--photobook-ink-3); }
+
   &:hover,
-  &:focus-visible { color: var(--photobook-ink); }
+  &:focus-visible { color: var(--photobook-ink); text-decoration: none; }
 
   &[hidden] { visibility: hidden; } // keeps the rail where it is on the page of every palette
 }
@@ -382,14 +391,15 @@
 
   a {
     padding-bottom: 0.3rem;
-    border-bottom: 1px solid var(--photobook-line);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2); // an edge of light, as the glass it sits on
     font: 500 0.62rem $barlow-font-family;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--photobook-ink-2);
     text-decoration: none;
 
-    &:hover { color: var(--photobook-ink); border-color: var(--photobook-ink-3); }
+    &:hover,
+    &:focus-visible { color: var(--photobook-ink); border-color: rgba(255, 255, 255, 0.5); }
   }
 }
 
