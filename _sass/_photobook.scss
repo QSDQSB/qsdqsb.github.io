@@ -912,12 +912,19 @@ html.is-reordering::view-transition-group(*) {
   grid-column: 1 / -1;
 
   > * { grid-column: 1; }
+
+  // Each in its own row, stated, so the glass (a grid item over rows 1 to 3, below) can lie under
+  // them rather than push them down.
+  > h3 { grid-row: 1; }
+  > .photobook-barcode { grid-row: 2; }
+  > .photobook-colophon__palette { grid-row: 3; }
+  > .photobook-colophon__onward { grid-row: 4; }
 }
 
 // The voyage's dye vat, beside its barcode and bar, leading to its palette page.
 .photobook-colophon__vat {
   grid-column: 2;
-  grid-row: 1 / span 4;
+  grid-row: 1 / span 3; // beside the title, frames and palette, inside their glass
   align-self: center;
   width: 6rem;
   aspect-ratio: 1;
@@ -1623,45 +1630,51 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 
 // In the colophon, the voyage's palette under its frames' vats, a little heavier, its hex codes
 // always shown (the specs panel keeps them for the pointer). With the voyage's vat it is one way
-// to the voyage's palette page: pointing at either (or the way on beneath) lights both
-// (.is-pointing, assets/js/photobook/index.js): a glass rises behind the palette, its bar thickens,
-// its codes brighten, and the vat lifts and stirs.
+// to the voyage's palette page: pointing at either (or the way on beneath) lights the section
+// (.is-pointing, assets/js/photobook/index.js): a glass rises round it (title, frames, palette and
+// vat), the bar thickens, the codes brighten, and the vat lifts and stirs.
 .photobook-colophon__palette {
-  $ease: 0.3s $cubic-bezier-smooth;
-
-  position: relative;
   margin-top: 0.4rem;
   cursor: pointer;
 
   .palette-strip__bar i { height: 8px; }
-  .palette-strip__bar { transition: transform $ease; }
-  .palette-strip__hex { opacity: 1; transition: color $ease; }
+  .palette-strip__bar { transition: transform 0.3s $cubic-bezier-smooth; }
+  .palette-strip__hex { opacity: 1; transition: color 0.3s $cubic-bezier-smooth; }
+
+  .is-pointing & {
+    .palette-strip__bar { transform: scaleY(1.25); } // thicker, and nothing beneath it moves
+    .palette-strip__hex { color: var(--photobook-ink); }
+  }
+}
+
+// The glass: a grid item of the section itself, over its first three rows (title, frames, palette)
+// and both columns (the vat's too), so it frames the section and leaves the way on outside.
+.photobook-colophon__colours {
+  isolation: isolate; // the glass lies behind the section's own things, not behind the page
 
   &::before {
+    $ease: 0.3s $cubic-bezier-smooth;
+
     content: "";
-    position: absolute;
-    inset: -0.75rem -0.9rem;
+    grid-column: 1 / -1;
+    grid-row: 1 / span 3;
     z-index: -1;
+    margin: -1rem -1.2rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 0.9rem;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.025));
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 30px rgba(0, 0, 0, 0.25);
+    border-radius: 1rem;
+
+    @include responsive-down(mobile) { margin: -0.8rem -0.7rem; } // inside a phone's gutter
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 34px rgba(0, 0, 0, 0.28);
     opacity: 0;
-    transform: scale(0.98);
+    transform: scale(0.985);
     transition: opacity $ease, transform $ease;
     pointer-events: none;
   }
 
-  .is-pointing & {
-    &::before { opacity: 1; transform: none; }
-    .palette-strip__bar { transform: scaleY(1.25); } // thicker, and nothing beneath it moves
-    .palette-strip__hex { color: var(--photobook-ink); }
-  }
-
-  .is-pressing &::before { transform: scale(0.99); }
+  &.is-pointing::before { opacity: 1; transform: none; }
+  &.is-pressing::before { transform: scale(0.995); }
 }
-
-.photobook-colophon__colours { isolation: isolate; } // the glass stays behind the palette, not the page
 
 // In the specs panel it runs the whole row beneath the film. Named as a highlight, since the
 // highlights' own cells are grids.
@@ -1875,7 +1888,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-sheet__order button::after,
   .photobook-barcode button,
   .palette-strip__hex,
-  .photobook-colophon__palette::before,
+  .photobook-colophon__colours::before,
   .photobook-colophon__palette .palette-strip__bar,
   .photobook-colophon__vat,
   .photobook-colophon__onward a,
