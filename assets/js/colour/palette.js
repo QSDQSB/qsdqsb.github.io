@@ -27,6 +27,7 @@ const kicker = root?.querySelector('.palette-page__home');
 const railNav = root?.querySelector('.palette-rail');
 const back = document.querySelector('.masthead__back');
 const menu = root?.querySelector('.palette-voyages'), menuList = menu?.querySelector('.palette-voyages__list');
+const pin = root?.querySelector('.palette-pin');
 const fold = menu?.querySelector('.palette-voyages__fold'), menuButton = root?.querySelector('.palette-page__menu');
 
 /** A palette as a wall label: the bar (a link when `href`), the hex codes beneath. Widths tempered. */
@@ -69,6 +70,7 @@ async function main() {
   function index() {
     document.title = document.title.replace(/^[^·]*·/, "QSD's Palette ·");
     title.textContent = "QSD's Palette";
+    pinTo(null);
     backTo(back?.dataset.home, back?.dataset.homeLabel);
     kicker.textContent = 'From the voyages';
     stage.innerHTML = `<p class="colour-lede">The colours of every voyage: each one's own, pooled from its photographs, without the black and white that every journey has.</p>
@@ -103,6 +105,7 @@ async function main() {
     stage.querySelector('[data-vat]').replaceWith(vatBox);
     fillVat(v);
     pour(v, stage.querySelectorAll('.palette-card__vat'));
+    pinTo(v);
     stage.querySelector('.palette-page__order').onclick = (e) => {
       const b = e.target.closest('button[data-order]'); if (!b || b.dataset.order === order) return;
       order = b.dataset.order; store.set('palette-order', order);
@@ -284,6 +287,20 @@ async function main() {
   menuList.addEventListener('click', (e) => { if (e.target.closest('a')) openMenu(false); });
   menu.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-open')) { e.preventDefault(); openMenu(false); } });
   buildMenu();
+
+  // Once the voyage's palette has scrolled away, a slim strip under the masthead keeps it in sight
+  // while the frames go by: its vat, its name and its bar. Seen, not read (the header says it all).
+  const header = new IntersectionObserver(([e]) => root.classList.toggle('is-pinned', !e.isIntersecting && e.boundingClientRect.top < 0), { rootMargin: '-90px 0px 0px 0px' });
+  function pinTo(v) {
+    header.disconnect();
+    root.classList.remove('is-pinned');
+    if (!v) { pin.replaceChildren(); return; }
+    pin.innerHTML = `<i></i><span>${esc(nameOf(v))}</span><b>${v.palette.map((c) => `<em style="--c:${c.hex};flex:${Math.sqrt(c.pc).toFixed(2)}"></em>`).join('')}</b>`;
+    const key = `pin/${v.g}`;
+    if (!poured.has(key)) poured.set(key, vat(v.palette, { size: 22, seed: seedOf(v.g) }));
+    pin.querySelector('i').append(poured.get(key));
+    header.observe(stage.querySelector('.palette-voyage'));
+  }
 
   // ← → step along the rail.
   addEventListener('keydown', (e) => {
