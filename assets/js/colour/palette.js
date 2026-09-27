@@ -165,8 +165,8 @@ async function main() {
     crossfade(ambience, v ? room(v) : document.createElement('i'));
   }
   // A change of voyage is one gesture, one tempo: the palette's blocks take the new dye in a wave
-  // from the left, and the vat beside them fills from the left in the same time and on the same curve
-  // (the site's standard ease), as if the dye ran on into it. The room's light turns alongside.
+  // from the left, and the vat beside them changes its dye whole in the same time and on the same
+  // curve (the site's standard ease). The room's light turns alongside.
   const CHANGE = 1100, EASE = 'cubic-bezier(.4,0,.2,1)';
   function fillVat(v) {
     if (vatBox.dataset.g === v.g) return;
@@ -177,17 +177,10 @@ async function main() {
     vatBox.append(fresh);
     const done = () => old.forEach((c) => { c.release?.(); c.remove(); });
     if (!old.length || still()) { done(); return; }
-    // A soft edge swept left to right: the mask is three times as wide as the vat, opaque on its left
-    // half, and slides from showing its clear end to showing its opaque one.
-    const edge = 'linear-gradient(90deg, #000 44%, transparent 56%)';
-    Object.assign(fresh.style, { maskImage: edge, webkitMaskImage: edge, maskSize: '300% 100%', webkitMaskSize: '300% 100%', maskRepeat: 'no-repeat', webkitMaskRepeat: 'no-repeat' });
-    fresh.animate([
-      { maskPosition: '100% 0', webkitMaskPosition: '100% 0', transform: 'scale(1.02)' },
-      { maskPosition: '0% 0', webkitMaskPosition: '0% 0', transform: 'none' },
-    ], { duration: CHANGE, easing: EASE }).finished.then(() => {
-      for (const k of ['maskImage', 'webkitMaskImage', 'maskSize', 'webkitMaskSize', 'maskRepeat', 'webkitMaskRepeat']) fresh.style[k] = '';
-      done();
-    }, done);
+    // The vessel turns a little as its dye changes, whole: the old dye fades as it turns on, the new
+    // arrives turning in behind it and comes to rest.
+    for (const c of old) c.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'rotate(12deg)' }], { duration: CHANGE, easing: EASE, fill: 'forwards' });
+    fresh.animate([{ opacity: 0, transform: 'rotate(-12deg)' }, { opacity: 1, transform: 'none' }], { duration: CHANGE, easing: EASE }).finished.then(done, done);
   }
 
   // The rail, above the title: built once, every voyage's dye vat by colour, without end: the run is
