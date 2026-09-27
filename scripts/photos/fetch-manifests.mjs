@@ -161,7 +161,17 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
     index.galleries[gallery] = summary(merged);
     books.push(merged);
   });
-  // Across voyages: only when colours are known; otherwise no atlas, and its pages say so.
+  // Across voyages: from every gallery, not only those fetched this time (a status check of one
+  // gallery must not leave the palette page with one voyage): the others from their last merge.
+  if (galleries) {
+    const fetchedNow = new Set(books.map(b => b.gallery));
+    for (const gallery of [...referencedGalleries().keys()].filter(g => !fetchedNow.has(g))) {
+      const file = path.join(PATHS.mergedDir, `${galleryKey(gallery)}.json`);
+      if (fs.existsSync(file)) books.push(JSON.parse(fs.readFileSync(file, 'utf8')));
+    }
+    books.sort((a, b) => String(a.gallery).localeCompare(String(b.gallery)));
+  }
+  // Only when colours are known; otherwise no atlas, and its pages say so.
   const atlasFile = path.join(PATHS.mergedDir, 'colour-atlas.json');
   // Kindred frames (Drift, lib/atlas.mjs): the local sidecar while developing, else the bucket's list.
   let kindred = readKindred();
