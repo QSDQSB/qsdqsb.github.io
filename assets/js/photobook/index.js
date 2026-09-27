@@ -54,6 +54,18 @@ if (vatSlot) {
     try { palette = JSON.parse(vatSlot.dataset.vat); } catch { /* no vat */ }
     const { vat, seedOf } = await import('../colour/vat.js');
     vatSlot.append(vat(palette, { size: 96, seed: seedOf(vatSlot.dataset.g) }));
+    // Then every frame's own, in the barcode, one a frame so the page never stalls: the vat its card
+    // on the palette page shows (the same seed), from the frame's signature in #photobook-data.
+    let frames = [];
+    try { frames = JSON.parse(document.getElementById('photobook-data')?.textContent || '[]'); } catch { /* none */ }
+    const slots = [...document.querySelectorAll('.photobook-barcode button[data-i]')];
+    const next = () => {
+      const b = slots.shift(); if (!b) return;
+      const f = frames[Number(b.dataset.i)];
+      if (f?.signature?.length) b.append(vat(f.signature, { size: 56, seed: seedOf(`${vatSlot.dataset.g}/${f.slug}`) }));
+      requestAnimationFrame(next);
+    };
+    requestAnimationFrame(next);
   }, { rootMargin: '500px 0px' });
   io.observe(vatSlot);
 }
