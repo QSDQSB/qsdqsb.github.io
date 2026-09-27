@@ -40,13 +40,7 @@
   z-index: 1;
 }
 
-.photobook-kicker {
-  margin: 0;
-  font: 500 0.62rem/1 $barlow-font-family;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--photobook-ink-2);
-}
+.photobook-kicker { @include eyebrow; }
 
 // The hover label of an icon control (tip.js): a small glass label in the UI face.
 .photobook-tip {
@@ -148,22 +142,13 @@
   color: $lighter-gray;
   text-shadow: 1px 1px 4px rgba($darker-gray, 0.5);
 
-  h1 {
-    margin: 1rem 0 0;
-    color: $lighter-gray;
-    // Set as every hero page's title (_page.scss, .page__hero--overlay .page__title), size for size.
-    font: 700 clamp(1.75rem, 2.8vw, 2.85rem)/1 $global-font-family;
-    letter-spacing: 0.015em;
-    @include responsive-up(desktop) { font-size: clamp(1.95rem, 2.6vw, 3rem); }
-    @include responsive-up(wide) { font-size: clamp(2.1rem, 2.35vw, 3.1rem); }
-    @include responsive-down(tablet) { font-size: clamp(1.2rem, 5vw, 1.65rem); }
-  }
+  h1 { @include display-title; }
 }
 
 .photobook-cover__lede {
   margin: clamp(0.72rem, 1.5vw, 1.08rem) 0 0;
   max-width: min(100%, #{$overlay-hero-excerpt-max-width}); // as the hero pages' excerpt: one line where it fits
-  font: italic 400 clamp(1.02rem, 1.34vw, 1.34rem)/1.26 $didot-family;
+  @include lede;
   opacity: 0.9;
 }
 
@@ -220,14 +205,6 @@
   &::after { bottom: 2px; }
 }
 
-// The glass both controls sit in, darkened behind so their marks keep contrast over a white sky.
-@mixin photobook-bar-glass {
-  background: var(--photobook-glass);
-  -webkit-backdrop-filter: blur(18px) saturate(140%) brightness(0.62);
-  backdrop-filter: blur(18px) saturate(140%) brightness(0.62);
-  border: 1px solid var(--photobook-glass-edge);
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.16), 0 5px 16px rgba(0, 0, 0, 0.12);
-}
 
 // At rest the dial is mounted on the seam of cover and book, its centre on the cover's lower edge;
 // it catches the top of the window at the same height, so nothing moves when it starts to follow.
@@ -257,7 +234,7 @@
 // The view switch: a slide of the same glass, as tall as the dial beside it, its thumb over the view
 // shown. It draws in with the dial.
 .photobook-switch {
-  @include photobook-bar-glass;
+  @include glass-bar;
   position: relative;
   display: grid;
   grid-template-rows: repeat(3, 1fr);
@@ -311,7 +288,7 @@
 .photobook-dial { position: relative; }
 
 .photobook-dial__well {
-  @include photobook-bar-glass;
+  @include glass-bar;
   position: relative;
   width: 86px;
   height: 86px;
@@ -976,23 +953,8 @@ html.is-reordering::view-transition-group(*) {
 
 // Onward, to the pages that look across every voyage by colour.
 .photobook-colophon__onward {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem 2rem;
   margin: 1.6rem 0 0;
-
-  a {
-    padding-bottom: 0.3rem;
-    border-bottom: 1px solid var(--photobook-line);
-    font: 500 0.62rem $barlow-font-family;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--photobook-ink-2);
-    text-decoration: none;
-    transition: color 0.3s $cubic-bezier-smooth, border-color 0.3s $cubic-bezier-smooth;
-
-    &:hover { color: var(--photobook-ink); border-color: var(--photobook-ink-3); }
-  }
+  @include onward-links;
 }
 
 /* ── the end of the page ──────────────────────────────────────────────── */
@@ -1041,45 +1003,13 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   from { opacity: 0; }
 }
 
-// A layer that crossfades (assets/js/photobook/wash.js): it settles in from a slightly larger scale
-// while the one beneath fades, so a change reads as the light shifting rather than a cut.
-@mixin photobook-wash-layer {
-  opacity: 0;
-  scale: 1.06;
-  transition: opacity 1.1s $cubic-bezier-standard, scale 1.6s $cubic-bezier-smooth;
-  will-change: opacity;
 
-  &.is-on { opacity: 1; scale: 1; }
-}
-
-// A room that takes a picture's colour: its layers (the colour, softened into frosted glass) under a
-// glass that keeps the room dark, the colour glowing strongest near the middle and falling away to
-// near-black at the edges and beneath. The lightbox's, and the palette page's (_colour.scss).
-@mixin photobook-wash {
-  overflow: hidden;
-
-  > * {
-    position: absolute;
-    inset: -12%;
-    filter: blur(36px) saturate(1.5) brightness(0.42);
-    @include photobook-wash-layer;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 25%, transparent 60%, rgba(6, 6, 8, 0.55)),
-      radial-gradient(ellipse 80% 70% at 50% 42%, rgba(6, 6, 8, 0.1), rgba(6, 6, 8, 0.72) 100%);
-  }
-}
 
 // The photograph's own placeholder is the colour: the room takes the print's.
 .photobook-lightbox__wash {
   position: absolute;
   inset: 0;
-  @include photobook-wash;
+  @include wash;
 
   div { background: center / cover no-repeat; }
 }
@@ -1203,29 +1133,10 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   &::after { content: ""; position: absolute; inset: -6px; }
 }
 
-// The way back: a glass pill, a chevron and the voyage's name. The lightbox's, and the palette
-// page's (_colour.scss), so going back looks the same wherever one is.
-@mixin photobook-back-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.36rem 0.8rem 0.36rem 0.6rem;
-  border: 1px solid var(--photobook-glass-edge);
-  border-radius: 999px;
-  background: var(--photobook-glass);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  backdrop-filter: blur(18px) saturate(140%);
-  color: $primary-color;
-  font: 500 0.86rem $barlow-font-family;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-
-  svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; }
-}
 
 .photobook-lightbox__back {
   flex: none;
-  @include photobook-back-pill;
+  @include pill;
 }
 
 .photobook-lightbox__count {
