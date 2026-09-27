@@ -69,7 +69,7 @@ async function main() {
     title.textContent = `QSD's Palette for ${name}`;
     kicker.textContent = "QSD's Palette";
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
-    stage.innerHTML = `<div class="palette-glass"><section class="palette-voyage">
+    stage.innerHTML = `<section class="palette-voyage">
         <div class="palette-voyage__blocks">${blocks(sig(v))}</div>
         <p class="palette-voyage__links"><a href="${page.url}">Open the book <span aria-hidden="true">→</span></a><a href="#">Every palette <span aria-hidden="true">→</span></a></p>
         <div data-vat></div>
@@ -85,7 +85,7 @@ async function main() {
             <h3>${esc(p.name || '')}${p.light ? `<small>${esc(p.light)}</small>` : ''}</h3>
             ${p.sig?.length ? bar(p.sig) : ''}
           </div>${p.sig?.length ? `<div class="palette-card__vat" data-i="${i}"></div>` : ''}</div>
-        </article>`; }).join('')}</div></div>`;
+        </article>`; }).join('')}</div>`;
     stage.querySelector('[data-vat]').replaceWith(vatBox);
     fillVat(v);
     pour(v, stage.querySelectorAll('.palette-card__vat'));

@@ -1030,23 +1030,19 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   &.is-on { opacity: 1; scale: 1; }
 }
 
-.photobook-lightbox__wash {
-  position: absolute;
-  inset: 0;
+// A room that takes a picture's colour: its layers (the colour, softened into frosted glass) under a
+// glass that keeps the room dark, the colour glowing strongest near the middle and falling away to
+// near-black at the edges and beneath. The lightbox's, and the palette page's (_colour.scss).
+@mixin photobook-wash {
   overflow: hidden;
 
-  // The photograph's own placeholder, scaled up and softened into frosted glass: the room takes the
-  // print's colour, a layer crossfading into the next.
-  div {
+  > * {
     position: absolute;
     inset: -12%;
-    background: center / cover no-repeat;
     filter: blur(36px) saturate(1.5) brightness(0.42);
     @include photobook-wash-layer;
   }
 
-  // The glass over it keeps the room dark: the print's colour glows behind it, strongest near the
-  // print and falling away to near-black at the edges and beneath, where the caption sits.
   &::after {
     content: "";
     position: absolute;
@@ -1055,6 +1051,15 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
       linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 25%, transparent 60%, rgba(6, 6, 8, 0.55)),
       radial-gradient(ellipse 80% 70% at 50% 42%, rgba(6, 6, 8, 0.1), rgba(6, 6, 8, 0.72) 100%);
   }
+}
+
+// The photograph's own placeholder is the colour: the room takes the print's.
+.photobook-lightbox__wash {
+  position: absolute;
+  inset: 0;
+  @include photobook-wash;
+
+  div { background: center / cover no-repeat; }
 }
 
 // The print's shape, animatable, so the mount beneath it morphs from one frame's shape to the next.
