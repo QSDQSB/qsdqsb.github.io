@@ -930,11 +930,16 @@ html.is-reordering::view-transition-group(*) {
 
 .photobook-barcode {
   display: flex;
-  gap: 2px;
-  height: 1.5rem;
+  flex-wrap: wrap; // a long book takes a second row rather than shrinking its vats past reading
+  gap: 0.45rem;
   margin-bottom: 1.1rem;
 
-  > * { flex: 1 1 0; min-width: 0; border-radius: 1px; }
+  // Every frame as its own dye vat (poured by assets/js/photobook/index.js, the same vat its card on
+  // the palette page shows), in the book's order; until then, and without script, its colours top
+  // to bottom.
+  // One size for all, from the number of frames (--n): as large as one row allows, never past
+  // 3.6rem, nor under 1.8rem, where a longer book wraps, every row alike.
+  > * { flex: 0 0 clamp(1.8rem, calc((100% - (var(--n, 20) - 1) * 0.45rem) / var(--n, 20)), 3.6rem); aspect-ratio: 1; border-radius: 50%; }
   > span { background: var(--photobook-line); }
 
   button {
@@ -942,9 +947,14 @@ html.is-reordering::view-transition-group(*) {
     border: 0;
     background: linear-gradient(var(--t), var(--m), var(--b));
     cursor: pointer;
-    transition: opacity 0.3s $cubic-bezier-smooth;
+    transition: opacity 0.3s $cubic-bezier-smooth, transform 0.3s $cubic-bezier-smooth;
 
-    &:focus-visible { outline: 1px solid var(--photobook-ink); outline-offset: 2px; }
+    &:focus-visible { outline: 1px solid var(--photobook-ink); outline-offset: 3px; }
+
+    // Poured: the vat takes the place of the colours standing in for it.
+    &:has(canvas) { background: none; }
+
+    canvas { display: block; width: 100%; height: auto; }
   }
 }
 
