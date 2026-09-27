@@ -23,6 +23,7 @@ const root = document.getElementById('palette-page');
 const stage = root?.querySelector('.palette-page__stage');
 const title = root?.querySelector('h1');
 const kicker = root?.querySelector('.palette-page__home');
+const railNav = root?.querySelector('.palette-rail');
 
 /** A palette as a wall label: the bar (a link when `href`), the hex codes beneath. Widths tempered. */
 function strip(colours, { href = null, label = '', shares = false } = {}) {
@@ -67,16 +68,10 @@ async function main() {
     title.textContent = `QSD's Palette for ${name}`;
     kicker.textContent = "QSD's Palette";
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
-    const at_ = railed.indexOf(v), prev = railed[(at_ - 1 + railed.length) % railed.length], next = railed[(at_ + 1) % railed.length];
-    stage.innerHTML = `<nav class="palette-rail" aria-label="Every voyage, by colour">
-        <a class="palette-rail__step" href="#${prev.g}" aria-label="${esc(nameOf(prev))}" data-tip="${esc(nameOf(prev))}" data-tip-side="top">‹</a>
-        <ol class="palette-rail__list">${railed.map((x) => `<li><a href="#${x.g}" data-g="${x.g}" data-tip="${esc(nameOf(x))}" data-tip-side="top" aria-label="${esc(nameOf(x))}"${x === v ? ' aria-current="page"' : ''}></a></li>`).join('')}</ol>
-        <a class="palette-rail__step" href="#${next.g}" aria-label="${esc(nameOf(next))}" data-tip="${esc(nameOf(next))}" data-tip-side="top">›</a>
-      </nav>
-      <section class="palette-voyage">
+    stage.innerHTML = `<section class="palette-voyage">
         <div>${blocks(sig(v))}
           <p class="palette-voyage__links"><a href="${page.url}">Open the book <span aria-hidden="true">→</span></a><a href="#">Every palette <span aria-hidden="true">→</span></a></p></div>
-        <div class="palette-voyage__vat"></div>
+        <div data-vat></div>
       </section>
       <div class="photobook-sheet__order palette-page__order" role="group" aria-label="Order">
         <button type="button" aria-pressed="${order === 'sequence'}" data-order="sequence">Sequence</button>
@@ -90,9 +85,8 @@ async function main() {
             ${p.sig?.length ? bar(p.sig) : ''}
           </div>${p.sig?.length ? `<div class="palette-card__vat" data-i="${i}"></div>` : ''}</div>
         </article>`; }).join('')}</div>`;
-    stage.querySelector('.palette-voyage__vat').append(vat(v.palette, { size: 176, seed: seedOf(v.g), label: `The colours of ${name}, run together as in a dye vat` }));
-    queue = []; // a voyage left behind pours nothing more
-    rail();
+    stage.querySelector('[data-vat]').replaceWith(vatBox);
+    fillVat(v);
     pour(v, stage.querySelectorAll('.palette-card__vat'));
     stage.querySelector('.palette-page__order').onclick = (e) => {
       const b = e.target.closest('button[data-order]'); if (!b || b.dataset.order === order) return;
@@ -121,25 +115,71 @@ async function main() {
     drip(slots, key, (slot) => vat(v.photos[slot.dataset.i].sig, { size: 44, seed: seedOf(key(slot)) }));
   }
 
-  function rail() {
-    const list = stage.querySelector('.palette-rail__list'), here = list.querySelector('[aria-current]');
-    here?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' });
-    drip(list.querySelectorAll('a'), (a) => `rail/${a.dataset.g}`, (a) => vat(voyages.find((x) => x.g === a.dataset.g).palette, { size: 40, seed: seedOf(a.dataset.g) }), { root: list, margin: '0px 320px' });
+  // The voyage's own dye vat stays on the page from one voyage to the next: the new colours poured
+  // in over the old, the old let go once they are covered.
+  const vatBox = Object.assign(document.createElement('div'), { className: 'palette-voyage__vat' });
+  function fillVat(v) {
+    if (vatBox.dataset.g === v.g) return;
+    vatBox.dataset.g = v.g;
+    const fresh = vat(v.palette, { size: 176, seed: seedOf(v.g), label: `The colours of ${nameOf(v)}, run together as in a dye vat` });
+    const old = [...vatBox.children];
+    vatBox.append(fresh);
+    if (!old.length || still()) { old.forEach((c) => c.remove()); return; }
+    fresh.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 900, easing: 'cubic-bezier(.3,.1,.2,1)' }).finished.then(() => old.forEach((c) => c.remove()), () => {});
+  }
+
+  // The rail, above the title: built once, every voyage's dye vat by colour. Moving from one voyage
+  // to another only moves the ring, and the rail glides to set the new one in the middle.
+  function railTo(v) {
+    if (!railNav.firstChild) {
+      railNav.innerHTML = `<a class="palette-rail__step" data-step="-1">‹</a>
+        <ol class="palette-rail__list">${railed.map((x) => `<li><a href="#${x.g}" data-g="${x.g}" data-tip="${esc(nameOf(x))}" data-tip-side="top" aria-label="${esc(nameOf(x))}"></a></li>`).join('')}</ol>
+        <a class="palette-rail__step" data-step="1">›</a>`;
+      drip(railNav.querySelectorAll('.palette-rail__list a'), (a) => `rail/${a.dataset.g}`, (a) => vat(voyages.find((x) => x.g === a.dataset.g).palette, { size: 40, seed: seedOf(a.dataset.g) }), { root: railNav.querySelector('.palette-rail__list'), margin: '0px 320px' });
+      railNav.dataset.first = '';
+    }
+    const list = railNav.querySelector('.palette-rail__list');
+    let here = null;
+    for (const a of list.querySelectorAll('a')) { const on = a.dataset.g === v?.g; if (on) { a.setAttribute('aria-current', 'page'); here = a; } else a.removeAttribute('aria-current'); }
+    const at_ = railed.indexOf(v);
+    for (const step of railNav.querySelectorAll('[data-step]')) {
+      const to = v ? railed[(at_ + Number(step.dataset.step) + railed.length) % railed.length] : null;
+      step.hidden = !to;
+      if (to) { step.href = `#${to.g}`; step.setAttribute('aria-label', nameOf(to)); step.dataset.tip = nameOf(to); step.dataset.tipSide = 'top'; }
+    }
+    if (here) {
+      const first = 'first' in railNav.dataset;
+      delete railNav.dataset.first;
+      list.scrollTo({ left: here.offsetLeft - (list.clientWidth - here.offsetWidth) / 2, behavior: first || still() ? 'instant' : 'smooth' });
+    }
   }
   // ← → step along the rail.
   addEventListener('keydown', (e) => {
     if (e.defaultPrevented || e.altKey || e.metaKey || e.ctrlKey || e.target.closest?.('input, textarea, select, [contenteditable]')) return;
-    const which = { ArrowLeft: 'first-child', ArrowRight: 'last-child' }[e.key];
-    const step = which && stage.querySelector(`.palette-rail__step:${which}`);
+    const dir = { ArrowLeft: '-1', ArrowRight: '1' }[e.key];
+    const step = dir && railNav.querySelector(`[data-step="${dir}"]:not([hidden])`);
     if (step) { e.preventDefault(); location.hash = step.getAttribute('href'); }
   });
 
-  function route() {
+  // From one voyage to the next: the words and frames fade out, the page returns to the top unseen,
+  // the new ones rise in; the dye vat meanwhile takes its new colours.
+  const parts = () => [title, ...stage.querySelectorAll('.palette-voyage > div:first-child, .palette-page__order, .palette-cards, .colour-lede, .palette-index')];
+  let shown = null, routing = 0;
+  async function route() {
     const g = decodeURIComponent(location.hash.slice(1));
     const v = voyages.find((x) => x.g === g);
     const at = new URLSearchParams(location.search).get('at');
+    const token = ++routing, gliding = shown !== null && shown !== (v?.g ?? '') && !still();
+    railTo(v);
+    if (gliding) {
+      await Promise.all(parts().map((el) => el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }], { duration: 180, easing: 'ease-in', fill: 'forwards' }).finished.catch(() => {})));
+      if (token !== routing) return;
+    }
+    shown = v?.g ?? '';
     if (v) voyage(v, at); else index();
     if (!v || !at) scrollTo({ top: 0, behavior: 'instant' });
+    for (const el of parts()) el.getAnimations().forEach((a) => a.cancel());
+    if (gliding) for (const el of parts()) el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
   }
   addEventListener('hashchange', () => { if (location.search) history.replaceState(null, '', location.pathname + location.hash); route(); });
   route();
