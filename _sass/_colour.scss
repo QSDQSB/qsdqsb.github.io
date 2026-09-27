@@ -218,6 +218,10 @@
     grid-template-columns: 13.5rem minmax(0, 1fr);
     column-gap: clamp(2rem, 3vw, 3.2rem);
     max-width: 96rem;
+    transition: grid-template-columns 0.35s $cubic-bezier-smooth;
+
+    // Folded away: the column is a slim strip, only its button left to bring it back.
+    &.is-folded { grid-template-columns: 2.5rem minmax(0, 1fr); }
   }
 }
 
@@ -227,9 +231,11 @@
 // the masthead, so the sheet does too.
 .palette-page:has(.palette-voyages.is-open) { z-index: 61; }
 
-// The way back and, below the rail breakpoint, the way to every voyage: two pills on one line,
-// held just under the masthead as the page goes by, as the picture view keeps its way back in reach.
+// Below the rail breakpoint, the way to every voyage: a pill held just under the masthead as the page
+// goes by. (The way back is the masthead's ‹.)
 .palette-page__bar {
+  @include responsive-up($responsive-left-rail-breakpoint) { display: none; }
+
   position: sticky;
   top: calc(5.2rem + env(safe-area-inset-top, 0px));
   z-index: 5;
@@ -266,7 +272,7 @@
     z-index: 60; // over the masthead (40) and its menus
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: max(1.2rem, env(safe-area-inset-top, 0px)) var(--photobook-gutter) 3rem;
+    padding: 0 var(--photobook-gutter) 3rem; // the top's room is the header's, so nothing shows above it
     background: rgba(12, 12, 16, 0.94);
     @include backdrop-blur(blur(18px) saturate(140%));
     visibility: hidden;
@@ -277,8 +283,32 @@
     &.is-open { visibility: visible; opacity: 1; transform: none; transition-delay: 0s; }
   }
 
-  section[hidden],
-  li[hidden] { display: none; }
+  // Its name and the button that folds it away (on a phone, closes the sheet), held at the top of
+  // the list however far it has scrolled.
+  .palette-voyages__head {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding-block: 0.3rem;
+
+    @include responsive-down($responsive-left-rail-breakpoint) {
+      padding-top: max(1.2rem, env(safe-area-inset-top, 0px));
+      background: rgb(12, 12, 16); // solid, so the names pass under it unseen
+    }
+
+    @include responsive-up($responsive-left-rail-breakpoint) {
+      background: rgba(26, 26, 28, 0.88);
+      @include backdrop-blur(blur(10px));
+    }
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+
+    h2 { margin: 0 0 0 0.45rem; }
+  }
 
   h2 {
     margin: 1.2rem 0 0.35rem 0.45rem;
@@ -290,6 +320,22 @@
 
   ol { margin: 0; padding: 0; list-style: none; }
   li { margin: 0; }
+
+  @include responsive-up($responsive-left-rail-breakpoint) {
+    .palette-voyages__x { display: none; }
+
+    .is-folded & {
+      overflow: visible;
+
+      .palette-voyages__head { justify-content: flex-start; background: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+      .palette-voyages__head h2,
+      .palette-voyages__list { display: none; }
+    }
+  }
+
+  @include responsive-down($responsive-left-rail-breakpoint) {
+    .palette-voyages__panel { display: none; }
+  }
 
   // A trip's parts hang from its name on a hairline, so the voyages after it are plainly not its own.
   section:has(h2) {
@@ -309,38 +355,8 @@
   }
 }
 
-.palette-voyages__find {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  padding-bottom: 0.4rem;
-  background: inherit; // the sheet's, on a phone
-
-  // In the column, the names pass beneath it under a little frost.
-  @include responsive-up($responsive-left-rail-breakpoint) {
-    background: rgba(26, 26, 28, 0.88);
-    @include backdrop-blur(blur(10px));
-  }
-
-  input {
-    flex: 1 1 auto;
-    min-width: 0;
-    padding: 0.45rem 0.85rem;
-    border: 1px solid var(--photobook-glass-edge);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--photobook-ink);
-    font: 400 max(0.8rem, 16px) $barlow-font-family; // 16px or more, so a phone does not zoom in to type
-
-    &::placeholder { color: var(--photobook-ink-3); }
-    &:focus-visible { outline: 1px solid var(--photobook-ink-3); outline-offset: 2px; }
-  }
-}
-
-.palette-voyages__close {
+// Folds the column away and back on a laptop; closes the sheet on a phone.
+.palette-voyages__fold {
   flex: none;
   display: grid;
   place-items: center;
@@ -351,10 +367,12 @@
   background: var(--photobook-glass);
   color: var(--photobook-ink-2);
   cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
 
-  svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+  svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linejoin: round; }
 
-  @include responsive-up($responsive-left-rail-breakpoint) { display: none; }
+  &:hover,
+  &:focus-visible { color: var(--photobook-ink); border-color: rgba(255, 255, 255, 0.24); }
 }
 
 // A voyage in the list. States stated against `a:visited` / `a:hover` (0,1,1).
@@ -403,18 +421,6 @@
   pointer-events: none;
   @include film-grain;
 }
-
-// The way back to the voyage's book, as the picture view's (@mixin photobook-back-pill). States
-// stated against `a:visited` / `a:hover` (0,1,1).
-.palette-page__back {
-  @include photobook-back-pill;
-
-  &[hidden] { display: none; }
-}
-
-.palette-page__back:visited { color: $primary-color; }
-.palette-page__back:hover,
-.palette-page__back:focus-visible { color: $primary-color; text-decoration: none; border-color: rgba(255, 255, 255, 0.24); }
 
 // The way back to every palette, in the kicker's ink. `a:visited` / `a:hover` (0,1,1) would turn it
 // the site's link blue, so its states are stated here at (0,2,0).
@@ -816,6 +822,7 @@
   .colour-drift__thread button,
   .palette-ambience > *,
   .palette-voyages,
+  .palette-page,
   .palette-voyage__vat canvas { transition: none; }
 }
 
