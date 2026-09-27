@@ -211,7 +211,165 @@
   max-width: 80rem;
   margin: 0 auto;
   padding: clamp(6.5rem, 12vw, 9rem) var(--photobook-gutter) clamp(4rem, 8vw, 6rem);
+
+  // Where the site's other pages take a left rail, this one takes its list of voyages beside it.
+  @include responsive-up($responsive-left-rail-breakpoint) {
+    display: grid;
+    grid-template-columns: 13.5rem minmax(0, 1fr);
+    column-gap: clamp(2rem, 3vw, 3.2rem);
+    max-width: 96rem;
+  }
 }
+
+.palette-page__body { min-width: 0; }
+
+// While the list of voyages is open as a sheet, the page (its own layer, for the ambience) rises over
+// the masthead, so the sheet does too.
+.palette-page:has(.palette-voyages.is-open) { z-index: 61; }
+
+// The way back and, below the rail breakpoint, the way to every voyage: two pills on one line.
+.palette-page__bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: clamp(1rem, 2.4vw, 1.6rem);
+}
+
+.palette-page__menu {
+  @include photobook-back-pill;
+
+  @include responsive-up($responsive-left-rail-breakpoint) { display: none; }
+}
+
+// Every voyage by place (palette.js): a trip's parts under its name, the rest on their own, each with
+// its vat. Beside the page on a laptop, following it down; on a phone a sheet over it.
+.palette-voyages {
+  @include responsive-up($responsive-left-rail-breakpoint) {
+    position: sticky;
+    top: 6rem;
+    align-self: start;
+    max-height: calc(100vh - 7rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--photobook-line) transparent;
+  }
+
+  @include responsive-down($responsive-left-rail-breakpoint) {
+    position: fixed;
+    inset: 0;
+    z-index: 60; // over the masthead (40) and its menus
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: max(1.2rem, env(safe-area-inset-top, 0px)) var(--photobook-gutter) 3rem;
+    background: rgba(12, 12, 16, 0.94);
+    @include backdrop-blur(blur(18px) saturate(140%));
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(1rem);
+    transition: opacity 0.25s $cubic-bezier-smooth, transform 0.3s $cubic-bezier-smooth, visibility 0s linear 0.3s;
+
+    &.is-open { visibility: visible; opacity: 1; transform: none; transition-delay: 0s; }
+  }
+
+  section[hidden],
+  li[hidden] { display: none; }
+
+  h2 {
+    margin: 1.2rem 0 0.35rem 0.45rem;
+    font: 500 max(0.62rem, 11px)/1 $barlow-font-family;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--photobook-ink-3);
+  }
+
+  ol { margin: 0; padding: 0; list-style: none; }
+  li { margin: 0; }
+
+  // A trip's parts hang from its name on a hairline, so the voyages after it are plainly not its own.
+  section:has(h2) {
+    margin-bottom: 0.9rem;
+
+    ol { margin-left: 0.6rem; padding-left: 0.35rem; border-left: 1px solid var(--photobook-line); }
+  }
+
+  i {
+    flex: none;
+    width: 1.15rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #1d1d1f; // until its vat is poured
+
+    canvas { display: block; width: 100%; height: auto; }
+  }
+}
+
+.palette-voyages__find {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding-bottom: 0.4rem;
+  background: inherit; // the sheet's, on a phone
+
+  // In the column, the names pass beneath it under a little frost.
+  @include responsive-up($responsive-left-rail-breakpoint) {
+    background: rgba(26, 26, 28, 0.88);
+    @include backdrop-blur(blur(10px));
+  }
+
+  input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--photobook-glass-edge);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--photobook-ink);
+    font: 400 max(0.8rem, 16px) $barlow-font-family; // 16px or more, so a phone does not zoom in to type
+
+    &::placeholder { color: var(--photobook-ink-3); }
+    &:focus-visible { outline: 1px solid var(--photobook-ink-3); outline-offset: 2px; }
+  }
+}
+
+.palette-voyages__close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--photobook-glass-edge);
+  border-radius: 50%;
+  background: var(--photobook-glass);
+  color: var(--photobook-ink-2);
+  cursor: pointer;
+
+  svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+
+  @include responsive-up($responsive-left-rail-breakpoint) { display: none; }
+}
+
+// A voyage in the list. States stated against `a:visited` / `a:hover` (0,1,1).
+.palette-voyages a,
+.palette-voyages a:visited {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.32rem 0.45rem;
+  border-radius: 0.55rem;
+  font: 400 max(0.84rem, 14px)/1.25 $barlow-font-family;
+  color: var(--photobook-ink-2);
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.palette-voyages a:hover,
+.palette-voyages a:focus-visible { color: var(--photobook-ink); background: rgba(255, 255, 255, 0.05); text-decoration: none; }
+
+.palette-voyages a[aria-current] { color: var(--photobook-ink); background: rgba(255, 255, 255, 0.08); }
 
 // The page as frosted glass over the voyage's light. The light: as the lightbox's room takes a
 // print's (@mixin photobook-wash), a small square of the voyage's dye vat (palette.js) spread over
@@ -244,7 +402,6 @@
 // The way back to the voyage's book, as the picture view's (@mixin photobook-back-pill). States
 // stated against `a:visited` / `a:hover` (0,1,1).
 .palette-page__back {
-  margin-bottom: clamp(1rem, 2.4vw, 1.6rem);
   @include photobook-back-pill;
 
   &[hidden] { display: none; }
@@ -666,6 +823,7 @@
   .colour-drift__tool,
   .colour-drift__thread button,
   .palette-ambience > *,
+  .palette-voyages,
   .palette-voyage__vat canvas { transition: none; }
 }
 

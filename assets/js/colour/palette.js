@@ -26,6 +26,8 @@ const title = root?.querySelector('h1');
 const kicker = root?.querySelector('.palette-page__home');
 const railNav = root?.querySelector('.palette-rail');
 const back = root?.querySelector('.palette-page__back');
+const menu = root?.querySelector('.palette-voyages'), menuList = menu?.querySelector('.palette-voyages__list');
+const find = menu?.querySelector('input'), menuButton = root?.querySelector('.palette-page__menu');
 
 /** A palette as a wall label: the bar (a link when `href`), the hex codes beneath. Widths tempered. */
 function strip(colours, { href = null, label = '', shares = false } = {}) {
@@ -194,6 +196,53 @@ async function main() {
       list.scrollTo({ left: here.offsetLeft - (list.clientWidth - here.offsetWidth) / 2, behavior: first || still() ? 'instant' : 'smooth' });
     }
   }
+  // Every voyage by place, to find one by name: a trip told in parts under its name (Prague: Castle,
+  // Twilight…), the rest on their own, each with its vat; the one on the page marked. A column on a
+  // laptop; on a phone a sheet, opened from "Voyages" and closed by choosing, Esc or ×.
+  const trips = data.trips || {};
+  const titleOf = (top) => trips[top] || top.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase());
+  function buildMenu() {
+    const groups = new Map();
+    for (const v of voyages) { const top = v.g.split('/')[0]; if (!groups.has(top)) groups.set(top, []); groups.get(top).push(v); }
+    const item = (v) => `<li><a href="#${v.g}" data-g="${v.g}"><i></i><span>${esc(nameOf(v))}</span></a></li>`;
+    const byName = (a, b) => nameOf(a).localeCompare(nameOf(b));
+    menuList.innerHTML = [...groups].map(([top, vs]) => ({ top, vs, label: vs.some((v) => v.g.includes('/')) ? titleOf(top) : nameOf(vs[0]) }))
+      .sort((a, b) => a.label.localeCompare(b.label))
+      .map(({ top, vs, label }) => (vs.some((v) => v.g.includes('/'))
+        ? `<section data-trip="${esc(label)}"><h2>${esc(label)}</h2><ol>${vs.sort(byName).map(item).join('')}</ol></section>`
+        : `<section data-trip=""><ol>${item(vs[0])}</ol></section>`)).join('');
+    drip(menuList.querySelectorAll('a i'), (i) => `menu/${i.parentElement.dataset.g}`, (i) => vat(voyages.find((x) => x.g === i.parentElement.dataset.g).palette, { size: 20, seed: seedOf(i.parentElement.dataset.g) }), { root: menu, margin: '200px 0px' });
+  }
+  function menuTo(v) {
+    let here = null;
+    for (const a of menuList.querySelectorAll('a')) { if (a.dataset.g === v?.g) { a.setAttribute('aria-current', 'page'); here = a; } else a.removeAttribute('aria-current'); }
+    // Keep the voyage on the page in view within the list, without moving the page itself.
+    if (here && (here.offsetTop < menu.scrollTop || here.offsetTop + here.offsetHeight > menu.scrollTop + menu.clientHeight)) menu.scrollTop = here.offsetTop - menu.clientHeight / 3;
+  }
+  const openMenu = (open) => {
+    menu.classList.toggle('is-open', open);
+    menuButton.setAttribute('aria-expanded', String(open));
+    if (open) find.focus({ preventScroll: true }); else if (menu.contains(document.activeElement)) menuButton.focus({ preventScroll: true });
+  };
+  menuButton.addEventListener('click', () => openMenu(!menu.classList.contains('is-open')));
+  menu.querySelector('.palette-voyages__close').addEventListener('click', () => openMenu(false));
+  menuList.addEventListener('click', (e) => { if (e.target.closest('a')) openMenu(false); });
+  menu.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-open')) { e.preventDefault(); openMenu(false); } });
+  find.addEventListener('input', () => {
+    const q = find.value.trim().toLowerCase();
+    for (const s of menuList.querySelectorAll('section')) {
+      let any = false;
+      for (const li of s.querySelectorAll('li')) { const hit = !q || `${s.dataset.trip} ${li.textContent}`.toLowerCase().includes(q); li.hidden = !hit; any ||= hit; }
+      s.hidden = !any;
+    }
+  });
+  find.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const first = menuList.querySelector('li:not([hidden]) a');
+    if (first) { e.preventDefault(); location.hash = first.getAttribute('href'); openMenu(false); }
+  });
+  buildMenu();
+
   // ← → step along the rail.
   addEventListener('keydown', (e) => {
     if (e.defaultPrevented || e.altKey || e.metaKey || e.ctrlKey || e.shiftKey || e.target.closest?.('input, textarea, select, [contenteditable]')) return;
@@ -212,6 +261,7 @@ async function main() {
     const at = new URLSearchParams(location.search).get('at');
     const token = ++routing, gliding = shown !== null && shown !== (v?.g ?? '') && !still();
     railTo(v);
+    menuTo(v);
     light(v);
     if (gliding) {
       await Promise.all(parts().map((el) => el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }], { duration: 180, easing: 'ease-in', fill: 'forwards' }).finished.catch(() => {})));
