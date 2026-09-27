@@ -13,8 +13,9 @@
  * [{hex, pc, accent}] or [[hex, pc, accent]]; `calm` (0 stirred … 1 layered) overrides the choice; the vat is `size` across (or the smaller of width and height), centred, transparent
  * round it. Still by default: painted on one shared WebGL canvas and copied out, so a page of frames
  * costs one context. `stir: true` gives the vat its own and keeps the currents moving (the lab);
- * `stir: 'hover'` stirs only while a pointer rests on it, and on leaving lets the dye settle back to
- * where it was poured, so at rest it is always true to its shares. Neither moves with motion off;
+ * `stir: 'hover'` stirs only while a pointer rests on it (or while `canvas.stir(true)`, for a link
+ * that leads to it), `speed` steps a second, and on leaving lets the dye settle back to where it was
+ * poured, so at rest it is always true to its shares. Neither moves with motion off;
  * a live vat's `release()` lets its context go. Used by the palette page
  * (assets/js/colour/palette.js) and the book's colophon (assets/js/photobook/index.js).
  */
@@ -105,7 +106,7 @@ function sharedRenderer() {
 const M = 48, INSIDE = (() => { const out = []; for (let y = 0; y < M; y++) for (let x = 0; x < M; x++) { const u = ((x + 0.5) / M) * 2 - 1, v = ((y + 0.5) / M) * 2 - 1; if (u * u + v * v <= 1) out.push(y * M + x); } return out; })();
 const px = new Uint8Array(M * M * 4);
 
-export function vat(palette, { size = 176, width = size, height = size, seed = 1, stir = false, label = '', calm: calmFor = null } = {}) {
+export function vat(palette, { size = 176, width = size, height = size, seed = 1, stir = false, speed = 15, label = '', calm: calmFor = null } = {}) {
   let state = seed;
   const rand = () => { state = (state * 16807) % 2147483647; return state / 2147483647; };
   const gauss = () => { let v = 0; for (let i = 0; i < 6; i++) v += rand(); return v / 6 - 0.5; };
@@ -175,14 +176,15 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
     let t = 0, on = false, raf = 0, last = 0;
     const tick = (now) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
-      t = on ? t + dt * 15 : t * Math.exp(-dt * 2.4); // stirred at 15 a second (2.5× the first), settling back as before
+      t = on ? t + dt * speed : t * Math.exp(-dt * 2.4); // stirred at `speed` a second, settling back as before
       if (!on && t < 0.02) t = 0;
       frame(t);
       raf = on || t ? requestAnimationFrame(tick) : 0;
     };
     const wake = () => { if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } };
-    out.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') { on = true; wake(); } });
-    out.addEventListener('pointerleave', () => { on = false; wake(); });
+    out.stir = (v) => { on = !!v; wake(); };
+    out.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') out.stir(true); });
+    out.addEventListener('pointerleave', () => out.stir(false));
   } else if (moving) {
     const t0 = performance.now();
     const loop = (now) => { if (!out.isConnected && now - t0 > 1000) { out.release(); return; } frame((now - t0) / 1000); requestAnimationFrame(loop); };
