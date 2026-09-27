@@ -342,14 +342,16 @@ async function main() {
     light(v);
     const before = gliding && v ? blocksNow() : [];
     if (gliding) {
-      await Promise.all(parts().map((el) => el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }], { duration: 180, easing: 'ease-in', fill: 'forwards' }).finished.catch(() => {})));
+      // The old voyage lifts away (an even sine, a few pixels up), not a blink.
+      await Promise.all(parts().map((el) => el.animate([{ opacity: getComputedStyle(el).opacity, transform: 'none' }, { opacity: 0, transform: 'translateY(-4px)' }], { duration: 320, easing: 'cubic-bezier(.37,0,.63,1)', fill: 'forwards' }).finished.catch(() => {})));
       if (token !== routing) return;
     }
     shown = v?.g ?? '';
     if (v) voyage(v, at); else index();
     if (!v || !at) scrollTo({ top: 0, behavior: 'instant' });
     for (const el of parts()) el.getAnimations().forEach((a) => a.cancel());
-    if (gliding) for (const el of parts()) el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
+    // …and the new one settles in from just below, a touch slower, so the two read as one movement.
+    if (gliding) for (const el of parts()) el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 560, easing: 'cubic-bezier(.22,1,.36,1)' });
     if (gliding && v) morph(before);
   }
   addEventListener('hashchange', () => { if (location.search) history.replaceState(null, '', location.pathname + location.hash); route(); });
