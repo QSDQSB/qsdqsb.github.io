@@ -25,7 +25,7 @@ import { parsePalette, vectorOf, chi2, emd, colourPath, rgbToOklab, swatchesOf }
 export function palettesOf(books) {
   const voyages = books.filter(m => m.book?.colour).map(m => ({
     g: m.gallery, palette: m.book.colour.palette, order: m.book.colour.order,
-    photos: m.photos.map(p => ({ slug: p.slug, name: p.name || null, light: p.light?.text || null, url: p.url, sizes: (p.sizes?.webp || []).filter(s => s <= 1280), sig: p.signature || null })),
+    photos: m.photos.map(p => ({ slug: p.slug, name: p.name || null, light: p.light?.text || null, url: p.url, r: p.ratio ? +p.ratio.toFixed(3) : null, sizes: (p.sizes?.webp || []).filter(s => s <= 1280), sig: p.signature || null })),
   }));
   // Each voyage's place on the rail of vats that leads from one to the next: its signature carried
   // into every other's (the earth mover's distance), laid on one line dark to light, like with like.

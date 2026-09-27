@@ -449,7 +449,8 @@
 .palette-card__print {
   display: block;
 
-  img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 0; background: #1d1d1d; }
+  // Each print whole, in its own shape (--r, its width over its height): never cropped to fit.
+  img { display: block; width: 100%; height: auto; aspect-ratio: var(--r, 3 / 2); border-radius: 0; background: #1d1d1d; }
 }
 
 .palette-card__row {
