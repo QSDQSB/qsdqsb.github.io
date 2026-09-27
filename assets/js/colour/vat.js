@@ -175,7 +175,7 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
     let t = 0, on = false, raf = 0, last = 0;
     const tick = (now) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
-      t = on ? t + dt * 6 : t * Math.exp(-dt * 2.4);
+      t = on ? t + dt * 15 : t * Math.exp(-dt * 2.4); // stirred at 15 a second (2.5× the first), settling back as before
       if (!on && t < 0.02) t = 0;
       frame(t);
       raf = on || t ? requestAnimationFrame(tick) : 0;
