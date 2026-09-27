@@ -13,7 +13,7 @@
  */
 
 import { tips } from '../photobook/tip.js';
-import { vat, seedOf } from './vat.js';
+import { vat, seedOf, oklab } from './vat.js';
 import { crossfade } from '../photobook/wash.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -295,7 +295,42 @@ async function main() {
 
   // From one voyage to the next: the words and frames fade out, the page returns to the top unseen,
   // the new ones rise in; the light and the dye vat meanwhile take the new colours.
-  const parts = () => [title, ...stage.querySelectorAll('.palette-voyage__blocks, .palette-page__order, .palette-cards, .colour-lede, .palette-index')];
+  const parts = () => [title, ...stage.querySelectorAll('.palette-page__order, .palette-cards, .colour-lede, .palette-index')];
+
+  // From one voyage's palette to the next, the blocks stay and take the new dye: each colour flows
+  // into the next through OKLab (so navy to rust passes a clean plum, never a grey-brown), in a wave
+  // from left to right; a colour the new palette lacks narrows away, one it adds opens from nothing;
+  // the hex and share of each rise in once its colour has nearly settled. About as long as the vat's
+  // own crossfade, so the whole palette turns as one.
+  const toHex = ([L, a, b]) => {
+    const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3, m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3, s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
+    const g = (x) => Math.round(Math.min(1, Math.max(0, x <= 0.0031308 ? 12.92 * x : 1.055 * x ** (1 / 2.4) - 0.055)) * 255).toString(16).padStart(2, '0');
+    return `#${g(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s)}${g(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s)}${g(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s)}`;
+  };
+  const smooth = (t) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2); // in and out: the blend is given its time
+  const flow = (from, to, steps = 12) => { const A = oklab(from), B = oklab(to); return Array.from({ length: steps + 1 }, (_, k) => { const t = smooth(k / steps); return { backgroundColor: toHex(A.map((x, i) => x + (B[i] - x) * t)), offset: k / steps }; }); };
+  const blocksNow = () => [...root.querySelectorAll('.palette-voyage .palette-blocks > div')].map((d) => d.querySelector('i').style.getPropertyValue('--c').trim());
+  function morph(before) {
+    const row = root.querySelector('.palette-voyage .palette-blocks');
+    if (!row || !before.length) return;
+    const now = [...row.children], wash = 1000, wave = 90, grow = 'cubic-bezier(.65,0,.35,1)';
+    now.forEach((d, i) => {
+      const to = d.querySelector('i').style.getPropertyValue('--c').trim(), from = before[Math.min(i, before.length - 1)], delay = i * wave;
+      d.querySelector('i').animate(flow(from, to), { duration: wash, delay, easing: 'linear', fill: 'backwards' });
+      if (i >= before.length) d.animate([{ flexGrow: 0 }, { flexGrow: 1 }], { duration: wash, delay, easing: grow, fill: 'backwards' });
+      for (const [k, el] of [d.querySelector('i'), d.querySelector('b')].entries()) {
+        // The words rise in as the dye settles: only the text, so the colour beneath keeps flowing.
+        el.animate([{ color: 'transparent' }, { color: 'transparent', offset: 0.6 }, {}], { duration: wash + 120, delay: delay + k * 40, easing: 'ease-out', fill: 'backwards' });
+      }
+    });
+    // Colours the new palette lacks: their blocks narrow away at the right, carrying their old dye.
+    before.slice(now.length).forEach((hex, j) => {
+      const ghost = Object.assign(document.createElement('div'), { ariaHidden: 'true' });
+      ghost.innerHTML = `<i style="--c:${hex}"></i><b>&nbsp;</b>`;
+      row.append(ghost);
+      ghost.animate([{ flexGrow: 1, opacity: 1 }, { flexGrow: 0, opacity: 0.4 }], { duration: wash, delay: (now.length + j) * wave, easing: grow, fill: 'both' }).finished.then(() => ghost.remove(), () => ghost.remove());
+    });
+  }
   let shown = null, routing = 0;
   async function route() {
     const g = decodeURIComponent(location.hash.slice(1));
@@ -305,6 +340,7 @@ async function main() {
     railTo(v);
     menuTo(v);
     light(v);
+    const before = gliding && v ? blocksNow() : [];
     if (gliding) {
       await Promise.all(parts().map((el) => el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }], { duration: 180, easing: 'ease-in', fill: 'forwards' }).finished.catch(() => {})));
       if (token !== routing) return;
@@ -314,6 +350,7 @@ async function main() {
     if (!v || !at) scrollTo({ top: 0, behavior: 'instant' });
     for (const el of parts()) el.getAnimations().forEach((a) => a.cancel());
     if (gliding) for (const el of parts()) el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
+    if (gliding && v) morph(before);
   }
   addEventListener('hashchange', () => { if (location.search) history.replaceState(null, '', location.pathname + location.hash); route(); });
   route();
