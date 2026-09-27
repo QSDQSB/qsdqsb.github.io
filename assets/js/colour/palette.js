@@ -13,7 +13,7 @@
  */
 
 import { tips } from '../photobook/tip.js';
-import { vat, seedOf, oklab } from './vat.js';
+import { vat, seedOf, oklab, field } from './vat.js';
 import { crossfade } from '../photobook/wash.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -158,10 +158,15 @@ async function main() {
     out.getContext('2d').drawImage(c, at, at, side, side, 0, 0, 48, 48);
     return out;
   }
+  // The room alive where it can be (vat.js field: small, soft, frugal), its light blending from one
+  // voyage to the next; else the still room of before.
+  let live;
   function light(v) {
     const g = v?.g ?? '';
     if (ambience.dataset.g === g) return;
     ambience.dataset.g = g;
+    if (live === undefined && v) { live = field(v.palette); if (live) { live.el.classList.add('is-on'); ambience.replaceChildren(live.el); window.__field = live.stats; return; } }
+    if (live) { if (v) live.set(v.palette); live.el.classList.toggle('is-on', !!v); return; }
     crossfade(ambience, v ? room(v) : document.createElement('i'));
   }
   // A change of voyage is one gesture, one tempo: the palette's blocks take the new dye in a wave

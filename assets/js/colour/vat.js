@@ -192,3 +192,113 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
   }
   return out;
 }
+
+/**
+ * A room lit by a palette, alive: the vat's flow drawn as a soft field across the whole view, the
+ * way a music player's backdrop breathes, for pages whose subject is colour (the palette page).
+ * Frugal by design: drawn small (about 96 px across) and already soft, so the browser stretches it
+ * with no blur; at most 20 frames a second; still while the reader scrolls, after 30 s without a
+ * touch, in a hidden tab, with motion off, and on touch devices (a battery in the hand). A change of
+ * palette blends in the shader (OKLab) over `blend` ms. One WebGL context for the page.
+ *
+ * field(palette) → { el, set(palette, blend), stats } or null without WebGL (keep a still room).
+ */
+const FIELD_FRAG = `
+precision highp float;
+uniform vec2 res; uniform float t, u;
+uniform vec3 colA[5]; uniform float wA[5]; uniform vec2 pA[5]; uniform int nA;
+uniform vec3 colB[5]; uniform float wB[5]; uniform vec2 pB[5]; uniform int nB;
+float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7)) + 0.091) * 43758.5453); }
+float noise(vec2 p) { vec2 i = floor(p), f = fract(p); vec2 w = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
+  return mix(mix(hash(i), hash(i + vec2(1, 0)), w.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), w.x), w.y); }
+float fbm(vec2 p) { float v = 0.0, a = 0.6; for (int i = 0; i < 2; i++) { v += a * noise(p); p = p * 1.9 + 11.0; a *= 0.4; } return v / 0.84; }
+vec3 toRgb(vec3 c) { float l = c.x + 0.3963377774 * c.y + 0.2158037573 * c.z, m = c.x - 0.1055613458 * c.y - 0.0638541728 * c.z, s = c.x - 0.0894841775 * c.y - 1.2914855480 * c.z;
+  l = l * l * l; m = m * m * m; s = s * s * s;
+  vec3 lin = vec3(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s, -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s, -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s);
+  lin = clamp(lin, 0.0, 1.0); return mix(12.92 * lin, 1.055 * pow(lin, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, lin)); }
+vec3 dye(vec2 pw, vec3 col[5], float w[5], vec2 p[5], int n) {
+  float tot = 0.0, L = 0.0, C = 0.0; vec2 ab = vec2(0.0);
+  for (int k = 0; k < 5; k++) { if (k >= n) continue; vec2 d = pw - p[k]; float g = w[k] * exp(-dot(d, d) / 0.55); tot += g;
+    L += g * col[k].x; ab += g * col[k].yz; C += g * length(col[k].yz); }
+  L /= tot; ab /= tot; C /= tot; float h = length(ab); if (h > 1e-4) ab *= mix(1.0, C / h, 0.7);
+  return vec3(L, ab);
+}
+void main() {
+  vec2 uv = (gl_FragCoord.xy / res) * 2.0 - 1.0; uv.x *= res.x / res.y; uv.y = -uv.y;
+  // The currents, as the vat's, but slow: one visible drift takes the better part of a minute.
+  vec2 q = vec2(fbm(uv * 0.7 + t * 0.010), fbm(uv * 0.7 + vec2(5.2, 1.3) - t * 0.008));
+  vec2 w2 = vec2(fbm(uv * 0.8 + 2.0 * q + vec2(1.7, 9.2) + t * 0.006), fbm(uv * 0.8 + 2.0 * q + vec2(8.3, 2.8) - t * 0.005));
+  vec2 pw = uv + 0.9 * (w2 - 0.5);
+  vec3 lab = mix(dye(pw, colA, wA, pA, nA), dye(pw, colB, wB, pB, nB), u);
+  // As quiet as the still room was (its heavy blur averaged the colours towards grey): a trace of
+  // each voyage's hue, dimmed as the room's CSS dimmed it, done here so nothing is filtered per frame.
+  lab.yz *= 0.4;
+  gl_FragColor = vec4(toRgb(lab) * 0.42, 1.0);
+}`;
+
+export function field(palette, { blend = 1100 } = {}) {
+  const el = Object.assign(document.createElement('canvas'), { className: 'colour-field' });
+  el.setAttribute('aria-hidden', 'true');
+  const gl = el.getContext('webgl', { alpha: false, antialias: false, depth: false, powerPreference: 'low-power', preserveDrawingBuffer: false });
+  if (!gl) return null;
+  const sh = (type, src) => { const x = gl.createShader(type); gl.shaderSource(x, src); gl.compileShader(x); return x; };
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, 'attribute vec2 a; void main(){ gl_Position = vec4(a, 0.0, 1.0); }'));
+  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FIELD_FRAG)); gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+  gl.useProgram(prog);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  const at = gl.getAttribLocation(prog, 'a'); gl.enableVertexAttribArray(at); gl.vertexAttribPointer(at, 2, gl.FLOAT, false, 0, 0);
+  const loc = {}, u = (name) => (loc[name] ??= gl.getUniformLocation(prog, name));
+
+  // Small, and the shape of the window: the browser stretches it; it is soft enough not to show.
+  const size = () => { el.width = 96; el.height = Math.max(40, Math.min(160, Math.round(96 * innerHeight / Math.max(1, innerWidth)))); gl.viewport(0, 0, el.width, el.height); gl.uniform2f(u('res'), el.width, el.height); };
+  size();
+
+  // A palette's colours, placed about the room: the largest near the middle, the rest round it.
+  const load = (slot, pal) => {
+    const cs = pal.slice(0, 5).map((p) => (Array.isArray(p) ? { hex: p[0], pc: p[1] } : p)), total = cs.reduce((s, p) => s + p.pc, 0) || 1;
+    const order = cs.map((_, i) => i).sort((x, y) => cs[y].pc - cs[x].pc);
+    order.forEach((i, rank) => {
+      const lab = oklab(cs[i].hex), ang = rank * 2.4 + 0.6, rad = rank === 0 ? 0.15 : 0.75 + 0.12 * rank;
+      gl.uniform3f(u(`col${slot}[${i}]`), lab[0], lab[1], lab[2]);
+      gl.uniform1f(u(`w${slot}[${i}]`), cs[i].pc / total);
+      gl.uniform2f(u(`p${slot}[${i}]`), Math.cos(ang) * rad * 1.3, Math.sin(ang) * rad);
+    });
+    gl.uniform1i(u(`n${slot}`), cs.length);
+  };
+
+  const stats = { frames: 0 };
+  let shown = palette, mixStart = 0, mixing = false, t = 0, last = 0, raf = 0, lastInput = performance.now(), scrolledAt = 0;
+  const draw = () => { gl.uniform1f(u('t'), t); gl.uniform1f(u('u'), mixing ? Math.min(1, (performance.now() - mixStart) / blend) : 1); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); stats.frames++; };
+  load('A', palette); load('B', palette); draw();
+
+  const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches || matchMedia('(hover: none)').matches;
+  const tick = (now) => {
+    raf = 0;
+    const idle = now - lastInput > 30000, scrolling = now - scrolledAt < 400;
+    if (mixing && now - mixStart >= blend) { mixing = false; load('A', shown); }
+    if (now - last >= 50) { // 20 a second
+      if (!still() && !idle && !scrolling) t += Math.min(0.1, (now - last) / 1000);
+      last = now; draw();
+    }
+    // Keep going only while something moves: the currents (not idle, not scrolling) or a blend.
+    if (mixing || (!still() && !idle && !scrolling && !document.hidden)) raf = requestAnimationFrame(tick);
+  };
+  const wake = () => { if (!raf && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(tick); } };
+  const touch = () => { lastInput = performance.now(); wake(); };
+  for (const ev of ['pointermove', 'keydown', 'wheel']) addEventListener(ev, touch, { passive: true });
+  addEventListener('scroll', () => { scrolledAt = lastInput = performance.now(); clearTimeout(scrollEnd); scrollEnd = setTimeout(wake, 450); }, { passive: true });
+  let scrollEnd = 0, resizing = 0;
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) touch(); });
+  addEventListener('resize', () => { clearTimeout(resizing); resizing = setTimeout(() => { size(); draw(); }, 150); });
+  wake();
+
+  return {
+    el, stats,
+    set(pal) {
+      if (!still()) { load('A', shown); load('B', pal); shown = pal; mixStart = performance.now(); mixing = true; wake(); }
+      else { shown = pal; load('A', pal); load('B', pal); mixing = false; draw(); }
+    },
+  };
+}
