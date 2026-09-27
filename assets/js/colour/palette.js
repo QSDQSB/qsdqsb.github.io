@@ -258,13 +258,13 @@ async function main() {
       .map(({ top, vs, label }) => (vs.some((v) => v.g.includes('/'))
         ? `<section data-trip="${esc(label)}"><h2>${esc(label)}</h2><ol>${vs.sort(byName).map(item).join('')}</ol></section>`
         : `<section data-trip=""><ol>${item(vs[0])}</ol></section>`)).join('');
-    drip(menuList.querySelectorAll('a i'), (i) => `menu/${i.parentElement.dataset.g}`, (i) => vat(voyages.find((x) => x.g === i.parentElement.dataset.g).palette, { size: 20, seed: seedOf(i.parentElement.dataset.g) }), { root: menu, margin: '200px 0px' });
+    drip(menuList.querySelectorAll('a i'), (i) => `menu/${i.parentElement.dataset.g}`, (i) => vat(voyages.find((x) => x.g === i.parentElement.dataset.g).palette, { size: 20, seed: seedOf(i.parentElement.dataset.g) }), { root: menuList, margin: '200px 0px' });
   }
   function menuTo(v) {
     let here = null;
     for (const a of menuList.querySelectorAll('a')) { if (a.dataset.g === v?.g) { a.setAttribute('aria-current', 'page'); here = a; } else a.removeAttribute('aria-current'); }
     // Keep the voyage on the page in view within the list, without moving the page itself.
-    if (here && (here.offsetTop < menu.scrollTop || here.offsetTop + here.offsetHeight > menu.scrollTop + menu.clientHeight)) menu.scrollTop = here.offsetTop - menu.clientHeight / 3;
+    if (here && (here.offsetTop < menuList.scrollTop || here.offsetTop + here.offsetHeight > menuList.scrollTop + menuList.clientHeight)) menuList.scrollTop = here.offsetTop - menuList.clientHeight / 3;
   }
   const openMenu = (open) => {
     menu.classList.toggle('is-open', open);
