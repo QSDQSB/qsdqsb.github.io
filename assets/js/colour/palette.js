@@ -75,11 +75,11 @@ async function main() {
     const name = nameOf(v), page = pages[v.g];
     document.title = document.title.replace(/^[^·]*·/, `QSD's Palette for ${name} ·`);
     // The way back to the voyage's book, to the frame the reader came from when there was one: the
-    // pill at the top, as the picture view's, and the voyage's name in the title.
+    // pill at the top, as the picture view's, held under the masthead all the way down.
     const home = `${page.url}${at ? `#${encodeURIComponent(at)}` : ''}`;
     back.href = home; back.hidden = false; back.querySelector('span').textContent = name;
     back.setAttribute('aria-label', `Back to ${name}`);
-    title.innerHTML = `QSD's Palette for <a class="palette-page__voyage" href="${home}">${esc(name)}</a>`;
+    title.textContent = `QSD's Palette for ${name}`;
     kicker.textContent = "QSD's Palette";
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
     stage.innerHTML = `<section class="palette-voyage">

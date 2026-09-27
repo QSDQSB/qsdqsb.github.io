@@ -227,11 +227,16 @@
 // the masthead, so the sheet does too.
 .palette-page:has(.palette-voyages.is-open) { z-index: 61; }
 
-// The way back and, below the rail breakpoint, the way to every voyage: two pills on one line.
+// The way back and, below the rail breakpoint, the way to every voyage: two pills on one line,
+// held just under the masthead as the page goes by, as the picture view keeps its way back in reach.
 .palette-page__bar {
+  position: sticky;
+  top: calc(5.2rem + env(safe-area-inset-top, 0px));
+  z-index: 5;
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
+  width: fit-content;
   margin-bottom: clamp(1rem, 2.4vw, 1.6rem);
 }
 
@@ -246,9 +251,9 @@
 .palette-voyages {
   @include responsive-up($responsive-left-rail-breakpoint) {
     position: sticky;
-    top: 6rem;
+    top: calc(5.2rem + env(safe-area-inset-top, 0px)); // level with the way back
     align-self: start;
-    max-height: calc(100vh - 7rem);
+    max-height: calc(100vh - 6.2rem);
     overflow-y: auto;
     overscroll-behavior: contain;
     scrollbar-width: thin;
@@ -410,19 +415,6 @@
 .palette-page__back:visited { color: $primary-color; }
 .palette-page__back:hover,
 .palette-page__back:focus-visible { color: $primary-color; text-decoration: none; border-color: rgba(255, 255, 255, 0.24); }
-
-// The voyage's name in the title leads there too, quietly: underlined only under the pointer.
-.palette-page__voyage,
-.palette-page__voyage:visited { color: inherit; text-decoration: none; }
-
-.palette-page__voyage:hover,
-.palette-page__voyage:focus-visible {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-decoration-color: rgba(255, 255, 255, 0.5);
-  text-underline-offset: 0.14em;
-}
 
 // The way back to every palette, in the kicker's ink. `a:visited` / `a:hover` (0,1,1) would turn it
 // the site's link blue, so its states are stated here at (0,2,0).
