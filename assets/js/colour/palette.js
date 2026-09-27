@@ -69,15 +69,15 @@ async function main() {
     kicker.textContent = "QSD's Palette";
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
     stage.innerHTML = `<section class="palette-voyage">
-        <div>${blocks(sig(v))}
-          <p class="palette-voyage__links"><a href="${page.url}">Open the book <span aria-hidden="true">→</span></a><a href="#">Every palette <span aria-hidden="true">→</span></a></p></div>
+        <div class="palette-voyage__blocks">${blocks(sig(v))}</div>
+        <p class="palette-voyage__links"><a href="${page.url}">Open the book <span aria-hidden="true">→</span></a><a href="#">Every palette <span aria-hidden="true">→</span></a></p>
         <div data-vat></div>
       </section>
       <div class="photobook-sheet__order palette-page__order" role="group" aria-label="Order">
         <button type="button" aria-pressed="${order === 'sequence'}" data-order="sequence">Sequence</button>
         <button type="button" aria-pressed="${order === 'colour'}" data-order="colour">Colour</button>
       </div>
-      <div class="palette-cards">${seq.map((i) => { const p = v.photos[i]; return `<article class="palette-card${p.slug === at ? ' is-from' : ''}" id="f-${esc(p.slug)}" style="view-transition-name:palette-f${i}">
+      <div class="palette-cards">${seq.map((i) => { const p = v.photos[i]; return `<article class="palette-card${p.slug === at ? ' is-from' : ''}" id="f-${esc(p.slug)}" data-n="${i}">
           <a class="palette-card__print" href="${page.url}#${encodeURIComponent(p.slug)}" aria-label="${esc(p.name || p.slug)}, in its book"><img src="${p.url}/${p.sizes.find((s) => s >= 960) || p.sizes[p.sizes.length - 1] || 480}.webp" alt="" loading="lazy" decoding="async"></a>
           ${p.sig?.length ? blocks(p.sig) : ''}
           <div class="palette-card__row"><div>
@@ -92,7 +92,12 @@ async function main() {
       const b = e.target.closest('button[data-order]'); if (!b || b.dataset.order === order) return;
       order = b.dataset.order; store.set('palette-order', order);
       const redraw = () => voyage(v, null);
-      if (still() || !document.startViewTransition) redraw(); else document.startViewTransition(redraw);
+      if (still() || !document.startViewTransition) { redraw(); return; }
+      // Only the frames on or near the screen are named for the move (as the book's sheet does), and
+      // only for as long as it lasts.
+      const named = (on) => { for (const c of stage.querySelectorAll('.palette-card')) { const r = c.getBoundingClientRect(); c.style.viewTransitionName = on && r.bottom > -200 && r.top < innerHeight + 200 ? `palette-f${c.dataset.n}` : ''; } };
+      named(true);
+      document.startViewTransition(() => { redraw(); named(true); }).finished.finally(() => named(false));
     };
     if (at) requestAnimationFrame(() => document.getElementById(`f-${at}`)?.scrollIntoView({ block: 'center', behavior: 'instant' }));
   }
@@ -109,10 +114,13 @@ async function main() {
       for (const e of entries) if (e.isIntersecting) { seen.unobserve(e.target); if (queue.push({ slot: e.target, fill: () => fill(e.target) }) === 1) requestAnimationFrame(next); }
     }, { root, rootMargin: margin });
     for (const slot of slots) if (poured.has(keyOf(slot))) fill(slot); else seen.observe(slot);
+    return seen;
   }
+  let cards = null; // the cards' watcher, let go when the cards are drawn again
   function pour(v, slots) {
+    cards?.disconnect();
     const key = (slot) => `${v.g}/${v.photos[slot.dataset.i].slug}`;
-    drip(slots, key, (slot) => vat(v.photos[slot.dataset.i].sig, { size: 44, seed: seedOf(key(slot)) }));
+    cards = drip(slots, key, (slot) => vat(v.photos[slot.dataset.i].sig, { size: 44, seed: seedOf(key(slot)) }));
   }
 
   // The voyage's own dye vat stays on the page from one voyage to the next: the new colours poured
@@ -125,7 +133,7 @@ async function main() {
     const old = [...vatBox.children];
     vatBox.append(fresh);
     if (!old.length || still()) { old.forEach((c) => c.remove()); return; }
-    fresh.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 900, easing: 'cubic-bezier(.3,.1,.2,1)' }).finished.then(() => old.forEach((c) => c.remove()), () => {});
+    fresh.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 600, easing: 'cubic-bezier(.3,.1,.2,1)' }).finished.then(() => old.forEach((c) => c.remove()), () => {});
   }
 
   // The rail, above the title: built once, every voyage's dye vat by colour. Moving from one voyage
@@ -155,15 +163,15 @@ async function main() {
   }
   // ← → step along the rail.
   addEventListener('keydown', (e) => {
-    if (e.defaultPrevented || e.altKey || e.metaKey || e.ctrlKey || e.target.closest?.('input, textarea, select, [contenteditable]')) return;
+    if (e.defaultPrevented || e.altKey || e.metaKey || e.ctrlKey || e.shiftKey || e.target.closest?.('input, textarea, select, [contenteditable]')) return;
     const dir = { ArrowLeft: '-1', ArrowRight: '1' }[e.key];
     const step = dir && railNav.querySelector(`[data-step="${dir}"]:not([hidden])`);
     if (step) { e.preventDefault(); location.hash = step.getAttribute('href'); }
   });
 
   // From one voyage to the next: the words and frames fade out, the page returns to the top unseen,
-  // the new ones rise in; the dye vat meanwhile takes its new colours.
-  const parts = () => [title, ...stage.querySelectorAll('.palette-voyage > div:first-child, .palette-page__order, .palette-cards, .colour-lede, .palette-index')];
+  // the new ones rise in; the dye vat meanwhile takes its new colours, starting as the words leave.
+  const parts = () => [title, ...stage.querySelectorAll('.palette-voyage__blocks, .palette-voyage__links, .palette-page__order, .palette-cards, .colour-lede, .palette-index')];
   let shown = null, routing = 0;
   async function route() {
     const g = decodeURIComponent(location.hash.slice(1));
@@ -171,6 +179,7 @@ async function main() {
     const at = new URLSearchParams(location.search).get('at');
     const token = ++routing, gliding = shown !== null && shown !== (v?.g ?? '') && !still();
     railTo(v);
+    if (gliding && v) fillVat(v); // the new colours start to pour as the old words leave
     if (gliding) {
       await Promise.all(parts().map((el) => el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }], { duration: 180, easing: 'ease-in', fill: 'forwards' }).finished.catch(() => {})));
       if (token !== routing) return;

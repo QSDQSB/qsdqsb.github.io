@@ -98,12 +98,13 @@ thumbhash:
   `rrggbbww` each (sRGB, then the share out of 255), largest first. Deterministic: the same pixels,
   the same string.
 - `grid`: the mean colour of each ninth of the frame, row by row (`rrggbb` × 9): what sits above what.
-- `signature`: three to five colours with their shares, dark to light (`lib/signature.mjs`): near-black
-  and near-white once each and never in charge, a vivid accent (marked `1`) kept down to 0.3% of the
-  frame. The specs panel draws it as a thin bar; a band's hex is copied on a click.
+- `signature`: three to five colours with their shares, dark to light (`lib/signature.mjs`): always
+  coloured, the greys and blacks set aside and the shares counted over what is left (black or white
+  only for a frame that is itself black and white), a vivid accent (marked `1`) kept down to 0.3% of
+  the frame. The specs panel draws it as a thin bar, its hex codes text to select on hover.
 - `dots`: 24 colours by Maximin (`lib/dots.mjs`), darkest first, each with its true share out of 255
   (`rrggbbss`): the steadiest of the methods tried across renditions, and the one that misses least.
-  The colophon's field gathers a voyage's.
+  Used at build time for the colour order; the pages are not sent them.
 
 Everything else is derived at build time and can be re-derived: the picture distance between two
 photos (the exact earth mover's distance between palettes, in OKLab ΔE: how far, on average, a unit
@@ -112,7 +113,17 @@ voyage's barcode and colour order (`book.mjs colourOf`), and, across voyages, ki
 light in bands of the sun's altitude (`lib/atlas.mjs`), which feed `/light/` and `/drift/`; and QSD's
 Palette (`/palette/#<gallery>`): every voyage's signature without black or white, each frame's own,
 in the book's sequence or by colour (the earth mover's distance between two frames' 24 dots, laid dark
-to light). The specs panel's palette leads there; its hex codes are text to select.
+to light). The specs panel's palette and the colophon lead there.
+
+**The dye vat** (`assets/js/colour/vat.js`) is how a palette is drawn as a feeling rather than a
+reading: a round vat seen from above, the colours poured in and run together, each covering as much
+of the vat as its share (it measures itself on the GPU and adjusts until it does). A palette of one
+family settles in misty layers, light above deep; a palette of contrasts is stirred into currents;
+the accent is a single wisp. Seeded by the gallery key (or `gallery/slug`), so the same palette always
+pours the same vat. It appears on `/palette/` (a rail of every voyage's vat above the title, ordered
+by `rank`, the voyages laid dark to light by the earth mover's distance between their signatures in
+`atlas.mjs palettesOf`; the voyage's own vat; one beside every frame) and in each book's colophon.
+Still vats share one WebGL context; without WebGL the slot stays empty and nothing else changes.
 
 The processor computes both for a new photo, and for an old one on its next run from the 480 px tier
 (nothing re-rendered). Until that run, `node scripts/photos/palettes.mjs` computes them from the
@@ -136,6 +147,8 @@ which `photos:fetch` folds in by hash. With neither, pages simply show no colour
 | `npm run photos:fetch [-- --local dir] [--strict]` | Pre-build merge into `_data/photo_manifests/`, and `colour-atlas.json` when colours are known. Never fails a build. | read (HTTP, public) |
 | `node scripts/photos/palettes.mjs [--gallery x] [--force]` | Every photo's palette from its public 480 px tier into the local sidecar, and kindred frames across voyages (cached; ~6 s for 600 photos). | read (HTTP, public) |
 | `node scripts/photos/palette-sheet.mjs [--gallery x] [--seeds 10] [--out f.html]` | A contact sheet: photos and their nearest under three measures. | none |
+| `node scripts/photos/backfill-colours.mjs [--gallery x] [--refresh signature] [--write]` / `--kindred [--write]` | Writes the colours the local sidecar holds into the private manifests (or the kindred list to the bucket's root), for photos processed before the processor kept them, or after an algorithm changes. Dry run by default; each manifest is backed up to `trash/<date>/` first. | write (with `--write`) |
+| `node scripts/photos/dots-lab.mjs [--gallery x]` | The colour lab under `/lab/` (git-ignored, shown by `jekyll serve`): every frame's dots by each method, every signature, the moods, and the page that chose the dye vat. | read (HTTP, public) |
 | `npm run photos:status [-- --gallery x] [--offline] [--no-fetch] [--json]` | One row per gallery: local, bucket, pending, processed, captioned, unlisted, orphans, last processed, formats. Exits 1 on anything out of place. | read |
 | `npm run photos:captions -- --gallery x [--dry-run]` | Appends an empty `caption:` entry for every slug the YAML lacks, in capture-time order. Never rewrites what is there. | none |
 | `npm run photos:recollect -- --gallery x [--rename] [--allow-drop] [--push] [--offline]` | The check before pushing imported files: matched, new, renamed, vanishing. Refuses while captioned work would vanish. | read (+ write with `--push`) |

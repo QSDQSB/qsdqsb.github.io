@@ -10,7 +10,7 @@
   The mood lab: one large colour image per voyage, in four registers, for choosing the one that sits
   at the top of QSD's Palette for <voyage>. Painterly (soft fields, a Rothko at dusk), celestial (every
   frame's dots as a nebula), editorial (a printed colour index), textile (every frame woven as a
-  patch). Reads /assets/palettes.json, the page's own data. Local only: /lab/ is git-ignored;
+  patch). Reads /assets/palettes.json, the page's own data, and ./dots.json (dots-lab.mjs). Local only: /lab/ is git-ignored;
   scripts/photos/dots-lab.mjs copies this page there.
 -->
 <style>
@@ -42,6 +42,9 @@
 </main>
 <script type="module">
 const data = await (await fetch('/assets/palettes.json')).json();
+// Each frame's 24 dots, which the site no longer ships: the lab's own copy (dots-lab.mjs).
+const dotsBy = await (await fetch('./dots.json')).json().catch(() => ({}));
+for (const v of data.voyages) for (const p of v.photos) p.dots = dotsBy[v.g]?.[p.slug] || null;
 const WANT = ['london', 'rigi', 'morocco', 'japan/kyoto'];
 const voyages = WANT.map((g) => data.voyages.find((v) => v.g === g)).filter(Boolean);
 const title = (v) => data.pages[v.g]?.title || v.g;

@@ -55,9 +55,9 @@ void main() {
   for (int k = 0; k < 5; k++) { if (k >= n) continue; L += ws[k] * col[k].x; ab += ws[k] * col[k].yz; C += ws[k] * length(col[k].yz); }
   float h = length(ab); if (h > 1e-4) ab *= mix(1.0, C / h, smoothstep(0.25, 0.75, h / max(C, 1e-4)));
   vec3 rgb = toRgb(vec3(L, ab));
-  // The vessel, lightly: a faint sheen above left, a hairline of light at the rim.
-  rgb += 0.03 * smoothstep(0.7, 0.0, length(uv - vec2(-0.4, -0.45)));
-  rgb = mix(rgb, rgb + 0.08, smoothstep(0.975, 1.0, r));
+  // The vessel, seen from above: its wall a little in shade at the rim, as a vat's is, not lit as a
+  // sphere would be.
+  rgb *= mix(1.0, 0.86, smoothstep(0.93, 1.0, r));
   float alpha = 1.0 - smoothstep(1.0 - aa, 1.0 + aa, r);
   gl_FragColor = vec4(rgb * alpha, alpha);
 }`;
@@ -89,8 +89,14 @@ function renderer(canvas) {
 }
 
 // Still vats are all painted on one hidden canvas and copied out: a browser keeps only a few WebGL
-// contexts alive, and a page of frames wants one each.
+// contexts alive, and a page of frames wants one each. False once WebGL has failed here; renewed if
+// the context is lost (a GPU reset, a tab sent to the background on a phone).
 let shared;
+function sharedRenderer() {
+  if (shared?.gl.isContextLost()) shared = undefined;
+  if (shared === undefined) shared = renderer(document.createElement('canvas')) || false;
+  return shared;
+}
 
 // The self-measuring grid: M × M pixels, the circle's pixels found once.
 const M = 48, INSIDE = (() => { const out = []; for (let y = 0; y < M; y++) for (let x = 0; x < M; x++) { const u = ((x + 0.5) / M) * 2 - 1, v = ((y + 0.5) / M) * 2 - 1; if (u * u + v * v <= 1) out.push(y * M + x); } return out; })();
@@ -107,17 +113,18 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
   out.className = 'colour-vat'; out.style.aspectRatio = `${width} / ${height}`;
   if (label) { out.setAttribute('role', 'img'); out.setAttribute('aria-label', label); } else out.setAttribute('aria-hidden', 'true');
   if (!n) return out;
-  const r = moving ? renderer(out) : (shared ||= renderer(document.createElement('canvas')));
+  const r = moving ? renderer(out) : sharedRenderer();
   if (!r) return out;
   const { gl, canvas, u } = r;
   if (canvas.width < Math.max(W, M) || canvas.height < Math.max(H, M)) { canvas.width = Math.max(W, M, canvas.width); canvas.height = Math.max(H, M, canvas.height); }
   const total = cs.reduce((s, p) => s + p.pc, 0), share = cs.map((p) => p.pc / total);
   const labs = cs.map((p) => oklab(p.hex));
   // How the colours sit together: the widest gap of hue between any two (the accent aside). One
-  // family (under 0.08 on the plane of hue) settles in layers; a contrast (over 0.13) is stirred.
+  // family (under 0.06 on the plane of hue) settles in layers; a contrast (over 0.16) is stirred;
+  // between, layers with a current through them.
   const main = cs.map((p, i) => i).filter((i) => !cs[i].accent);
   let gap = 0; for (const i of main) for (const j of main) gap = Math.max(gap, Math.hypot(labs[i][1] - labs[j][1], labs[i][2] - labs[j][2]));
-  const calm = calmFor ?? Math.min(1, Math.max(0, (0.13 - gap) / 0.05));
+  const calm = calmFor ?? Math.min(1, Math.max(0, (0.16 - gap) / 0.1));
   gl.uniform1f(u('seed'), (seed % 1000) + 1); gl.uniform1i(u('n'), n); gl.uniform1f(u('t'), 0);
   gl.uniform1f(u('calm'), calm); gl.uniform1f(u('tilt'), gauss() * 0.5);
   // Where each colour is poured. Stirred: evenly round the vat, a little astray, the largest in the
@@ -134,8 +141,8 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
     gl.uniform1f(u(`drop[${i}]`), cs[i].accent ? 1 : 0);
     gl.uniform2f(u(`pos[${i}]`), stirred[0] + (layered[0] - stirred[0]) * calm, stirred[1] + (layered[1] - stirred[1]) * calm);
   });
-  // Measure and adjust: how much of the vat each colour covers, until it is its share. The fifth
-  // colour's share is what the other four leave.
+  // Measure and adjust: how much of the vat each colour covers, until it is its share (within half a
+  // point; most arrive in a few rounds). The fifth colour's share is what the other four leave.
   const gain = share.slice();
   gl.viewport(0, 0, M, M); gl.uniform2f(u('res'), M, M); gl.uniform2f(u('org'), 0, 0); gl.uniform1i(u('mode'), 1);
   let areas = [];
@@ -147,6 +154,7 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
     const all = INSIDE.length * 255;
     areas = [...mass.map((m) => m / all), 0].slice(0, n);
     if (n === 5) areas[4] = Math.max(0, 1 - areas[0] - areas[1] - areas[2] - areas[3]);
+    if (areas.every((a, k) => Math.abs(a - share[k]) < 0.005)) break;
     for (let k = 0; k < n; k++) gain[k] *= ((share[k] + 1e-3) / (areas[k] + 1e-3)) ** 0.8;
   }
   for (let k = 0; k < 5; k++) gl.uniform1f(u(`gain[${k}]`), gain[k] || 0);
