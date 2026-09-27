@@ -922,10 +922,15 @@ html.is-reordering::view-transition-group(*) {
   width: 6rem;
   aspect-ratio: 1;
   border-radius: 50%;
+  transition: transform 0.3s $cubic-bezier-smooth, box-shadow 0.3s $cubic-bezier-smooth;
 
   canvas { display: block; width: 100%; height: auto; }
 
   &:empty { visibility: hidden; }
+
+  // Lifted while the way to the palette page is pointed at: a hairline ring, a soft shadow.
+  .is-pointing & { transform: scale(1.04); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 12px 32px rgba(0, 0, 0, 0.4); }
+  .is-pressing & { transform: scale(1.01); }
 }
 
 .photobook-barcode {
@@ -1616,12 +1621,47 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .palette-strip__hex { opacity: 1; }
 }
 
-// In the colophon, the voyage's palette under its barcode, a little heavier.
+// In the colophon, the voyage's palette under its frames' vats, a little heavier, its hex codes
+// always shown (the specs panel keeps them for the pointer). With the voyage's vat it is one way
+// to the voyage's palette page: pointing at either (or the way on beneath) lights both
+// (.is-pointing, assets/js/photobook/index.js): a glass rises behind the palette, its bar thickens,
+// its codes brighten, and the vat lifts and stirs.
 .photobook-colophon__palette {
+  $ease: 0.3s $cubic-bezier-smooth;
+
+  position: relative;
   margin-top: 0.4rem;
+  cursor: pointer;
 
   .palette-strip__bar i { height: 8px; }
+  .palette-strip__bar { transition: transform $ease; }
+  .palette-strip__hex { opacity: 1; transition: color $ease; }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -0.75rem -0.9rem;
+    z-index: -1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.9rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.025));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 30px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transform: scale(0.98);
+    transition: opacity $ease, transform $ease;
+    pointer-events: none;
+  }
+
+  .is-pointing & {
+    &::before { opacity: 1; transform: none; }
+    .palette-strip__bar { transform: scaleY(1.25); } // thicker, and nothing beneath it moves
+    .palette-strip__hex { color: var(--photobook-ink); }
+  }
+
+  .is-pressing &::before { transform: scale(0.99); }
 }
+
+.photobook-colophon__colours { isolation: isolate; } // the glass stays behind the palette, not the page
 
 // In the specs panel it runs the whole row beneath the film. Named as a highlight, since the
 // highlights' own cells are grids.
@@ -1835,6 +1875,9 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-sheet__order button::after,
   .photobook-barcode button,
   .palette-strip__hex,
+  .photobook-colophon__palette::before,
+  .photobook-colophon__palette .palette-strip__bar,
+  .photobook-colophon__vat,
   .photobook-colophon__onward a,
   .photobook-tip,
   .photobook-lightbox__wash div,
