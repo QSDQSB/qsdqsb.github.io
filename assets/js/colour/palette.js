@@ -71,7 +71,7 @@ async function main() {
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
     stage.innerHTML = `<section class="palette-voyage">
         <div class="palette-voyage__blocks">${blocks(sig(v))}</div>
-        <p class="palette-voyage__links"><a href="${page.url}">Open the book <span aria-hidden="true">→</span></a></p>
+        <div class="palette-voyage__card">${page.card || ''}</div>
         <div data-vat></div>
       </section>
       <div class="photobook-sheet__order palette-page__order" role="group" aria-label="Order">
@@ -191,7 +191,7 @@ async function main() {
 
   // From one voyage to the next: the words and frames fade out, the page returns to the top unseen,
   // the new ones rise in; the light and the dye vat meanwhile take the new colours.
-  const parts = () => [title, ...stage.querySelectorAll('.palette-voyage__blocks, .palette-voyage__links, .palette-page__order, .palette-cards, .colour-lede, .palette-index')];
+  const parts = () => [title, ...stage.querySelectorAll('.palette-voyage__blocks, .palette-voyage__card, .palette-page__order, .palette-cards, .colour-lede, .palette-index')];
   let shown = null, routing = 0;
   async function route() {
     const g = decodeURIComponent(location.hash.slice(1));

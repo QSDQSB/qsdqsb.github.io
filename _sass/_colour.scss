@@ -340,14 +340,14 @@
   &[hidden] { visibility: hidden; } // keeps the rail where it is on the page of every palette
 }
 
-// One voyage: its palette as blocks and the way on beneath, beside its dye vat, straight on the
-// frosted room. On a phone the blocks take the full width, and the vat, smaller, sits beside the
-// links.
+// One voyage: its palette as blocks, and beneath them the voyage's own card (the site's, as the end
+// of every book draws it) to lead back to its book, beside its dye vat, straight on the frosted
+// room. On a phone the blocks take the full width, and the card sits beside the vat, as tall.
 .palette-voyage {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas: ". vat" "blocks vat" "links vat" ". vat"; // the words centred against the vat
-  grid-template-rows: 1fr auto auto 1fr;
+  grid-template-areas: "blocks vat" "card vat";
+  grid-template-rows: auto auto;
   column-gap: 2rem;
   align-items: start;
   padding-bottom: clamp(1.6rem, 3.5vw, 2.2rem);
@@ -356,8 +356,7 @@
   .palette-blocks i { height: 2.5rem; }
 
   @include responsive-down(mobile) {
-    grid-template-areas: "blocks blocks" "links vat";
-    grid-template-rows: auto auto;
+    grid-template-areas: "blocks blocks" "card vat";
     row-gap: 1.2rem;
   }
 }
@@ -369,6 +368,7 @@
 .palette-voyage__vat {
   display: grid;
   grid-area: vat;
+  align-self: center;
   width: 11rem;
 
   @include responsive-down(mobile) { width: 8rem; }
@@ -382,26 +382,14 @@
   }
 }
 
-.palette-voyage__links {
-  grid-area: links;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem 2rem;
-  margin: 1.4rem 0 0;
+.palette-voyage__card {
+  grid-area: card;
+  display: flex; // so the card can take the row's height beside the vat on a phone
 
-  @include responsive-down(mobile) { margin-top: 0; }
+  .card { margin: clamp(1rem, 2vw, 1.4rem) 0 0; }
 
-  a {
-    padding-bottom: 0.3rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2); // an edge of light, as the glass it sits on
-    font: 500 0.62rem $barlow-font-family;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--photobook-ink-2);
-    text-decoration: none;
-
-    &:hover,
-    &:focus-visible { color: var(--photobook-ink); border-color: rgba(255, 255, 255, 0.5); }
+  @include responsive-down(mobile) {
+    .card { margin: 0; }
   }
 }
 

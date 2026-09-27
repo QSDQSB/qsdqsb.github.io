@@ -5,10 +5,12 @@ sitemap: false
 {%- comment -%}
   QSD's Palette (_pages/palette.html, assets/js/colour/palette.js): every voyage's signature, colour
   line, colour order and frames' signatures (_data/photo_manifests/palettes.json, written by
-  `npm run photos:fetch`, scripts/photos/lib/atlas.mjs palettesOf), with each gallery's page and
-  title added here. With no palettes, an empty list: the page says the colours are still to come.
+  `npm run photos:fetch`, scripts/photos/lib/atlas.mjs palettesOf), with each gallery's page, title
+  and card added here: the site's own voyage card (_includes/archive-single.html), as the end of
+  every book draws it, for the page to lead back by. With no palettes, an empty list: the page says
+  the colours are still to come.
 {%- endcomment -%}
 {%- assign palettes = site.data.photo_manifests["palettes"] -%}
 {%- assign docs = site.voyage | concat: site.subvoyage | where_exp: "d", "d.gallery_name" -%}
-{"pages":{ {%- for d in docs -%}{{ d.gallery_name | jsonify }}:{"url":{{ d.url | relative_url | jsonify }},"title":{{ d.title | strip_html | jsonify }}}{% unless forloop.last %},{% endunless %}{%- endfor -%} },
+{"pages":{ {%- for post in docs -%}{%- capture card -%}{% include archive-single.html %}{%- endcapture -%}{{ post.gallery_name | jsonify }}:{"url":{{ post.url | relative_url | jsonify }},"title":{{ post.title | strip_html | jsonify }},"card":{{ card | normalize_whitespace | strip | jsonify }}}{% unless forloop.last %},{% endunless %}{%- endfor -%} },
 "voyages":{% if palettes %}{{ palettes.voyages | jsonify }}{% else %}[]{% endif %}}
