@@ -66,12 +66,12 @@ async function main() {
   function voyage(v, at) {
     const name = nameOf(v), page = pages[v.g];
     document.title = document.title.replace(/^[^·]*·/, `QSD's Palette for ${name} ·`);
-    title.textContent = `QSD's Palette for ${name}`;
+    // The voyage's name is the way back to its book, to the frame the reader came from when there was one.
+    title.innerHTML = `QSD's Palette for <a class="palette-page__voyage" href="${page.url}${at ? `#${encodeURIComponent(at)}` : ''}" data-tip="Open the book" data-tip-side="top">${esc(name)}</a>`;
     kicker.textContent = "QSD's Palette";
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
     stage.innerHTML = `<section class="palette-voyage">
         <div class="palette-voyage__blocks">${blocks(sig(v))}</div>
-        <p class="palette-voyage__links"><a href="${page.url}">Open the book <span aria-hidden="true">→</span></a></p>
         <div data-vat></div>
       </section>
       <div class="photobook-sheet__order palette-page__order" role="group" aria-label="Order">
@@ -191,7 +191,7 @@ async function main() {
 
   // From one voyage to the next: the words and frames fade out, the page returns to the top unseen,
   // the new ones rise in; the light and the dye vat meanwhile take the new colours.
-  const parts = () => [title, ...stage.querySelectorAll('.palette-voyage__blocks, .palette-voyage__links, .palette-page__order, .palette-cards, .colour-lede, .palette-index')];
+  const parts = () => [title, ...stage.querySelectorAll('.palette-voyage__blocks, .palette-page__order, .palette-cards, .colour-lede, .palette-index')];
   let shown = null, routing = 0;
   async function route() {
     const g = decodeURIComponent(location.hash.slice(1));
