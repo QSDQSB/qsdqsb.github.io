@@ -58,18 +58,4 @@ const PAL = path.join(ROOT, 'lab', 'palette');
 fs.mkdirSync(PAL, { recursive: true });
 fs.writeFileSync(path.join(PAL, 'data.json'), JSON.stringify({ generated: new Date().toISOString(), galleries: signatures }));
 fs.copyFileSync(path.join(ROOT, 'scripts', 'photos', 'lab', 'palette.html'), path.join(PAL, 'index.html'));
-// The mood lab reads the site's own /assets/palettes.json, and each frame's 24 dots from its own
-// file (the site no longer ships them): { gallery: { slug: dots } }, from the merged manifests.
-fs.mkdirSync(path.join(ROOT, 'lab', 'moods'), { recursive: true });
-const moodDots = {};
-for (const g of Object.keys(index.galleries)) {
-  const file = path.join(PATHS.mergedDir, `${galleryKey(g)}.json`);
-  if (fs.existsSync(file)) moodDots[g] = Object.fromEntries(JSON.parse(fs.readFileSync(file, 'utf8')).photos.filter(p => p.dots).map(p => [p.slug, p.dots]));
-}
-fs.writeFileSync(path.join(ROOT, 'lab', 'moods', 'dots.json'), JSON.stringify(moodDots));
-fs.copyFileSync(path.join(ROOT, 'scripts', 'photos', 'lab', 'moods.html'), path.join(ROOT, 'lab', 'moods', 'index.html'));
-// Choosing the mood: its page and the painting it shares (lab/paint.js).
-fs.mkdirSync(path.join(ROOT, 'lab', 'choose'), { recursive: true });
-fs.copyFileSync(path.join(ROOT, 'scripts', 'photos', 'lab', 'choose.html'), path.join(ROOT, 'lab', 'choose', 'index.html'));
-fs.copyFileSync(path.join(ROOT, 'scripts', 'photos', 'lab', 'paint.js'), path.join(ROOT, 'lab', 'paint.js'));
 console.log(`\ncolour lab: ${galleries.reduce((s, g) => s + g.photos.length, 0)} photos in ${galleries.length} galleries, ${((Date.now() - t0) / 1000).toFixed(0)} s → lab/dots/, lab/palette/`);
