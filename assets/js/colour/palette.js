@@ -25,9 +25,9 @@ const stage = root?.querySelector('.palette-page__stage');
 const title = root?.querySelector('h1');
 const kicker = root?.querySelector('.palette-page__home');
 const railNav = root?.querySelector('.palette-rail');
-const back = root?.querySelector('.palette-page__back');
+const back = document.querySelector('.masthead__back');
 const menu = root?.querySelector('.palette-voyages'), menuList = menu?.querySelector('.palette-voyages__list');
-const find = menu?.querySelector('input'), menuButton = root?.querySelector('.palette-page__menu');
+const fold = menu?.querySelector('.palette-voyages__fold'), menuButton = root?.querySelector('.palette-page__menu');
 
 /** A palette as a wall label: the bar (a link when `href`), the hex codes beneath. Widths tempered. */
 function strip(colours, { href = null, label = '', shares = false } = {}) {
@@ -58,6 +58,10 @@ async function main() {
   const nameOf = (v) => pages[v.g].title;
   const sig = (v) => v.palette.map((c) => [c.hex, c.pc, c.accent ? 1 : 0]);
   let order = store.get('palette-order') === 'colour' ? 'colour' : 'sequence';
+  // The masthead's way back (_layouts/default.html, from the page's masthead_back_*): to the voyages
+  // on the page of every palette, to the book on a voyage's.
+  if (back) { back.dataset.home = back.getAttribute('href'); back.dataset.homeLabel = back.getAttribute('aria-label'); }
+  const backTo = (href, label) => { if (!back || !href) return; back.href = href; back.setAttribute('aria-label', label); back.dataset.tip = label; };
   // The rail: every voyage as a small vat, by colour (dark to light, like with like), so the way
   // from one voyage's palette to the next is a step to its neighbour.
   const railed = voyages.every((v) => Number.isFinite(v.rank)) ? [...voyages].sort((a, b) => a.rank - b.rank) : voyages;
@@ -65,7 +69,7 @@ async function main() {
   function index() {
     document.title = document.title.replace(/^[^·]*·/, "QSD's Palette ·");
     title.textContent = "QSD's Palette";
-    back.hidden = true;
+    backTo(back?.dataset.home, back?.dataset.homeLabel);
     kicker.textContent = 'From the voyages';
     stage.innerHTML = `<p class="colour-lede">The colours of every voyage: each one's own, pooled from its photographs, without the black and white that every journey has.</p>
       <ol class="palette-index">${voyages.map((v) => `<li><a href="#${v.g}" class="palette-index__name">${esc(nameOf(v))}</a>${strip(sig(v), { href: `#${v.g}`, label: `QSD's Palette for ${nameOf(v)}` })}</li>`).join('')}</ol>`;
@@ -74,11 +78,8 @@ async function main() {
   function voyage(v, at) {
     const name = nameOf(v), page = pages[v.g];
     document.title = document.title.replace(/^[^·]*·/, `QSD's Palette for ${name} ·`);
-    // The way back to the voyage's book, to the frame the reader came from when there was one: the
-    // pill at the top, as the picture view's, held under the masthead all the way down.
-    const home = `${page.url}${at ? `#${encodeURIComponent(at)}` : ''}`;
-    back.href = home; back.hidden = false; back.querySelector('span').textContent = name;
-    back.setAttribute('aria-label', `Back to ${name}`);
+    // The masthead's ‹ goes back to the voyage's book, to the frame the reader came from when there was one.
+    backTo(`${page.url}${at ? `#${encodeURIComponent(at)}` : ''}`, `Back to ${name}`);
     title.textContent = `QSD's Palette for ${name}`;
     kicker.textContent = "QSD's Palette";
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
@@ -171,34 +172,80 @@ async function main() {
     crossfade(vatBox, vat(v.palette, { size: 176, seed: seedOf(v.g), stir: 'hover', label: `The colours of ${nameOf(v)}, run together as in a dye vat` }));
   }
 
-  // The rail, above the title: built once, every voyage's dye vat by colour. Moving from one voyage
-  // to another only moves the ring, and the rail glides to set the new one in the middle.
+  // The rail, above the title: built once, every voyage's dye vat by colour, without end: the run is
+  // laid three times and the reader kept in the middle one, moved a whole run along (unseen, the runs
+  // being alike) whenever they near either end, so the last voyage leads on to the first. Moving
+  // from one voyage to another only moves the ring, and the rail glides the short way round to set
+  // the new one in the middle. The outer runs are for the eye alone; their vats are copies.
+  let railList = null, gliding_ = false;
+  const runWidth = () => { const a = railList.children[railed.length], b = railList.children[0]; return a.offsetLeft - b.offsetLeft; };
+  const centre = (el) => el.offsetLeft - (railList.clientWidth - el.offsetWidth) / 2;
+  const wrap = () => {
+    if (gliding_) return;
+    const run = runWidth(), x = railList.scrollLeft;
+    if (x < run * 0.5) railList.scrollLeft = x + run;
+    else if (x > run * 1.5) railList.scrollLeft = x - run;
+  };
+  function copyOf(canvas) {
+    const c = Object.assign(document.createElement('canvas'), { width: canvas.width, height: canvas.height, className: canvas.className });
+    c.style.cssText = canvas.style.cssText; c.setAttribute('aria-hidden', 'true');
+    c.getContext('2d').drawImage(canvas, 0, 0);
+    return c;
+  }
   function railTo(v) {
     if (!railNav.firstChild) {
+      const run = (copy) => railed.map((x) => `<li${copy === 1 ? '' : ' aria-hidden="true"'}><a href="#${x.g}" data-g="${x.g}" data-copy="${copy}"${copy === 1 ? ` data-tip="${esc(nameOf(x))}" data-tip-side="top" aria-label="${esc(nameOf(x))}"` : ' tabindex="-1"'}></a></li>`).join('');
       railNav.innerHTML = `<a class="palette-rail__step" data-step="-1">‹</a>
-        <ol class="palette-rail__list">${railed.map((x) => `<li><a href="#${x.g}" data-g="${x.g}" data-tip="${esc(nameOf(x))}" data-tip-side="top" aria-label="${esc(nameOf(x))}"></a></li>`).join('')}</ol>
+        <ol class="palette-rail__list">${run(0)}${run(1)}${run(2)}</ol>
         <a class="palette-rail__step" data-step="1">›</a>`;
-      drip(railNav.querySelectorAll('.palette-rail__list a'), (a) => `rail/${a.dataset.g}`, (a) => vat(voyages.find((x) => x.g === a.dataset.g).palette, { size: 40, seed: seedOf(a.dataset.g) }), { root: railNav.querySelector('.palette-rail__list'), margin: '0px 320px' });
+      railList = railNav.querySelector('.palette-rail__list');
+      // A voyage's vat is poured once; its places in the other runs take a copy.
+      drip(railList.querySelectorAll('a'), (a) => `rail/${a.dataset.g}/${a.dataset.copy}`, (a) => {
+        const first = [0, 1, 2].map((k) => poured.get(`rail/${a.dataset.g}/${k}`)).find(Boolean);
+        return first ? copyOf(first) : vat(voyages.find((x) => x.g === a.dataset.g).palette, { size: 40, seed: seedOf(a.dataset.g) });
+      }, { root: railList, margin: '0px 320px' });
+      let ticking = false;
+      railList.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; wrap(); }); } }, { passive: true });
+      // When the rail changes width (the list folded away, a window resized), the voyage on the page
+      // is set back in the middle, at once.
+      new ResizeObserver(() => {
+        if (gliding_) return;
+        const cur = railList.querySelector('a[data-copy="1"][aria-current]');
+        if (cur) railList.scrollLeft = centre(cur);
+      }).observe(railList);
       railNav.dataset.first = '';
     }
-    const list = railNav.querySelector('.palette-rail__list');
     let here = null;
-    for (const a of list.querySelectorAll('a')) { const on = a.dataset.g === v?.g; if (on) { a.setAttribute('aria-current', 'page'); here = a; } else a.removeAttribute('aria-current'); }
+    const mid = railList.scrollLeft + railList.clientWidth / 2;
+    for (const a of railList.querySelectorAll('a')) {
+      const on = a.dataset.g === v?.g;
+      if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+      // Of the three places the voyage stands, the nearest: the short way round.
+      if (on && (!here || Math.abs(a.offsetLeft + a.offsetWidth / 2 - mid) < Math.abs(here.offsetLeft + here.offsetWidth / 2 - mid))) here = a;
+    }
     const at_ = railed.indexOf(v);
     for (const step of railNav.querySelectorAll('[data-step]')) {
       const to = v ? railed[(at_ + Number(step.dataset.step) + railed.length) % railed.length] : null;
       step.hidden = !to;
       if (to) { step.href = `#${to.g}`; step.setAttribute('aria-label', nameOf(to)); step.dataset.tip = nameOf(to); step.dataset.tipSide = 'top'; }
     }
-    if (here) {
-      const first = 'first' in railNav.dataset;
-      delete railNav.dataset.first;
-      list.scrollTo({ left: here.offsetLeft - (list.clientWidth - here.offsetWidth) / 2, behavior: first || still() ? 'instant' : 'smooth' });
-    }
+    if (!here) return;
+    const first = 'first' in railNav.dataset;
+    delete railNav.dataset.first;
+    if (first) here = railList.querySelector(`a[data-copy="1"][data-g="${CSS.escape(v.g)}"]`);
+    if (first || still()) { railList.scrollLeft = centre(here); return; }
+    // Glide, then settle into the middle run where the reader cannot see it happen.
+    gliding_ = true;
+    railList.scrollTo({ left: centre(here), behavior: 'smooth' });
+    let settled = false;
+    const settle = () => { if (settled) return; settled = true; gliding_ = false; wrap(); };
+    railList.addEventListener('scrollend', settle, { once: true });
+    setTimeout(settle, 900); // when there was nowhere to glide, or no scrollend to say so
   }
-  // Every voyage by place, to find one by name: a trip told in parts under its name (Prague: Castle,
-  // Twilight…), the rest on their own, each with its vat; the one on the page marked. A column on a
-  // laptop; on a phone a sheet, opened from "Voyages" and closed by choosing, Esc or ×.
+  // Every voyage by place: a trip told in parts under its name (Prague: Castle, Twilight…), the rest
+  // on their own, each with its vat; the one on the page marked. A column on a laptop, folded away to
+  // a slim strip and back (remembered); on a phone a sheet, opened from "Voyages" and closed by
+  // choosing, Esc or ×.
   const trips = data.trips || {};
   const titleOf = (top) => trips[top] || top.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase());
   function buildMenu() {
@@ -222,25 +269,20 @@ async function main() {
   const openMenu = (open) => {
     menu.classList.toggle('is-open', open);
     menuButton.setAttribute('aria-expanded', String(open));
-    if (open) find.focus({ preventScroll: true }); else if (menu.contains(document.activeElement)) menuButton.focus({ preventScroll: true });
+    if (open) fold.focus({ preventScroll: true }); else if (menu.contains(document.activeElement)) menuButton.focus({ preventScroll: true });
   };
+  const sheet = matchMedia('(max-width: 71.98rem)'); // below the site's rail breakpoint the list is a sheet
+  const setFolded = (folded) => {
+    root.classList.toggle('is-folded', folded);
+    fold.setAttribute('aria-expanded', String(!folded));
+    fold.setAttribute('aria-label', folded ? 'Show the voyages' : 'Hide the voyages');
+    store.set('palette-voyages', folded ? 'folded' : 'open');
+  };
+  setFolded(store.get('palette-voyages') === 'folded');
   menuButton.addEventListener('click', () => openMenu(!menu.classList.contains('is-open')));
-  menu.querySelector('.palette-voyages__close').addEventListener('click', () => openMenu(false));
+  fold.addEventListener('click', () => (sheet.matches ? openMenu(false) : setFolded(!root.classList.contains('is-folded'))));
   menuList.addEventListener('click', (e) => { if (e.target.closest('a')) openMenu(false); });
   menu.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-open')) { e.preventDefault(); openMenu(false); } });
-  find.addEventListener('input', () => {
-    const q = find.value.trim().toLowerCase();
-    for (const s of menuList.querySelectorAll('section')) {
-      let any = false;
-      for (const li of s.querySelectorAll('li')) { const hit = !q || `${s.dataset.trip} ${li.textContent}`.toLowerCase().includes(q); li.hidden = !hit; any ||= hit; }
-      s.hidden = !any;
-    }
-  });
-  find.addEventListener('keydown', (e) => {
-    if (e.key !== 'Enter') return;
-    const first = menuList.querySelector('li:not([hidden]) a');
-    if (first) { e.preventDefault(); location.hash = first.getAttribute('href'); openMenu(false); }
-  });
   buildMenu();
 
   // ← → step along the rail.
