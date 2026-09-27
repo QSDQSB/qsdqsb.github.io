@@ -1019,26 +1019,31 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   from { opacity: 0; }
 }
 
+// A layer that crossfades (assets/js/photobook/wash.js): it settles in from a slightly larger scale
+// while the one beneath fades, so a change reads as the light shifting rather than a cut.
+@mixin photobook-wash-layer {
+  opacity: 0;
+  scale: 1.06;
+  transition: opacity 1.1s $cubic-bezier-standard, scale 1.6s $cubic-bezier-smooth;
+  will-change: opacity;
+
+  &.is-on { opacity: 1; scale: 1; }
+}
+
 .photobook-lightbox__wash {
   position: absolute;
   inset: 0;
   overflow: hidden;
 
   // The photograph's own placeholder, scaled up and softened into frosted glass: the room takes the
-  // print's colour. Layers crossfade (lightbox.js), and each settles in from a slightly larger scale,
-  // so a change of frame reads as the light shifting rather than a cut.
+  // print's colour, a layer crossfading into the next.
   div {
     position: absolute;
     inset: -12%;
     background: center / cover no-repeat;
     filter: blur(36px) saturate(1.5) brightness(0.42);
-    opacity: 0;
-    scale: 1.06;
-    transition: opacity 1.1s $cubic-bezier-standard, scale 1.6s $cubic-bezier-smooth;
-    will-change: opacity;
+    @include photobook-wash-layer;
   }
-
-  div.is-on { opacity: 1; scale: 1; }
 
   // The glass over it keeps the room dark: the print's colour glows behind it, strongest near the
   // print and falling away to near-black at the edges and beneath, where the caption sits.
