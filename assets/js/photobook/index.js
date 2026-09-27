@@ -43,4 +43,19 @@ if (main) {
   main.classList.add('is-developing');
 }
 
+// The colophon's dye vat (assets/js/colour/vat.js): poured once, as the reader nears the end of the
+// book, the same vat the voyage's palette page shows. Its renderer is fetched only then.
+const vatSlot = document.querySelector('.photobook-colophon__vat[data-vat]');
+if (vatSlot) {
+  const io = new IntersectionObserver(async (entries) => {
+    if (!entries.some((e) => e.isIntersecting)) return;
+    io.disconnect();
+    let palette = [];
+    try { palette = JSON.parse(vatSlot.dataset.vat); } catch { /* no vat */ }
+    const { vat, seedOf } = await import('../colour/vat.js');
+    vatSlot.append(vat(palette, { size: 96, seed: seedOf(vatSlot.dataset.g) }));
+  }, { rootMargin: '500px 0px' });
+  io.observe(vatSlot);
+}
+
 // The closing cards' covers come in as they near: assets/js/card-covers.js.

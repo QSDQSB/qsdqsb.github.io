@@ -4,8 +4,10 @@
   Beneath them, when the frames' palettes are known, QSD's Palette for the voyage: its barcode, a
   sliver per frame in the book's order, each shaded top to bottom as its frame is (a sliver opens
   its frame); the voyage's own colours as a bar, like the specs panel's (no black or white; the bar
-  leads to the voyage's palette page; the hex codes beneath are text to select); and the way on to
-  the pages that look across every voyage by colour.
+  leads to the voyage's palette page; the hex codes beneath are text to select); beside them, the
+  voyage's dye vat, the same one its palette page shows (poured by assets/js/photobook/index.js when
+  the reader nears it; empty without script or WebGL); and the way on to the pages that look across
+  every voyage by colour.
 {%- endcomment -%}
 {%- assign c = include.book.book.colophon -%}
 {%- assign colour = include.book.book.colour -%}
@@ -42,6 +44,7 @@
     {%- if colour %}
     <div class="photobook-colophon__colours">
       <h3>QSD's Palette for {{ page.title | strip_html }}</h3>
+      <a class="photobook-colophon__vat" href="{{ '/palette/' | relative_url }}#{{ include.book.gallery }}" data-vat="{{ colour.palette | jsonify | escape }}" data-g="{{ include.book.gallery | escape }}" data-tip="The dye vat of {{ page.title | strip_html | escape }}" data-tip-side="top" aria-label="The dye vat of {{ page.title | strip_html | escape }}, on its palette page"></a>
       <div class="photobook-barcode" role="group" aria-label="Every frame's colours, in the book's order">
         {%- for b in colour.barcode -%}
         {%- if b.strip %}<button type="button" data-i="{{ b.i }}" style="--t:{{ b.strip[0] }};--m:{{ b.strip[1] }};--b:{{ b.strip[2] }}" aria-label="Frame {{ b.i | plus: 1 }}: {{ b.name | escape }}" data-tip="{{ b.name | escape }}"></button>{% else %}<span></span>{% endif -%}

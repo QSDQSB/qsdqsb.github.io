@@ -905,7 +905,28 @@ html.is-reordering::view-transition-group(*) {
 
 // The voyage's colours, the whole width beneath the three bars: the barcode (a sliver per frame in the
 // book's order, shaded top to bottom as its frame is), then the five colours of the whole voyage.
-.photobook-colophon__colours { grid-column: 1 / -1; }
+.photobook-colophon__colours {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: clamp(1.4rem, 3vw, 2.4rem);
+  grid-column: 1 / -1;
+
+  > * { grid-column: 1; }
+}
+
+// The voyage's dye vat, beside its barcode and bar, leading to its palette page.
+.photobook-colophon__vat {
+  grid-column: 2;
+  grid-row: 1 / span 4;
+  align-self: center;
+  width: 6rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+
+  canvas { display: block; width: 100%; height: auto; }
+
+  &:empty { visibility: hidden; }
+}
 
 .photobook-barcode {
   display: flex;
@@ -930,18 +951,6 @@ html.is-reordering::view-transition-group(*) {
 @include responsive-hover {
   .photobook-barcode:hover button:not(:hover) { opacity: 0.45; }
 }
-
-// The colour line: a palette on the wheel of hue, joined dark to light (QSD's Palette).
-.photobook-wheel {
-  width: 5.5rem;
-  height: 5.5rem;
-  overflow: visible;
-}
-
-.photobook-wheel__rim { fill: none; stroke: var(--photobook-line); }
-.photobook-wheel__hue { opacity: 0.6; }
-.photobook-wheel__line { fill: none; stroke: var(--photobook-ink-3); stroke-width: 0.8; stroke-linejoin: round; }
-.photobook-wheel__dot { stroke: $background-color; stroke-width: 1; }
 
 // Onward, to the pages that look across every voyage by colour.
 .photobook-colophon__onward {
