@@ -68,7 +68,7 @@ async function main() {
     title.textContent = `QSD's Palette for ${name}`;
     kicker.textContent = "QSD's Palette";
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
-    stage.innerHTML = `<section class="palette-voyage">
+    stage.innerHTML = `<div class="palette-glass"><section class="palette-voyage">
         <div class="palette-voyage__blocks">${blocks(sig(v))}</div>
         <p class="palette-voyage__links"><a href="${page.url}">Open the book <span aria-hidden="true">→</span></a><a href="#">Every palette <span aria-hidden="true">→</span></a></p>
         <div data-vat></div>
@@ -84,7 +84,7 @@ async function main() {
             <h3>${esc(p.name || '')}${p.light ? `<small>${esc(p.light)}</small>` : ''}</h3>
             ${p.sig?.length ? bar(p.sig) : ''}
           </div>${p.sig?.length ? `<div class="palette-card__vat" data-i="${i}"></div>` : ''}</div>
-        </article>`; }).join('')}</div>`;
+        </article>`; }).join('')}</div></div>`;
     stage.querySelector('[data-vat]').replaceWith(vatBox);
     fillVat(v);
     pour(v, stage.querySelectorAll('.palette-card__vat'));
@@ -126,14 +126,24 @@ async function main() {
   // The voyage's own dye vat stays on the page from one voyage to the next: the new colours poured
   // in over the old, the old let go once they are covered.
   const vatBox = Object.assign(document.createElement('div'), { className: 'palette-voyage__vat' });
-  function fillVat(v) {
-    if (vatBox.dataset.g === v.g) return;
-    vatBox.dataset.g = v.g;
-    const fresh = vat(v.palette, { size: 176, seed: seedOf(v.g), label: `The colours of ${nameOf(v)}, run together as in a dye vat` });
-    const old = [...vatBox.children];
-    vatBox.append(fresh);
+  // Behind the page, the same vat drawn large and lost in blur: the voyage's colours as the light the
+  // whole page stands in, seen round and through its glass.
+  const ambience = Object.assign(document.createElement('div'), { className: 'palette-ambience' });
+  ambience.setAttribute('aria-hidden', 'true');
+  root.prepend(ambience);
+  /** Pour `fresh` into `box` over whatever it held, the old let go once covered. */
+  const pourInto = (box, fresh) => {
+    const old = [...box.children];
+    box.append(fresh);
     if (!old.length || still()) { old.forEach((c) => c.remove()); return; }
     fresh.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 600, easing: 'cubic-bezier(.3,.1,.2,1)' }).finished.then(() => old.forEach((c) => c.remove()), () => {});
+  };
+  function fillVat(v) {
+    if (vatBox.dataset.g === v?.g) return;
+    vatBox.dataset.g = v?.g ?? '';
+    if (!v) { pourInto(ambience, document.createElement('i')); return; }
+    pourInto(vatBox, vat(v.palette, { size: 176, seed: seedOf(v.g), label: `The colours of ${nameOf(v)}, run together as in a dye vat` }));
+    pourInto(ambience, vat(v.palette, { size: 160, seed: seedOf(v.g) }));
   }
 
   // The rail, above the title: built once, every voyage's dye vat by colour. Moving from one voyage
@@ -179,13 +189,13 @@ async function main() {
     const at = new URLSearchParams(location.search).get('at');
     const token = ++routing, gliding = shown !== null && shown !== (v?.g ?? '') && !still();
     railTo(v);
-    if (gliding && v) fillVat(v); // the new colours start to pour as the old words leave
+    if (gliding) fillVat(v); // the new colours start to pour as the old words leave
     if (gliding) {
       await Promise.all(parts().map((el) => el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }], { duration: 180, easing: 'ease-in', fill: 'forwards' }).finished.catch(() => {})));
       if (token !== routing) return;
     }
     shown = v?.g ?? '';
-    if (v) voyage(v, at); else index();
+    if (v) voyage(v, at); else { index(); fillVat(null); }
     if (!v || !at) scrollTo({ top: 0, behavior: 'instant' });
     for (const el of parts()) el.getAnimations().forEach((a) => a.cancel());
     if (gliding) for (const el of parts()) el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
