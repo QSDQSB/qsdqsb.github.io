@@ -7,7 +7,13 @@
      .is-folded — after a 10 s dwell it folds into the one-line summary row;
                   clicking the row unfolds it again
      .is-done   — successful subscription; form is replaced by the note
+     .is-leaving — the × was pressed: fades and folds shut, then
+                   html.subscribe-dismissed hides it on every page from then on
    ========================================================================== */
+
+html.subscribe-dismissed .subscribe-slip {
+  display: none;
+}
 
 .subscribe-slip {
   max-width: 40rem; /* share the word-card column so post endings stay one spine */
@@ -54,7 +60,57 @@
 
 .subscribe-slip__card {
   @extend %subscribe-slip-glass;
+  position: relative;
   padding: 1.35rem 1.5rem 1.2rem;
+}
+
+/* Close for good: a hairline cross in the corner, as quiet as the privacy link. */
+.subscribe-slip__close {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  color: rgba($text-color, 0.38);
+  transition: color 0.3s ease;
+  html.motion-off & { transition: none; }
+
+  svg {
+    width: 0.7rem;
+    height: 0.7rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: $intriguing-word-color;
+  }
+  &:focus-visible {
+    outline: 1px solid rgba($intriguing-word-color, 0.6);
+    outline-offset: 2px;
+  }
+  &[hidden] { display: none; }
+}
+
+.subscribe-slip.is-leaving {
+  margin-top: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease, margin-top 0.8s $cubic-bezier-smooth;
+}
+.subscribe-slip.is-leaving .subscribe-slip__body {
+  grid-template-rows: 0fr;
+  opacity: 0;
 }
 
 .subscribe-slip__heading {
@@ -62,6 +118,7 @@
   align-items: center;
   gap: 0.7rem;
   margin: 0 0 0.45rem;
+  padding-right: 1.5rem; // clear of the ×
   font-family: $didot-family;
   font-weight: 400;
   font-size: $type-size-4;
