@@ -23,9 +23,9 @@ masthead_back_label: QSD's Palette
     <div class="reverie__words">
       <div class="reverie__chip" aria-hidden="true"></div>
       <div class="reverie__label">
-        <p class="colour-kicker">Reverie</p>
+        <p class="colour-kicker">QSD Reveries</p>
         <h1 class="reverie__hex">Reverie</h1>
-        <p class="reverie__named" data-tip="After Robert Ridgway, Color Standards and Color Nomenclature (1912)" data-tip-side="top"></p>
+        <p class="reverie__named" data-tip="After Robert Ridgway, Color Standards and Color Nomenclature (1912)" data-tip-side="bottom"></p>
       </div>
     </div>
   </header>
@@ -35,6 +35,17 @@ masthead_back_label: QSD's Palette
       <noscript><p class="colour-empty">Reverie is drawn by a script; with it off, the photographs are in the <a href="{{ '/voyage/' | relative_url }}">voyages</a>.</p></noscript>
     </div>
   </div>
+  {%- comment -%} The word itself, as the site's word cards give one (_sass/_archive.scss .word_card); its facts from the Online Etymology Dictionary and Wiktionary (reverie, rêver). {%- endcomment -%}
+  <section class="page__intriguing-word-wrapper reverie__word" aria-label="The word">
+    <h4 class="barlow"><i class="fa-solid fa-feather"></i> The Word</h4>
+    <div class="word_card_container">
+      <div class="word_card">
+        <h1 lang="en" translate="no">Reverie</h1>
+        <span class="word_card__origin">French · 14th century</span>
+        <p>A state of pleasant, dreamlike musing; being wholly <span class="to-emphasise">lost in one's thoughts</span>. From Old French <i lang="fr">resver</i>, "to wander, to rave", the verb that also became <i lang="fr">rêver</i>, "to dream". In the 1300s it meant revelry: the riot came first, the dream after.</p>
+      </div>
+    </div>
+  </section>
   <footer class="colour-end">{% include presented-by-qsd.html line="Shot by QSD." %}</footer>
 </main>
 {%- comment -%} A print opens in the book's own lightbox, over the page (assets/js/photobook/lightbox.js). {%- endcomment -%}
