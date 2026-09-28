@@ -32,6 +32,16 @@
   color: var(--photobook-ink-2);
 }
 
+// A source, credited small beneath what it gave (Ridgway's colours, on their own page and in Reverie's).
+.colour-source {
+  margin: clamp(2rem, 4vw, 3rem) 0 0;
+  font: 400 max(0.72rem, 12px)/1.5 $barlow-font-family;
+  color: var(--photobook-ink-3);
+
+  a,
+  a:visited { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+}
+
 // The shade at a colour field's foot, as deep as its colour needs (--shade) for ivory words; above
 // the dye, beneath the words.
 @mixin colour-shade {
@@ -1051,6 +1061,11 @@
 // The word, closing the page as a post closes on one.
 .reverie__word { padding: 0 var(--photobook-gutter); }
 
+.reverie__source {
+  padding: 0 var(--photobook-gutter);
+  text-align: center;
+}
+
 .reverie__count {
   @include eyebrow;
   margin: clamp(2.2rem, 4.5vw, 3.2rem) 0 clamp(1.2rem, 2.4vw, 1.6rem);
@@ -1155,15 +1170,6 @@
   // Held by no photograph: its words dimmed, never its colour (a colour book must show each true).
   &.is-unheld :is(b, span) { opacity: 0.4; transition: opacity 0.3s $cubic-bezier-smooth; }
   &.is-unheld:is(:hover, :focus-visible) :is(b, span) { opacity: 0.8; }
-}
-
-.ridgway-source {
-  margin: clamp(2rem, 4vw, 3rem) 0 0;
-  font: 400 max(0.72rem, 12px)/1.5 $barlow-font-family;
-  color: var(--photobook-ink-3);
-
-  a,
-  a:visited { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
 }
 
 @mixin colour-still {
