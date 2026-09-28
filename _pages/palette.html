@@ -36,9 +36,10 @@ masthead_back_label: Back to the voyages
     <nav class="palette-rail" aria-label="Every voyage's dye vat, by colour"></nav>
     <header class="colour-head palette-page__head">
       <p class="colour-kicker"><a href="{{ '/palette/' | relative_url }}" class="palette-page__home">QSD's Palette</a></p>
-      <h1>QSD's Palette</h1>
+      <h1 tabindex="-1">QSD's Palette</h1>
     </header>
-    <div class="palette-page__stage" aria-live="polite"></div>
+    <div class="palette-page__stage"></div>
+    <p class="visually-hidden" role="status" id="palette-status"></p>
     <noscript><p class="colour-empty">The palettes are drawn by a script; with it off, the photographs are in the <a href="{{ '/voyage/' | relative_url }}">voyages</a>.</p></noscript>
   </div>
   <footer class="colour-end">{% include presented-by-qsd.html line="Shot by QSD." %}</footer>
