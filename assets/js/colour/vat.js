@@ -18,7 +18,8 @@
  * costs one context. `stir: true` gives the vat its own and keeps the currents moving (the lab);
  * `stir: 'hover'` stirs only while a pointer rests on it (or while `canvas.stir(true)`, for a link
  * that leads to it), `speed` steps a second, and on leaving lets the dye settle back to where it was
- * poured, so at rest it is always true to its shares. Neither moves with motion off;
+ * poured, so at rest it is always true to its shares; `stir: 'hold'` stirs only while `canvas.stir(true)`
+ * and stays where it stopped (Reverie's opening, stirred from its colour dot). None moves with motion off;
  * a live vat's `release()` lets its context go. Used by the palette page
  * (assets/js/colour/palette.js) and the book's colophon (assets/js/photobook/index.js).
  */
@@ -267,20 +268,24 @@ export function vat(palette, { size = 176, width = size, height = size, shape = 
     out.dataset.calm = P.calm.toFixed(2);
     delete out.dataset.pouring;
     if (moving) out.release = () => gl.getExtension('WEBGL_lose_context')?.loseContext();
-    if (moving && stir === 'hover') {
-      // Drawn only while it moves: stirred under the pointer, then eased back to rest (t = 0).
+    if (moving && (stir === 'hover' || stir === 'hold')) {
+      // Drawn only while it moves. 'hover': stirred under the pointer, then eased back to rest (t = 0).
+      // 'hold': stirred while out.stir(true) (a control elsewhere asks it), and left where it stopped.
       let t = 0, on = false, raf = 0, last = 0;
+      const settles = stir === 'hover';
       const tick = (now) => {
         const dt = Math.min(0.05, (now - last) / 1000); last = now;
-        t = on ? t + dt * speed : t * Math.exp(-dt * 2.4); // stirred at `speed` a second, settling back as before
-        if (!on && t < 0.02) t = 0;
+        t = on ? t + dt * speed : settles ? t * Math.exp(-dt * 2.4) : t; // stirred at `speed` a second
+        if (settles && !on && t < 0.02) t = 0;
         frame(t);
-        raf = on || t ? requestAnimationFrame(tick) : 0;
+        raf = on || (settles && t) ? requestAnimationFrame(tick) : 0;
       };
       const wake = () => { if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } };
       out.stir = (v) => { on = !!v; wake(); };
-      out.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') out.stir(true); });
-      out.addEventListener('pointerleave', () => out.stir(false));
+      if (settles) {
+        out.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') out.stir(true); });
+        out.addEventListener('pointerleave', () => out.stir(false));
+      }
     } else if (moving) {
       const t0 = performance.now();
       const loop = (now) => { if (!out.isConnected && now - t0 > 1000) { out.release(); return; } frame((now - t0) / 1000); requestAnimationFrame(loop); };

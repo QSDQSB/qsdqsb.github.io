@@ -923,8 +923,8 @@
   .reverie__named { color: inherit; opacity: 0.85; }
 }
 
-// The colour itself, exact and flat, a dot of it standing on its dye as a chip on a plastered wall: the
-// dye around it is its mood, the dot the colour; its hex and its name beside it, as its label.
+// The colour's words on its dye: the eyebrow, the hex with a dot of the colour after its figures
+// (pointing at it stirs the dye), and the colour's name beneath.
 .reverie__words {
   display: flex;
   align-items: flex-end;
@@ -972,16 +972,21 @@
 
 
 .reverie__chip {
-  flex: none;
-  align-self: center; // on the hex's middle, not the name's line
-  width: clamp(3.4rem, 6vw, 5.6rem);
+  // After the hex's last figure, a little apart, its top on the figures' top, 40% of their height.
+  position: absolute;
+  left: 100%;
+  top: 0.09em; // Didot's figures, measured: their top 0.09em into the line, 0.73em tall
+  width: calc(0.73em * 0.4);
   aspect-ratio: 1;
+  margin-left: 0.1em;
   border-radius: 50%;
+  cursor: crosshair;
 }
 
 
 // In the opening the chip shows the colour: the hex carries no disc there, and is set a size down.
 .reverie__dye .reverie__hex {
+  position: relative;
   font-size: clamp(2.6rem, 6.4vw, 6.2rem);
 
   &::after { content: none; }

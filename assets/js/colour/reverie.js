@@ -59,7 +59,7 @@ async function main() {
     return { f, hex };
   }
 
-  const dye = root.querySelector('.reverie__dye'), hexEl = root.querySelector('.reverie__hex'), namedEl = root.querySelector('.reverie__named'), chipEl = root.querySelector('.reverie__chip');
+  const dye = root.querySelector('.reverie__dye'), hexEl = root.querySelector('.reverie__hex'), codeEl = root.querySelector('.reverie__code'), namedEl = root.querySelector('.reverie__named'), chipEl = root.querySelector('.reverie__chip');
   // Ridgway's names, each with its colour in OKLab; a colour is named by the nearest within reach.
   const ridgway = (await names).colours.map(([n, h]) => [n.replace(/\s*\(\d\)$/, ''), oklab(`#${h}`)]);
   const nameOf = (hex) => {
@@ -122,7 +122,8 @@ async function main() {
     // round it. Drawn at an eighth of the size it is shown and let soften as it is spread: a mood.
     const focused = focus(f.sig, hex);
     const box = dye.getBoundingClientRect();
-    const field = vat(focused, { shape: 'rect', width: Math.max(1, Math.round(box.width / 8)), height: Math.max(1, Math.round(box.height / 8)), seed });
+    // Stirred from the colour dot and left where it stops ('hold'): drawn small, so a stir costs little.
+    const field = vat(focused, { shape: 'rect', width: Math.max(1, Math.round(box.width / 8)), height: Math.max(1, Math.round(box.height / 8)), seed, stir: 'hold', speed: 8 });
     await field.ready;
     // The photographs that hold it, the one it was found in first; and the colours a step away.
     const found = [{ f }, ...holding(frames, hex, { not: f })];
@@ -132,11 +133,12 @@ async function main() {
       document.title = document.title.replace(/^[^·]*·/, `Reverie in ${HEX} ·`);
       if (back) { const label = `Back to ${f.name || 'the photograph'}, in ${page.title}`; back.href = `${page.url}#${encodeURIComponent(f.slug)}`; back.setAttribute('aria-label', label); back.dataset.tip = label; }
       if (shown?.f !== f) crossfade(room, glow(f.sig, { seed }));
-      dye.querySelector(':scope > .colour-vat')?.remove();
+      const was = dye.querySelector(':scope > .colour-vat');
+      if (was !== field) { was?.release?.(); was?.remove(); } // one live field at a time: the last one's context let go
       dye.prepend(field);
       dye.classList.add('is-poured');
       dye.style.setProperty('--shade', shadeFor(hex));
-      hexEl.textContent = HEX;
+      codeEl.textContent = HEX;
       hexEl.style.setProperty('--c', hex);
       chipEl.style.background = hex;
       const named = nameOf(hex);
@@ -146,7 +148,7 @@ async function main() {
         : `<a href="${reverieOf(c.f.g, c.f.slug, c.hex)}" style="--c:${c.hex}" data-tip="${c.hex.toUpperCase()}" data-tip-side="top" aria-label="${c.hex.toUpperCase()}"></a>`}</li>`).join('')}</ol>`;
       // The photographs, bare: the print and its words; the first, where the colour was found, ringed.
       body.innerHTML = `
-        <p class="reverie__count">${found.length > 1 ? `In ${found.length} photographs` : 'Only here, so far'}</p>
+        <p class="reverie__count">QSD reveries in ${found.length} photograph${found.length === 1 ? '' : 's'}</p>
         <div class="palette-cards">${found.map(({ f: p }, i) => card(p, { href: `${base}drift/?from=${encodeURIComponent(`${p.g}/${p.slug}`)}&c=${hex.slice(1)}&src=${encodeURIComponent(`${f.g}/${f.slug}`)}&open`, label: 'full screen, in this colour', i, from: i === 0, place: pages[p.g].title, placeHref: `${base}palette/?at=${encodeURIComponent(p.slug)}#${p.g}`, plain: true })).join('')}</div>
         <p class="colour-next"><a href="${base}drift/?from=${encodeURIComponent(`${f.g}/${f.slug}`)}&c=${hex.slice(1)}">Drift in this colour <span aria-hidden="true">→</span></a><a href="${base}palette/?at=${encodeURIComponent(f.slug)}#${f.g}">QSD's Palette for ${esc(page.title)} <span aria-hidden="true">→</span></a></p>`;
       shown = { f, hex, found, focused };
@@ -177,6 +179,10 @@ async function main() {
     }).catch(() => {});
     return changing;
   }
+
+  // Pointing at the colour's dot stirs its dye; leaving it, the dye stays as it was left.
+  chipEl.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') dye.querySelector(':scope > .colour-vat')?.stir?.(true); });
+  chipEl.addEventListener('pointerleave', () => dye.querySelector(':scope > .colour-vat')?.stir?.(false));
 
   // A colour nearby: its Reverie, in the page. A print: the lightbox, over the page.
   root.addEventListener('click', (e) => {
