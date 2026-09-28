@@ -33,7 +33,7 @@ const fold = menu?.querySelector('.palette-voyages__fold'), menuButton = root?.q
 function strip(colours, { href = null, label = '', shares = false } = {}) {
   const bands = colours.map(([h, pc]) => `<i style="--c:${h};flex:${Math.sqrt(pc).toFixed(2)}"></i>`).join('');
   const bar = href ? `<a class="palette-strip__bar" href="${href}" aria-label="${esc(label)}">${bands}</a>` : `<div class="palette-strip__bar" aria-hidden="true">${bands}</div>`;
-  const hex = colours.map(([h, pc, accent]) => `<span title="${Math.round(pc)}%${accent ? ', accent' : ''}"><i style="--c:${h}"></i>${h.slice(1).toUpperCase()}${shares ? `<b>${Math.round(pc)}%</b>` : ''}</span>`).join('');
+  const hex = colours.map(([h, pc, accent]) => `<span><i style="--c:${h}"></i>${h.slice(1).toUpperCase()}${shares ? `<b>${Math.round(pc)}%</b>` : ''}</span>`).join('');
   return `<div class="palette-strip">${bar}<p class="palette-strip__hex">${hex}</p></div>`;
 }
 
