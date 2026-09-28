@@ -296,8 +296,11 @@
   transition: opacity 0.2s ease-out, fill-opacity 0.2s ease-out, stroke-opacity 0.2s ease-out, fill 0.2s ease-out, stroke 0.2s ease-out, stroke-width 0.2s ease-out;
 }
 
-// Atlas pill toggle
+// Atlas pill toggle — pinned over the map's top-right corner, under the
+// click-to-explore veil (1100) and the tag palette it opens (1005).
 .map-legend--atlas-pill {
+  position: absolute;
+  z-index: 1000;
   top: 14px;
   right: 14px;
   left: auto;
