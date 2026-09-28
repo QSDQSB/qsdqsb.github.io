@@ -10,6 +10,14 @@ photos:
     country: France
     gps: present
     source: OpenStreetMap reverse geocode
+  dscf2792:
+    suggested: Haussmann - Saint-Lazare, Paris
+    landmark: Haussmann - Saint-Lazare
+    street: Rue du Havre
+    city: Paris
+    country: France
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2921:
     suggested: Square Franck Bauer, Paris
     landmark: Square Franck Bauer

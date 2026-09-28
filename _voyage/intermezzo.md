@@ -1,7 +1,7 @@
 ---
 title: "Intermezzo"
 excerpt: "Where the camera wandered off the plan"
-date: 2026-09-28
+date: 2021-01-19
 gallery_name: "intermezzo"
 tags:
   - 🕹️Everyone deserves a tag -- even the ...
@@ -15,3 +15,5 @@ header:
 map:
   exclude: true
 ---
+
+On 19.01.2021, 406 days before the foundation of this site, QSD received his Fujifilm X-S10.

@@ -15,6 +15,7 @@
   {%- assign parent = site.voyage | where: "path", parent_path | first -%}
   {%- if parent -%}{%- assign back_url = parent.url | relative_url -%}{%- assign back_label = "Back to " | append: parent.title -%}{%- endif -%}
 {%- endif -%}
+{%- assign pb_note = content | strip -%}
 {% include_cached masthead.html back_url=back_url back_label=back_label %}
 <div class="photobook-glow" aria-hidden="true"><i></i><i></i></div>
 {% include photobook/cover.html book=book %}
@@ -22,13 +23,13 @@
 {% include photobook/filmbar.html book=book %}
 <main class="photobook-main" id="photobook-main">
   {% include photobook/book.html book=book %}
-  {{ content }}
+  {% if pb_note != "" %}<div class="photobook-note">{{ content }}</div>{% endif %}
 </main>
 {% include photobook/colophon.html book=book %}
 {%- else %}
 <main class="photobook-main photobook-main--empty" id="photobook-main">
   <p class="photobook-empty">The photographs of this voyage are still on their way.</p>
-  {{ content }}
+  {% if pb_note != "" %}<div class="photobook-note">{{ content }}</div>{% endif %}
 </main>
 {%- endif %}
 {% include photobook/end.html %}
