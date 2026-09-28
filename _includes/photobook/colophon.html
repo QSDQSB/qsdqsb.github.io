@@ -54,8 +54,8 @@
         <a class="palette-strip__bar" href="{{ '/palette/' | relative_url }}#{{ include.book.gallery }}" data-tip="QSD's Palette for {{ page.title | strip_html | escape }}" data-tip-side="top" aria-label="QSD's Palette for {{ page.title | strip_html | escape }}">{% for s in colour.palette %}<i style="--c:{{ s.hex }};flex:{{ s.pc | at_least: 1 }}"></i>{% endfor %}</a>
         <p class="palette-strip__hex">{% for s in colour.palette %}<span><i style="--c:{{ s.hex }}"></i>{{ s.hex | remove: "#" | upcase }}<b>{{ s.pc }}%</b>{% if s.accent %}<small>accent</small>{% endif %}</span>{% endfor %}</p>
       </div>
-      {%- assign drift_from = include.book.photos[include.book.book.cover] | default: include.book.photos.first %}
-      <p class="photobook-colophon__onward"><a href="{{ '/palette/' | relative_url }}#{{ include.book.gallery }}">QSD's Palette for {{ page.title | strip_html }} <span aria-hidden="true">→</span></a><a href="{{ '/drift/' | relative_url }}?from={{ include.book.gallery | append: '/' | append: drift_from.slug | url_encode }}">Drift from here <span aria-hidden="true">→</span></a><a href="{{ '/light/' | relative_url }}">The colour of light <span aria-hidden="true">→</span></a></p>
+      {%- assign reverie_from = include.book.photos[include.book.book.cover] | default: include.book.photos.first %}
+      <p class="photobook-colophon__onward"><a href="{{ '/palette/' | relative_url }}#{{ include.book.gallery }}">QSD's Palette for {{ page.title | strip_html }} <span aria-hidden="true">→</span></a><a href="{{ '/reverie/' | relative_url }}?from={{ include.book.gallery | append: '/' | append: reverie_from.slug | url_encode }}">Reverie from here <span aria-hidden="true">→</span></a></p>
     </div>
     {%- endif %}
   </div>

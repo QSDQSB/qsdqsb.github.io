@@ -1165,26 +1165,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   margin-left: auto;
 }
 
-.photobook-lightbox__tool {
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 50%;
-  background: var(--photobook-button);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  color: $primary-color;
-  cursor: pointer;
-  transition: background 0.3s $cubic-bezier-smooth, color 0.3s $cubic-bezier-smooth;
-
-  &:hover { background: var(--photobook-button-hover); color: #fff; }
-  &[aria-pressed="true"] { color: $h2-color; border-color: rgba($h2-color, 0.35); }
-
-  svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
-}
+.photobook-lightbox__tool { @include round-tool; }
 
 .photobook-lightbox__caption {
   position: absolute;

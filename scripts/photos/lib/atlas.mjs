@@ -1,7 +1,9 @@
 /**
  * Every photograph on the site in one list, for the pages that look across
  * voyages (The Colour of Light, Drift): what each one is, where its light
- * stood, its colours, and its kindred frames in other voyages.
+ * stood, its colours (its signature too, for Drift's trail of dye vats, and its
+ * 24 dots, `rrggbbss` each, for Reverie's matching: finer than the signature),
+ * and its kindred frames in other voyages.
  *
  *   kindredOf   nearest photos by colour, other voyages only: a shortlist by
  *               the 32-anchor vector (χ²), then the exact earth mover's
@@ -18,14 +20,16 @@
 import { parsePalette, vectorOf, chi2, emd, colourPath, rgbToOklab, swatchesOf } from './palette.mjs';
 
 /**
- * QSD's Palette (_pages/palette.html): for every voyage with colours, its signature (no black or
+ * QSD's Palette (_pages/palette.html) and Reverie (_pages/reverie.html): for every voyage with colours, its signature (no black or
  * white), its colour line, its colour order (24 dots, lib/book.mjs colourOf), each frame's own
- * signature in the book's order, and its `rank` on the page's rail of voyages (by colour). Galleries are keyed as `gallery_name` says them (`prague/twilight`).
+ * signature in the book's order (with renditions up to 2560 px, enough for Reverie's cover), and its
+ * `rank` on the page's rail of voyages (by colour). Galleries are keyed as `gallery_name` says them
+ * (`prague/twilight`).
  */
 export function palettesOf(books) {
   const voyages = books.filter(m => m.book?.colour).map(m => ({
     g: m.gallery, palette: m.book.colour.palette, order: m.book.colour.order,
-    photos: m.photos.map(p => ({ slug: p.slug, name: p.name || null, light: p.light?.text || null, url: p.url, r: p.ratio ? +p.ratio.toFixed(3) : null, sizes: (p.sizes?.webp || []).filter(s => s <= 1280), sig: p.signature || null })),
+    photos: m.photos.map(p => ({ slug: p.slug, name: p.name || null, light: p.light?.text || null, url: p.url, r: p.ratio ? +p.ratio.toFixed(3) : null, sizes: (p.sizes?.webp || []).filter(s => s <= 2560), sig: p.signature || null })),
   }));
   // Each voyage's place on the rail of vats that leads from one to the next: its signature carried
   // into every other's (the earth mover's distance), laid on one line dark to light, like with like.
@@ -76,7 +80,7 @@ export function atlasOf(books, kindred = {}) {
         sizes: (p.sizes?.webp || []).filter(s => s <= 2560), r: p.ratio,
         name: p.name || null, city: p.place?.city || null,
         alt: p.light ? p.light.alt : null, phase: p.light?.phase || null, light: p.light?.text || null,
-        strip: p.strip, sw: p.swatches.map(([h]) => h), pc: p.swatches.map(([, w]) => Math.round(w)),
+        strip: p.strip, sw: p.swatches.map(([h]) => h), pc: p.swatches.map(([, w]) => Math.round(w)), sig: p.signature || null, dots: p.dots || null,
         taken: p.taken ? String(p.taken).slice(0, 10) : null,
       });
     }

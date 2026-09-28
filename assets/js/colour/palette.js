@@ -13,10 +13,10 @@
  */
 
 import { tips } from '../photobook/tip.js';
-import { vat, seedOf, oklab } from './vat.js';
+import { vat, seedOf, oklab, glow } from './vat.js';
 import { crossfade } from '../photobook/wash.js';
+import { esc, blocks, card, kindred, dripper, reverieOf } from './cards.js';
 
-const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* this visit only */ } } };
 
@@ -36,18 +36,6 @@ function strip(colours, { href = null, label = '', shares = false } = {}) {
   const hex = colours.map(([h, pc, accent]) => `<span title="${Math.round(pc)}%${accent ? ', accent' : ''}"><i style="--c:${h}"></i>${h.slice(1).toUpperCase()}${shares ? `<b>${Math.round(pc)}%</b>` : ''}</span>`).join('');
   return `<div class="palette-strip">${bar}<p class="palette-strip__hex">${hex}</p></div>`;
 }
-
-/** Black or white for the hex on a block, whichever reads better against it (WCAG contrast). */
-const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
-const ink = (h) => {
-  const n = parseInt(h.slice(1), 16), L = 0.2126 * lin(n >> 16) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
-  return (L + 0.05) / 0.05 > 1.05 / (L + 0.05) ? '#000' : '#fff'; // pure, so even a middling colour reads at 4.5:1 or better
-};
-/** A palette as blocks: equal widths, the hex inside (text to select), the share beneath. */
-const blocks = (cs) => `<div class="palette-blocks">${cs.map(([h, pc, accent]) => `<div class="${accent ? 'is-accent' : ''}"><i style="--c:${h};--on:${ink(h)}">${h.slice(1).toUpperCase()}</i><b>${Math.round(pc * 10) / 10}%</b></div>`).join('')}</div>`;
-
-/** A palette as the specs panel draws it: a thin bar, widths tempered. */
-const bar = (cs) => `<div class="palette-card__bar" aria-hidden="true">${cs.map(([h, pc]) => `<i style="--c:${h};flex:${Math.sqrt(pc).toFixed(2)}"></i>`).join('')}</div>`;
 
 async function main() {
   let data = null;
@@ -94,8 +82,11 @@ async function main() {
     title.textContent = `QSD's Palette for ${name}`;
     kicker.textContent = "QSD's Palette";
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
+    // A colour of the voyage's own opens its Reverie from the frame that holds the most of it.
+    const frames = v.photos.map((p) => ({ ...p, g: v.g }));
+    const rootOf = (h) => { const [m] = kindred(frames, h, { most: 1, near: 0.12 }); return m ? reverieOf(v.g, m.f.slug, m.hit) : null; };
     stage.innerHTML = `<section class="palette-voyage">
-        <div class="palette-voyage__blocks">${blocks(sig(v))}</div>
+        <div class="palette-voyage__blocks">${blocks(sig(v), { link: rootOf })}</div>
         <div data-vat></div>
       </section>
       <div class="photobook-sheet__order palette-page__order" role="group" aria-label="Order">
@@ -103,14 +94,7 @@ async function main() {
         <button type="button" aria-pressed="${order === 'colour'}" data-order="colour">Colour</button>
       </div>
       <h2 class="visually-hidden">The frames</h2>
-      <div class="palette-cards">${seq.map((i) => { const p = v.photos[i]; return `<article class="palette-card${p.slug === at ? ' is-from' : ''}" id="f-${esc(p.slug)}" data-n="${i}">
-          <a class="palette-card__print" href="${page.url}#${encodeURIComponent(p.slug)}" aria-label="${esc(p.name || p.slug)}, in its book"><img style="--r:${p.r || 1.5}" src="${p.url}/${p.sizes.find((s) => s >= 960) || p.sizes[p.sizes.length - 1] || 480}.webp" alt="" loading="lazy" decoding="async"></a>
-          ${p.sig?.length ? blocks(p.sig) : ''}
-          <div class="palette-card__row"><div>
-            <h3>${esc(p.name || '')}${p.light ? `<small>${esc(p.light)}</small>` : ''}</h3>
-            ${p.sig?.length ? bar(p.sig) : ''}
-          </div>${p.sig?.length ? `<div class="palette-card__vat" data-i="${i}"></div>` : ''}</div>
-        </article>`; }).join('')}</div>`;
+      <div class="palette-cards">${seq.map((i) => { const p = v.photos[i]; return card(p, { href: `${page.url}#${encodeURIComponent(p.slug)}`, i, from: p.slug === at, link: (h) => reverieOf(v.g, p.slug, h) }); }).join('')}</div>`;
     stage.querySelector('[data-vat]').replaceWith(vatBox);
     fillVat(v);
     pour(v, stage.querySelectorAll('.palette-card__vat'));
@@ -125,32 +109,18 @@ async function main() {
       named(true);
       document.startViewTransition(() => { redraw(); named(true); }).finished.finally(() => named(false));
     };
-    if (at) requestAnimationFrame(() => document.getElementById(`f-${at}`)?.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    // From a frame's bar in the book: the voyage's title and palette first, then down to that frame,
+    // held in a ring for a moment (_colour.scss).
+    const from = at && document.getElementById(`f-${at}`);
+    if (from) {
+      if (still()) requestAnimationFrame(() => from.scrollIntoView({ block: 'center', behavior: 'instant' }));
+      else setTimeout(() => { if (from.isConnected) from.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 900);
+    }
   }
 
-  // Each frame's own vat, poured as its card nears the screen, one a frame so scrolling stays smooth;
-  // kept once poured, so a change of order moves them rather than pouring them again.
-  const poured = new Map();
-  let queue = [], hold = 0, running = false, waking = 0;
-  // One a frame, and while a voyage is changing (hold) only those that may not wait: the frames'
-  // cards wait, the change has the frames to itself; the rail, seen gliding, does not.
-  const kick = () => { if (running) return; running = true; clearTimeout(waking); requestAnimationFrame(next); };
-  const next = () => {
-    const wait = hold - performance.now();
-    const at = wait > 0 ? queue.findIndex((j) => j.now) : 0;
-    if (!queue.length || at < 0) { running = false; if (queue.length) waking = setTimeout(kick, wait); return; }
-    const [job] = queue.splice(at, 1); if (job.slot.isConnected) job.fill(); requestAnimationFrame(next);
-  };
-  /** Pour a vat into each slot as it nears view (`root`, `margin`), one a frame; a vat poured once is
-   *  kept. `now`: poured even while a voyage is changing. */
-  function drip(slots, keyOf, make, { root = null, margin = '600px 0px', now = false } = {}) {
-    const fill = (slot) => { const key = keyOf(slot); if (!poured.has(key)) poured.set(key, make(slot)); slot.replaceChildren(poured.get(key)); };
-    const seen = new IntersectionObserver((entries) => {
-      for (const e of entries) if (e.isIntersecting) { seen.unobserve(e.target); queue.push({ slot: e.target, fill: () => fill(e.target), now }); kick(); }
-    }, { root, rootMargin: margin });
-    for (const slot of slots) if (poured.has(keyOf(slot))) fill(slot); else seen.observe(slot);
-    return seen;
-  }
+  // Each frame's own vat, poured as its card nears the screen (./cards.js dripper), and none of the
+  // frames' while a voyage is changing: the change has the frames to itself.
+  const { poured, drip, holdFor } = dripper();
   let cards = null; // the cards' watcher, let go when the cards are drawn again
   // The frames rise into view as content does across the site (_scroll-animations.scss: the same
   // classes, the same 12 px and timing), unless motion is off.
@@ -180,19 +150,11 @@ async function main() {
   // Both change as the book's wash does (../photobook/wash.js): the new laid over the old and faded
   // in. The light turns as the words leave; the vat once it is back among the new ones (moving an
   // element cuts its fade short).
-  /** The room's light: the square inside the voyage's vat, 48 px, for the page to spread and soften
-   *  (a small picture scaled up is already soft, and costs next to nothing to hold). */
-  function room(v) {
-    const c = vat(v.palette, { size: 96, seed: seedOf(v.g) }), out = document.createElement('canvas');
-    out.width = out.height = 48;
-    c.ready.then(() => { const side = c.width / Math.SQRT2, at = (c.width - side) / 2; out.getContext('2d').drawImage(c, at, at, side, side, 0, 0, 48, 48); });
-    return out;
-  }
   function light(v) {
     const g = v?.g ?? '';
     if (ambience.dataset.g === g) return;
     ambience.dataset.g = g;
-    crossfade(ambience, v ? room(v) : document.createElement('i'));
+    crossfade(ambience, v ? glow(v.palette, { seed: seedOf(v.g) }) : document.createElement('i'));
   }
   // A change of voyage is one gesture, one tempo: the palette's blocks take the new dye in a wave
   // from the left, and the vat beside them changes its dye whole in the same time and on the same
@@ -361,7 +323,7 @@ async function main() {
   };
   // Evenly spaced through OKLab; the animation's own easing (the vat's) paces it.
   const flow = (from, to, steps = 12) => { const A = oklab(from), B = oklab(to); return Array.from({ length: steps + 1 }, (_, k) => ({ backgroundColor: toHex(A.map((x, i) => x + (B[i] - x) * (k / steps))), offset: k / steps })); };
-  const blocksNow = () => [...root.querySelectorAll('.palette-voyage .palette-blocks > div')].map((d) => d.querySelector('i').style.getPropertyValue('--c').trim());
+  const blocksNow = () => [...root.querySelectorAll('.palette-voyage .palette-blocks > *')].map((d) => d.querySelector('i').style.getPropertyValue('--c').trim());
   function morph(before) {
     const row = root.querySelector('.palette-voyage .palette-blocks');
     if (!row || !before.length) return;
@@ -391,7 +353,7 @@ async function main() {
     const v = voyages.find((x) => x.g === g);
     const at = new URLSearchParams(location.search).get('at');
     const token = ++routing, gliding = shown !== null && shown !== (v?.g ?? '') && !still();
-    if (gliding) hold = performance.now() + 300 + CHANGE;
+    if (gliding) holdFor(300 + CHANGE);
     railTo(v);
     menuTo(v);
     light(v);
@@ -403,7 +365,7 @@ async function main() {
     }
     shown = v?.g ?? '';
     if (v) voyage(v, at); else index();
-    if (!v || !at) scrollTo({ top: 0, behavior: 'instant' });
+    scrollTo({ top: 0, behavior: 'instant' });
     for (const el of parts()) el.getAnimations().forEach((a) => a.cancel());
     // …and the new one settles in as a page arrives (0.4 s, the smooth curve).
     if (gliding) for (const el of parts()) el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 400, easing: SMOOTH });

@@ -530,12 +530,25 @@
   button { min-height: 1.75rem; } // at least 24px to tap, on a phone too
 }
 
-// A palette as blocks: equal widths, the hex inside, the share beneath.
+// A palette as blocks: equal widths, the hex inside, the share beneath. A block that leads to its
+// colour's Reverie is a link, its hex still text to select; the colour chosen carries a white line
+// inside its block, and a pointer resting on another shows the same line, fainter.
 .palette-blocks {
   display: flex;
   user-select: text;
 
-  > div { flex: 1 1 0; min-width: 0; }
+  > * { flex: 1 1 0; min-width: 0; }
+
+  a,
+  a:visited { color: inherit; text-decoration: none; -webkit-user-drag: none; }
+
+  a i { transition: box-shadow 0.3s $cubic-bezier-smooth; }
+  a:hover i,
+  a:focus-visible i { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.7); }
+  a:focus-visible { outline: none; }
+
+  .is-picked i { box-shadow: inset 0 0 0 2px #fff; }
+  .is-picked b { color: var(--photobook-ink); }
 
   i {
     display: grid;
@@ -617,8 +630,33 @@
   }
 }
 
-// The frame the reader came from, marked by a hairline beneath its print.
-.palette-card.is-from .palette-card__print { box-shadow: 0 6px 0 -5px var(--photobook-ink-3); }
+// Where a card's frame comes from, when the cards come from many voyages (Reverie).
+.palette-card__place {
+  @include eyebrow;
+  margin: 0.8rem 0 0;
+  color: var(--photobook-ink-3);
+
+  + h3 { margin-top: 0.45rem; }
+
+  // A voyage's name leads to its palette.
+  a,
+  a:visited { color: inherit; text-decoration: none; transition: color 0.3s $cubic-bezier-smooth; }
+  a:hover,
+  a:focus-visible { color: var(--photobook-ink); }
+}
+
+// The frame the reader came from: held in a ring as the page glides down to it, then let go.
+.palette-card.is-from .palette-card__print {
+  outline: 1px solid transparent;
+  outline-offset: 6px;
+  animation: palette-from 3.6s $cubic-bezier-standard 0.9s both;
+}
+
+@keyframes palette-from {
+  0%, 12% { outline-color: transparent; }
+  30%, 70% { outline-color: var(--photobook-ink-2); }
+  100% { outline-color: transparent; }
+}
 
 /* ── Drift ────────────────────────────────────────────────────────────── */
 .colour-drift {
@@ -698,7 +736,7 @@
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr);
   align-items: end;
   gap: 0.9rem 1.5rem;
   padding: 1.1rem var(--photobook-gutter) calc(1rem + env(safe-area-inset-bottom, 0px));
@@ -720,55 +758,205 @@
   span { margin-left: 1.2rem; letter-spacing: 0.08em; text-transform: none; font-size: 0.72rem; color: var(--photobook-ink-2); }
 }
 
-.colour-drift__tools { display: flex; gap: 0.5rem; }
+// In a colour, the first stop: the colour's dye filling the stage (a rectangular vat), its hex upon
+// it as Reverie sets it (.reverie__hex), in the ink that reads best there (--on).
+.colour-drift__colour {
+  overflow: hidden;
+  color: var(--on, #fff);
 
-.colour-drift__tool {
-  display: grid;
-  place-items: center;
-  width: 2.4rem;
-  height: 2.4rem;
-  padding: 0;
-  border: 1px solid var(--photobook-glass-edge);
-  border-radius: 50%;
-  background: var(--photobook-button);
-  color: var(--photobook-ink-2);
-  cursor: pointer;
-  transition: background 0.3s $cubic-bezier-smooth, color 0.3s $cubic-bezier-smooth;
-
-  &:hover { background: var(--photobook-button-hover); color: var(--photobook-ink); }
-
-  svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  > .colour-vat { position: absolute; inset: 0; width: 100%; height: 100%; }
 }
+
+.colour-drift__hex {
+  position: absolute;
+  left: clamp(1.2rem, 3vw, 2.4rem);
+  bottom: clamp(1rem, 3vw, 2rem);
+}
+
+// The viewer's tools where the lightbox keeps its own: top right, in the band the masthead sits in.
+.colour-drift__tools {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  right: 0;
+  height: calc(4rem + env(safe-area-inset-top, 0px));
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: env(safe-area-inset-top, 0px) max(1rem, env(safe-area-inset-right, 0px)) 0 0;
+  transition: opacity 1.2s $cubic-bezier-smooth;
+
+  .is-overture & { opacity: 0; }
+  @include responsive-down(mobile) { height: calc(3.6rem + env(safe-area-inset-top, 0px)); }
+}
+
+.colour-drift__tool { @include round-tool; }
 
 .colour-drift__play { display: none; fill: currentColor; stroke: none; }
 .colour-drift__tool[aria-pressed="false"] .colour-drift__pause { display: none; }
 .colour-drift__tool[aria-pressed="false"] .colour-drift__play { display: inline; }
 
-// The way so far: a sliver a frame, shaded as its frame is; the one on show stands taller.
+// The way so far: a dye vat a frame, the one on show ringed.
 .colour-drift__thread {
   grid-column: 1 / -1;
   display: flex;
-  align-items: flex-end;
-  gap: 2px;
-  height: 22px;
+  align-items: center;
+  gap: 0.45rem;
+  height: 30px;
+  padding: 0 3px; // room for the ring round the frame on the page
   overflow-x: auto;
   scrollbar-width: none;
 
   &::-webkit-scrollbar { display: none; }
 
+  // A frame on the way: its dye vat, the frame on the page ringed as on the palette page's rail.
   button {
-    flex: 0 0 6px;
-    height: 14px;
+    flex: 0 0 20px;
+    height: 20px;
     padding: 0;
     border: 0;
-    border-radius: 1px;
-    background: linear-gradient(var(--t), var(--m), var(--b));
+    border-radius: 50%;
+    background: linear-gradient(var(--t), var(--m), var(--b)); // a frame whose palette is still to come
+    outline: 1px solid transparent;
+    outline-offset: 2px;
     cursor: pointer;
-    transition: height 0.3s $cubic-bezier-smooth;
+    transition: outline-color 0.3s $cubic-bezier-smooth;
 
-    &.is-on { height: 22px; }
-    &:focus-visible { outline: 1px solid var(--photobook-ink); outline-offset: 2px; }
+    &:has(canvas) { background: none; }
+    &.is-on,
+    &:focus-visible { outline-color: var(--photobook-ink); }
   }
+
+  canvas { display: block; width: 100%; height: 100%; }
+}
+
+/* ── Reverie ──────────────────────────────────────────────────────────── */
+// One colour of one photograph, and every photograph that holds it. The photograph whole, never
+// cropped (the colour chosen may lie anywhere in it), in a room lit by its dye: the palette page's
+// room and grain, and its column.
+.reverie {
+  position: relative;
+  isolation: isolate; // the room lies behind the page, not behind the site
+  width: 100%; // a -webkit-box child: stated, or it shrinks to its content
+}
+
+.reverie::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  @include film-grain;
+}
+
+.reverie__body {
+  width: 100%;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 2.4rem) var(--photobook-gutter) clamp(4rem, 8vw, 6rem);
+}
+
+// The opening: the photograph's dye poured into the whole width (vat.js, shape 'rect'), the colour
+// chosen given the most of it, its hex upon it in the ink that reads best there (--on). The book
+// cover's proportions; a clean edge where it meets the page.
+.reverie__dye {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  aspect-ratio: 3 / 1;
+  min-height: 26rem;
+  padding: 5.5rem var(--photobook-gutter) clamp(2.2rem, 5vw, 3.6rem);
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--on, #fff);
+
+  > .colour-vat {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+  }
+
+  .colour-kicker { color: inherit; opacity: 0.75; }
+}
+
+.reverie__words {
+  width: 100%;
+  max-width: calc(80rem - 2 * var(--photobook-gutter));
+  margin-inline: auto;
+}
+
+// The colours nearby, a step away each (cards.js nearby), dark to light, the colour here among them
+// marked as a chosen block is, by a white line inside it.
+.reverie__near {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem 1.4rem;
+  padding-bottom: clamp(1.4rem, 3vw, 2rem);
+  border-bottom: 1px dotted var(--photobook-line);
+
+  ol { display: flex; flex-wrap: wrap; gap: 0.55rem; margin: 0; padding: 0; list-style: none; }
+
+  a,
+  .is-here {
+    display: block;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--c);
+    transition: box-shadow 0.3s $cubic-bezier-smooth;
+  }
+
+  a:hover,
+  a:focus-visible { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.45); outline: none; }
+  .is-here { box-shadow: inset 0 0 0 2px #fff; }
+}
+
+.reverie__near-label { @include eyebrow; margin: 0; }
+
+// The photographs, bare: the print and its words. The first, where the colour was found, keeps its ring.
+.palette-card.is-plain .palette-card__row { grid-template-columns: minmax(0, 1fr); }
+.reverie .palette-card.is-from .palette-card__print { animation: none; outline-color: var(--photobook-ink-3); }
+
+// The colour chosen, its hex set large in Didot: Playfair's figures do not read at this size.
+.reverie__hex {
+  margin: 0.6rem 0 0;
+  font: 400 clamp(3.4rem, 9vw, 8.6rem)/1 $didot-family;
+  letter-spacing: 0.01em;
+  color: inherit;
+  user-select: all;
+}
+
+.reverie__count {
+  @include eyebrow;
+  margin: clamp(2.2rem, 4.5vw, 3.2rem) 0 clamp(1.2rem, 2.4vw, 1.6rem);
+}
+
+// From one colour to the next in place (reverie.js go): the dye turns to the new colour in the dye's
+// own time (the palette page's vat change), and the hex gives way to the next. Named only while it
+// happens, so nothing else is held.
+@supports (view-transition-name: none) {
+  .reverie-in-place .reverie__dye { view-transition-name: reverie-dye; }
+  .reverie-in-place .reverie__hex { view-transition-name: reverie-hex; }
+
+  ::view-transition-group(reverie-dye),
+  ::view-transition-old(reverie-dye),
+  ::view-transition-new(reverie-dye) {
+    animation-duration: 1.1s;
+    animation-timing-function: $cubic-bezier-standard;
+  }
+
+  ::view-transition-group(reverie-hex) { animation-duration: 0.45s; animation-timing-function: $cubic-bezier-smooth; }
+  ::view-transition-old(reverie-hex) { animation: fade-out 0.25s $cubic-bezier-standard both; }
+  ::view-transition-new(reverie-hex) { animation: fade-in 0.4s $cubic-bezier-smooth 0.2s both; }
+
+  // The rest of the page, in place: the old words leave a moment before the new arrive, so the two are
+  // never read over each other.
+  html.reverie-in-place::view-transition-old(root) { animation: fade-out 0.18s $cubic-bezier-standard both; }
+  html.reverie-in-place::view-transition-new(root) { animation: fade-in 0.32s $cubic-bezier-smooth 0.14s both; }
 }
 
 @mixin colour-still {
@@ -783,8 +971,11 @@
   .palette-ambience > *,
   .palette-voyages,
   .palette-page,
-  .palette-voyage__vat canvas { transition: none; }
+  .palette-voyage__vat canvas,
+  .palette-blocks a i,
+  .reverie__near a { transition: none; }
   .palette-voyages__list { animation: none; }
+  .palette-card.is-from .palette-card__print { animation: none; outline-color: var(--photobook-ink-2); }
 }
 
 @include responsive-reduced-motion {
