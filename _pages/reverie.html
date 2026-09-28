@@ -15,15 +15,15 @@ masthead_back_label: QSD's Palette
   photographs, as the palette page's cards, each opening in the book's own lightbox over the page,
   the colour its first frame. A colour nearby begins a Reverie of its own, in the page. /reverie/?c=<hex>&from=<gallery>/<slug>; without a colour, the photograph's leading one;
   without either, a photograph at random.
-  Under the hex, the colour's name in Ridgway's nomenclature (1912) when one lies close (/assets/ridgway.json).
+  Above the hex, the colour's name in Ridgway's nomenclature (1912) when one lies close (/assets/ridgway.json).
   Data: /assets/colour-atlas.json. Script: assets/js/colour/reverie.js. Styles: _sass/_colour.scss.
 {%- endcomment -%}
 <main class="reverie" id="reverie" data-own-links>
   <header class="reverie__dye">
     <div class="reverie__words">
       <p class="colour-kicker">Reverie</p>
+      <p class="reverie__named" data-tip="After Robert Ridgway, Color Standards and Color Nomenclature (1912)" data-tip-side="top" hidden></p>
       <h1 class="reverie__hex">Reverie</h1>
-      <p class="reverie__named" data-tip="After Robert Ridgway, Color Standards and Color Nomenclature (1912)" data-tip-side="top"></p>
     </div>
   </header>
   <div class="reverie__body">

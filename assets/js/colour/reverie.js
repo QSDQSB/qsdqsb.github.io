@@ -18,7 +18,7 @@
  * the one that holds the colour most; without either, a photograph at random. The masthead's ‹ goes back
  * to the photograph it was found in, in its book.
  *
- * Beneath the hex, its name in Robert Ridgway's Color Standards and Color Nomenclature (1912), when
+ * Above the hex, its name in Robert Ridgway's Color Standards and Color Nomenclature (1912), when
  * one of his colours lies within half again the eye's match of it (four colours in five have one).
  *
  * Data: /assets/colour-atlas.json (scripts/photos/lib/atlas.mjs atlasOf); /assets/ridgway.json
@@ -138,7 +138,7 @@ async function main() {
       hexEl.textContent = HEX;
       hexEl.style.setProperty('--c', hex);
       const named = nameOf(hex);
-      namedEl.textContent = named; // its line kept, named or not, so the hex never moves between colours
+      namedEl.textContent = named; namedEl.hidden = !named; // above the hex: the hex keeps its corner either way
       near.innerHTML = `<p class="reverie__near-label">Nearby</p><ol>${around.map((c) => `<li>${c.here
         ? `<span class="is-here" style="--c:${c.hex}" aria-current="true" aria-label="${c.hex.toUpperCase()}, here"></span>`
         : `<a href="${reverieOf(c.f.g, c.f.slug, c.hex)}" style="--c:${c.hex}" data-tip="${c.hex.toUpperCase()}" data-tip-side="top" aria-label="${c.hex.toUpperCase()}"></a>`}</li>`).join('')}</ol>`;
