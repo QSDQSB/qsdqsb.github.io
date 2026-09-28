@@ -16,7 +16,10 @@ import { pointsOf, siteDots } from './dots.mjs';
 import { signatureOf, compactSignature } from './signature.mjs';
 
 // The palette is read from a small downsample: 96 px on the long edge is plenty for 32 colours.
-const PALETTE_SAMPLE = 96;
+// The size a photograph's colours are read at. At 96 px a roof, a parasol or a red coat was a few
+// pixels, each blended into the stone and sky round it, and came out brown or not at all; at 384 px
+// they keep their colour, as the eye does (2026-09-28: 105 of 600 regained a warm, vivid colour).
+const PALETTE_SAMPLE = 384;
 
 /**
  * A photograph's colours, from the bytes of the original or of any tier: the 32-colour palette and
