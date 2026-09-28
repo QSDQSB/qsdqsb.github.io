@@ -24,6 +24,7 @@ That is what made it look like a different site (2026-09-27).
 | Piece | Mixin / class | For | Used by |
 |---|---|---|---|
 | Pill | `pill` | A glass pill with a chevron or mark and a label: the way back, a menu | `.photobook-lightbox__back`, `.palette-page__menu` |
+| Round tool | `round-tool` | A full-screen viewer's tools, top right: slideshow, specs, picture only, the way to the book | `.photobook-lightbox__tool`, `.colour-drift__tool` |
 | Quiet icon button | `icon-button-quiet($size)` | A bare mark in the label's ink, lit on hover: no ring, no fill | `.palette-voyages__fold`, `.palette-rail__step` |
 | Segmented toggle | class `.photobook-sheet__order` | Two or three exclusive choices in spaced capitals (Sequence / Colour) | the book's sheet, the palette page |
 | Tooltip | `data-tip` (+ `data-tip-side`), `assets/js/photobook/tip.js` | Naming an icon control after a pause; pointer only | masthead ‹, lightbox, colophon, rail |

@@ -222,12 +222,12 @@ test('the rail of voyages lays like beside like, dark to light', async () => {
 
 test('the palette page is sent only what it draws', async () => {
   const { palettesOf } = await import('../scripts/photos/lib/atlas.mjs');
-  const photo = { slug: 'a', name: 'A', light: { text: 'Golden hour' }, url: 'https://img/x', ratio: 1.5, sizes: { webp: [480, 960, 1920] }, signature: [['#304868', 60, 0], ['#e1cbbc', 40, 0]], dots: 'ff0000ff'.repeat(24), palette: 'x', grid: 'y' };
+  const photo = { slug: 'a', name: 'A', light: { text: 'Golden hour' }, url: 'https://img/x', ratio: 1.5, sizes: { webp: [480, 960, 1920, 4096] }, signature: [['#304868', 60, 0], ['#e1cbbc', 40, 0]], dots: 'ff0000ff'.repeat(24), palette: 'x', grid: 'y' };
   const { voyages } = palettesOf([{ gallery: 'g', photos: [photo], book: { colour: { palette: [{ hex: '#304868', pc: 60 }, { hex: '#e1cbbc', pc: 40 }], ramp: [], barcode: [], order: [0] } } }]);
   assert.deepEqual(Object.keys(voyages[0]).sort(), ['g', 'order', 'palette', 'photos', 'rank']);
   assert.deepEqual(Object.keys(voyages[0].photos[0]).sort(), ['light', 'name', 'r', 'sig', 'sizes', 'slug', 'url']);
   assert.equal(voyages[0].photos[0].r, 1.5, 'each print keeps its own shape');
-  assert.deepEqual(voyages[0].photos[0].sizes, [480, 960], 'no size above 1280');
+  assert.deepEqual(voyages[0].photos[0].sizes, [480, 960, 1920], 'up to 2560, as the atlas: enough for a cover, not the 4096 tier');
 });
 
 test('a dye vat is poured the same way for the same gallery, and differently for another', async () => {

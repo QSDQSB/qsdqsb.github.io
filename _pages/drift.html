@@ -5,11 +5,13 @@ permalink: /drift/
 sitemap: false
 body_class: photobook colour-page colour-page--drift
 seo_description: "A walk through every voyage by colour alone: each photograph followed by the nearest in colour from another journey."
+masthead_back_url: /palette/
+masthead_back_label: QSD's Palette
 ---
 {%- comment -%}
   Drift: one photograph at a time, full screen, each followed by the nearest in colour from another
   voyage (kindred frames, scripts/photos/lib/atlas.mjs), the room washed in its colours. The way
-  taken gathers at the foot as a strip of slivers; a sliver goes back to its frame. Start anywhere,
+  taken gathers at the foot as a row of dye vats; a vat goes back to its frame. Start anywhere,
   or from a frame: /drift/?from=<gallery>/<slug>. Data: /assets/colour-atlas.json. Script:
   assets/js/colour/drift.js. Styles: _sass/_colour.scss.
 {%- endcomment -%}
@@ -24,12 +26,12 @@ seo_description: "A walk through every voyage by colour alone: each photograph f
     <button class="colour-drift__zone colour-drift__zone--prev" type="button" data-act="back" aria-label="Back to the last photograph"></button>
     <button class="colour-drift__zone colour-drift__zone--next" type="button" data-act="next" aria-label="Drift to the next photograph"></button>
   </div>
+  <div class="colour-drift__tools">
+    <button type="button" class="colour-drift__tool" data-act="play" aria-pressed="true" aria-label="Drift on its own" data-tip="Pause · Space"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="colour-drift__pause" d="M9 6v12M15 6v12"/><path class="colour-drift__play" d="M8 5.5v13l10.5-6.5z"/></svg></button>
+    <a class="colour-drift__tool colour-drift__open" href="#" aria-label="Open in its book" data-tip="Open in its book"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h10v10M19 5L6 18"/></svg></a>
+  </div>
   <footer class="colour-drift__foot">
     <div class="colour-drift__caption"></div>
-    <div class="colour-drift__tools">
-      <button type="button" class="colour-drift__tool" data-act="play" aria-pressed="true" aria-label="Drift on its own" data-tip="Pause · Space"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="colour-drift__pause" d="M9 6v12M15 6v12"/><path class="colour-drift__play" d="M8 5.5v13l10.5-6.5z"/></svg></button>
-      <a class="colour-drift__tool colour-drift__open" href="#" aria-label="Open in its book" data-tip="Open in its book"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h10v10M19 5L6 18"/></svg></a>
-    </div>
     <nav class="colour-drift__thread" aria-label="The way so far"></nav>
   </footer>
   <noscript><p class="colour-empty">Drift is drawn by a script; with it off, the photographs are in the <a href="{{ '/voyage/' | relative_url }}">voyages</a>.</p></noscript>

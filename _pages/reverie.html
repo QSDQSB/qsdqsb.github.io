@@ -1,0 +1,35 @@
+---
+title: "Reverie"
+layout: default
+permalink: /reverie/
+sitemap: false
+body_class: photobook colour-page colour-page--reverie
+seo_description: "One colour of one photograph, and every photograph from QSD's voyages that holds it."
+masthead_back_url: /palette/
+masthead_back_label: QSD's Palette
+---
+{%- comment -%}
+  Reverie: one colour, and every photograph from any voyage that holds it (close to the eye), the one
+  it was found in first. The colour leads: its dye across the whole width (that photograph's colours
+  round it), its hex set large; beneath, the colours nearby, a step away each, to wander to; then the
+  photographs, as the palette page's cards. A colour on any of them begins a Reverie of its own, in
+  the page. /reverie/?c=<hex>&from=<gallery>/<slug>; without a colour, the photograph's leading one;
+  without either, a photograph at random.
+  Data: /assets/palettes.json. Script: assets/js/colour/reverie.js. Styles: _sass/_colour.scss.
+{%- endcomment -%}
+<main class="reverie" id="reverie" data-own-links>
+  <header class="reverie__dye">
+    <div class="reverie__words">
+      <p class="colour-kicker">Reverie</p>
+      <h1 class="reverie__hex">Reverie</h1>
+    </div>
+  </header>
+  <div class="reverie__body">
+    <nav class="reverie__near" aria-label="Colours nearby"></nav>
+    <div class="reverie__stage" aria-live="polite">
+      <noscript><p class="colour-empty">Reverie is drawn by a script; with it off, the photographs are in the <a href="{{ '/voyage/' | relative_url }}">voyages</a>.</p></noscript>
+    </div>
+  </div>
+  <footer class="colour-end">{% include presented-by-qsd.html line="Shot by QSD." %}</footer>
+</main>
+<script type="module" src="{{ '/assets/js/colour/reverie.js' | relative_url }}"></script>

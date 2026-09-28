@@ -9,9 +9,12 @@
  * blues) settles in layers, light above deep, edges misted; a palette of contrasts is stirred into
  * broad currents; most lie between. An accent is always a drop, never a layer.
  *
- * vat(palette, { size, width, height, seed, stir, label, calm }) → a canvas. `palette` is
+ * vat(palette, { size, width, height, shape, seed, stir, label, calm }) → a canvas. `palette` is
  * [{hex, pc, accent}] or [[hex, pc, accent]]; `calm` (0 stirred … 1 layered) overrides the choice; the vat is `size` across (or the smaller of width and height), centred, transparent
- * round it. Still by default: painted on one shared WebGL canvas and copied out, so a page of frames
+ * round it. `shape: 'rect'` pours the same dye into the whole width × height instead, its colours
+ * spread along its length and measured over all of it, so each still covers its share (Reverie's
+ * opening); drawn small and shown large (it is a mood, and softens as it spreads), it costs no more
+ * than a round vat. Still by default: painted on one shared WebGL canvas and copied out, so a page of frames
  * costs one context. `stir: true` gives the vat its own and keeps the currents moving (the lab);
  * `stir: 'hover'` stirs only while a pointer rests on it (or while `canvas.stir(true)`, for a link
  * that leads to it), `speed` steps a second, and on leaving lets the dye settle back to where it was
@@ -22,7 +25,7 @@
 
 const FRAG = `
 precision highp float;
-uniform vec2 res, org; uniform float seed, t, calm, tilt; uniform int mode;
+uniform vec2 res, org; uniform float seed, t, calm, tilt, aspect; uniform int mode, shape;
 uniform vec3 col[5]; uniform float gain[5], drop[5]; uniform vec2 pos[5]; uniform int n;
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7)) + seed * 0.013) * 43758.5453); }
 float noise(vec2 p) { vec2 i = floor(p), f = fract(p); vec2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
@@ -33,9 +36,10 @@ vec3 toRgb(vec3 c) { float l = c.x + 0.3963377774 * c.y + 0.2158037573 * c.z, m 
   vec3 lin = vec3(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s, -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s, -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s);
   lin = clamp(lin, 0.0, 1.0); return mix(12.92 * lin, 1.055 * pow(lin, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, lin)); }
 void main() {
-  vec2 uv = ((gl_FragCoord.xy - org) / res) * 2.0 - 1.0; uv.y = -uv.y;
+  vec2 uv = ((gl_FragCoord.xy - org) / res) * 2.0 - 1.0; uv.y = -uv.y; uv.x *= aspect;
   float r = length(uv), aa = 2.0 / res.x;
-  if (r > 1.0 + aa || (mode > 0 && r > 1.0)) { gl_FragColor = vec4(0.0); return; }
+  // Round, or (shape 1) a rectangle aspect wide to 1 high, filled to its edges.
+  if (shape == 0 && (r > 1.0 + aa || (mode > 0 && r > 1.0))) { gl_FragColor = vec4(0.0); return; }
   // The currents: broad, warped twice, drifting slowly with t; and, where the colours contrast, one
   // long sweep across the vat, so they draw out in ribbons rather than sit in patches. Where they are
   // of one family (calm), no sweep: they settle in layers, light over deep, their edges misted.
@@ -49,7 +53,7 @@ void main() {
   // Each colour's hold here: its gain (set so its area is its share), fading softly from where it was poured.
   float ws[5]; float tot = 0.0;
   for (int k = 0; k < 5; k++) { ws[k] = 0.0; if (k >= n) continue;
-    vec2 d = lean * (pw - pos[k]);
+    vec2 d = lean * (pw - pos[k] * vec2(shape == 1 ? aspect : 1.0, 1.0)); // spread along a rectangle's length
     // A layer reaches across the vat; a drop (the accent) stays a drop.
     float layer = calm * (1.0 - drop[k]);
     ws[k] = gain[k] * exp(-(d.x * d.x * (1.0 - 0.94 * layer) + d.y * d.y) / mix(0.26, 0.1, calm)); tot += ws[k]; }
@@ -61,6 +65,7 @@ void main() {
   vec3 rgb = toRgb(vec3(L, ab));
   // The vessel, seen from above: its wall a little in shade at the rim, as a vat's is, not lit as a
   // sphere would be.
+  if (shape == 1) { gl_FragColor = vec4(rgb, 1.0); return; }
   rgb *= mix(1.0, 0.86, smoothstep(0.93, 1.0, r));
   float alpha = 1.0 - smoothstep(1.0 - aa, 1.0 + aa, r);
   gl_FragColor = vec4(rgb * alpha, alpha);
@@ -105,12 +110,12 @@ function sharedRenderer() {
 }
 
 // The self-measuring grid: M × M pixels, the circle's pixels found once.
-const M = 48, INSIDE = (() => { const out = []; for (let y = 0; y < M; y++) for (let x = 0; x < M; x++) { const u = ((x + 0.5) / M) * 2 - 1, v = ((y + 0.5) / M) * 2 - 1; if (u * u + v * v <= 1) out.push(y * M + x); } return out; })();
+const M = 48, EVERY = Array.from({ length: M * M }, (_, i) => i), INSIDE = (() => { const out = []; for (let y = 0; y < M; y++) for (let x = 0; x < M; x++) { const u = ((x + 0.5) / M) * 2 - 1, v = ((y + 0.5) / M) * 2 - 1; if (u * u + v * v <= 1) out.push(y * M + x); } return out; })();
 const px = new Uint8Array(M * M * 4);
 
 // What a vat is, from its palette and seed alone: its colours, where each is poured, how calm it
 // is. Deterministic, so it can be set on any context, as often as needed.
-function plan(palette, seed, calmFor) {
+function plan(palette, seed, calmFor, aspect = 0) {
   let state = seed;
   const rand = () => { state = (state * 16807) % 2147483647; return state / 2147483647; };
   const gauss = () => { let v = 0; for (let i = 0; i < 6; i++) v += rand(); return v / 6 - 0.5; };
@@ -137,13 +142,14 @@ function plan(palette, seed, calmFor) {
     const stirred = [Math.cos(ang) * rad, Math.sin(ang) * rad], layered = [cs[i].accent ? (rand() - 0.5) * 0.9 : gauss() * 0.3, level[i]];
     pos[i] = [stirred[0] + (layered[0] - stirred[0]) * calm, stirred[1] + (layered[1] - stirred[1]) * calm];
   });
-  const key = `${seed}|${calmFor ?? ''}|${cs.map((p) => `${p.hex}:${p.pc}:${p.accent ? 1 : 0}`).join(',')}`;
-  return { n, cs, share, labs, calm, tilt, pos, key, seed };
+  const key = `${seed}|${calmFor ?? ''}|${cs.map((p) => `${p.hex}:${p.pc}:${p.accent ? 1 : 0}`).join(',')}${aspect ? `|rect ${aspect.toFixed(2)}` : ''}`;
+  return { n, cs, share, labs, calm, tilt, pos, key, seed, aspect };
 }
 function set(r, P, gain) {
   const { gl, u } = r;
   gl.uniform1f(u('seed'), (P.seed % 1000) + 1); gl.uniform1i(u('n'), P.n); gl.uniform1f(u('t'), 0);
   gl.uniform1f(u('calm'), P.calm); gl.uniform1f(u('tilt'), P.tilt);
+  gl.uniform1i(u('shape'), P.aspect ? 1 : 0); gl.uniform1f(u('aspect'), P.aspect || 1);
   for (let i = 0; i < P.n; i++) {
     gl.uniform3f(u(`col[${i}]`), P.labs[i][0], P.labs[i][1], P.labs[i][2]);
     gl.uniform1f(u(`drop[${i}]`), P.cs[i].accent ? 1 : 0);
@@ -163,8 +169,9 @@ let saving = 0;
 const keep = (key, g) => { gains.set(key, g); clearTimeout(saving); saving = setTimeout(() => { try { localStorage.setItem(STORE, JSON.stringify(Object.fromEntries(gains))); } catch { /* this visit only */ } }, 800); };
 const areasOf = (P, data) => {
   const mass = [0, 0, 0, 0];
-  for (const j of INSIDE) for (let k = 0; k < 4; k++) mass[k] += data[j * 4 + k];
-  const all = INSIDE.length * 255, areas = [...mass.map((m) => m / all), 0].slice(0, P.n);
+  const cells = P.aspect ? EVERY : INSIDE;
+  for (const j of cells) for (let k = 0; k < 4; k++) mass[k] += data[j * 4 + k];
+  const all = cells.length * 255, areas = [...mass.map((m) => m / all), 0].slice(0, P.n);
   if (P.n === 5) areas[4] = Math.max(0, 1 - areas[0] - areas[1] - areas[2] - areas[3]);
   return areas;
 };
@@ -228,7 +235,7 @@ function pump() {
  */
 const stillness = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export function vat(palette, { size = 176, width = size, height = size, seed = 1, stir = false, speed = 15, label = '', calm: calmFor = null } = {}) {
+export function vat(palette, { size = 176, width = size, height = size, shape = 'round', seed = 1, stir = false, speed = 15, label = '', calm: calmFor = null } = {}) {
   const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(width * dpr), H = Math.round(height * dpr);
   const moving = !!stir && !stillness();
   const out = document.createElement('canvas'); out.width = W; out.height = H;
@@ -236,7 +243,8 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
   if (label) { out.setAttribute('role', 'img'); out.setAttribute('aria-label', label); } else out.setAttribute('aria-hidden', 'true');
   out.ready = Promise.resolve(out);
   if (!palette?.length) return out;
-  let P = plan(palette, seed, calmFor), live = null, shown = null;
+  const aspect = shape === 'rect' ? width / height : 0;
+  let P = plan(palette, seed, calmFor, aspect), live = null, shown = null;
   const r0 = sharedRenderer();
   if (!r0) return out;
 
@@ -248,10 +256,11 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
     const { gl, canvas, u } = r;
     if (canvas.width < W || canvas.height < H) { canvas.width = Math.max(W, canvas.width); canvas.height = Math.max(H, canvas.height); }
     set(r, P, gain);
-    const side = Math.min(W, H), ox = Math.round((W - side) / 2), oy = Math.round((H - side) / 2);
+    // Round: a square as tall as the smaller side, centred. A rectangle: the whole canvas.
+    const side = Math.min(W, H), [vw, vh] = aspect ? [W, H] : [side, side], ox = Math.round((W - vw) / 2), oy = Math.round((H - vh) / 2);
     const baseY = canvas.height - H; // drawing at the bottom-left of a larger shared canvas: the top-left of the copy
-    gl.uniform2f(u('res'), side, side); gl.uniform2f(u('org'), ox, baseY + oy); gl.uniform1i(u('mode'), 0);
-    const frame = (t) => { gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.viewport(ox, baseY + oy, side, side); gl.uniform1f(u('t'), t); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
+    gl.uniform2f(u('res'), vw, vh); gl.uniform2f(u('org'), ox, baseY + oy); gl.uniform1i(u('mode'), 0);
+    const frame = (t) => { gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.viewport(ox, baseY + oy, vw, vh); gl.uniform1f(u('t'), t); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
     frame(0);
     shown = { frame, gain };
     if (areas) out.dataset.areas = areas.map((x) => x.toFixed(3)).join(' '); // what the vat covers, to check against the shares
@@ -295,9 +304,18 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
   out.ready = pour();
   // A live vat takes another palette in the same canvas and context: no new context, no new program.
   out.repaint = (next, { seed: s2 = seed, label: l2 = '' } = {}) => {
-    P = plan(next, s2, calmFor);
+    P = plan(next, s2, calmFor, aspect);
     if (l2) out.setAttribute('aria-label', l2);
     return (out.ready = pour());
   };
+  return out;
+}
+
+/** A room's light from a palette: the square inside its vat, 48 px, for a page to spread and soften
+ *  behind itself (a small picture scaled up is already soft, and costs next to nothing to hold). */
+export function glow(palette, { seed = 1 } = {}) {
+  const c = vat(palette, { size: 96, seed }), out = document.createElement('canvas');
+  out.width = out.height = 48;
+  out.ready = c.ready.then(() => { const side = c.width / Math.SQRT2, at = (c.width - side) / 2; out.getContext('2d').drawImage(c, at, at, side, side, 0, 0, 48, 48); return out; });
   return out;
 }

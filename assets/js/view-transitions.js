@@ -56,6 +56,12 @@
       return true;
     }
 
+    // Skip links a page handles itself, in place (a container marked data-own-links: Reverie, which
+    // changes from one colour to the next without leaving the page).
+    if (link.closest('[data-own-links]')) {
+      return true;
+    }
+
     // Skip if link has target="_blank"
     if (link.target === '_blank') {
       return true;
