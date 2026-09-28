@@ -765,10 +765,12 @@
   color: var(--on, #fff);
 
   > .colour-vat { position: absolute; inset: 0; width: 100%; height: 100%; }
+  &::after { @include surface-relief; }
 }
 
 .colour-drift__hex {
   position: absolute;
+  z-index: 1;
   left: clamp(1.2rem, 3vw, 2.4rem);
   bottom: clamp(1rem, 3vw, 2rem);
 }
@@ -778,7 +780,8 @@
   color: var(--on, #fff);
 
   > .colour-vat { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .reverie__hex { position: absolute; left: clamp(1.2rem, 3vw, 2.4rem); bottom: clamp(1rem, 3vw, 2rem); }
+  &::after { @include surface-relief; }
+  .reverie__hex { position: absolute; z-index: 1; left: clamp(1.2rem, 3vw, 2.4rem); bottom: clamp(1rem, 3vw, 2rem); }
 }
 
 // The viewer's tools where the lightbox keeps its own: top right, in the band the masthead sits in.
@@ -887,10 +890,13 @@
     height: 100%;
   }
 
+  &.is-poured::after { @include surface-relief; z-index: -1; } // no wall before its colour (reverie.js)
+
   .colour-kicker { color: inherit; opacity: 0.75; }
 }
 
 .reverie__words {
+  position: relative;
   width: 100%;
   max-width: calc(80rem - 2 * var(--photobook-gutter));
   margin-inline: auto;
@@ -937,8 +943,7 @@
   color: inherit;
   user-select: all;
 
-  // The colour itself beside its name, as tall as the figures and on their line; a hairline in the
-  // text's ink keeps it seen on a ground of its own colour.
+  // The colour itself beside its name, as tall as the figures and on their line.
   &::after {
     content: "";
     display: inline-block;
@@ -947,7 +952,6 @@
     margin-left: 0.22em;
     border-radius: 50%;
     background: var(--c, transparent);
-    box-shadow: 0 0 0 max(1px, 0.012em) currentColor;
     vertical-align: baseline;
   }
 }

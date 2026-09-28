@@ -121,6 +121,7 @@ async function main() {
       if (shown?.f !== f) crossfade(room, glow(f.sig, { seed }));
       dye.querySelector(':scope > .colour-vat')?.remove();
       dye.prepend(field);
+      dye.classList.add('is-poured');
       dye.style.setProperty('--on', ink(hex));
       hexEl.textContent = HEX;
       hexEl.style.setProperty('--c', hex);

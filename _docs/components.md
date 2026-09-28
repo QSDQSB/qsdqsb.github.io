@@ -35,6 +35,7 @@ That is what made it look like a different site (2026-09-27).
 | Piece | Mixin | For | Used by |
 |---|---|---|---|
 | Bar glass | `glass-bar` | The darkened glass controls sit in over a photograph | the Photobook's dial and switch |
+| Surface relief | `surface-relief` | A flat colour field given a surface: wall or canvas relief under a raking light (a still SVG tile, soft light) | Reverie's opening, a colour's lightbox frame, Drift's colour |
 | Wash | `wash` (+ `wash-layer`) | A room lit by a picture's colour, crossfading layer to layer (`assets/js/photobook/wash.js`) | the lightbox, the palette page's room |
 
 ## Motion
