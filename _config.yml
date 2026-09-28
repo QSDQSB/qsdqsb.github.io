@@ -124,6 +124,7 @@ exclude:
   - Rakefile
   - assets/js/_main.js
   - assets/js/plugins
+  - assets/js/colour/package.json   # tells Node these are ES modules; not site content
   - scripts
   - node_modules
   - assets/js/vendor

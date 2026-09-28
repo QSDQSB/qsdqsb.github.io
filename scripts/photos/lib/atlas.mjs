@@ -18,6 +18,7 @@
  */
 
 import { parsePalette, vectorOf, chi2, emd, colourPath, rgbToOklab, swatchesOf } from './palette.mjs';
+import { holding } from '../../../assets/js/colour/cards.js';
 
 /**
  * QSD's Palette (_pages/palette.html) and Reverie (_pages/reverie.html): for every voyage with colours, its signature (no black or
@@ -103,6 +104,24 @@ export function atlasOf(books, kindred = {}) {
   for (const p of photos) p.k = (kindred[p.hash] || []).map(([h]) => at.get(h)).filter(i => i != null);
   for (const p of photos) delete p.hash;
   return { photos, bands };
+}
+
+/**
+ * The landing page's Reverie (_includes/home/whats-new.html): every colour of Ridgway's book
+ * (assets/ridgway.json) that `least` photographs or more hold, by Reverie's own matching (cards.js
+ * holding), each as [name, hex, the photograph holding it most (`gallery/slug`), its signature], so
+ * the page can pour its dye and open its Reverie without the atlas. The photographs are still, so this
+ * is worked out here, once, not by every visitor.
+ */
+export function picksOf(atlas, book, { least = 3 } = {}) {
+  const frames = (atlas?.photos || []).filter(p => p.dots && p.sig);
+  if (!frames.length || !book?.colours?.length) return null;
+  const out = [];
+  for (const [name, hex] of book.colours) {
+    const held = holding(frames, `#${hex}`);
+    if (held.length >= least) out.push([name, hex, `${held[0].f.g}/${held[0].f.slug}`, held[0].f.sig]);
+  }
+  return out.length ? out : null;
 }
 
 /**

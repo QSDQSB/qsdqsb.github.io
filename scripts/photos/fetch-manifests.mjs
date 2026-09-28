@@ -13,6 +13,7 @@
  *                                                          palettes are known (lib/atlas.mjs)
  *   out  _data/photo_manifests/palettes.json               every voyage's palette, for QSD's Palette
  *   out  _data/photo_manifests/frames.json                 every voyage's lightbox frames, for Reverie
+ *   out  _data/photo_manifests/reverie-picks.json          Ridgway's colours the photographs hold, for the landing page
  *
  * Galleries are the `gallery_name` values referenced by _voyage and
  * _subvoyage frontmatter, so a voyage with no processed photos still gets
@@ -47,7 +48,7 @@ import { rcloneVersion, remoteExists } from './lib/rclone.mjs';
 import { mergeManifest, validateAuthored } from './lib/manifest.mjs';
 import { bookOf } from './lib/book.mjs';
 import { readSidecar, readKindred } from './palettes.mjs';
-import { atlasOf, palettesOf, framesOf, KINDRED_KEY } from './lib/atlas.mjs';
+import { atlasOf, palettesOf, framesOf, picksOf, KINDRED_KEY } from './lib/atlas.mjs';
 
 const require = createRequire(import.meta.url);
 const { referencedGalleries } = require('../check-gallery-integrity.js');
@@ -179,6 +180,10 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
   if (!local && !Object.keys(kindred).length) kindred = (await privateJson(KINDRED_KEY).catch(() => null))?.photos || {};
   const atlas = atlasOf(books, kindred);
   if (atlas) fs.writeFileSync(atlasFile, JSON.stringify(atlas) + '\n'); else fs.rmSync(atlasFile, { force: true });
+  // The landing page's Reverie: Ridgway's colours the photographs hold, each with where to find it.
+  const picksFile = path.join(PATHS.mergedDir, 'reverie-picks.json');
+  const picks = picksOf(atlas, JSON.parse(fs.readFileSync(path.join(PATHS.mergedDir, '..', '..', 'assets', 'ridgway.json'), 'utf8')));
+  if (picks) fs.writeFileSync(picksFile, JSON.stringify(picks) + '\n'); else fs.rmSync(picksFile, { force: true });
   // QSD's Palette, every voyage's colours on one page.
   const palettesFile = path.join(PATHS.mergedDir, 'palettes.json');
   const palettes = palettesOf(books);
