@@ -1021,6 +1021,85 @@
   html.reverie-in-place::view-transition-new(root) { animation: fade-in 0.32s $cubic-bezier-smooth 0.14s both; }
 }
 
+/* ── Utilities ─────────────────────────────────────────────────────────── */
+// Small tools (/utils/), set as the colour pages are: the palette page's column, its words and rules.
+.utils-page,
+.ridgway-page {
+  width: 100%; // a -webkit-box child: stated, or it shrinks to its content
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: clamp(6.5rem, 12vw, 9rem) var(--photobook-gutter) clamp(4rem, 8vw, 6rem);
+}
+
+.utils-list {
+  margin: clamp(2rem, 5vw, 3rem) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px dotted var(--photobook-line);
+
+  li { padding: 1.4rem 0; border-bottom: 1px dotted var(--photobook-line); }
+
+  a,
+  a:visited { font: 700 clamp(1.3rem, 2.2vw, 1.8rem)/1.2 $global-font-family; color: var(--photobook-ink); text-decoration: none; }
+  a:hover,
+  a:focus-visible { color: #fff; }
+
+  p { max-width: 44rem; margin: 0.55rem 0 0; @include lede; font-size: clamp(0.98rem, 1.2vw, 1.12rem); color: var(--photobook-ink-2); }
+}
+
+// Ridgway's colour book: a plate a section, its swatches as the book sets them, each named, its hex
+// beneath; those no photograph holds with their words dimmed, their colour always true (ridgway.js).
+.ridgway-plates { margin-top: clamp(2rem, 5vw, 3rem); }
+
+.ridgway-plate {
+  padding: clamp(1.4rem, 3vw, 2rem) 0;
+  border-top: 1px dotted var(--photobook-line);
+  // Laid out and painted only near the screen: fifty-three plates cost as little as one.
+  content-visibility: auto;
+  contain-intrinsic-size: auto 22rem;
+
+  ol {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+    gap: 1.2rem 0.9rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+.ridgway-plate__no { @include eyebrow; margin: 0; }
+
+.ridgway-swatch,
+.ridgway-swatch:visited {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.3s $cubic-bezier-smooth;
+
+  i { display: block; aspect-ratio: 3 / 2; background: var(--c); transition: box-shadow 0.3s $cubic-bezier-smooth; }
+  b { display: block; margin-top: 0.55rem; font: 500 0.8rem/1.3 $barlow-font-family; color: var(--photobook-ink); }
+  span { display: block; margin-top: 0.15rem; font: 500 max(0.62rem, 11px) $barlow-font-family; letter-spacing: 0.14em; color: var(--photobook-ink-3); font-variant-numeric: tabular-nums; }
+
+  // The door shows itself as a chosen block is marked: a white line inside the colour.
+  &:hover i,
+  &:focus-visible i { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.7); }
+  &:focus-visible { outline: none; }
+
+  // Held by no photograph: its words dimmed, never its colour (a colour book must show each true).
+  &.is-unheld :is(b, span) { opacity: 0.4; transition: opacity 0.3s $cubic-bezier-smooth; }
+  &.is-unheld:is(:hover, :focus-visible) :is(b, span) { opacity: 0.8; }
+}
+
+.ridgway-source {
+  margin: clamp(2rem, 4vw, 3rem) 0 0;
+  font: 400 max(0.72rem, 12px)/1.5 $barlow-font-family;
+  color: var(--photobook-ink-3);
+
+  a,
+  a:visited { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+}
+
 @mixin colour-still {
   .colour-tile,
   .colour-sky__sun,
@@ -1035,7 +1114,9 @@
   .palette-page,
   .palette-voyage__vat canvas,
   .palette-blocks a i,
-  .reverie__near a { transition: none; }
+  .reverie__near a,
+  .ridgway-swatch,
+  .ridgway-swatch :is(i, b, span) { transition: none; }
   .palette-voyages__list { animation: none; }
   .palette-card.is-from .palette-card__print { animation: none; outline-color: var(--photobook-ink-2); }
 }

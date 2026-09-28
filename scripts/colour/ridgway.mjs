@@ -8,8 +8,11 @@
  *
  *   node scripts/colour/ridgway.mjs <unzipped pg63087-h folder>   → assets/ridgway.json
  *
+ * Each colour as [name, hex, plate], in the book's order: plate by plate, as the swatches stand on it.
+ *
  * The plates are over a century old and photographed: a name here evokes a colour; it does not
- * measure one. Used by Reverie (assets/js/colour/reverie.js) to name a colour when one lies close.
+ * measure one. Used by Reverie (assets/js/colour/reverie.js) to name a colour when one lies close, and
+ * by the colour book (/utils/ridgway/, assets/js/colour/ridgway.js).
  */
 
 import fs from 'node:fs';
@@ -34,12 +37,13 @@ const toHex = ([L, a, b]) => {
   return [4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s, -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s, -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s].map((x) => gam(x).toString(16).padStart(2, '0')).join('');
 };
 
-// Every swatch as the page names it: <a title="Clay Color"><img src="images/xxix_17pp___clay_color.jpg">
+// Every swatch as the page names it, in its order: <a title="Clay Color"><img alt="XXIX_17′′___Clay_Color"
+// src="images/xxix_17pp___clay_color.jpg"> (the plate first in the image's words).
 const html = fs.readFileSync(path.join(dir, 'pg63087-images.html'), 'utf8');
-const swatches = [...html.matchAll(/<a title="([^"]+)"[^>]*>\s*<img[^>]*src="(images\/[^"]+)"/g)].map(([, name, src]) => ({ name: name.replace(/&amp;/g, '&').trim(), src }));
+const swatches = [...html.matchAll(/<a title="([^"]+)"[^>]*>\s*<img[^>]*alt="([^"_]+)_[^"]*"[^>]*src="(images\/[^"]+)"/g)].map(([, name, plate, src]) => ({ name: name.replace(/&amp;/g, '&').trim(), plate: plate.toUpperCase(), src }));
 
 const out = [];
-for (const { name, src } of swatches) {
+for (const { name, plate, src } of swatches) {
   // The middle three-fifths of the swatch, each pixel in OKLab; the lightest and darkest tenth (the
   // paper's specks, a speck of dust) left out, the rest averaged.
   const { data, info } = await sharp(path.join(dir, src)).removeAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -50,9 +54,13 @@ for (const { name, src } of swatches) {
   px.sort((p, q) => p[0] - q[0]);
   const keep = px.slice(Math.floor(px.length * 0.1), Math.ceil(px.length * 0.9));
   const mean = [0, 1, 2].map((k) => keep.reduce((s, p) => s + p[k], 0) / keep.length);
-  out.push([name, toHex(mean)]);
+  out.push([name, toHex(mean), plate]);
 }
-out.sort((a, b) => a[0].localeCompare(b[0]));
+// The book's order: plate by plate (I to LIII), each as its page lays it out.
+const roman = (r) => [...r].reduce((n, c, i, a) => { const v = { I: 1, V: 5, X: 10, L: 50 }[c], w = { I: 1, V: 5, X: 10, L: 50 }[a[i + 1]] || 0; return n + (v < w ? -v : v); }, 0);
+out.forEach((c, i) => { c.at = i; });
+out.sort((a, b) => roman(a[2]) - roman(b[2]) || a.at - b.at);
+out.forEach((c) => { delete c.at; });
 
 const file = path.join(path.dirname(new URL(import.meta.url).pathname), '../../assets/ridgway.json');
 fs.writeFileSync(file, JSON.stringify({
