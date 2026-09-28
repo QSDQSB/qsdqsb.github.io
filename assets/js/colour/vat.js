@@ -11,7 +11,7 @@
  *
  * vat(palette, { size, width, height, shape, seed, stir, label, calm }) → a canvas. `palette` is
  * [{hex, pc, accent}] or [[hex, pc, accent]]; `calm` (0 stirred … 1 layered) overrides the choice; the vat is `size` across (or the smaller of width and height), centred, transparent
- * round it. `shape: 'rect'` pours the same dye into the whole width × height instead, its colours
+ * round it; `soon` measures it at once (for the one vat a page waits on). `shape: 'rect'` pours the same dye into the whole width × height instead, its colours
  * spread along its length and measured over all of it, so each still covers its share (Reverie's
  * opening); drawn small and shown large (it is a mood, and softens as it spreads), it costs no more
  * than a round vat. Still by default: painted on one shared WebGL canvas and copied out, so a page of frames
@@ -236,7 +236,7 @@ function pump() {
  */
 const stillness = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export function vat(palette, { size = 176, width = size, height = size, shape = 'round', seed = 1, stir = false, speed = 15, label = '', calm: calmFor = null } = {}) {
+export function vat(palette, { size = 176, width = size, height = size, shape = 'round', seed = 1, stir = false, speed = 15, label = '', calm: calmFor = null, soon = false } = {}) {
   const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(width * dpr), H = Math.round(height * dpr);
   const moving = !!stir && !stillness();
   const out = document.createElement('canvas'); out.width = W; out.height = H;
@@ -300,7 +300,9 @@ export function vat(palette, { size = 176, width = size, height = size, shape = 
     if (known) { draw({ gain: known }); return Promise.resolve(out); }
     // At once where it cannot be deferred (WebGL 1), and with motion off (a reader who asked for
     // stillness, a screenshot that must find every vat drawn): nothing there moves to be spoiled.
-    if (!r0.async || stillness()) { const m = measureNow(r0, P); keep(P.key, m.gain); draw(m); return Promise.resolve(out); }
+    // `soon`: one vat a page waits on (Reverie's opening) is measured there and then, a few ms, rather
+    // than a round a frame (its readings a frame late each) for up to sixteen.
+    if (!r0.async || stillness() || soon) { const m = measureNow(r0, P); keep(P.key, m.gain); draw(m); return Promise.resolve(out); }
     if (!shown) out.dataset.pouring = '';
     const mine = P;
     return measureLater(P).then((m) => {
