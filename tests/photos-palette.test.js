@@ -236,3 +236,13 @@ test('a dye vat is poured the same way for the same gallery, and differently for
   assert.notEqual(seedOf('london'), seedOf('oxford'));
   for (const g of ['london', 'prague/twilight', 'japan/kyoto']) assert.ok(seedOf(g) >= 1 && seedOf(g) < 2147483647);
 });
+
+test('the frames for a lightbox away from its book leave the placeholder behind', async () => {
+  const { framesOf } = await import('../scripts/photos/lib/atlas.mjs');
+  const f = { slug: 'a', url: 'https://img/x', sizes: [480], ratio: 1.5, name: 'A', ph: 'data:image/png;base64,AAAA', glow: ['rgb(1,2,3)'] };
+  const out = framesOf([{ gallery: 'g/h', book: { lightbox: [f] } }, { gallery: 'none', book: {} }]);
+  assert.deepEqual(Object.keys(out), ['g/h'], 'only galleries with frames');
+  assert.equal(out['g/h'][0].ph, undefined, 'no placeholder');
+  assert.deepEqual(out['g/h'][0].glow, ['rgb(1,2,3)'], 'the glow kept for the room');
+  assert.equal(framesOf([]), null);
+});

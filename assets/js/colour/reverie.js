@@ -4,9 +4,10 @@
  * picture at least), the one it was found in first. The colour leads: its dye across the whole width
  * (a rectangular vat, the colour given the most of it and that photograph's colours round it), its hex
  * set large. Beneath, the colours nearby, a step away each, to wander to; then the photographs, as the
- * palette page's cards but bare: prints and their words, nothing laid over the mood. A print opens full
- * screen and stays in the colour (Drift, walking this colour from it, held still; its ‹ comes back
- * here); a voyage's name opens its palette.
+ * palette page's cards but bare: prints and their words, nothing laid over the mood. A print opens in
+ * the book's own lightbox, over the page (../photobook/lightbox.js: its specs, keys and rail), the
+ * colour its first frame and each photograph's dye vat a dot on the rail; closing it is back in the
+ * colour, where it was left. A voyage's name opens its palette.
  *
  * Moving to another colour stays in the page (history kept): the dye turns to the new colour in place,
  * as the palette page's vat does, and the hex gives way to the next. From further down, the page
@@ -22,6 +23,7 @@
 
 import { tips } from '../photobook/tip.js';
 import { crossfade } from '../photobook/wash.js';
+import { lightbox } from '../photobook/lightbox.js';
 import { vat, seedOf, oklab, glow } from './vat.js';
 import { esc, ink, card, reverieOf, holding, nearby, focus } from './cards.js';
 
@@ -61,6 +63,41 @@ async function main() {
   root.prepend(room);
   let shown = null;
 
+  // The book's lightbox, over the page. Its frames are laid when it opens (the colour, then the
+  // photographs as the cards stand), from every voyage's lightbox frames (/assets/frames.json,
+  // fetched once, when first wanted).
+  let book = null;
+  const books = () => (book ??= fetch(new URL('../../frames.json', import.meta.url)).then((r) => r.json()).catch(() => ({})));
+  const lbFrames = [], lbEl = document.getElementById('photobook-lightbox');
+  const cardPrints = () => body.querySelectorAll('.palette-card__print');
+  const lb = lightbox(lbFrames, {
+    printOf: (i) => (i === 0 ? dye : cardPrints()[i - 1]),
+    mark: (p) => (p.paint ? vat(p.dye, { size: 16, seed: p.seed }) : vat(p.signature || p.sig || [], { size: 16, seed: seedOf(`${p.g}/${p.slug}`) })),
+  });
+  async function lay() {
+    const all = await books(), { f, hex, found, focused } = shown, HEX = hex.toUpperCase();
+    const seed = seedOf(`${f.g}/${f.slug}`);
+    const colour = {
+      slug: 'colour', name: HEX, place: HEX, city: `In ${found.length} photograph${found.length === 1 ? '' : 's'}`, ratio: 16 / 9, dye: focused, seed,
+      paint() {
+        const el = document.createElement('div');
+        el.style.setProperty('--on', ink(hex));
+        el.append(vat(focused, { shape: 'rect', width: 200, height: 112, seed }));
+        el.insertAdjacentHTML('beforeend', `<p class="reverie__hex" style="--c:${hex}">${HEX}</p>`);
+        return el;
+      },
+      room: () => glow(focused, { seed }),
+    };
+    const photos = found.map(({ f: p }) => {
+      const fr = (all[p.g] || []).find((x) => x.slug === p.slug) || { slug: p.slug, url: p.url, sizes: p.sizes, ratio: p.r, name: p.name };
+      return { ...fr, g: p.g, voyage: pages[p.g].title };
+    });
+    lbFrames.splice(0, lbFrames.length, colour, ...photos);
+  }
+  async function openAt(k, img = null) { await lay(); lb.open(k, null, img); }
+  // The way back, named for the colour.
+  const lbBack = lbEl?.querySelector('.photobook-lightbox__back');
+
   /**
    * A colour's Reverie, made ready off the page (the dye measured and drawn), then set in at once by the
    * returned `put`: a view transition must find its change ready, as the page does not draw while it waits.
@@ -86,6 +123,7 @@ async function main() {
       dye.prepend(field);
       dye.style.setProperty('--on', ink(hex));
       hexEl.textContent = HEX;
+      hexEl.style.setProperty('--c', hex);
       near.innerHTML = `<p class="reverie__near-label">Nearby</p><ol>${around.map((c) => `<li>${c.here
         ? `<span class="is-here" style="--c:${c.hex}" aria-current="true" aria-label="${c.hex.toUpperCase()}, here"></span>`
         : `<a href="${reverieOf(c.f.g, c.f.slug, c.hex)}" style="--c:${c.hex}" data-tip="${c.hex.toUpperCase()}" data-tip-side="top" aria-label="${c.hex.toUpperCase()}"></a>`}</li>`).join('')}</ol>`;
@@ -94,7 +132,9 @@ async function main() {
         <p class="reverie__count">${found.length > 1 ? `In ${found.length} photographs` : 'Only here, so far'}</p>
         <div class="palette-cards">${found.map(({ f: p }, i) => card(p, { href: `${base}drift/?from=${encodeURIComponent(`${p.g}/${p.slug}`)}&c=${hex.slice(1)}&src=${encodeURIComponent(`${f.g}/${f.slug}`)}&open`, label: 'full screen, in this colour', i, from: i === 0, place: pages[p.g].title, placeHref: `${base}palette/?at=${encodeURIComponent(p.slug)}#${p.g}`, plain: true })).join('')}</div>
         <p class="colour-next"><a href="${base}drift/?from=${encodeURIComponent(`${f.g}/${f.slug}`)}&c=${hex.slice(1)}">Drift in this colour <span aria-hidden="true">→</span></a><a href="${base}palette/?at=${encodeURIComponent(f.slug)}#${f.g}">QSD's Palette for ${esc(page.title)} <span aria-hidden="true">→</span></a></p>`;
-      shown = { f, hex };
+      shown = { f, hex, found, focused };
+      shownAt = location.search;
+      if (lbBack) { lbBack.lastChild.textContent = HEX; lbBack.setAttribute('aria-label', `Back to ${HEX}`); lbBack.dataset.tip = `Back to ${HEX} · Esc`; }
     };
   }
 
@@ -103,7 +143,7 @@ async function main() {
    * screen, it changes in place: the dye turns to the new colour and the hex gives way. From further
    * down, the page changes as the site's pages do (the root's fade) and comes back at the top.
    */
-  let changing = Promise.resolve();
+  let changing = Promise.resolve(), shownAt = '';
   function go(next) {
     changing = changing.then(async () => {
       const put = await prepare(next);
@@ -118,16 +158,20 @@ async function main() {
     return changing;
   }
 
-  // A colour nearby: its Reverie, in the page.
+  // A colour nearby: its Reverie, in the page. A print: the lightbox, over the page.
   root.addEventListener('click', (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    const print = e.target.closest('.palette-card__print');
+    if (print && lbEl) { e.preventDefault(); openAt([...cardPrints()].indexOf(print) + 1, print.querySelector('img')); return; }
     const a = e.target.closest('.reverie__near a[href]');
-    if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    if (!a) return;
     const url = new URL(a.href, location.href);
     e.preventDefault();
     history.pushState(null, '', url.pathname + url.search);
     go(read(url.href));
   });
-  addEventListener('popstate', () => go(read(location.href)));
+  // Back and forward between colours (the lightbox's own steps, open and closed, keep the address).
+  addEventListener('popstate', () => { if (lbEl?.open || location.search === shownAt) return; go(read(location.href)); });
 
   // Back from a print (Drift's ‹): the page as it was left, where it was left.
   const key = () => `reverie-at:${location.search}`;
@@ -139,6 +183,10 @@ async function main() {
   changing = prepare(first).then((put) => {
     put();
     if (returning) { try { const y = Number(sessionStorage.getItem(key())); if (y) requestAnimationFrame(() => scrollTo({ top: y, behavior: 'instant' })); } catch { /* no memory */ } }
+    // A link to one of its photographs (#slug) opens it.
+    const slug = decodeURIComponent(location.hash.slice(1));
+    const k = slug ? shown.found.findIndex(({ f: p }) => p.slug === slug) : -1;
+    if (k >= 0) openAt(k + 1);
   });
 }
 

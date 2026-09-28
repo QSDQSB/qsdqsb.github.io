@@ -12,8 +12,8 @@ masthead_back_label: QSD's Palette
   Reverie: one colour, and every photograph from any voyage that holds it (close to the eye), the one
   it was found in first. The colour leads: its dye across the whole width (that photograph's colours
   round it), its hex set large; beneath, the colours nearby, a step away each, to wander to; then the
-  photographs, as the palette page's cards. A colour on any of them begins a Reverie of its own, in
-  the page. /reverie/?c=<hex>&from=<gallery>/<slug>; without a colour, the photograph's leading one;
+  photographs, as the palette page's cards, each opening in the book's own lightbox over the page,
+  the colour its first frame. A colour nearby begins a Reverie of its own, in the page. /reverie/?c=<hex>&from=<gallery>/<slug>; without a colour, the photograph's leading one;
   without either, a photograph at random.
   Data: /assets/palettes.json. Script: assets/js/colour/reverie.js. Styles: _sass/_colour.scss.
 {%- endcomment -%}
@@ -32,4 +32,6 @@ masthead_back_label: QSD's Palette
   </div>
   <footer class="colour-end">{% include presented-by-qsd.html line="Shot by QSD." %}</footer>
 </main>
+{%- comment -%} A print opens in the book's own lightbox, over the page (assets/js/photobook/lightbox.js). {%- endcomment -%}
+{% include photobook/lightbox.html %}
 <script type="module" src="{{ '/assets/js/colour/reverie.js' | relative_url }}"></script>
