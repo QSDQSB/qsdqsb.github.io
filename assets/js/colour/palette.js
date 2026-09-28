@@ -66,13 +66,24 @@ async function main() {
   // from one voyage's palette to the next is a step to its neighbour.
   const railed = voyages.every((v) => Number.isFinite(v.rank)) ? [...voyages].sort((a, b) => a.rank - b.rank) : voyages;
 
+  // Every voyage by place, by name: a trip told in parts under its own (Prague: Castle, Twilight…),
+  // the rest on their own. The list beside the page and the page of every palette keep this order.
+  const trips = data.trips || {};
+  const titleOf = (top) => trips[top] || top.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase());
+  const byName = (a, b) => nameOf(a).localeCompare(nameOf(b));
+  const tops = new Map();
+  for (const v of voyages) { const top = v.g.split('/')[0]; if (!tops.has(top)) tops.set(top, []); tops.get(top).push(v); }
+  const byPlace = [...tops]
+    .map(([top, vs]) => { const parts = vs.some((v) => v.g.includes('/')); return { parts, vs: parts ? vs.sort(byName) : vs, label: parts ? titleOf(top) : nameOf(vs[0]) }; })
+    .sort((a, b) => a.label.localeCompare(b.label));
+
   function index() {
     document.title = document.title.replace(/^[^·]*·/, "QSD's Palette ·");
     title.textContent = "QSD's Palette";
     backTo(back?.dataset.home, back?.dataset.homeLabel);
     kicker.textContent = 'From the voyages';
     stage.innerHTML = `<p class="colour-lede">The colours of every voyage: each one's own, pooled from its photographs, without the black and white that every journey has.</p>
-      <ol class="palette-index">${voyages.map((v) => `<li><a href="#${v.g}" class="palette-index__name">${esc(nameOf(v))}</a>${strip(sig(v), { href: `#${v.g}`, label: `QSD's Palette for ${nameOf(v)}` })}</li>`).join('')}</ol>`;
+      <ol class="palette-index">${byPlace.flatMap(({ vs }) => vs).map((v) => `<li><a href="#${v.g}" class="palette-index__name">${esc(nameOf(v))}</a>${strip(sig(v), { href: `#${v.g}`, label: `QSD's Palette for ${nameOf(v)}` })}</li>`).join('')}</ol>`;
   }
 
   function voyage(v, at) {
@@ -120,13 +131,22 @@ async function main() {
   // Each frame's own vat, poured as its card nears the screen, one a frame so scrolling stays smooth;
   // kept once poured, so a change of order moves them rather than pouring them again.
   const poured = new Map();
-  let queue = [];
-  const next = () => { const job = queue.shift(); if (!job) return; if (job.slot.isConnected) job.fill(); requestAnimationFrame(next); };
-  /** Pour a vat into each slot as it nears view (`root`, `margin`), one a frame; a vat poured once is kept. */
-  function drip(slots, keyOf, make, { root = null, margin = '600px 0px' } = {}) {
+  let queue = [], hold = 0, running = false, waking = 0;
+  // One a frame, and while a voyage is changing (hold) only those that may not wait: the frames'
+  // cards wait, the change has the frames to itself; the rail, seen gliding, does not.
+  const kick = () => { if (running) return; running = true; clearTimeout(waking); requestAnimationFrame(next); };
+  const next = () => {
+    const wait = hold - performance.now();
+    const at = wait > 0 ? queue.findIndex((j) => j.now) : 0;
+    if (!queue.length || at < 0) { running = false; if (queue.length) waking = setTimeout(kick, wait); return; }
+    const [job] = queue.splice(at, 1); if (job.slot.isConnected) job.fill(); requestAnimationFrame(next);
+  };
+  /** Pour a vat into each slot as it nears view (`root`, `margin`), one a frame; a vat poured once is
+   *  kept. `now`: poured even while a voyage is changing. */
+  function drip(slots, keyOf, make, { root = null, margin = '600px 0px', now = false } = {}) {
     const fill = (slot) => { const key = keyOf(slot); if (!poured.has(key)) poured.set(key, make(slot)); slot.replaceChildren(poured.get(key)); };
     const seen = new IntersectionObserver((entries) => {
-      for (const e of entries) if (e.isIntersecting) { seen.unobserve(e.target); if (queue.push({ slot: e.target, fill: () => fill(e.target) }) === 1) requestAnimationFrame(next); }
+      for (const e of entries) if (e.isIntersecting) { seen.unobserve(e.target); queue.push({ slot: e.target, fill: () => fill(e.target), now }); kick(); }
     }, { root, rootMargin: margin });
     for (const slot of slots) if (poured.has(keyOf(slot))) fill(slot); else seen.observe(slot);
     return seen;
@@ -164,9 +184,8 @@ async function main() {
    *  (a small picture scaled up is already soft, and costs next to nothing to hold). */
   function room(v) {
     const c = vat(v.palette, { size: 96, seed: seedOf(v.g) }), out = document.createElement('canvas');
-    const side = c.width / Math.SQRT2, at = (c.width - side) / 2;
     out.width = out.height = 48;
-    out.getContext('2d').drawImage(c, at, at, side, side, 0, 0, 48, 48);
+    c.ready.then(() => { const side = c.width / Math.SQRT2, at = (c.width - side) / 2; out.getContext('2d').drawImage(c, at, at, side, side, 0, 0, 48, 48); });
     return out;
   }
   function light(v) {
@@ -185,16 +204,27 @@ async function main() {
   function fillVat(v) {
     if (vatBox.dataset.g === v.g) return;
     vatBox.dataset.g = v.g;
-    const old = [...vatBox.children];
-    // Stirred while the pointer rests on it; settled back, true to its shares, when it leaves.
-    const fresh = vat(v.palette, { size: 176, seed: seedOf(v.g), stir: 'hover', label: `The colours of ${nameOf(v)}, run together as in a dye vat` });
-    vatBox.append(fresh);
-    const done = () => old.forEach((c) => { c.release?.(); c.remove(); });
-    if (!old.length || still()) { done(); return; }
+    const label = `The colours of ${nameOf(v)}, run together as in a dye vat`;
+    // One live vat for the page's life (stirred while the pointer rests on it, settled back when it
+    // leaves), repainted from voyage to voyage in the same context, so a change makes no new one.
+    let live = vatBox.querySelector('canvas.colour-vat:not(.is-was)');
+    if (!live) { live = vat(v.palette, { size: 176, seed: seedOf(v.g), stir: 'hover', label }); vatBox.append(live); return; }
+    if (still()) { live.repaint(v.palette, { seed: seedOf(v.g), label }); return; }
+    // The old dye kept as a still picture, over the live vat, while the live vat takes the new.
+    const was = Object.assign(document.createElement('canvas'), { width: live.width, height: live.height, className: 'colour-vat is-was' });
+    was.style.cssText = live.style.cssText; was.setAttribute('aria-hidden', 'true');
+    was.getContext('2d').drawImage(live, 0, 0);
+    vatBox.querySelectorAll('.is-was').forEach((c) => c.remove());
+    vatBox.append(was);
+    live.style.opacity = '0';
     // The vessel turns a little as its dye changes, whole: the old dye fades as it turns on, the new
-    // arrives turning in behind it and comes to rest.
-    for (const c of old) c.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'rotate(12deg)' }], { duration: CHANGE, easing: EASE, fill: 'forwards' });
-    fresh.animate([{ opacity: 0, transform: 'rotate(-12deg)' }, { opacity: 1, transform: 'none' }], { duration: CHANGE, easing: EASE }).finished.then(done, done);
+    // arrives turning in behind it and comes to rest (at once when its measure is remembered; a few
+    // frames on, the first time).
+    live.repaint(v.palette, { seed: seedOf(v.g), label }).then(() => {
+      was.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'rotate(12deg)' }], { duration: CHANGE, easing: EASE, fill: 'forwards' }).finished.then(() => was.remove(), () => was.remove());
+      live.style.opacity = '';
+      live.animate([{ opacity: 0, transform: 'rotate(-12deg)' }, { opacity: 1, transform: 'none' }], { duration: CHANGE, easing: EASE });
+    });
   }
 
   // The rail, above the title: built once, every voyage's dye vat by colour, without end: the run is
@@ -213,8 +243,9 @@ async function main() {
   };
   function copyOf(canvas) {
     const c = Object.assign(document.createElement('canvas'), { width: canvas.width, height: canvas.height, className: canvas.className });
-    c.style.cssText = canvas.style.cssText; c.setAttribute('aria-hidden', 'true');
-    c.getContext('2d').drawImage(canvas, 0, 0);
+    c.style.cssText = canvas.style.cssText; c.setAttribute('aria-hidden', 'true'); c.dataset.pouring = '';
+    canvas.ready.then(() => { c.getContext('2d').drawImage(canvas, 0, 0); delete c.dataset.pouring; });
+    c.ready = canvas.ready.then(() => c);
     return c;
   }
   function railTo(v) {
@@ -228,7 +259,7 @@ async function main() {
       drip(railList.querySelectorAll('a'), (a) => `rail/${a.dataset.g}/${a.dataset.copy}`, (a) => {
         const first = [0, 1, 2].map((k) => poured.get(`rail/${a.dataset.g}/${k}`)).find(Boolean);
         return first ? copyOf(first) : vat(voyages.find((x) => x.g === a.dataset.g).palette, { size: 40, seed: seedOf(a.dataset.g) });
-      }, { root: railList, margin: '0px 320px' });
+      }, { root: railList, margin: '0px 320px', now: true });
       let ticking = false;
       railList.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; wrap(); }); } }, { passive: true });
       // When the rail changes width (the list folded away, a window resized), the voyage on the page
@@ -271,18 +302,11 @@ async function main() {
   // on their own, each with its vat; the one on the page marked. A column on a laptop, folded away to
   // a slim strip and back (remembered); on a phone a sheet, opened from "Voyages" and closed by
   // choosing, Esc or ×.
-  const trips = data.trips || {};
-  const titleOf = (top) => trips[top] || top.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase());
   function buildMenu() {
-    const groups = new Map();
-    for (const v of voyages) { const top = v.g.split('/')[0]; if (!groups.has(top)) groups.set(top, []); groups.get(top).push(v); }
     const item = (v) => `<li><a href="#${v.g}" data-g="${v.g}"><i></i><span>${esc(nameOf(v))}</span></a></li>`;
-    const byName = (a, b) => nameOf(a).localeCompare(nameOf(b));
-    menuList.innerHTML = [...groups].map(([top, vs]) => ({ top, vs, label: vs.some((v) => v.g.includes('/')) ? titleOf(top) : nameOf(vs[0]) }))
-      .sort((a, b) => a.label.localeCompare(b.label))
-      .map(({ top, vs, label }) => (vs.some((v) => v.g.includes('/'))
-        ? `<section data-trip="${esc(label)}"><h2>${esc(label)}</h2><ol>${vs.sort(byName).map(item).join('')}</ol></section>`
-        : `<section data-trip=""><ol>${item(vs[0])}</ol></section>`)).join('');
+    menuList.innerHTML = byPlace.map(({ vs, label, parts }) => (parts
+      ? `<section data-trip="${esc(label)}"><h2>${esc(label)}</h2><ol>${vs.map(item).join('')}</ol></section>`
+      : `<section data-trip=""><ol>${item(vs[0])}</ol></section>`)).join('');
     drip(menuList.querySelectorAll('a i'), (i) => `menu/${i.parentElement.dataset.g}`, (i) => vat(voyages.find((x) => x.g === i.parentElement.dataset.g).palette, { size: 20, seed: seedOf(i.parentElement.dataset.g) }), { root: menuList, margin: '200px 0px' });
   }
   function menuTo(v) {
@@ -305,7 +329,10 @@ async function main() {
   };
   setFolded(store.get('palette-voyages') === 'folded');
   menuButton.addEventListener('click', () => openMenu(!menu.classList.contains('is-open')));
-  fold.addEventListener('click', () => (sheet.matches ? openMenu(false) : setFolded(!root.classList.contains('is-folded'))));
+  // Folding changes the layout once (the list's words fade, _colour.scss), rather than laying the page
+  // out again every frame.
+  const toggleFold = () => setFolded(!root.classList.contains('is-folded'));
+  fold.addEventListener('click', () => (sheet.matches ? openMenu(false) : toggleFold()));
   menuList.addEventListener('click', (e) => { if (e.target.closest('a')) openMenu(false); });
   menu.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-open')) { e.preventDefault(); openMenu(false); } });
   buildMenu();
@@ -364,6 +391,7 @@ async function main() {
     const v = voyages.find((x) => x.g === g);
     const at = new URLSearchParams(location.search).get('at');
     const token = ++routing, gliding = shown !== null && shown !== (v?.g ?? '') && !still();
+    if (gliding) hold = performance.now() + 300 + CHANGE;
     railTo(v);
     menuTo(v);
     light(v);
