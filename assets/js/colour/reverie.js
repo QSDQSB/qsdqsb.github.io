@@ -53,13 +53,13 @@ async function main() {
     if (!f && hex) f = holding(frames, hex, { least: 0 })[0]?.f;
     if (!f) f = frames[Math.floor(Math.random() * frames.length)];
     if (!hex) {
-      const lab = (h) => oklab(h), vivid = f.sig.filter(([h, pc]) => pc >= 8 && lab(h)[0] > 0.3).sort((a, b) => Math.hypot(...lab(b[0]).slice(1)) - Math.hypot(...lab(a[0]).slice(1)));
+      const vivid = f.sig.filter(([h, pc]) => pc >= 8 && oklab(h)[0] > 0.3).sort((a, b) => Math.hypot(...oklab(b[0]).slice(1)) - Math.hypot(...oklab(a[0]).slice(1)));
       hex = (vivid[0] || [...f.sig].sort((a, b) => b[1] - a[1])[0])[0];
     }
     return { f, hex };
   }
 
-  const dye = root.querySelector('.reverie__dye'), hexEl = root.querySelector('.reverie__hex'), codeEl = root.querySelector('.reverie__code'), namedEl = root.querySelector('.reverie__named'), chipEl = root.querySelector('.reverie__chip');
+  const dye = root.querySelector('.reverie__dye'), codeEl = root.querySelector('.reverie__code'), namedEl = root.querySelector('.reverie__named'), chipEl = root.querySelector('.reverie__chip');
   // Ridgway's names, each with its colour in OKLab; a colour is named by the nearest within reach.
   const ridgway = (await names).colours.map(([n, h]) => [n.replace(/\s*\(\d\)$/, ''), oklab(`#${h}`)]);
   const nameOf = (hex) => {
@@ -123,12 +123,12 @@ async function main() {
     const focused = focus(f.sig, hex);
     const box = dye.getBoundingClientRect();
     // Still, from the shared context (no context of its own to make, no program to compile): the colour
-    // changes at once. The stirrable one is made only when the dot is first pointed at (stirFrom, below).
+    // changes at once. The stirrable one is made only when the dot is first pointed at (below).
     const fw = Math.max(1, Math.round(box.width / 8)), fh = Math.max(1, Math.round(box.height / 8));
     const field = vat(focused, { shape: 'rect', width: fw, height: fh, seed, soon: true });
     await field.ready;
-    // The photographs that hold it, the one it was found in first; and the colours a step away.
-    // The one it was found in first, then the nearest others, no voyage crowding the rest out.
+    // The photographs that hold it: the one it was found in first, then the nearest others, no voyage
+    // crowding the rest out; and the colours a step away.
     const others = holding(frames, hex, { not: f }), all = others.length + 1;
     const found = [{ f }, ...varied(others, { most: SHOWN - 1 })];
     const around = [...nearby(frames, hex), { hex, f, here: true }].sort((a, b) => oklab(a.hex)[0] - oklab(b.hex)[0]);
@@ -144,7 +144,6 @@ async function main() {
       dye.classList.add('is-poured');
       dye.style.setProperty('--shade', shadeFor(hex));
       codeEl.textContent = HEX;
-      hexEl.style.setProperty('--c', hex);
       chipEl.style.background = hex;
       const named = nameOf(hex);
       namedEl.textContent = named; // its line kept, named or not, so the hex never moves between colours
