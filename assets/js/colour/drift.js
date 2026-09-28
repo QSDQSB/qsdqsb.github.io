@@ -61,9 +61,10 @@ async function main() {
   const source = colour ? indexOf(src) : -1;
   const inColour = colour ? [...(source >= 0 ? [source] : []), ...holding(all.filter((p) => p.dots), colour, { not: all[source] }).map(({ f }) => all.indexOf(f))] : [];
   const dye = colour && source >= 0 && all[source].sig?.length ? focus(all[source].sig, colour) : colour ? [[colour, 100]] : null;
-  let at = indexOf(from);
-  if (colour && !opened) at = COLOUR;
-  if (at < 0 && at !== COLOUR) at = inColour[0] ?? Math.floor(Math.random() * all.length);
+  // Opening on the colour itself, or on a photograph: as asked, else the colour's first, else any.
+  const onColour = !!colour && !opened;
+  let at = onColour ? COLOUR : indexOf(from);
+  if (!onColour && at < 0) at = inColour[0] ?? Math.floor(Math.random() * all.length);
   if (colour) {
     root.querySelector('.colour-drift__head .colour-kicker').textContent = `In ${colour.toUpperCase()}`;
     // The way back is to the colour: the Reverie the reader came from, as they left it, when they came
@@ -95,7 +96,7 @@ async function main() {
     if (i === COLOUR) return inColour[0] ?? null;
     const held = inColour.find((j) => !seen.has(j));
     if (held != null) return held;
-    const recent = new Set(way.slice(-3).map((k) => all[k].v));
+    const recent = new Set(way.slice(-3).filter((k) => k !== COLOUR).map((k) => all[k].v));
     const k = all[i].k || [];
     return k.find((j) => !seen.has(j) && !recent.has(all[j].v))
       ?? k.find((j) => !seen.has(j))
@@ -154,7 +155,7 @@ async function main() {
     el.ready.then(() => {
       if (way[pos] !== COLOUR) return;
       stage.appendChild(el);
-      caption.innerHTML = `<p class="colour-drift__name">${colour.toUpperCase()}</p><p class="colour-drift__meta">In ${inColour.length} photograph${inColour.length === 1 ? '' : 's'}</p>`;
+      caption.innerHTML = `<p class="colour-drift__meta">In ${inColour.length} photograph${inColour.length === 1 ? '' : 's'}</p>`; // the hex is on the dye itself
       openEl.href = `${REVERIE}?c=${colour.slice(1)}${src ? `&from=${encodeURIComponent(src)}` : ''}`;
       openEl.setAttribute('aria-label', 'Open in Reverie'); openEl.dataset.tip = 'Open in Reverie';
       for (const s of thread.children) s.classList.toggle('is-on', Number(s.dataset.k) === pos);

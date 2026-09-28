@@ -104,7 +104,7 @@ function renderer(canvas, { v2 = false } = {}) {
 // one, so the vats can be measured without stopping the page (below).
 let shared;
 function sharedRenderer() {
-  if (shared?.gl.isContextLost()) { shared = undefined; jobs.length = 0; }
+  if (shared?.gl.isContextLost()) { shared = undefined; for (const j of jobs.splice(0)) j.resolve(null); } // settled, not left waiting
   if (shared === undefined) shared = renderer(document.createElement('canvas'), { v2: true }) || false;
   return shared;
 }
@@ -298,7 +298,12 @@ export function vat(palette, { size = 176, width = size, height = size, shape = 
     if (!r0.async || stillness()) { const m = measureNow(r0, P); keep(P.key, m.gain); draw(m); return Promise.resolve(out); }
     if (!shown) out.dataset.pouring = '';
     const mine = P;
-    return measureLater(P).then((m) => { if (m && mine === P) { keep(P.key, m.gain); draw(m); } return out; });
+    return measureLater(P).then((m) => {
+      if (mine !== P) return out;
+      if (m) { keep(P.key, m.gain); draw(m); }
+      else { const r = sharedRenderer(); if (r) { const n = measureNow(r, P); keep(P.key, n.gain); draw(n); } else delete out.dataset.pouring; }
+      return out;
+    });
   };
   if (!shown) out.stir = () => {}; // until drawn
   out.ready = pour();

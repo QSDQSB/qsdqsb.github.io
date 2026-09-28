@@ -443,9 +443,10 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.6rem;
+  min-height: 3.8rem; // its height before the script fills it, so the title beneath never jumps
   margin: 0 0 clamp(1.4rem, 3vw, 2rem);
 
-  &:empty { display: none; }
+  @include responsive-down(mobile) { min-height: 3.375rem; }
 }
 
 .palette-rail__list {
@@ -717,6 +718,8 @@
   z-index: 1;
   min-height: 0;
   margin: clamp(4.5rem, 8vw, 5.5rem) var(--photobook-gutter) 0;
+
+  @include responsive-down(mobile) { margin-top: 7.1rem; } // beneath the tools' own band (below the masthead)
 }
 
 .colour-drift__print {
@@ -784,7 +787,7 @@
   &::after { @include surface-relief; }
 }
 
-.colour-drift__hex {
+.colour-drift__colour .colour-drift__hex {
   position: absolute;
   z-index: 1;
   left: clamp(1.2rem, 3vw, 2.4rem);
@@ -817,7 +820,8 @@
   transition: opacity 1.2s $cubic-bezier-smooth;
 
   .is-overture & { opacity: 0; }
-  @include responsive-down(mobile) { height: calc(3.6rem + env(safe-area-inset-top, 0px)); }
+  // On a phone the masthead fills the band: the tools stand just beneath it, still at the right.
+  @include responsive-down(mobile) { top: calc(4.1rem + env(safe-area-inset-top, 0px)); height: auto; padding-top: 0; }
 }
 
 .colour-drift__tool { @include round-tool; }
@@ -945,11 +949,12 @@
     height: 1.6rem;
     border-radius: 50%;
     background: var(--c);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14); // a dark colour still seen on the dark page
     transition: box-shadow 0.3s $cubic-bezier-smooth;
   }
 
   a:hover,
-  a:focus-visible { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.45); outline: none; }
+  a:focus-visible { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), inset 0 0 0 2px rgba(255, 255, 255, 0.45); outline: none; }
   .is-here { box-shadow: inset 0 0 0 2px #fff; }
 }
 
@@ -967,24 +972,34 @@
   color: inherit;
   user-select: all;
 
-  // The colour itself beside its name, as tall as the figures and on their line.
+  // The colour itself beside its figures, as tall as them and on their line, hung past the hex so the
+  // hex's width is its six figures alone (the name above aligns to them).
+  position: relative;
+  width: fit-content;
+
   &::after {
     content: "";
-    display: inline-block;
+    position: absolute;
+    left: 100%;
+    bottom: 0.21em;
     width: 0.7em;
     height: 0.7em;
     margin-left: 0.22em;
     border-radius: 50%;
     background: var(--c, transparent);
-    vertical-align: baseline;
   }
 }
 
-// Above the hex, small, the colour's name in Ridgway's nomenclature (1912), in the titles' Playfair.
-// The words stand at the dye's foot, so the hex keeps its corner whether a name is there or not.
+// Beneath the hex, as a colour chip names its colour, the name in Ridgway's nomenclature (1912), in
+// the titles' Playfair, upright. Its line is always there, named or not, so the hex stands in the same
+// place from one colour to the next.
 .reverie__named {
-  margin: 0.7rem 0 0;
-  font: 400 clamp(1rem, 1.35vw, 1.25rem)/1.3 $global-font-family;
+  min-height: 1.3em;
+  margin: 0.55rem 0 0;
+  white-space: nowrap; // one line always, or a long name would lift the hex
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font: 400 clamp(1.1rem, 1.8vw, 1.6rem)/1.3 $global-font-family;
   letter-spacing: 0.01em;
   color: inherit;
   opacity: 0.9;
@@ -1000,7 +1015,7 @@
 // happens, so nothing else is held.
 @supports (view-transition-name: none) {
   .reverie-in-place .reverie__dye { view-transition-name: reverie-dye; }
-  .reverie-in-place .reverie__hex { view-transition-name: reverie-hex; }
+  .reverie-in-place .reverie__hex:not(.is-painted) { view-transition-name: reverie-hex; }
   .reverie-in-place .reverie__named { view-transition-name: reverie-named; }
 
   ::view-transition-group(reverie-dye),
@@ -1021,6 +1036,10 @@
   html.reverie-in-place::view-transition-old(root) { animation: fade-out 0.18s $cubic-bezier-standard both; }
   html.reverie-in-place::view-transition-new(root) { animation: fade-in 0.32s $cubic-bezier-smooth 0.14s both; }
 }
+
+// A page drawn by its script keeps a screen's height until it is, so its ending (.colour-end) never
+// shows first and is then pushed down.
+:is(.palette-page__stage, .reverie__stage, .ridgway-plates):not(:has(> :not(noscript))) { min-height: 100svh; }
 
 /* ── Utilities ─────────────────────────────────────────────────────────── */
 // Small tools (/utils/), set as the colour pages are: the palette page's column, its words and rules.

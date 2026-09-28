@@ -125,7 +125,7 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     const here = !screening && pos >= 0 && printFor(order[pos]);
     const was = screening ? screenFrom : null;
     stop(); screening = false; lb.classList.remove('is-screening');
-    lb.classList.remove('has-specs', 'is-pinned', 'is-bare', 'is-idle'); pressed('bare', false); setZoom(1); placeSpecs();
+    lb.classList.remove('has-specs', 'is-pinned', 'is-bare', 'is-idle', 'is-painted'); pressed('bare', false); setZoom(1); placeSpecs();
     if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
     mat.replaceChildren(); wash.replaceChildren(); pos = -1;
     const back = here || lastFocus;
@@ -411,7 +411,7 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     const k = e.key.toLowerCase();
     if ((k === ' ' || k === 'enter') && e.target.closest?.('button')) return;
     if (k === 'arrowright') next(); else if (k === 'arrowleft') prev();
-    else if (k === ' ' || k === 's') ACTS.play(); else if (k === 'i') toggleSpecs(); else if (k === 'f') bare();
+    else if (k === ' ' || k === 's') ACTS.play(); else if (k === 'i') { if (!cur()?.paint) toggleSpecs(); } else if (k === 'f') bare();
     else if (k === 'z') setZoom(zoom > 1.02 ? 1 : 2.2); else return;
     e.preventDefault(); wake();
   });
