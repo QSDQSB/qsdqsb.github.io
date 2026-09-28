@@ -612,7 +612,10 @@ a.word_card--link {
   justify-content: center;
   align-items: center;
   transition: $cubic-bezier-default;
-  &:hover {
+  // Keyboard focus turns the card over as the pointer does; at opacity 0 the
+  // focus ring would be drawn on an invisible card.
+  &:hover,
+  &:focus-visible {
     transform: rotateY(12deg) rotateX(8deg);
     opacity: 1;
   }
@@ -620,7 +623,8 @@ a.word_card--link {
     transition: transform 1.5s $cubic-bezier-param, opacity 1.5s $cubic-bezier-param;
     transition-delay: 0.1s;
     transform: rotate(123deg);
-    &:hover {
+    &:hover,
+    &:focus-visible {
       transform: rotate(180deg) rotateY(12deg) rotateX(8deg);
       opacity: 1;  
     }
@@ -633,7 +637,8 @@ a.word_card--link {
   transform-style: preserve-3d;
   animation-play-state: paused;
   transform: rotateY(12deg);
-  &:hover {
+  &:hover,
+  &:focus-visible {
     animation-play-state: running;
     transform: none;
   }

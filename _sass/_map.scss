@@ -475,11 +475,6 @@
       background: rgba($lighter-gray, 0.04);
     }
 
-    &:focus-visible {
-      outline: none;
-      border-color: rgba($lighter-gray, 0.12);
-    }
-
     &.is-active {
       color: $lighter-gray;
       background: rgba($lighter-gray, 0.06);
@@ -489,6 +484,12 @@
         transform: scale(1.2);
         box-shadow: 0 0 0 2px rgba($lighter-gray, 0.12);
       }
+    }
+
+    // After .is-active, so focus on the active tag still reads as focus.
+    &:focus-visible {
+      outline: none;
+      border-color: rgba($lighter-gray, 0.5);
     }
 
     .legend-color {
