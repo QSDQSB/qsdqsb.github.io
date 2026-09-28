@@ -117,7 +117,8 @@ to light). The specs panel's palette and the colophon lead there.
 
 **The dye vat** (`assets/js/colour/vat.js`) is how a palette is drawn as a feeling rather than a
 reading: a round vat seen from above, the colours poured in and run together, each covering as much
-of the vat as its share (it measures itself on the GPU and adjusts until it does). A palette of one
+of the vat as its share (its weights worked out on the page, where the currents are computed exactly as
+the graphics card draws them). A palette of one
 family settles in misty layers, light above deep; a palette of contrasts is stirred into currents;
 the accent is a single wisp. Seeded by the gallery key (or `gallery/slug`), so the same palette always
 pours the same vat. It appears on `/palette/` (a rail of every voyage's vat above the title, ordered
