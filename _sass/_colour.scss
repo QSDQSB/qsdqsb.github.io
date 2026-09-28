@@ -940,9 +940,6 @@
 // The colour's words on its dye: the eyebrow, the hex with a dot of the colour after its figures
 // (pointing at it stirs the dye), and the colour's name beneath.
 .reverie__words {
-  display: flex;
-  align-items: flex-end;
-  gap: clamp(1.2rem, 3vw, 2.6rem);
   position: relative;
   z-index: 1;
   width: 100%;

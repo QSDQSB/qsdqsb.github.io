@@ -10,7 +10,7 @@ export const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&am
 
 /** Black or white for the hex on a block, whichever reads better against it (WCAG contrast). */
 const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
-export const ink = (h) => {
+const ink = (h) => {
   const n = parseInt(h.slice(1), 16), L = 0.2126 * lin(n >> 16) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
   return (L + 0.05) / 0.05 > 1.05 / (L + 0.05) ? '#000' : '#fff'; // pure, so even a middling colour reads at 4.5:1 or better
 };
@@ -57,7 +57,7 @@ export function card(p, { href, i, n = i, from = false, pick = null, place = '',
 
 /** Close to the eye: two colours nearer than this in OKLab read as one (a colour finds a median of 24
  *  photographs so, 43 at the most common; at 0.05 it was 117, too many to call one colour). */
-export const NEAR = 0.025;
+const NEAR = 0.025;
 const labs = new Map();
 const lab = (h) => { if (!labs.has(h)) labs.set(h, oklab(h)); return labs.get(h); };
 /** Every frame holding a colour close to `hex`, the most of it first: each by its nearest such colour,
@@ -148,14 +148,9 @@ export function nearby(frames, hex, { from = 0.04, to = 0.08, most = 14 } = {}) 
   found.sort((a, b) => b.share - a.share);
   const out = [];
   for (const c of found) if (out.length < most && out.every((o) => Math.hypot(o.lab[0] - c.lab[0], o.lab[1] - c.lab[1], o.lab[2] - c.lab[2]) > from)) out.push(c);
-  return out;
+  // A colour out on its own (the far reaches, where a wander leads) looks further, so it is never an end.
+  return out.length < 3 && to < 0.12 ? nearby(frames, hex, { from, to: 0.12, most }) : out;
 }
-/** A frame's own colour nearest to `hex`: among its dots, or its palette. */
-export function nearestIn(f, hex, { of = 'dots' } = {}) {
-  const P = lab(hex), list = of === 'dots' ? dots(f).map((d) => d.hex) : (f.sig || []).map(([h]) => h);
-  return list.map((h) => ({ h, x: Math.hypot(...lab(h).map((v, k) => v - P[k])) })).sort((a, b) => a.x - b.x)[0]?.h || null;
-}
-
 /**
  * A queue that pours a vat into each slot as it nears view, one a frame so scrolling stays smooth; a
  * vat poured once is kept (`poured`), so a change of order moves it rather than pouring it again.
