@@ -19,18 +19,18 @@ masthead_back_label: QSD's Palette
   Data: /assets/colour-atlas.json. Script: assets/js/colour/reverie.js. Styles: _sass/_colour.scss.
 {%- endcomment -%}
 <main class="reverie" id="reverie">
-  <header class="reverie__dye">
+  <header class="reverie__dye" tabindex="-1">
     <div class="reverie__words">
       <div class="reverie__label">
         <p class="colour-kicker">Reveries</p>
-        <h1 class="reverie__hex"><span class="reverie__code">Reverie</span><span class="reverie__chip" aria-hidden="true"></span></h1>
+        <h1 class="reverie__hex" tabindex="-1"><span class="reverie__code">Reverie</span><span class="reverie__chip" aria-hidden="true"></span></h1>
         <p class="reverie__named" data-tip="After Robert Ridgway, Color Standards and Color Nomenclature (1912)" data-tip-side="bottom"></p>
       </div>
     </div>
   </header>
   <div class="reverie__body">
     <nav class="reverie__near" aria-label="Colours nearby"></nav>
-    <div class="reverie__stage" aria-live="polite">
+    <div class="reverie__stage">
       <noscript><p class="colour-empty">Reverie is drawn by a script; with it off, the photographs are in the <a href="{{ '/voyage/' | relative_url }}">voyages</a>.</p></noscript>
     </div>
   </div>
@@ -39,7 +39,7 @@ masthead_back_label: QSD's Palette
     <h4 class="barlow"><i class="fa-solid fa-feather" aria-hidden="true"></i><span class="visually-hidden">The word</span></h4>
     <div class="word_card_container">
       <div class="word_card">
-        <h1 lang="en" translate="no">Reverie</h1>
+        <h2 lang="en" translate="no">Reverie</h2>
         <span class="word_card__origin">French · 14th century</span>
         <p>A state of pleasant, dreamlike musing; being wholly <span class="to-emphasise">lost in one's thoughts</span>. From Old French <i lang="fr">resver</i>, "to wander, to rave", the verb that also became <i lang="fr">rêver</i>, "to dream".</p>
       </div>

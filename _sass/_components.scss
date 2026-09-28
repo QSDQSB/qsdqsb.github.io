@@ -84,6 +84,13 @@
   svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; }
 }
 
+// The keyboard's mark on a swatch that may be any colour, pale or deep: the house's brass hairline
+// (as the map's), set off the edge so no swatch can hide it. :focus-visible only; the pointer keeps its own.
+@mixin brass-focus {
+  outline: 2px solid rgba($intriguing-word-color, 0.6);
+  outline-offset: 2px;
+}
+
 // A quiet control: a mark in the label's ink, lit under the pointer; no ring, no fill.
 // A viewer's round tool, top right of a full-screen photograph (slideshow, specs, picture only, the
 // way to its book): a glass disc with a line mark; lit when on. The lightbox's, and Drift's.

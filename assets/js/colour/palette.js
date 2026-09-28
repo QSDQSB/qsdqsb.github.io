@@ -22,7 +22,7 @@ const store = { get: (k) => { try { return localStorage.getItem(k); } catch { re
 
 const root = document.getElementById('palette-page');
 const stage = root?.querySelector('.palette-page__stage');
-const title = root?.querySelector('h1');
+const title = root?.querySelector('h1'), status = document.getElementById('palette-status');
 const kicker = root?.querySelector('.palette-page__home');
 const railNav = root?.querySelector('.palette-rail');
 const back = document.querySelector('.masthead__back');
@@ -101,7 +101,8 @@ async function main() {
     stage.querySelector('.palette-page__order').onclick = (e) => {
       const b = e.target.closest('button[data-order]'); if (!b || b.dataset.order === order) return;
       order = b.dataset.order; store.set('palette-order', order);
-      const redraw = () => voyage(v, null);
+      // The buttons are drawn again with the frames: the one pressed keeps the focus.
+      const redraw = () => { voyage(v, null); stage.querySelector(`[data-order="${order}"]`)?.focus({ preventScroll: true }); };
       if (still() || !document.startViewTransition) { redraw(); return; }
       // Only the frames on or near the screen are named for the move (as the book's sheet does), and
       // only for as long as it lasts.
@@ -113,12 +114,14 @@ async function main() {
     // held in a ring for a moment (_colour.scss).
     const from = at && document.getElementById(`f-${at}`);
     if (from) {
-      if (still()) requestAnimationFrame(() => { from.scrollIntoView({ block: 'center', behavior: 'instant' }); from.classList.add('is-arrived'); });
+      // Focus goes with the reader to the frame they came from (the ring is its mark: no outline).
+      const land = () => { from.classList.add('is-arrived'); from.tabIndex = -1; from.focus({ preventScroll: true }); };
+      if (still()) requestAnimationFrame(() => { from.scrollIntoView({ block: 'center', behavior: 'instant' }); land(); });
       else setTimeout(() => {
         if (!from.isConnected) return;
         from.scrollIntoView({ block: 'center', behavior: 'smooth' });
         // The ring once the glide has landed (scrollend), or at the latest a moment on.
-        const lit = () => from.classList.add('is-arrived');
+        const lit = () => { if (!from.classList.contains('is-arrived')) land(); };
         addEventListener('scrollend', lit, { once: true }); setTimeout(lit, 1400);
       }, 900);
     }
@@ -204,7 +207,8 @@ async function main() {
   const runWidth = () => { const a = railList.children[railed.length], b = railList.children[0]; return a.offsetLeft - b.offsetLeft; };
   const centre = (el) => el.offsetLeft - (railList.clientWidth - el.offsetWidth) / 2;
   const wrap = () => {
-    if (gliding_) return;
+    // Not while the keyboard is on the rail: the jump would leave the focused vat off screen.
+    if (gliding_ || railList.contains(document.activeElement)) return;
     const run = runWidth(), x = railList.scrollLeft;
     if (x < run * 0.5) railList.scrollLeft = x + run;
     else if (x > run * 1.5) railList.scrollLeft = x - run;
@@ -285,6 +289,8 @@ async function main() {
   }
   const openMenu = (open) => {
     menu.classList.toggle('is-open', open);
+    // As a sheet over the page, the page behind it is out of reach until it closes.
+    for (const el of [root.querySelector('.palette-page__body'), root.querySelector('.colour-end'), document.querySelector('.masthead')]) if (el) el.inert = open && sheet.matches;
     menuButton.setAttribute('aria-expanded', String(open));
     if (open) fold.focus({ preventScroll: true }); else if (menu.contains(document.activeElement)) menuButton.focus({ preventScroll: true });
   };
@@ -369,8 +375,12 @@ async function main() {
       await Promise.all(parts().map((el) => el.animate([{ opacity: getComputedStyle(el).opacity, transform: 'none' }, { opacity: 0, transform: 'translateY(-4px)' }], { duration: 300, easing: EASE, fill: 'forwards' }).finished.catch(() => {})));
       if (token !== routing) return;
     }
+    const changed = shown !== null, hadFocus = stage.contains(document.activeElement);
     shown = v?.g ?? '';
     if (v) voyage(v, at); else index();
+    // Said once, not the whole stage read out; and focus, if the reader was in what was replaced, to the title.
+    if (changed) status.textContent = title.textContent;
+    if (hadFocus && !(v && at)) title.focus({ preventScroll: true });
     scrollTo({ top: 0, behavior: 'instant' });
     for (const el of parts()) el.getAnimations().forEach((a) => a.cancel());
     // …and the new one settles in as a page arrives (0.4 s, the smooth curve).

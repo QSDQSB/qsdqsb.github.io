@@ -32,7 +32,7 @@ export const reverieOf = (g, slug, hex = null) => `${REVERIE}?${[hex ? `c=${hex.
 export const blocks = (cs, { pick = null, link = null } = {}) => `<div class="palette-blocks">${cs.map(([h, pc, accent]) => {
   const to = link?.(h), tag = to ? 'a' : 'div';
   const cls = [accent ? 'is-accent' : '', h === pick ? 'is-picked' : ''].filter(Boolean).join(' ');
-  return `<${tag}${cls ? ` class="${cls}"` : ''}${to ? ` href="${to}" draggable="false" data-tip="Reverie in ${h.toUpperCase()}" data-tip-side="top"` : ''}><i style="--c:${h};--on:${ink(h)}">${h.slice(1).toUpperCase()}</i><b>${Math.round(pc * 10) / 10}%</b></${tag}>`;
+  return `<${tag}${cls ? ` class="${cls}"` : ''}${to ? ` href="${to}" draggable="false" data-tip="Reverie in ${h.toUpperCase()}" data-tip-side="top"` : ''}>${to ? '<span class="visually-hidden">Reverie in </span>' : ''}<i style="--c:${h};--on:${ink(h)}">${h.slice(1).toUpperCase()}</i><b>${Math.round(pc * 10) / 10}%</b></${tag}>`;
 }).join('')}</div>`;
 
 /** A palette as the specs panel draws it: a thin bar, widths tempered. */

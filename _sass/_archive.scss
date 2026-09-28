@@ -496,7 +496,7 @@ a.word_card--link {
   padding: 1rem 2.5rem;
   border-radius: 1rem;
   transition: $cubic-bezier-default;
-  h1 {
+  :is(h1, h2) { // an h2 where the page has its own h1 (Reverie's, the landing's)
     color: $intriguing-word-color; // hsl(40, 70%, 85%);
     font-size: $type-size-2;
     font-family: $didot-family;
@@ -553,7 +553,7 @@ a.word_card--link {
     box-shadow: $box-shadow-fancy;
     transform: scale(1.05);
     border: 1px solid #e0d3b8cc;  // hsl(40, 40%, 80%);
-    h1 {
+    :is(h1, h2) {
       color: hsl(40, 70%, 85%);
     }
     p .to-emphasise {

@@ -54,8 +54,9 @@
     </a>
     {%- endif %}
 
-    <a class="wn-card wn-card--word word_card" href="{{ '/posts/terminology/' | relative_url }}" aria-label="A word that intrigues QSD">
-      <h1 id="homeWordTitle" lang="{{ word.language | default: 'en' }}" translate="no">{{ word.title }}</h1>
+    <a class="wn-card wn-card--word word_card" href="{{ '/posts/terminology/' | relative_url }}">
+      <span class="visually-hidden">A word that intrigues QSD: </span>
+      <h2 id="homeWordTitle" lang="{{ word.language | default: 'en' }}" translate="no">{{ word.title }}</h2>
       <span class="word_card__origin" id="homeWordOrigin">{{ word.origin }}</span>
       <p id="homeWordDef">{{ word.description }}</p>
     </a>

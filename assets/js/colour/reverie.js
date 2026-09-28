@@ -59,7 +59,7 @@ async function main() {
     return { f, hex };
   }
 
-  const dye = root.querySelector('.reverie__dye'), codeEl = root.querySelector('.reverie__code'), namedEl = root.querySelector('.reverie__named'), chipEl = root.querySelector('.reverie__chip');
+  const dye = root.querySelector('.reverie__dye'), codeEl = root.querySelector('.reverie__code'), namedEl = root.querySelector('.reverie__named'), chipEl = root.querySelector('.reverie__chip'), hexEl = root.querySelector('.reverie__hex');
   // Ridgway's names, each with its colour in OKLab; a colour is named by the nearest within reach.
   const ridgway = (await names).colours.map(([n, h]) => [n.replace(/\s*\(\d\)$/, ''), oklab(`#${h}`)]);
   const nameOf = (hex) => {
@@ -148,7 +148,7 @@ async function main() {
       const named = nameOf(hex);
       namedEl.textContent = named; // its line kept, named or not, so the hex never moves between colours
       near.innerHTML = `<p class="reverie__near-label">Nearby</p><ol>${around.map((c) => `<li>${c.here
-        ? `<span class="is-here" style="--c:${c.hex}" aria-current="true" aria-label="${c.hex.toUpperCase()}, here"></span>`
+        ? `<span class="is-here" style="--c:${c.hex}" aria-current="true"><span class="visually-hidden">${c.hex.toUpperCase()}, here</span></span>`
         : `<a href="${reverieOf(c.f.g, c.f.slug, c.hex)}" style="--c:${c.hex}" data-tip="${c.hex.toUpperCase()}" data-tip-side="top" aria-label="${c.hex.toUpperCase()}"></a>`}</li>`).join('')}</ol>`;
       // The photographs, bare: the print and its words; the first, where the colour was found, ringed.
       body.innerHTML = `
@@ -168,14 +168,16 @@ async function main() {
    */
   let changing = Promise.resolve(), shownAt = '', wanted = '';
   // One change after another; a change that fails leaves the page as it was, and the next still runs.
-  function go(next, at = location.search) {
+  // `focus`: a change the reader asked for from a control the change takes away (a colour nearby):
+  // focus goes to the new colour's hex, which says it, rather than falling to the page.
+  function go(next, at = location.search, { focus = false } = {}) {
     wanted = at;
     changing = changing.then(async () => {
       if (at !== wanted) return; // passed over by a later change before it began
       const put = await prepare(next);
       if (at !== wanted) return;
       const inPlace = scrollY < dye.offsetHeight * 0.6;
-      const update = () => { put(); shownAt = at; if (!inPlace) scrollTo({ top: 0, behavior: 'instant' }); };
+      const update = () => { put(); shownAt = at; if (!inPlace) scrollTo({ top: 0, behavior: 'instant' }); if (focus) hexEl.focus({ preventScroll: true }); };
       if (still() || !document.startViewTransition) { update(); return; }
       const html = document.documentElement;
       html.classList.toggle('reverie-in-place', inPlace);
@@ -213,7 +215,7 @@ async function main() {
     const url = new URL(a.href, location.href);
     e.preventDefault();
     history.pushState(null, '', url.pathname + url.search);
-    go(read(url.href), url.search);
+    go(read(url.href), url.search, { focus: true });
   });
   // Back and forward between colours (the lightbox's own steps, open and closed, keep the address).
   addEventListener('popstate', () => { if (lbEl?.open || location.search === (wanted || shownAt)) return; go(read(location.href)); });
