@@ -18,14 +18,18 @@
  * the one that holds the colour most; without either, a photograph at random. The masthead's ‹ goes back
  * to the photograph it was found in, in its book.
  *
- * Data: /assets/colour-atlas.json (scripts/photos/lib/atlas.mjs atlasOf).
+ * Beneath the hex, its name in Robert Ridgway's Color Standards and Color Nomenclature (1912), when
+ * one of his colours lies within half again the eye's match of it (four colours in five have one).
+ *
+ * Data: /assets/colour-atlas.json (scripts/photos/lib/atlas.mjs atlasOf); /assets/ridgway.json
+ * (scripts/colour/ridgway.mjs).
  */
 
 import { tips } from '../photobook/tip.js';
 import { crossfade } from '../photobook/wash.js';
 import { lightbox } from '../photobook/lightbox.js';
 import { vat, seedOf, oklab, glow } from './vat.js';
-import { esc, ink, card, reverieOf, holding, nearby, focus } from './cards.js';
+import { esc, card, reverieOf, holding, nearby, focus, shadeFor } from './cards.js';
 
 const root = document.getElementById('reverie');
 const body = root?.querySelector('.reverie__stage');
@@ -33,6 +37,7 @@ const base = new URL('../../../', import.meta.url).pathname;
 const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 async function main() {
+  const names = fetch(new URL('../../ridgway.json', import.meta.url)).then((r) => r.json()).catch(() => ({ colours: [] }));
   let data = null;
   try { data = await (await fetch(new URL('../../colour-atlas.json', import.meta.url))).json(); } catch { /* shown below */ }
   const pages = data?.pages || {};
@@ -53,7 +58,14 @@ async function main() {
     return { f, hex };
   }
 
-  const dye = root.querySelector('.reverie__dye'), hexEl = root.querySelector('.reverie__hex');
+  const dye = root.querySelector('.reverie__dye'), hexEl = root.querySelector('.reverie__hex'), namedEl = root.querySelector('.reverie__named');
+  // Ridgway's names, each with its colour in OKLab; a colour is named by the nearest within reach.
+  const ridgway = (await names).colours.map(([n, h]) => [n.replace(/\s*\(\d\)$/, ''), oklab(`#${h}`)]);
+  const nameOf = (hex) => {
+    const P = oklab(hex); let best = null;
+    for (const [n, L] of ridgway) { const x = Math.hypot(P[0] - L[0], P[1] - L[1], P[2] - L[2]); if (!best || x < best.x) best = { n, x }; }
+    return best && best.x <= 0.03 ? best.n : '';
+  };
   const near = root.querySelector('.reverie__near');
   const back = document.querySelector('.masthead__back');
   // The room below the opening, faintly lit by the photograph's dye (the palette page's room,
@@ -81,7 +93,7 @@ async function main() {
       slug: 'colour', name: HEX, place: HEX, city: `In ${found.length} photograph${found.length === 1 ? '' : 's'}`, ratio: 16 / 9, dye: focused, seed,
       paint() {
         const el = document.createElement('div');
-        el.style.setProperty('--on', ink(hex));
+        el.style.setProperty('--shade', shadeFor(hex));
         el.append(vat(focused, { shape: 'rect', width: 200, height: 112, seed }));
         el.insertAdjacentHTML('beforeend', `<p class="reverie__hex" style="--c:${hex}">${HEX}</p>`);
         return el;
@@ -122,9 +134,11 @@ async function main() {
       dye.querySelector(':scope > .colour-vat')?.remove();
       dye.prepend(field);
       dye.classList.add('is-poured');
-      dye.style.setProperty('--on', ink(hex));
+      dye.style.setProperty('--shade', shadeFor(hex));
       hexEl.textContent = HEX;
       hexEl.style.setProperty('--c', hex);
+      const named = nameOf(hex);
+      namedEl.textContent = named; namedEl.hidden = !named;
       near.innerHTML = `<p class="reverie__near-label">Nearby</p><ol>${around.map((c) => `<li>${c.here
         ? `<span class="is-here" style="--c:${c.hex}" aria-current="true" aria-label="${c.hex.toUpperCase()}, here"></span>`
         : `<a href="${reverieOf(c.f.g, c.f.slug, c.hex)}" style="--c:${c.hex}" data-tip="${c.hex.toUpperCase()}" data-tip-side="top" aria-label="${c.hex.toUpperCase()}"></a>`}</li>`).join('')}</ol>`;

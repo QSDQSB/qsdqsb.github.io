@@ -22,7 +22,7 @@
 
 import { tips } from '../photobook/tip.js';
 import { vat, seedOf } from './vat.js';
-import { holding, focus, ink } from './cards.js';
+import { holding, focus, shadeFor } from './cards.js';
 
 const DWELL = 7000;
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -115,7 +115,7 @@ async function main() {
   function colourFrame() {
     const box = stage.getBoundingClientRect(), el = document.createElement('div');
     el.className = 'colour-drift__print colour-drift__colour';
-    el.style.setProperty('--on', ink(colour));
+    el.style.setProperty('--shade', shadeFor(colour));
     const field = vat(dye, { shape: 'rect', width: Math.max(1, Math.round(box.width / 8)), height: Math.max(1, Math.round(box.height / 8)), seed: seedOf(src || colour) });
     el.append(field);
     el.insertAdjacentHTML('beforeend', `<p class="reverie__hex colour-drift__hex" style="--c:${colour}">${colour.toUpperCase()}</p>`);
