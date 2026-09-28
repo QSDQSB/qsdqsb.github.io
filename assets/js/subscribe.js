@@ -9,6 +9,9 @@
  * if the pointer leaves without engaging); a click or keyboard focus COMMITS
  * the expansion (never re-folds). A browser that already subscribed peeks to a
  * quiet acknowledgement, not a fresh form.
+ *
+ * The × closes it for good on this browser: the slip fades and folds shut, and
+ * head/custom.html hides it before first paint on every later page.
  */
 (function () {
   "use strict";
@@ -22,6 +25,8 @@
   var PEEK_MIN_OPEN_MS = 900;
   var PEEK_REFOLD_GRACE_MS = 2000; // unhurried retreat — the card lingers before folding back
   var DONE_KEY = "qsd-subscribe-done";
+  var DISMISSED_KEY = "qsd-subscribe-dismissed"; // read in head/custom.html too
+  var LEAVE_MS = 800; // the fold's own duration (.subscribe-slip__body)
 
   var MSG_INVALID = "That address doesn’t look right.";
   var MSG_FAILED = "That didn’t go through. Try once more.";
@@ -53,6 +58,8 @@
     this.hp = root.querySelector(".subscribe-slip__hp input");
     this.okNote = root.querySelector(".subscribe-slip__note--ok");
     this.errNote = root.querySelector(".subscribe-slip__note--err");
+    this.close = root.querySelector(".subscribe-slip__close");
+    this.close.hidden = false; // without JS it could not work, so it stays hidden
 
     this.bind();
 
@@ -75,6 +82,7 @@
     var self = this;
 
     this.summary.addEventListener("click", function () { self.engage(true); });
+    this.close.addEventListener("click", function () { self.dismiss(); });
 
     this.root.addEventListener("pointerenter", function () {
       self.hovering = true;
@@ -182,6 +190,23 @@
     if (focusInput && !this.root.classList.contains("is-done")) {
       this.input.focus({ preventScroll: true });
     }
+  };
+
+  /* ---------- dismiss ---------- */
+
+  Slip.prototype.dismiss = function () {
+    var root = this.root;
+    this.cancelRefold();
+    storageSet(DISMISSED_KEY, String(Date.now()));
+    if (reduced) {
+      document.documentElement.classList.add("subscribe-dismissed");
+      return;
+    }
+    // Fade and fold shut, so the page below closes up rather than jumping.
+    root.classList.add("is-leaving");
+    window.setTimeout(function () {
+      document.documentElement.classList.add("subscribe-dismissed");
+    }, LEAVE_MS);
   };
 
   /* ---------- submission ---------- */

@@ -179,30 +179,46 @@
 }
 
 /* ── the controls: the view switch and the film dial, staying with the reader ── */
-// A film's name as it is printed along a negative's edge, between two rows of sprocket holes: the
+// A film's name as it is printed along a film's edge, drawn in line: a hairline at each edge, one row
+// of sprocket holes at 135 proportions (2 mm by 2.8 mm, 4.75 mm apart) and the print beneath, the
+// name in the film's muted colour; after it, quieter, the film's letters and the frame's number. The
 // specs panel's film, and the head of a book filtered to one film.
 @mixin photobook-edge-print {
+  $holes: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 114 100' preserveAspectRatio='none'%3E%3Cpath d='M39 24H75Q81 24 81 30V85Q81 91 75 91H39Q33 91 33 85V30Q33 24 39 24Z'/%3E%3C/svg%3E") 0 0 / 11.4px 100% repeat-x;
   position: relative;
-  padding: 0.62rem 0.7rem;
-  border-radius: 3px;
-  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  padding: calc(10px + 0.5em) 0.6em 0.5em;
+  border-block: 1px solid rgba(233, 229, 219, 0.09);
   color: var(--film);
-  font: 600 0.66rem $barlow-font-family;
-  letter-spacing: 0.26em;
+  font: 500 0.56rem/1 $barlow-font-family;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
+  white-space: nowrap;
 
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    left: 5px;
-    right: 5px;
-    height: 3px;
-    background: radial-gradient(circle, rgba(230, 238, 232, 0.2) 1.1px, transparent 1.5px) 0 0 / 9px 3px repeat-x;
+  > span,
+  > i {
+    font-weight: 300;
+    font-style: normal;
+    letter-spacing: 0.14em;
+    color: rgba(233, 229, 219, 0.7);
+    font-variant-numeric: tabular-nums;
   }
 
-  &::before { top: 2px; }
-  &::after { bottom: 2px; }
+  > i { margin-left: auto; }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: rgba(233, 229, 219, 0.13);
+    -webkit-mask: $holes;
+    mask: $holes;
+  }
 }
 
 
@@ -780,6 +796,11 @@ html.is-reordering::view-transition-group(*) {
   font: italic 400 1.1rem $didot-family;
   color: var(--photobook-ink-2);
   text-align: center;
+}
+
+// The page's own words, after the book: on the book's gutter, never against the screen's edge.
+.photobook-note {
+  padding: 0 var(--photobook-gutter);
 }
 
 /* ── colophon: three bars on one baseline ─────────────────────────────── */
