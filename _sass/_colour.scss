@@ -973,10 +973,10 @@
 
 .reverie__chip {
   flex: none;
-  width: clamp(5.5rem, 10vw, 9.5rem);
+  align-self: center; // on the hex's middle, not the name's line
+  width: clamp(3.4rem, 6vw, 5.6rem);
   aspect-ratio: 1;
   border-radius: 50%;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.25), 0 18px 40px rgba(0, 0, 0, 0.35);
 }
 
 
