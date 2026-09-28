@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 /**
- * Every photograph's colours, computed from its public 480 px tier and kept
- * in a local sidecar: nothing written to either bucket, no manifest touched.
+ * Every photograph's colours, computed from its public 480 px tier (or, with --originals, from the
+ * local original: the tier's WebP keeps colour at half resolution, which dulls small vivid areas) and
+ * kept in a local sidecar: nothing written to either bucket, no manifest touched.
  *
  *   in   _data/photo_manifests/<key>.json          (npm run photos:fetch first)
  *   in   img.qsdqsb.com/t/<hash>/480.webp          public, read only
+ *   in   photos/<gallery>/<file>                   with --originals (PHOTOS_DIR), read only
  *   out  .photos-local/palettes/<key>.json         { photos: { <hash>: { palette, grid, signature, dots } } } (gitignored)
  *   out  .photos-local/palettes/_kindred.json      every photo's nearest in other voyages (lib/atlas.mjs),
  *                                                  recomputed only when the set of photos changes
@@ -13,7 +15,7 @@
  * a replaced photograph is computed afresh. `photos:fetch` folds the sidecar
  * into the merge wherever the machine manifest has no palette of its own.
  *
- * Usage: node scripts/photos/palettes.mjs [--gallery london] [--force]
+ * Usage: node scripts/photos/palettes.mjs [--gallery london] [--force] [--originals]
  */
 
 import fs from 'node:fs';
@@ -69,9 +71,13 @@ async function main() {
         const p = todo[i];
         if (have[p.hash]?.signature && have[p.hash]?.dots) { out[p.hash] = have[p.hash]; kept++; continue; }
         try {
-          const r = await fetch(`${p.url}/480.webp`);
-          if (!r.ok) throw new Error(`${r.status}`);
-          const buf = Buffer.from(await r.arrayBuffer());
+          let buf;
+          if (args.originals) buf = fs.readFileSync(path.join(PATHS.photosDir, gallery, p.file));
+          else {
+            const r = await fetch(`${p.url}/480.webp`);
+            if (!r.ok) throw new Error(`${r.status}`);
+            buf = Buffer.from(await r.arrayBuffer());
+          }
           const t = performance.now();
           out[p.hash] = await paletteOfImage(buf);
           busy += performance.now() - t; done++;
