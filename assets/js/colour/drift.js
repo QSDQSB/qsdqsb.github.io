@@ -22,7 +22,7 @@
 
 import { tips } from '../photobook/tip.js';
 import { vat, seedOf } from './vat.js';
-import { holding, focus, shadeFor } from './cards.js';
+import { holding, varied, SHOWN, focus, shadeFor } from './cards.js';
 
 const DWELL = 7000;
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -59,7 +59,7 @@ async function main() {
   // that hold it, the most of it first: Reverie's order, walked before anything else.
   const COLOUR = -1, indexOf = (key) => (key ? all.findIndex((p) => `${p.g}/${p.slug}` === key) : -1);
   const source = colour ? indexOf(src) : -1;
-  const inColour = colour ? [...(source >= 0 ? [source] : []), ...holding(all.filter((p) => p.dots), colour, { not: all[source] }).map(({ f }) => all.indexOf(f))] : [];
+  const inColour = colour ? [...(source >= 0 ? [source] : []), ...varied(holding(all.filter((p) => p.dots), colour, { not: all[source] }), { most: SHOWN - (source >= 0 ? 1 : 0) }).map(({ f }) => all.indexOf(f))] : [];
   const dye = colour && source >= 0 && all[source].sig?.length ? focus(all[source].sig, colour) : colour ? [[colour, 100]] : null;
   // Opening on the colour itself, or on a photograph: as asked, else the colour's first, else any.
   const onColour = !!colour && !opened;
@@ -117,7 +117,7 @@ async function main() {
     const box = stage.getBoundingClientRect(), el = document.createElement('div');
     el.className = 'colour-drift__print colour-drift__colour';
     el.style.setProperty('--shade', shadeFor(colour));
-    const field = vat(dye, { shape: 'rect', width: Math.max(1, Math.round(box.width / 8)), height: Math.max(1, Math.round(box.height / 8)), seed: seedOf(src || colour) });
+    const field = vat(dye, { shape: 'rect', width: Math.max(1, Math.round(box.width / 8)), height: Math.max(1, Math.round(box.height / 8)), seed: seedOf(src || colour), soon: true });
     el.append(field);
     el.insertAdjacentHTML('beforeend', `<p class="reverie__hex colour-drift__hex" style="--c:${colour}">${colour.toUpperCase()}</p>`);
     el.ready = field.ready.then(() => el);

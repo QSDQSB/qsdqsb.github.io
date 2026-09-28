@@ -40,7 +40,16 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, transparent 38%, rgba(10, 10, 12, calc(var(--shade, 0) * 0.6)) 62%, rgba(10, 10, 12, var(--shade, 0)) 100%);
+  // Eased in over many stops: two straight segments meet in a crease the eye can find.
+  background: linear-gradient(180deg,
+    transparent 30%,
+    rgba(10, 10, 12, calc(var(--shade, 0) * 0.04)) 40%,
+    rgba(10, 10, 12, calc(var(--shade, 0) * 0.15)) 50%,
+    rgba(10, 10, 12, calc(var(--shade, 0) * 0.32)) 60%,
+    rgba(10, 10, 12, calc(var(--shade, 0) * 0.53)) 70%,
+    rgba(10, 10, 12, calc(var(--shade, 0) * 0.74)) 80%,
+    rgba(10, 10, 12, calc(var(--shade, 0) * 0.9)) 90%,
+    rgba(10, 10, 12, var(--shade, 0)) 100%);
 }
 
 /* ── The Colour of Light ──────────────────────────────────────────────── */

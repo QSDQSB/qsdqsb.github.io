@@ -30,7 +30,7 @@ import { tips } from '../photobook/tip.js';
 import { crossfade } from '../photobook/wash.js';
 import { lightbox } from '../photobook/lightbox.js';
 import { vat, seedOf, oklab, glow } from './vat.js';
-import { esc, card, reverieOf, holding, nearby, focus, shadeFor } from './cards.js';
+import { esc, card, reverieOf, holding, varied, SHOWN, nearby, focus, shadeFor } from './cards.js';
 
 const root = document.getElementById('reverie');
 const body = root?.querySelector('.reverie__stage');
@@ -74,7 +74,7 @@ async function main() {
   const room = Object.assign(document.createElement('div'), { className: 'palette-ambience' });
   room.setAttribute('aria-hidden', 'true');
   root.prepend(room);
-  let shown = null;
+  let shown = null, hero = {};
 
   // The book's lightbox, over the page. Its frames are laid when it opens (the colour, then the
   // photographs as the cards stand), from every voyage's lightbox frames (/assets/frames.json,
@@ -122,19 +122,24 @@ async function main() {
     // round it. Drawn at an eighth of the size it is shown and let soften as it is spread: a mood.
     const focused = focus(f.sig, hex);
     const box = dye.getBoundingClientRect();
-    // Stirred from the colour dot and left where it stops ('hold'): drawn small, so a stir costs little.
-    const field = vat(focused, { shape: 'rect', width: Math.max(1, Math.round(box.width / 8)), height: Math.max(1, Math.round(box.height / 8)), seed, stir: 'hold', speed: 8 });
+    // Still, from the shared context (no context of its own to make, no program to compile): the colour
+    // changes at once. The stirrable one is made only when the dot is first pointed at (stirFrom, below).
+    const fw = Math.max(1, Math.round(box.width / 8)), fh = Math.max(1, Math.round(box.height / 8));
+    const field = vat(focused, { shape: 'rect', width: fw, height: fh, seed, soon: true });
     await field.ready;
     // The photographs that hold it, the one it was found in first; and the colours a step away.
-    const found = [{ f }, ...holding(frames, hex, { not: f })];
+    // The one it was found in first, then the nearest others, no voyage crowding the rest out.
+    const others = holding(frames, hex, { not: f }), all = others.length + 1;
+    const found = [{ f }, ...varied(others, { most: SHOWN - 1 })];
     const around = [...nearby(frames, hex), { hex, f, here: true }].sort((a, b) => oklab(a.hex)[0] - oklab(b.hex)[0]);
 
     return function put() {
       document.title = document.title.replace(/^[^·]*·/, `Reverie in ${HEX} ·`);
       if (back) { const label = `Back to ${f.name || 'the photograph'}, in ${page.title}`; back.href = `${page.url}#${encodeURIComponent(f.slug)}`; back.setAttribute('aria-label', label); back.dataset.tip = label; }
       if (shown?.f !== f) crossfade(room, glow(f.sig, { seed }));
-      const was = dye.querySelector(':scope > .colour-vat');
-      if (was !== field) { was?.release?.(); was?.remove(); } // one live field at a time: the last one's context let go
+      dye.querySelector(':scope > .colour-vat')?.remove();
+      hero.live?.release?.(); // the last colour's stirring field, if it was stirred, lets its context go
+      hero = { field, live: null, spec: [focused, { shape: 'rect', width: fw, height: fh, seed, stir: 'hold', speed: 20 }], want: false };
       dye.prepend(field);
       dye.classList.add('is-poured');
       dye.style.setProperty('--shade', shadeFor(hex));
@@ -148,7 +153,7 @@ async function main() {
         : `<a href="${reverieOf(c.f.g, c.f.slug, c.hex)}" style="--c:${c.hex}" data-tip="${c.hex.toUpperCase()}" data-tip-side="top" aria-label="${c.hex.toUpperCase()}"></a>`}</li>`).join('')}</ol>`;
       // The photographs, bare: the print and its words; the first, where the colour was found, ringed.
       body.innerHTML = `
-        <p class="reverie__count">QSD reveries in ${found.length} photograph${found.length === 1 ? '' : 's'}</p>
+        <p class="reverie__count">${all > found.length ? `QSD reveries: the ${found.length} nearest of ${all} photographs` : `QSD reveries in ${all} photograph${all === 1 ? '' : 's'}`}</p>
         <div class="palette-cards">${found.map(({ f: p }, i) => card(p, { href: `${base}drift/?from=${encodeURIComponent(`${p.g}/${p.slug}`)}&c=${hex.slice(1)}&src=${encodeURIComponent(`${f.g}/${f.slug}`)}&open`, label: 'full screen, in this colour', i, from: i === 0, place: pages[p.g].title, placeHref: `${base}palette/?at=${encodeURIComponent(p.slug)}#${p.g}`, plain: true })).join('')}</div>
         <p class="colour-next"><a href="${base}drift/?from=${encodeURIComponent(`${f.g}/${f.slug}`)}&c=${hex.slice(1)}">Drift in this colour <span aria-hidden="true">→</span></a><a href="${base}palette/?at=${encodeURIComponent(f.slug)}#${f.g}">QSD's Palette for ${esc(page.title)} <span aria-hidden="true">→</span></a></p>`;
       shown = { f, hex, found, focused };
@@ -180,9 +185,23 @@ async function main() {
     return changing;
   }
 
-  // Pointing at the colour's dot stirs its dye; leaving it, the dye stays as it was left.
-  chipEl.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') dye.querySelector(':scope > .colour-vat')?.stir?.(true); });
-  chipEl.addEventListener('pointerleave', () => dye.querySelector(':scope > .colour-vat')?.stir?.(false));
+  // Pointing at the colour's dot stirs its dye; leaving it, the dye stays as it was left. The stirring
+  // field is made on the first point (the same dye, measured already, so it takes the still one's place
+  // unseen), and kept for this colour only.
+  chipEl.addEventListener('pointerenter', (e) => {
+    if (e.pointerType === 'touch') return;
+    const h = hero; h.want = true;
+    if (h.live) { h.live.stir(true); return; }
+    if (h.making) return;
+    h.making = true;
+    const live = vat(...h.spec);
+    live.ready.then(() => {
+      if (hero !== h) { live.release?.(); return; }
+      h.field.replaceWith(live); h.live = live;
+      if (h.want) live.stir(true);
+    });
+  });
+  chipEl.addEventListener('pointerleave', () => { hero.want = false; hero.live?.stir(false); });
 
   // A colour nearby: its Reverie, in the page. A print: the lightbox, over the page.
   root.addEventListener('click', (e) => {

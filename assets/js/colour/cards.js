@@ -87,8 +87,10 @@ export function focus(sig, hex) {
   return sig.map(([h, pc, a]) => (h === mine.h ? [hex, most, 0] : [h, pc * (100 - most) / Math.max(1e-6, rest), a]));
 }
 
-/** A colour as the eye tells colours apart: nearer than this in OKLab, two read as one. */
-export const SAME = 0.02;
+/** A colour as the eye tells colours apart: a dot within this of it (OKLab) holds it. */
+export const SAME = 0.025;
+/** How fast a dot's closeness falls away from the colour: exp(−(x / WIDTH)²), a bell, not a slope. */
+const WIDTH = 0.018;
 const dotsOf = new WeakMap();
 /** A frame's 24 dots (`rrggbbss` each, lib/dots.mjs): OKLab, and the share of the picture each stands for. */
 const dots = (f) => {
@@ -99,23 +101,44 @@ const dots = (f) => {
   }
   return dotsOf.get(f);
 };
-/** Every frame that holds `hex`, read from its 24 dots (finer than its palette, which gathers a picture
- *  into five): the share of the picture within `near` of it, weighed by how near, at least `least` (a
- *  dot's worth), the most first. `not`: the frame to leave out. */
-export function holding(frames, hex, { near = SAME, least = 1 / 24, not = null } = {}) {
+/**
+ * Every frame that holds `hex`, read from its 24 dots (finer than its palette, which gathers a picture
+ * into five): the dots within `near` of it covering at least `least` of the picture. Each scored by how
+ * much of the picture holds it (S, the share) and how close it comes (C, the share-weighted closeness
+ * of those dots), share leaning a little heavier: S^1.2 × C. The best first. `not`: the frame to leave out.
+ */
+export function holding(frames, hex, { near = SAME, least = 0.05, not = null } = {}) {
   const P = lab(hex), out = [];
   for (const f of frames) {
     if (f === not) continue;
-    let held = 0, score = 0;
-    for (const d of dots(f)) { const x = Math.hypot(P[0] - d.lab[0], P[1] - d.lab[1], P[2] - d.lab[2]); if (x <= near) { held += d.share; score += d.share * (1 - x / near); } }
-    if (held >= least) out.push({ f, held, score });
+    let held = 0, close = 0;
+    for (const d of dots(f)) {
+      const x = Math.hypot(P[0] - d.lab[0], P[1] - d.lab[1], P[2] - d.lab[2]);
+      if (x <= near) { held += d.share; close += d.share * Math.exp(-((x / WIDTH) ** 2)); }
+    }
+    if (held >= least && held > 0) out.push({ f, held, score: held ** 1.2 * (close / held) });
   }
   return out.sort((a, b) => b.score - a.score);
 }
-/** The colours a step from `hex` that the photographs hold (each a dot's worth at least), no two alike:
- *  where to wander from it, one family still (a step: past the eye's match, within twice it). Each with
- *  the frame that holds the most of it. */
-export function nearby(frames, hex, { from = 0.03, to = 0.06, most = 14 } = {}) {
+/** The first `most` of a ranked `holding` list, chosen so no voyage crowds the rest out: taken one at a
+ *  time, each frame's score lowered by `fade` for every frame already taken from its voyage (`v`, so a
+ *  trip's parts count as one). */
+export function varied(found, { most = 30, fade = 0.8 } = {}) {
+  const left = found.slice(), taken = [], per = new Map();
+  while (taken.length < most && left.length) {
+    let at = 0, top = -Infinity;
+    for (let i = 0; i < left.length; i++) { const s = left[i].score * fade ** (per.get(left[i].f.v) || 0); if (s > top) { top = s; at = i; } }
+    const [m] = left.splice(at, 1);
+    taken.push(m); per.set(m.f.v, (per.get(m.f.v) || 0) + 1);
+  }
+  return taken;
+}
+/** At most, the photographs a colour shows (Reverie, Drift in a colour): the one it was found in, then these. */
+export const SHOWN = 30;
+/** The colours around `hex` that the photographs hold (each a dot's worth at least), no two alike:
+ *  where to wander from it. Far enough that each is a page of its own (0.04–0.08 away, 0.04 apart), dark to
+ *  light. Each with the frame that holds the most of it. */
+export function nearby(frames, hex, { from = 0.04, to = 0.08, most = 14 } = {}) {
   const P = lab(hex), found = [];
   for (const f of frames) for (const d of dots(f)) {
     if (d.share < 1 / 24) continue;
