@@ -144,7 +144,7 @@ function plan(palette, seed, calmFor, aspect = 0) {
     pos[i] = [stirred[0] + (layered[0] - stirred[0]) * calm, stirred[1] + (layered[1] - stirred[1]) * calm];
   });
   const key = `${seed}|${calmFor ?? ''}|${cs.map((p) => `${p.hex}:${p.pc}:${p.accent ? 1 : 0}`).join(',')}${aspect ? `|rect ${aspect.toFixed(2)}` : ''}`;
-  return { n, cs, share, labs, calm, tilt, pos, key, seed, aspect };
+  return { n, cs, share, labs, calm, tilt, pos, key, seed, aspect, args: [palette, seed, calmFor, aspect] };
 }
 function set(r, P, gain) {
   const { gl, u } = r;
@@ -193,9 +193,42 @@ function measureNow(r, P) {
   return { gain, areas };
 }
 
+// Measuring reads the GPU back, and a read waits for it (on Apple's graphics even the deferred read
+// below waits): on the page's own thread that is a hover or a click kept waiting. So a vat is measured
+// in a worker (./vat-worker.js, its own offscreen canvas), where waiting costs the page nothing; where
+// a worker cannot draw (no OffscreenCanvas WebGL), on the page, a round a frame, as before.
+let worker = null, workerOk = typeof Worker !== 'undefined' && typeof OffscreenCanvas !== 'undefined', asked = 0;
+const asks = new Map();
+function measureLater(P) {
+  if (!workerOk) return measureOnPage(P);
+  try {
+    if (!worker) {
+      worker = new Worker(new URL('./vat-worker.js', import.meta.url), { type: 'module' });
+      worker.onmessage = ({ data }) => {
+        const a = asks.get(data.id); if (!a) return;
+        asks.delete(data.id);
+        if (data.error) { workerOk = false; a.fallback(); } else a.resolve({ gain: data.gain, areas: data.areas });
+      };
+      worker.onerror = () => { workerOk = false; for (const a of asks.values()) a.fallback(); asks.clear(); };
+    }
+  } catch { workerOk = false; return measureOnPage(P); }
+  return new Promise((resolve) => {
+    const id = asked++;
+    asks.set(id, { resolve, fallback: () => measureOnPage(P).then(resolve) });
+    worker.postMessage({ id, args: P.args });
+  });
+}
+/** Measured off the page (in ./vat-worker.js): the same plan and rounds, on an offscreen canvas. */
+let off;
+export function measureOff(palette, seed, calmFor, aspect) {
+  if (off === undefined) off = renderer(new OffscreenCanvas(M, M), { v2: true }) || false;
+  if (!off) throw new Error('no WebGL here');
+  return measureNow(off, plan(palette, seed, calmFor, aspect));
+}
+
 const LANES = 6, jobs = [];
 let pumping = 0;
-function measureLater(P) {
+function measureOnPage(P) {
   return new Promise((resolve) => { jobs.push({ P, gain: P.share.slice(), it: 0, areas: [], resolve, buf: null, fence: null }); if (!pumping) pumping = requestAnimationFrame(pump); });
 }
 function pump() {
@@ -298,11 +331,11 @@ export function vat(palette, { size = 176, width = size, height = size, shape = 
   const pour = () => {
     const known = gains.get(P.key);
     if (known) { draw({ gain: known }); return Promise.resolve(out); }
-    // At once where it cannot be deferred (WebGL 1), and with motion off (a reader who asked for
-    // stillness, a screenshot that must find every vat drawn): nothing there moves to be spoiled.
+    // At once where it cannot be deferred (WebGL 1), and for an automated renderer (a screenshot must
+    // find every vat drawn: html.motion-off from head/custom.html).
     // `soon`: one vat a page waits on (Reverie's opening) is measured there and then, a few ms, rather
     // than a round a frame (its readings a frame late each) for up to sixteen.
-    if (!r0.async || stillness() || soon) { const m = measureNow(r0, P); keep(P.key, m.gain); draw(m); return Promise.resolve(out); }
+    if (!r0.async || window.QSD_MOTION_OFF === true || soon) { const m = measureNow(r0, P); keep(P.key, m.gain); draw(m); return Promise.resolve(out); }
     if (!shown) out.dataset.pouring = '';
     const mine = P;
     return measureLater(P).then((m) => {
