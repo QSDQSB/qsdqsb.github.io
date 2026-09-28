@@ -1068,6 +1068,21 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 
 .photobook-lightbox:is(.is-bare, .is-zoomed) .photobook-lightbox__mount { opacity: 0; }
 
+// A painted frame (away from the book: a colour, in Reverie): the print's own box, filled by the page.
+.photobook-lightbox__painted {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(100cqw, 100cqh * var(--pr));
+  height: min(100cqh, 100cqw / var(--pr));
+  translate: -50% -50%;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity var(--xf, 0.55s) $cubic-bezier-standard;
+
+  &.is-on { opacity: 1; }
+}
+
 .photobook-lightbox.is-playing .photobook-lightbox__mat img.is-on {
   animation: photobook-push var(--dwell, 8.6s) linear forwards;
 }
@@ -1264,6 +1279,34 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   &.is-scrubbing button::before { width: 2px; height: 12px; opacity: 0.8; }
   &.is-scrubbing button.is-on::before { width: 3px; height: 22px; opacity: 1; }
   &.is-scrubbing button.is-scrub::before { width: 3px; height: 26px; opacity: 1; background: $lighter-gray; }
+}
+
+// Marks a page gives for the frames (away from the book: each photograph's dye vat, in Reverie): a
+// dot for each in place of the tick, the one on show ringed, as Drift's way is.
+.photobook-lightbox__rail.has-marks {
+  gap: 4px;
+
+  button {
+    flex: 0 1 18px;
+    width: 18px;
+    height: 40px;
+    place-items: center;
+
+    &::before { content: none; }
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    max-width: 16px;
+    height: auto;
+    border-radius: 50%;
+    outline: 1px solid transparent;
+    outline-offset: 2px;
+    transition: outline-color 0.3s $cubic-bezier-smooth;
+  }
+
+  button:is(.is-on, :hover, .is-scrub) canvas { outline-color: var(--photobook-ink); }
 }
 
 .photobook-lightbox__peek {

@@ -773,6 +773,14 @@
   bottom: clamp(1rem, 3vw, 2rem);
 }
 
+// Reverie's colour in the book's lightbox (a painted frame, lightbox.js): its dye, its hex upon it.
+.photobook-lightbox__painted {
+  color: var(--on, #fff);
+
+  > .colour-vat { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .reverie__hex { position: absolute; left: clamp(1.2rem, 3vw, 2.4rem); bottom: clamp(1rem, 3vw, 2rem); }
+}
+
 // The viewer's tools where the lightbox keeps its own: top right, in the band the masthead sits in.
 .colour-drift__tools {
   position: absolute;
@@ -928,6 +936,20 @@
   letter-spacing: 0.01em;
   color: inherit;
   user-select: all;
+
+  // The colour itself beside its name, as tall as the figures and on their line; a hairline in the
+  // text's ink keeps it seen on a ground of its own colour.
+  &::after {
+    content: "";
+    display: inline-block;
+    width: 0.7em;
+    height: 0.7em;
+    margin-left: 0.22em;
+    border-radius: 50%;
+    background: var(--c, transparent);
+    box-shadow: 0 0 0 max(1px, 0.012em) currentColor;
+    vertical-align: baseline;
+  }
 }
 
 .reverie__count {

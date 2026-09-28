@@ -39,6 +39,17 @@ export function palettesOf(books) {
   return voyages.length ? { voyages } : null;
 }
 
+/**
+ * The lightbox's frames for every voyage, for a lightbox opened away from its book (Reverie): what the
+ * book's own page carries (lib/book.mjs, `book.lightbox`) without the placeholder picture, which would
+ * weigh twenty times the rest; the room takes the frame's glow instead. Keyed by gallery.
+ */
+export function framesOf(books) {
+  const out = {};
+  for (const m of books) if (m.book?.lightbox?.length) out[m.gallery] = m.book.lightbox.map(({ ph, ...f }) => f);
+  return Object.keys(out).length ? out : null;
+}
+
 /** Where the kindred list lives in the originals bucket, beside the galleries' manifests (private). */
 export const KINDRED_KEY = '_kindred.json';
 

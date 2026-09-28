@@ -118,7 +118,7 @@ async function main() {
     el.style.setProperty('--on', ink(colour));
     const field = vat(dye, { shape: 'rect', width: Math.max(1, Math.round(box.width / 8)), height: Math.max(1, Math.round(box.height / 8)), seed: seedOf(src || colour) });
     el.append(field);
-    el.insertAdjacentHTML('beforeend', `<p class="reverie__hex colour-drift__hex">${colour.toUpperCase()}</p>`);
+    el.insertAdjacentHTML('beforeend', `<p class="reverie__hex colour-drift__hex" style="--c:${colour}">${colour.toUpperCase()}</p>`);
     el.ready = field.ready.then(() => el);
     return el;
   }

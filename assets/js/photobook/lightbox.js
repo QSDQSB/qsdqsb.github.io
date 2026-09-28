@@ -6,6 +6,11 @@
  * (or I) puts them away and brings them back, and the choice is remembered on this browser.
  *
  * Markup: _includes/photobook/lightbox.html. Styles: _sass/_photobook.scss.
+ *
+ * Away from its book (Reverie, assets/js/colour/reverie.js) it takes frames from many voyages, each
+ * naming its own (`g`, `voyage`), and three things from the page: `printOf(i)`, where a frame's print
+ * stands on it (to close back into); `mark(p)`, a mark for each frame on the rail in place of the tick;
+ * and frames that are painted rather than photographed (`paint()`, a colour), which have no specs.
  */
 
 import { crossfade } from './wash.js';
@@ -45,7 +50,7 @@ export const weatherGlyph = (w) => {
   return `<svg class="photobook-weather__glyph" viewBox="${x0} 0 ${x1 - x0} 16" style="--ink:${((x1 - x0) / 16).toFixed(3)}" aria-hidden="true">${WEATHER[w.kind] || ''}</svg>`;
 };
 
-export function lightbox(frames) {
+export function lightbox(frames, { printOf = null, mark = null } = {}) {
   const lb = document.getElementById('photobook-lightbox');
   if (!lb) return { open() {}, openFromHash() {}, screen() {}, prefetch() {} };
   const $ = (s) => lb.querySelector(s);
@@ -54,6 +59,8 @@ export function lightbox(frames) {
   let order = frames.map((_, i) => i), pos = -1, timer = 0, raf = 0, t0 = 0, idleT = 0, lastFocus = null;
   let specOpen = store.get('photobook-specs') !== 'closed';
   const cur = () => frames[order[pos]];
+  // Where a frame's print stands on the page, to close back into: in the book, its frame.
+  const printFor = printOf || ((i) => [...document.querySelectorAll(`.photobook-frame[data-i="${i}"] .photobook-frame__print`)].find((b) => b.offsetParent));
   const pressed = (act, on) => $(`[data-act="${act}"]`)?.setAttribute('aria-pressed', String(on));
 
   // The smallest rendition at least as wide as the print will be drawn on this screen, in device
@@ -61,6 +68,7 @@ export function lightbox(frames) {
   // picture only and the loupe may take the largest.
   // Renditions are named by their long edge, so a portrait needs a larger name for the same width.
   const srcFor = (p) => {
+    if (p.paint) return null;
     const r = p.ratio || 1.5, box = mat.getBoundingClientRect(), bare = lb.classList.contains('is-bare'), zoomed = lb.classList.contains('is-zoomed');
     const [bw, bh] = box.width ? [box.width, box.height] : [window.innerWidth, window.innerHeight];
     const fill = bare && lb.style.getPropertyValue('--fit') === 'cover';
@@ -114,7 +122,7 @@ export function lightbox(frames) {
   lb.addEventListener('close', () => {
     // Back on the page where the reader left off: the frame last shown, in whichever view is out;
     // after a screening, the place the reader started it from.
-    const here = !screening && pos >= 0 && [...document.querySelectorAll(`.photobook-frame[data-i="${order[pos]}"] .photobook-frame__print`)].find((b) => b.offsetParent);
+    const here = !screening && pos >= 0 && printFor(order[pos]);
     const was = screening ? screenFrom : null;
     stop(); screening = false; lb.classList.remove('is-screening');
     lb.classList.remove('has-specs', 'is-pinned', 'is-bare', 'is-idle'); pressed('bare', false); setZoom(1); placeSpecs();
@@ -148,12 +156,18 @@ export function lightbox(frames) {
     if (!mat.querySelector('.photobook-lightbox__mount')) mat.prepend(Object.assign(document.createElement('div'), { className: 'photobook-lightbox__mount' }));
     lb.style.setProperty('--pr', String(p.ratio || 1.5));
     // The print drifts in from the side it came from; the old one leaves the other way.
-    const old = [...mat.querySelectorAll('img')];
-    // A light rendition shows at once; the full one takes its place as soon as it is decoded.
-    const im = new Image(), full = srcFor(p);
-    const quick = firstQuick || `${p.url}/${p.sizes.find((s) => s >= 960) || p.sizes[0] || 960}.webp`; firstQuick = null;
-    im.alt = p.alt || p.name; im.draggable = false; im.decoding = 'async'; im.src = seen.has(full) ? full : quick;
-    if (!seen.has(full) && full !== quick) fetchImg(full).decode().then(() => { if (im.isConnected) im.src = full; }, () => {});
+    const old = [...mat.querySelectorAll(':scope > img, :scope > .photobook-lightbox__painted')];
+    const wasPainted = lb.classList.contains('is-painted');
+    lb.classList.toggle('is-painted', !!p.paint);
+    let im;
+    if (p.paint) { im = p.paint(); im.classList.add('photobook-lightbox__painted'); firstQuick = null; }
+    else {
+      // A light rendition shows at once; the full one takes its place as soon as it is decoded.
+      im = new Image(); const full = srcFor(p);
+      const quick = firstQuick || `${p.url}/${p.sizes.find((s) => s >= 960) || p.sizes[0] || 960}.webp`; firstQuick = null;
+      im.alt = p.alt || p.name; im.draggable = false; im.decoding = 'async'; im.src = seen.has(full) ? full : quick;
+      if (!seen.has(full) && full !== quick) fetchImg(full).decode().then(() => { if (im.isConnected) im.src = full; }, () => {});
+    }
     im.style.setProperty('--d', String(dir));
     mat.style.setProperty('--xf', still() ? '0s' : slow ? '1.6s' : '.55s');
     mat.appendChild(im);
@@ -161,10 +175,16 @@ export function lightbox(frames) {
       im.classList.add('is-on');
       for (const o of old) { o.style.scale = getComputedStyle(o).scale; o.style.setProperty('--d', String(-dir)); o.classList.remove('is-on'); setTimeout(() => o.remove(), slow ? 1700 : 900); }
     });
-    if (instant || im.complete) reveal(); else im.decode().then(reveal, reveal);
-    // The room takes the print's colour, from its placeholder (already soft, so no blur).
-    if (p.ph) {
+    if (instant || p.paint || im.complete) reveal(); else im.decode().then(reveal, reveal);
+    // The room takes the print's colour, from its placeholder (already soft, so no blur); away from
+    // its book, from its glow; a painted frame brings its own.
+    if (p.room) crossfade(wash, p.room());
+    else if (p.ph) {
       const a = document.createElement('div'); a.style.backgroundImage = `url(${p.ph})`;
+      crossfade(wash, a);
+    } else if (p.glow?.length) {
+      const a = document.createElement('div'), [x, y = x, z = y] = p.glow;
+      a.style.background = `radial-gradient(60% 70% at 25% 30%, ${x}, transparent 72%), radial-gradient(60% 70% at 75% 35%, ${y}, transparent 72%), radial-gradient(80% 60% at 50% 100%, ${z}, transparent 72%), ${z}`;
       crossfade(wash, a);
     }
     // Fewer frames than the book holds means one film was chosen: the count names it, in its colour
@@ -172,8 +192,8 @@ export function lightbox(frames) {
     const one = order.length < frames.length && frames[order[0]]?.film;
     $('.photobook-lightbox__count').innerHTML = `<span><b>${String(pos + 1).padStart(2, '0')}</b> / ${String(order.length).padStart(2, '0')}</span>${one ? `<i style="--film:${frames[order[0]].hue}">${esc(one)}</i>` : ''}`;
     $('.photobook-lightbox__caption').innerHTML = captionHTML(p);
-    specsIn.innerHTML = specsHTML(p);
-    placeSpecs();
+    specsIn.innerHTML = p.paint ? '' : specsHTML(p);
+    if (wasPainted || p.paint) applySpecs(); else placeSpecs();   // a painted frame has no specs: the panel steps aside
     const railHadFocus = rail.contains(document.activeElement);
     for (const [k, b] of [...rail.children].entries()) {
       const on = k === pos;
@@ -182,7 +202,7 @@ export function lightbox(frames) {
       if (on && railHadFocus) b.focus({ preventScroll: true });
     }
     $('.photobook-lightbox__live').textContent = `${p.name}, ${pos + 1} of ${order.length}`;
-    for (const d of [1, -1]) { const q = frames[order[(pos + d + order.length) % order.length]]; if (q && !seen.has(srcFor(q))) fetchImg(srcFor(q)); }
+    for (const d of [1, -1]) { const q = frames[order[(pos + d + order.length) % order.length]]; if (q && !q.paint && !seen.has(srcFor(q))) fetchImg(srcFor(q)); }
     history.replaceState({ photobook: true }, '', `#${p.slug}`);
     if (timer) restart();
     return i;
@@ -202,8 +222,9 @@ export function lightbox(frames) {
   // drown the rest, which leads to the voyage's page in QSD's Palette; beneath it the colours' hex
   // codes, plain text to select and copy, shown while the palette is under the pointer.
   const palette = { base: lb.dataset.palette, gallery: lb.dataset.gallery, title: lb.dataset.paletteTitle };
+  const paletteOf = (p) => (p.g ? { gallery: p.g, title: `QSD's Palette for ${p.voyage || p.g}` } : palette);
   const paletteHTML = (p) => (p.signature?.length ? `<div class="palette-strip photobook-specs__palette">
-      <a class="palette-strip__bar" href="${palette.base}?at=${encodeURIComponent(p.slug)}#${palette.gallery}" data-tip="${esc(palette.title)}" data-tip-side="top" aria-label="${esc(palette.title)}">${p.signature.map(([h, pc]) => `<i style="--c:${h};flex:${Math.sqrt(pc).toFixed(2)}"></i>`).join('')}</a>
+      <a class="palette-strip__bar" href="${palette.base}?at=${encodeURIComponent(p.slug)}#${paletteOf(p).gallery}" data-tip="${esc(paletteOf(p).title)}" data-tip-side="top" aria-label="${esc(paletteOf(p).title)}">${p.signature.map(([h, pc]) => `<i style="--c:${h};flex:${Math.sqrt(pc).toFixed(2)}"></i>`).join('')}</a>
       <p class="palette-strip__hex">${p.signature.map(([h, pc, accent]) => `<span title="${Math.round(pc)}%${accent ? ', accent' : ''}"><i style="--c:${h}"></i>${h.slice(1).toUpperCase()}</span>`).join('')}</p>
     </div>` : '');
 
@@ -231,11 +252,13 @@ export function lightbox(frames) {
   const rail = $('.photobook-lightbox__rail');
   function buildRail() {
     rail.innerHTML = order.map((i, k) => `<button type="button" data-k="${k}" tabindex="-1" aria-label="Frame ${k + 1}: ${esc(frames[i].name)}"><span class="photobook-lightbox__peek"></span></button>`).join('');
+    rail.classList.toggle('has-marks', !!mark);
+    if (mark) [...rail.children].forEach((b, k) => { const m = mark(frames[order[k]]); if (m) b.prepend(m); });
   }
   // A preview is only fetched the first time the pointer (or a finger) rests on its mark; it is kept on screen.
   const peekOf = (b) => {
     const pk = b?.querySelector('.photobook-lightbox__peek'); if (!pk) return;
-    if (!pk.style.backgroundImage) { const p = frames[order[Number(b.dataset.k)]]; pk.style.backgroundImage = `url(${p.url}/${p.sizes[0] || 480}.webp)`; }
+    if (!pk.style.backgroundImage) { const p = frames[order[Number(b.dataset.k)]]; if (p.paint) return; pk.style.backgroundImage = `url(${p.url}/${p.sizes[0] || 480}.webp)`; }
     pk.style.removeProperty('--px');
     const r = pk.getBoundingClientRect(), m = 8;
     const shift = r.left < m ? m - r.left : r.right > innerWidth - m ? innerWidth - m - r.right : 0;
@@ -279,7 +302,7 @@ export function lightbox(frames) {
 
   // The panel's state: open or closed (the toolbar button). Open, the print makes room for it.
   function applySpecs() {
-    const bare = lb.classList.contains('is-bare');
+    const bare = lb.classList.contains('is-bare') || (pos >= 0 && !!cur()?.paint);
     lb.classList.toggle('is-pinned', specOpen && !bare);
     lb.classList.toggle('has-specs', specOpen && !bare);
     pressed('specs', specOpen);
@@ -332,7 +355,7 @@ export function lightbox(frames) {
   // Picture only and the loupe may want a larger file than the framed print had.
   let pending = '';
   function upgrade() {
-    const im = mat.querySelector('img.is-on'), f = pos >= 0 && srcFor(cur());
+    const im = mat.querySelector('img.is-on'), f = pos >= 0 && !cur().paint && srcFor(cur());
     if (!im || !f || im.src.endsWith(f) || f === pending || !bigger(f, im.src)) return;
     pending = f;
     fetchImg(f).decode().then(() => { if (im.isConnected) im.src = f; }, () => {}).finally(() => { if (pending === f) pending = ''; });
@@ -373,7 +396,7 @@ export function lightbox(frames) {
   function shut() {
     if (!lb.open) return;
     const on = mat.querySelector('img.is-on');
-    const to = !screening && pos >= 0 && [...document.querySelectorAll(`.photobook-frame[data-i="${order[pos]}"] .photobook-frame__print img`)].find((x) => x.offsetParent);
+    const to = !screening && pos >= 0 && printFor(order[pos])?.querySelector('img');
     if (!document.startViewTransition || still() || !on || !to) return lb.close();
     to.closest('.photobook-frame__print').scrollIntoView({ block: 'center', behavior: 'instant' });
     on.style.viewTransitionName = 'photobook-print';
@@ -482,7 +505,7 @@ export function lightbox(frames) {
     if (i >= 0) open(i);
   }
   /** Start fetching a frame's full print before it is opened (the pointer resting on it, a finger on it). */
-  function prefetch(i) { const p = frames[i]; if (!p) return; const f = srcFor(p); if (!seen.has(f)) fetchImg(f); }
+  function prefetch(i) { const p = frames[i]; if (!p || p.paint) return; const f = srcFor(p); if (!seen.has(f)) fetchImg(f); }
 
   return { open, openFromHash, screen, prefetch };
 }
