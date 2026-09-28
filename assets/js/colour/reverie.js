@@ -18,7 +18,7 @@
  * the one that holds the colour most; without either, a photograph at random. The masthead's ‹ goes back
  * to the photograph it was found in, in its book.
  *
- * Above the hex, its name in Robert Ridgway's Color Standards and Color Nomenclature (1912), when
+ * Beneath the hex, its name in Robert Ridgway's Color Standards and Color Nomenclature (1912), when
  * one of his colours lies within half again the eye's match of it (four colours in five have one).
  *
  * Data: /assets/colour-atlas.json (scripts/photos/lib/atlas.mjs atlasOf); /assets/ridgway.json
@@ -95,18 +95,18 @@ async function main() {
         const el = document.createElement('div');
         el.style.setProperty('--shade', shadeFor(hex));
         el.append(vat(focused, { shape: 'rect', width: 200, height: 112, seed }));
-        el.insertAdjacentHTML('beforeend', `<p class="reverie__hex" style="--c:${hex}">${HEX}</p>`);
+        el.insertAdjacentHTML('beforeend', `<p class="reverie__hex is-painted" style="--c:${hex}">${HEX}</p>`);
         return el;
       },
       room: () => glow(focused, { seed }),
     };
     const photos = found.map(({ f: p }) => {
-      const fr = (all[p.g] || []).find((x) => x.slug === p.slug) || { slug: p.slug, url: p.url, sizes: p.sizes, ratio: p.r, name: p.name };
+      const fr = (all[p.g] || []).find((x) => x.slug === p.slug) || { slug: p.slug, url: p.url, sizes: p.sizes, ratio: p.r, name: p.name, signature: p.sig };
       return { ...fr, g: p.g, voyage: pages[p.g].title };
     });
     lbFrames.splice(0, lbFrames.length, colour, ...photos);
   }
-  async function openAt(k, img = null) { await lay(); lb.open(k, null, img); }
+  async function openAt(k, img = null) { const was = shown; await changing; await lay(); if (shown === was) lb.open(k, null, img); }
   // The way back, named for the colour.
   const lbBack = lbEl?.querySelector('.photobook-lightbox__back');
 
@@ -138,7 +138,7 @@ async function main() {
       hexEl.textContent = HEX;
       hexEl.style.setProperty('--c', hex);
       const named = nameOf(hex);
-      namedEl.textContent = named; namedEl.hidden = !named; // above the hex: the hex keeps its corner either way
+      namedEl.textContent = named; // its line kept, named or not, so the hex never moves between colours
       near.innerHTML = `<p class="reverie__near-label">Nearby</p><ol>${around.map((c) => `<li>${c.here
         ? `<span class="is-here" style="--c:${c.hex}" aria-current="true" aria-label="${c.hex.toUpperCase()}, here"></span>`
         : `<a href="${reverieOf(c.f.g, c.f.slug, c.hex)}" style="--c:${c.hex}" data-tip="${c.hex.toUpperCase()}" data-tip-side="top" aria-label="${c.hex.toUpperCase()}"></a>`}</li>`).join('')}</ol>`;
@@ -148,7 +148,6 @@ async function main() {
         <div class="palette-cards">${found.map(({ f: p }, i) => card(p, { href: `${base}drift/?from=${encodeURIComponent(`${p.g}/${p.slug}`)}&c=${hex.slice(1)}&src=${encodeURIComponent(`${f.g}/${f.slug}`)}&open`, label: 'full screen, in this colour', i, from: i === 0, place: pages[p.g].title, placeHref: `${base}palette/?at=${encodeURIComponent(p.slug)}#${p.g}`, plain: true })).join('')}</div>
         <p class="colour-next"><a href="${base}drift/?from=${encodeURIComponent(`${f.g}/${f.slug}`)}&c=${hex.slice(1)}">Drift in this colour <span aria-hidden="true">→</span></a><a href="${base}palette/?at=${encodeURIComponent(f.slug)}#${f.g}">QSD's Palette for ${esc(page.title)} <span aria-hidden="true">→</span></a></p>`;
       shown = { f, hex, found, focused };
-      shownAt = location.search;
       if (lbBack) { lbBack.lastChild.textContent = HEX; lbBack.setAttribute('aria-label', `Back to ${HEX}`); lbBack.dataset.tip = `Back to ${HEX} · Esc`; }
     };
   }
@@ -158,18 +157,22 @@ async function main() {
    * screen, it changes in place: the dye turns to the new colour and the hex gives way. From further
    * down, the page changes as the site's pages do (the root's fade) and comes back at the top.
    */
-  let changing = Promise.resolve(), shownAt = '';
-  function go(next) {
+  let changing = Promise.resolve(), shownAt = '', wanted = '';
+  // One change after another; a change that fails leaves the page as it was, and the next still runs.
+  function go(next, at = location.search) {
+    wanted = at;
     changing = changing.then(async () => {
+      if (at !== wanted) return; // passed over by a later change before it began
       const put = await prepare(next);
+      if (at !== wanted) return;
       const inPlace = scrollY < dye.offsetHeight * 0.6;
-      const update = () => { put(); if (!inPlace) scrollTo({ top: 0, behavior: 'instant' }); };
+      const update = () => { put(); shownAt = at; if (!inPlace) scrollTo({ top: 0, behavior: 'instant' }); };
       if (still() || !document.startViewTransition) { update(); return; }
       const html = document.documentElement;
       html.classList.toggle('reverie-in-place', inPlace);
       await document.startViewTransition(update).finished.catch(() => {});
       html.classList.remove('reverie-in-place');
-    });
+    }).catch(() => {});
     return changing;
   }
 
@@ -183,10 +186,10 @@ async function main() {
     const url = new URL(a.href, location.href);
     e.preventDefault();
     history.pushState(null, '', url.pathname + url.search);
-    go(read(url.href));
+    go(read(url.href), url.search);
   });
   // Back and forward between colours (the lightbox's own steps, open and closed, keep the address).
-  addEventListener('popstate', () => { if (lbEl?.open || location.search === shownAt) return; go(read(location.href)); });
+  addEventListener('popstate', () => { if (lbEl?.open || location.search === (wanted || shownAt)) return; go(read(location.href)); });
 
   // Back from a print (Drift's ‹): the page as it was left, where it was left.
   const key = () => `reverie-at:${location.search}`;
@@ -195,8 +198,9 @@ async function main() {
 
   const first = read(location.href);
   history.replaceState(null, '', reverieOf(first.f.g, first.f.slug, first.hex) + location.hash);
+  wanted = location.search;
   changing = prepare(first).then((put) => {
-    put();
+    put(); shownAt = location.search;
     if (returning) { try { const y = Number(sessionStorage.getItem(key())); if (y) requestAnimationFrame(() => scrollTo({ top: y, behavior: 'instant' })); } catch { /* no memory */ } }
     // A link to one of its photographs (#slug) opens it.
     const slug = decodeURIComponent(location.hash.slice(1));
