@@ -165,7 +165,7 @@ function set(r, P, gain) {
 // WebGL 2 allows, each round's reading is copied aside on the graphics card and collected a frame
 // later, several vats at once, so measuring never stops the page; else, at once, as before.
 const STORE = 'vat-gains-1';
-const gains = (() => { try { return new Map(Object.entries(JSON.parse(localStorage.getItem(STORE) || '{}'))); } catch { return new Map(); } })();
+const gains = (() => { try { return new Map(Object.entries(JSON.parse(globalThis.window?.localStorage.getItem(STORE) || '{}'))); } catch { return new Map(); } })();
 let saving = 0;
 const keep = (key, g) => { gains.set(key, g); clearTimeout(saving); saving = setTimeout(() => { try { localStorage.setItem(STORE, JSON.stringify(Object.fromEntries(gains))); } catch { /* this visit only */ } }, 800); };
 const areasOf = (P, data) => {

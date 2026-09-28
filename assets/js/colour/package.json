@@ -1,0 +1,4 @@
+{
+  "//": "These scripts are ES modules, in the browser and in the build (scripts/photos/lib/atlas.mjs imports cards.js); not served (_config.yml exclude).",
+  "type": "module"
+}

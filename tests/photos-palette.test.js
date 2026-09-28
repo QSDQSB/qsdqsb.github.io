@@ -246,3 +246,23 @@ test('the frames for a lightbox away from its book leave the placeholder behind'
   assert.deepEqual(out['g/h'][0].glow, ['rgb(1,2,3)'], 'the glow kept for the room');
   assert.equal(framesOf([]), null);
 });
+
+test("the landing page's picks are Ridgway's colours enough photographs hold, each with the one holding it most", async () => {
+  const { picksOf } = await import('../scripts/photos/lib/atlas.mjs');
+  // A frame's 24 dots as `rrggbbss`: all one colour, or half one and half another.
+  const dots = (a, b = a) => Array.from({ length: 24 }, (_, i) => `${i < 12 ? a : b}0b`).join('');
+  const sig = [['#5e7bb3', 100]];
+  const photos = [
+    { g: 'london', slug: 'a', sig, dots: dots('5e7bb3') },
+    { g: 'prague/twilight', slug: 'b', sig, dots: dots('5e7bb3', '222222') },
+    { g: 'porto', slug: 'c', sig, dots: dots('5e7bb3', '222222') },
+    { g: 'rome', slug: 'd', sig, dots: dots('f9c5cc') },
+  ];
+  const book = { colours: [['Cadet Blue', '5e7bb3', 'XXI'], ['Hermosa Pink', 'f9c5cc', 'I']] };
+  const out = picksOf({ photos }, book);
+  assert.equal(out.length, 1, 'a colour one photograph holds is left out');
+  assert.deepEqual(out[0].slice(0, 3), ['Cadet Blue', '5e7bb3', 'london/a'], 'the photograph holding it most');
+  assert.deepEqual(out[0][3], sig, 'with its signature, for the dye');
+  assert.equal(picksOf({ photos }, { colours: [] }), null);
+  assert.equal(picksOf(null, book), null);
+});
