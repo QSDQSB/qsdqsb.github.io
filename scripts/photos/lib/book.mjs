@@ -21,23 +21,25 @@ import { normalizeFilm } from './camera.mjs';
 import { bookRows, PORTRAIT } from '../../../assets/js/photobook/rows.mjs';
 export { bookRows };
 
-// Film simulations take a hue from the site's palette: an original mark, not Fujifilm's artwork.
+// Film simulations take a hue from the site's palette: an original mark, not Fujifilm's artwork. Muted
+// on purpose (low chroma, capped lightness): the film's name is read beside the specs, not over them.
 const FILMS = {
-  'Provia': '#8fb0a0', 'Velvia': '#d08a86', 'Astia': '#b7a6c6', 'Classic Chrome': '#c9b98f', 'Classic Negative': '#7fbcbc',
-  'Nostalgic Neg.': '#e4b181', 'Eterna Bleach Bypass': '#a8adae', 'Eterna': '#93a6b3', 'Pro Neg. Hi': '#e5cfa9', 'Pro Neg. Std': '#cdbfa6',
-  'Reala Ace': '#9fc3a0', 'Sepia': '#c7a27c',
+  'Provia': '#99a8ba', 'Velvia': '#c09194', 'Astia': '#afa8c0', 'Classic Chrome': '#b8ab8e', 'Classic Negative': '#91b0a7',
+  'Nostalgic Neg.': '#c5a688', 'Eterna Bleach Bypass': '#aaadad', 'Eterna': '#9aa7b1', 'Pro Neg. Hi': '#bea79b', 'Pro Neg. Std': '#b3aba0',
+  'Reala Ace': '#a1b39b', 'Sepia': '#b7a089',
 };
 export function filmHue(name) {
   if (!name) return null;
   const k = Object.keys(FILMS).find(f => name.startsWith(f));
-  return k ? FILMS[k] : /^(Acros|Monochrome)/.test(name) ? '#e6eee8' : '#8b9296';
+  return k ? FILMS[k] : /^Acros/.test(name) ? '#c9c9c2' : /^Monochrome/.test(name) ? '#a9a9a5' : '#8b9296';
 }
 
-// The film's mark on the dial: the letters it is known by, two where a first letter is shared.
+// The film's mark on the dial and its edge print: the letters Fujifilm's own film dial uses (STD for
+// Provia, S for Astia, NC for Classic Negative); films the dial leaves off keep two letters of their own.
 const CODES = {
-  'Provia': 'P', 'Velvia': 'V', 'Astia': 'A', 'Classic Chrome': 'CC', 'Classic Negative': 'CN', 'Nostalgic Neg.': 'NN',
-  'Eterna Bleach Bypass': 'EB', 'Eterna': 'E', 'Pro Neg. Hi': 'NH', 'Pro Neg. Std': 'NS', 'Reala Ace': 'R', 'Sepia': 'S',
-  'Acros': 'AC', 'Monochrome': 'M',
+  'Provia': 'STD', 'Velvia': 'V', 'Astia': 'S', 'Classic Chrome': 'CC', 'Classic Negative': 'NC', 'Nostalgic Neg.': 'NN',
+  'Eterna Bleach Bypass': 'EB', 'Eterna': 'E', 'Pro Neg. Hi': 'NH', 'Pro Neg. Std': 'NS', 'Reala Ace': 'RA', 'Sepia': 'SEP',
+  'Acros': 'A', 'Monochrome': 'M',
 };
 export function filmCode(name) {
   if (!name) return null;
@@ -215,7 +217,7 @@ export function lightboxOf(photos) {
     name: p.name, alt: p.alt || p.name, place: p.place?.name || null, city: p.place?.city || null,
     shots: p.shutterCount ?? null, focal: p.focal ?? null, aperture: p.aperture ?? null, shutter: p.shutter ?? null,
     iso: p.iso ?? null, bias: p.exposureBias ?? null, camera: cameraName(p.camera), lens: lensName(p.lens),
-    film: p.film ?? null, hue: p.filmHue ?? null, light: p.light, weather: p.aloft || weatherOf(p.weather, p.light), glow: p.glow, ph: p.ph, settings: settingsOf(p),
+    film: p.film ?? null, hue: p.filmHue ?? null, code: filmCode(p.film), light: p.light, weather: p.aloft || weatherOf(p.weather, p.light), glow: p.glow, ph: p.ph, settings: settingsOf(p),
   }));
 }
 
