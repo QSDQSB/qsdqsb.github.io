@@ -980,11 +980,14 @@
   }
 }
 
-// Beneath the hex, the colour's name in Ridgway's nomenclature (1912), in the site's lede.
+// Beneath the hex, the colour's name in Ridgway's nomenclature (1912), in the titles' Playfair, set
+// as a caption (italic). Its line is always there, named or not, so the hex stands in the same place
+// from one colour to the next.
 .reverie__named {
+  min-height: 1.3em;
   margin: 0.5rem 0 0;
-  @include lede;
-  font-size: clamp(1.1rem, 1.8vw, 1.6rem);
+  font: italic 400 clamp(1.1rem, 1.8vw, 1.6rem)/1.3 $global-font-family;
+  letter-spacing: 0.01em;
   color: inherit;
   opacity: 0.9;
 }
