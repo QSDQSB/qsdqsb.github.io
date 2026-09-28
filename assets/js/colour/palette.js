@@ -113,8 +113,14 @@ async function main() {
     // held in a ring for a moment (_colour.scss).
     const from = at && document.getElementById(`f-${at}`);
     if (from) {
-      if (still()) requestAnimationFrame(() => from.scrollIntoView({ block: 'center', behavior: 'instant' }));
-      else setTimeout(() => { if (from.isConnected) from.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 900);
+      if (still()) requestAnimationFrame(() => { from.scrollIntoView({ block: 'center', behavior: 'instant' }); from.classList.add('is-arrived'); });
+      else setTimeout(() => {
+        if (!from.isConnected) return;
+        from.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        // The ring once the glide has landed (scrollend), or at the latest a moment on.
+        const lit = () => from.classList.add('is-arrived');
+        addEventListener('scrollend', lit, { once: true }); setTimeout(lit, 1400);
+      }, 900);
     }
   }
 
