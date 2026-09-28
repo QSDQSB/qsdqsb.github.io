@@ -6,7 +6,9 @@
   Opt out per page with `subscribe: false` in frontmatter.
 
   Behaviour: assets/js/subscribe.js — reveals on viewport entry, folds itself
-  into the one-line summary after a 10 s dwell, unfolds on click.
+  into the one-line summary after a 10 s dwell, unfolds on click. The × closes
+  it for good on this browser (qsd-subscribe-dismissed, read in head/custom.html
+  before first paint so the slip never flashes on later pages).
   Backend: functions/api/subscribe.js (Cloudflare Pages Function + D1).
   Without JS the form still posts to /api/subscribe and gets an HTML reply.
 {% endcomment %}
@@ -19,6 +21,9 @@
   <div class="subscribe-slip__body">
     <div class="subscribe-slip__inner">
       <div class="subscribe-slip__card">
+        <button class="subscribe-slip__close" type="button" aria-label="Close, and stop showing this" hidden>
+          <svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9"/></svg>
+        </button>
         <h4 class="subscribe-slip__heading">
           <span class="subscribe-slip__mark" aria-hidden="true"></span>
           Subscribe for updates

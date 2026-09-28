@@ -776,6 +776,11 @@ html.is-refiltering::view-transition-new(*) { animation-duration: 0.35s; }
   text-align: center;
 }
 
+// The page's own words, after the book: on the book's gutter, never against the screen's edge.
+.photobook-note {
+  padding: 0 var(--photobook-gutter);
+}
+
 /* ── colophon: three bars on one baseline ─────────────────────────────── */
 .photobook-colophon {
   // The site's body is a -webkit-box, which would shrink a centred block to its content.
