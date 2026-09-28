@@ -152,7 +152,7 @@ async function main() {
         : `<a href="${reverieOf(c.f.g, c.f.slug, c.hex)}" style="--c:${c.hex}" data-tip="${c.hex.toUpperCase()}" data-tip-side="top" aria-label="${c.hex.toUpperCase()}"></a>`}</li>`).join('')}</ol>`;
       // The photographs, bare: the print and its words; the first, where the colour was found, ringed.
       body.innerHTML = `
-        <p class="reverie__count">${all > found.length ? `QSD reveries: the ${found.length} nearest of ${all} photographs` : `QSD reveries in ${all} photograph${all === 1 ? '' : 's'}`}</p>
+        <p class="reverie__count">${all > found.length ? `QSD reveries: the ${found.length} nearest of ${all} photographs` : (all === 1 ? 'QSD reveries in only this photograph… for now' : `QSD reveries in ${all} photographs`)}</p>
         <div class="palette-cards">${found.map(({ f: p }, i) => card(p, { href: `${base}drift/?from=${encodeURIComponent(`${p.g}/${p.slug}`)}&c=${hex.slice(1)}&src=${encodeURIComponent(`${f.g}/${f.slug}`)}&open`, label: 'full screen, in this colour', i, from: i === 0, place: pages[p.g].title, placeHref: `${base}palette/?at=${encodeURIComponent(p.slug)}#${p.g}`, plain: true })).join('')}</div>
         <p class="colour-next"><a href="${base}drift/?from=${encodeURIComponent(`${f.g}/${f.slug}`)}&c=${hex.slice(1)}">Drift in this colour <span aria-hidden="true">→</span></a><a href="${base}palette/?at=${encodeURIComponent(f.slug)}#${f.g}">QSD's Palette for ${esc(page.title)} <span aria-hidden="true">→</span></a></p>`;
       shown = { f, hex, found, focused };

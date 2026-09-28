@@ -227,7 +227,7 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
   const paletteOf = (p) => (p.g ? { gallery: p.g, title: `QSD's Palette for ${p.voyage || p.g}` } : palette);
   const paletteHTML = (p) => (p.signature?.length ? `<div class="palette-strip photobook-specs__palette">
       <a class="palette-strip__bar" href="${palette.base}?at=${encodeURIComponent(p.slug)}#${paletteOf(p).gallery}" data-tip="${esc(paletteOf(p).title)}" data-tip-side="top" aria-label="${esc(paletteOf(p).title)}">${p.signature.map(([h, pc]) => `<i style="--c:${h};flex:${Math.sqrt(pc).toFixed(2)}"></i>`).join('')}</a>
-      <p class="palette-strip__hex">${p.signature.map(([h, pc, accent]) => `<span title="${Math.round(pc)}%${accent ? ', accent' : ''}"><i style="--c:${h}"></i>${h.slice(1).toUpperCase()}</span>`).join('')}</p>
+      <p class="palette-strip__hex">${p.signature.map(([h, pc, accent]) => `<span><i style="--c:${h}"></i>${h.slice(1).toUpperCase()}</span>`).join('')}</p>
     </div>` : '');
 
   function specsHTML(p) {
