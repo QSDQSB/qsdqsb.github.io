@@ -922,7 +922,12 @@
   .colour-kicker { color: inherit; opacity: 0.85; }
 }
 
+// The colour itself, exact and flat, as a paint chip stands on a plastered wall: the dye around it is
+// its mood, the chip the colour; its hex and its name beside it, as the chip's label.
 .reverie__words {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(1.2rem, 3vw, 2.6rem);
   position: relative;
   z-index: 1;
   width: 100%;
@@ -964,6 +969,23 @@
 .palette-card.is-plain .palette-card__row { grid-template-columns: minmax(0, 1fr); }
 .reverie .palette-card.is-from .palette-card__print { animation: none; outline-color: var(--photobook-ink-3); }
 
+
+.reverie__chip {
+  flex: none;
+  width: clamp(6.5rem, 13vw, 12.5rem);
+  aspect-ratio: 4 / 5;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.25), 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.reverie__label { min-width: 0; }
+
+// In the opening the chip shows the colour: the hex carries no disc there, and is set a size down.
+.reverie__dye .reverie__hex {
+  font-size: clamp(2.6rem, 6.4vw, 6.2rem);
+
+  &::after { content: none; }
+}
+
 // The colour chosen, its hex set large in Didot: Playfair's figures do not read at this size.
 .reverie__hex {
   margin: 0.6rem 0 0;
@@ -991,7 +1013,7 @@
 }
 
 // Beneath the hex, as a colour chip names its colour, the name in Ridgway's nomenclature (1912), in
-// the titles' Playfair, upright. Its line is always there, named or not, so the hex stands in the same
+// Didot, as the hex above it, upright. Its line is always there, named or not, so the hex stands in the same
 // place from one colour to the next.
 .reverie__named {
   min-height: 1.3em;
@@ -999,7 +1021,7 @@
   white-space: nowrap; // one line always, or a long name would lift the hex
   overflow: hidden;
   text-overflow: ellipsis;
-  font: 400 clamp(1.1rem, 1.8vw, 1.6rem)/1.3 $global-font-family;
+  font: 400 clamp(1.2rem, 1.9vw, 1.7rem)/1.3 $didot-family;
   letter-spacing: 0.01em;
   color: inherit;
   opacity: 0.9;

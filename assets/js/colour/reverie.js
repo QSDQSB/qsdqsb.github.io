@@ -1,7 +1,8 @@
 /**
  * Reverie (_pages/reverie.html): one colour, and every photograph from any voyage that holds it, read
  * from each photograph's 24 dots (./cards.js holding: the same colour to the eye, a dot's worth of the
- * picture at least), the one it was found in first. The colour leads: its dye across the whole width
+ * picture at least), the one it was found in first. The colour leads: a chip of it, exact and flat,
+ * labelled with its hex and its name, standing on its dye across the whole width
  * (a rectangular vat, the colour given the most of it and that photograph's colours round it), its hex
  * set large. Beneath, the colours nearby, a step away each, to wander to; then the photographs, as the
  * palette page's cards but bare: prints and their words, nothing laid over the mood. A print opens in
@@ -58,7 +59,7 @@ async function main() {
     return { f, hex };
   }
 
-  const dye = root.querySelector('.reverie__dye'), hexEl = root.querySelector('.reverie__hex'), namedEl = root.querySelector('.reverie__named');
+  const dye = root.querySelector('.reverie__dye'), hexEl = root.querySelector('.reverie__hex'), namedEl = root.querySelector('.reverie__named'), chipEl = root.querySelector('.reverie__chip');
   // Ridgway's names, each with its colour in OKLab; a colour is named by the nearest within reach.
   const ridgway = (await names).colours.map(([n, h]) => [n.replace(/\s*\(\d\)$/, ''), oklab(`#${h}`)]);
   const nameOf = (hex) => {
@@ -137,6 +138,7 @@ async function main() {
       dye.style.setProperty('--shade', shadeFor(hex));
       hexEl.textContent = HEX;
       hexEl.style.setProperty('--c', hex);
+      chipEl.style.background = hex;
       const named = nameOf(hex);
       namedEl.textContent = named; // its line kept, named or not, so the hex never moves between colours
       near.innerHTML = `<p class="reverie__near-label">Nearby</p><ol>${around.map((c) => `<li>${c.here
