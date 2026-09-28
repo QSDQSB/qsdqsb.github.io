@@ -32,7 +32,7 @@
   color: var(--photobook-ink-2);
 }
 
-// A source, credited small beneath what it gave (Ridgway's colours, on their own page and in Reverie's).
+// A source, credited small beneath what it gave (Ridgway's colours, on their own page).
 .colour-source {
   margin: clamp(2rem, 4vw, 3rem) 0 0;
   font: 400 max(0.72rem, 12px)/1.5 $barlow-font-family;
@@ -215,6 +215,12 @@
 
 .colour-next {
   margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  @include onward-links;
+}
+
+// Beneath Reverie's way on, whose the colour's name is: a way to the book it comes from.
+.reverie__credit {
+  margin-top: 0.8rem;
   @include onward-links;
 }
 
@@ -1060,11 +1066,6 @@
 
 // The word, closing the page as a post closes on one.
 .reverie__word { padding: 0 var(--photobook-gutter); }
-
-.reverie__source {
-  padding: 0 var(--photobook-gutter);
-  text-align: center;
-}
 
 .reverie__count {
   @include eyebrow;
