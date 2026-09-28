@@ -1282,12 +1282,28 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 }
 
 // Marks a page gives for the frames (away from the book: each photograph's dye vat, in Reverie): a
-// dot for each in place of the tick, the one on show ringed, as Drift's way is.
+// dot for each in place of the tick, the one on show ringed, as Drift's way is. Never squeezed to fit:
+// more than fit, and the rail scrolls, as the palette page's rail of vats does, its ends fading.
 .photobook-lightbox__rail.has-marks {
   gap: 4px;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  touch-action: pan-x;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 1.25rem, #000 calc(100% - 1.25rem), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 1.25rem, #000 calc(100% - 1.25rem), transparent);
+
+  padding-inline: 1.25rem;   // the fading ends clear of the first and last dot
+
+  &::-webkit-scrollbar { display: none; }
+
+  // A scrolling rail clips what rises above it: the previews stay with the book's ticks.
+  .photobook-lightbox__peek { display: none; }
 
   button {
-    flex: 0 1 18px;
+    flex: 0 0 18px;
     width: 18px;
     height: 40px;
     place-items: center;

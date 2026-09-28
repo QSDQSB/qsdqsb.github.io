@@ -200,6 +200,8 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
       b.classList.toggle('is-on', on); b.tabIndex = on ? 0 : -1;
       if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
       if (on && railHadFocus) b.focus({ preventScroll: true });
+      // A rail of marks scrolls (more of them than fit): the one on show is kept in its middle.
+      if (on && mark) rail.scrollTo({ left: b.offsetLeft - (rail.clientWidth - b.offsetWidth) / 2, behavior: instant || still() ? 'instant' : 'smooth' });
     }
     $('.photobook-lightbox__live').textContent = `${p.name}, ${pos + 1} of ${order.length}`;
     for (const d of [1, -1]) { const q = frames[order[(pos + d + order.length) % order.length]]; if (q && !q.paint && !seen.has(srcFor(q))) fetchImg(srcFor(q)); }
@@ -282,7 +284,7 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     scrub.at?.classList.remove('is-scrub'); b.classList.add('is-scrub'); scrub.at = b; peekOf(b);
   };
   rail.addEventListener('pointerdown', (e) => {
-    if (e.pointerType === 'mouse') return;
+    if (e.pointerType === 'mouse' || mark) return;   // a rail of marks scrolls under the finger instead
     scrub = { x: e.clientX, at: null, moved: false, id: e.pointerId };
     rail.setPointerCapture(e.pointerId); rail.classList.add('is-scrubbing'); scrubTo(markAt(e.clientX));
   });
@@ -396,9 +398,9 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
   function shut() {
     if (!lb.open) return;
     const on = mat.querySelector('img.is-on');
-    const to = !screening && pos >= 0 && printFor(order[pos])?.querySelector('img');
+    const box = !screening && pos >= 0 && printFor(order[pos]), to = box?.querySelector('img');
     if (!document.startViewTransition || still() || !on || !to) return lb.close();
-    to.closest('.photobook-frame__print').scrollIntoView({ block: 'center', behavior: 'instant' });
+    box.scrollIntoView({ block: 'center', behavior: 'instant' });
     on.style.viewTransitionName = 'photobook-print';
     const t = document.startViewTransition(() => { on.style.viewTransitionName = ''; lb.close(); to.style.viewTransitionName = 'photobook-print'; });
     t.ready.catch(() => {});
