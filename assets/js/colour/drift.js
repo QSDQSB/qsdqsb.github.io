@@ -117,7 +117,7 @@ async function main() {
     const box = stage.getBoundingClientRect(), el = document.createElement('div');
     el.className = 'colour-drift__print colour-drift__colour';
     el.style.setProperty('--shade', shadeFor(colour));
-    const field = vat(dye, { shape: 'rect', width: Math.max(1, Math.round(box.width / 8)), height: Math.max(1, Math.round(box.height / 8)), seed: seedOf(src || colour), soon: true });
+    const field = vat(dye, { shape: 'rect', width: Math.max(1, Math.round(box.width / 8)), height: Math.max(1, Math.round(box.height / 8)), seed: seedOf(src || colour) });
     el.append(field);
     el.insertAdjacentHTML('beforeend', `<p class="reverie__hex colour-drift__hex" style="--c:${colour}">${colour.toUpperCase()}</p>`);
     el.ready = field.ready.then(() => el);

@@ -1,8 +1,9 @@
 /**
  * The dye vat (染缸): a palette as one round vat seen from above, its colours poured in and left to
  * drift together in broad, slow currents, so they run softly into one another. Each colour covers as
- * much of the vat as its share: the vat measures itself on the GPU at 64 px and adjusts until it does,
- * so it tells the truth the colour bar tells. Mixed in OKLab with the chroma kept, so two colours make
+ * much of the vat as its share, so it tells the truth the colour bar tells: the currents are worked out
+ * on the page's own arithmetic too (settle, below), exactly as the graphics card draws them, and each
+ * colour's weight set there until it does, a millisecond or so a vat, nothing read back from the card. Mixed in OKLab with the chroma kept, so two colours make
  * a clean third, not a grey (across nearly opposite hues it settles, as paint does).
  *
  * How it pours follows how the colours sit together: a palette of one family (a misty evening, all
@@ -11,8 +12,8 @@
  *
  * vat(palette, { size, width, height, shape, seed, stir, label, calm }) → a canvas. `palette` is
  * [{hex, pc, accent}] or [[hex, pc, accent]]; `calm` (0 stirred … 1 layered) overrides the choice; the vat is `size` across (or the smaller of width and height), centred, transparent
- * round it; `soon` measures it at once (for the one vat a page waits on). `shape: 'rect'` pours the same dye into the whole width × height instead, its colours
- * spread along its length and measured over all of it, so each still covers its share (Reverie's
+ * round it. `shape: 'rect'` pours the same dye into the whole width × height instead, its colours
+ * spread along its length and weighed over all of it, so each still covers its share (Reverie's
  * opening); drawn small and shown large (it is a mood, and softens as it spreads), it costs no more
  * than a round vat. Still by default: painted on one shared WebGL canvas and copied out, so a page of frames
  * costs one context. `stir: true` gives the vat its own and keeps the currents moving (the lab);
@@ -26,9 +27,14 @@
 
 const FRAG = `
 precision highp float;
-uniform vec2 res, org; uniform float seed, t, calm, tilt, aspect; uniform int mode, shape;
+uniform vec2 res, org; uniform float seed, t, calm, tilt, aspect; uniform int shape;
 uniform vec3 col[5]; uniform float gain[5], drop[5]; uniform vec2 pos[5]; uniform int n;
-float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7)) + seed * 0.013) * 43758.5453); }
+// Integers only, each below 2^24 (exact in any float), so every graphics card, and the page's own
+// arithmetic (settle, below), draws the same currents: a permutation polynomial mod 289, the +0.5
+// keeping the remainder clear of rounding at exact multiples.
+float m289(float x) { return x - floor((x + 0.5) * (1.0 / 289.0)) * 289.0; }
+float perm(float x) { return m289((34.0 * x + 1.0) * x); }
+float hash(vec2 p) { return perm(perm(m289(p.x) + m289(seed)) + m289(p.y)) / 289.0; }
 float noise(vec2 p) { vec2 i = floor(p), f = fract(p); vec2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
   return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y); }
 float fbm(vec2 p) { float v = 0.0, a = 0.6; for (int i = 0; i < 2; i++) { v += a * noise(p); p = p * 1.9 + 11.0; a *= 0.4; } return v / 0.84; }
@@ -40,7 +46,7 @@ void main() {
   vec2 uv = ((gl_FragCoord.xy - org) / res) * 2.0 - 1.0; uv.y = -uv.y; uv.x *= aspect;
   float r = length(uv), aa = 2.0 / res.x;
   // Round, or (shape 1) a rectangle aspect wide to 1 high, filled to its edges.
-  if (shape == 0 && (r > 1.0 + aa || (mode > 0 && r > 1.0))) { gl_FragColor = vec4(0.0); return; }
+  if (shape == 0 && r > 1.0 + aa) { gl_FragColor = vec4(0.0); return; }
   // The currents: broad, warped twice, drifting slowly with t; and, where the colours contrast, one
   // long sweep across the vat, so they draw out in ribbons rather than sit in patches. Where they are
   // of one family (calm), no sweep: they settle in layers, light over deep, their edges misted.
@@ -59,7 +65,6 @@ void main() {
     float layer = calm * (1.0 - drop[k]);
     ws[k] = gain[k] * exp(-(d.x * d.x * (1.0 - 0.94 * layer) + d.y * d.y) / mix(0.26, 0.1, calm)); tot += ws[k]; }
   for (int k = 0; k < 5; k++) ws[k] /= tot;
-  if (mode == 1) { gl_FragColor = vec4(ws[0], ws[1], ws[2], ws[3]); return; }
   float L = 0.0, C = 0.0; vec2 ab = vec2(0.0);
   for (int k = 0; k < 5; k++) { if (k >= n) continue; L += ws[k] * col[k].x; ab += ws[k] * col[k].yz; C += ws[k] * length(col[k].yz); }
   float h = length(ab); if (h > 1e-4) ab *= mix(1.0, C / h, smoothstep(0.25, 0.75, h / max(C, 1e-4)));
@@ -83,9 +88,9 @@ export function oklab(h) {
 export const seedOf = (text) => { let h = 2166136261; for (const ch of String(text)) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return (h % 2147483646) + 1; };
 
 /** A WebGL renderer on `canvas`: the program compiled once, and one uniform setter. */
-function renderer(canvas, { v2 = false } = {}) {
+function renderer(canvas) {
   const opts = { preserveDrawingBuffer: true, premultipliedAlpha: true, antialias: true };
-  const gl = (v2 && canvas.getContext('webgl2', opts)) || canvas.getContext('webgl', opts);
+  const gl = canvas.getContext('webgl', opts);
   if (!gl) return null;
   const sh = (type, src) => { const x = gl.createShader(type); gl.shaderSource(x, src); gl.compileShader(x); return x; };
   const prog = gl.createProgram();
@@ -96,23 +101,18 @@ function renderer(canvas, { v2 = false } = {}) {
   gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
   const at = gl.getAttribLocation(prog, 'a'); gl.enableVertexAttribArray(at); gl.vertexAttribPointer(at, 2, gl.FLOAT, false, 0, 0);
   const loc = {}, u = (name) => (loc[name] ??= gl.getUniformLocation(prog, name));
-  return { gl, canvas, u, async: typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext };
+  return { gl, canvas, u };
 }
 
 // Still vats are all painted on one hidden canvas and copied out: a browser keeps only a few WebGL
 // contexts alive, and a page of frames wants one each. False once WebGL has failed here; renewed if
-// the context is lost (a GPU reset, a tab sent to the background on a phone). WebGL 2 where there is
-// one, so the vats can be measured without stopping the page (below).
+// the context is lost (a GPU reset, a tab sent to the background on a phone).
 let shared;
 function sharedRenderer() {
-  if (shared?.gl.isContextLost()) { shared = undefined; for (const j of jobs.splice(0)) j.resolve(null); } // settled, not left waiting
-  if (shared === undefined) shared = renderer(document.createElement('canvas'), { v2: true }) || false;
+  if (shared?.gl.isContextLost()) shared = undefined;
+  if (shared === undefined) shared = renderer(document.createElement('canvas')) || false;
   return shared;
 }
-
-// The self-measuring grid: M × M pixels, the circle's pixels found once.
-const M = 48, EVERY = Array.from({ length: M * M }, (_, i) => i), INSIDE = (() => { const out = []; for (let y = 0; y < M; y++) for (let x = 0; x < M; x++) { const u = ((x + 0.5) / M) * 2 - 1, v = ((y + 0.5) / M) * 2 - 1; if (u * u + v * v <= 1) out.push(y * M + x); } return out; })();
-const px = new Uint8Array(M * M * 4);
 
 // What a vat is, from its palette and seed alone: its colours, where each is poured, how calm it
 // is. Deterministic, so it can be set on any context, as often as needed.
@@ -144,7 +144,7 @@ function plan(palette, seed, calmFor, aspect = 0) {
     pos[i] = [stirred[0] + (layered[0] - stirred[0]) * calm, stirred[1] + (layered[1] - stirred[1]) * calm];
   });
   const key = `${seed}|${calmFor ?? ''}|${cs.map((p) => `${p.hex}:${p.pc}:${p.accent ? 1 : 0}`).join(',')}${aspect ? `|rect ${aspect.toFixed(2)}` : ''}`;
-  return { n, cs, share, labs, calm, tilt, pos, key, seed, aspect, args: [palette, seed, calmFor, aspect] };
+  return { n, cs, share, labs, calm, tilt, pos, key, seed, aspect };
 }
 function set(r, P, gain) {
   const { gl, u } = r;
@@ -159,117 +159,17 @@ function set(r, P, gain) {
   for (let k = 0; k < 5; k++) gl.uniform1f(u(`gain[${k}]`), gain[k] || 0);
 }
 
-// Measuring a vat: how much of it each colour covers, adjusted until each is its share (within half a
-// point; most arrive in a few rounds; the fifth colour's share is what the other four leave). Done
-// once per palette and seed, ever: the gains are kept here and in this browser's storage. Where
-// WebGL 2 allows, each round's reading is copied aside on the graphics card and collected a frame
-// later, several vats at once, so measuring never stops the page; else, at once, as before.
-const STORE = 'vat-gains-1';
-const gains = (() => { try { return new Map(Object.entries(JSON.parse(globalThis.window?.localStorage.getItem(STORE) || '{}'))); } catch { return new Map(); } })();
-let saving = 0;
-const keep = (key, g) => { gains.set(key, g); clearTimeout(saving); saving = setTimeout(() => { try { localStorage.setItem(STORE, JSON.stringify(Object.fromEntries(gains))); } catch { /* this visit only */ } }, 800); };
-const areasOf = (P, data) => {
-  const mass = [0, 0, 0, 0];
-  const cells = P.aspect ? EVERY : INSIDE;
-  for (const j of cells) for (let k = 0; k < 4; k++) mass[k] += data[j * 4 + k];
-  const all = cells.length * 255, areas = [...mass.map((m) => m / all), 0].slice(0, P.n);
-  if (P.n === 5) areas[4] = Math.max(0, 1 - areas[0] - areas[1] - areas[2] - areas[3]);
-  return areas;
-};
+// Weighing a vat: how much of it each colour covers, adjusted until each is its share (settle,
+// below). Once per palette and seed in a visit: kept here for the next vat of the same.
+const gains = new Map();
 const step = (P, gain, areas) => { for (let k = 0; k < P.n; k++) gain[k] *= ((P.share[k] + 1e-3) / (areas[k] + 1e-3)) ** 0.8; };
-const settled = (P, areas) => areas.every((a, k) => Math.abs(a - P.share[k]) < 0.005);
-
-function measureNow(r, P) {
-  const { gl, u } = r, gain = P.share.slice();
-  let areas = [];
-  gl.viewport(0, 0, M, M); gl.uniform2f(u('res'), M, M); gl.uniform2f(u('org'), 0, 0); gl.uniform1i(u('mode'), 1);
-  for (let it = 0; it < 16; it++) {
-    set(r, P, gain);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); gl.readPixels(0, 0, M, M, gl.RGBA, gl.UNSIGNED_BYTE, px);
-    areas = areasOf(P, px);
-    if (settled(P, areas)) break;
-    step(P, gain, areas);
-  }
-  return { gain, areas };
-}
-
-// Measuring reads the GPU back, and a read waits for it (on Apple's graphics even the deferred read
-// below waits): on the page's own thread that is a hover or a click kept waiting. So a vat is measured
-// in a worker (./vat-worker.js, its own offscreen canvas), where waiting costs the page nothing; where
-// a worker cannot draw (no OffscreenCanvas WebGL), on the page, a round a frame, as before.
-let worker = null, workerOk = typeof Worker !== 'undefined' && typeof OffscreenCanvas !== 'undefined', asked = 0;
-const asks = new Map();
-function measureLater(P) {
-  if (!workerOk) return measureOnPage(P);
-  try {
-    if (!worker) {
-      worker = new Worker(new URL('./vat-worker.js', import.meta.url), { type: 'module' });
-      worker.onmessage = ({ data }) => {
-        const a = asks.get(data.id); if (!a) return;
-        asks.delete(data.id);
-        if (data.error) { workerOk = false; a.fallback(); } else a.resolve({ gain: data.gain, areas: data.areas });
-      };
-      worker.onerror = () => { workerOk = false; for (const a of asks.values()) a.fallback(); asks.clear(); };
-    }
-  } catch { workerOk = false; return measureOnPage(P); }
-  return new Promise((resolve) => {
-    const id = asked++;
-    asks.set(id, { resolve, fallback: () => measureOnPage(P).then(resolve) });
-    worker.postMessage({ id, args: P.args });
-  });
-}
-/** Measured off the page (in ./vat-worker.js): the same plan and rounds, on an offscreen canvas. */
-let off;
-export function measureOff(palette, seed, calmFor, aspect) {
-  if (off === undefined) off = renderer(new OffscreenCanvas(M, M), { v2: true }) || false;
-  if (!off) throw new Error('no WebGL here');
-  return measureNow(off, plan(palette, seed, calmFor, aspect));
-}
-
-const LANES = 6, jobs = [];
-let pumping = 0;
-function measureOnPage(P) {
-  return new Promise((resolve) => { jobs.push({ P, gain: P.share.slice(), it: 0, areas: [], resolve, buf: null, fence: null }); if (!pumping) pumping = requestAnimationFrame(pump); });
-}
-function pump() {
-  pumping = 0;
-  const r = sharedRenderer();
-  if (!r) { for (const j of jobs.splice(0)) j.resolve(null); return; }
-  const { gl, u } = r;
-  if (r.canvas.width < M * LANES || r.canvas.height < M) { r.canvas.width = Math.max(r.canvas.width, M * LANES); r.canvas.height = Math.max(r.canvas.height, M); }
-  jobs.slice(0, LANES).forEach((j, lane) => {
-    if (j.fence) {
-      const st = gl.clientWaitSync(j.fence, 0, 0);
-      if (st !== gl.ALREADY_SIGNALED && st !== gl.CONDITION_SATISFIED) return; // not yet: next frame
-      gl.deleteSync(j.fence); j.fence = null;
-      gl.bindBuffer(gl.PIXEL_PACK_BUFFER, j.buf); gl.getBufferSubData(gl.PIXEL_PACK_BUFFER, 0, px); gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
-      j.areas = areasOf(j.P, px); j.it++;
-      if (settled(j.P, j.areas) || j.it >= 16) { j.done = true; return; }
-      step(j.P, j.gain, j.areas);
-    }
-    // One round: drawn in its own lane of the canvas, read into its own buffer, fenced.
-    set(r, j.P, j.gain);
-    gl.viewport(lane * M, 0, M, M); gl.uniform2f(u('res'), M, M); gl.uniform2f(u('org'), lane * M, 0); gl.uniform1i(u('mode'), 1);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    j.buf ??= gl.createBuffer();
-    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, j.buf); gl.bufferData(gl.PIXEL_PACK_BUFFER, M * M * 4, gl.STREAM_READ);
-    gl.readPixels(lane * M, 0, M, M, gl.RGBA, gl.UNSIGNED_BYTE, 0);
-    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
-    j.fence = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
-  });
-  gl.flush();
-  for (let i = jobs.length - 1; i >= 0; i--) if (jobs[i].done) { const [j] = jobs.splice(i, 1); if (j.buf) gl.deleteBuffer(j.buf); j.resolve({ gain: j.gain, areas: j.areas }); }
-  if (jobs.length) pumping = requestAnimationFrame(pump);
-}
 
 /**
- * A vat as a canvas, returned at once; `canvas.ready` resolves when it is drawn. Measured before (its
- * gains remembered), it is drawn there and then; else it is drawn once measured, a few frames on,
- * and fades in (CSS: .colour-vat[data-pouring]).
+ * A vat as a canvas, drawn at once; `canvas.ready` resolves with it.
  */
 const stillness = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export function vat(palette, { size = 176, width = size, height = size, shape = 'round', seed = 1, stir = false, speed = 15, label = '', calm: calmFor = null, soon = false } = {}) {
+export function vat(palette, { size = 176, width = size, height = size, shape = 'round', seed = 1, stir = false, speed = 15, label = '', calm: calmFor = null } = {}) {
   const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(width * dpr), H = Math.round(height * dpr);
   const moving = !!stir && !stillness();
   const out = document.createElement('canvas'); out.width = W; out.height = H;
@@ -284,7 +184,7 @@ export function vat(palette, { size = 176, width = size, height = size, shape = 
 
   const draw = ({ gain, areas }) => {
     // A live vat keeps its own context for its life, and is repainted in it (repaint, below).
-    if (shown && live) { shown.gain = gain; set(live, P, gain); shown.frame(0); if (areas) out.dataset.areas = areas.map((x) => x.toFixed(3)).join(' '); out.dataset.calm = P.calm.toFixed(2); delete out.dataset.pouring; return; }
+    if (shown && live) { shown.gain = gain; set(live, P, gain); shown.frame(0); if (areas) out.dataset.areas = areas.map((x) => x.toFixed(3)).join(' '); out.dataset.calm = P.calm.toFixed(2); return; }
     const r = moving ? (live = renderer(out)) : sharedRenderer();
     if (!r) return;
     const { gl, canvas, u } = r;
@@ -293,13 +193,12 @@ export function vat(palette, { size = 176, width = size, height = size, shape = 
     // Round: a square as tall as the smaller side, centred. A rectangle: the whole canvas.
     const side = Math.min(W, H), [vw, vh] = aspect ? [W, H] : [side, side], ox = Math.round((W - vw) / 2), oy = Math.round((H - vh) / 2);
     const baseY = canvas.height - H; // drawing at the bottom-left of a larger shared canvas: the top-left of the copy
-    gl.uniform2f(u('res'), vw, vh); gl.uniform2f(u('org'), ox, baseY + oy); gl.uniform1i(u('mode'), 0);
+    gl.uniform2f(u('res'), vw, vh); gl.uniform2f(u('org'), ox, baseY + oy); 
     const frame = (t) => { gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.viewport(ox, baseY + oy, vw, vh); gl.uniform1f(u('t'), t); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
     frame(0);
     shown = { frame, gain };
     if (areas) out.dataset.areas = areas.map((x) => x.toFixed(3)).join(' '); // what the vat covers, to check against the shares
     out.dataset.calm = P.calm.toFixed(2);
-    delete out.dataset.pouring;
     if (moving) out.release = () => gl.getExtension('WEBGL_lose_context')?.loseContext();
     if (moving && (stir === 'hover' || stir === 'hold')) {
       // Drawn only while it moves. 'hover': stirred under the pointer, then eased back to rest (t = 0).
@@ -329,21 +228,9 @@ export function vat(palette, { size = 176, width = size, height = size, shape = 
   };
 
   const pour = () => {
-    const known = gains.get(P.key);
-    if (known) { draw({ gain: known }); return Promise.resolve(out); }
-    // At once where it cannot be deferred (WebGL 1), and for an automated renderer (a screenshot must
-    // find every vat drawn: html.motion-off from head/custom.html).
-    // `soon`: one vat a page waits on (Reverie's opening) is measured there and then, a few ms, rather
-    // than a round a frame (its readings a frame late each) for up to sixteen.
-    if (!r0.async || window.QSD_MOTION_OFF === true || soon) { const m = measureNow(r0, P); keep(P.key, m.gain); draw(m); return Promise.resolve(out); }
-    if (!shown) out.dataset.pouring = '';
-    const mine = P;
-    return measureLater(P).then((m) => {
-      if (mine !== P) return out;
-      if (m) { keep(P.key, m.gain); draw(m); }
-      else { const r = sharedRenderer(); if (r) { const n = measureNow(r, P); keep(P.key, n.gain); draw(n); } else delete out.dataset.pouring; }
-      return out;
-    });
+    if (!gains.has(P.key)) gains.set(P.key, settle(P));
+    draw(gains.get(P.key));
+    return Promise.resolve(out);
   };
   if (!shown) out.stir = () => {}; // until drawn
   out.ready = pour();
@@ -363,4 +250,53 @@ export function glow(palette, { seed = 1 } = {}) {
   out.width = out.height = 48;
   out.ready = c.ready.then(() => { const side = c.width / Math.SQRT2, at = (c.width - side) / 2; out.getContext('2d').drawImage(c, at, at, side, side, 0, 0, 48, 48); return out; });
   return out;
+}
+
+// The currents as the shader draws them at rest (t = 0), on a G × G grid in plain arithmetic: each
+// cell's pull toward each colour, before the gains. The random numbers are whole numbers, exact here
+// and on any graphics card (FRAG's hash), so what is weighed here is what is drawn there.
+const G = 48;
+function field(P) {
+  const s = (P.seed % 1000) + 1, calm = P.calm, asp = P.aspect || 1, rect = !!P.aspect;
+  const m289 = (x) => x - Math.floor((x + 0.5) / 289) * 289, perm = (x) => m289((34 * x + 1) * x), sm = m289(s);
+  const hash = (x, y) => perm(perm(m289(x) + sm) + m289(y)) / 289;
+  const noise = (x, y) => { const ix = Math.floor(x), iy = Math.floor(y), fx = x - ix, fy = y - iy;
+    const ux = fx * fx * fx * (fx * (fx * 6 - 15) + 10), uy = fy * fy * fy * (fy * (fy * 6 - 15) + 10);
+    const a = hash(ix, iy), b = hash(ix + 1, iy), c = hash(ix, iy + 1), d = hash(ix + 1, iy + 1);
+    return (a + (b - a) * ux) + ((c + (d - c) * ux) - (a + (b - a) * ux)) * uy; };
+  const fbm = (x, y) => { let v = 0, a = 0.6; for (let i = 0; i < 2; i++) { v += a * noise(x, y); x = x * 1.9 + 11; y = y * 1.9 + 11; a *= 0.4; } return v / 0.84; };
+  const ox = s * 0.0071, oy = s * 0.0037, amp = 0.7 + (0.42 - 0.7) * calm, width = 0.26 + (0.1 - 0.26) * calm;
+  const al = [Math.cos(s * 0.37), Math.sin(s * 0.37)], ac = [-al[1], al[0]], ct = Math.cos(P.tilt), st = Math.sin(P.tilt);
+  const pull = [];
+  for (let y = 0; y < G; y++) for (let x = 0; x < G; x++) {
+    let u = ((x + 0.5) / G) * 2 - 1, v = -(((y + 0.5) / G) * 2 - 1);
+    if (!rect && u * u + v * v > 1) continue;
+    u *= asp;
+    const qx = fbm(u + ox, v + oy), qy = fbm(u + ox + 5.2, v + oy + 1.3);
+    const wx = fbm(u * 1.2 + 2.2 * qx + 1.7, v * 1.2 + 2.2 * qy + 9.2), wy = fbm(u * 1.2 + 2.2 * qx + 8.3, v * 1.2 + 2.2 * qy + 2.8);
+    let px = u + amp * (wx - 0.5) + calm * 0.1 * (fbm(u * 4 + 3.1, v * 4 + 3.1) - 0.5), py = v + amp * (wy - 0.5) + calm * 0.1 * (fbm(u * 4 + 7.7, v * 4 + 7.7) - 0.5);
+    const sw = (1 - calm) * 0.28 * Math.sin((px * ac[0] + py * ac[1]) * 2.4 + s * 0.11);
+    px += al[0] * sw; py += al[1] * sw;
+    const e = new Float64Array(P.n);
+    for (let k = 0; k < P.n; k++) {
+      const rx = px - P.pos[k][0] * (rect ? asp : 1), ry = py - P.pos[k][1];
+      const dx = ct * rx + st * ry, dy = -st * rx + ct * ry, layer = calm * (1 - (P.cs[k].accent ? 1 : 0));
+      e[k] = Math.exp(-(dx * dx * (1 - 0.94 * layer) + dy * dy) / width);
+    }
+    pull.push(e);
+  }
+  return pull;
+}
+// Each colour's weight, set until it covers its share within a tenth of a point.
+function settle(P, { tol = 0.001, rounds = 60 } = {}) {
+  const pull = field(P), gain = P.share.slice(), n = P.n;
+  let areas = [];
+  for (let it = 0; it < rounds; it++) {
+    areas = new Array(n).fill(0);
+    for (const e of pull) { let t = 0; for (let k = 0; k < n; k++) t += gain[k] * e[k]; if (t > 0) for (let k = 0; k < n; k++) areas[k] += gain[k] * e[k] / t; }
+    for (let k = 0; k < n; k++) areas[k] /= pull.length;
+    if (areas.every((a, k) => Math.abs(a - P.share[k]) < tol)) break;
+    step(P, gain, areas);
+  }
+  return { gain, areas };
 }

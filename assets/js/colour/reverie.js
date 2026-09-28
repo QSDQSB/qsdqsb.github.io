@@ -125,7 +125,7 @@ async function main() {
     // Still, from the shared context (no context of its own to make, no program to compile): the colour
     // changes at once. The stirrable one is made only when the dot is first pointed at (below).
     const fw = Math.max(1, Math.round(box.width / 8)), fh = Math.max(1, Math.round(box.height / 8));
-    const field = vat(focused, { shape: 'rect', width: fw, height: fh, seed, soon: true });
+    const field = vat(focused, { shape: 'rect', width: fw, height: fh, seed });
     await field.ready;
     // The photographs that hold it: the one it was found in first, then the nearest others, no voyage
     // crowding the rest out; and the colours a step away.
