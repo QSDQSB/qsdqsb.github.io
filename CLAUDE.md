@@ -166,7 +166,7 @@ The two that break most often: `gallery_name` must be a gallery the photo pipeli
 
 When a layout or include changes visible structure, validate desktop *and* mobile-small.
 
-→ `_docs/layouts.md`.
+→ `_docs/layouts.md`; `web-design-guidelines` skill for keyboard, focus and semantics on interactive controls.
 
 ---
 

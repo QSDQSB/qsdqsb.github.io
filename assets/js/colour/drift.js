@@ -74,7 +74,6 @@ async function main() {
     if (back) {
       back.href = came ? document.referrer : `${reverie}?c=${colour.slice(1)}${src ? `&from=${encodeURIComponent(src)}` : ''}`;
       back.setAttribute('aria-label', `Back to ${colour.toUpperCase()}`); back.dataset.tip = `Back to ${colour.toUpperCase()}`;
-      back.setAttribute('data-own-links', ''); // left to this page (../view-transitions.js), so it can step back
       back.addEventListener('click', (e) => { if (came && history.length > 1) { e.preventDefault(); history.back(); } });
       addEventListener('keydown', (e) => { if (e.key === 'Escape') back.click(); });
     }

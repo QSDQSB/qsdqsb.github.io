@@ -81,7 +81,7 @@ test('the colophon counts films, lenses and the half hours of the day', async ()
     { taken: '2023-07-12T21:14:00+01:00', lens: 'XF16', settings: { filmSimulation: 'Classic Negative' }, light: { phase: 'golden' } },
   ]);
   assert.deepEqual(c.films.map(f => [f.name, f.n, f.pc]), [['Classic Negative', 2, 67], ['Astia', 1, 33]]);
-  assert.equal(c.films[0].hue, '#3e7658');
+  assert.equal(c.films[0].hue, '#91b0a7');
   assert.deepEqual(c.lenses.map(l => l.name), ['XF 90', 'XF 16']);
   assert.deepEqual(c.hours.map(h => h.stack), [0, 1, 0], 'two frames in the 18:00 half hour stack');
   assert.deepEqual(c.phases, { day: 2, golden: 1, night: 0 });
@@ -111,18 +111,20 @@ test('lenses read as a photographer says them', async () => {
   assert.equal(lensName(null), null);
 });
 
-test('each film has its mark on the dial, two letters where a first letter is shared', async () => {
+test("each film has its mark on the dial: Fujifilm's own letters, else two of its own", async () => {
   const { filmCode, colophonOf } = await lib();
   assert.equal(filmCode('Velvia'), 'V');
-  assert.equal(filmCode('Classic Negative'), 'CN');
+  assert.equal(filmCode('Classic Negative'), 'NC', "Fujifilm's own dial letters");
+  assert.equal(filmCode('Provia'), 'STD');
+  assert.equal(filmCode('Astia'), 'S');
   assert.equal(filmCode('Classic Chrome'), 'CC');
   assert.equal(filmCode('Eterna Bleach Bypass'), 'EB', 'the longer name is matched before Eterna');
   assert.equal(filmCode('Eterna'), 'E');
-  assert.equal(filmCode('Acros+R'), 'AC');
+  assert.equal(filmCode('Acros+R'), 'A');
   assert.equal(filmCode('Something New'), 'SN', 'an unknown film takes its initials');
   assert.equal(filmCode(null), null);
   const films = colophonOf([{ film: 'Astia' }, { film: 'Pro Neg. Hi' }]).films;
-  assert.deepEqual(films.map(f => f.code), ['A', 'NH']);
+  assert.deepEqual(films.map(f => f.code), ['S', 'NH']);
 });
 
 test('alt text: the owner\'s alt, else place, city and film', async () => {

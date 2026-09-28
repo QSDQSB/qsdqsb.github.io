@@ -192,7 +192,7 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     const one = order.length < frames.length && frames[order[0]]?.film;
     $('.photobook-lightbox__count').innerHTML = `<span><b>${String(pos + 1).padStart(2, '0')}</b> / ${String(order.length).padStart(2, '0')}</span>${one ? `<i style="--film:${frames[order[0]].hue}">${esc(one)}</i>` : ''}`;
     $('.photobook-lightbox__caption').innerHTML = captionHTML(p);
-    specsIn.innerHTML = p.paint ? '' : specsHTML(p);
+    specsIn.innerHTML = p.paint ? '' : specsHTML(p, i + 1);
     if (wasPainted || p.paint) applySpecs(); else placeSpecs();   // a painted frame has no specs: the panel steps aside
     const railHadFocus = rail.contains(document.activeElement);
     for (const [k, b] of [...rail.children].entries()) {
@@ -230,7 +230,8 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
       <p class="palette-strip__hex">${p.signature.map(([h, pc, accent]) => `<span><i style="--c:${h}"></i>${h.slice(1).toUpperCase()}</span>`).join('')}</p>
     </div>` : '');
 
-  function specsHTML(p) {
+  // n: the frame's place in the book, printed on the film's edge as a roll numbers its frames.
+  function specsHTML(p, n) {
     const ev = p.bias ? ` · ${p.bias > 0 ? '+' : '−'}${Math.abs(Math.round(p.bias * 100) / 100)} EV` : '';
     const sun = p.light ? `<div class="photobook-specs__sun"><b>${String(p.light.alt).replace('-', '−')}°${sunGlyph(p.light)}</b><span>${esc(p.light.text)}</span></div>` : '';
     const wide = ([, v]) => String(v).length > 12;
@@ -244,7 +245,7 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
         <div><b>${p.iso ?? '—'}</b><span>ISO${ev}</span></div>
         ${p.weather ? `<div class="photobook-specs__weather"><b>${String(p.weather.t).replace('-', '−')}°C</b><span>${weatherGlyph(p.weather)}${esc(p.weather.text)}</span></div>` : ''}
         ${sun}
-        ${p.film ? `<div class="photobook-specs__film"><div class="photobook-specs__print" style="--film:${p.hue}">${esc(p.film)}</div></div>` : ''}
+        ${p.film ? `<div class="photobook-specs__film"><div class="photobook-specs__print" style="--film:${p.hue}">${esc(p.film)}${p.code ? `<span>${esc(p.code)}</span>` : ''}<i>${n}&emsp;▸${n}A</i></div></div>` : ''}
         ${paletteHTML(p)}
       </div>
       ${p.camera || p.lens ? `<p class="photobook-specs__gear"><b>${esc(p.camera || '')}</b>${p.lens ? ` · ${esc(p.lens)}` : ''}</p>` : ''}
