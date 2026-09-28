@@ -77,8 +77,9 @@ export function oklab(h) {
 export const seedOf = (text) => { let h = 2166136261; for (const ch of String(text)) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return (h % 2147483646) + 1; };
 
 /** A WebGL renderer on `canvas`: the program compiled once, and one uniform setter. */
-function renderer(canvas) {
-  const gl = canvas.getContext('webgl', { preserveDrawingBuffer: true, premultipliedAlpha: true, antialias: true });
+function renderer(canvas, { v2 = false } = {}) {
+  const opts = { preserveDrawingBuffer: true, premultipliedAlpha: true, antialias: true };
+  const gl = (v2 && canvas.getContext('webgl2', opts)) || canvas.getContext('webgl', opts);
   if (!gl) return null;
   const sh = (type, src) => { const x = gl.createShader(type); gl.shaderSource(x, src); gl.compileShader(x); return x; };
   const prog = gl.createProgram();
@@ -89,16 +90,17 @@ function renderer(canvas) {
   gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
   const at = gl.getAttribLocation(prog, 'a'); gl.enableVertexAttribArray(at); gl.vertexAttribPointer(at, 2, gl.FLOAT, false, 0, 0);
   const loc = {}, u = (name) => (loc[name] ??= gl.getUniformLocation(prog, name));
-  return { gl, canvas, u };
+  return { gl, canvas, u, async: typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext };
 }
 
 // Still vats are all painted on one hidden canvas and copied out: a browser keeps only a few WebGL
 // contexts alive, and a page of frames wants one each. False once WebGL has failed here; renewed if
-// the context is lost (a GPU reset, a tab sent to the background on a phone).
+// the context is lost (a GPU reset, a tab sent to the background on a phone). WebGL 2 where there is
+// one, so the vats can be measured without stopping the page (below).
 let shared;
 function sharedRenderer() {
-  if (shared?.gl.isContextLost()) shared = undefined;
-  if (shared === undefined) shared = renderer(document.createElement('canvas')) || false;
+  if (shared?.gl.isContextLost()) { shared = undefined; jobs.length = 0; }
+  if (shared === undefined) shared = renderer(document.createElement('canvas'), { v2: true }) || false;
   return shared;
 }
 
@@ -106,22 +108,14 @@ function sharedRenderer() {
 const M = 48, INSIDE = (() => { const out = []; for (let y = 0; y < M; y++) for (let x = 0; x < M; x++) { const u = ((x + 0.5) / M) * 2 - 1, v = ((y + 0.5) / M) * 2 - 1; if (u * u + v * v <= 1) out.push(y * M + x); } return out; })();
 const px = new Uint8Array(M * M * 4);
 
-export function vat(palette, { size = 176, width = size, height = size, seed = 1, stir = false, speed = 15, label = '', calm: calmFor = null } = {}) {
+// What a vat is, from its palette and seed alone: its colours, where each is poured, how calm it
+// is. Deterministic, so it can be set on any context, as often as needed.
+function plan(palette, seed, calmFor) {
   let state = seed;
   const rand = () => { state = (state * 16807) % 2147483647; return state / 2147483647; };
   const gauss = () => { let v = 0; for (let i = 0; i < 6; i++) v += rand(); return v / 6 - 0.5; };
   const cs = palette.slice(0, 5).map((p) => (Array.isArray(p) ? { hex: p[0], pc: p[1], accent: !!p[2] } : p)), n = cs.length;
-  const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(width * dpr), H = Math.round(height * dpr);
-  const moving = !!stir && !(window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const out = document.createElement('canvas'); out.width = W; out.height = H;
-  out.className = 'colour-vat'; out.style.aspectRatio = `${width} / ${height}`;
-  if (label) { out.setAttribute('role', 'img'); out.setAttribute('aria-label', label); } else out.setAttribute('aria-hidden', 'true');
-  if (!n) return out;
-  const r = moving ? renderer(out) : sharedRenderer();
-  if (!r) return out;
-  const { gl, canvas, u } = r;
-  if (canvas.width < Math.max(W, M) || canvas.height < Math.max(H, M)) { canvas.width = Math.max(W, M, canvas.width); canvas.height = Math.max(H, M, canvas.height); }
-  const total = cs.reduce((s, p) => s + p.pc, 0), share = cs.map((p) => p.pc / total);
+  const total = cs.reduce((s, p) => s + p.pc, 0) || 1, share = cs.map((p) => p.pc / total);
   const labs = cs.map((p) => oklab(p.hex));
   // How the colours sit together: the widest gap of hue between any two (the accent aside). One
   // family (under 0.06 on the plane of hue) settles in layers; a contrast (over 0.16) is stirred;
@@ -129,8 +123,7 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
   const main = cs.map((p, i) => i).filter((i) => !cs[i].accent);
   let gap = 0; for (const i of main) for (const j of main) gap = Math.max(gap, Math.hypot(labs[i][1] - labs[j][1], labs[i][2] - labs[j][2]));
   const calm = calmFor ?? Math.min(1, Math.max(0, (0.16 - gap) / 0.1));
-  gl.uniform1f(u('seed'), (seed % 1000) + 1); gl.uniform1i(u('n'), n); gl.uniform1f(u('t'), 0);
-  gl.uniform1f(u('calm'), calm); gl.uniform1f(u('tilt'), gauss() * 0.5);
+  const tilt = gauss() * 0.5;
   // Where each colour is poured. Stirred: evenly round the vat, a little astray, the largest in the
   // middle. Layered: light above deep, each as deep as its share; the accent a drop at its own level.
   const order = cs.map((p, i) => i).sort((x, y) => share[y] - share[x]), turn = rand() * 2 * Math.PI;
@@ -138,59 +131,173 @@ export function vat(palette, { size = 176, width = size, height = size, seed = 1
   const level = {}; let run = 0;
   for (const i of layers) { level[i] = -0.8 + 1.6 * (run + share[i] / 2) / mainShare; run += share[i]; }
   for (const i of cs.keys()) if (!(i in level)) { const deeper = layers.filter((j) => labs[j][0] > labs[i][0]).length; level[i] = -0.8 + 1.6 * deeper / Math.max(1, layers.length); }
+  const pos = [];
   order.forEach((i, rank) => {
     const ang = turn + (rank / Math.max(1, n - 1)) * 2 * Math.PI + gauss() * 0.6, rad = rank === 0 ? 0.1 * rand() : 0.45 + gauss() * 0.2;
     const stirred = [Math.cos(ang) * rad, Math.sin(ang) * rad], layered = [cs[i].accent ? (rand() - 0.5) * 0.9 : gauss() * 0.3, level[i]];
-    gl.uniform3f(u(`col[${i}]`), labs[i][0], labs[i][1], labs[i][2]);
-    gl.uniform1f(u(`drop[${i}]`), cs[i].accent ? 1 : 0);
-    gl.uniform2f(u(`pos[${i}]`), stirred[0] + (layered[0] - stirred[0]) * calm, stirred[1] + (layered[1] - stirred[1]) * calm);
+    pos[i] = [stirred[0] + (layered[0] - stirred[0]) * calm, stirred[1] + (layered[1] - stirred[1]) * calm];
   });
-  // Measure and adjust: how much of the vat each colour covers, until it is its share (within half a
-  // point; most arrive in a few rounds). The fifth colour's share is what the other four leave.
-  const gain = share.slice();
-  gl.viewport(0, 0, M, M); gl.uniform2f(u('res'), M, M); gl.uniform2f(u('org'), 0, 0); gl.uniform1i(u('mode'), 1);
-  let areas = [];
-  for (let it = 0; it < 16; it++) {
-    for (let k = 0; k < 5; k++) gl.uniform1f(u(`gain[${k}]`), gain[k] || 0);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); gl.readPixels(0, 0, M, M, gl.RGBA, gl.UNSIGNED_BYTE, px);
-    const mass = [0, 0, 0, 0];
-    for (const j of INSIDE) for (let k = 0; k < 4; k++) mass[k] += px[j * 4 + k];
-    const all = INSIDE.length * 255;
-    areas = [...mass.map((m) => m / all), 0].slice(0, n);
-    if (n === 5) areas[4] = Math.max(0, 1 - areas[0] - areas[1] - areas[2] - areas[3]);
-    if (areas.every((a, k) => Math.abs(a - share[k]) < 0.005)) break;
-    for (let k = 0; k < n; k++) gain[k] *= ((share[k] + 1e-3) / (areas[k] + 1e-3)) ** 0.8;
+  const key = `${seed}|${calmFor ?? ''}|${cs.map((p) => `${p.hex}:${p.pc}:${p.accent ? 1 : 0}`).join(',')}`;
+  return { n, cs, share, labs, calm, tilt, pos, key, seed };
+}
+function set(r, P, gain) {
+  const { gl, u } = r;
+  gl.uniform1f(u('seed'), (P.seed % 1000) + 1); gl.uniform1i(u('n'), P.n); gl.uniform1f(u('t'), 0);
+  gl.uniform1f(u('calm'), P.calm); gl.uniform1f(u('tilt'), P.tilt);
+  for (let i = 0; i < P.n; i++) {
+    gl.uniform3f(u(`col[${i}]`), P.labs[i][0], P.labs[i][1], P.labs[i][2]);
+    gl.uniform1f(u(`drop[${i}]`), P.cs[i].accent ? 1 : 0);
+    gl.uniform2f(u(`pos[${i}]`), P.pos[i][0], P.pos[i][1]);
   }
   for (let k = 0; k < 5; k++) gl.uniform1f(u(`gain[${k}]`), gain[k] || 0);
-  // Then the vat itself, centred.
-  const side = Math.min(W, H), ox = Math.round((W - side) / 2), oy = Math.round((H - side) / 2);
-  const baseY = canvas.height - H; // drawing at the bottom-left of a larger shared canvas: the top-left of the copy
-  gl.uniform2f(u('res'), side, side); gl.uniform2f(u('org'), ox, baseY + oy); gl.uniform1i(u('mode'), 0);
-  const frame = (t) => { gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.viewport(ox, baseY + oy, side, side); gl.uniform1f(u('t'), t); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
-  frame(0);
-  out.dataset.areas = areas.map((x) => x.toFixed(3)).join(' '); // what the vat covers, to check against the shares
-  out.dataset.calm = calm.toFixed(2);
-  if (moving) out.release = () => gl.getExtension('WEBGL_lose_context')?.loseContext();
-  if (moving && stir === 'hover') {
-    // Drawn only while it moves: stirred under the pointer, then eased back to rest (t = 0).
-    let t = 0, on = false, raf = 0, last = 0;
-    const tick = (now) => {
-      const dt = Math.min(0.05, (now - last) / 1000); last = now;
-      t = on ? t + dt * speed : t * Math.exp(-dt * 2.4); // stirred at `speed` a second, settling back as before
-      if (!on && t < 0.02) t = 0;
-      frame(t);
-      raf = on || t ? requestAnimationFrame(tick) : 0;
-    };
-    const wake = () => { if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } };
-    out.stir = (v) => { on = !!v; wake(); };
-    out.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') out.stir(true); });
-    out.addEventListener('pointerleave', () => out.stir(false));
-  } else if (moving) {
-    const t0 = performance.now();
-    const loop = (now) => { if (!out.isConnected && now - t0 > 1000) { out.release(); return; } frame((now - t0) / 1000); requestAnimationFrame(loop); };
-    requestAnimationFrame(loop);
-  } else {
-    out.getContext('2d').drawImage(canvas, 0, 0, W, H, 0, 0, W, H);
+}
+
+// Measuring a vat: how much of it each colour covers, adjusted until each is its share (within half a
+// point; most arrive in a few rounds; the fifth colour's share is what the other four leave). Done
+// once per palette and seed, ever: the gains are kept here and in this browser's storage. Where
+// WebGL 2 allows, each round's reading is copied aside on the graphics card and collected a frame
+// later, several vats at once, so measuring never stops the page; else, at once, as before.
+const STORE = 'vat-gains-1';
+const gains = (() => { try { return new Map(Object.entries(JSON.parse(localStorage.getItem(STORE) || '{}'))); } catch { return new Map(); } })();
+let saving = 0;
+const keep = (key, g) => { gains.set(key, g); clearTimeout(saving); saving = setTimeout(() => { try { localStorage.setItem(STORE, JSON.stringify(Object.fromEntries(gains))); } catch { /* this visit only */ } }, 800); };
+const areasOf = (P, data) => {
+  const mass = [0, 0, 0, 0];
+  for (const j of INSIDE) for (let k = 0; k < 4; k++) mass[k] += data[j * 4 + k];
+  const all = INSIDE.length * 255, areas = [...mass.map((m) => m / all), 0].slice(0, P.n);
+  if (P.n === 5) areas[4] = Math.max(0, 1 - areas[0] - areas[1] - areas[2] - areas[3]);
+  return areas;
+};
+const step = (P, gain, areas) => { for (let k = 0; k < P.n; k++) gain[k] *= ((P.share[k] + 1e-3) / (areas[k] + 1e-3)) ** 0.8; };
+const settled = (P, areas) => areas.every((a, k) => Math.abs(a - P.share[k]) < 0.005);
+
+function measureNow(r, P) {
+  const { gl, u } = r, gain = P.share.slice();
+  let areas = [];
+  gl.viewport(0, 0, M, M); gl.uniform2f(u('res'), M, M); gl.uniform2f(u('org'), 0, 0); gl.uniform1i(u('mode'), 1);
+  for (let it = 0; it < 16; it++) {
+    set(r, P, gain);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); gl.readPixels(0, 0, M, M, gl.RGBA, gl.UNSIGNED_BYTE, px);
+    areas = areasOf(P, px);
+    if (settled(P, areas)) break;
+    step(P, gain, areas);
   }
+  return { gain, areas };
+}
+
+const LANES = 6, jobs = [];
+let pumping = 0;
+function measureLater(P) {
+  return new Promise((resolve) => { jobs.push({ P, gain: P.share.slice(), it: 0, areas: [], resolve, buf: null, fence: null }); if (!pumping) pumping = requestAnimationFrame(pump); });
+}
+function pump() {
+  pumping = 0;
+  const r = sharedRenderer();
+  if (!r) { for (const j of jobs.splice(0)) j.resolve(null); return; }
+  const { gl, u } = r;
+  if (r.canvas.width < M * LANES || r.canvas.height < M) { r.canvas.width = Math.max(r.canvas.width, M * LANES); r.canvas.height = Math.max(r.canvas.height, M); }
+  jobs.slice(0, LANES).forEach((j, lane) => {
+    if (j.fence) {
+      const st = gl.clientWaitSync(j.fence, 0, 0);
+      if (st !== gl.ALREADY_SIGNALED && st !== gl.CONDITION_SATISFIED) return; // not yet: next frame
+      gl.deleteSync(j.fence); j.fence = null;
+      gl.bindBuffer(gl.PIXEL_PACK_BUFFER, j.buf); gl.getBufferSubData(gl.PIXEL_PACK_BUFFER, 0, px); gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+      j.areas = areasOf(j.P, px); j.it++;
+      if (settled(j.P, j.areas) || j.it >= 16) { j.done = true; return; }
+      step(j.P, j.gain, j.areas);
+    }
+    // One round: drawn in its own lane of the canvas, read into its own buffer, fenced.
+    set(r, j.P, j.gain);
+    gl.viewport(lane * M, 0, M, M); gl.uniform2f(u('res'), M, M); gl.uniform2f(u('org'), lane * M, 0); gl.uniform1i(u('mode'), 1);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    j.buf ??= gl.createBuffer();
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, j.buf); gl.bufferData(gl.PIXEL_PACK_BUFFER, M * M * 4, gl.STREAM_READ);
+    gl.readPixels(lane * M, 0, M, M, gl.RGBA, gl.UNSIGNED_BYTE, 0);
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+    j.fence = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+  });
+  gl.flush();
+  for (let i = jobs.length - 1; i >= 0; i--) if (jobs[i].done) { const [j] = jobs.splice(i, 1); if (j.buf) gl.deleteBuffer(j.buf); j.resolve({ gain: j.gain, areas: j.areas }); }
+  if (jobs.length) pumping = requestAnimationFrame(pump);
+}
+
+/**
+ * A vat as a canvas, returned at once; `canvas.ready` resolves when it is drawn. Measured before (its
+ * gains remembered), it is drawn there and then; else it is drawn once measured, a few frames on,
+ * and fades in (CSS: .colour-vat[data-pouring]).
+ */
+const stillness = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+export function vat(palette, { size = 176, width = size, height = size, seed = 1, stir = false, speed = 15, label = '', calm: calmFor = null } = {}) {
+  const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(width * dpr), H = Math.round(height * dpr);
+  const moving = !!stir && !stillness();
+  const out = document.createElement('canvas'); out.width = W; out.height = H;
+  out.className = 'colour-vat'; out.style.aspectRatio = `${width} / ${height}`;
+  if (label) { out.setAttribute('role', 'img'); out.setAttribute('aria-label', label); } else out.setAttribute('aria-hidden', 'true');
+  out.ready = Promise.resolve(out);
+  if (!palette?.length) return out;
+  let P = plan(palette, seed, calmFor), live = null, shown = null;
+  const r0 = sharedRenderer();
+  if (!r0) return out;
+
+  const draw = ({ gain, areas }) => {
+    // A live vat keeps its own context for its life, and is repainted in it (repaint, below).
+    if (shown && live) { shown.gain = gain; set(live, P, gain); shown.frame(0); if (areas) out.dataset.areas = areas.map((x) => x.toFixed(3)).join(' '); out.dataset.calm = P.calm.toFixed(2); delete out.dataset.pouring; return; }
+    const r = moving ? (live = renderer(out)) : sharedRenderer();
+    if (!r) return;
+    const { gl, canvas, u } = r;
+    if (canvas.width < W || canvas.height < H) { canvas.width = Math.max(W, canvas.width); canvas.height = Math.max(H, canvas.height); }
+    set(r, P, gain);
+    const side = Math.min(W, H), ox = Math.round((W - side) / 2), oy = Math.round((H - side) / 2);
+    const baseY = canvas.height - H; // drawing at the bottom-left of a larger shared canvas: the top-left of the copy
+    gl.uniform2f(u('res'), side, side); gl.uniform2f(u('org'), ox, baseY + oy); gl.uniform1i(u('mode'), 0);
+    const frame = (t) => { gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.viewport(ox, baseY + oy, side, side); gl.uniform1f(u('t'), t); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
+    frame(0);
+    shown = { frame, gain };
+    if (areas) out.dataset.areas = areas.map((x) => x.toFixed(3)).join(' '); // what the vat covers, to check against the shares
+    out.dataset.calm = P.calm.toFixed(2);
+    delete out.dataset.pouring;
+    if (moving) out.release = () => gl.getExtension('WEBGL_lose_context')?.loseContext();
+    if (moving && stir === 'hover') {
+      // Drawn only while it moves: stirred under the pointer, then eased back to rest (t = 0).
+      let t = 0, on = false, raf = 0, last = 0;
+      const tick = (now) => {
+        const dt = Math.min(0.05, (now - last) / 1000); last = now;
+        t = on ? t + dt * speed : t * Math.exp(-dt * 2.4); // stirred at `speed` a second, settling back as before
+        if (!on && t < 0.02) t = 0;
+        frame(t);
+        raf = on || t ? requestAnimationFrame(tick) : 0;
+      };
+      const wake = () => { if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } };
+      out.stir = (v) => { on = !!v; wake(); };
+      out.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') out.stir(true); });
+      out.addEventListener('pointerleave', () => out.stir(false));
+    } else if (moving) {
+      const t0 = performance.now();
+      const loop = (now) => { if (!out.isConnected && now - t0 > 1000) { out.release(); return; } frame((now - t0) / 1000); requestAnimationFrame(loop); };
+      requestAnimationFrame(loop);
+    } else {
+      out.getContext('2d').drawImage(canvas, 0, 0, W, H, 0, 0, W, H);
+    }
+  };
+
+  const pour = () => {
+    const known = gains.get(P.key);
+    if (known) { draw({ gain: known }); return Promise.resolve(out); }
+    // At once where it cannot be deferred (WebGL 1), and with motion off (a reader who asked for
+    // stillness, a screenshot that must find every vat drawn): nothing there moves to be spoiled.
+    if (!r0.async || stillness()) { const m = measureNow(r0, P); keep(P.key, m.gain); draw(m); return Promise.resolve(out); }
+    if (!shown) out.dataset.pouring = '';
+    const mine = P;
+    return measureLater(P).then((m) => { if (m && mine === P) { keep(P.key, m.gain); draw(m); } return out; });
+  };
+  if (!shown) out.stir = () => {}; // until drawn
+  out.ready = pour();
+  // A live vat takes another palette in the same canvas and context: no new context, no new program.
+  out.repaint = (next, { seed: s2 = seed, label: l2 = '' } = {}) => {
+    P = plan(next, s2, calmFor);
+    if (l2) out.setAttribute('aria-label', l2);
+    return (out.ready = pour());
+  };
   return out;
 }

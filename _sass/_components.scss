@@ -106,6 +106,15 @@
   &:focus-visible { color: var(--photobook-ink); background: rgba(255, 255, 255, 0.06); text-decoration: none; }
 }
 
+/* ── colour ──────────────────────────────────────────────────────────── */
+
+// A dye vat (assets/js/colour/vat.js) still being measured is not yet shown; it fades in once drawn.
+.colour-vat { transition: opacity 0.4s $cubic-bezier-smooth; }
+.colour-vat[data-pouring] { opacity: 0; }
+
+@include responsive-reduced-motion { .colour-vat { transition: none; } }
+html.motion-off .colour-vat { transition: none; }
+
 /* ── surfaces ────────────────────────────────────────────────────────── */
 
 // The glass both controls sit in, darkened behind so their marks keep contrast over a white sky.

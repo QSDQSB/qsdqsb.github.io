@@ -203,7 +203,6 @@
     grid-template-columns: 13.5rem minmax(0, 1fr);
     column-gap: clamp(2rem, 3vw, 3.2rem);
     max-width: 96rem;
-    transition: grid-template-columns 0.35s $cubic-bezier-smooth;
 
     // Folded away: the column is a slim strip, only its button left to bring it back.
     &.is-folded { grid-template-columns: 2.5rem minmax(0, 1fr); }
@@ -280,6 +279,7 @@
   }
 
   .palette-voyages__list {
+    animation: photobook-fade-in 0.3s $cubic-bezier-smooth; // as the list opens again, its words fade in
     flex: 1 1 auto;
     min-height: 0;
     position: relative; // the ruler for keeping the voyage on the page in view
@@ -566,6 +566,12 @@
   gap: clamp(2rem, 3.5vw, 2.6rem) clamp(1rem, 2vw, 1.6rem);
 }
 
+.palette-card {
+  // Laid out and painted only near the screen: a voyage of forty frames changes as fast as one of four.
+  content-visibility: auto;
+  contain-intrinsic-size: auto 34rem;
+}
+
 .palette-card__print {
   display: block;
 
@@ -778,6 +784,7 @@
   .palette-voyages,
   .palette-page,
   .palette-voyage__vat canvas { transition: none; }
+  .palette-voyages__list { animation: none; }
 }
 
 @include responsive-reduced-motion {
