@@ -138,7 +138,7 @@ async function main() {
       hexEl.textContent = HEX;
       hexEl.style.setProperty('--c', hex);
       const named = nameOf(hex);
-      namedEl.textContent = named; namedEl.hidden = !named;
+      namedEl.textContent = named; // its line kept, named or not, so the hex never moves between colours
       near.innerHTML = `<p class="reverie__near-label">Nearby</p><ol>${around.map((c) => `<li>${c.here
         ? `<span class="is-here" style="--c:${c.hex}" aria-current="true" aria-label="${c.hex.toUpperCase()}, here"></span>`
         : `<a href="${reverieOf(c.f.g, c.f.slug, c.hex)}" style="--c:${c.hex}" data-tip="${c.hex.toUpperCase()}" data-tip-side="top" aria-label="${c.hex.toUpperCase()}"></a>`}</li>`).join('')}</ol>`;
