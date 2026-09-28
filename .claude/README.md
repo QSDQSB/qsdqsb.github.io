@@ -64,7 +64,7 @@ Manual entrypoints. Type `/<name>` in Claude Code.
 | `/js-sync` | Verifies `_main.js` ↔ `main.min.js` are in sync; rebuilds if not. |
 | `/commit` | Drafts a properly-formatted (emoji-prefixed) commit message from the current diff. Doesn't run the commit. |
 
-## Skills (5)
+## Skills (7)
 
 Auto-fire based on description matching. Defined under `skills/<name>/SKILL.md`.
 
@@ -75,6 +75,8 @@ Auto-fire based on description matching. Defined under `skills/<name>/SKILL.md`.
 | `frontmatter-contract-enforcer` | Editing `_posts/`, `_pages/`, `_voyage/`, `_subvoyage/`; touching `gallery_name`, `map_dataset`, etc. |
 | `gallery-integrity-audit` | `gallery_name` added/changed; gallery directories touched. |
 | `responsive-layout-auditor` | Editing visual layout, spacing, typography, breakpoints. Catches desktop/mobile divergence. |
+| `house-style` | Writing prose or code comments; the house-style hook reports a finding. |
+| `web-design-guidelines` | UI/accessibility review; an interactive control or a focus/`outline` rule changes. Pinned, adapted copy of Vercel's Web Interface Guidelines — no runtime fetch. |
 
 ## Agents (2)
 
