@@ -15,7 +15,7 @@
 import { tips } from '../photobook/tip.js';
 import { vat, seedOf, oklab, glow } from './vat.js';
 import { crossfade } from '../photobook/wash.js';
-import { esc, blocks, card, kindred, dripper, reverieOf } from './cards.js';
+import { esc, blocks, card, kindred, dripper, reverieOf, place, cameFrom, backLabel } from './cards.js';
 
 const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* this visit only */ } } };
@@ -49,7 +49,13 @@ async function main() {
   // The masthead's way back (_layouts/default.html, from the page's masthead_back_*): to the voyages
   // on the page of every palette, to the book on a voyage's.
   if (back) { back.dataset.home = back.getAttribute('href'); back.dataset.homeLabel = back.getAttribute('aria-label'); }
-  const backTo = (href, label) => { if (!back || !href) return; back.href = href; back.setAttribute('aria-label', label); back.dataset.tip = label; };
+  const backTo = (href, label) => { if (!back || !href) return; back.href = href; back.setAttribute('aria-label', label); back.dataset.tip = label; delete back.dataset.along; };
+  // Back the way the reader came, when that is where ‹ leads (the voyage's own book, or the page they
+  // came in from): through the history, so the page is found as they left it, over the voyages taken
+  // here since (each a step in the history, counted in its state).
+  const came = cameFrom();
+  const along = (label) => { backTo(came.href, label); back.dataset.along = ''; };
+  back?.addEventListener('click', (e) => { if ('along' in back.dataset && history.length > 1) { e.preventDefault(); history.go(-((history.state?.hops ?? 0) + 1)); } });
   // The rail: every voyage as a small vat, by colour (dark to light, like with like), so the way
   // from one voyage's palette to the next is a step to its neighbour.
   const railed = voyages.every((v) => Number.isFinite(v.rank)) ? [...voyages].sort((a, b) => a.rank - b.rank) : voyages;
@@ -68,23 +74,25 @@ async function main() {
   function index() {
     document.title = document.title.replace(/^[^·]*·/, "QSD's Palette ·");
     title.textContent = "QSD's Palette";
-    backTo(back?.dataset.home, back?.dataset.homeLabel);
+    if (came) along(backLabel(came)); else backTo(back?.dataset.home, back?.dataset.homeLabel);
     kicker.textContent = 'From the voyages';
     stage.innerHTML = `<p class="colour-lede">The colours of every voyage: each one's own, pooled from its photographs, without the black and white that every journey has.</p>
       <ol class="palette-index">${byPlace.flatMap(({ vs }) => vs).map((v) => `<li><a href="#${v.g}" class="palette-index__name">${esc(nameOf(v))}</a>${strip(sig(v), { href: `#${v.g}`, label: `QSD's Palette for ${nameOf(v)}` })}</li>`).join('')}</ol>`;
   }
 
-  function voyage(v, at) {
+  function voyage(v, at, { glide = true } = {}) {
     const name = nameOf(v), page = pages[v.g];
     document.title = document.title.replace(/^[^·]*·/, `QSD's Palette for ${name} ·`);
     // The masthead's ‹ goes back to the voyage's book, to the frame the reader came from when there was one.
     backTo(`${page.url}${at ? `#${encodeURIComponent(at)}` : ''}`, `Back to ${name}`);
+    if (came?.pathname === new URL(page.url, location.href).pathname) along(`Back to ${name}`);
     title.textContent = `QSD's Palette for ${name}`;
     kicker.textContent = "QSD's Palette";
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
-    // A colour of the voyage's own opens its Reverie from the frame that holds the most of it.
+    // A colour of the voyage's own opens its Reverie, that colour and no other, from the frame that
+    // holds the most of it (only where the reader sets out: the colour is the one they chose).
     const frames = v.photos.map((p) => ({ ...p, g: v.g }));
-    const rootOf = (h) => { const [m] = kindred(frames, h, { most: 1, near: 0.12 }); return m ? reverieOf(v.g, m.f.slug, m.hit) : null; };
+    const rootOf = (h) => { const [m] = kindred(frames, h, { most: 1, near: 0.12 }); return reverieOf(m ? v.g : null, m?.f.slug, h); };
     stage.innerHTML = `<section class="palette-voyage">
         <div class="palette-voyage__blocks">${blocks(sig(v), { link: rootOf })}</div>
         <div data-vat></div>
@@ -112,7 +120,9 @@ async function main() {
     };
     // From a frame's bar in the book: the voyage's title and palette first, then down to that frame,
     // held in a ring for a moment (_colour.scss).
-    const from = at && document.getElementById(`f-${at}`);
+    const from = at && glide && document.getElementById(`f-${at}`);
+    // Arrived: the address no longer asks for the glide (Back to it finds the page where it was left).
+    if (at) history.replaceState(history.state, '', location.pathname + location.hash);
     if (from) {
       // Focus goes with the reader to the frame they came from (the ring is its mark: no outline).
       const land = () => { from.classList.add('is-arrived'); from.tabIndex = -1; from.focus({ preventScroll: true }); };
@@ -359,12 +369,19 @@ async function main() {
       ghost.animate([{ flexGrow: 1, opacity: 1 }, { flexGrow: 0, opacity: 0.4 }], { duration: wash, delay: (now.length + j) * wave, easing: grow, fill: 'both' }).finished.then(() => ghost.remove(), () => ghost.remove());
     });
   }
-  let shown = null, routing = 0;
+  let shown = null, routing = 0, hops = 0;
+  const kept = () => place(`palette-at:${location.hash}`);
+  const returning = performance.getEntriesByType('navigation')[0]?.type === 'back_forward';
+  addEventListener('pagehide', () => kept().save());
   async function route() {
     const g = decodeURIComponent(location.hash.slice(1));
     const v = voyages.find((x) => x.g === g);
     const at = new URLSearchParams(location.search).get('at');
     const token = ++routing, gliding = shown !== null && shown !== (v?.g ?? '') && !still();
+    // Each voyage taken here is a step in the history: its state counts them, for ‹ (above).
+    if (history.state?.hops == null) history.replaceState({ ...history.state, hops: shown === null ? 0 : hops + 1 }, '');
+    hops = history.state.hops;
+    const back_ = shown === null && returning; // come back to (Back): as it was left, no glide
     if (gliding) holdFor(300 + CHANGE);
     railTo(v);
     menuTo(v);
@@ -377,17 +394,18 @@ async function main() {
     }
     const changed = shown !== null, hadFocus = stage.contains(document.activeElement);
     shown = v?.g ?? '';
-    if (v) voyage(v, at); else index();
+    if (v) voyage(v, at, { glide: !back_ }); else index();
     // Said once, not the whole stage read out; and focus, if the reader was in what was replaced, to the title.
     if (changed) status.textContent = title.textContent;
     if (hadFocus && !(v && at)) title.focus({ preventScroll: true });
     scrollTo({ top: 0, behavior: 'instant' });
+    if (back_) requestAnimationFrame(() => kept().restore());
     for (const el of parts()) el.getAnimations().forEach((a) => a.cancel());
     // …and the new one settles in as a page arrives (0.4 s, the smooth curve).
     if (gliding) for (const el of parts()) el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 400, easing: SMOOTH });
     if (gliding && v) morph(before);
   }
-  addEventListener('hashchange', () => { if (location.search) history.replaceState(null, '', location.pathname + location.hash); route(); });
+  addEventListener('hashchange', () => { if (location.search) history.replaceState(history.state, '', location.pathname + location.hash); route(); });
   route();
 }
 
