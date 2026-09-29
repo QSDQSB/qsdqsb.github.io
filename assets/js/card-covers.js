@@ -4,7 +4,8 @@
  * _includes/archive-single.html with defer_cover=true parks a card's cover in --bg-later
  * instead of --bg-img, so /voyage/, a voyage's index of parts and the Photobook's closing
  * cards do not fetch every cover on arrival. A card within 800px of the screen gets its
- * cover (--bg-img) from here; one on the first screen gets it straight away.
+ * cover (--bg-img) from here, in the smallest size that fills it; one on the first screen gets it
+ * straight away.
  *
  * Automated renderers (window.QSD_MOTION_OFF: crawlers, screenshot baselines) and browsers
  * without IntersectionObserver take every cover at once, so a full-page render is complete.
@@ -13,8 +14,14 @@
 (function () {
   'use strict';
 
+  // The smallest rendition that fills the card at the screen's density (2x at most: a cover is
+  // soft by design), when the card lists them (data-covers: "src width, …", smallest first); else
+  // the original.
   function show(card) {
-    card.style.setProperty('--bg-img', card.style.getPropertyValue('--bg-later'));
+    var list = (card.dataset.covers || '').split(', ').map(function (s) { var i = s.lastIndexOf(' '); return { src: s.slice(0, i), w: +s.slice(i + 1) }; }).filter(function (c) { return c.w; });
+    var need = card.offsetWidth * Math.min(2, window.devicePixelRatio || 1);
+    var pick = list.filter(function (c) { return c.w >= need; })[0] || list[list.length - 1];
+    card.style.setProperty('--bg-img', pick ? 'url("' + pick.src + '")' : card.style.getPropertyValue('--bg-later'));
   }
 
   function init() {

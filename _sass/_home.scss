@@ -738,7 +738,8 @@ html.home-snap { scroll-snap-type: y mandatory; }
   aspect-ratio: 3 / 1; // as tall as 2 and 3 above it; Reverie's own opening's shape
   background: var(--dye, #14121a);
   .wn-scrim { @include colour-shade; z-index: -1; }
-  .wn-body { gap: 0.4rem; }
+  // Its words on the dye, however light: a soft shadow as deep as the colour needs (--shade).
+  .wn-body { gap: 0.4rem; text-shadow: 0 1px 14px rgba(10, 10, 12, calc(var(--shade, 0) * 0.9)); }
 }
 .wn-dye {
   position: absolute;

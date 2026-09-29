@@ -15,7 +15,7 @@
 import { tips } from '../photobook/tip.js';
 import { vat, seedOf, oklab, glow } from './vat.js';
 import { crossfade } from '../photobook/wash.js';
-import { esc, blocks, bar, card, kindred, dripper, reverieOf, place, cameFrom, backLabel } from './cards.js';
+import { esc, blocks, bar, card, kindred, dripper, reverieOf, place, cameFrom, backLabel, measureCards } from './cards.js';
 
 const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* this visit only */ } } };
@@ -46,8 +46,10 @@ async function main() {
   // came in from): through the history, so the page is found as they left it, over the voyages taken
   // here since (each a step in the history, counted in its state).
   const came = cameFrom();
-  const along = (label) => { backTo(came.href, label); back.dataset.along = ''; };
-  back?.addEventListener('click', (e) => { if ('along' in back.dataset && history.length > 1) { e.preventDefault(); history.go(-((history.state?.hops ?? 0) + 1)); } });
+  // `steps`: back that many steps in this page's own history (the overview, from the voyage opened
+  // from it); else back over every voyage taken here, to the page the reader came from.
+  const along = (label, href = came.href, steps = 0) => { backTo(href, label); back.dataset.along = String(steps); };
+  back?.addEventListener('click', (e) => { if ('along' in back.dataset && history.length > 1) { e.preventDefault(); history.go(-(Number(back.dataset.along) || (history.state?.hops ?? 0) + 1)); } });
   // The rail: every voyage as a small vat, by colour (dark to light, like with like), so the way
   // from one voyage's palette to the next is a step to its neighbour.
   const railed = voyages.every((v) => Number.isFinite(v.rank)) ? [...voyages].sort((a, b) => a.rank - b.rank) : voyages;
@@ -85,6 +87,7 @@ async function main() {
     // The masthead's ‹ goes back to the voyage's book, to the frame the reader came from when there was one.
     backTo(`${page.url}${at ? `#${encodeURIComponent(at)}` : ''}`, `Back to ${name}`);
     if (came?.pathname === new URL(page.url, location.href).pathname) along(`Back to ${name}`);
+    else if (prevShown === '') along("Back to QSD's Palette", location.pathname, 1); // opened from the overview
     title.textContent = `QSD's Palette for ${name}`;
     kicker.textContent = "QSD's Palette";
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
@@ -273,7 +276,11 @@ async function main() {
       step.hidden = !to;
       if (to) { step.href = `#${to.g}`; step.setAttribute('aria-label', nameOf(to)); step.dataset.tip = nameOf(to); step.dataset.tipSide = 'top'; }
     }
-    if (!here) return;
+    if (!here) {
+      // The overview, on arrival: the rail from the middle of its middle run, so it runs on both ways.
+      if ('first' in railNav.dataset) { delete railNav.dataset.first; const mid = railList.children[railed.length + (railed.length >> 1)]; if (mid) railList.scrollLeft = centre(mid); }
+      return;
+    }
     const first = 'first' in railNav.dataset;
     delete railNav.dataset.first;
     if (first) here = railList.querySelector(`a[data-copy="1"][data-g="${CSS.escape(v.g)}"]`);
@@ -375,7 +382,7 @@ async function main() {
       ghost.animate([{ flexGrow: 1, opacity: 1 }, { flexGrow: 0, opacity: 0.4 }], { duration: wash, delay: (now.length + j) * wave, easing: grow, fill: 'both' }).finished.then(() => ghost.remove(), () => ghost.remove());
     });
   }
-  let shown = null, routing = 0, hops = 0;
+  let shown = null, routing = 0, hops = 0, prevShown = null, shownHash = location.hash;
   const kept = () => place(`palette-at:${location.hash}`);
   const returning = performance.getEntriesByType('navigation')[0]?.type === 'back_forward';
   addEventListener('pagehide', () => kept().save());
@@ -385,9 +392,15 @@ async function main() {
     const at = new URLSearchParams(location.search).get('at');
     const token = ++routing, gliding = shown !== null && shown !== (v?.g ?? '') && !still();
     // Each voyage taken here is a step in the history: its state counts them, for ‹ (above).
-    if (history.state?.hops == null) history.replaceState({ ...history.state, hops: shown === null ? 0 : hops + 1 }, '');
+    const stamped = history.state?.hops != null;
+    if (!stamped) history.replaceState({ ...history.state, hops: shown === null ? 0 : hops + 1 }, '');
     hops = history.state.hops;
     const back_ = shown === null && returning; // come back to (Back): as it was left, no glide
+    // A voyage left for another in the page keeps its place, found again on Back (the entry has its
+    // count already: it was stamped when first shown).
+    const revisit = shown !== null && stamped;
+    if (shown !== null) place(`palette-at:${shownHash}`).save();
+    prevShown = shown; shownHash = location.hash;
     if (gliding) holdFor(300 + CHANGE);
     railTo(v);
     menuTo(v);
@@ -404,7 +417,8 @@ async function main() {
     // Said once, not the whole stage read out; and focus, if the reader was in what was replaced, to the title.
     if (changed) status.textContent = title.textContent;
     if (hadFocus && !(v && at)) title.focus({ preventScroll: true });
-    scrollTo({ top: 0, behavior: 'instant' });
+    measureCards(stage);
+    if (!(revisit && kept().restore())) scrollTo({ top: 0, behavior: 'instant' });
     if (back_) requestAnimationFrame(() => kept().restore());
     for (const el of parts()) el.getAnimations().forEach((a) => a.cancel());
     // …and the new one settles in as a page arrives (0.4 s, the smooth curve).
