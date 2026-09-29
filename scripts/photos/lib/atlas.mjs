@@ -107,21 +107,23 @@ export function atlasOf(books, kindred = {}) {
 }
 
 /**
- * The landing page's Reverie (_includes/home/whats-new.html): every colour of Ridgway's book
- * (assets/ridgway.json) that `least` photographs or more hold, by Reverie's own matching (cards.js
- * holding), each as [name, hex, the photograph holding it most (`gallery/slug`), its signature], so
- * the page can pour its dye and open its Reverie without the atlas. The photographs are still, so this
- * is worked out here, once, not by every visitor.
+ * Ridgway's book (assets/ridgway.json) against the photographs, by Reverie's own matching (cards.js
+ * holding): `held`, how many photographs hold each colour (those none holds left out), for the book's
+ * own page; and `picks`, the colours `least` photographs or more hold, each as [name, hex, the
+ * photograph holding it most (`gallery/slug`), its signature], for the landing page's Reverie
+ * (_includes/home/whats-new.html), which pours its dye and opens its Reverie without the atlas. The
+ * photographs are still, so this is worked out here, once, not by every visitor.
  */
 export function picksOf(atlas, book, { least = 3 } = {}) {
   const frames = (atlas?.photos || []).filter(p => p.dots && p.sig);
   if (!frames.length || !book?.colours?.length) return null;
-  const out = [];
+  const picks = [], held = {};
   for (const [name, hex] of book.colours) {
-    const held = holding(frames, `#${hex}`);
-    if (held.length >= least) out.push([name, hex, `${held[0].f.g}/${held[0].f.slug}`, held[0].f.sig]);
+    const by = holding(frames, `#${hex}`);
+    if (by.length) held[hex] = by.length;
+    if (by.length >= least) picks.push([name, hex, `${by[0].f.g}/${by[0].f.slug}`, by[0].f.sig]);
   }
-  return out.length ? out : null;
+  return picks.length ? { picks, held } : null;
 }
 
 /**

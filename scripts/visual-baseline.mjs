@@ -111,6 +111,11 @@ async function drawAllRows(page) {
   await page.addStyleTag({ content: '.photobook-row { content-visibility: visible; }' });
 }
 
+async function drawColourStage(page) {
+  await page.waitForSelector('.palette-card, .palette-index', { timeout: 15000 });
+  await page.addStyleTag({ content: '.palette-card { content-visibility: visible; }' });
+}
+
 const PAGES = [
   { id: 'home', url: '/', motion: true },
   { id: 'post-toc', url: '/posts/shihuqiao/', motion: true },
@@ -133,6 +138,11 @@ const PAGES = [
       await page.waitForFunction(() => [...document.querySelectorAll('.photobook-lightbox__mat img')].every((im) => im.complete), null, { timeout: 20000 });
     },
   },
+  // The colour pages, drawn by their scripts: the shot waits for the stage, and draws every card
+  // (they skip rendering off screen, as the book's rows do); their vats pour on the scroll-through.
+  { id: 'palette', url: '/palette/', setup: drawColourStage },
+  { id: 'palette-voyage', url: '/palette/#london', setup: drawColourStage },
+  { id: 'reverie', url: '/reverie/?c=4a6fa5', setup: drawColourStage },
   { id: 'voyage-by-tags', url: '/voyage-by-tags/' },
   { id: 'about', url: '/about/' },
   { id: 'portfolio', url: '/portfolio/' },

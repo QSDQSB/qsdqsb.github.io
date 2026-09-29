@@ -13,7 +13,7 @@ const tile = document.querySelector('.wn-card--reverie');
 
 async function pour() {
   let picks = [];
-  try { picks = await (await fetch(tile.dataset.picks)).json(); } catch { return; } // the Liquid pick stays
+  try { ({ picks } = await (await fetch(tile.dataset.picks)).json()); } catch { return; } // the Liquid pick stays
   if (!picks.length) return;
   const [name, six, from, sig] = picks[Math.floor(Math.random() * picks.length)];
   const hex = `#${six}`, cut = from.lastIndexOf('/');

@@ -435,14 +435,17 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
   mat.addEventListener('pointermove', (e) => { if (lb.classList.contains('is-zoomed')) origin(e); });
 
   // Touch: swipe to move, swipe up for the specs, tap to bring the tools back.
-  let sx = null, sy = 0;
-  lb.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse' || pinch || e.target.closest('button:not(.photobook-lightbox__zone),.photobook-specs')) return; sx = e.clientX; sy = e.clientY; if (timer && !screening) stop(); });
+  // On the specs panel (pinned over half a phone's screen) only a sideways swipe counts: the panel
+  // scrolls up and down itself, and a tap there is for what it holds.
+  let sx = null, sy = 0, onSpecs = false;
+  lb.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse' || pinch || e.target.closest('button:not(.photobook-lightbox__zone)')) return; onSpecs = !!e.target.closest('.photobook-specs'); sx = e.clientX; sy = e.clientY; if (timer && !screening && !onSpecs) stop(); });
   lb.addEventListener('pointercancel', () => { sx = null; });
   lb.addEventListener('pointerup', (e) => {
     if (sx === null) return;
     // Zoomed, a drag looks around the print (the loupe follows it); it does not turn the page.
     if (lb.classList.contains('is-zoomed')) { sx = null; return; }
     const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+    if (onSpecs) { if (Math.abs(dx) > 50 && Math.abs(dx) > 1.5 * Math.abs(dy)) (dx < 0 ? next : prev)(); return; }
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) (dx < 0 ? next : prev)();
     else if (dy < -60) { if (!specOpen) toggleSpecs(); else revealSpecs(); }
     else if (dy > 60 && lb.classList.contains('has-specs')) toggleSpecs();

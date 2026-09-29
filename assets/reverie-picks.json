@@ -3,9 +3,10 @@ layout: null
 sitemap: false
 ---
 {%- comment -%}
-  Ridgway's colours the photographs hold, each as [name, hex, gallery/slug, signature]
-  (_data/photo_manifests/reverie-picks.json, written by `npm run photos:fetch`, scripts/photos/lib/atlas.mjs
-  picksOf), for the landing page's Reverie (_includes/home/whats-new.html). With none, an empty list.
+  Ridgway's colours the photographs hold (_data/photo_manifests/reverie-picks.json, written by
+  `npm run photos:fetch`, scripts/photos/lib/atlas.mjs picksOf): `picks`, [name, hex, gallery/slug,
+  signature] each, for the landing page's Reverie (_includes/home/whats-new.html); `held`, how many
+  photographs hold each, for Ridgway's page (assets/js/colour/ridgway.js). With none, both empty.
 {%- endcomment -%}
 {%- assign picks = site.data.photo_manifests["reverie-picks"] -%}
-{% if picks %}{{ picks | jsonify }}{% else %}[]{% endif %}
+{% if picks %}{{ picks | jsonify }}{% else %}{"picks":[],"held":{}}{% endif %}

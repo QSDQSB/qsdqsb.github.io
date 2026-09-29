@@ -29,7 +29,7 @@ That is what made it look like a different site (2026-09-27).
 | Quiet icon button | `icon-button-quiet($size)` | A bare mark in the label's ink, lit on hover: no ring, no fill | `.palette-voyages__fold`, `.palette-rail__step` |
 | Segmented toggle | class `.photobook-sheet__order` | Two or three exclusive choices in spaced capitals (Sequence / Colour) | the book's sheet, the palette page |
 | Tooltip | `data-tip` (+ `data-tip-side`), `assets/js/photobook/tip.js` | Naming an icon control after a pause; pointer only | masthead ‹, lightbox, colophon, rail |
-| Palette strip | class `.palette-strip` | A palette as a thin bar with its hex codes | specs panel, colophon, palette index |
+| Palette strip | class `.palette-strip` | A palette as a thin bar with its hex codes | specs panel, colophon |
 
 ## Surfaces
 

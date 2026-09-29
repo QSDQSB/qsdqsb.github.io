@@ -217,6 +217,15 @@ async function main() {
     history.pushState({ colours: (history.state?.colours ?? 0) + 1 }, '', url.pathname + url.search);
     go(read(url.href), url.search, { focus: true });
   });
+  // ← and → wander to the colour beside this one in the row nearby (dark to light), as a click there
+  // would; not while the lightbox has the keys, or a field or a modifier does.
+  addEventListener('keydown', (e) => {
+    if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || e.metaKey || e.ctrlKey || e.altKey || e.shiftKey || lbEl?.open || e.target.closest?.('input, textarea, select, [contenteditable]')) return;
+    const items = [...near.querySelectorAll('li')], here = items.findIndex((li) => li.querySelector('.is-here'));
+    const to = items[here + (e.key === 'ArrowRight' ? 1 : -1)]?.querySelector('a[href]');
+    if (here < 0 || !to) return;
+    e.preventDefault(); to.click();
+  });
   // Back and forward between colours (the lightbox's own steps, open and closed, keep the address).
   addEventListener('popstate', () => { if (lbEl?.open || location.search === (wanted || shownAt)) return; go(read(location.href)); });
 

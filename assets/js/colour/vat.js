@@ -179,8 +179,8 @@ export function vat(palette, { size = 176, width = size, height = size, shape = 
   if (!palette?.length) return out;
   const aspect = shape === 'rect' ? width / height : 0;
   let P = plan(palette, seed, calmFor, aspect), live = null, shown = null;
-  const r0 = sharedRenderer();
-  if (!r0) return out;
+  // A stirring vat draws only in its own context: the shared one is not made for it.
+  if (!moving && !sharedRenderer()) return out;
 
   const draw = ({ gain, areas }) => {
     // A live vat keeps its own context for its life, and is repainted in it (repaint, below).
@@ -255,7 +255,7 @@ export function glow(palette, { seed = 1 } = {}) {
 // The currents as the shader draws them at rest (t = 0), on a G × G grid in plain arithmetic: each
 // cell's pull toward each colour, before the gains. The random numbers are whole numbers, exact here
 // and on any graphics card (FRAG's hash), so what is weighed here is what is drawn there.
-const G = 48;
+const G = 32; // as true as a finer grid, measured against 128 × 128 (worst colour within 0.21 points)
 function field(P) {
   const s = (P.seed % 1000) + 1, calm = P.calm, asp = P.aspect || 1, rect = !!P.aspect;
   const m289 = (x) => x - Math.floor((x + 0.5) / 289) * 289, perm = (x) => m289((34 * x + 1) * x), sm = m289(s);
@@ -267,7 +267,7 @@ function field(P) {
   const fbm = (x, y) => { let v = 0, a = 0.6; for (let i = 0; i < 2; i++) { v += a * noise(x, y); x = x * 1.9 + 11; y = y * 1.9 + 11; a *= 0.4; } return v / 0.84; };
   const ox = s * 0.0071, oy = s * 0.0037, amp = 0.7 + (0.42 - 0.7) * calm, width = 0.26 + (0.1 - 0.26) * calm;
   const al = [Math.cos(s * 0.37), Math.sin(s * 0.37)], ac = [-al[1], al[0]], ct = Math.cos(P.tilt), st = Math.sin(P.tilt);
-  const pull = [];
+  const pull = new Float64Array(G * G * P.n); let cells = 0; // one array, not one a cell
   for (let y = 0; y < G; y++) for (let x = 0; x < G; x++) {
     let u = ((x + 0.5) / G) * 2 - 1, v = -(((y + 0.5) / G) * 2 - 1);
     if (!rect && u * u + v * v > 1) continue;
@@ -277,24 +277,23 @@ function field(P) {
     let px = u + amp * (wx - 0.5) + calm * 0.1 * (fbm(u * 4 + 3.1, v * 4 + 3.1) - 0.5), py = v + amp * (wy - 0.5) + calm * 0.1 * (fbm(u * 4 + 7.7, v * 4 + 7.7) - 0.5);
     const sw = (1 - calm) * 0.28 * Math.sin((px * ac[0] + py * ac[1]) * 2.4 + s * 0.11);
     px += al[0] * sw; py += al[1] * sw;
-    const e = new Float64Array(P.n);
+    const e = cells++ * P.n;
     for (let k = 0; k < P.n; k++) {
       const rx = px - P.pos[k][0] * (rect ? asp : 1), ry = py - P.pos[k][1];
       const dx = ct * rx + st * ry, dy = -st * rx + ct * ry, layer = calm * (1 - (P.cs[k].accent ? 1 : 0));
-      e[k] = Math.exp(-(dx * dx * (1 - 0.94 * layer) + dy * dy) / width);
+      pull[e + k] = Math.exp(-(dx * dx * (1 - 0.94 * layer) + dy * dy) / width);
     }
-    pull.push(e);
   }
-  return pull;
+  return { pull, cells };
 }
 // Each colour's weight, set until it covers its share within a tenth of a point.
 function settle(P, { tol = 0.001, rounds = 60 } = {}) {
-  const pull = field(P), gain = P.share.slice(), n = P.n;
+  const { pull, cells } = field(P), gain = P.share.slice(), n = P.n;
   let areas = [];
   for (let it = 0; it < rounds; it++) {
     areas = new Array(n).fill(0);
-    for (const e of pull) { let t = 0; for (let k = 0; k < n; k++) t += gain[k] * e[k]; if (t > 0) for (let k = 0; k < n; k++) areas[k] += gain[k] * e[k] / t; }
-    for (let k = 0; k < n; k++) areas[k] /= pull.length;
+    for (let e = 0; e < cells * n; e += n) { let t = 0; for (let k = 0; k < n; k++) t += gain[k] * pull[e + k]; if (t > 0) for (let k = 0; k < n; k++) areas[k] += gain[k] * pull[e + k] / t; }
+    for (let k = 0; k < n; k++) areas[k] /= cells;
     if (areas.every((a, k) => Math.abs(a - P.share[k]) < tol)) break;
     step(P, gain, areas);
   }

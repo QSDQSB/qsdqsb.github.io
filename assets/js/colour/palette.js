@@ -15,7 +15,7 @@
 import { tips } from '../photobook/tip.js';
 import { vat, seedOf, oklab, glow } from './vat.js';
 import { crossfade } from '../photobook/wash.js';
-import { esc, blocks, card, kindred, dripper, reverieOf, place, cameFrom, backLabel } from './cards.js';
+import { esc, blocks, bar, card, kindred, dripper, reverieOf, place, cameFrom, backLabel } from './cards.js';
 
 const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* this visit only */ } } };
@@ -28,14 +28,6 @@ const railNav = root?.querySelector('.palette-rail');
 const back = document.querySelector('.masthead__back');
 const menu = root?.querySelector('.palette-voyages'), menuList = menu?.querySelector('.palette-voyages__list');
 const fold = menu?.querySelector('.palette-voyages__fold'), menuButton = root?.querySelector('.palette-page__menu');
-
-/** A palette as a wall label: the bar (a link when `href`), the hex codes beneath. Widths tempered. */
-function strip(colours, { href = null, label = '', shares = false } = {}) {
-  const bands = colours.map(([h, pc]) => `<i style="--c:${h};flex:${Math.sqrt(pc).toFixed(2)}"></i>`).join('');
-  const bar = href ? `<a class="palette-strip__bar" href="${href}" aria-label="${esc(label)}">${bands}</a>` : `<div class="palette-strip__bar" aria-hidden="true">${bands}</div>`;
-  const hex = colours.map(([h, pc, accent]) => `<span><i style="--c:${h}"></i>${h.slice(1).toUpperCase()}${shares ? `<b>${Math.round(pc)}%</b>` : ''}</span>`).join('');
-  return `<div class="palette-strip">${bar}<p class="palette-strip__hex">${hex}</p></div>`;
-}
 
 async function main() {
   let data = null;
@@ -76,8 +68,15 @@ async function main() {
     title.textContent = "QSD's Palette";
     if (came) along(backLabel(came)); else backTo(back?.dataset.home, back?.dataset.homeLabel);
     kicker.textContent = 'From the voyages';
-    stage.innerHTML = `<p class="colour-lede">The colours of every voyage: each one's own, pooled from its photographs, without the black and white that every journey has.</p>
-      <ol class="palette-index">${byPlace.flatMap(({ vs }) => vs).map((v) => `<li><a href="#${v.g}" class="palette-index__name">${esc(nameOf(v))}</a>${strip(sig(v), { href: `#${v.g}`, label: `QSD's Palette for ${nameOf(v)}` })}</li>`).join('')}</ol>`;
+    // By place, as the list beside it: a trip's parts under its name, the voyages between trips
+    // together. Each a way to its palette: its vat (poured as it nears the screen), name and bar.
+    const runs = [];
+    for (const t of byPlace) { if (!t.parts && runs.at(-1)?.label === '') runs.at(-1).vs.push(...t.vs); else runs.push({ label: t.parts ? t.label : '', vs: [...t.vs] }); }
+    const entry = (v) => `<li><a href="#${v.g}" data-g="${v.g}"><i class="palette-index__vat"></i><span><span class="palette-index__name">${esc(nameOf(v))}</span>${bar(sig(v))}</span></a></li>`;
+    stage.innerHTML = `<p class="colour-lede">The paint behind the pictures.</p>
+      <div class="palette-index">${runs.map(({ label, vs }) => `<section>${label ? `<h2>${esc(label)}</h2>` : ''}<ol>${vs.map(entry).join('')}</ol></section>`).join('')}</div>`;
+    const gOf = (i) => i.parentElement.dataset.g;
+    drip(stage.querySelectorAll('.palette-index__vat'), (i) => `index/${gOf(i)}`, (i) => vat(voyages.find((x) => x.g === gOf(i)).palette, { size: 52, seed: seedOf(gOf(i)) }));
   }
 
   function voyage(v, at, { glide = true } = {}) {
@@ -129,10 +128,17 @@ async function main() {
       if (still()) requestAnimationFrame(() => { from.scrollIntoView({ block: 'center', behavior: 'instant' }); land(); });
       else setTimeout(() => {
         if (!from.isConnected) return;
+        // The cards above it are only estimated until drawn, so the page moves under a long glide:
+        // aimed again when it lands, until the frame is in the middle (a few times at most), then ringed.
+        let tries = 0;
+        const aim = () => {
+          const r = from.getBoundingClientRect(), off = r.top + r.height / 2 - innerHeight / 2;
+          if (Math.abs(off) > innerHeight * 0.2 && tries++ < 3) { from.scrollIntoView({ block: 'center', behavior: 'smooth' }); settle(); return; }
+          if (!from.classList.contains('is-arrived')) land();
+        };
+        const settle = () => { let done = false; const go = () => { if (!done) { done = true; aim(); } }; addEventListener('scrollend', go, { once: true }); setTimeout(go, 1400); };
         from.scrollIntoView({ block: 'center', behavior: 'smooth' });
-        // The ring once the glide has landed (scrollend), or at the latest a moment on.
-        const lit = () => { if (!from.classList.contains('is-arrived')) land(); };
-        addEventListener('scrollend', lit, { once: true }); setTimeout(lit, 1400);
+        settle();
       }, 900);
     }
   }
@@ -225,14 +231,14 @@ async function main() {
   };
   function copyOf(canvas) {
     const c = Object.assign(document.createElement('canvas'), { width: canvas.width, height: canvas.height, className: canvas.className });
-    c.style.cssText = canvas.style.cssText; c.setAttribute('aria-hidden', 'true'); c.dataset.pouring = '';
-    canvas.ready.then(() => { c.getContext('2d').drawImage(canvas, 0, 0); delete c.dataset.pouring; });
+    c.style.cssText = canvas.style.cssText; c.setAttribute('aria-hidden', 'true');
+    canvas.ready.then(() => c.getContext('2d').drawImage(canvas, 0, 0));
     c.ready = canvas.ready.then(() => c);
     return c;
   }
   function railTo(v) {
     if (!railNav.firstChild) {
-      const run = (copy) => railed.map((x) => `<li${copy === 1 ? '' : ' aria-hidden="true"'}><a href="#${x.g}" data-g="${x.g}" data-copy="${copy}"${copy === 1 ? ` data-tip="${esc(nameOf(x))}" data-tip-side="top" aria-label="${esc(nameOf(x))}"` : ' tabindex="-1"'}></a></li>`).join('');
+      const run = (copy) => railed.map((x) => `<li${copy === 1 ? '' : ' aria-hidden="true"'}><a href="#${x.g}" data-g="${x.g}" data-copy="${copy}" data-tip="${esc(nameOf(x))}" data-tip-side="top"${copy === 1 ? ` aria-label="${esc(nameOf(x))}"` : ' tabindex="-1"'}></a></li>`).join('');
       railNav.innerHTML = `<a class="palette-rail__step" data-step="-1">‹</a>
         <ol class="palette-rail__list">${run(0)}${run(1)}${run(2)}</ol>
         <a class="palette-rail__step" data-step="1">›</a>`;

@@ -22,7 +22,7 @@
 
 import { tips } from '../photobook/tip.js';
 import { vat, seedOf } from './vat.js';
-import { holding, varied, SHOWN, focus, shadeFor } from './cards.js';
+import { holding, varied, SHOWN, focus, shadeFor, dripper } from './cards.js';
 
 const DWELL = 7000;
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -49,6 +49,9 @@ async function main() {
   const pages = data.pages || {};
   const caption = root.querySelector('.colour-drift__caption');
   const thread = root.querySelector('.colour-drift__thread');
+  // The trail's vats, poured as it brings them near, one a frame (./cards.js dripper).
+  const { drip } = dripper();
+  const pourStep = (b, key, make) => drip([b], () => key, make, { root: thread, margin: '0px 400px', now: true });
   const openEl = root.querySelector('.colour-drift__open');
   const playEl = root.querySelector('[data-act="play"]');
   const washes = [...root.querySelectorAll('.colour-drift__wash i')];
@@ -191,12 +194,13 @@ async function main() {
   }
 
   // Each frame on the way as its dye vat, the same one its card pours on the palette page; a frame
-  // whose palette is still to be read keeps its three-band sliver of colour, drawn round.
+  // whose palette is still to be read keeps its three-band sliver of colour, drawn round. Poured as
+  // the trail brings them near, one a frame (pourStep, above), not all at once.
   function addStep(i, k) {
     if (i === COLOUR) {
       const c = document.createElement('button');
       c.type = 'button'; c.dataset.k = k; c.className = 'is-colour';
-      c.append(vat(dye, { size: 20, seed: seedOf(src || colour) }));
+      pourStep(c, 'colour', () => vat(dye, { size: 20, seed: seedOf(src || colour) }));
       c.setAttribute('aria-label', `${k + 1}: ${colour.toUpperCase()}`); c.dataset.tip = colour.toUpperCase();
       thread.appendChild(c);
       return;
@@ -205,7 +209,7 @@ async function main() {
     const b = document.createElement('button');
     b.type = 'button';
     b.dataset.k = k;
-    if (p.sig?.length) b.append(vat(p.sig, { size: 20, seed: seedOf(`${p.g}/${p.slug}`) }));
+    if (p.sig?.length) pourStep(b, `step/${i}`, () => vat(p.sig, { size: 20, seed: seedOf(`${p.g}/${p.slug}`) }));
     else b.style.cssText = `--t:${p.strip[0]};--m:${p.strip[1]};--b:${p.strip[2]}`;
     b.setAttribute('aria-label', `${k + 1}: ${p.name || ''}`);
     b.dataset.tip = p.name || '';

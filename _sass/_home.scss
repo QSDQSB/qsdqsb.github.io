@@ -461,6 +461,9 @@ html.home-snap { scroll-snap-type: y mandatory; }
 }
 /* Centred while it fits; once it doesn't, the auto margins fall to zero and the
    content starts at the top rather than being clipped above it. */
+// The board's tiles lift and grow under the pointer: room for that inside the body's scroll box
+// (which clips), taken back from its margin so nothing moves at rest.
+.home__panel--new .home__panel-body { padding: 1rem; margin: -1rem; }
 .home__panel-body > :first-child { margin-top: auto; }
 .home__panel-body > :last-child { margin-bottom: auto; }
 .home__panel-body > * {
@@ -834,6 +837,9 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
   .wn-card--word p { font-size: $type-size-7 * 0.9; }
 }
 @include responsive-down(tablet) {
+  // Below the masthead's mark, which stays over the panels: the panels' heads start clear of it.
+  .home__panel--index,
+  .home__panel--new { padding-top: 4.25rem; }
   .home__index-grid { grid-template-columns: 1fr; }
   .home__index-stage { display: none; }
   .home__doors:hover .door { opacity: 1; }
