@@ -21,6 +21,7 @@ toc: true
 toc_sticky: true
 author_profile: false
 intriguing-word: false
+lang: zh # the body is Chinese (_layouts/single.html sets it on the text)
 ---
 
 # 狮虎桥路

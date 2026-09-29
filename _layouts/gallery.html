@@ -17,6 +17,7 @@ layout: compress
   {% assign body_class = "photobook" %}
 {% endif %}
 <body{% if body_class != "" %} class="{{ body_class }}"{% endif %}>
+{% include_cached skip-link.html %}
 {%- comment -%} The masthead's search opens this panel, as on every other page (_layouts/default.html). {%- endcomment -%}
 {% if site.search == true %}
 <div class="search-content">
