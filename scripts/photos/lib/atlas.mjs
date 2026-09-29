@@ -1,6 +1,6 @@
 /**
  * Every photograph on the site in one list, for the pages that look across
- * voyages (The Colour of Light, Drift): what each one is, where its light
+ * voyages (Reverie, Drift): what each one is, where its light
  * stood, its colours (its signature too, for Drift's trail of dye vats, and its
  * 24 dots, `rrggbbss` each, for Reverie's matching: finer than the signature),
  * and its kindred frames in other voyages.
@@ -10,14 +10,12 @@
  *               distance. Slow enough (seconds) to be computed offline and
  *               cached by content hash (scripts/photos/palettes.mjs).
  *   atlasOf     the compact records the pages read, from the booked
- *               manifests and that cache, and the light in bands of the
- *               sun's altitude: each band's pooled colours, its mean
- *               lightness and its lean (rose–green, gold–blue)
+ *               manifests and that cache
  *
  * No coordinates: place names and the sun's altitude only, as in the books.
  */
 
-import { parsePalette, vectorOf, chi2, emd, colourPath, rgbToOklab, swatchesOf } from './palette.mjs';
+import { parsePalette, vectorOf, chi2, emd, colourPath, rgbToOklab } from './palette.mjs';
 import { holding } from '../../../assets/js/colour/cards.js';
 
 /**
@@ -98,12 +96,11 @@ export function atlasOf(books, kindred = {}) {
     }
   }
   if (!photos.length) return null;
-  const bands = bandsOf(photos);
   // Indices, not hashes, on the page: kindred frames still to be found are left out.
   const at = new Map(photos.map((p, i) => [p.hash, i]));
   for (const p of photos) p.k = (kindred[p.hash] || []).map(([h]) => at.get(h)).filter(i => i != null);
   for (const p of photos) delete p.hash;
-  return { photos, bands };
+  return { photos };
 }
 
 /**
@@ -126,33 +123,3 @@ export function picksOf(atlas, book, { least = 3 } = {}) {
   return picks.length ? { picks, held } : null;
 }
 
-/**
- * The sun's altitude in bands, as the site names its light (lib/book.mjs lightOf): below −6° night,
- * to −2° blue hour, ±2° the horizon, to 6° golden light, then low sun, day and high sun.
- */
-export const BANDS = [
-  { key: 'night', label: 'Night', lo: -90, hi: -6 },
-  { key: 'blue', label: 'Blue hour', lo: -6, hi: -2 },
-  { key: 'horizon', label: 'The horizon', lo: -2, hi: 2 },
-  { key: 'golden', label: 'Golden light', lo: 2, hi: 6 },
-  { key: 'low', label: 'Low sun', lo: 6, hi: 20 },
-  { key: 'day', label: 'Day', lo: 20, hi: 45 },
-  { key: 'high', label: 'High sun', lo: 45, hi: 91 },
-];
-
-const hexLab = (h) => rgbToOklab(parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16));
-
-function bandsOf(photos) {
-  return BANDS.map(b => {
-    const ps = photos.filter(p => p.alt != null && p.alt >= b.lo && p.alt < b.hi);
-    if (!ps.length) return { ...b, n: 0 };
-    // Each photo counts once: its five colours by their shares, pooled, then merged back to five.
-    const pooled = ps.flatMap(p => p.sw.map((h, i) => ({ lab: hexLab(h), w: p.pc[i] / 100 / ps.length })));
-    const mean = (k) => pooled.reduce((s, c) => s + c.w * c.lab[k], 0) / pooled.reduce((s, c) => s + c.w, 0);
-    return {
-      ...b, n: ps.length,
-      palette: swatchesOf(pooled).map(s => ({ hex: s.hex, pc: Math.round(s.pc) })),
-      L: +mean(0).toFixed(3), rose: +(mean(1) * 100).toFixed(2), gold: +(mean(2) * 100).toFixed(2),
-    };
-  });
-}

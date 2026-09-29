@@ -38,7 +38,6 @@ for (const [name, width] of [['iPhone 14', null], ['iPhone SE', 320]]) {
   const device = { ...devices[name] };
   if (width) device.viewport = { width, height: 568 };
   const context = await browser.newContext(device);
-  await context.addInitScript(() => { try { localStorage.setItem('qsd:welcome-seen', '1'); } catch { /* private */ } });
   const page = await context.newPage();
   for (const path of PAGES) {
     try { await page.goto(base + path, { waitUntil: 'networkidle', timeout: 45000 }); } catch { console.log(`?  ${name} ${path}: did not load`); failed++; continue; }

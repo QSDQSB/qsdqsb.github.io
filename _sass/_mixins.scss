@@ -133,12 +133,10 @@
 /*
    Dark glass surface fill
    ==========================================================================
-   The near-black frosted fill — background + blur/saturate — was hand-copied
-   identically between `%subscribe-slip-glass` (_subscribe.scss) and
-   `.welcome-toast__inner` (_welcome-toast.scss), each also hand-writing the
-   -webkit-/standard backdrop-filter pair instead of using the mixin above.
-   Border, radius and box-shadow stay at the callsite — they differ between
-   the two (component-specific knobs), only the fill itself is shared.
+   The near-black frosted fill — background + blur/saturate — for the
+   subscribe slip's glass (`%subscribe-slip-glass`, _subscribe.scss), with the
+   -webkit-/standard backdrop-filter pair written once. Border, radius and
+   box-shadow stay at the callsite; only the fill is here.
 */
 
 @mixin dark-glass-fill {

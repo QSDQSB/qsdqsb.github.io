@@ -109,8 +109,8 @@ thumbhash:
 Everything else is derived at build time and can be re-derived: the picture distance between two
 photos (the exact earth mover's distance between palettes, in OKLab ΔE: how far, on average, a unit
 of colour must travel), a fixed 32-anchor vector for quick shortlists, five display swatches, each
-voyage's barcode and colour order (`book.mjs colourOf`), and, across voyages, kindred frames and the
-light in bands of the sun's altitude (`lib/atlas.mjs`), which feed `/light/` and `/drift/`; and QSD's
+voyage's barcode and colour order (`book.mjs colourOf`), and, across voyages, kindred frames
+(`lib/atlas.mjs`), which feed `/drift/` and `/reverie/`; and QSD's
 Palette (`/palette/#<gallery>`): every voyage's signature without black or white, each frame's own,
 in the book's sequence or by colour (the earth mover's distance between two frames' 24 dots, laid dark
 to light). The specs panel's palette and the colophon lead there.
