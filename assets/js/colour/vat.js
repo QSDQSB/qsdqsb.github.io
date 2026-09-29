@@ -77,7 +77,8 @@ void main() {
   gl_FragColor = vec4(rgb * alpha, alpha);
 }`;
 
-const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
+/** An sRGB channel (0–255) as linear light. */
+export const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
 export function oklab(h) {
   const r = lin(parseInt(h.slice(1, 3), 16)), g = lin(parseInt(h.slice(3, 5), 16)), b = lin(parseInt(h.slice(5, 7), 16));
   const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b), m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b), s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
@@ -167,7 +168,8 @@ const step = (P, gain, areas) => { for (let k = 0; k < P.n; k++) gain[k] *= ((P.
 /**
  * A vat as a canvas, drawn at once; `canvas.ready` resolves with it.
  */
-const stillness = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
+/** Motion held still: the site's kill switch (crawlers, screenshots) or the reader's reduced motion. */
+export const stillness = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export function vat(palette, { size = 176, width = size, height = size, shape = 'round', seed = 1, stir = false, speed = 15, label = '', calm: calmFor = null } = {}) {
   const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(width * dpr), H = Math.round(height * dpr);

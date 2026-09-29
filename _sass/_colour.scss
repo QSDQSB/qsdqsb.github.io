@@ -44,23 +44,36 @@
 }
 
 // The shade at a colour field's foot, as deep as its colour needs (--shade) for ivory words; above
-// the dye, beneath the words.
+// the dye, beneath the words. Measured up from the foot, not in parts of the field's height, so it
+// stands behind the words however tall the field (a wide screen's 3:1 is taller), the small labels
+// above the hex included.
 @mixin colour-shade {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  // Eased in over many stops: two straight segments meet in a crease the eye can find.
-  background: linear-gradient(180deg,
-    transparent 30%,
-    rgba(10, 10, 12, calc(var(--shade, 0) * 0.04)) 40%,
-    rgba(10, 10, 12, calc(var(--shade, 0) * 0.15)) 50%,
-    rgba(10, 10, 12, calc(var(--shade, 0) * 0.32)) 60%,
-    rgba(10, 10, 12, calc(var(--shade, 0) * 0.53)) 70%,
-    rgba(10, 10, 12, calc(var(--shade, 0) * 0.74)) 80%,
-    rgba(10, 10, 12, calc(var(--shade, 0) * 0.9)) 90%,
-    rgba(10, 10, 12, var(--shade, 0)) 100%);
+  // Eased out over many stops: two straight segments meet in a crease the eye can find.
+  background: linear-gradient(0deg,
+    rgba(10, 10, 12, var(--shade, 0)) 0,
+    rgba(10, 10, 12, var(--shade, 0)) 5rem,
+    rgba(10, 10, 12, calc(var(--shade, 0) * 0.85)) 8rem,
+    rgba(10, 10, 12, calc(var(--shade, 0) * 0.6)) 11rem,
+    rgba(10, 10, 12, calc(var(--shade, 0) * 0.32)) 14rem,
+    rgba(10, 10, 12, calc(var(--shade, 0) * 0.12)) 17rem,
+    transparent 20rem);
+}
+
+// A colour field (Reverie's opening, Drift's colour stop, the lightbox's painted frame): the colour's
+// dye across it, ivory words upon it, the foot shaded as a light colour needs. The wall's relief is
+// each field's own (Reverie's waits for its colour).
+@mixin colour-field {
+  color: $lighter-gray;
+  text-shadow: 1px 1px 4px rgba($darker-gray, 0.5);
+
+  &::before { @include colour-shade; }
+
+  > .colour-vat { position: absolute; inset: 0; width: 100%; height: 100%; }
 }
 
 /* ── the way on ─────────────────────────────────────────────────────── */
@@ -473,7 +486,7 @@
   a i { transition: box-shadow 0.3s $cubic-bezier-smooth; }
   a:hover i,
   a:focus-visible i { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.7); }
-  a:focus-visible { outline: none; }
+  a:focus-visible { @include brass-focus; } // the white line alone is lost on a pale block
 
   .is-picked i { box-shadow: inset 0 0 0 2px #fff; }
   .is-picked b { color: var(--photobook-ink); }
@@ -540,7 +553,7 @@
     color: var(--photobook-ink); // the site colours its h3
   }
 
-  h3 small { margin-left: 0.5rem; font-size: max(0.66rem, 11px); letter-spacing: 0.1em; text-transform: uppercase; color: var(--photobook-ink-3); }
+  h3 small { margin-left: 0.5rem; font-size: max(0.66rem, 11px); letter-spacing: 0.1em; text-transform: uppercase; color: var(--photobook-ink-3); white-space: nowrap; }
 }
 
 .palette-card__bar {
@@ -706,12 +719,7 @@ body.colour-page--drift { padding-bottom: 0; }
 // it as Reverie sets it (.reverie__hex), in ivory, the foot shaded as a light colour needs.
 .colour-drift__colour {
   overflow: hidden;
-  color: $lighter-gray;
-  text-shadow: 1px 1px 4px rgba($darker-gray, 0.5);
-
-  &::before { @include colour-shade; }
-
-  > .colour-vat { position: absolute; inset: 0; width: 100%; height: 100%; }
+  @include colour-field;
   &::after { @include surface-relief; }
 }
 
@@ -725,12 +733,7 @@ body.colour-page--drift { padding-bottom: 0; }
 
 // Reverie's colour in the book's lightbox (a painted frame, lightbox.js): its dye, its hex upon it.
 .photobook-lightbox__painted {
-  color: $lighter-gray;
-  text-shadow: 1px 1px 4px rgba($darker-gray, 0.5);
-
-  &::before { @include colour-shade; }
-
-  > .colour-vat { position: absolute; inset: 0; width: 100%; height: 100%; }
+  @include colour-field;
   &::after { @include surface-relief; }
   .reverie__hex { position: absolute; z-index: 1; left: clamp(1.2rem, 3vw, 2.4rem); bottom: clamp(1rem, 3vw, 2rem); }
 }
@@ -834,23 +837,14 @@ body.colour-page--drift { padding-bottom: 0; }
   padding: 5.5rem var(--photobook-gutter) clamp(2.2rem, 5vw, 3.6rem);
   overflow: hidden;
   isolation: isolate;
-  color: $lighter-gray;
-  text-shadow: 1px 1px 4px rgba($darker-gray, 0.5);
-
-  &::before { @include colour-shade; }
-
-  > .colour-vat {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    width: 100%;
-    height: 100%;
-  }
+  @include colour-field;
+  > .colour-vat { z-index: -1; }
 
   &.is-poured::after { @include surface-relief; z-index: -1; } // no wall before its colour (reverie.js)
 
+  // The small words above and beneath the hex: a shadow as deep as the colour needs, as the board's tile.
   .colour-kicker,
-  .reverie__named { color: inherit; opacity: 0.85; }
+  .reverie__named { color: inherit; text-shadow: 0 1px 10px rgba(10, 10, 12, calc(var(--shade, 0) * 0.9)), 1px 1px 4px rgba($darker-gray, 0.5); }
 }
 
 // The colour's words on its dye: the eyebrow, the hex with a dot of the colour after its figures
@@ -975,6 +969,8 @@ body.colour-page--drift { padding-bottom: 0; }
 
 .reverie__count {
   @include eyebrow;
+  line-height: 1.6; // it may run to two lines on a phone
+  text-wrap: balance;
   margin: clamp(2.2rem, 4.5vw, 3.2rem) 0 clamp(1.2rem, 2.4vw, 1.6rem);
 }
 
