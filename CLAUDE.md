@@ -104,7 +104,7 @@ npm test
 
 **Photographs live in R2, not git.** `photos/` is the local mirror, `_data/photos/*.yml` the captions, and `_data/photo_manifests/` the build-time merge (`photos:fetch`, before every build). Pages load them from `img.qsdqsb.com`; nothing reads `gallery/` or generates thumbnails any more. Never commit image bytes or anything under `_data/photo_manifests/`.
 
-→ `_docs/build.md` for the full pipeline, the `generate:depth` authoring step, the rake shim, and all check commands. → **`_docs/photos-recipes.md` first for any photo or gallery task** (add, new voyage, amend, replace, remove, troubleshoot); `_docs/photos-pipeline.md` for the pipeline's reference, every flag, and the Cloudflare setup.
+→ `_docs/build.md` for the full pipeline, the `generate:depth` authoring step, the rake shim, and all check commands. → `_docs/new-machine.md` to set up a fresh laptop (tools, where each credential goes, what rebuilds itself). → **`_docs/photos-recipes.md` first for any photo or gallery task** (add, new voyage, amend, replace, remove, troubleshoot); `_docs/photos-pipeline.md` for the pipeline's reference, every flag, and the Cloudflare setup.
 
 ---
 
