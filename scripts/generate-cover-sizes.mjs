@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * WebP renditions of the 3:1 voyage heroes (images/cover/), for the Photobook's cover srcset.
+ * WebP renditions of the 3:1 voyage heroes (images/cover/), for the Photobook's cover srcset and the
+ * voyage cards, which take the smallest that fills them (assets/js/card-covers.js).
  *
  *   images/cover/london-shard-3v1.jpg → images/cover/sized/london-shard-3v1-{1920,2880}.webp
  *
@@ -26,27 +27,30 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'images', 'cover');
 const OUT = path.join(SRC, 'sized');
 const DATA = path.join(ROOT, '_data', 'cover_sizes.json');
-const WIDTHS = [1920, 2880];
+const WIDTHS = [1280, 1920, 2880]; // 1280: a card on a phone, drawn at 2x
 const force = process.argv.includes('--force');
 
 const fresh = (out, src) => !force && fs.existsSync(out) && fs.statSync(out).mtimeMs >= fs.statSync(src).mtimeMs;
 
 async function main() {
   fs.mkdirSync(OUT, { recursive: true });
-  const covers = fs.readdirSync(SRC).filter((f) => /\.(jpe?g|png)$/i.test(f));
+  // Every cover, those of a voyage's parts in its own folder too (cover/japan/…), sized beside the
+  // same folder under sized/.
+  const covers = fs.readdirSync(SRC, { recursive: true }).filter((f) => /\.(jpe?g|png)$/i.test(f) && !f.startsWith(`sized${path.sep}`));
   const map = {};
   let made = 0;
   for (const f of covers) {
-    const src = path.join(SRC, f), stem = f.replace(/\.[^.]+$/, '');
+    const src = path.join(SRC, f), rel = f.split(path.sep).join('/'), stem = rel.replace(/\.[^.]+$/, '');
     const { width } = await sharp(src).metadata();
     const smaller = WIDTHS.filter((w) => w < width);
     for (const w of smaller) {
       const out = path.join(OUT, `${stem}-${w}.webp`);
       if (fresh(out, src)) continue;
+      fs.mkdirSync(path.dirname(out), { recursive: true });
       await sharp(src).resize({ width: w }).webp({ quality: 80 }).toFile(out);
       made++;
     }
-    map[`cover/${f}`] = [...smaller.map((w) => ({ w, src: `/images/cover/sized/${stem}-${w}.webp` })), { w: width, src: `/images/cover/${f}` }];
+    map[`cover/${rel}`] = [...smaller.map((w) => ({ w, src: `/images/cover/sized/${stem}-${w}.webp` })), { w: width, src: `/images/cover/${rel}` }];
   }
   fs.writeFileSync(DATA, JSON.stringify(map, null, 1));
   console.log(`covers: ${covers.length} heroes, ${made} rendition(s) written → images/cover/sized/`);

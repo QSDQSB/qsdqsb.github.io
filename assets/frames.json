@@ -1,0 +1,11 @@
+---
+layout: null
+sitemap: false
+---
+{%- comment -%}
+  Every voyage's lightbox frames (_data/photo_manifests/frames.json, written by `npm run photos:fetch`,
+  scripts/photos/lib/atlas.mjs framesOf), for the lightbox Reverie opens over itself
+  (assets/js/colour/reverie.js). With none, an empty object.
+{%- endcomment -%}
+{%- assign frames = site.data.photo_manifests["frames"] -%}
+{% if frames %}{{ frames | jsonify }}{% else %}{}{% endif %}

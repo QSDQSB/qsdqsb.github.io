@@ -50,7 +50,7 @@ header:
 - 🤖QSDQSB
 - 🔬24' Maths&Stats at Ox
 - 🦃From [The Queen's College](https://www.queens.ox.ac.uk), whose logo consists of three turkeys
-- [☕️](posts/2022/03/coffee-counter)Americano addict
+- [☕️](/posts/coffee-counter/)Americano addict
   - ⬆️Might trigger something if you click the coffee emoji
 - 📷Photography rookie
 - 🎸Amateur music composer
@@ -98,5 +98,7 @@ Don't know what this is? It's quite simple — just get a maths degree and you'l
 
 Consider a language that doesn't support the logic `not`, 13 years after someone pointed it out: *[The Mighty Liquid](https://github.com/Shopify/liquid/issues/138)*
 {: .notice--success}
+
+<p class="about__onward"><a href="{{ '/cv/' | relative_url }}">Curriculum Vitae <span aria-hidden="true">→</span></a></p>
 
 <div class="logo_wrapper" style="max-width: 60%;"><a href="#a-bizarre-self-intro"><img src="/images/QSDLOGO-2000.svg" alt="QSD Logo" class="logo_style"></a></div>

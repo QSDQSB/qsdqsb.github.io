@@ -6,6 +6,8 @@
 {% assign logo_candidates = "splash.jpg,two_colours.jpg,svg.svg,profile.jpg,emblem_neon.svg" | split: "," %}
 {% if include.logo_name %}
     {% assign logo_name = include.logo_name | prepend: path_to_logo %}
+{% elsif site.visual_baseline %}
+    {% assign logo_name = path_to_logo | append: logo_candidates.first %}
 {% else %}
     {% assign sampled_logo = logo_candidates | sample %}
     {% assign logo_name = path_to_logo | append: sampled_logo %}

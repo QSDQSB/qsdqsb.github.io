@@ -17,6 +17,7 @@ html.subscribe-dismissed .subscribe-slip {
 
 .subscribe-slip {
   max-width: 40rem; /* share the word-card column so post endings stay one spine */
+  body > & { width: calc(100% - 2rem); } /* straight in the body (a voyage of parts): inside the screen's gutter */
   margin: 3rem auto 0;
   clear: both; /* theme grids float cards (susy) — drop below them, never beside */
   opacity: 0;
@@ -47,7 +48,7 @@ html.subscribe-dismissed .subscribe-slip {
   visibility: hidden; /* clipped content must not stay focusable */
 }
 
-/* Shared glass surface — same family as .welcome-toast__inner;
+/* Shared glass surface (the dark-glass fill, _mixins.scss);
    radius matches .word_card (1rem) since they share the colophon column. */
 %subscribe-slip-glass {
   border: 1px solid rgba($h2-color, 0.26);

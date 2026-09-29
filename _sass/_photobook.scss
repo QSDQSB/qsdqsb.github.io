@@ -40,13 +40,7 @@
   z-index: 1;
 }
 
-.photobook-kicker {
-  margin: 0;
-  font: 500 0.62rem/1 $barlow-font-family;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--photobook-ink-2);
-}
+.photobook-kicker { @include eyebrow; }
 
 // The hover label of an icon control (tip.js): a small glass label in the UI face.
 .photobook-tip {
@@ -148,22 +142,13 @@
   color: $lighter-gray;
   text-shadow: 1px 1px 4px rgba($darker-gray, 0.5);
 
-  h1 {
-    margin: 1rem 0 0;
-    color: $lighter-gray;
-    // Set as every hero page's title (_page.scss, .page__hero--overlay .page__title), size for size.
-    font: 700 clamp(1.75rem, 2.8vw, 2.85rem)/1 $global-font-family;
-    letter-spacing: 0.015em;
-    @include responsive-up(desktop) { font-size: clamp(1.95rem, 2.6vw, 3rem); }
-    @include responsive-up(wide) { font-size: clamp(2.1rem, 2.35vw, 3.1rem); }
-    @include responsive-down(tablet) { font-size: clamp(1.2rem, 5vw, 1.65rem); }
-  }
+  h1 { @include display-title; }
 }
 
 .photobook-cover__lede {
   margin: clamp(0.72rem, 1.5vw, 1.08rem) 0 0;
   max-width: min(100%, #{$overlay-hero-excerpt-max-width}); // as the hero pages' excerpt: one line where it fits
-  font: italic 400 clamp(1.02rem, 1.34vw, 1.34rem)/1.26 $didot-family;
+  @include lede;
   opacity: 0.9;
 }
 
@@ -236,14 +221,6 @@
   }
 }
 
-// The glass both controls sit in, darkened behind so their marks keep contrast over a white sky.
-@mixin photobook-bar-glass {
-  background: var(--photobook-glass);
-  -webkit-backdrop-filter: blur(18px) saturate(140%) brightness(0.62);
-  backdrop-filter: blur(18px) saturate(140%) brightness(0.62);
-  border: 1px solid var(--photobook-glass-edge);
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.16), 0 5px 16px rgba(0, 0, 0, 0.12);
-}
 
 // At rest the dial is mounted on the seam of cover and book, its centre on the cover's lower edge;
 // it catches the top of the window at the same height, so nothing moves when it starts to follow.
@@ -273,7 +250,7 @@
 // The view switch: a slide of the same glass, as tall as the dial beside it, its thumb over the view
 // shown. It draws in with the dial.
 .photobook-switch {
-  @include photobook-bar-glass;
+  @include glass-bar;
   position: relative;
   display: grid;
   grid-template-rows: repeat(3, 1fr);
@@ -327,7 +304,7 @@
 .photobook-dial { position: relative; }
 
 .photobook-dial__well {
-  @include photobook-bar-glass;
+  @include glass-bar;
   position: relative;
   width: 86px;
   height: 86px;
@@ -550,6 +527,12 @@ html.is-refiltering::view-transition-group(*) {
 html.is-refiltering::view-transition-old(*),
 html.is-refiltering::view-transition-new(*) { animation-duration: 0.35s; }
 
+// Laying the sheet by colour, or back in sequence: every frame travels, so the move takes a little longer.
+html.is-reordering::view-transition-group(*) {
+  animation-duration: 0.7s;
+  animation-timing-function: $cubic-bezier-smooth;
+}
+
 .photobook-book,
 .photobook-sheet { transition: opacity 0.32s $cubic-bezier-smooth; }
 
@@ -761,6 +744,45 @@ html.is-refiltering::view-transition-new(*) { animation-duration: 0.35s; }
   .photobook-frame:hover .photobook-film span { max-width: 12rem; opacity: 1; }
 }
 
+// The sheet's order, above it at the left: the book's sequence, or one gradient by colour. The chosen
+// one is underlined, the colour order in the voyage's own colours, dark to light.
+.photobook-sheet__order {
+  display: flex;
+  gap: 1.4rem;
+  margin: 0 var(--photobook-gutter) clamp(1.2rem, 2.4vw, 2rem);
+
+  &[hidden] { display: none; }
+
+  button {
+    position: relative;
+    padding: 0.35rem 0;
+    border: 0;
+    background: none;
+    font: 500 0.62rem $barlow-font-family;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--photobook-ink-3);
+    cursor: pointer;
+    transition: color 0.3s $cubic-bezier-smooth;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0.22em; // the tracking after the last letter
+      bottom: 0;
+      height: 1px;
+      background: var(--ramp, var(--photobook-ink-3));
+      opacity: 0;
+      transition: opacity 0.3s $cubic-bezier-smooth;
+    }
+
+    &:hover { color: var(--photobook-ink); }
+    &[aria-pressed="true"] { color: var(--photobook-ink); }
+    &[aria-pressed="true"]::after { opacity: 1; }
+  }
+}
+
 .photobook-sheet__frame-no {
   font: 500 0.6rem $barlow-font-family;
   letter-spacing: 0.18em;
@@ -879,6 +901,83 @@ html.is-refiltering::view-transition-new(*) { animation-duration: 0.35s; }
 
 .photobook-legend__n { color: var(--photobook-ink); }
 
+// The voyage's colours, the whole width beneath the three bars: the barcode (a sliver per frame in the
+// book's order, shaded top to bottom as its frame is), then the five colours of the whole voyage.
+.photobook-colophon__colours {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: clamp(1.4rem, 3vw, 2.4rem);
+  grid-column: 1 / -1;
+
+  > * { grid-column: 1; }
+
+  // Each in its own row, stated, so the glass (a grid item over rows 1 to 3, below) can lie under
+  // them rather than push them down.
+  > h3 { grid-row: 1; }
+  > .photobook-barcode { grid-row: 2; }
+  > .photobook-colophon__palette { grid-row: 3; }
+  > .photobook-colophon__onward { grid-row: 4; }
+}
+
+// The voyage's dye vat, beside its barcode and bar, leading to its palette page.
+.photobook-colophon__vat {
+  grid-column: 2;
+  grid-row: 1 / span 3; // beside the title, frames and palette, inside their glass
+  align-self: center;
+  width: 6rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transition: transform 0.3s $cubic-bezier-smooth, box-shadow 0.3s $cubic-bezier-smooth;
+
+  canvas { display: block; width: 100%; height: auto; }
+
+  &:empty { visibility: hidden; }
+
+  // Lifted while the way to the palette page is pointed at: a hairline ring, a soft shadow.
+  .is-pointing & { transform: scale(1.04); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 12px 32px rgba(0, 0, 0, 0.4); }
+  .is-pressing & { transform: scale(1.01); }
+}
+
+.photobook-barcode {
+  display: flex;
+  flex-wrap: wrap; // a long book takes a second row rather than shrinking its vats past reading
+  gap: 0.45rem;
+  margin-bottom: 1.1rem;
+
+  // Every frame as its own dye vat (poured by assets/js/photobook/index.js, the same vat its card on
+  // the palette page shows), in the book's order; until then, and without script, its colours top
+  // to bottom.
+  // One size for all, from the number of frames (--n): as large as one row allows, never past
+  // 3.6rem, nor under 1.8rem, where a longer book wraps, every row alike.
+  > * { flex: 0 0 clamp(1.8rem, calc((100% - (var(--n, 20) - 1) * 0.45rem) / var(--n, 20)), 3.6rem); aspect-ratio: 1; border-radius: 50%; }
+  > span { background: var(--photobook-line); }
+
+  button {
+    padding: 0;
+    border: 0;
+    background: linear-gradient(var(--t), var(--m), var(--b));
+    cursor: pointer;
+    transition: opacity 0.3s $cubic-bezier-smooth, transform 0.3s $cubic-bezier-smooth;
+
+    &:focus-visible { outline: 1px solid var(--photobook-ink); outline-offset: 3px; }
+
+    // Poured: the vat takes the place of the colours standing in for it.
+    &:has(canvas) { background: none; }
+
+    canvas { display: block; width: 100%; height: auto; }
+  }
+}
+
+@include responsive-hover {
+  .photobook-barcode:hover button:not(:hover) { opacity: 0.45; }
+}
+
+// Onward, to the pages that look across every voyage by colour.
+.photobook-colophon__onward {
+  margin: 1.6rem 0 0;
+  @include onward-links;
+}
+
 /* ── the end of the page ──────────────────────────────────────────────── */
 .photobook-end {
   width: 100%;
@@ -925,37 +1024,15 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   from { opacity: 0; }
 }
 
+
+
+// The photograph's own placeholder is the colour: the room takes the print's.
 .photobook-lightbox__wash {
   position: absolute;
   inset: 0;
-  overflow: hidden;
+  @include wash;
 
-  // The photograph's own placeholder, scaled up and softened into frosted glass: the room takes the
-  // print's colour. Layers crossfade (lightbox.js), and each settles in from a slightly larger scale,
-  // so a change of frame reads as the light shifting rather than a cut.
-  div {
-    position: absolute;
-    inset: -12%;
-    background: center / cover no-repeat;
-    filter: blur(36px) saturate(1.5) brightness(0.42);
-    opacity: 0;
-    scale: 1.06;
-    transition: opacity 1.1s $cubic-bezier-standard, scale 1.6s $cubic-bezier-smooth;
-    will-change: opacity;
-  }
-
-  div.is-on { opacity: 1; scale: 1; }
-
-  // The glass over it keeps the room dark: the print's colour glows behind it, strongest near the
-  // print and falling away to near-black at the edges and beneath, where the caption sits.
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 25%, transparent 60%, rgba(6, 6, 8, 0.55)),
-      radial-gradient(ellipse 80% 70% at 50% 42%, rgba(6, 6, 8, 0.1), rgba(6, 6, 8, 0.72) 100%);
-  }
+  div { background: center / cover no-repeat; }
 }
 
 // The print's shape, animatable, so the mount beneath it morphs from one frame's shape to the next.
@@ -1011,6 +1088,21 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 }
 
 .photobook-lightbox:is(.is-bare, .is-zoomed) .photobook-lightbox__mount { opacity: 0; }
+
+// A painted frame (away from the book: a colour, in Reverie): the print's own box, filled by the page.
+.photobook-lightbox__painted {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(100cqw, 100cqh * var(--pr));
+  height: min(100cqh, 100cqw / var(--pr));
+  translate: -50% -50%;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity var(--xf, 0.55s) $cubic-bezier-standard;
+
+  &.is-on { opacity: 1; }
+}
 
 .photobook-lightbox.is-playing .photobook-lightbox__mat img.is-on {
   animation: photobook-push var(--dwell, 8.6s) linear forwards;
@@ -1077,28 +1169,20 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   &::after { content: ""; position: absolute; inset: -6px; }
 }
 
-.photobook-lightbox__back {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.36rem 0.8rem 0.36rem 0.6rem;
-  border: 1px solid var(--photobook-glass-edge);
-  border-radius: 999px;
-  background: var(--photobook-glass);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  backdrop-filter: blur(18px) saturate(140%);
-  color: $primary-color;
-  font: 500 0.86rem $barlow-font-family;
-  letter-spacing: 0.02em;
-  cursor: pointer;
 
-  svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.photobook-lightbox__back {
+  // A long film name gives way (…) before the tools are pushed off a phone's screen.
+  flex: 0 1 auto;
+  min-width: 0;
+  @include pill;
+
+  svg { flex: none; }
+  span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 
 .photobook-lightbox__count {
   flex: 0 1 auto;
-  min-width: 0;             // a long film name gives way before the tools, and before the count
+  min-width: min-content;   // the film's name gives way, never the frame's number (the back pill yields first)
   display: flex;
   align-items: baseline;
   white-space: nowrap;
@@ -1122,26 +1206,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   margin-left: auto;
 }
 
-.photobook-lightbox__tool {
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 50%;
-  background: var(--photobook-button);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  color: $primary-color;
-  cursor: pointer;
-  transition: background 0.3s $cubic-bezier-smooth, color 0.3s $cubic-bezier-smooth;
-
-  &:hover { background: var(--photobook-button-hover); color: #fff; }
-  &[aria-pressed="true"] { color: $h2-color; border-color: rgba($h2-color, 0.35); }
-
-  svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
-}
+.photobook-lightbox__tool { @include round-tool; }
 
 .photobook-lightbox__caption {
   position: absolute;
@@ -1240,6 +1305,50 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   &.is-scrubbing button::before { width: 2px; height: 12px; opacity: 0.8; }
   &.is-scrubbing button.is-on::before { width: 3px; height: 22px; opacity: 1; }
   &.is-scrubbing button.is-scrub::before { width: 3px; height: 26px; opacity: 1; background: $lighter-gray; }
+}
+
+// Marks a page gives for the frames (away from the book: each photograph's dye vat, in Reverie): a
+// dot for each in place of the tick, the one on show ringed, as Drift's way is. Never squeezed to fit:
+// more than fit, and the rail scrolls, as the palette page's rail of vats does, its ends fading.
+.photobook-lightbox__rail.has-marks {
+  gap: 4px;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  touch-action: pan-x;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 1.25rem, #000 calc(100% - 1.25rem), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 1.25rem, #000 calc(100% - 1.25rem), transparent);
+
+  padding-inline: 1.25rem;   // the fading ends clear of the first and last dot
+
+  &::-webkit-scrollbar { display: none; }
+
+  // A scrolling rail clips what rises above it: the previews stay with the book's ticks.
+  .photobook-lightbox__peek { display: none; }
+
+  button {
+    flex: 0 0 18px;
+    width: 18px;
+    height: 40px;
+    place-items: center;
+
+    &::before { content: none; }
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    max-width: 16px;
+    height: auto;
+    border-radius: 50%;
+    outline: 1px solid transparent;
+    outline-offset: 2px;
+    transition: outline-color 0.3s $cubic-bezier-smooth;
+  }
+
+  button:is(.is-on, :hover, .is-scrub) canvas { outline-color: var(--photobook-ink); }
 }
 
 .photobook-lightbox__peek {
@@ -1447,6 +1556,110 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 // The film simulation, set like the edge print along a negative.
 .photobook-specs__print { @include photobook-edge-print; }
 
+// A palette set like a wall label in a gallery (the specs panel, QSD's Palette): a thin bar of three
+// to five colours, drawn 4px tall in a taller hit area, and beneath it the colours' hex codes, each
+// behind a chip of its colour, in finely tracked capitals. The codes are plain text, to select and
+// copy; they come in with the pointer (their room is kept, so nothing moves) and stay on a touch
+// screen, where there is no pointer to rest.
+.palette-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr); // never wider than what it labels
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.palette-strip__bar {
+  display: flex;
+  gap: 2px;
+  padding-block: 5px;
+
+  i { min-width: 2px; height: 4px; background: var(--c); }
+
+  &:focus-visible { outline: 1px solid var(--photobook-ink); outline-offset: 3px; }
+}
+
+.palette-strip__hex {
+  display: flex;
+  flex-wrap: wrap; // a narrow label takes two lines rather than running past its bar
+  justify-content: space-between;
+  gap: 0.35rem 0.5rem;
+  margin: 0;
+  font: 500 0.58rem/1 $barlow-font-family;
+  letter-spacing: 0.1em;
+  color: var(--photobook-ink-2);
+  font-variant-numeric: tabular-nums;
+  user-select: text;
+  opacity: 0;
+  transition: opacity 0.35s $cubic-bezier-smooth;
+
+  span { display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap; }
+  b { margin-left: 0.15rem; font-weight: 400; color: var(--photobook-ink-3); }
+  small { margin-left: 0.2rem; font: 500 0.5rem $barlow-font-family; letter-spacing: 0.18em; text-transform: uppercase; color: var(--photobook-ink-3); }
+  i { width: 5px; height: 5px; background: var(--c); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08); } // a hairline, so a near-black chip still shows
+}
+
+.palette-strip:hover .palette-strip__hex,
+.palette-strip:focus-within .palette-strip__hex { opacity: 1; }
+
+@include responsive-coarse-pointer {
+  .palette-strip__hex { opacity: 1; }
+}
+
+// In the colophon, the voyage's palette under its frames' vats, a little heavier, its hex codes
+// always shown (the specs panel keeps them for the pointer). With the voyage's vat it is one way
+// to the voyage's palette page: pointing at either (or the way on beneath) lights the section
+// (.is-pointing, assets/js/photobook/index.js): a glass rises round it (title, frames, palette and
+// vat), the bar thickens, the codes brighten, and the vat lifts and stirs.
+.photobook-colophon__palette {
+  margin-top: 0.4rem;
+  cursor: pointer;
+
+  .palette-strip__bar i { height: 8px; }
+  .palette-strip__bar { transition: transform 0.3s $cubic-bezier-smooth; }
+  .palette-strip__hex { opacity: 1; transition: color 0.3s $cubic-bezier-smooth; }
+
+  .is-pointing & {
+    .palette-strip__bar { transform: scaleY(1.25); } // thicker, and nothing beneath it moves
+    .palette-strip__hex { color: var(--photobook-ink); }
+  }
+}
+
+// The glass: a grid item of the section itself, over its first three rows (title, frames, palette)
+// and both columns (the vat's too), so it frames the section and leaves the way on outside.
+.photobook-colophon__colours {
+  isolation: isolate; // the glass lies behind the section's own things, not behind the page
+
+  &::before {
+    $ease: 0.3s $cubic-bezier-smooth;
+
+    content: "";
+    grid-column: 1 / -1;
+    grid-row: 1 / span 3;
+    z-index: -1;
+    margin: -1rem -1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+
+    @include responsive-down(mobile) { margin: -0.8rem -0.7rem; } // inside a phone's gutter
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 34px rgba(0, 0, 0, 0.28);
+    opacity: 0;
+    transform: scale(0.985);
+    transition: opacity $ease, transform $ease;
+    pointer-events: none;
+  }
+
+  &.is-pointing::before { opacity: 1; transform: none; }
+  &.is-pressing::before { transform: scale(0.995); }
+}
+
+// In the specs panel it runs the whole row beneath the film. Named as a highlight, since the
+// highlights' own cells are grids.
+.photobook-specs__highlights > .photobook-specs__palette {
+  grid-column: 1 / -1;
+  margin-top: -0.2rem;
+}
+
 .photobook-specs__gear {
   font: 400 0.74rem $barlow-font-family;
   color: var(--photobook-ink-2);
@@ -1648,6 +1861,14 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-book,
   .photobook-sheet,
   .photobook-sheet .photobook-film span,
+  .photobook-sheet__order button,
+  .photobook-sheet__order button::after,
+  .photobook-barcode button,
+  .palette-strip__hex,
+  .photobook-colophon__colours::before,
+  .photobook-colophon__palette .palette-strip__bar,
+  .photobook-colophon__vat,
+  .photobook-colophon__onward a,
   .photobook-tip,
   .photobook-lightbox__wash div,
   .photobook-lightbox__mat,

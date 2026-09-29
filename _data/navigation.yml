@@ -5,9 +5,9 @@ main:
 
   - title: "Voyage"
     url: /voyage/
+  - title: "Palette"
+    url: /palette/
   - title: "Bestiary"
     url: /bestiary/
-  - title: "CV"
-    url: /cv/
   - title: "About"
     url: /about/

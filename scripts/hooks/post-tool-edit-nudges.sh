@@ -35,6 +35,8 @@ case "$file" in
       | grep -v '^OK' | sed 's/^/[!important] /'
     python3 scripts/check-house-style.py --new-only --code 2>&1 \
       | grep -v '^OK' | sed 's/^/[house-style] /'
+    # Reuse before create: a new component family is named, to be checked against the catalogue.
+    bash scripts/check-new-components.sh "$file" 2>&1 | sed 's/^/[components] /'
     ;;
 esac
 

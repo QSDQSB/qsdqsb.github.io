@@ -9,6 +9,11 @@
  *   in   _data/photo_locations/<gallery>.yml               place names, when located
  *   out  _data/photo_manifests/<key>.json                  (gitignored)
  *   out  _data/photo_manifests/_index.json                 summary + warnings
+ *   out  _data/photo_manifests/colour-atlas.json           every coloured photo across voyages, when
+ *                                                          palettes are known (lib/atlas.mjs)
+ *   out  _data/photo_manifests/palettes.json               every voyage's palette, for QSD's Palette
+ *   out  _data/photo_manifests/frames.json                 every voyage's lightbox frames, for Reverie
+ *   out  _data/photo_manifests/reverie-picks.json          Ridgway's colours the photographs hold, for the landing page
  *
  * Galleries are the `gallery_name` values referenced by _voyage and
  * _subvoyage frontmatter, so a voyage with no processed photos still gets
@@ -42,6 +47,8 @@ import { FsStore, R2Store } from './lib/store.mjs';
 import { rcloneVersion, remoteExists } from './lib/rclone.mjs';
 import { mergeManifest, validateAuthored } from './lib/manifest.mjs';
 import { bookOf } from './lib/book.mjs';
+import { readSidecar, readKindred } from './palettes.mjs';
+import { atlasOf, palettesOf, framesOf, picksOf, KINDRED_KEY } from './lib/atlas.mjs';
 
 const require = createRequire(import.meta.url);
 const { referencedGalleries } = require('../check-gallery-integrity.js');
@@ -60,7 +67,10 @@ let privateError = null;
 const NO_ACCESS = 'no access to the private manifests: set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY, or the rclone remote';
 
 async function privateManifest(gallery) {
-  const key = `${gallery}/${MANIFEST_FILE}`;
+  return privateJson(`${gallery}/${MANIFEST_FILE}`);
+}
+
+async function privateJson(key) {
   if (r2) return r2.getJson(key);
   if (viaRclone) {
     const r = spawnSync('rclone', ['cat', `${env.rcloneRemote}:${env.originalsBucket}/${key}`], { encoding: 'utf8', timeout: TIMEOUT_MS * 2 });
@@ -87,6 +97,20 @@ async function mapLimited(items, limit, fn) {
   return out;
 }
 
+/**
+ * Colours (palette, grid, signature, dots) the machine manifest does not carry yet, from the local sidecar (scripts/photos/palettes.mjs),
+ * matched by content hash. Where there is no sidecar (a Cloudflare build) this changes nothing.
+ */
+function withPalettes(gallery, machine) {
+  if (!machine?.photos) return machine;
+  const side = readSidecar(gallery);
+  if (!Object.keys(side).length) return machine;
+  // The manifest's own colours win; the sidecar fills only what it lacks. With PHOTOS_SIDECAR_WINS=1
+  // (local only: to see a changed colour algorithm before its manifests are refreshed) it wins.
+  if (process.env.PHOTOS_SIDECAR_WINS) return { ...machine, photos: machine.photos.map(p => (side[p.hash] ? { ...p, ...side[p.hash] } : p)) };
+  return { ...machine, photos: machine.photos.map(p => ((p.palette && p.signature && p.dots) || !side[p.hash] ? p : { ...side[p.hash], ...p })) };
+}
+
 /** The locate sidecar's `photos` map (names only, never coordinates), or an empty one. */
 function readLocations(gallery) {
   const file = path.join(PATHS.locationsDir, `${gallery}.yml`);
@@ -107,6 +131,7 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
   fs.mkdirSync(PATHS.mergedDir, { recursive: true });
   const index = { generated: new Date().toISOString(), base: env.publicBase, galleries: {} };
   let unreachable = 0;
+  const books = [];
 
   const fetched = await mapLimited(names, PARALLEL, async (gallery) => {
     try { return { machine: await fetchMachine(gallery, local), error: null }; }
@@ -120,16 +145,53 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
     let note = null;
     if (error) {
       unreachable++;
-      if (fs.existsSync(out)) { note = `bucket unreachable (${error}); kept the previous merge`; index.galleries[gallery] = { ...summary(JSON.parse(fs.readFileSync(out, 'utf8'))), note }; return; }
+      if (fs.existsSync(out)) {
+        // The previous merge stands in, on the colour pages too: one bad read must not drop a voyage.
+        const kept = JSON.parse(fs.readFileSync(out, 'utf8'));
+        note = `bucket unreachable (${error}); kept the previous merge`;
+        index.galleries[gallery] = { ...summary(kept), note };
+        books.push(kept);
+        return;
+      }
       note = `bucket unreachable (${error}); no previous merge`;
     }
     // The Photobook's layer (rows, cover, colophon, place, light, glow) is worked out here, once.
-    const merged = bookOf(mergeManifest(gallery, machine, doc, env.publicBase), readLocations(gallery));
+    const merged = bookOf(mergeManifest(gallery, withPalettes(gallery, machine), doc, env.publicBase), readLocations(gallery));
     merged.warnings.push(...problems);
     if (note) merged.warnings.push(note);
     fs.writeFileSync(out, JSON.stringify(merged, null, 2) + '\n');
     index.galleries[gallery] = summary(merged);
+    books.push(merged);
   });
+  // Across voyages: from every gallery, not only those fetched this time (a status check of one
+  // gallery must not leave the palette page with one voyage): the others from their last merge.
+  if (galleries) {
+    const fetchedNow = new Set(books.map(b => b.gallery));
+    for (const gallery of [...referencedGalleries().keys()].filter(g => !fetchedNow.has(g))) {
+      const file = path.join(PATHS.mergedDir, `${galleryKey(gallery)}.json`);
+      if (fs.existsSync(file)) books.push(JSON.parse(fs.readFileSync(file, 'utf8')));
+    }
+    books.sort((a, b) => String(a.gallery).localeCompare(String(b.gallery)));
+  }
+  // Only when colours are known; otherwise no atlas, and its pages say so.
+  const atlasFile = path.join(PATHS.mergedDir, 'colour-atlas.json');
+  // Kindred frames (Drift, lib/atlas.mjs): the local sidecar while developing, else the bucket's list.
+  let kindred = readKindred();
+  if (!local && !Object.keys(kindred).length) kindred = (await privateJson(KINDRED_KEY).catch(() => null))?.photos || {};
+  const atlas = atlasOf(books, kindred);
+  if (atlas) fs.writeFileSync(atlasFile, JSON.stringify(atlas) + '\n'); else fs.rmSync(atlasFile, { force: true });
+  // The landing page's Reverie: Ridgway's colours the photographs hold, each with where to find it.
+  const picksFile = path.join(PATHS.mergedDir, 'reverie-picks.json');
+  const picks = picksOf(atlas, JSON.parse(fs.readFileSync(path.join(PATHS.mergedDir, '..', 'ridgway.json'), 'utf8')));
+  if (picks) fs.writeFileSync(picksFile, JSON.stringify(picks) + '\n'); else fs.rmSync(picksFile, { force: true });
+  // QSD's Palette, every voyage's colours on one page.
+  const palettesFile = path.join(PATHS.mergedDir, 'palettes.json');
+  const palettes = palettesOf(books);
+  if (palettes) fs.writeFileSync(palettesFile, JSON.stringify(palettes) + '\n'); else fs.rmSync(palettesFile, { force: true });
+  // Every voyage's lightbox frames, for a lightbox opened away from its book (Reverie).
+  const framesFile = path.join(PATHS.mergedDir, 'frames.json');
+  const frames = framesOf(books);
+  if (frames) fs.writeFileSync(framesFile, JSON.stringify(frames) + '\n'); else fs.rmSync(framesFile, { force: true });
   fs.writeFileSync(path.join(PATHS.mergedDir, '_index.json'), JSON.stringify(index, null, 2) + '\n');
   return { index, unreachable };
 }

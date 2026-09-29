@@ -7,9 +7,11 @@
  *              frames close the book together
  *   cover      the frame the voyage opens on
  *   colophon   films, lenses and the hours the frames were made
+ *   colour     the voyage's five colours, its barcode (a sliver per frame, shaded top to bottom
+ *              as the frame is) and an order in which the sheet reads as one gradient
  *   per photo  film (its familiar name), place (name and city), light (the sun as one phrase and the
  *              glyph's dot), glow (three soft colours for the page), ph
- *              (the placeholder as a data URL), filmHue
+ *              (the placeholder as a data URL), filmHue, swatches (its five colours and shares)
  *
  * Nothing here reads a photograph's coordinates: place names come from the
  * locate sidecar, the sun from values the processor keeps at city precision.
@@ -17,6 +19,8 @@
 
 import { thumbHashToDataURL, thumbHashToRGBA } from 'thumbhash';
 import { normalizeFilm } from './camera.mjs';
+import { parsePalette, parseGrid, swatchesOf, voyagePalette, emd, colourPath, oklabToRgb, rgbToOklab, rgbHex } from './palette.mjs';
+import { signatureOfColours } from './signature.mjs';
 // The rhythm is shared with the page, whose film filter re-lays the frames it keeps.
 import { bookRows, PORTRAIT } from '../../../assets/js/photobook/rows.mjs';
 export { bookRows };
@@ -217,8 +221,65 @@ export function lightboxOf(photos) {
     name: p.name, alt: p.alt || p.name, place: p.place?.name || null, city: p.place?.city || null,
     shots: p.shutterCount ?? null, focal: p.focal ?? null, aperture: p.aperture ?? null, shutter: p.shutter ?? null,
     iso: p.iso ?? null, bias: p.exposureBias ?? null, camera: cameraName(p.camera), lens: lensName(p.lens),
-    film: p.film ?? null, hue: p.filmHue ?? null, code: filmCode(p.film), light: p.light, weather: p.aloft || weatherOf(p.weather, p.light), glow: p.glow, ph: p.ph, settings: settingsOf(p),
+    film: p.film ?? null, hue: p.filmHue ?? null, code: filmCode(p.film), light: p.light, weather: p.aloft || weatherOf(p.weather, p.light), glow: p.glow, ph: p.ph, settings: settingsOf(p), signature: p.signature || null,
   }));
+}
+
+/**
+ * The voyage in colour, from each photograph's palette and grid (scripts/photos/lib/palette.mjs):
+ * per photo its five swatches and its strip (the grid's three rows, top to bottom); for the book,
+ * the voyage's signature (lib/signature.mjs, pooled from the photographs' palettes), the barcode in
+ * reading order, and the colour order for the sheet: the
+ * shortest path through the frames under the picture distance, dark to light. Frames with no palette
+ * yet close the colour order, in book order, and sit in the barcode as blanks. Null when no frame has one.
+ */
+export function colourOf(photos) {
+  const parsed = photos.map(p => (p.palette ? { P: parsePalette(p.palette), G: parseGrid(p.grid) } : null));
+  const have = parsed.map((x, i) => (x?.P.length ? i : -1)).filter(i => i >= 0);
+  if (!have.length) return { photos, colour: null };
+  const rowHex = (G, r) => {
+    const cells = G.slice(3 * r, 3 * r + 3);
+    const mean = [0, 1, 2].map(k => cells.reduce((s, c) => s + c[k], 0) / cells.length);
+    return rgbHex(oklabToRgb(...mean));
+  };
+  const out = photos.map((p, i) => {
+    const x = parsed[i];
+    if (!x?.P.length) return p;
+    return { ...p, swatches: swatchesOf(x.P).map(s => [s.hex, s.pc]), strip: x.G.length === 9 ? [0, 1, 2].map(r => rowHex(x.G, r)) : null };
+  });
+  // The colour order (the sheet's, and the palette page's): how much colour must move to turn one
+  // photograph's 24 dots into another's (the earth mover's distance, each dot weighed by its share),
+  // then every frame laid on the one line that best keeps those distances, dark to light
+  // (colourPath). Brightness leads; within it, like hues settle together. Frames without dots yet
+  // are compared by their 32-colour palettes.
+  const dotsOf = (i) => parseDots(photos[i].dots);
+  const byDots = have.every(i => dotsOf(i).length);
+  const dist = (i) => (byDots ? dotsOf(i) : parsed[i].P);
+  const Ps = new Map(have.map(i => [i, dist(i)]));
+  const D = have.map(i => have.map(j => (i < j ? emd(Ps.get(i), Ps.get(j)) : 0)));
+  for (let a = 0; a < have.length; a++) for (let b = 0; b < a; b++) D[a][b] = D[b][a];
+  const light = have.map(i => Ps.get(i).reduce((s, c) => s + c.w * c.lab[0], 0));
+  const order = [...colourPath(D, light).map(k => have[k]), ...photos.map((_, i) => i).filter(i => !parsed[i]?.P.length)];
+  // The voyage's signature, pooled from its photographs' palettes (each photograph counting once).
+  const sig = signatureOfColours(have.flatMap(i => parsed[i].P.map(c => ({ lab: c.lab, w: c.w / have.length }))), { ground: false });
+  const palette = sig.colours.map(c => ({ hex: c.hex, pc: Math.round(c.pc), accent: c.accent }));
+  // The voyage's five merged colours, dark to light: a ramp for anything drawn as one gradient.
+  const ramp = [...voyagePalette(have.map(i => parsed[i].P))].sort((a, b) => a.lab[0] - b.lab[0]).map(s => s.hex);
+  const barcode = out.map((p, i) => ({ i, strip: p.strip || null, name: p.name || null }));
+  return { photos: out, colour: { palette, ramp, barcode, order } };
+}
+
+/** A photograph's 24 dots (`rrggbbss` × 24, lib/dots.mjs) as weighted OKLab colours, shares summing to one. */
+export function parseDots(s) {
+  if (!s) return [];
+  const out = [];
+  for (let i = 0; i + 8 <= s.length; i += 8) {
+    const h = s.slice(i, i + 6), w = parseInt(s.slice(i + 6, i + 8), 16) || 1; // a dot's share never rounds to nothing
+    out.push({ lab: rgbToOklab(parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)), w });
+  }
+  const sum = out.reduce((a, c) => a + c.w, 0) || 1;
+  for (const c of out) c.w /= sum;
+  return out;
 }
 
 /** "prague/zizkov-tower" → "Zizkov Tower": a gallery's own name, for frames with no place yet. */
@@ -264,5 +325,6 @@ export function bookOf(merged, locations = {}) {
     const name = place?.name || p.caption || merged.title || titleOf(merged.gallery) || p.frame;
     return { ...p, name, film, place, light, glow: glowOf(p.thumbhash), ph: placeholderOf(p.thumbhash), filmHue: filmHue(film) };
   }
-  return { ...merged, photos, book: { rows: bookRows(photos), cover: coverIndex(photos), colophon: colophonOf(photos), lightbox: lightboxOf(photos) } };
+  const { photos: tinted, colour } = colourOf(photos);
+  return { ...merged, photos: tinted, book: { rows: bookRows(tinted), cover: coverIndex(tinted), colophon: colophonOf(tinted), lightbox: lightboxOf(tinted), colour } };
 }
