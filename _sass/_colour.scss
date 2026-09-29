@@ -660,7 +660,9 @@
   &:focus { outline: none; } // focused only by script, on arrival from the book: the ring is its mark
   // Laid out and painted only near the screen: a voyage of forty frames changes as fast as one of four.
   content-visibility: auto;
-  contain-intrinsic-size: auto 34rem;
+  // Held at the height its page measured from a drawn card (--card-h, set by the page's script), so
+  // the cards not yet drawn are counted true and a glide to one far down lands where it aims.
+  contain-intrinsic-size: auto var(--card-h, 34rem);
 }
 
 .palette-card__print {

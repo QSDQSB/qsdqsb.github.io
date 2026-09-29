@@ -202,6 +202,28 @@ export function place(key) {
   };
 }
 
+/** A page of cards tells its not-yet-drawn cards their true height (_colour.scss --card-h), from one
+ *  drawn for the purpose (it may be off screen, and so not drawn yet); again whenever the cards' grid
+ *  changes width (its first layout settling, the fonts, a resized window), as their height follows. */
+const measured = new WeakMap();
+export function measureCards(root) {
+  const grid = root.querySelector('.palette-cards');
+  if (!grid) return;
+  const measure = () => {
+    const c = grid.querySelector('.palette-card');
+    if (!c) return;
+    c.style.contentVisibility = 'visible';
+    const h = c.offsetHeight;
+    c.style.contentVisibility = '';
+    if (h) root.style.setProperty('--card-h', `${h}px`);
+  };
+  measure();
+  measured.get(root)?.disconnect();
+  const ro = new ResizeObserver(measure);
+  ro.observe(grid);
+  measured.set(root, ro);
+}
+
 /** The masthead's ‹ named for the page it goes back to. */
 export const backLabel = (url) => {
   const p = url.pathname.slice(new URL('../../../', import.meta.url).pathname.length - 1);

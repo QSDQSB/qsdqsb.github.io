@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * WebP renditions of the 3:1 voyage heroes (images/cover/), for the Photobook's cover srcset.
+ * WebP renditions of the 3:1 voyage heroes (images/cover/), for the Photobook's cover srcset and the
+ * voyage cards, which take the smallest that fills them (assets/js/card-covers.js).
  *
  *   images/cover/london-shard-3v1.jpg → images/cover/sized/london-shard-3v1-{1920,2880}.webp
  *
@@ -26,7 +27,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'images', 'cover');
 const OUT = path.join(SRC, 'sized');
 const DATA = path.join(ROOT, '_data', 'cover_sizes.json');
-const WIDTHS = [1920, 2880];
+const WIDTHS = [1280, 1920, 2880]; // 1280: a card on a phone, drawn at 2x
 const force = process.argv.includes('--force');
 
 const fresh = (out, src) => !force && fs.existsSync(out) && fs.statSync(out).mtimeMs >= fs.statSync(src).mtimeMs;
