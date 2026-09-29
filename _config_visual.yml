@@ -1,0 +1,5 @@
+# Pixel-baseline overrides — layered on by `npm run visual:build` only
+# (`--config _config.yml,_config_visual.yml`); the live build never reads it.
+# Pins what would otherwise be drawn at random and is too small to paint over
+# reliably, so the shots compare it instead of masking it.
+visual_baseline: true

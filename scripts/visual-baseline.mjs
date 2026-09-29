@@ -10,12 +10,16 @@
  *
  * Capture and diff expect a built site in `_site/` and serve it themselves
  * on a free localhost port. Build it with `visual:build`, not `build:fast`:
- * several layouts pick content with Liquid's `sample` (the QSD logo, related
- * and random posts, the word card), so an ordinary build differs from the
- * last one before a single style changes. `visual:build` seeds Ruby's PRNG
- * first, which is what `sample` draws from, so the same source renders the
- * same HTML, but only while no source changes: any edit reshuffles the draws,
- * so the sampled blocks (SAMPLED below) are painted over in every shot.
+ * several layouts pick content with Liquid's `sample` (related and random
+ * posts, the word card), so an ordinary build differs from the last one
+ * before a single style changes. `visual:build` seeds Ruby's PRNG first,
+ * which is what `sample` draws from, so the same source renders the same
+ * HTML, but only while no source changes: any edit reshuffles the draws, so
+ * the sampled blocks (SAMPLED below) are painted over in every shot. The QSD
+ * sign-off logo is the exception: `visual:build` layers `_config_visual.yml`
+ * on, which pins it to the first candidate, so it is compared, not masked.
+ * A mask is only as good as its box, and on a full-page mobile shot the box
+ * can land off the element it was meant to cover.
  *
  * Why this exists: CSS refactors — `!important` triage, token inlining,
  * import reordering — are verified by eye or not at all, and "not at all"
@@ -98,10 +102,11 @@ const SETTLE_MS = 7000; // longest page-side timer (Home reveal fallback) + marg
  * covers kramdown `{: .notice}` paragraphs, where `.page__content p` outranks
  * the notice class — neither is reachable from the other pages.
  */
-// What Liquid picks with `sample`: the footer logo, the word cards, the related and "elsewhere"
-// cards. The seeded build repeats a draw only while no source changes, so any unrelated edit
-// would reshuffle them; the shots paint them over instead of comparing them.
-const SAMPLED = ['img[alt="QSD Logo"]', '.center-wrapper:has(img[alt="QSD Logo"])', '.word_card_container', '.page__related .grid__wrapper', '.photobook-end__more'];
+// What Liquid picks with `sample`: the word cards, the related and "elsewhere" cards. The seeded
+// build repeats a draw only while no source changes, so any unrelated edit would reshuffle them;
+// the shots paint them over instead of comparing them. (The sign-off logo is pinned by
+// _config_visual.yml instead, and compared.)
+const SAMPLED = ['.word_card_container', '.page__related .grid__wrapper', '.photobook-end__more'];
 // An animated GIF (post-notices carries LeetCode's monthly badge) is caught on whichever frame it
 // is showing; `animations: 'disabled'` stops CSS, not GIFs. Painted over for the same reason.
 const MOVING = ['img[src$=".gif"]'];
