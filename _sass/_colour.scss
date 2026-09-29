@@ -436,30 +436,69 @@
 
 .palette-page__stage { margin-top: clamp(2rem, 5vw, 3.5rem); }
 
-// Every voyage, a line each: its name, and its palette as a wider bar.
+// Every voyage by place, as the list beside it: a trip's parts under its name (the list's label), each
+// voyage its vat, its name and its bar. Under the pointer an entry lights as the list's do, and its
+// vat takes the rail's ring. The entries' padding hangs into the gutter, so vats and title align.
 .palette-index {
-  margin: clamp(2rem, 5vw, 3rem) 0 0;
-  padding: 0;
-  list-style: none;
+  display: grid;
+  gap: clamp(1.6rem, 3.5vw, 2.4rem);
+  margin: clamp(2rem, 5vw, 3rem) -0.7rem 0;
 
-  li {
-    display: grid;
-    grid-template-columns: minmax(8rem, 16rem) minmax(0, 1fr);
-    gap: 0.6rem 2rem;
-    align-items: center;
-    padding: 1.1rem 0;
-    border-top: 1px dotted var(--photobook-line);
+  h2 {
+    @include eyebrow;
+    margin: 0 0.7rem 0.6rem;
+    color: var(--photobook-ink-3);
   }
 
-  .palette-strip__bar i { height: 10px; }
+  ol {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(15.5rem, 100%), 1fr));
+    gap: 0.2rem clamp(0.6rem, 1.6vw, 1.2rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li { margin: 0; min-width: 0; }
+
+  // States stated against `a:visited` / `a:hover` (0,1,1).
+  a,
+  a:visited {
+    display: grid;
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    gap: 0.9rem;
+    align-items: center;
+    padding: 0.6rem 0.7rem;
+    border-radius: 0.55rem;
+    color: var(--photobook-ink-2);
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  a:hover,
+  a:focus-visible { color: var(--photobook-ink); background: rgba(255, 255, 255, 0.05); text-decoration: none; }
+
+  a:focus-visible { outline: 1px solid var(--photobook-ink-3); outline-offset: 0; }
+
+  .palette-card__bar { height: 5px; margin-top: 0.55rem; }
+}
+
+.palette-index__vat {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #1d1d1f; // until its vat is poured
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+  transition: outline-color 0.2s ease;
+
+  a:is(:hover, :focus-visible) > & { outline-color: var(--photobook-ink-3); }
+
+  canvas { display: block; width: 100%; height: auto; }
 }
 
 .palette-index__name {
-  font: 700 1.1rem $global-font-family;
-  color: $lighter-gray;
-  text-decoration: none;
-
-  &:hover { color: #fff; }
+  display: block;
+  font: 700 1.05rem/1.2 $global-font-family;
 }
 
 // The rail, above the title: every voyage's dye vat, by colour; the one on the page ringed, a step

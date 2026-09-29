@@ -259,10 +259,11 @@ test("the landing page's picks are Ridgway's colours enough photographs hold, ea
     { g: 'rome', slug: 'd', sig, dots: dots('f9c5cc') },
   ];
   const book = { colours: [['Cadet Blue', '5e7bb3', 'XXI'], ['Hermosa Pink', 'f9c5cc', 'I']] };
-  const out = picksOf({ photos }, book);
+  const { picks: out, held } = picksOf({ photos }, book);
   assert.equal(out.length, 1, 'a colour one photograph holds is left out');
   assert.deepEqual(out[0].slice(0, 3), ['Cadet Blue', '5e7bb3', 'london/a'], 'the photograph holding it most');
   assert.deepEqual(out[0][3], sig, 'with its signature, for the dye');
+  assert.deepEqual(held, { '5e7bb3': 3, f9c5cc: 1 }, 'every held colour counted, for the book\'s page');
   assert.equal(picksOf({ photos }, { colours: [] }), null);
   assert.equal(picksOf(null, book), null);
 });

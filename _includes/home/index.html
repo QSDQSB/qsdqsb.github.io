@@ -31,7 +31,9 @@
         <div class="door-plate__frame">
           {% for link in doors %}
           {% assign dp = door_pages | where: "url", link.url | first %}
-          <div class="door-shot{% if forloop.first %} is-on{% endif %}" style="background-image:url('{% include home/overlay-src.html page=dp %}');"></div>
+          {%- comment -%} door_view: "<background-position> / <background-size>", a crop of the plate's own (Palette's: the lake's reflections). {%- endcomment -%}
+          {%- assign dv = dp.door_view | split: " / " %}
+          <div class="door-shot{% if forloop.first %} is-on{% endif %}" style="background-image:url('{% include home/overlay-src.html page=dp %}');{% if dv[0] %}background-position:{{ dv[0] }};{% endif %}{% if dv[1] %}background-size:{{ dv[1] }};{% endif %}"></div>
           {% endfor %}
           <span class="door-plate__vignette"></span>
           <span class="door-plate__grain"></span>

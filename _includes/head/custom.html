@@ -109,4 +109,14 @@
 <script src="{{ base_path }}/assets/js/map.js" defer></script>
 {% endif %}
 
+{%- comment -%} A page's own data and modules, fetched while the page is read rather than once its
+  script has loaded and asked (front matter `preload:` for JSON, `modules:` for ES modules; the colour
+  pages). {%- endcomment -%}
+{%- for p in page.preload %}
+<link rel="preload" href="{{ p | relative_url }}" as="fetch" crossorigin>
+{%- endfor %}
+{%- for m in page.modules %}
+<link rel="modulepreload" href="{{ m | relative_url }}">
+{%- endfor %}
+
 <!-- end custom head snippets -->
