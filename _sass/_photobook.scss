@@ -49,12 +49,13 @@
   left: 0;
   top: 0;
   padding: 0.38rem 0.62rem;
-  border: 1px solid var(--photobook-glass-edge);
+  // The inks' values stand in where a page has not set them (the masthead's glosses, on any page).
+  border: 1px solid var(--photobook-glass-edge, rgba(255, 255, 255, 0.12));
   border-radius: 6px;
   background: rgba(12, 12, 16, 0.82);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  color: var(--photobook-ink);
+  color: var(--photobook-ink, #{$lighter-gray});
   font: 500 0.6rem/1 $barlow-font-family;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -1665,6 +1666,18 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   color: var(--photobook-ink-2);
 
   b { font-weight: 500; color: $lighter-gray; }
+}
+
+// How to fold the panel away, at its foot, until the reader has done it once (lightbox.js).
+.photobook-specs__hint {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--photobook-line);
+  font: 500 max(0.56rem, 10px)/1.3 $barlow-font-family;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--photobook-ink-3);
 }
 
 .photobook-specs__settings {

@@ -11,6 +11,7 @@ header:
   overlay_image: SeizeTheDay-3v1.jpg
   overlay_filter: 0.2
   caption: "Boars Hill, Oxford, 12/3/2021"
+lang: zh # the body is Chinese (_layouts/single.html sets it on the text)
 ---
 ## 哈佛大学研究出的“一个人成为废物的9大特质”
 

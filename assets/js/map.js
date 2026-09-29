@@ -252,6 +252,7 @@
         map[handler].enable();
       }
     });
+    restWhenOutOfView(map, container);
     // Enabling `keyboard` gives the container a tabindex, so move focus onto
     // the now-navigable map. Otherwise a reader who activated it from the
     // keyboard is stranded on the hidden veil. preventScroll stops the page
@@ -263,6 +264,29 @@
         container.focus();
       }
     }
+  }
+
+  // A map left live keeps any finger that meets it on the way down the page: a phone
+  // pans the map instead of scrolling. So once the map has left the screen entirely it
+  // rests again behind its veil, and exploring it again is one more tap.
+  function restWhenOutOfView(map, container) {
+    if (container._restObserver || typeof IntersectionObserver === 'undefined') return;
+    container._restObserver = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) return;
+      deactivateMap(map, container);
+    });
+    container._restObserver.observe(container);
+  }
+
+  function deactivateMap(map, container) {
+    if (!container.classList.contains('map-container--active')) return;
+    if (container.contains(document.activeElement)) return; // still in the reader's hands (keyboard)
+    container.classList.remove('map-container--active');
+    ACTIVATION_HANDLERS.forEach((handler) => {
+      if (map[handler] && typeof map[handler].disable === 'function') {
+        map[handler].disable();
+      }
+    });
   }
 
   function buildActivationVeilInner(state) {

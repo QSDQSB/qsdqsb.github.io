@@ -95,16 +95,18 @@ than the screen scrolls it inside its .home__panel-body. {% endcomment %}
 
 
 <script>
-  // Always enter on the hero: browsers restore the prior scroll offset on
-  // reload / back-forward, which would drop you onto a lower panel. Force the
-  // top while on Home, then hand restoration back when leaving.
+  // Enter on the hero: a reload would otherwise restore the prior offset and
+  // drop you onto a lower panel. Back and Forward are returns, not entries, so
+  // the browser keeps the reader where they left (a card opened from the board
+  // comes back to the board); a bfcache restore keeps its offset the same way.
   (function () {
     if (!("scrollRestoration" in history)) return;
+    var nav = window.performance && performance.getEntriesByType ? performance.getEntriesByType("navigation")[0] : null;
+    if (nav && nav.type === "back_forward") return;
     history.scrollRestoration = "manual";
     var toTop = function () { window.scrollTo(0, 0); };
     toTop();
     window.addEventListener("load", toTop);
-    window.addEventListener("pageshow", function (e) { if (e.persisted) toTop(); });  // bfcache restore
     window.addEventListener("pagehide", function () { history.scrollRestoration = "auto"; });
   })();
 
