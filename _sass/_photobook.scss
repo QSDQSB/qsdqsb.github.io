@@ -1171,13 +1171,18 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 
 
 .photobook-lightbox__back {
-  flex: none;
+  // A long film name gives way (…) before the tools are pushed off a phone's screen.
+  flex: 0 1 auto;
+  min-width: 0;
   @include pill;
+
+  svg { flex: none; }
+  span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 
 .photobook-lightbox__count {
   flex: 0 1 auto;
-  min-width: 0;             // a long film name gives way before the tools, and before the count
+  min-width: min-content;   // the film's name gives way, never the frame's number (the back pill yields first)
   display: flex;
   align-items: baseline;
   white-space: nowrap;

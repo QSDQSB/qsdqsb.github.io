@@ -9,7 +9,7 @@
   <button class="photobook-lightbox__zone photobook-lightbox__zone--next" type="button" data-act="next" tabindex="-1" aria-label="Next photograph"></button>
   <div class="photobook-lightbox__progress" aria-hidden="true"></div>
   <header class="photobook-lightbox__top photobook-lightbox__chrome">
-    <button class="photobook-lightbox__back" type="button" data-act="close" aria-label="Back to {{ page.title | strip_html | escape }}" data-tip="Back to the book · Esc"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>{{ page.title | strip_html }}</button>
+    <button class="photobook-lightbox__back" type="button" data-act="close" aria-label="Back to {{ page.title | strip_html | escape }}" data-tip="Back to the book · Esc"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg><span>{{ page.title | strip_html }}</span></button>
     <span class="photobook-lightbox__count" aria-hidden="true"></span>
     <div class="photobook-lightbox__tools">
       <button class="photobook-lightbox__tool" type="button" data-act="specs" data-tip="Specs · I" aria-label="Specs" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5h14M5 12h14M5 17.5h9"/></svg></button>

@@ -537,6 +537,9 @@
   place-items: center;
   aspect-ratio: 16 / 9;
 
+  // Focus comes back here when the lightbox closes: the house's mark, inside the box so the next card can't clip it.
+  &:focus-visible { @include brass-focus; outline-offset: -2px; }
+
   img { display: block; width: min(100%, calc(100% * var(--r, 1.5) / 1.7778)); height: auto; aspect-ratio: var(--r, 1.5); border-radius: 0; background: none; }
 }
 
