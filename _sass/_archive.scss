@@ -648,6 +648,11 @@ a.word_card--link {
   @include responsive-up(mobile) {
     display: flex;
   }
+  // No hover on touch, so nobody finds the cards on purpose there; they would only
+  // catch taps meant for whatever sits in the corner beneath them.
+  @include responsive-coarse-pointer {
+    display: none;
+  }
   justify-content: center;
   align-items: center;
   transition: $cubic-bezier-default;
