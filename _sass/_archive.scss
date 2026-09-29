@@ -185,7 +185,8 @@
     .content h3 {
       transform: translateY(-0.25em);
     }
-    .content .sci {
+    .content .sci,
+    .readtime {
       opacity: 1;
     }
     .hidden_item {
@@ -236,13 +237,52 @@
       transition: inherit;
       opacity: 0;
       margin: 0;
-      // Touch devices have no hover state, so the excerpt can't be a hover
-      // detail there. Pinning it always-on crowded the mobile cards, so drop
-      // it from the flow on touch entirely — cards stay compact image + title +
-      // date "magazine covers". Desktop keeps the hover-reveal below.
+      // Touch has no hover to reveal it, so the excerpt rests at the foot of the
+      // cover: a brass hairline, then at most two italic lines, kept clear of
+      // the date in the right-hand corner. Desktop keeps the hover reveal.
       @include responsive-coarse-pointer {
-        display: none;
+        opacity: 1;
+        margin-top: auto;
+        padding: 0.9rem 5.5rem 0 0;
+
+        &::before {
+          content: "";
+          display: block;
+          width: 1.25rem;
+          height: 1px;
+          margin-bottom: 0.5rem;
+          background: rgba($intriguing-word-color, 0.7);
+        }
+
+        p {
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          overflow: hidden;
+          margin: 0;
+          font-style: italic;
+          font-size: 0.8rem;
+          line-height: 1.45;
+          color: rgba($text-color, 0.84);
+        }
       }
+    }
+  }
+
+  // The cover grows a quiet foot for the excerpt on touch: a little taller,
+  // the content spanning it top to bottom, and a deeper scrim under the words.
+  @include responsive-coarse-pointer {
+    min-height: 9.5rem;
+    align-items: stretch;
+
+    &::before {
+      background: linear-gradient(180deg, rgba(0,0,0,0) 22%, rgba(0,0,0,0.62) 100%);
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
     }
   }
   .tags {
@@ -278,10 +318,9 @@
     font-family: $tag-font-family;
     font-size: $type-code-size;
     padding: 0;
-    // Touch/mobile: with the excerpt already dropped, this meta line
-    // ("less than 1 minute read") is the only dangling text and crowds the
-    // compact cover — drop it on touch too, leaving image + title + date.
-    // Desktop keeps it.
+    // Revealed with the excerpt on hover, so the cover at rest is title alone.
+    // Touch has no hover, and the excerpt is the one line it keeps: no read time there.
+    opacity: 0;
     @include responsive-coarse-pointer {
       display: none;
     }
