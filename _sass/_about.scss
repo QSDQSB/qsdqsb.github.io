@@ -41,6 +41,12 @@ body.page--about {
   margin: 1.5rem 0 2rem;
 }
 
+/* --- the way on, at the very end: the CV's door (it left the masthead) --- */
+.about__onward {
+  margin: 2.5rem 0 1.5rem;
+  @include onward-links;
+}
+
 /* --- coda asides (post-scriptum): quiet marginalia --- */
 .about__aside {
   font-family: $barlow-font-family;
