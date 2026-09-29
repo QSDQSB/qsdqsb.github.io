@@ -833,14 +833,19 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
   .wn-card--4 { aspect-ratio: 16 / 9; }
   .wn-card--4 .wn-body { max-width: 100%; }
   .wn-card--reverie { min-height: 10rem; }
+  /* One inset for every tile in the column, and one title size after the first. */
+  .wn-card--1, .wn-card--4 { padding: 1.3rem; }
+  .wn-card--4 h3 { font-size: 1.15rem; }
   /* The word, its lines beneath one another again: a column is too narrow to set them side by side. */
-  .wn-card--word { padding: 1.2rem 1.15rem 2.1rem; }
+  .wn-card--word { padding: 1.2rem 1.3rem 2.1rem; }
   .wn-card--word p { font-size: $type-size-7 * 0.9; }
 }
 @include responsive-down(tablet) {
   // Below the masthead's mark, which stays over the panels: the panels' heads start clear of it.
   .home__panel--index,
   .home__panel--new { padding-top: 4.25rem; }
+  // The cue up, shorter, ends above the panel's head, which now starts lower.
+  .home__scroll-hint--up { top: 1rem; height: 2.25rem; }
   .home__index-grid { grid-template-columns: 1fr; }
   .home__index-stage { display: none; }
   .home__doors:hover .door { opacity: 1; }

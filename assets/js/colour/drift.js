@@ -233,6 +233,15 @@ async function main() {
     const s = e.target.closest('.colour-drift__thread button');
     if (s) { pos = Number(s.dataset.k); show(way[pos], { push: false }); }
   });
+  // A sideways swipe steps as ← and → do, as the book's lightbox turns its pages.
+  let sx = null, sy = 0;
+  stage.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') { sx = e.clientX; sy = e.clientY; } });
+  stage.addEventListener('pointercancel', () => { sx = null; });
+  stage.addEventListener('pointerup', (e) => {
+    if (sx === null) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > 1.5 * Math.abs(dy)) (dx < 0 ? next : back)();
+  });
   addEventListener('keydown', (e) => {
     if (e.target.closest?.('input, textarea')) return;
     if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
