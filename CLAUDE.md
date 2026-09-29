@@ -100,7 +100,7 @@ npm test
 
 **Rule:** Never hand-edit `main.min.js`. Edit `_main.js`, then run `npm run build:js`.
 
-**Visual changes are verified by pixel diff, not by eye.** `npm run visual:build && npm run visual:diff` against the committed baseline before committing anything under `_sass/`, `_layouts/` or `_includes/`; re-capture only for a change that is meant to be visible, and commit the new PNGs with it.
+**Visual changes are verified by pixel diff, not by eye.** `npm run visual:build && npm run visual:diff` against the committed baseline before committing anything under `_sass/`, `_layouts/` or `_includes/`; re-capture only for a change that is meant to be visible, and commit the new PNGs with it. The diff runs in Chromium: anything touching layout is also checked in Safari's engine, `npm run check:mobile-overflow` (WebKit iPhones, against a served site).
 
 **Photographs live in R2, not git.** `photos/` is the local mirror, `_data/photos/*.yml` the captions, and `_data/photo_manifests/` the build-time merge (`photos:fetch`, before every build). Pages load them from `img.qsdqsb.com`; nothing reads `gallery/` or generates thumbnails any more. Never commit image bytes or anything under `_data/photo_manifests/`.
 
@@ -184,6 +184,7 @@ Mechanical checks, all scoped to **changes vs `HEAD`** — never the existing ba
 | `check-important-ratchet.py` | `check:important` | Any `!important` growth — the stylesheet uses none |
 | `check-responsive-policy.sh` | `check:responsive-policy` | Raw breakpoints outside `_responsive-policy.scss` |
 | `check-seo-descriptions.py` | `check:seo` | Pages with no real meta description |
+| `check-mobile-overflow.mjs` | `check:mobile-overflow` | A page wider than an iPhone in Safari's engine (WebKit at 390 and 320 px) — Chromium, and so the pixel diff, forgives what Safari does not. Needs a served site and `npx playwright install webkit` |
 | `check-new-components.sh` | — | A new component family styled in a page's partial instead of reusing `_components.scss` (a nudge, never a failure) |
 
 **Hooks.** PostToolUse (`post-tool-edit-nudges.sh`) runs whichever checks match the edited file and prints findings inline, non-blocking. Stop (`stop-variables-check.sh`, `stop-house-guards.sh`) exits 2 on violations introduced this session.
