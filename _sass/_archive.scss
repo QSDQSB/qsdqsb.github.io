@@ -690,6 +690,10 @@ a.word_card--link {
     background: linear-gradient(195deg,#FAC39EBB 0%, #FBD0B7BB 25%, #FBD6C4BB 65%, #DF989FAA 100%);
   }
 }
+@include responsive-reduced-motion {
+  .wheel_of_fortune:hover,
+  .wheel_of_fortune:focus-visible { animation: none; }
+}
 @keyframes oscillate {
   0%, 100% {
     transform: rotateY(12deg) rotateX(0);

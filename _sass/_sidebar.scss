@@ -207,6 +207,11 @@
 
 
 
+// The avatar's pulse loops for as long as the page is open: none for a reader who asked for stillness.
+@include responsive-reduced-motion {
+  .author__avatar img { animation: none; }
+}
+
 .author__content {
   display: table-cell;
   vertical-align: top;

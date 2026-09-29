@@ -13,6 +13,7 @@ tags:
 header:
   overlay_image: Cat2-3v1.jpg
   overlay_filter: 0.5
+lang: zh # the body is Chinese (_layouts/single.html sets it on the text)
 ---
 ## RAAAAAAAAINBOW赏析
 {: .barlow}

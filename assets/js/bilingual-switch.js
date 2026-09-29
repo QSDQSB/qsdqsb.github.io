@@ -15,6 +15,8 @@
   var COOKIE_DAYS = 365;
   var EVENT_NAME = "qsd:bilingual-change";
 
+  // A panel's label as a language tag, so a screen reader voices it and Han glyphs resolve.
+  var LANG_CODES = { "EN": "en", "中": "zh", "中文": "zh", "FR": "fr" };
   var bilingualBlocks = [];
   var currentLanguage = null;
 
@@ -229,6 +231,7 @@
       button.setAttribute("data-bilingual-option", label);
       button.setAttribute("aria-pressed", "false");
       button.textContent = label;
+      if (LANG_CODES[label]) button.setAttribute("lang", LANG_CODES[label]);
 
       button.addEventListener("click", function(event) {
         var selected = normalizeLabel(event.currentTarget.getAttribute("data-bilingual-option"));
@@ -264,6 +267,7 @@
       var label = normalizeLabel(panel.getAttribute("data-bilingual-lang")) || ("LANG " + (i + 1));
       labels.push(label);
       panel.classList.add("bilingual-switch__panel");
+      if (LANG_CODES[label] && !panel.hasAttribute("lang")) panel.setAttribute("lang", LANG_CODES[label]);
     }
 
     if (labels[0] === labels[1]) {
