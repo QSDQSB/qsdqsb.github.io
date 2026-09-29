@@ -1668,6 +1668,18 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   b { font-weight: 500; color: $lighter-gray; }
 }
 
+// How to fold the panel away, at its foot, until the reader has done it once (lightbox.js).
+.photobook-specs__hint {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--photobook-line);
+  font: 500 max(0.56rem, 10px)/1.3 $barlow-font-family;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--photobook-ink-3);
+}
+
 .photobook-specs__settings {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
