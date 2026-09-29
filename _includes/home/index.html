@@ -4,11 +4,11 @@
   </div>
 
   {% comment %} Doors are the masthead nav (site.data.navigation.main), so the two
-  stay in sync; CV is filtered off the landing. Each door's descriptor + plate image
+  stay in sync (the CV's door is at the end of About). Each door's descriptor + plate image
   come from the linked page's own excerpt + overlay_image — concat site.pages with
   site.portfolio because the voyage index lives in the portfolio collection. {% endcomment %}
   {% assign door_pages = site.pages | concat: site.portfolio %}
-  {% assign doors = site.data.navigation.main | where_exp: "link", "link.url != '/cv/'" %}
+  {% assign doors = site.data.navigation.main %}
 
   <div class="home__index-grid">
     <ul class="home__doors">

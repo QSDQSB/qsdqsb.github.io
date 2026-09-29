@@ -69,4 +69,11 @@ permalink: /sitemap.xml
   <url>
     <loc>{{ site.url }}/cv/</loc>
   </url>
+  {%- comment -%} The colour pages: QSD's Palette, Reverie (a colour at random, bare), the Utilities and Ridgway's colour book. {%- endcomment %}
+  {%- assign colour_pages = "/palette/,/reverie/,/utils/,/utils/ridgway/" | split: "," %}
+  {%- for path in colour_pages %}
+  <url>
+    <loc>{{ site.url }}{{ path }}</loc>
+  </url>
+  {%- endfor %}
 </urlset>
