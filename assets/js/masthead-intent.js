@@ -45,7 +45,8 @@ document.addEventListener("DOMContentLoaded", function () {
       !prefersReducedMotion &&
       !navLocked &&
       navState === "collapsed" &&
-      !isOverflowMenuOpen()
+      !isOverflowMenuOpen() &&
+      !isSearchOpen()
     );
   };
 
@@ -78,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const interacting = masthead.matches(":hover") || (active && masthead.contains(active));
       const overflowMenuOpen = isOverflowMenuOpen();
 
-      if (!interacting && !overflowMenuOpen) {
+      if (!interacting && !overflowMenuOpen && !isSearchOpen()) {
         setNavState("collapsed", "idle-timeout");
       } else {
         scheduleIdleCollapse();
@@ -92,6 +93,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const isActivelyScrolling = function () {
     return Date.now() < scrollActivityUntil;
+  };
+
+  // While search is open its input holds focus outside the masthead, and the
+  // masthead's search toggle is the visible way to close it: hold the bar still.
+  const isSearchOpen = function () {
+    return !!document.querySelector(".search-content.is--visible");
   };
 
   const isOverflowMenuOpen = function () {
@@ -147,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    if (isOverflowMenuOpen()) {
+    if (isOverflowMenuOpen() || isSearchOpen()) {
       directionalScrollIntent = 0;
       lastScrollY = currentY;
       return;

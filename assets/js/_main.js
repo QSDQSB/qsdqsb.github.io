@@ -454,14 +454,34 @@ document.addEventListener("DOMContentLoaded", function(){
       renderSearchSuggestions(this.value);
     });
 
-    searchInput.addEventListener("blur", function() {
+    // Suggestions fold once focus has left both the input and the suggestions: a
+    // keyboard reader tabbing from the input onto a suggestion keeps it.
+    var foldSuggestionsOnLeave = function(event) {
+      var next = event.relatedTarget;
+      if (next && (next === searchInput || (searchSuggestions && searchSuggestions.contains(next)))) return;
       cancelSearchBlurTimer();
       searchBlurTimer = window.setTimeout(function() {
         hideSearchSuggestions();
       }, 140);
+    };
+    searchInput.addEventListener("blur", foldSuggestionsOnLeave);
+
+    // Enter (a phone keyboard's Go) goes to the results: onto the first one, or,
+    // with none yet, off the input so the keyboard folds away and the list shows.
+    searchInput.addEventListener("keydown", function(event) {
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+      var firstResult = document.querySelector("#results a");
+      if (firstResult) {
+        firstResult.focus();
+      } else {
+        searchInput.blur();
+      }
     });
 
     if (searchSuggestions) {
+      searchSuggestions.addEventListener("focusout", foldSuggestionsOnLeave);
+
       searchSuggestions.addEventListener("mousedown", function(event) {
         if (event.target.closest(".search-suggestion")) {
           event.preventDefault();
