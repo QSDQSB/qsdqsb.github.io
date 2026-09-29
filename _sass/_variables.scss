@@ -8,7 +8,7 @@
 
 /* system typefaces */
 $sans-serif                 : "Playfair Display", apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
-$monospace                  : "Monaco", Consolas, "Lucida Console", monospace;
+$monospace                  : "Monaco", ui-monospace, Menlo, Consolas, "Lucida Console", monospace; // ui-monospace: SF Mono on an iPhone
 $didot-family              : "Didot", "CMU Serif", "Playfair Display", "Songti SC", "STSong", serif;
 /* sans serif typefaces */
 $cmu-serif-family           : "CMU Serif", "Playfair Display", "Songti SC", "STSong", serif;

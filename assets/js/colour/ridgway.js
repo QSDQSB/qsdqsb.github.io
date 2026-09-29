@@ -8,16 +8,16 @@
  */
 
 import { tips } from '../photobook/tip.js';
-import { esc, reverieOf, cameFrom, backLabel } from './cards.js';
+import { esc, reverieOf, cameFrom, backLabel, json } from './cards.js';
 
 const root = document.getElementById('ridgway');
 const plates = root?.querySelector('.ridgway-plates');
 
 async function main() {
   // How many photographs hold each colour, worked out at build (scripts/photos/lib/atlas.mjs picksOf).
-  const counts = fetch(new URL('../../reverie-picks.json', import.meta.url)).then((r) => r.json()).then((d) => d.held).catch(() => null);
+  const counts = json(new URL('../../reverie-picks.json', import.meta.url)).then((d) => d.held).catch(() => null);
   let book = null;
-  try { book = await (await fetch(new URL('../../ridgway.json', import.meta.url))).json(); } catch { /* shown below */ }
+  try { book = await json(new URL('../../ridgway.json', import.meta.url)); } catch { /* shown below */ }
   if (!book?.colours?.length) { plates.innerHTML = '<p class="colour-empty">The plates could not be read.</p>'; return; }
 
   // The masthead's ‹, when the reader came from another page of the site: back that way (Reverie as

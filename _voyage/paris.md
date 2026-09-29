@@ -2,7 +2,7 @@
 title: "Paris"
 excerpt: "Where elysian dreams dance with eternal flames"
 date: 2023-04-10
-updated: 2026-09-28  # its photographs last changed: how Recent Updates ranks it
+updated: 2026-09-28 21:00  # its photographs last changed: how Recent Updates ranks it
 gallery_name: "paris"
 tags: ["🕹️Everyone deserves a tag -- even the ..."]
 header:

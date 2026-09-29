@@ -51,9 +51,10 @@ npm run photos:ingest                   # import → enrich → locate → check
 `ingest` handles only the galleries that changed. It copies files in by frame number or by picture,
 restores stripped camera records, names places from GPS, checks nothing captioned would vanish, then pushes.
 Once the workflow finishes (`gh run list --workflow photos-process.yml -L 3`), run `npm run photos:status
--- --gallery <g>`. It should say `no problems`. Then set the voyage's `updated:` to today, in its
-`_voyage/` (or `_subvoyage/`) front matter: the landing's Recent Updates ranks voyages by it (a voyage's
-`date` is the trip's, not when it came to the site).
+-- --gallery <g>`. It should say `no problems`. Then set the voyage's `updated:` to now
+(`2026-09-28 21:00`: the time settles a day's ties, a new voyage later than one given a few frames) in
+its `_voyage/` front matter, the parent's for a part (the board reads `_voyage/` only): the landing's
+Recent Updates ranks voyages by it (a voyage's `date` is the trip's, not when it came to the site).
 
 ### Start a new voyage
 

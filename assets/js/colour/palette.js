@@ -15,7 +15,7 @@
 import { tips } from '../photobook/tip.js';
 import { vat, seedOf, oklab, glow } from './vat.js';
 import { crossfade } from '../photobook/wash.js';
-import { esc, blocks, bar, card, kindred, dripper, reverieOf, place, cameFrom, backLabel, measureCards } from './cards.js';
+import { esc, blocks, bar, card, kindred, dripper, reverieOf, place, cameFrom, backLabel, measureCards, json } from './cards.js';
 
 const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* this visit only */ } } };
@@ -31,7 +31,7 @@ const fold = menu?.querySelector('.palette-voyages__fold'), menuButton = root?.q
 
 async function main() {
   let data = null;
-  try { data = await (await fetch(new URL('../../palettes.json', import.meta.url))).json(); } catch { /* shown below */ }
+  try { data = await json(new URL('../../palettes.json', import.meta.url)); } catch { /* shown below */ }
   const voyages = (data?.voyages || []).filter((v) => data.pages?.[v.g]);
   if (!voyages.length) { stage.innerHTML = '<p class="colour-empty">The colours are still being read from the photographs.</p>'; return; }
   const pages = data.pages;

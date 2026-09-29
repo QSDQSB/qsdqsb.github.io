@@ -22,7 +22,7 @@
 
 import { tips } from '../photobook/tip.js';
 import { vat, seedOf } from './vat.js';
-import { holding, varied, SHOWN, focus, shadeFor, dripper } from './cards.js';
+import { holding, varied, SHOWN, focus, shadeFor, dripper, json } from './cards.js';
 
 const DWELL = 7000;
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -38,7 +38,7 @@ const REVERIE = new URL('../../../reverie/', import.meta.url).pathname;
 async function main() {
   tips();
   let data = null;
-  try { data = await (await fetch(new URL('../../colour-atlas.json', import.meta.url))).json(); } catch { /* shown below */ }
+  try { data = await json(new URL('../../colour-atlas.json', import.meta.url)); } catch { /* shown below */ }
   const all = data?.photos || [];
   const stage = root.querySelector('.colour-drift__stage');
   if (!all.length) {

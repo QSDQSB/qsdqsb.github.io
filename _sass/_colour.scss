@@ -746,6 +746,9 @@
 }
 
 /* ── Drift ────────────────────────────────────────────────────────────── */
+// The drift is the screen: the page's own foot room (_base.scss body padding) would let it slide.
+body.colour-page--drift { padding-bottom: 0; }
+
 .colour-drift {
   position: relative;
   width: 100%; // a -webkit-box child: stated, or it shrinks to its content
@@ -864,6 +867,7 @@
 .colour-drift__colour .colour-drift__hex {
   position: absolute;
   z-index: 1;
+  font-size: unquote("clamp(min(3.4rem, 14vw), 9vw, 8.6rem)"); // on the narrowest phone, the hex and its disc still fit
   left: clamp(1.2rem, 3vw, 2.4rem);
   bottom: clamp(1rem, 3vw, 2rem);
 }
@@ -1029,6 +1033,7 @@
     background: var(--c);
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14); // a dark colour still seen on the dark page
     transition: box-shadow 0.3s $cubic-bezier-smooth;
+    html.motion-off & { transition: none; }
   }
 
   a:hover,

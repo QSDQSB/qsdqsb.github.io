@@ -34,20 +34,23 @@ const fresh = (out, src) => !force && fs.existsSync(out) && fs.statSync(out).mti
 
 async function main() {
   fs.mkdirSync(OUT, { recursive: true });
-  const covers = fs.readdirSync(SRC).filter((f) => /\.(jpe?g|png)$/i.test(f));
+  // Every cover, those of a voyage's parts in its own folder too (cover/japan/…), sized beside the
+  // same folder under sized/.
+  const covers = fs.readdirSync(SRC, { recursive: true }).filter((f) => /\.(jpe?g|png)$/i.test(f) && !f.startsWith(`sized${path.sep}`));
   const map = {};
   let made = 0;
   for (const f of covers) {
-    const src = path.join(SRC, f), stem = f.replace(/\.[^.]+$/, '');
+    const src = path.join(SRC, f), rel = f.split(path.sep).join('/'), stem = rel.replace(/\.[^.]+$/, '');
     const { width } = await sharp(src).metadata();
     const smaller = WIDTHS.filter((w) => w < width);
     for (const w of smaller) {
       const out = path.join(OUT, `${stem}-${w}.webp`);
       if (fresh(out, src)) continue;
+      fs.mkdirSync(path.dirname(out), { recursive: true });
       await sharp(src).resize({ width: w }).webp({ quality: 80 }).toFile(out);
       made++;
     }
-    map[`cover/${f}`] = [...smaller.map((w) => ({ w, src: `/images/cover/sized/${stem}-${w}.webp` })), { w: width, src: `/images/cover/${f}` }];
+    map[`cover/${rel}`] = [...smaller.map((w) => ({ w, src: `/images/cover/sized/${stem}-${w}.webp` })), { w: width, src: `/images/cover/${rel}` }];
   }
   fs.writeFileSync(DATA, JSON.stringify(map, null, 1));
   console.log(`covers: ${covers.length} heroes, ${made} rendition(s) written → images/cover/sized/`);
