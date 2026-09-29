@@ -253,14 +253,13 @@
 // the masthead, so the sheet does too.
 .palette-page:has(.palette-voyages.is-open) { z-index: 61; }
 
-// Below the rail breakpoint, the way to every voyage: a pill held just under the masthead as the page
-// goes by. (The way back is the masthead's ‹.)
+// Below the rail breakpoint, the way to every voyage: a pill at the top, beside the rail. (The way
+// back is the masthead's ‹.)
 .palette-page__bar {
   @include responsive-up($responsive-left-rail-breakpoint) { display: none; }
 
-  position: sticky;
-  top: calc(5.2rem + env(safe-area-inset-top, 0px));
-  z-index: 5;
+  // In its place at the top, not held on screen: nothing floats over the frames (the rail of
+  // vats, and scrolling back up, change voyage from further down).
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;

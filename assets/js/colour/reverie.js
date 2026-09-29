@@ -30,7 +30,7 @@ import { tips } from '../photobook/tip.js';
 import { crossfade } from '../photobook/wash.js';
 import { lightbox } from '../photobook/lightbox.js';
 import { vat, seedOf, oklab, glow } from './vat.js';
-import { esc, card, reverieOf, holding, varied, SHOWN, nearby, focus, shadeFor } from './cards.js';
+import { esc, card, reverieOf, holding, varied, SHOWN, nearby, focus, shadeFor, place, cameFrom, backLabel } from './cards.js';
 
 const root = document.getElementById('reverie');
 const body = root?.querySelector('.reverie__stage');
@@ -68,7 +68,7 @@ async function main() {
     return best && best.x <= 0.03 ? best.n : '';
   };
   const near = root.querySelector('.reverie__near');
-  const back = document.querySelector('.masthead__back');
+  const back = document.querySelector('.masthead__back'), came = cameFrom();
   // The room below the opening, faintly lit by the photograph's dye (the palette page's room,
   // ../photobook/wash.js).
   const room = Object.assign(document.createElement('div'), { className: 'palette-ambience' });
@@ -135,7 +135,7 @@ async function main() {
 
     return function put() {
       document.title = document.title.replace(/^[^·]*·/, `Reverie in ${HEX} ·`);
-      if (back) { const label = `Back to ${f.name || 'the photograph'}, in ${page.title}`; back.href = `${page.url}#${encodeURIComponent(f.slug)}`; back.setAttribute('aria-label', label); back.dataset.tip = label; }
+      if (back && !came) { const label = `Back to ${f.name || 'the photograph'}, in ${page.title}`; back.href = `${page.url}#${encodeURIComponent(f.slug)}`; back.setAttribute('aria-label', label); back.dataset.tip = label; }
       if (shown?.f !== f) crossfade(room, glow(f.sig, { seed }));
       dye.querySelector(':scope > .colour-vat')?.remove();
       hero.live?.release?.(); // the last colour's stirring field, if it was stirred, lets its context go
@@ -214,23 +214,34 @@ async function main() {
     if (!a) return;
     const url = new URL(a.href, location.href);
     e.preventDefault();
-    history.pushState(null, '', url.pathname + url.search);
+    history.pushState({ colours: (history.state?.colours ?? 0) + 1 }, '', url.pathname + url.search);
     go(read(url.href), url.search, { focus: true });
   });
   // Back and forward between colours (the lightbox's own steps, open and closed, keep the address).
   addEventListener('popstate', () => { if (lbEl?.open || location.search === (wanted || shownAt)) return; go(read(location.href)); });
 
-  // Back from a print (Drift's ‹): the page as it was left, where it was left.
-  const key = () => `reverie-at:${location.search}`;
-  addEventListener('pagehide', () => { try { sessionStorage.setItem(key(), String(scrollY)); } catch { /* this visit only */ } });
+  // Back from a print (Drift's ‹): the page as it was left, where it was left (the card at the top).
+  const kept = () => place(`reverie-at:${location.search}`);
+  addEventListener('pagehide', () => kept().save());
   const returning = performance.getEntriesByType('navigation')[0]?.type === 'back_forward';
 
+  // The masthead's ‹, when the reader came from another page of the site: back the way they came, to
+  // that page as they left it (the book at its frame, the palette where they were), over the colours
+  // they have taken here since (each a step in the history, counted in its state).
+  if (back && came) {
+    const to = backLabel(came);
+    back.href = came.href; back.setAttribute('aria-label', to); back.dataset.tip = to;
+    back.addEventListener('click', (e) => { if (history.length > 1) { e.preventDefault(); history.go(-((history.state?.colours ?? 0) + 1)); } });
+  }
+
   const first = read(location.href);
-  history.replaceState(null, '', reverieOf(first.f.g, first.f.slug, first.hex) + location.hash);
+  // The address made whole (its colour and where it was found), keeping what the history holds for
+  // this entry (the lightbox's, when the page is come back to with it open).
+  history.replaceState({ ...history.state, colours: history.state?.colours ?? 0 }, '', reverieOf(first.f.g, first.f.slug, first.hex) + location.hash);
   wanted = location.search;
   changing = prepare(first).then((put) => {
     put(); shownAt = location.search;
-    if (returning) { try { const y = Number(sessionStorage.getItem(key())); if (y) requestAnimationFrame(() => scrollTo({ top: y, behavior: 'instant' })); } catch { /* no memory */ } }
+    if (returning) requestAnimationFrame(() => kept().restore());
     // A link to one of its photographs (#slug) opens it.
     const slug = decodeURIComponent(location.hash.slice(1));
     const k = slug ? shown.found.findIndex(({ f: p }) => p.slug === slug) : -1;

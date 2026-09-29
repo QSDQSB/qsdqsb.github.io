@@ -177,3 +177,38 @@ export function dripper() {
   }
   return { poured, drip, holdFor: (ms) => { hold = performance.now() + ms; } };
 }
+
+/**
+ * Where the reader was on a page of cards, kept for their return (Back): the first card on screen and
+ * how far down it sat, not a scroll offset, since cards not yet drawn are only estimated
+ * (content-visibility) and the page's height moves as they are.
+ */
+export function place(key) {
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; // this, not the browser's guess
+  return {
+    save() {
+      const c = [...document.querySelectorAll('.palette-card[id]')].find((x) => x.getBoundingClientRect().bottom > 0);
+      try { sessionStorage.setItem(key, JSON.stringify(c ? { id: c.id, top: c.getBoundingClientRect().top } : { y: scrollY })); } catch { /* this visit only */ }
+    },
+    restore() {
+      let at = null;
+      try { at = JSON.parse(sessionStorage.getItem(key) || 'null'); } catch { /* no memory */ }
+      if (!at) return false;
+      const el = at.id && document.getElementById(at.id);
+      const go = () => scrollTo({ top: el ? el.getBoundingClientRect().top + scrollY - at.top : at.y, behavior: 'instant' });
+      go(); requestAnimationFrame(go); // again once the cards about it are drawn
+      return true;
+    },
+  };
+}
+
+/** The masthead's ‹ named for the page it goes back to. */
+export const backLabel = (url) => {
+  const p = url.pathname.slice(new URL('../../../', import.meta.url).pathname.length - 1);
+  return p === '/' ? 'Back home' : p.startsWith('/palette/') ? "Back to QSD's Palette" : p.startsWith('/reverie/') ? 'Back to the colour' : p.startsWith('/voyage/') ? 'Back to the book' : 'Back';
+};
+
+/** The page the reader came from on this site, if any (not this page itself): its URL. */
+export const cameFrom = () => {
+  try { const r = document.referrer && new URL(document.referrer); return r && r.origin === location.origin && r.pathname !== location.pathname ? r : null; } catch { return null; }
+};
