@@ -5,7 +5,7 @@
  *
  *   1. skip it when the manifest already carries this exact file
  *      (same etag + size), unless --force
- *   2. read EXIF, orient, measure, thumbhash, dominant colour
+ *   2. read EXIF, orient, measure, thumbhash, dominant colour, palette (32 colours and a 3×3 grid)
  *   3. render every public tier and upload it
  *   4. record the photo in <gallery>/manifest.json (what the site builds from: no GPS; the sun
  *      and the weather at the moment of the frame) and <gallery>/.private.json (GPS + full
@@ -30,7 +30,8 @@ import { env, ROOT, PATHS, ORIGINAL_RE, IGNORED_PREFIXES, MANIFEST_FILE, PRIVATE
 import { storesFrom } from './lib/store.mjs';
 import { readExif } from './lib/exif.mjs';
 import { assignSlugs } from './lib/slug.mjs';
-import { analyse, renderTiers } from './lib/tiers.mjs';
+import { analyse, renderTiers, paletteOfImage } from './lib/tiers.mjs';
+import { kindredOf, KINDRED_KEY } from './lib/atlas.mjs';
 import { emptyManifest, sortPhotos } from './lib/manifest.mjs';
 import { lightGallery } from './lib/sun.mjs';
 import { weatherGallery } from './lib/weather.mjs';
@@ -75,6 +76,7 @@ async function main() {
 
   await closeCamera();
   log(`\ndone: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed, ${lit} given their sun across ${byGallery.size} galleries`);
+  if (changed + removed + lit > 0 && !DRY) await refreshKindred(originals);
   if (args.gc) await collectGarbage(pub, originals);
   if (changed + removed + lit > 0 && env.deployHook && !DRY) {
     const r = await fetch(env.deployHook, { method: 'POST' });
@@ -127,7 +129,7 @@ async function processGallery(gallery, files, { originals, pub }) {
           taken: exif.taken, camera: exif.camera, lens: exif.lens, focal: exif.focal, focal35: exif.focal35,
           aperture: exif.aperture, shutter: exif.shutter, iso: exif.iso, exposureBias: exif.exposureBias,
           ...(cam ? cam.pub : {}),
-          thumbhash: facts.thumbhash, tint: facts.tint, sizes, formats, processed: new Date().toISOString(),
+          thumbhash: facts.thumbhash, tint: facts.tint, palette: facts.palette, grid: facts.grid, signature: facts.signature, dots: facts.dots, sizes, formats, processed: new Date().toISOString(),
         });
         priv.photos[slug] = {
           file, key: meta.key, hash, version, gps: exif.gps,
@@ -165,15 +167,52 @@ async function processGallery(gallery, files, { originals, pub }) {
   };
   const lit = lightGallery([...bySlug.values()], gpsOf, placeOf(gallery))
     // …and the weather of that hour, asked once of Open-Meteo's archive; a network call, no image.
-    + (DRY ? 0 : await weatherGallery([...bySlug.values()], gpsOf, placeOf(gallery)));
+    + (DRY ? 0 : await weatherGallery([...bySlug.values()], gpsOf, placeOf(gallery)))
+    // …and the palette of a photo processed before palettes were kept, from its smallest tier: no
+    // original, no render.
+    + (DRY ? 0 : await paletteGallery([...bySlug.values()], pub, gallery));
 
   if ((changed || removed || lit) && !DRY) {
     const photos = sortPhotos([...bySlug.values()]);
     await originals.putJson(manifestKey, { version: MANIFEST_VERSION, gallery, generated: new Date().toISOString(), photos });
     await originals.putJson(privateKey, { gallery, generated: new Date().toISOString(), photos: priv.photos });
   }
-  if (changed || removed || failed || lit) log(`  ${gallery}: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed${lit ? `, ${lit} given their sun or weather` : ''}`);
+  if (changed || removed || failed || lit) log(`  ${gallery}: ${changed} processed, ${skipped} unchanged, ${removed} removed, ${failed} failed${lit ? `, ${lit} given their sun, weather or palette` : ''}`);
   return { changed, failed, skipped, removed, lit };
+}
+
+/** Colours (palette, grid, signature, dots) for photos that have tiers but not all of them yet, read from the 480 px WebP. Returns how many were added. */
+async function paletteGallery(photos, pub, gallery) {
+  let n = 0;
+  for (const p of photos) {
+    if ((p.palette && p.signature && p.dots) || !p.hash) continue;
+    const tier = (p.sizes?.webp || [])[0];
+    if (!tier) continue;
+    try {
+      const buf = await pub.get(`t/${p.hash}/${tier}.webp`);
+      if (!buf) continue;
+      Object.assign(p, await paletteOfImage(buf));
+      n++;
+    } catch (e) { log(`  ${gallery}/${p.slug}: palette unread (${e.message})`); }
+  }
+  return n;
+}
+
+/**
+ * Every photo's nearest in colour from other voyages (lib/atlas.mjs kindredOf), for Drift: worked out
+ * across all galleries' manifests and kept beside them in the originals bucket, since one new photo
+ * can be kindred to any other. Seconds of arithmetic, no images.
+ */
+async function refreshKindred(originals) {
+  const items = [];
+  for (const o of (await originals.list('')).filter((x) => x.key.endsWith(`/${MANIFEST_FILE}`) && !x.key.startsWith('trash/'))) {
+    const m = await originals.getJson(o.key);
+    for (const p of m?.photos || []) if (p.hash && p.palette) items.push({ hash: p.hash, gallery: m.gallery, palette: p.palette });
+  }
+  if (!items.length) return;
+  const t = Date.now();
+  await originals.putJson(KINDRED_KEY, { generated: new Date().toISOString(), photos: kindredOf(items) });
+  log(`kindred: ${items.length} photos in ${((Date.now() - t) / 1000).toFixed(1)} s`);
 }
 
 /**

@@ -1,13 +1,22 @@
 {% comment %}
-  Four most-recently-touched docs across Posts, Portfolio, Voyage.
-  Sort key: frontmatter `updated` if present, else `date`.
-  Index is zero-padded to 3 digits so the string-sort tiebreaker is stable.
-  A voyage whose Photobook is still empty is left out (_includes/photobook-ready.html).
+  Recent Updates: a board of tiles filling the screen.
+  - Four most-recently-touched docs across Posts, Portfolio, Voyage. Sort key: frontmatter `updated`
+    if present, else `date` (a voyage's `date` is its trip's: its `updated` says when its photographs
+    last changed, _docs/photos-recipes.md). Index is zero-padded to 3 digits so the string-sort tiebreaker is stable.
+    A voyage whose Photobook is still empty is left out (_includes/photobook-ready.html), and so is a
+    page marked `recent: false` (the index of voyages: no date of its own).
+  - A word that intrigues QSD (_data/words.yml), at random on each visit.
+  - A Reverie: one of Ridgway's colours the photographs hold (assets/reverie-picks.json, worked out at
+    build), at random on each visit, its dye stirring while the pointer rests on it
+    (assets/js/colour/home-reverie.js). Liquid renders a pick of its own for a page without scripts.
 {% endcomment %}
 {% assign combined = site.posts | concat: site.portfolio | concat: site.voyage %}
 {% assign keyed = "" %}
-{% for d in combined %}{% if d.collection == "voyage" %}{% include photobook-ready.html doc=d %}{% unless photobook_ready %}{% continue %}{% endunless %}{% endif %}{% assign k = d.updated | default: d.date | date: "%Y%m%d%H%M%S" %}{% assign raw_idx = forloop.index0 | prepend: "000" %}{% assign pad_idx = raw_idx | slice: -3, 3 %}{% assign keyed = keyed | append: k | append: "#" | append: pad_idx | append: "|" %}{% endfor %}
+{% for d in combined %}{% if d.recent == false %}{% continue %}{% endif %}{% if d.collection == "voyage" %}{% include photobook-ready.html doc=d %}{% unless photobook_ready %}{% continue %}{% endunless %}{% endif %}{% assign k = d.updated | default: d.date | date: "%Y%m%d%H%M%S" %}{% assign raw_idx = forloop.index0 | prepend: "000" %}{% assign pad_idx = raw_idx | slice: -3, 3 %}{% assign keyed = keyed | append: k | append: "#" | append: pad_idx | append: "|" %}{% endfor %}
 {% assign ordered = keyed | split: "|" | sort | reverse %}
+{% assign words = site.data.words %}
+{% assign word = words | sample %}
+{% assign pick = site.data.photo_manifests["reverie-picks"].picks | sample %}
 
 <section class="home__whatsnew reveal">
   <div class="home__section-head">
@@ -32,5 +41,43 @@
         </div>
       </a>
     {% endfor %}
+
+    {%- if pick %}
+    {%- assign pick_parts = pick[2] | split: "/" -%}
+    <a class="wn-card wn-card--reverie" href="{{ '/reverie/' | relative_url }}?c={{ pick[1] }}&amp;from={{ pick[2] | url_encode }}" style="--dye: #{{ pick[1] }};"
+       data-picks="{{ '/assets/reverie-picks.json' | relative_url }}">
+      <div class="wn-dye" aria-hidden="true"></div>
+      <div class="wn-scrim"></div>
+      <div class="wn-body">
+        <span class="wn-kind">Reverie</span>
+        <p class="wn-named">{{ pick[0] }}</p>
+        <h3 class="wn-hex">#{{ pick[1] | upcase }}</h3>
+      </div>
+    </a>
+    {%- endif %}
+
+    <a class="wn-card wn-card--word word_card" href="{{ '/posts/terminology/' | relative_url }}">
+      <span class="visually-hidden">A word that intrigues QSD: </span>
+      <h2 id="homeWordTitle" lang="{{ word.language | default: 'en' }}" translate="no">{{ word.title }}</h2>
+      <span class="word_card__origin" id="homeWordOrigin">{{ word.origin }}</span>
+      <p id="homeWordDef">{{ word.description }}</p>
+    </a>
   </div>
+  {%- comment -%} Inside the section: the panel centres its first and last child (_home.scss). {%- endcomment -%}
+<script>
+(function () {
+  var words = {{ words | jsonify }};
+  if (!words || !words.length) return;
+  var w = words[Math.floor(Math.random() * words.length)];
+  var title = document.getElementById('homeWordTitle');
+  var def = document.getElementById('homeWordDef');
+  if (!title) return;
+  title.textContent = w.title;
+  title.setAttribute('lang', w.language || 'en');
+  var origin = document.getElementById('homeWordOrigin');
+  if (origin) origin.textContent = w.origin || '';
+  def.innerHTML = w.description;
+})();
+</script>
+<script type="module" src="{{ '/assets/js/colour/home-reverie.js' | relative_url }}"></script>
 </section>

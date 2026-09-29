@@ -1,0 +1,10 @@
+---
+layout: null
+sitemap: false
+---
+{%- comment -%}
+  Ridgway's colour book (_data/ridgway.json, written by scripts/colour/ridgway.mjs from Project
+  Gutenberg's edition): for Reverie's names (assets/js/colour/reverie.js). The book's own page draws
+  its plates from the same data at build (_pages/utils-ridgway.html).
+{%- endcomment -%}
+{{ site.data.ridgway | jsonify }}

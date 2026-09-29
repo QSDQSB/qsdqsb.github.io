@@ -4,11 +4,11 @@
   </div>
 
   {% comment %} Doors are the masthead nav (site.data.navigation.main), so the two
-  stay in sync; CV is filtered off the landing. Each door's descriptor + plate image
+  stay in sync (the CV's door is at the end of About). Each door's descriptor + plate image
   come from the linked page's own excerpt + overlay_image — concat site.pages with
   site.portfolio because the voyage index lives in the portfolio collection. {% endcomment %}
   {% assign door_pages = site.pages | concat: site.portfolio %}
-  {% assign doors = site.data.navigation.main | where_exp: "link", "link.url != '/cv/'" %}
+  {% assign doors = site.data.navigation.main %}
 
   <div class="home__index-grid">
     <ul class="home__doors">
@@ -31,7 +31,9 @@
         <div class="door-plate__frame">
           {% for link in doors %}
           {% assign dp = door_pages | where: "url", link.url | first %}
-          <div class="door-shot{% if forloop.first %} is-on{% endif %}" style="background-image:url('{% include home/overlay-src.html page=dp %}');"></div>
+          {%- comment -%} door_view: "<background-position> / <background-size>", a crop of the plate's own (Palette's: the lake's reflections). {%- endcomment -%}
+          {%- assign dv = dp.door_view | split: " / " %}
+          <div class="door-shot{% if forloop.first %} is-on{% endif %}" style="background-image:url('{% include home/overlay-src.html page=dp %}');{% if dv[0] %}background-position:{{ dv[0] }};{% endif %}{% if dv[1] %}background-size:{{ dv[1] }};{% endif %}"></div>
           {% endfor %}
           <span class="door-plate__vignette"></span>
           <span class="door-plate__grain"></span>

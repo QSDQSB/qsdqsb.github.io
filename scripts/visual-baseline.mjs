@@ -10,12 +10,16 @@
  *
  * Capture and diff expect a built site in `_site/` and serve it themselves
  * on a free localhost port. Build it with `visual:build`, not `build:fast`:
- * several layouts pick content with Liquid's `sample` (the QSD logo, related
- * and random posts, the word card), so an ordinary build differs from the
- * last one before a single style changes. `visual:build` seeds Ruby's PRNG
- * first, which is what `sample` draws from, so the same source renders the
- * same HTML, but only while no source changes: any edit reshuffles the draws,
- * so the sampled blocks (SAMPLED below) are painted over in every shot.
+ * several layouts pick content with Liquid's `sample` (related and random
+ * posts, the word card), so an ordinary build differs from the last one
+ * before a single style changes. `visual:build` seeds Ruby's PRNG first,
+ * which is what `sample` draws from, so the same source renders the same
+ * HTML, but only while no source changes: any edit reshuffles the draws, so
+ * the sampled blocks (SAMPLED below) are painted over in every shot. The QSD
+ * sign-off logo is the exception: `visual:build` layers `_config_visual.yml`
+ * on, which pins it to the first candidate, so it is compared, not masked.
+ * A mask is only as good as its box, and on a full-page mobile shot the box
+ * can land off the element it was meant to cover.
  *
  * Why this exists: CSS refactors — `!important` triage, token inlining,
  * import reordering — are verified by eye or not at all, and "not at all"
@@ -29,8 +33,7 @@
  * page's slowest timers have run (the Home reveal fallback at 6 s, the
  * masthead's idle-collapse and auto-fade at 2.6 s + 3 s) and pins the
  * masthead to its expanded resting state, which is what a reader sees at
- * the top of a page. The first-visit welcome toast is pre-dismissed through
- * its localStorage key, so shots are of a returning visitor, and
+ * the top of a page, and
  * `Math.random` is seeded so the Home's intriguing-word card picks the same
  * word every run. Anything
  * fetched from the network at render time (map tiles) is still
@@ -99,16 +102,22 @@ const SETTLE_MS = 7000; // longest page-side timer (Home reveal fallback) + marg
  * covers kramdown `{: .notice}` paragraphs, where `.page__content p` outranks
  * the notice class — neither is reachable from the other pages.
  */
-// What Liquid picks with `sample`: the footer logo, the word cards, the related and "elsewhere"
-// cards. The seeded build repeats a draw only while no source changes, so any unrelated edit
-// would reshuffle them; the shots paint them over instead of comparing them.
-const SAMPLED = ['img[alt="QSD Logo"]', '.center-wrapper:has(img[alt="QSD Logo"])', '.word_card_container', '.page__related .grid__wrapper', '.photobook-end__more'];
+// What Liquid picks with `sample`: the word cards, the related and "elsewhere" cards. The seeded
+// build repeats a draw only while no source changes, so any unrelated edit would reshuffle them;
+// the shots paint them over instead of comparing them. (The sign-off logo is pinned by
+// _config_visual.yml instead, and compared.)
+const SAMPLED = ['.word_card_container', '.page__related .grid__wrapper', '.photobook-end__more'];
 // An animated GIF (post-notices carries LeetCode's monthly badge) is caught on whichever frame it
 // is showing; `animations: 'disabled'` stops CSS, not GIFs. Painted over for the same reason.
 const MOVING = ['img[src$=".gif"]'];
 
 async function drawAllRows(page) {
   await page.addStyleTag({ content: '.photobook-row { content-visibility: visible; }' });
+}
+
+async function drawColourStage(page) {
+  await page.waitForSelector('.palette-card, .palette-index', { timeout: 15000 });
+  await page.addStyleTag({ content: '.palette-card { content-visibility: visible; }' });
 }
 
 const PAGES = [
@@ -133,6 +142,11 @@ const PAGES = [
       await page.waitForFunction(() => [...document.querySelectorAll('.photobook-lightbox__mat img')].every((im) => im.complete), null, { timeout: 20000 });
     },
   },
+  // The colour pages, drawn by their scripts: the shot waits for the stage, and draws every card
+  // (they skip rendering off screen, as the book's rows do); their vats pour on the scroll-through.
+  { id: 'palette', url: '/palette/', setup: drawColourStage },
+  { id: 'palette-voyage', url: '/palette/#london', setup: drawColourStage },
+  { id: 'reverie', url: '/reverie/?c=4a6fa5', setup: drawColourStage },
   { id: 'voyage-by-tags', url: '/voyage-by-tags/' },
   { id: 'about', url: '/about/' },
   { id: 'portfolio', url: '/portfolio/' },
@@ -288,7 +302,6 @@ async function openPage(browser, viewportName) {
     timezoneId: 'UTC',
   });
   await context.addInitScript(() => {
-    try { localStorage.setItem('qsd:welcome-seen', '1'); } catch (e) { /* storage blocked */ }
     // mulberry32 — small, seedable, good enough to make a picker repeatable.
     let seed = 0x9e3779b9;
     Math.random = () => {

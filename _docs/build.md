@@ -74,7 +74,11 @@ and commit the new PNGs with it.
 Use `visual:build`, not `build:fast`, before a diff: several layouts pick
 content with Liquid's `sample` (the QSD logo, related and random posts, the
 word card), so an ordinary build never matches the previous one.
-`visual:build` seeds Ruby's PRNG first.
+`visual:build` seeds Ruby's PRNG first, and layers `_config_visual.yml` on
+top of `_config.yml`: its `visual_baseline: true` pins the sign-off logo
+(`_includes/qsd-logo.html`) to the first candidate, so the logo is compared
+rather than masked. The live build never reads that file and still draws a
+logo at random.
 
 `visual:audit` is the behavioural half. It loads every page under motion-off
 and lists each element whose computed style still carries a running
