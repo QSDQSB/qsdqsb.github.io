@@ -21,19 +21,16 @@
  */
 
 import { tips } from '../photobook/tip.js';
-import { vat, seedOf } from './vat.js';
-import { holding, varied, SHOWN, focus, shadeFor, dripper, json } from './cards.js';
+import { vat, seedOf, stillness as still } from './vat.js';
+import { esc, REVERIE, holding, varied, SHOWN, focus, shadeFor, dripper, json } from './cards.js';
 
 const DWELL = 7000;
-const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 const deg = (d) => `${d < 0 ? '−' : ''}${Math.abs(d)}°`;
 const GROUND = [16, 16, 18];
 /** A colour taken most of the way back to the dark ground, as the Photobook's glow does. */
 const soften = (h, k = 0.58) => { const n = parseInt(h.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255]; return `rgb(${c.map((v, i) => Math.round(GROUND[i] + (v - GROUND[i]) * k)).join(',')})`; };
 
 const root = document.getElementById('colour-drift');
-const REVERIE = new URL('../../../reverie/', import.meta.url).pathname;
 
 async function main() {
   tips();

@@ -29,13 +29,12 @@
 import { tips } from '../photobook/tip.js';
 import { crossfade } from '../photobook/wash.js';
 import { lightbox } from '../photobook/lightbox.js';
-import { vat, seedOf, oklab, glow } from './vat.js';
+import { vat, seedOf, oklab, glow, stillness as still } from './vat.js';
 import { esc, card, reverieOf, holding, varied, SHOWN, nearby, focus, shadeFor, place, cameFrom, backLabel, measureCards, json } from './cards.js';
 
 const root = document.getElementById('reverie');
 const body = root?.querySelector('.reverie__stage');
 const base = new URL('../../../', import.meta.url).pathname;
-const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 async function main() {
   // The colour the address asks for, at once, while the photographs are read: its hex and its flat
@@ -59,6 +58,9 @@ async function main() {
     let f = frames.find((x) => x.g === from.slice(0, cut) && x.slug === from.slice(cut + 1));
     let hex = /^[0-9a-f]{6}$/i.test(q.get('c') || '') ? `#${q.get('c').toLowerCase()}` : null;
     if (!f && hex) f = holding(frames, hex, { least: 0 })[0]?.f;
+    // Found in a photograph that barely holds it (a voyage's palette leads here from its best frame by
+    // signature, which the dots may not bear out): the one of its voyage that holds it most, else any.
+    if (f && hex && !holding([f], hex, { least: 1 / 24 }).length) f = holding(frames.filter((x) => x.g === f.g), hex, { least: 1 / 24 })[0]?.f || holding(frames, hex, { least: 0 })[0]?.f || f;
     if (!f) f = frames[Math.floor(Math.random() * frames.length)];
     if (!hex) {
       const vivid = f.sig.filter(([h, pc]) => pc >= 8 && oklab(h)[0] > 0.3).sort((a, b) => Math.hypot(...oklab(b[0]).slice(1)) - Math.hypot(...oklab(a[0]).slice(1)));
@@ -99,7 +101,7 @@ async function main() {
     const all = await books(), { f, hex, found, focused } = shown, HEX = hex.toUpperCase();
     const seed = seedOf(`${f.g}/${f.slug}`);
     const colour = {
-      slug: 'colour', name: HEX, place: HEX, city: `In ${found.length} photograph${found.length === 1 ? '' : 's'}`, ratio: 16 / 9, dye: focused, seed,
+      slug: 'colour', name: HEX, place: nameOf(hex), city: `In ${found.length} photograph${found.length === 1 ? '' : 's'}`, ratio: 16 / 9, dye: focused, seed,
       paint() {
         const el = document.createElement('div');
         el.style.setProperty('--shade', shadeFor(hex));

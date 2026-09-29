@@ -13,11 +13,10 @@
  */
 
 import { tips } from '../photobook/tip.js';
-import { vat, seedOf, oklab, glow } from './vat.js';
+import { vat, seedOf, oklab, glow, stillness as still } from './vat.js';
 import { crossfade } from '../photobook/wash.js';
 import { esc, blocks, bar, card, kindred, dripper, reverieOf, place, cameFrom, backLabel, measureCards, json } from './cards.js';
 
-const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* this visit only */ } } };
 
 const root = document.getElementById('palette-page');
@@ -264,9 +263,13 @@ async function main() {
     }
     let here = null;
     const mid = railList.scrollLeft + railList.clientWidth / 2;
+    // One stop for the keyboard in the rail, the voyage on the page (← and → step along it); the
+    // overview's, its first.
+    const current = railList.querySelector(`a[data-copy="1"][data-g="${CSS.escape(v?.g ?? '')}"]`) || railList.querySelector('a[data-copy="1"]');
     for (const a of railList.querySelectorAll('a')) {
       const on = a.dataset.g === v?.g;
       if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+      a.tabIndex = a === current ? 0 : -1;
       // Of the three places the voyage stands, the nearest: the short way round.
       if (on && (!here || Math.abs(a.offsetLeft + a.offsetWidth / 2 - mid) < Math.abs(here.offsetLeft + here.offsetWidth / 2 - mid))) here = a;
     }

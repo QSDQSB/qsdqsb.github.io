@@ -4,27 +4,27 @@
  * frame, and the queue that pours each card's dye vat as it nears the screen.
  */
 
-import { oklab } from './vat.js';
+import { oklab, lin } from './vat.js';
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 /** Black or white for the hex on a block, whichever reads better against it (WCAG contrast). */
-const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
 const ink = (h) => {
   const n = parseInt(h.slice(1), 16), L = 0.2126 * lin(n >> 16) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
   return (L + 0.05) / 0.05 > 1.05 / (L + 0.05) ? '#000' : '#fff'; // pure, so even a middling colour reads at 4.5:1 or better
 };
 
-/** How much a colour field's foot must darken for ivory words to read on it (3:1, as large type
- *  asks): none on a mid or dark colour; on a light one, as the book's cover shades beneath its title. */
+/** How much a colour field's foot must darken for ivory words to read on it (about 4:1, for the small
+ *  labels above the hex as well as the hex): none on a mid or dark colour; on a light one, as the
+ *  book's cover shades beneath its title. */
 export const shadeFor = (h) => {
   const n = parseInt(h.slice(1), 16), L = 0.2126 * lin(n >> 16) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
-  return Math.min(0.7, Math.max(0, 1 - 0.3 / L)).toFixed(2);
+  return Math.min(0.7, Math.max(0, 1 - 0.2 / L)).toFixed(2);
 };
 
 /** A colour's Reverie: /reverie/?c=<hex>, and &from=<gallery>/<slug>, the frame it was found in (its
  *  first photograph, and the way back), when there is one. Without a colour, the frame's leading one. */
-const REVERIE = new URL('../../../reverie/', import.meta.url).pathname;
+export const REVERIE = new URL('../../../reverie/', import.meta.url).pathname;
 export const reverieOf = (g, slug, hex = null) => `${REVERIE}?${[hex ? `c=${hex.slice(1).toLowerCase()}` : '', g ? `from=${encodeURIComponent(`${g}/${slug}`)}` : ''].filter(Boolean).join('&')}`;
 
 /** A palette as blocks: equal widths, the hex inside (text to select), the share beneath. `pick`: the
