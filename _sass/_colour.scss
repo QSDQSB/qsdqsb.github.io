@@ -1,11 +1,12 @@
 /* ==========================================================================
-   COLOUR — the pages that look across every voyage by colour:
-   The Colour of Light (_pages/light.html) and Drift (_pages/drift.html).
+   COLOUR — the pages that look across every voyage by colour: QSD's Palette,
+   Reverie, Drift and Ridgway's colour book (_pages/palette.html, reverie.html,
+   drift.html, utils-ridgway.html).
 
-   Both carry the Photobook's body class for its ink and glass tokens
-   (_photobook.scss); their data is /assets/colour-atlas.json, their scripts
+   They carry the Photobook's body class for its ink and glass tokens
+   (_photobook.scss); their data is /assets/*.json, their scripts
    assets/js/colour/. Colour enters only as the photographs' own: the chrome
-   is ink, and gold is the sun's position alone.
+   is ink.
    ========================================================================== */
 
 // The pages' heads are the site's pieces (_components.scss), as a book's cover sets them.
@@ -62,157 +63,7 @@
     rgba(10, 10, 12, var(--shade, 0)) 100%);
 }
 
-/* ── The Colour of Light ──────────────────────────────────────────────── */
-.colour-light {
-  width: 100%; // a -webkit-box child: stated, or it shrinks to its content
-  max-width: 80rem;
-  margin: 0 auto;
-  padding: clamp(6.5rem, 12vw, 9rem) var(--photobook-gutter) clamp(4rem, 8vw, 6rem);
-}
-
-.colour-sky {
-  display: block; // the site's figures are rows of images; this one is a chart
-  margin: clamp(3rem, 7vw, 5rem) 0 0;
-}
-
-// One column a degree; each frame a small print of its own colours, top to bottom.
-.colour-sky__plot {
-  --th: clamp(5px, 0.72vw, 11px);
-  position: relative;
-  height: calc(var(--rows, 1) * (var(--th) + 1px));
-}
-
-.colour-tile {
-  position: absolute;
-  left: calc(var(--c) / var(--cols) * 100%);
-  bottom: calc(var(--s) * (var(--th) + 1px));
-  width: calc(100% / var(--cols) - 1px);
-  height: var(--th);
-  background: linear-gradient(var(--t), var(--m), var(--b));
-  cursor: pointer;
-  transition: opacity 0.3s $cubic-bezier-smooth;
-
-  &.is-on { outline: 1px solid var(--photobook-ink); outline-offset: 1px; }
-}
-
-.colour-sky__plot.has-on .colour-tile:not(.is-on) { opacity: 0.5; }
-
-// The horizon, through the whole sky; the bands' edges, dotted, lighter.
-.colour-sky__horizon,
-.colour-sky__edge {
-  position: absolute;
-  top: -0.6rem;
-  bottom: 0;
-  pointer-events: none;
-}
-
-.colour-sky__horizon { border-left: 1px solid var(--photobook-ink-3); }
-.colour-sky__edge { border-left: 1px dotted var(--photobook-line); }
-
-.colour-sky__axis {
-  position: relative;
-  height: 2.6rem;
-  margin-top: 0.5rem;
-  border-top: 1px solid var(--photobook-line);
-}
-
-.colour-sky__tick {
-  position: absolute;
-  top: 0.55rem;
-  translate: -50% 0;
-  font: 400 0.62rem $barlow-font-family;
-  letter-spacing: 0.08em;
-  color: var(--photobook-ink-3);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-
-  &.is-horizon { letter-spacing: 0.2em; text-transform: uppercase; color: var(--photobook-ink-2); }
-  // The ends hold everything beyond them, and sit inside the chart's edges.
-  &.is-first { translate: 0 0; }
-  &.is-last { translate: -100% 0; }
-}
-
-// The sun, at the altitude of the frame in hand: the one gold on the page.
-.colour-sky__sun {
-  position: absolute;
-  top: -4px;
-  width: 7px;
-  height: 7px;
-  margin-left: -3.5px;
-  border-radius: 50%;
-  background: var(--photobook-gold);
-  opacity: 0;
-  transition: opacity 0.3s $cubic-bezier-smooth, left 0.3s $cubic-bezier-smooth;
-
-  &.is-on { opacity: 1; }
-}
-
-.colour-sky__note {
-  max-width: 44rem;
-  font: 400 0.74rem/1.5 $barlow-font-family;
-  color: var(--photobook-ink-3);
-}
-
-// The frame in hand, by the pointer.
-.colour-card {
-  position: fixed;
-  z-index: 50;
-  width: 15rem;
-  padding: 0.6rem 0.6rem 0.75rem;
-  border: 1px solid var(--photobook-glass-edge);
-  border-radius: 6px;
-  background: rgba(12, 12, 16, 0.86);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  cursor: pointer;
-
-  &[hidden] { display: none; }
-
-  img { display: block; width: 100%; height: auto; }
-  p { margin: 0; }
-}
-
-.colour-card__name { margin-top: 0.6rem; font: 500 0.86rem $barlow-font-family; color: var(--photobook-ink); }
-.colour-card__meta { margin-top: 0.2rem; font: 500 0.56rem $barlow-font-family; letter-spacing: 0.18em; text-transform: uppercase; color: var(--photobook-ink-3); }
-.colour-card__light { margin-top: 0.5rem; font: 400 0.74rem $barlow-font-family; color: var(--photobook-ink-2); }
-.colour-card__light b { margin-right: 0.45rem; font: 400 0.95rem $didot-family; color: var(--photobook-ink); }
-
-// The bands: each one's colours, its range, its count.
-.colour-bands {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-  gap: 2rem clamp(1rem, 2.4vw, 2rem);
-  margin-top: clamp(3rem, 6vw, 4.5rem);
-  padding-top: 1.6rem;
-  border-top: 1px dotted var(--photobook-line);
-
-  h3 { margin: 0; font: 600 1.05rem $didot-family; color: $lighter-gray; }
-  p { margin: 0; }
-}
-
-.colour-band__range { margin-top: 0.35rem; font: 400 0.66rem $barlow-font-family; letter-spacing: 0.08em; color: var(--photobook-ink-3); }
-
-.colour-band__bar {
-  display: flex;
-  gap: 2px;
-  height: 6px;
-  margin: 0.9rem 0 0.7rem;
-
-  i { border-radius: 1px; background: var(--c); }
-}
-
-.colour-band__n { font: 400 0.74rem $barlow-font-family; color: var(--photobook-ink-2); }
-.colour-band__n b { font-weight: 400; color: var(--photobook-ink); }
-
-.colour-findings {
-  max-width: 44rem;
-  margin: clamp(2.5rem, 5vw, 3.5rem) 0 0;
-  font: italic 400 clamp(1.02rem, 1.3vw, 1.25rem)/1.45 $didot-family;
-  color: var(--photobook-ink-2);
-
-  &:empty { display: none; }
-}
-
+/* ── the way on ─────────────────────────────────────────────────────── */
 .colour-next {
   margin-top: clamp(2.5rem, 5vw, 3.5rem);
   @include onward-links;
@@ -1229,8 +1080,6 @@ body.colour-page--drift { padding-bottom: 0; }
 }
 
 @mixin colour-still {
-  .colour-tile,
-  .colour-sky__sun,
   .colour-drift__wash i,
   .colour-drift__head,
   .colour-drift__foot,

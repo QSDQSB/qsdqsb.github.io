@@ -48,7 +48,7 @@ html.subscribe-dismissed .subscribe-slip {
   visibility: hidden; /* clipped content must not stay focusable */
 }
 
-/* Shared glass surface — same family as .welcome-toast__inner;
+/* Shared glass surface (the dark-glass fill, _mixins.scss);
    radius matches .word_card (1rem) since they share the colophon column. */
 %subscribe-slip-glass {
   border: 1px solid rgba($h2-color, 0.26);

@@ -29,8 +29,7 @@
  * page's slowest timers have run (the Home reveal fallback at 6 s, the
  * masthead's idle-collapse and auto-fade at 2.6 s + 3 s) and pins the
  * masthead to its expanded resting state, which is what a reader sees at
- * the top of a page. The first-visit welcome toast is pre-dismissed through
- * its localStorage key, so shots are of a returning visitor, and
+ * the top of a page, and
  * `Math.random` is seeded so the Home's intriguing-word card picks the same
  * word every run. Anything
  * fetched from the network at render time (map tiles) is still
@@ -298,7 +297,6 @@ async function openPage(browser, viewportName) {
     timezoneId: 'UTC',
   });
   await context.addInitScript(() => {
-    try { localStorage.setItem('qsd:welcome-seen', '1'); } catch (e) { /* storage blocked */ }
     // mulberry32 — small, seedable, good enough to make a picker repeatable.
     let seed = 0x9e3779b9;
     Math.random = () => {

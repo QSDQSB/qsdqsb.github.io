@@ -123,7 +123,7 @@ the record can't be recovered and the photo simply shows without it.
 
 ### Photos show no colours
 
-The colophon's Colours row, the specs palette, the sheet's colour order, `/light/` and `/drift/` need
+The colophon's Colours row, the specs palette, the sheet's colour order, QSD's Palette, Reverie and `/drift/` need
 each photo's `palette`. The processor adds it (on the next run for older photos: owner's go, it
 writes the manifest). To see colours locally before that, `node scripts/photos/palettes.mjs`, then
 `npm run photos:fetch`: a git-ignored sidecar, nothing written to R2.
