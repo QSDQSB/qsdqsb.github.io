@@ -66,7 +66,7 @@ async function main() {
     .sort((a, b) => a.label.localeCompare(b.label));
 
   function index() {
-    document.title = document.title.replace(/^[^·]*·/, "QSD's Palette ·");
+    document.title = document.title.replace(/^[^·]*·/, 'QSD’s Palette ·');
     title.textContent = "QSD's Palette";
     if (came) along(backLabel(came)); else backTo(back?.dataset.home, back?.dataset.homeLabel);
     kicker.textContent = 'From the voyages';
@@ -83,7 +83,7 @@ async function main() {
 
   function voyage(v, at, { glide = true } = {}) {
     const name = nameOf(v), page = pages[v.g];
-    document.title = document.title.replace(/^[^·]*·/, `QSD's Palette for ${name} ·`);
+    document.title = document.title.replace(/^[^·]*·/, `QSD’s Palette for ${name} ·`);
     // The masthead's ‹ goes back to the voyage's book, to the frame the reader came from when there was one.
     backTo(`${page.url}${at ? `#${encodeURIComponent(at)}` : ''}`, `Back to ${name}`);
     if (came?.pathname === new URL(page.url, location.href).pathname) along(`Back to ${name}`);

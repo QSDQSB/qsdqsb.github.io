@@ -6,7 +6,7 @@
  * later list: each swatch's colour is taken here, from the middle of its image (the paper's grain and
  * specks trimmed away, the rest averaged in OKLab).
  *
- *   node scripts/colour/ridgway.mjs <unzipped pg63087-h folder>   → assets/ridgway.json
+ *   node scripts/colour/ridgway.mjs <unzipped pg63087-h folder>   → _data/ridgway.json
  *
  * Each colour as [name, hex, plate], in the book's order: plate by plate, as the swatches stand on it.
  *
@@ -62,9 +62,9 @@ out.forEach((c, i) => { c.at = i; });
 out.sort((a, b) => roman(a[2]) - roman(b[2]) || a.at - b.at);
 out.forEach((c) => { delete c.at; });
 
-const file = path.join(path.dirname(new URL(import.meta.url).pathname), '../../assets/ridgway.json');
+const file = path.join(path.dirname(new URL(import.meta.url).pathname), '../../_data/ridgway.json');
 fs.writeFileSync(file, JSON.stringify({
   source: "Robert Ridgway, Color Standards and Color Nomenclature (Washington, 1912), public domain; colours read from Project Gutenberg's edition, #63087, by scripts/colour/ridgway.mjs",
   colours: out,
 }) + '\n');
-console.log(`${out.length} named colours → assets/ridgway.json (${fs.statSync(file).size} bytes)`);
+console.log(`${out.length} named colours → _data/ridgway.json (${fs.statSync(file).size} bytes)`);
