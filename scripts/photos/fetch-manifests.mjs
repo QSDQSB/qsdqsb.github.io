@@ -182,7 +182,7 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
   if (atlas) fs.writeFileSync(atlasFile, JSON.stringify(atlas) + '\n'); else fs.rmSync(atlasFile, { force: true });
   // The landing page's Reverie: Ridgway's colours the photographs hold, each with where to find it.
   const picksFile = path.join(PATHS.mergedDir, 'reverie-picks.json');
-  const picks = picksOf(atlas, JSON.parse(fs.readFileSync(path.join(PATHS.mergedDir, '..', '..', 'assets', 'ridgway.json'), 'utf8')));
+  const picks = picksOf(atlas, JSON.parse(fs.readFileSync(path.join(PATHS.mergedDir, '..', 'ridgway.json'), 'utf8')));
   if (picks) fs.writeFileSync(picksFile, JSON.stringify(picks) + '\n'); else fs.rmSync(picksFile, { force: true });
   // QSD's Palette, every voyage's colours on one page.
   const palettesFile = path.join(PATHS.mergedDir, 'palettes.json');

@@ -104,7 +104,7 @@ export function atlasOf(books, kindred = {}) {
 }
 
 /**
- * Ridgway's book (assets/ridgway.json) against the photographs, by Reverie's own matching (cards.js
+ * Ridgway's book (_data/ridgway.json) against the photographs, by Reverie's own matching (cards.js
  * holding): `held`, how many photographs hold each colour (those none holds left out), for the book's
  * own page; and `picks`, the colours `least` photographs or more hold, each as [name, hex, the
  * photograph holding it most (`gallery/slug`), its signature], for the landing page's Reverie
