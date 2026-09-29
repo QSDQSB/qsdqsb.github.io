@@ -2,6 +2,23 @@ document.addEventListener("DOMContentLoaded", function () {
   const masthead = document.querySelector(".masthead");
   if (!masthead) return;
 
+  // The section this page belongs to (masthead.html is cached, so it is marked here, not in
+  // Liquid): the link whose data-section holds the longest path this page's path starts with.
+  (function markCurrentSection() {
+    const here = window.location.pathname;
+    let best = null;
+    let bestLength = 0;
+    masthead.querySelectorAll(".visible-links a[data-section]").forEach(function (link) {
+      link.dataset.section.split(/\s+/).forEach(function (path) {
+        if (path.length > 1 && here.indexOf(path) === 0 && path.length > bestLength) {
+          best = link;
+          bestLength = path.length;
+        }
+      });
+    });
+    if (best) best.setAttribute("aria-current", "page");
+  })();
+
   const nav = masthead.querySelector(".greedy-nav");
   const navToggle = masthead.querySelector(".greedy-nav__toggle");
   const hiddenLinks = masthead.querySelector(".hidden-links");
