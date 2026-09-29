@@ -192,7 +192,7 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     const one = order.length < frames.length && frames[order[0]]?.film;
     $('.photobook-lightbox__count').innerHTML = `<span><b>${String(pos + 1).padStart(2, '0')}</b> / ${String(order.length).padStart(2, '0')}</span>${one ? `<i style="--film:${frames[order[0]].hue}">${esc(one)}</i>` : ''}`;
     $('.photobook-lightbox__caption').innerHTML = captionHTML(p);
-    specsIn.innerHTML = p.paint ? '' : specsHTML(p, i + 1);
+    specsIn.innerHTML = p.paint ? '' : specsHTML(p, i + 1) + specsHint();
     if (wasPainted || p.paint) applySpecs(); else placeSpecs();   // a painted frame has no specs: the panel steps aside
     const railHadFocus = rail.contains(document.activeElement);
     for (const [k, b] of [...rail.children].entries()) {
@@ -231,6 +231,10 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     </div>` : '');
 
   // n: the frame's place in the book, printed on the film's edge as a roll numbers its frames.
+  // Until the reader has folded the specs once (the setting is then remembered), the panel's foot
+  // says how: a swipe on a phone, where the panel stands over half the screen; the key elsewhere.
+  const specsHint = () => (store.get('photobook-specs') ? '' : `<p class="photobook-specs__hint">${matchMedia('(hover: none), (pointer: coarse)').matches ? 'Swipe down to fold these away' : 'Press I to fold these away'}</p>`);
+
   function specsHTML(p, n) {
     const ev = p.bias ? ` · ${p.bias > 0 ? '+' : '−'}${Math.abs(Math.round(p.bias * 100) / 100)} EV` : '';
     const sun = p.light ? `<div class="photobook-specs__sun"><b>${String(p.light.alt).replace('-', '−')}°${sunGlyph(p.light)}</b><span>${esc(p.light.text)}</span></div>` : '';
@@ -343,6 +347,7 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
   function toggleSpecs() {
     specOpen = lb.classList.contains('is-bare') || !specOpen;
     store.set('photobook-specs', specOpen ? 'open' : 'closed');
+    specsIn.querySelector('.photobook-specs__hint')?.remove();
     if (specOpen) bare(false);
     applySpecs();
   }

@@ -13,9 +13,9 @@
 {% endif %}
 
 {% if post.link %}
-  <a class="list__item" href="{{ post.link }}" target="_blank">
+  <a class="list__item" href="{{ post.link }}" target="_blank" rel="noopener">
 {% else %}
-  <a class="list__item" href="{{ base_path }}{{ post.url }}" target="_blank" rel="permalink">
+  <a class="list__item" href="{{ base_path }}{{ post.url }}" rel="permalink">
 {% endif %}
   <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
     {% if include.type == "grid" and teaser %}

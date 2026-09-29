@@ -8,6 +8,9 @@
  */
 
 export function tips() {
+  // One label for the page, however many scripts ask (the masthead's glosses and a page's own).
+  if (document.documentElement.dataset.tips) return;
+  document.documentElement.dataset.tips = 'on';
   const tip = Object.assign(document.createElement('div'), { className: 'photobook-tip', role: 'tooltip' });
   let cur = null, wait = 0, byFocus = false;
 

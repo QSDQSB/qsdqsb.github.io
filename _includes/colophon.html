@@ -1,0 +1,13 @@
+{%- comment -%}
+  The quiet last line of every page but Home (whose own panels are its way on): the sections,
+  the feed and the terms, so no page ends in a wall. Styled in _page.scss.
+{%- endcomment -%}
+<footer class="site-colophon">
+  <nav class="site-colophon__links" aria-label="Site">
+    {%- for link in site.data.navigation.main %}
+    <a href="{{ link.url | relative_url }}">{{ link.title }}</a>
+    {%- endfor %}
+    <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
+    <a href="{{ '/terms/' | relative_url }}">Terms</a>
+  </nav>
+</footer>

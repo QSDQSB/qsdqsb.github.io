@@ -2,6 +2,23 @@ document.addEventListener("DOMContentLoaded", function () {
   const masthead = document.querySelector(".masthead");
   if (!masthead) return;
 
+  // The section this page belongs to (masthead.html is cached, so it is marked here, not in
+  // Liquid): the link whose data-section holds the longest path this page's path starts with.
+  (function markCurrentSection() {
+    const here = window.location.pathname;
+    let best = null;
+    let bestLength = 0;
+    masthead.querySelectorAll(".visible-links a[data-section]").forEach(function (link) {
+      link.dataset.section.split(/\s+/).forEach(function (path) {
+        if (path.length > 1 && here.indexOf(path) === 0 && path.length > bestLength) {
+          best = link;
+          bestLength = path.length;
+        }
+      });
+    });
+    if (best) best.setAttribute("aria-current", "page");
+  })();
+
   const nav = masthead.querySelector(".greedy-nav");
   const navToggle = masthead.querySelector(".greedy-nav__toggle");
   const hiddenLinks = masthead.querySelector(".hidden-links");
@@ -45,7 +62,8 @@ document.addEventListener("DOMContentLoaded", function () {
       !prefersReducedMotion &&
       !navLocked &&
       navState === "collapsed" &&
-      !isOverflowMenuOpen()
+      !isOverflowMenuOpen() &&
+      !isSearchOpen()
     );
   };
 
@@ -78,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const interacting = masthead.matches(":hover") || (active && masthead.contains(active));
       const overflowMenuOpen = isOverflowMenuOpen();
 
-      if (!interacting && !overflowMenuOpen) {
+      if (!interacting && !overflowMenuOpen && !isSearchOpen()) {
         setNavState("collapsed", "idle-timeout");
       } else {
         scheduleIdleCollapse();
@@ -92,6 +110,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const isActivelyScrolling = function () {
     return Date.now() < scrollActivityUntil;
+  };
+
+  // While search is open its input holds focus outside the masthead, and the
+  // masthead's search toggle is the visible way to close it: hold the bar still.
+  const isSearchOpen = function () {
+    return !!document.querySelector(".search-content.is--visible");
   };
 
   const isOverflowMenuOpen = function () {
@@ -147,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    if (isOverflowMenuOpen()) {
+    if (isOverflowMenuOpen() || isSearchOpen()) {
       directionalScrollIntent = 0;
       lastScrollY = currentY;
       return;
