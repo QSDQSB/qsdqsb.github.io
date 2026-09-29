@@ -1,13 +1,21 @@
 # main links links
+# gloss: a hover / keyboard-focus label for a name that doesn't explain itself (assets/js/nav-glosses.js).
+# also: other paths that belong to the section, for the current-section hairline (masthead-intent.js).
 main:
   - title: "Posts"
-    url: /year-archive/    
+    url: /year-archive/
+    also: /posts/ /tags/
 
   - title: "Voyage"
     url: /voyage/
+    also: /voyage-by-tags/
   - title: "Palette"
     url: /palette/
+    gloss: "The colours of every voyage"
+    also: /reverie/ /drift/
   - title: "Bestiary"
     url: /bestiary/
+    gloss: "An errata of creatures, still being bound"
   - title: "About"
     url: /about/
+    also: /cv/

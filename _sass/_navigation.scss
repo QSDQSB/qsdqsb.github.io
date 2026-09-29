@@ -388,6 +388,18 @@
           transform: scale(1) translateY(0);
         }
       }
+
+      // The section this page belongs to (marked by masthead-intent.js): a brass hairline under its name.
+      &[aria-current="page"]::after {
+        content: "";
+        position: absolute;
+        left: 0.68rem;
+        right: 0.68rem;
+        bottom: 0.2rem;
+        height: 1px;
+        background: rgba($intriguing-word-color, 0.7);
+        pointer-events: none;
+      }
     }
   }
 
