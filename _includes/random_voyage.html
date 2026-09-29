@@ -1,6 +1,7 @@
 {% include base_path %}
 
-{% capture random_voyage_targets %}["/voyage"{% for post in site.voyage %}{% if post.url %}, "{{ post.url }}"{% endif %}{% endfor %}]{% endcapture %}
+{%- comment -%} Only voyages whose Photobook holds photographs (_includes/photobook-ready.html): a jump never lands on an empty one. {%- endcomment -%}
+{% capture random_voyage_targets %}["/voyage"{% for post in site.voyage %}{% include photobook-ready.html doc=post %}{% if post.url and photobook_ready %}, "{{ post.url }}"{% endif %}{% endfor %}]{% endcapture %}
 
   <a class="floating_tarot_card_container wheel_of_fortune" href="/voyage/??????" data-random-jump data-random-jump-mode="navigate" data-random-jump-targets='{{ random_voyage_targets }}' title="🔮Wheel of Fortune: Mysterious journey awaits!" style="right: 1.5em; left: auto;">
     <div class="floating_tarot_card" aria-hidden="true" style="mask-image: url('/assets/css/images/tarots/wheel-of-fortune.svg');"></div>

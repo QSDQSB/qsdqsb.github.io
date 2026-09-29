@@ -111,10 +111,11 @@
 
 {%- comment -%} A page's own data and modules, fetched while the page is read rather than once its
   script has loaded and asked (front matter `preload:` for JSON, `modules:` for ES modules; the colour
-  pages). {%- endcomment -%}
-{%- for p in page.preload %}
-<link rel="preload" href="{{ p | relative_url }}" as="fetch" crossorigin>
-{%- endfor %}
+  pages). The data is fetched here and its promise handed on (assets/js/colour/cards.js json), not
+  preloaded: Safari does not reuse a preloaded fetch, and would download it twice. {%- endcomment -%}
+{%- if page.preload %}
+<script>window.QSD_pre = {};{% for p in page.preload %}{% assign u = p | relative_url %}window.QSD_pre[{{ u | jsonify }}] = fetch({{ u | jsonify }}).then(function (r) { return r.ok ? r.json() : null; }, function () { return null; });{% endfor %}</script>
+{%- endif %}
 {%- for m in page.modules %}
 <link rel="modulepreload" href="{{ m | relative_url }}">
 {%- endfor %}

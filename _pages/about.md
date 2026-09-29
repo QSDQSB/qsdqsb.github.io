@@ -50,7 +50,7 @@ header:
 - 🤖QSDQSB
 - 🔬24' Maths&Stats at Ox
 - 🦃From [The Queen's College](https://www.queens.ox.ac.uk), whose logo consists of three turkeys
-- [☕️](posts/2022/03/coffee-counter)Americano addict
+- [☕️](/posts/coffee-counter/)Americano addict
   - ⬆️Might trigger something if you click the coffee emoji
 - 📷Photography rookie
 - 🎸Amateur music composer

@@ -49,17 +49,19 @@
   a,
   a:visited {
     padding-bottom: 0.3rem;
-    border-bottom: 1px solid var(--photobook-line);
+    // The Photobook's inks, or their values where a page has not set them (About).
+    border-bottom: 1px solid var(--photobook-line, #{$darker-gray});
     font: 500 max(0.62rem, 11px) $barlow-font-family;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--photobook-ink-2);
+    color: var(--photobook-ink-2, #{$light-gray});
     text-decoration: none;
     transition: color 0.3s $cubic-bezier-smooth, border-color 0.3s $cubic-bezier-smooth;
+    html.motion-off & { transition: none; }
   }
 
   a:hover,
-  a:focus-visible { color: var(--photobook-ink); border-color: var(--photobook-ink-3); text-decoration: none; }
+  a:focus-visible { color: var(--photobook-ink, #{$lighter-gray}); border-color: var(--photobook-ink-3, #8b9296); text-decoration: none; }
 }
 
 /* ── controls ────────────────────────────────────────────────────────── */

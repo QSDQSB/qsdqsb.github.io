@@ -30,7 +30,7 @@ import { tips } from '../photobook/tip.js';
 import { crossfade } from '../photobook/wash.js';
 import { lightbox } from '../photobook/lightbox.js';
 import { vat, seedOf, oklab, glow } from './vat.js';
-import { esc, card, reverieOf, holding, varied, SHOWN, nearby, focus, shadeFor, place, cameFrom, backLabel, measureCards } from './cards.js';
+import { esc, card, reverieOf, holding, varied, SHOWN, nearby, focus, shadeFor, place, cameFrom, backLabel, measureCards, json } from './cards.js';
 
 const root = document.getElementById('reverie');
 const body = root?.querySelector('.reverie__stage');
@@ -46,9 +46,9 @@ async function main() {
     root.querySelector('.reverie__chip').style.background = `#${asked}`;
     const d = root.querySelector('.reverie__dye'); d.style.backgroundColor = `#${asked}`; d.style.setProperty('--shade', shadeFor(`#${asked}`));
   }
-  const names = fetch(new URL('../../ridgway.json', import.meta.url)).then((r) => r.json()).catch(() => ({ colours: [] }));
+  const names = json(new URL('../../ridgway.json', import.meta.url)).catch(() => ({ colours: [] }));
   let data = null;
-  try { data = await (await fetch(new URL('../../colour-atlas.json', import.meta.url))).json(); } catch { /* shown below */ }
+  try { data = await json(new URL('../../colour-atlas.json', import.meta.url)); } catch { /* shown below */ }
   const pages = data?.pages || {};
   const frames = (data?.photos || []).filter((p) => pages[p.g] && p.dots && p.sig?.length);
   if (!frames.length) { body.innerHTML = '<p class="colour-empty">The colours are still being read from the photographs.</p>'; return; }
@@ -228,12 +228,17 @@ async function main() {
   });
   // ← and → wander to the colour beside this one in the row nearby (dark to light), as a click there
   // would; not while the lightbox has the keys, or a field or a modifier does.
+  // The row is drawn again round each new colour, so the one left is not always beside it: the key
+  // the other way, straight after, steps back to it instead.
+  let lastStep = null;
   addEventListener('keydown', (e) => {
     if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || e.metaKey || e.ctrlKey || e.altKey || e.shiftKey || lbEl?.open || e.target.closest?.('input, textarea, select, [contenteditable]')) return;
+    if (lastStep && lastStep.key !== e.key && history.state?.colours === lastStep.depth) { e.preventDefault(); lastStep = null; history.back(); return; }
     const items = [...near.querySelectorAll('li')], here = items.findIndex((li) => li.querySelector('.is-here'));
     const to = items[here + (e.key === 'ArrowRight' ? 1 : -1)]?.querySelector('a[href]');
     if (here < 0 || !to) return;
     e.preventDefault(); to.click();
+    lastStep = { key: e.key, depth: history.state?.colours };
   });
   // Back and forward between colours (the lightbox's own steps, open and closed, keep the address).
   addEventListener('popstate', () => { if (lbEl?.open || location.search === (wanted || shownAt)) return; go(read(location.href)); });

@@ -219,9 +219,17 @@ export function measureCards(root) {
   };
   measure();
   measured.get(root)?.disconnect();
-  const ro = new ResizeObserver(measure);
+  const ro = new ResizeObserver(() => requestAnimationFrame(measure)); // after the resize is laid out, not inside it
   ro.observe(grid);
   measured.set(root, ro);
+}
+
+/** A page's data (a URL): the fetch its head began (_includes/head/custom.html, front matter
+ *  `preload:`), taken once; else fetched now. Rejects as fetch does when it cannot be had. */
+export function json(url) {
+  const key = new URL(url, location.href).pathname, pre = window.QSD_pre?.[key];
+  if (pre) delete window.QSD_pre[key];
+  return (pre || Promise.resolve(null)).then((d) => d ?? fetch(key).then((r) => r.json()));
 }
 
 /** The masthead's ‹ named for the page it goes back to. */

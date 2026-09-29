@@ -476,6 +476,11 @@ html.home-snap { scroll-snap-type: y mandatory; }
    plate, and a board of tiles, want the room a wide screen has. */
 .home__panel--index .home__panel-body > *,
 .home__panel--new .home__panel-body > * { max-width: 1600px; }
+// The board's height follows its width (each tile of a set shape): on a shorter window it is drawn
+// smaller, whole, rather than scrolled inside its panel.
+@include responsive-up(tablet-wide) {
+  .home__panel--new .home__panel-body > .home__whatsnew { max-width: unquote("min(1600px, calc((100svh - 10rem) * 1.75))"); }
+}
 /* the panel owns the vertical rhythm now — drop the sections' own block padding */
 .home__panel .home__index,
 .home__panel .home__whatsnew { padding: 0; }
@@ -869,4 +874,10 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
   .home__scroll-hint { opacity: 1; }
   .home__scroll-hint::after { top: auto; bottom: 0; opacity: 0.85; }
   .home__scroll-hint--up::after { top: 0; bottom: auto; }
+}
+// Motion off (crawlers, screenshots: _motion-off.scss stops every animation): the words the entrance
+// would have brought in are shown where they rest, as for reduced motion above.
+html.motion-off {
+  .home__wordmark .ln > span, .home__motto > span { transform: none; }
+  .home__plate, .home__scroll-hint { opacity: 1; }
 }

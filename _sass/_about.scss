@@ -42,7 +42,8 @@ body.page--about {
 }
 
 /* --- the way on, at the very end: the CV's door (it left the masthead) --- */
-.about__onward {
+// Named with the content it sits in, which sets every paragraph's margins otherwise.
+.page__content .about__onward {
   margin: 2.5rem 0 1.5rem;
   @include onward-links;
 }
