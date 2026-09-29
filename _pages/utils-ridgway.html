@@ -2,7 +2,7 @@
 title: "Ridgway's Colours"
 layout: default
 permalink: /utils/ridgway/
-preload: [/assets/ridgway.json, /assets/reverie-picks.json]
+preload: [/assets/reverie-picks.json]
 modules: [/assets/js/colour/ridgway.js, /assets/js/colour/cards.js, /assets/js/colour/vat.js, /assets/js/photobook/tip.js]
 body_class: photobook colour-page
 seo_description: "The 1,115 named colours of Robert Ridgway's Color Standards and Color Nomenclature (1912), each a way into the photographs that hold it."
@@ -21,8 +21,18 @@ masthead_back_label: Utilities
     <h1>Ridgway's Colours</h1>
     <p class="colour-lede">Robert Ridgway's <i>Color Standards and Color Nomenclature</i> (Washington, 1912): 1,115 colours, named and set on fifty-three plates.</p>
   </header>
+  {%- comment -%} The plates, drawn here from the book (_data/ridgway.json), so they are the page's own
+    words to any reader or crawler; the script adds which colours the photographs hold. {%- endcomment -%}
   <div class="ridgway-plates">
-    <noscript><p class="colour-empty">The plates are drawn by a script.</p></noscript>
+    {%- assign plate = nil -%}
+    {%- for c in site.data.ridgway.colours -%}
+      {%- if c[2] != plate -%}
+        {%- unless forloop.first %}</ol></section>{% endunless %}
+        {%- assign plate = c[2] %}
+    <section class="ridgway-plate" aria-label="Plate {{ plate }}"><h2 class="ridgway-plate__no">Plate {{ plate }}</h2><ol>
+      {%- endif %}<li><a class="ridgway-swatch" href="{{ '/reverie/' | relative_url }}?c={{ c[1] }}" style="--c:#{{ c[1] }}" data-hex="#{{ c[1] }}"><i></i><b>{{ c[0] | escape }}</b><span>{{ c[1] | upcase }}</span></a></li>
+      {%- if forloop.last %}</ol></section>{% endif -%}
+    {%- endfor %}
   </div>
   <p class="colour-source">Colours read from the photographed plates of <a href="https://www.gutenberg.org/ebooks/63087">Project Gutenberg's edition</a>; over a century old, they evoke more than they measure.</p>
   <footer class="colour-end">{% include presented-by-qsd.html line="Made by QSD." %}</footer>
