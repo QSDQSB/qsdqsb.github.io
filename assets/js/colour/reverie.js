@@ -38,6 +38,14 @@ const base = new URL('../../../', import.meta.url).pathname;
 const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 async function main() {
+  // The colour the address asks for, at once, while the photographs are read: its hex and its flat
+  // colour where the dye will pour.
+  const asked = new URLSearchParams(location.search).get('c');
+  if (/^[0-9a-f]{6}$/i.test(asked || '')) {
+    root.querySelector('.reverie__code').textContent = `#${asked.toUpperCase()}`;
+    root.querySelector('.reverie__chip').style.background = `#${asked}`;
+    const d = root.querySelector('.reverie__dye'); d.style.backgroundColor = `#${asked}`; d.style.setProperty('--shade', shadeFor(`#${asked}`));
+  }
   const names = fetch(new URL('../../ridgway.json', import.meta.url)).then((r) => r.json()).catch(() => ({ colours: [] }));
   let data = null;
   try { data = await (await fetch(new URL('../../colour-atlas.json', import.meta.url))).json(); } catch { /* shown below */ }
