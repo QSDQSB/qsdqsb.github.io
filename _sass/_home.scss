@@ -825,6 +825,10 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
 @include responsive-down(tablet-wide) {
   /* Stacked, one column; each tile carries its own height. */
   .wn-grid { grid-template-columns: 1fr; }
+  /* A stacked board is taller than a screen: the panel grows to hold it and the page scrolls it,
+     rather than a box of its own scrolling inside the snapping page. */
+  .home__panel--new { height: auto; min-height: 100svh; }
+  .home__panel--new .home__panel-body { overflow: visible; }
   .wn-card--2, .wn-card--3, .wn-card--reverie { aspect-ratio: auto; }
   .wn-card--1, .wn-card--2, .wn-card--3, .wn-card--4, .wn-card--word, .wn-card--reverie { grid-column: auto; grid-row: auto; }
   /* Stacked single-column, the cards carry their own weight — drop the excerpts
