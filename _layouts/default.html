@@ -19,6 +19,7 @@ layout: compress
     {% include_cached skip-link.html %}
     {% include_cached masthead.html back_url=page.masthead_back_url back_label=page.masthead_back_label %}
     {{ content }}
+    {% unless page.url == "/" %}{% include_cached colophon.html %}{% endunless %}
 
     {% if site.search == true %}
     <div class="search-content">
