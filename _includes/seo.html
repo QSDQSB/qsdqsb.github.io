@@ -11,6 +11,8 @@
      (SERP + browser tab only; the visible page heading is untouched) so they
      match long-tail photography queries. {% endcomment %}
   {% assign _title_core = page.title %}
+  {% comment %} seo_title: a fuller title for search and the tab, where the page's own heading is short (Ridgway's Colours, after the book it holds). {% endcomment %}
+  {% if page.seo_title %}{% assign _title_core = page.seo_title %}{% endif %}
   {% if page.collection == 'voyage' or page.collection == 'subvoyage' %}
     {% assign _title_core = page.title | append: " — Travel Photography" %}
   {% endif %}
