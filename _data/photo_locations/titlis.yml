@@ -1,0 +1,117 @@
+# Suggested locations for gallery titlis, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf3877:
+    suggested: Hasenmatt, Grafenort
+    street: Hasenmatt
+    city: Grafenort
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf3926:
+    suggested: Engelbergerstrasse, Engelberg
+    street: Engelbergerstrasse
+    city: Engelberg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf3940:
+    suggested: Gerschnistrasse, Engelberg
+    street: Gerschnistrasse
+    city: Engelberg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf3968:
+    suggested: Station Stand, Engelberg
+    street: Station Stand
+    city: Engelberg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf3991:
+    suggested: Station Stand, Engelberg
+    street: Station Stand
+    city: Engelberg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4004:
+    suggested: Station Stand, Engelberg
+    street: Station Stand
+    city: Engelberg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4009:
+    suggested: Station Stand, Engelberg
+    street: Station Stand
+    city: Engelberg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5022:
+    suggested: Titlis Cliff Walk, Engelberg
+    landmark: Titlis Cliff Walk
+    street: Kleintitlis
+    city: Engelberg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5024:
+    suggested: Titlis Cliff Walk, Engelberg
+    landmark: Titlis Cliff Walk
+    street: Kleintitlis
+    city: Engelberg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5027:
+    suggested: Titlis Cliff Walk, Engelberg
+    landmark: Titlis Cliff Walk
+    street: Kleintitlis
+    city: Engelberg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5039:
+    suggested: Titlis Cliff Walk, Engelberg
+    landmark: Titlis Cliff Walk
+    street: Kleintitlis
+    city: Engelberg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5054:
+    suggested: Titlis Cliff Walk, Engelberg
+    landmark: Titlis Cliff Walk
+    street: Kleintitlis
+    city: Engelberg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5056:
+    suggested: Titlis Cliff Walk, Engelberg
+    landmark: Titlis Cliff Walk
+    street: Kleintitlis
+    city: Engelberg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5083:
+    suggested: Titlis Cliff Walk, Engelberg
+    landmark: Titlis Cliff Walk
+    street: Kleintitlis
+    city: Engelberg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5101:
+    suggested: Titlis Cliff Walk, Engelberg
+    landmark: Titlis Cliff Walk
+    street: Kleintitlis
+    city: Engelberg
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
