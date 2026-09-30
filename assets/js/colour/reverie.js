@@ -2,16 +2,13 @@
  * Reverie (_pages/reverie.html): one colour, and every photograph from any voyage that holds it, read
  * from each photograph's 24 dots (./cards.js holding: the same colour to the eye, a dot's worth of the
  * picture at least), the one it was found in first. The colour leads: a chip of it, exact and flat,
- * labelled with its hex and its name, standing on its dye, which fills the screen and stays there, the
- * room the page stands in (a rectangular vat, the colour given the most of it and that photograph's
- * colours round it), its hex set large. The rest rises over it on a pane of liquid glass afloat in the
- * dye, the dye running on beside it; the glass dims what it shows the more the lighter the dye
- * (--glass-light), so the prints are judged on near-black whatever the colour. On it, the
- * colours nearby, a step away each, to wander to; then the photographs, as the palette page's cards but
- * bare: prints and their words, nothing laid over the mood; or, switched, each as its own dye in the
- * print's place, the print coming back under the pointer (or the keyboard's focus; on a touch screen,
- * in the lightbox a tap opens). A print opens in the book's own lightbox, over the page
- * (../photobook/lightbox.js: its specs, keys and rail), the
+ * labelled with its hex and its name, standing on its dye across the whole width
+ * (a rectangular vat, the colour given the most of it and that photograph's colours round it), its hex
+ * set large. Beneath, the colours nearby, a step away each, to wander to; then the photographs, as the
+ * palette page's cards but bare: prints and their words, nothing laid over the mood; or, switched to
+ * their palettes, each photograph as its own dye in its print's place, the print coming back under the
+ * pointer or the keyboard (on a touch screen, in the lightbox a tap opens). A print opens in
+ * the book's own lightbox, over the page (../photobook/lightbox.js: its specs, keys and rail), the
  * colour its first frame and each photograph's dye vat a dot on the rail; closing it is back in the
  * colour, where it was left. A voyage's name opens its palette.
  *
@@ -32,47 +29,24 @@
  */
 
 import { tips } from '../photobook/tip.js';
+import { crossfade } from '../photobook/wash.js';
 import { lightbox } from '../photobook/lightbox.js';
-import { vat, seedOf, oklab, lin, glow, stillness as still } from './vat.js';
+import { vat, seedOf, oklab, glow, stillness as still } from './vat.js';
 import { esc, card, reverieOf, holding, varied, SHOWN, nearby, focus, shadeFor, dripper, place, cameFrom, backLabel, measureCards, json } from './cards.js';
 
 const root = document.getElementById('reverie');
 const body = root?.querySelector('.reverie__stage');
 const base = new URL('../../../', import.meta.url).pathname;
-const room = root?.querySelector('.reverie__room');
-
-/** How much of the dye's light the glass lets through (_colour.scss .reverie__sheet, its backdrop's
- *  brightness): 0.64 of a deep dye's, down to 0.26 of the lightest's, by the dye's light (its colours'
- *  luminance, each by its share). */
-const glassFor = (palette) => {
-  const Y = palette.reduce((a, [h, pc]) => { const n = parseInt(h.slice(1), 16); return a + (pc / 100) * (0.2126 * lin(n >> 16) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255)); }, 0);
-  return (0.64 - 0.384 * Math.sqrt(Math.min(1, Y))).toFixed(3);
-};
-
-/** The photographs as prints, or as their dyes (kept for the next visit: a reader's preference, no more). */
-const VIEW = 'reverie-view';
-let palettes = false;
-try { palettes = localStorage.getItem(VIEW) === 'palettes'; } catch { /* prints, then */ }
+const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* this visit only */ } } };
 
 async function main() {
-  // The page's glass and the colophon's made one pane (_colour.scss .reverie__sheet::before): the page's
-  // reaches down behind the colophon, as far as the colophon is tall.
-  const foot = document.querySelector('.site-colophon');
-  if (foot && 'ResizeObserver' in window) {
-    new ResizeObserver(() => {
-      root.style.setProperty('--reverie-foot', `${foot.offsetHeight}px`);
-      root.classList.add('is-joined');
-    }).observe(foot);
-  }
-
   // The colour the address asks for, at once, while the photographs are read: its hex and its flat
   // colour where the dye will pour.
   const asked = new URLSearchParams(location.search).get('c');
   if (/^[0-9a-f]{6}$/i.test(asked || '')) {
     root.querySelector('.reverie__code').textContent = `#${asked.toUpperCase()}`;
     root.querySelector('.reverie__chip').style.background = `#${asked}`;
-    room.style.backgroundColor = `#${asked}`;
-    root.querySelector('.reverie__dye').style.setProperty('--shade', shadeFor(`#${asked}`));
+    const d = root.querySelector('.reverie__dye'); d.style.backgroundColor = `#${asked}`; d.style.setProperty('--shade', shadeFor(`#${asked}`));
   }
   const names = json(new URL('../../ridgway.json', import.meta.url)).catch(() => ({ colours: [] }));
   let data = null;
@@ -80,6 +54,20 @@ async function main() {
   const pages = data?.pages || {};
   const frames = (data?.photos || []).filter((p) => pages[p.g] && p.dots && p.sig?.length);
   if (!frames.length) { body.innerHTML = '<p class="colour-empty">The colours are still being read from the photographs.</p>'; return; }
+
+  // The photographs, or their palettes: each photograph's own dye in its print's place, poured as its
+  // card nears the screen, and only once asked for; kept, so the same photograph under the next colour
+  // is not poured again. The choice kept for the next visit.
+  let view = store.get('reverie-view') === 'palettes' ? 'palettes' : 'prints';
+  root.classList.toggle('is-palettes', view === 'palettes');
+  const drops = dripper(), byKey = new Map(frames.map((p) => [`${p.g}/${p.slug}`, p]));
+  const pourDyes = () => {
+    if (view !== 'palettes') return;
+    drops.drip(body.querySelectorAll('.palette-card__dye'), (slot) => slot.dataset.key, (slot) => {
+      const p = byKey.get(slot.dataset.key), r = p.r || 1.5;
+      return vat(p.sig, { shape: 'rect', width: 120, height: Math.round(120 / r), seed: seedOf(slot.dataset.key) });
+    });
+  };
 
   /** The colour and the photograph it was found in, from an address. */
   function read(url) {
@@ -108,19 +96,12 @@ async function main() {
   };
   const near = root.querySelector('.reverie__near');
   const back = document.querySelector('.masthead__back'), came = cameFrom();
+  // The room below the opening, faintly lit by the photograph's dye (the palette page's room,
+  // ../photobook/wash.js).
+  const room = Object.assign(document.createElement('div'), { className: 'palette-ambience' });
+  room.setAttribute('aria-hidden', 'true');
+  root.prepend(room);
   let shown = null, hero = {};
-  // Each photograph's own dye, in its print's place, poured as its card nears the screen and kept (the
-  // same photograph under another colour is the same dye); only once the palettes are asked for.
-  const drops = dripper();
-  const byKey = new Map(frames.map((p) => [`${p.g}/${p.slug}`, p]));
-  const pourDyes = () => {
-    if (!palettes) return;
-    drops.drip(body.querySelectorAll('.palette-card__dye'), (slot) => slot.dataset.key, (slot) => {
-      const p = byKey.get(slot.dataset.key), r = p.r || 1.5;
-      return vat(p.sig, { shape: 'rect', width: 120, height: Math.round(120 / r), seed: seedOf(slot.dataset.key) });
-    });
-  };
-  root.classList.toggle('is-palettes', palettes);
 
   // The book's lightbox, over the page. Its frames are laid when it opens (the colour, then the
   // photographs as the cards stand), from every voyage's lightbox frames (/assets/frames.json,
@@ -163,11 +144,11 @@ async function main() {
    */
   async function prepare({ f, hex }) {
     const page = pages[f.g], HEX = hex.toUpperCase(), seed = seedOf(`${f.g}/${f.slug}`);
-    // The room: the photograph's colours turned toward this one (./cards.js focus) and poured into the
-    // whole screen (a rectangular vat, ./vat.js), so it lies in the middle and the others run as currents
+    // The opening: the photograph's colours turned toward this one (./cards.js focus) and poured into the
+    // whole width (a rectangular vat, ./vat.js), so it lies in the middle and the others run as currents
     // round it. Drawn at an eighth of the size it is shown and let soften as it is spread: a mood.
     const focused = focus(f.sig, hex);
-    const box = room.getBoundingClientRect();
+    const box = dye.getBoundingClientRect();
     // Still, from the shared context (no context of its own to make, no program to compile): the colour
     // changes at once. The stirrable one is made only when the dot is first pointed at (below).
     const fw = Math.max(1, Math.round(box.width / 8)), fh = Math.max(1, Math.round(box.height / 8));
@@ -182,12 +163,12 @@ async function main() {
     return function put() {
       document.title = document.title.replace(/^[^·]*·/, `Reverie in ${HEX} ·`);
       if (back && !came) { const label = `Back to ${f.name || 'the photograph'}, in ${page.title}`; back.href = `${page.url}#${encodeURIComponent(f.slug)}`; back.setAttribute('aria-label', label); back.dataset.tip = label; }
-      room.querySelector(':scope > .colour-vat')?.remove();
+      if (shown?.f !== f) crossfade(room, glow(f.sig, { seed }));
+      dye.querySelector(':scope > .colour-vat')?.remove();
       hero.live?.release?.(); // the last colour's stirring field, if it was stirred, lets its context go
       hero = { field, live: null, spec: [focused, { shape: 'rect', width: fw, height: fh, seed, stir: 'hold', speed: 20 }], want: false };
-      room.prepend(field);
-      room.classList.add('is-poured');
-      document.documentElement.style.setProperty('--glass-light', glassFor(focused)); // the page's glass and the site's colophon beneath it
+      dye.prepend(field);
+      dye.classList.add('is-poured');
       dye.style.setProperty('--shade', shadeFor(hex));
       codeEl.textContent = HEX;
       chipEl.style.background = hex;
@@ -197,11 +178,14 @@ async function main() {
         ? `<span class="is-here" style="--c:${c.hex}" aria-current="true"><span class="visually-hidden">${c.hex.toUpperCase()}, here</span></span>`
         : `<a href="${reverieOf(c.f.g, c.f.slug, c.hex)}" style="--c:${c.hex}" data-tip="${c.hex.toUpperCase()}" data-tip-side="top" aria-label="${c.hex.toUpperCase()}"></a>`}</li>`).join('')}</ol>`;
       // The photographs, bare: the print and its words; the first, where the colour was found, ringed.
-      // Beside their count, the switch to their dyes.
+      // Beside their count, the switch to their palettes.
       body.innerHTML = `
         <div class="reverie__tally">
           <p class="reverie__count">${all > found.length ? `QSD reveries: the ${found.length} nearest of ${all} photographs` : (all === 1 ? 'QSD reveries in only this photograph… for now' : `QSD reveries in ${all} photographs`)}</p>
-          <button type="button" class="reverie__view" aria-pressed="${palettes}" data-tip="Each photograph as its colours alone" data-tip-side="top"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="5" cy="5.6" r="2.6"/><circle cx="11" cy="5.6" r="2.6"/><circle cx="8" cy="10.8" r="2.6"/></svg>Palettes</button>
+          <div class="photobook-sheet__order reverie__view" role="group" aria-label="Show">
+            <button type="button" aria-pressed="${view === 'prints'}" data-view="prints">Photographs</button>
+            <button type="button" aria-pressed="${view === 'palettes'}" data-view="palettes">Palettes</button>
+          </div>
         </div>
         <h2 class="visually-hidden">The photographs</h2>
         <div class="palette-cards">${found.map(({ f: p }, i) => card(p, { href: `${base}drift/?from=${encodeURIComponent(`${p.g}/${p.slug}`)}&c=${hex.slice(1)}&src=${encodeURIComponent(`${f.g}/${f.slug}`)}&open`, label: 'full screen, in this colour', i, from: i === 0, place: pages[p.g].title, placeHref: `${base}palette/?at=${encodeURIComponent(p.slug)}#${p.g}`, plain: true, dye: true })).join('')}</div>
@@ -260,13 +244,13 @@ async function main() {
 
   // A colour nearby: its Reverie, in the page. A print: the lightbox, over the page.
   root.addEventListener('click', (e) => {
-    const view = e.target.closest('.reverie__view');
-    if (view) {
-      palettes = !palettes;
-      view.setAttribute('aria-pressed', palettes);
-      root.classList.toggle('is-palettes', palettes);
-      try { localStorage.setItem(VIEW, palettes ? 'palettes' : 'prints'); } catch { /* this visit only */ }
+    const switched = e.target.closest('.reverie__view button[data-view]');
+    if (switched) {
+      if (switched.dataset.view === view) return;
+      view = switched.dataset.view; store.set('reverie-view', view);
+      for (const b of switched.parentElement.children) b.setAttribute('aria-pressed', String(b === switched));
       pourDyes();
+      root.classList.toggle('is-palettes', view === 'palettes');
       return;
     }
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;

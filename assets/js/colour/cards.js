@@ -42,11 +42,11 @@ export const bar = (cs) => `<div class="palette-card__bar" aria-hidden="true">${
  *  (`place`, when the cards come from many voyages), name and light, its bar, and a slot for its vat
  *  (`data-i`, `i`). `from`: the frame the reader came from. `plain`: the print and its words alone.
  *  `label`: where the print leads, for a screen reader; `placeHref`: where the place's name leads.
- *  `dye`: a slot over the picture, its own shape, for the frame's dye in its place (Reverie's palettes). */
+ *  `dye`: a slot over the print for the photograph's own dye, in its box (Reverie's palettes). */
 export function card(p, { href, i, n = i, from = false, pick = null, place = '', placeHref = null, label = 'in its book', link = null, plain = false, dye = false }) {
   const size = p.sizes.find((s) => s >= 960) || p.sizes[p.sizes.length - 1] || 480, colours = !plain && p.sig?.length;
   return `<article class="palette-card${from ? ' is-from' : ''}${plain ? ' is-plain' : ''}" id="f-${esc(p.slug)}" data-n="${n}">
-    <a class="palette-card__print" href="${href}" aria-label="${esc(p.name || p.slug)}, ${esc(label)}"><img style="--r:${p.r || 1.5}" src="${p.url}/${size}.webp" alt="" loading="lazy" decoding="async">${dye ? `<i class="palette-card__dye" aria-hidden="true" style="--r:${p.r || 1.5}" data-key="${esc(`${p.g}/${p.slug}`)}"></i>` : ''}</a>
+    <a class="palette-card__print" href="${href}" aria-label="${esc(p.name || p.slug)}, ${esc(label)}"><img style="--r:${p.r || 1.5}" src="${p.url}/${size}.webp" alt="" loading="lazy" decoding="async">${dye ? `<span class="palette-card__dye" style="--r:${p.r || 1.5};background:${p.sig?.[0]?.[0] || 'none'}" data-key="${esc(`${p.g}/${p.slug}`)}"></span>` : ''}</a>
     ${colours ? blocks(p.sig, { pick, link }) : ''}
     <div class="palette-card__row"><div>
       ${place ? `<p class="palette-card__place">${placeHref ? `<a href="${placeHref}">${esc(place)}</a>` : esc(place)}</p>` : ''}

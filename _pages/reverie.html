@@ -12,19 +12,15 @@ masthead_back_label: QSD's Palette
 ---
 {%- comment -%}
   Reverie: one colour, and every photograph from any voyage that holds it (close to the eye), the one
-  it was found in first. The colour leads: its dye fills the screen, the room the page stands in (that
-  photograph's colours round it), its hex set large on the first screen; the rest of the page rises over
-  the dye on a pane of liquid glass afloat in it, the dye running on beside it, the glass dimming what it
-  shows enough that no dye, however light, colours how a print reads.
-  On it, the colours nearby, a step away each, to wander to; then the photographs, as the palette page's
-  cards, or each as its dye alone (the photograph beneath, under the pointer), each opening in the book's
-  own lightbox over the page, the colour its first frame. A colour nearby begins a Reverie of its own, in the page. /reverie/?c=<hex>&from=<gallery>/<slug>; without a colour, the photograph's leading one;
+  it was found in first. The colour leads: its dye across the whole width (that photograph's colours
+  round it), its hex set large; beneath, the colours nearby, a step away each, to wander to; then the
+  photographs, as the palette page's cards, each opening in the book's own lightbox over the page,
+  the colour its first frame. A colour nearby begins a Reverie of its own, in the page. /reverie/?c=<hex>&from=<gallery>/<slug>; without a colour, the photograph's leading one;
   without either, a photograph at random.
   Beneath the hex, as its caption, the colour's name in Ridgway's nomenclature (1912) when one lies close (/assets/ridgway.json).
   Data: /assets/colour-atlas.json. Script: assets/js/colour/reverie.js. Styles: _sass/_colour.scss.
 {%- endcomment -%}
 <main class="reverie" id="reverie">
-  <div class="reverie__room" aria-hidden="true"></div>
   <header class="reverie__dye" tabindex="-1">
     <div class="reverie__words">
       <div class="reverie__label">
@@ -34,26 +30,24 @@ masthead_back_label: QSD's Palette
       </div>
     </div>
   </header>
-  <div class="reverie__sheet">
-    <div class="reverie__body">
-      <nav class="reverie__near" aria-label="Colours nearby"></nav>
-      <div class="reverie__stage">
-        <noscript><p class="colour-empty">Reverie is drawn by a script; with it off, the photographs are in the <a href="{{ '/voyage/' | relative_url }}">voyages</a>.</p></noscript>
+  <div class="reverie__body">
+    <nav class="reverie__near" aria-label="Colours nearby"></nav>
+    <div class="reverie__stage">
+      <noscript><p class="colour-empty">Reverie is drawn by a script; with it off, the photographs are in the <a href="{{ '/voyage/' | relative_url }}">voyages</a>.</p></noscript>
+    </div>
+  </div>
+  {%- comment -%} The word itself, as the site's word cards give one (_sass/_archive.scss .word_card); its facts from the Online Etymology Dictionary and Wiktionary (reverie, rêver). {%- endcomment -%}
+  <section class="page__intriguing-word-wrapper reverie__word" aria-label="The word">
+    <h4 class="barlow"><i class="fa-solid fa-feather" aria-hidden="true"></i><span class="visually-hidden">The word</span></h4>
+    <div class="word_card_container">
+      <div class="word_card">
+        <h2 lang="en" translate="no">Reverie</h2>
+        <span class="word_card__origin">French · 14th century</span>
+        <p>A state of pleasant, dreamlike musing; being wholly <span class="to-emphasise">lost in one's thoughts</span>. From Old French <i lang="fr">resver</i>, "to wander, to rave", the verb that also became <i lang="fr">rêver</i>, "to dream".</p>
       </div>
     </div>
-    {%- comment -%} The word itself, as the site's word cards give one (_sass/_archive.scss .word_card); its facts from the Online Etymology Dictionary and Wiktionary (reverie, rêver). {%- endcomment -%}
-    <section class="page__intriguing-word-wrapper reverie__word" aria-label="The word">
-      <h4 class="barlow"><i class="fa-solid fa-feather" aria-hidden="true"></i><span class="visually-hidden">The word</span></h4>
-      <div class="word_card_container">
-        <div class="word_card">
-          <h2 lang="en" translate="no">Reverie</h2>
-          <span class="word_card__origin">French · 14th century</span>
-          <p>A state of pleasant, dreamlike musing; being wholly <span class="to-emphasise">lost in one's thoughts</span>. From Old French <i lang="fr">resver</i>, "to wander, to rave", the verb that also became <i lang="fr">rêver</i>, "to dream".</p>
-        </div>
-      </div>
-    </section>
-    <footer class="colour-end">{% include presented-by-qsd.html line="Shot by QSD." %}</footer>
-  </div>
+  </section>
+  <footer class="colour-end">{% include presented-by-qsd.html line="Shot by QSD." %}</footer>
 </main>
 {%- comment -%} A print opens in the book's own lightbox, over the page (assets/js/photobook/lightbox.js). {%- endcomment -%}
 {% include photobook/lightbox.html %}
