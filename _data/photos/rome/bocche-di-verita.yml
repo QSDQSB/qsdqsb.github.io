@@ -1,3 +1,7 @@
 # Authored layer for gallery/rome/bocche-di-verita — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: dscf2406
+  focus: [0.485, 0.648]
 photos: {}

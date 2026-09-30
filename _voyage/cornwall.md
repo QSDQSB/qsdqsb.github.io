@@ -6,6 +6,4 @@ gallery_name: "cornwall"
 date: 2023-03-13
 tags:
   - 🌊Coastal
-header:
-  overlay_image: cover/cornwall-portmourth-beach-3v1.jpg
 ---

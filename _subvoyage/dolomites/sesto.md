@@ -13,6 +13,4 @@ tags:
 map:
   lat: 46.6667
   lng: 12.35
-header:
-  overlay_image: cover/dolomites/Sesto-3v1.jpg
 ---

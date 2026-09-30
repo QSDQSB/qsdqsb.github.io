@@ -100,7 +100,9 @@ should call `npm run` directly.
 Photographs live in R2 and reach the page from `img.qsdqsb.com`. The build
 only fetches their manifests (`npm run photos:fetch`) and merges them with the
 committed captions; the Photobook's rows, cover, colophon and per-photo layer
-are worked out at that step by `scripts/photos/lib/book.mjs`. The sitemap's
+are worked out at that step by `scripts/photos/lib/book.mjs`, and each voyage's
+authored `cover:` is resolved into `_data/photo_manifests/_covers.json`. `npm run
+covers` then cuts their 1200 × 630 link previews (`images/og/`, gitignored). The sitemap's
 image entries come from the same manifests (the 1920 px JPEG, titled with the
 place). The old `gallery/` tree is retired and no thumbnails are generated;
 `gallery/`, `images/thumbnails/gallery/` and `_data/gallery_meta/` stay in

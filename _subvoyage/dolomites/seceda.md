@@ -11,6 +11,4 @@ tags:
   - 🏞️QSD's Favourite
   - 🍝Italy
   - 🥾Hiking
-header:
-  overlay_image: cover/dolomites/Seceda-3v1.jpg
 ---

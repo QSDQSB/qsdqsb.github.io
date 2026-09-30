@@ -8,6 +8,4 @@ tags:
   - 🌊Coastal
 map:
   query: "Gaztelugatxe, Bakio, Spain"
-header:
-  overlay_image: cover/dragonstone-3v1.jpg
 ---

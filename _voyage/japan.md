@@ -6,6 +6,5 @@ subgalleries: true
 tags:
   - 🛤️Retrace
 header:
-  overlay_image: cover/japan/Japan-3v1.jpg
   caption: "*impermanent: 無常*"
 ---

@@ -1,4 +1,6 @@
-{% if page.header.overlay_color or page.header.overlay_image or page.header.image %}
+{% comment %} A voyage's cover (voyage-cover.html) turns the overlay hero on, as header.overlay_image does for other pages. {% endcomment %}
+{% include voyage-cover.html doc=page %}
+{% if page.header.overlay_color or page.header.overlay_image or page.header.image or vc %}
 {% include base_path %}
 
 {% if page.header.image contains "://" %}
@@ -32,11 +34,22 @@
 {% endif %}
 
 
-<div class="page__hero{% if page.header.overlay_color or page.header.overlay_image %}--overlay{% endif %}"
+<div class="page__hero{% if page.header.overlay_color or page.header.overlay_image or vc %}--overlay{% endif %}"
   style="{% if page.header.overlay_color %}background-color: {{ page.header.overlay_color | default: 'transparent' }};{% endif %}"
 >
-  {% if page.header.overlay_color or page.header.overlay_image %}
-    {% if overlay_img_path %}
+  {% if page.header.overlay_color or page.header.overlay_image or vc %}
+    {% if vc %}
+      {% comment %}
+        A voyage's cover (voyage-cover.html): the photo's tiers, 2880 on a desktop and 1920 on a
+        phone, placed on its focus for each shape the hero takes (_sass/_page.scss). Its depth map
+        belongs to the photo, images/depth/photos/<gallery>/<slug>.depth.jpg, and the canvas takes
+        the same focus.
+      {% endcomment %}
+      {% capture depth_path %}/images/depth/photos/{{ vc.gallery }}/{{ vc.slug }}.depth.jpg{% endcapture %}
+      {% assign depth_file = nil %}
+      {% unless page.header.depth_parallax == false %}{% assign depth_file = site.static_files | where: "path", depth_path | first %}{% endunless %}
+      <div class="page__hero-media page__hero-media--cover" style="--hero-img: url('{{ vc.url }}/2880.webp'); --hero-img-sm: url('{{ vc.url }}/1920.webp'); --hero-pos: {{ vc.pos.hero }}; --hero-pos-md: {{ vc.pos.screen }}; --hero-pos-sm: {{ vc.pos.tall }};{% if overlay_filter %} --hero-filter: linear-gradient({{ overlay_filter }}, {{ overlay_filter }});{% endif %}"{% if depth_file %} data-depth-map="{{ depth_path | prepend: base_path }}" data-depth-photo="{{ vc.url }}/1920.webp" data-depth-centre="{{ vc.focus[0] }} {{ vc.focus[1] }}"{% if overlay_filter %} data-depth-filter="{{ overlay_filter }}"{% endif %}{% if page.header.depth_amp %} data-depth-amp="{{ page.header.depth_amp }}"{% endif %}{% if page.header.depth_focus %} data-depth-focus="{{ page.header.depth_focus }}"{% endif %}{% endif %}></div>
+    {% elsif overlay_img_path %}
       {% comment %}
         Depth parallax (Lontananza): if scripts/generate-hero-depth-maps.mjs
         produced a depth map for this hero image, emit data attributes for

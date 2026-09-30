@@ -1,3 +1,7 @@
 # Authored layer for gallery/dolomites/selva — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: dscf0110
+  focus: [0.545, 0.47]
 photos: {}

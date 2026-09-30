@@ -8,6 +8,4 @@ tags:
   - 🏞️QSD's Favourite
 left_tarot_card: knight-of-cups
 left_tarot_href: "#prague-castle"
-header:
-  overlay_image: cover/prague-wide-mount-3v1.jpg
 ---

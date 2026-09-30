@@ -61,9 +61,10 @@ Recent Updates ranks voyages by it (a voyage's `date` is the trip's, not when it
 1. Photos: an inbox folder named for the new gallery (kebab-case, e.g. `lake-como`), then
    `npm run photos:ingest` as above.
 2. Page: use the **voyage-scaffolder** agent, or write `_voyage/<g>.md` with `title`, `date`, `excerpt`,
-   `tags`, `gallery_name: "<g>"` and `header.overlay_image: cover/<name>-3v1.jpg`.
-3. Cover: a 3:1 JPEG in `images/cover/` (committed). The build writes its sized versions itself
-   (`npm run covers`).
+   `tags` and `gallery_name: "<g>"`.
+3. Cover: once the photos are processed, `npm run covers:focus`: pick the photo, click where its subject
+   sits, Save. That writes `cover: { photo: dscf…, focus: [x, y] }` into `_data/photos/<g>.yml`; no image
+   file, no frontmatter. `check:frontmatter` reports a voyage with no cover.
 4. Optional words: `npm run photos:captions -- --gallery <g>` adds an empty entry per slug to fill in.
    Pin the opening frames with `order: [dscf…, dscf…]`.
 5. `npm run check:frontmatter` and `npm run check:gallery`, then commit the `.md`, the YAML and the cover.
@@ -82,11 +83,12 @@ All of these go in `_data/photos/<g>.yml` (`npm run photos:fetch` validates it):
 | Correct a wrong place name (a stale GPS fix) | `dscf6440: { place: "The Monument, London" }` |
 | Add a caption, alt text or story | `caption:`, `alt:`, `story: \|` (plus `_zh` variants) |
 | Hide a photo but keep it | `hidden: true` |
-| Prefer a photo for the cover | `featured: true` (the first featured landscape becomes the cover frame) |
+| Set or move the cover | `npm run covers:focus` (http://localhost:4400): pick the photo, click where the subject sits, Save. Or by hand, top level `cover: { photo: dscf7406, focus: [0.5, 0.48] }`: the photo, and the subject's x, y (0–1 from its top-left). Every shape (card, Photobook, hero, phone, link preview) is cut around that point. `crops: { "4:3": [x, y] }` only for a shape whose subject sits elsewhere. A voyage in parts: `_data/photos/<parent>.yml`, `photo: <part>/<slug>` |
+| Prefer a photo for the book's opening frame, with no cover set | `featured: true` (the first featured landscape) |
 | A flight or aerial set (no place or sun; temperature at altitude) | top level `aerial: { altitude_ft: 33000 }` |
 
 No reprocessing needed: rebuild (`npm run build`/`serve`) to see it. Top-level keys allowed: `title`,
-`order`, `aerial`, `photos`. Per photo: `place`, `caption`, `caption_zh`, `alt`, `story`, `story_zh`,
+`order`, `aerial`, `cover`, `photos`. Per photo: `place`, `caption`, `caption_zh`, `alt`, `story`, `story_zh`,
 `featured`, `hidden`.
 
 ### Replace a photo with a new edit

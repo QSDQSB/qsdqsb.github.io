@@ -667,7 +667,7 @@ html.home-snap { scroll-snap-type: y mandatory; }
   padding: 1.3rem;
   transition: $cubic-bezier-default-05s;
 }
-.wn-media { position: absolute; inset: 0; z-index: -2; background-size: cover; background-position: center; background-image: var(--cover); background-color: #14121a; filter: brightness(0.86) saturate(0.92); transform: scale(1.03); transition: transform 1.1s $cubic-bezier-smooth; }
+.wn-media { position: absolute; inset: 0; z-index: -2; background-size: cover; background-position: var(--cover-pos, center); background-image: var(--cover); background-color: #14121a; filter: brightness(0.86) saturate(0.92); transform: scale(1.03); transition: transform 1.1s $cubic-bezier-smooth; }
 .wn-scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(9, 9, 12, 0.28) 0%, rgba(9, 9, 12, 0.55) 45%, rgba(9, 9, 12, 0.9) 100%); }
 
 /* Hover mirrors .card: a scaled lift on a deep layered shadow. The whole card

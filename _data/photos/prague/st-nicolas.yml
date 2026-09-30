@@ -1,3 +1,7 @@
 # Authored layer for gallery/prague/st-nicolas — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: dscf4786
+  focus: [0.529, 0.471]
 photos: {}

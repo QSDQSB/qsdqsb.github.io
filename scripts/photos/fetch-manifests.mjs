@@ -9,6 +9,8 @@
  *   in   _data/photo_locations/<gallery>.yml               place names, when located
  *   out  _data/photo_manifests/<key>.json                  (gitignored)
  *   out  _data/photo_manifests/_index.json                 summary + warnings
+ *   out  _data/photo_manifests/_covers.json                each voyage's cover (lib/cover.mjs), by page:
+ *                                                          the gallery's key, or a parent voyage's name
  *   out  _data/photo_manifests/colour-atlas.json           every coloured photo across voyages, when
  *                                                          palettes are known (lib/atlas.mjs)
  *   out  _data/photo_manifests/palettes.json               every voyage's palette, for QSD's Palette
@@ -46,6 +48,7 @@ import { env, PATHS, MANIFEST_FILE, galleryKey, parseArgs } from './lib/config.m
 import { FsStore, R2Store } from './lib/store.mjs';
 import { rcloneVersion, remoteExists } from './lib/rclone.mjs';
 import { mergeManifest, validateAuthored } from './lib/manifest.mjs';
+import { coverEntry } from './lib/cover.mjs';
 import { bookOf } from './lib/book.mjs';
 import { readSidecar, readKindred } from './palettes.mjs';
 import { atlasOf, palettesOf, framesOf, picksOf, KINDRED_KEY } from './lib/atlas.mjs';
@@ -163,6 +166,9 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
     index.galleries[gallery] = summary(merged);
     books.push(merged);
   });
+  const { covers, warnings } = coversOf(names);
+  index.coverWarnings = warnings;
+  fs.writeFileSync(path.join(PATHS.mergedDir, '_covers.json'), JSON.stringify(covers, null, 1) + '\n');
   // Across voyages: from every gallery, not only those fetched this time (a status check of one
   // gallery must not leave the palette page with one voyage): the others from their last merge.
   if (galleries) {
@@ -195,6 +201,37 @@ export async function fetchAll({ local = null, galleries = null } = {}) {
   fs.writeFileSync(path.join(PATHS.mergedDir, '_index.json'), JSON.stringify(index, null, 2) + '\n');
   return { index, unreachable };
 }
+/**
+ * Every authored cover, resolved against the merged galleries: a gallery's own
+ * (_data/photos/<gallery>.yml), and a voyage in parts' (_data/photos/<parent>.yml,
+ * which names a part's photo as part/slug). Keyed as the pages look them up.
+ */
+function coversOf(galleries) {
+  const covers = {}, warnings = [];
+  const merged = (g) => { try { return JSON.parse(fs.readFileSync(path.join(PATHS.mergedDir, `${galleryKey(g)}.json`), 'utf8')); } catch { return null; } };
+  const add = (key, gallery, cover, where) => {
+    const m = merged(gallery);
+    const photo = m?.photos.find(p => p.slug === cover.photo.split('/').pop());
+    if (!photo) { warnings.push(`${where}: cover photo "${cover.photo}" is not a listed photo of ${gallery}`); return; }
+    covers[key] = coverEntry(photo, cover, gallery);
+  };
+  for (const g of galleries) {
+    const { doc } = readAuthored(g);
+    if (doc?.cover?.photo) add(galleryKey(g), g, doc.cover, `_data/photos/${g}.yml`);
+  }
+  // A voyage in parts has no gallery of its own: its YAML sits beside the parts' folder.
+  const parents = fs.existsSync(PATHS.authoredDir) ? fs.readdirSync(PATHS.authoredDir).filter(f => f.endsWith('.yml') && fs.existsSync(path.join(PATHS.authoredDir, f.slice(0, -4)))).map(f => f.slice(0, -4)) : [];
+  for (const parent of parents.filter(p => !galleries.includes(p))) {
+    const where = `_data/photos/${parent}.yml`;
+    const { doc, problems } = readAuthored(parent);
+    warnings.push(...problems);
+    if (!doc?.cover?.photo) continue;
+    if (!doc.cover.photo.includes('/')) { warnings.push(`${where}: a voyage in parts names its cover as part/slug`); continue; }
+    add(parent, `${parent}/${doc.cover.photo.split('/')[0]}`, doc.cover, where);
+  }
+  return { covers, warnings };
+}
+
 const summary = (m) => ({ key: m.key, count: m.count, unlisted: m.unlisted, processed: !!m.generated, warnings: m.warnings });
 
 /** Shape-check one authored file. Returns its problems; an empty list means it would merge cleanly. */
@@ -223,6 +260,7 @@ async function main() {
       for (const w of s.warnings) { console.log(`    ! ${w}`); warned++; }
     }
   } else warned = rows.reduce((n, [, s]) => n + s.warnings.length, 0);
+  for (const w of index.coverWarnings) { console.log(`  ! ${w}`); warned++; }
   const source = local ? 'local store' : r2 ? 'private, R2 key' : viaRclone ? 'private, rclone' : 'no private access';
   console.log(`photo manifests: ${rows.length} galleries → ${path.relative(process.cwd(), PATHS.mergedDir)}/ (${source}; ${warned} warning(s)${unreachable ? `, ${unreachable} unreachable` : ''})`);
   if (privateError) {

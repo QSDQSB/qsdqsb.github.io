@@ -13,8 +13,8 @@ Jekyll won't refuse to render a page with a missing `header` or a `gallery_name`
 |---|---|---|
 | `_posts` | `title`, `date` | `permalink`, `tags`, `header` |
 | `_pages` | `title` | `layout` (non-default), `permalink` (routable) |
-| `_voyage` | `title`, `date`, `header` | exactly one of: `gallery_name` OR `subgalleries: true`; optional `map:` viewport (only with `subgalleries:true`) |
-| `_subvoyage` | `title`, `date`, `header` | `gallery_name` (typically required for gallery routing); optional `map:` block to pin / refine the parent's auto-derived map marker |
+| `_voyage` | `title`, `date`, a cover (`cover:` in `_data/photos/<basename or gallery>.yml`, else `header.overlay_image`) | exactly one of: `gallery_name` OR `subgalleries: true`; optional `map:` viewport (only with `subgalleries:true`) |
+| `_subvoyage` | `title`, `date`, a cover (`cover:` in `_data/photos/<gallery_name>.yml`, else `header.overlay_image`) | `gallery_name` (typically required for gallery routing); optional `map:` block to pin / refine the parent's auto-derived map marker |
 
 ## Routing & placement
 

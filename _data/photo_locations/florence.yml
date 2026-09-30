@@ -2,7 +2,31 @@
 # gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
 # gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
 photos:
+  dscf2530:
+    suggested: Loggia dei Lanzi, Florence
+    landmark: Loggia dei Lanzi
+    street: Piazzale degli Uffizi
+    city: Florence
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2617:
+    suggested: Santa Maria del Fiore, Florence
+    landmark: Santa Maria del Fiore
+    street: Via dello Studio
+    city: Florence
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2732:
+    suggested: Michelangelo Square, Florence
+    landmark: Michelangelo Square
+    street: Viale Giuseppe Poggi
+    city: Florence
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2744:
     suggested: Michelangelo Square, Florence
     landmark: Michelangelo Square
     street: Viale Giuseppe Poggi

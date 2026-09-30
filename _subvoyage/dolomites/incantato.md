@@ -12,6 +12,4 @@ tags:
 map:
   lat: 46.6943
   lng: 12.0854
-header:
-  overlay_image: cover/dolomites/Incantato-3v1.jpg
 ---

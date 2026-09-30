@@ -8,6 +8,4 @@ tags:
   - 🏔️Alps
   - 🚞Switzerland
   - 🥾Hiking
-header:
-  overlay_image: cover/fronalpstock-ridge-line-3v1.jpg
 ---

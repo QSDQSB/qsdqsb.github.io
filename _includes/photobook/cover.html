@@ -1,14 +1,25 @@
 {%- comment -%}
-  The cover: the voyage's own 3:1 hero (header.overlay_image, the one its card and the atlas show),
-  full bleed, with the site's hero recipe (the fade at the foot, the scrim, the title). A page
-  without one opens on the book's cover frame. The glow takes its colours from that frame either way.
+  The cover: the voyage's own cover photo (`cover:` in its YAML, through voyage-cover.html), full
+  bleed, with the site's hero recipe (the fade at the foot, the scrim, the title). It is cut around
+  its focus at every width: the box runs from 3:1 on a desktop to near-square on a phone, and
+  each step takes its own position (--pos-*, _sass/_photobook.scss). A voyage without a `cover:`
+  keeps its 3:1 header.overlay_image; one with neither opens on the book's cover frame. The glow
+  takes its colours from the book's cover frame, which is the cover photo when the YAML names one.
   The way back (to a part's voyage, or to all voyages) is the masthead's ‹ (_includes/photobook.html).
 {%- endcomment -%}
 {%- assign pb = include.book -%}
 {%- assign cover = nil -%}
 {%- if pb.book.cover != nil -%}{%- assign cover = pb.photos[pb.book.cover] -%}{%- endif -%}
+{%- include voyage-cover.html doc=page -%}
 <header class="photobook-cover" id="photobook-cover" data-i="{% if cover %}{{ pb.book.cover }}{% endif %}">
-  {%- if page.header.overlay_image %}
+  {%- if vc %}
+  {%- comment -%} Cover-fit in a box at least 26rem tall: the photo is drawn at least 26rem × its ratio wide. AVIF stops at 1920; past that (a desktop at 2x) the 2880 WebP. {%- endcomment -%}
+  {%- assign vc_floor = vc.ratio | times: 26 | ceil -%}
+  <picture>
+    {%- if vc.sizes.avif %}<source type="image/avif" media="(max-width: 1920px) and (max-resolution: 1dppx), (max-width: 960px) and (max-resolution: 2dppx), (max-width: 767px)" sizes="max(100vw, {{ vc_floor }}rem)" srcset="{% for w in vc.sizes.avif %}{{ vc.url }}/{{ w }}.avif {{ w }}w{% unless forloop.last %}, {% endunless %}{% endfor %}">{% endif -%}
+    <img class="photobook-cover__image" src="{{ vc.url }}/1920.webp" sizes="max(100vw, {{ vc_floor }}rem)" srcset="{% for w in vc.sizes.webp %}{% if w <= 2880 %}{% unless forloop.first %}, {% endunless %}{{ vc.url }}/{{ w }}.webp {{ w }}w{% endif %}{% endfor %}" width="{{ vc.w }}" height="{{ vc.h }}" alt="" fetchpriority="high" decoding="async" style="--pos-wide: {{ vc.pos.wide }}; --pos-hero: {{ vc.pos.hero }}; --pos-screen: {{ vc.pos.screen }}; --pos-tall: {{ vc.pos.tall }}; --pos-portrait: {{ vc.pos.portrait }};{% if vc.ph %} background-image: url({{ vc.ph }});{% endif %}">
+  </picture>
+  {%- elsif page.header.overlay_image %}
   {%- assign hero = page.header.overlay_image -%}
   {%- unless hero contains "://" or hero contains "/images/" %}{% assign hero = "/images/" | append: hero %}{% endunless %}
   {%- comment -%} WebP renditions from scripts/generate-cover-sizes.mjs; the 3:1 cover is drawn at least 78rem wide (26rem tall). {%- endcomment -%}

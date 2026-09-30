@@ -9,6 +9,4 @@ tags:
 map:
   lat: 41.9029
   lng: 12.4527
-header:
-  overlay_image: cover/rome/vatican-museum-room-of-geography-3v1.jpg
 ---

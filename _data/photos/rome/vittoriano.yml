@@ -1,3 +1,7 @@
 # Authored layer for gallery/rome/vittoriano — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: dscf1619
+  focus: [0.6, 0.45]
 photos: {}
