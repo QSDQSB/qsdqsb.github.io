@@ -1,0 +1,5 @@
+# Authored layer for gallery/intermezzo — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# Frames that belong to no voyage, each from a different place, so the place line carries the
+# frame: name one here (`place: "Name, City"`) wherever the geocoder misses.
+photos: {}

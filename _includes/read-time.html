@@ -1,17 +1,41 @@
-{% if post.read_time %}
-  {% assign words = post.content | strip_html | number_of_words %}
-{% elsif page.read_time %}
-  {% assign words = page.content | strip_html | number_of_words %}
-{% endif %}
-
-{% if site.words_per_minute %}
-  {% if words < 180 %}
-	  {{ site.data.ui-text[site.locale].less_than | default: "less than" }} 1 {{ site.data.ui-text[site.locale].minute_read | default: "minute read" }}
-	{% elsif words < 360 %}
-	  1 {{ site.data.ui-text[site.locale].minute_read | default: "minute read" }}
-	{% else %}
-	  {{ words | divided_by:site.words_per_minute }} {{ site.data.ui-text[site.locale].minute_read | default: "minute read" }}
-	{% endif %}
-{% else %}
-  {{ site.data.ui-text[site.locale].undefined_wpm | "Undefined parameter words_per_minute at _config.yml" }}
-{% endif %}
+{%- comment -%}
+  Reading time, counting English and Chinese on their own terms. Jekyll 3's
+  number_of_words splits on whitespace, so a paragraph of Chinese counts as one
+  word; its characters are counted instead. url_encode spells every character
+  from U+3000 to U+9FFF (CJK punctuation, kana, the ideographs) with a lead byte
+  %E3 to %E9, which no other character starts with, so counting those leads counts
+  the characters; emoji (%F0, %E2 and %EF leads) are left out. A bilingual post
+  ([data-bilingual]) is read in one language, so it takes the longer of the two,
+  not their sum.
+{%- endcomment -%}
+{%- if post.read_time -%}
+  {%- assign rt_raw = post.content -%}
+{%- elsif page.read_time -%}
+  {%- assign rt_raw = page.content -%}
+{%- endif -%}
+{%- assign rt_text = rt_raw | strip_html -%}
+{%- assign rt_encoded = rt_text | url_encode -%}
+{%- assign rt_leads = "%E3 %E4 %E5 %E6 %E7 %E8 %E9" | split: " " -%}
+{%- assign rt_cjk = 0 -%}
+{%- for rt_lead in rt_leads -%}
+  {%- assign rt_found = rt_encoded | split: rt_lead | size | minus: 1 | at_least: 0 -%}
+  {%- assign rt_cjk = rt_cjk | plus: rt_found -%}
+{%- endfor -%}
+{%- assign rt_words = rt_text | number_of_words -%}
+{%- assign rt_en = rt_words | times: 1.0 | divided_by: site.words_per_minute -%}
+{%- assign rt_zh = rt_cjk | times: 1.0 | divided_by: site.cjk_chars_per_minute -%}
+{%- if rt_raw contains "data-bilingual" -%}
+  {%- if rt_en > rt_zh -%}{%- assign rt_min = rt_en -%}{%- else -%}{%- assign rt_min = rt_zh -%}{%- endif -%}
+{%- else -%}
+  {%- assign rt_min = rt_en | plus: rt_zh -%}
+{%- endif -%}
+{%- assign rt_min = rt_min | round -%}
+{%- if site.words_per_minute and site.cjk_chars_per_minute -%}
+  {%- if rt_min < 1 -%}
+    {{ site.data.ui-text[site.locale].less_than | default: "less than" }} 1 {{ site.data.ui-text[site.locale].minute_read | default: "minute read" }}
+  {%- else -%}
+    {{ rt_min }} {{ site.data.ui-text[site.locale].minute_read | default: "minute read" }}
+  {%- endif -%}
+{%- else -%}
+  {{ site.data.ui-text[site.locale].undefined_wpm | default: "Undefined parameter words_per_minute at _config.yml" }}
+{%- endif -%}

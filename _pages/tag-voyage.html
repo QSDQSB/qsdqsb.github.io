@@ -14,7 +14,10 @@ toc: true
 
 {% include base_path %}
 {% assign all_voyages = site.voyage | concat: site.subvoyage %}
-{% include group-by-array collection=all_voyages field="tags" %}
+{%- comment -%} As /voyage/ lists them: a voyage whose Photobook is still empty is left out (_includes/photobook-ready.html). {%- endcomment -%}
+{%- assign ready_voyages = "" | split: "" -%}
+{%- for d in all_voyages %}{% include photobook-ready.html doc=d %}{% if photobook_ready %}{% assign ready_voyages = ready_voyages | push: d %}{% endif %}{% endfor %}
+{% include group-by-array collection=ready_voyages field="tags" %}
 
     {% for tag in group_names %}
       {% assign posts = group_items[forloop.index0] %}

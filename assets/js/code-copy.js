@@ -27,9 +27,13 @@
     if (!text) return false;
 
     // Prefer modern clipboard API when available
+    // writeText rejects when the document lacks focus or the permission is
+    // refused; fall through to execCommand rather than leave the button mute.
     if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return true;
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (e) {}
     }
 
     // Fallback: execCommand

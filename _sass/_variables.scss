@@ -8,7 +8,7 @@
 
 /* system typefaces */
 $sans-serif                 : "Playfair Display", apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
-$monospace                  : "Monaco", Consolas, "Lucida Console", monospace;
+$monospace                  : "Monaco", ui-monospace, Menlo, Consolas, "Lucida Console", monospace; // ui-monospace: SF Mono on an iPhone
 $didot-family              : "Didot", "CMU Serif", "Playfair Display", "Songti SC", "STSong", serif;
 /* sans serif typefaces */
 $cmu-serif-family           : "CMU Serif", "Playfair Display", "Songti SC", "STSong", serif;
@@ -48,7 +48,7 @@ $text-color                 : $lighter-gray;
 $border-color               : $darker-gray;
 $default-tag-color          : #497472; // @keep — placeholder text parsed by Liquid at _page.scss:796, not a normal Sass reference
 $primary-color              : #E6EEE8;
-$h2-color                   : hsl(29, 65%, 70%); // brass heading + accent tone (Home / About / welcome-toast)
+$h2-color                   : hsl(29, 65%, 70%); // brass heading + accent tone (Home / About)
 $success-color              : #3c8287;
 $warning-color              : #db580c;
 $danger-color               : #a74f4c;

@@ -28,6 +28,8 @@
 
 {% comment %} defer_cover=true parks the cover in --bg-later until assets/js/card-covers.js sees the card near. {% endcomment %}
 {% if include.defer_cover %}{% assign cover_var = "--bg-later: url(" %}{% else %}{% assign cover_var = "--bg-img: url(" %}{% endif %}
+{%- comment -%} A deferred cover's WebP renditions (_data/cover_sizes.json, npm run covers): card-covers.js takes the smallest that fills the card. {%- endcomment -%}
+{% if include.defer_cover %}{% assign cover_sized = site.data.cover_sizes[post.header.overlay_image] %}{% else %}{% assign cover_sized = nil %}{% endif %}
 {% assign ovl_address = ")" | prepend: teaser | prepend: cover_var %}
 
 
@@ -37,7 +39,7 @@
   {% assign post_link = post.url | prepend: base_path %}
 {% endif %}
 
-<a class="card" id="{{ title | slugify }}" href={{ post_link }} style="{{ ovl_address }}{% if card_pos %}; --bg-pos: {{ card_pos }}{% endif %}">
+<a class="card" id="{{ title | slugify }}" href={{ post_link }} style="{{ ovl_address }}{% if card_pos %}; --bg-pos: {{ card_pos }}{% endif %}"{% if cover_sized %} data-covers="{% for s in cover_sized %}{{ s.src | relative_url }} {{ s.w }}{% unless forloop.last %}, {% endunless %}{% endfor %}"{% endif %}>
     <div class="content">
       <h3>{{ title }}</h3>
           {% if post.read_time %}
@@ -52,7 +54,7 @@
 
     <div class="date">
       {% if post.date %}
-          <p><time datetime="{{ post.date | default: "2022-01-01" | date_to_xmlschema }}">{{ post.date | default: "2022-01-01" | date: "%B %d" }}</time></p>
+          <p><time datetime="{{ post.date | default: "2022-01-01" | date_to_xmlschema }}">{{ post.date | default: "2022-01-01" | date: "%b %Y" }}</time></p>
         {% endif %}
     </div>
   </a>

@@ -1,0 +1,88 @@
+# Suggested locations for gallery intermezzo, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf3005:
+    suggested: Convento dos Marianos, Lisbon
+    landmark: Convento dos Marianos
+    street: Rua de São João da Mata
+    city: Lisbon
+    country: Portugal
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5605:
+    suggested: Karlsplatz, Vienna
+    street: Karlsplatz
+    city: Vienna
+    country: Austria
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5615:
+    suggested: Karlskirche, Vienna
+    landmark: Karlskirche
+    street: Karlsplatz
+    city: Vienna
+    country: Austria
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5626:
+    suggested: Karlskirche, Vienna
+    landmark: Karlskirche
+    street: Karlsplatz
+    city: Vienna
+    country: Austria
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5775:
+    suggested: Saint Stephen's Cathedral, Vienna
+    landmark: Saint Stephen's Cathedral
+    street: Stephansplatz
+    city: Vienna
+    country: Austria
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5800:
+    suggested: Ragazerstrasse, Sargans
+    street: Ragazerstrasse
+    city: Sargans
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6142:
+    suggested: Kapuzinerberg, Salzburg
+    landmark: Kapuzinerberg
+    street: Kapuzinerberg
+    city: Salzburg
+    country: Austria
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6150:
+    suggested: Weg zur Oberen Stadtaussicht, Salzburg
+    street: Weg zur Oberen Stadtaussicht
+    city: Salzburg
+    country: Austria
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6474:
+    suggested: Anfiteatro Romano, Milan
+    landmark: Anfiteatro Romano
+    street: Via Edmondo De Amicis
+    city: Milan
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf6704:
+    suggested: Cirencester Roman Amphitheatre, Cotswold District
+    landmark: Cirencester Roman Amphitheatre
+    street: Bristol Road
+    city: Cotswold District
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf9268:
+    suggested: Birling Gap Road, Wealden
+    street: Birling Gap Road
+    city: Wealden
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode

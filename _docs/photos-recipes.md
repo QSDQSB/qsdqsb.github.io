@@ -51,7 +51,10 @@ npm run photos:ingest                   # import → enrich → locate → check
 `ingest` handles only the galleries that changed. It copies files in by frame number or by picture,
 restores stripped camera records, names places from GPS, checks nothing captioned would vanish, then pushes.
 Once the workflow finishes (`gh run list --workflow photos-process.yml -L 3`), run `npm run photos:status
--- --gallery <g>`. It should say `no problems`.
+-- --gallery <g>`. It should say `no problems`. Then set the voyage's `updated:` to now
+(`2026-09-28 21:00`: the time settles a day's ties, a new voyage later than one given a few frames) in
+its `_voyage/` front matter, the parent's for a part (the board reads `_voyage/` only): the landing's
+Recent Updates ranks voyages by it (a voyage's `date` is the trip's, not when it came to the site).
 
 ### Start a new voyage
 
@@ -120,6 +123,13 @@ reads its unedited camera file, and copies the record into our edited file. Then
 go). If the library holds no camera original for a photo (only an edited export was ever imported),
 the record can't be recovered and the photo simply shows without it.
 
+### Photos show no colours
+
+The colophon's Colours row, the specs palette, the sheet's colour order, QSD's Palette, Reverie and `/drift/` need
+each photo's `palette`. The processor adds it (on the next run for older photos: owner's go, it
+writes the manifest). To see colours locally before that, `node scripts/photos/palettes.mjs`, then
+`npm run photos:fetch`: a git-ignored sidecar, nothing written to R2.
+
 ## When something looks wrong
 
 | Symptom | Likely cause | Do |
@@ -138,6 +148,7 @@ the record can't be recovered and the photo simply shows without it.
 | Scripts | `scripts/photos/` (`ingest`, `import`, `enrich`, `locate`, `recollect`, `push`, `plan`, `prune`, `trash`, `status`, `captions`, `process`, `fetch-manifests`) |
 | Authored words | `_data/photos/<g>.yml`; places `_data/photo_locations/<g>.yml` |
 | Page templates | `_includes/photobook/*.html`, `_sass/_photobook.scss`, `assets/js/photobook/` (see `_docs/layouts.md`) |
-| Book logic at build | `scripts/photos/lib/book.mjs` (rows, cover, colophon, sun and weather phrases, film letters) |
+| Book logic at build | `scripts/photos/lib/book.mjs` (rows, cover, colophon, sun and weather phrases, film letters, colours) |
+| Colours | `scripts/photos/lib/palette.mjs` (palette, distance, swatches), `lib/atlas.mjs` (across voyages); pages `_pages/light.html`, `_pages/drift.html`, `_pages/palette.html` (QSD's Palette, `/palette/#<gallery>`), `assets/js/colour/`, `_sass/_colour.scss` |
 | Database | D1 `qsdqsb-photos`, worker `workers/photos-db/` (api.qsdqsb.com) |
 | Full reference | `_docs/photos-pipeline.md` |

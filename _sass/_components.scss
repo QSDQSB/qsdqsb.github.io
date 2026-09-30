@@ -1,0 +1,201 @@
+/* ==========================================================================
+   COMPONENTS — the site's shared pieces, from the Photobook's design (the canonical system).
+
+   Every page that needs one of these includes it; none restyles it. Before writing a new label,
+   title, button, pill, glass or set of links, look here (and in _docs/components.md, the catalogue
+   with where each is used). A new piece earns its place by a need none of these meets, and then it
+   is added here, not kept in its page.
+   ========================================================================== */
+
+// The site's two curves, for scripts too (the palette page reads them), so one vocabulary of motion.
+:root {
+  --ease-standard: #{$cubic-bezier-standard};
+  --ease-smooth: #{$cubic-bezier-smooth};
+}
+
+/* ── words ───────────────────────────────────────────────────────────── */
+
+// A label above a title or a section: the UI face in spaced capitals. Never under 11px.
+@mixin eyebrow {
+  margin: 0;
+  font: 500 max(0.62rem, 11px)/1 $barlow-font-family;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--photobook-ink-2);
+}
+
+// A page's title, as every hero page and every book sets it (_page.scss, the cover's).
+@mixin display-title {
+  margin: 1rem 0 0;
+  color: $lighter-gray;
+  font: 700 clamp(1.75rem, 2.8vw, 2.85rem)/1 $global-font-family;
+  letter-spacing: 0.015em;
+  @include responsive-up(desktop) { font-size: clamp(1.95rem, 2.6vw, 3rem); }
+  @include responsive-up(wide) { font-size: clamp(2.1rem, 2.35vw, 3.1rem); }
+  @include responsive-down(tablet) { font-size: clamp(1.2rem, 5vw, 1.65rem); }
+}
+
+// The line beneath a title: Didot italic, as a book's cover and every hero's excerpt.
+@mixin lede {
+  font: italic 400 clamp(1.02rem, 1.34vw, 1.34rem)/1.26 $didot-family;
+}
+
+// The way on: small spaced capitals over a hairline, in a row that wraps.
+@mixin onward-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 2rem;
+
+  a,
+  a:visited {
+    padding-bottom: 0.3rem;
+    // The Photobook's inks, or their values where a page has not set them (About).
+    border-bottom: 1px solid var(--photobook-line, #{$darker-gray});
+    font: 500 max(0.62rem, 11px) $barlow-font-family;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--photobook-ink-2, #{$light-gray});
+    text-decoration: none;
+    transition: color 0.3s $cubic-bezier-smooth, border-color 0.3s $cubic-bezier-smooth;
+    html.motion-off & { transition: none; }
+  }
+
+  a:hover,
+  a:focus-visible { color: var(--photobook-ink, #{$lighter-gray}); border-color: var(--photobook-ink-3, #8b9296); text-decoration: none; }
+}
+
+/* ── controls ────────────────────────────────────────────────────────── */
+
+// The way back: a glass pill, a chevron and the voyage's name. The lightbox's, and the palette
+// page's (_colour.scss), so going back looks the same wherever one is.
+@mixin pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.36rem 0.8rem 0.36rem 0.6rem;
+  border: 1px solid var(--photobook-glass-edge);
+  border-radius: 999px;
+  background: var(--photobook-glass);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  color: $primary-color;
+  font: 500 0.86rem $barlow-font-family;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+
+  svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+}
+
+// The keyboard's mark on a swatch that may be any colour, pale or deep: the house's brass hairline
+// (as the map's), set off the edge so no swatch can hide it. :focus-visible only; the pointer keeps its own.
+@mixin brass-focus {
+  outline: 2px solid rgba($intriguing-word-color, 0.6);
+  outline-offset: 2px;
+}
+
+// A quiet control: a mark in the label's ink, lit under the pointer; no ring, no fill.
+// A viewer's round tool, top right of a full-screen photograph (slideshow, specs, picture only, the
+// way to its book): a glass disc with a line mark; lit when on. The lightbox's, and Drift's.
+@mixin round-tool {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  background: var(--photobook-button);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: $primary-color;
+  cursor: pointer;
+  transition: background 0.3s $cubic-bezier-smooth, color 0.3s $cubic-bezier-smooth;
+
+  &:hover { background: var(--photobook-button-hover); color: #fff; }
+  &[aria-pressed="true"] { color: $h2-color; border-color: rgba($h2-color, 0.35); }
+
+  svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+}
+
+// A field of flat colour given a surface to lie on: plastered wall or primed canvas, its relief caught
+// by a raking light from the upper left, the grain in it. One still image (an SVG's noise lit as a
+// surface), laid over the colour on an ::after; the colour beneath keeps its hue (soft light).
+// Reverie's opening, a colour's frame in the lightbox, Drift's colour.
+@mixin surface-relief {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.45;
+  mix-blend-mode: soft-light;
+  // One image over the whole field, never a repeated tile: a lighting filter works out each point's
+  // slope from its neighbours, and at a tile's edge, having none, draws a seam that repeats as a grid.
+  // The filter reaches past the image on every side, so its own edge never shows either.
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1800' height='600' viewBox='0 0 1800 600'%3E%3Cfilter id='r' filterUnits='userSpaceOnUse' x='-40' y='-40' width='1880' height='680'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' seed='7' result='n'/%3E%3CfeDiffuseLighting in='n' surfaceScale='2.6' diffuseConstant='1.1' lighting-color='%23fff'%3E%3CfeDistantLight azimuth='225' elevation='38'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect x='-40' y='-40' width='1880' height='680' filter='url(%23r)'/%3E%3C/svg%3E") center / cover no-repeat;
+}
+
+@mixin icon-button-quiet($size: 2rem) {
+  display: grid;
+  place-items: center;
+  min-width: $size;
+  min-height: $size;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--photobook-ink-3);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s $cubic-bezier-smooth, background-color 0.3s $cubic-bezier-smooth;
+
+  svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linejoin: round; stroke-linecap: round; }
+
+  &:visited { color: var(--photobook-ink-3); }
+  &:hover,
+  &:focus-visible { color: var(--photobook-ink); background: rgba(255, 255, 255, 0.06); text-decoration: none; }
+}
+
+/* ── surfaces ────────────────────────────────────────────────────────── */
+
+// The glass both controls sit in, darkened behind so their marks keep contrast over a white sky.
+@mixin glass-bar {
+  background: var(--photobook-glass);
+  -webkit-backdrop-filter: blur(18px) saturate(140%) brightness(0.62);
+  backdrop-filter: blur(18px) saturate(140%) brightness(0.62);
+  border: 1px solid var(--photobook-glass-edge);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.16), 0 5px 16px rgba(0, 0, 0, 0.12);
+}
+
+// A layer that crossfades (assets/js/photobook/wash.js): it settles in from a slightly larger scale
+// while the one beneath fades, so a change reads as the light shifting rather than a cut.
+@mixin wash-layer {
+  opacity: 0;
+  scale: 1.06;
+  transition: opacity 1.1s $cubic-bezier-standard, scale 1.6s $cubic-bezier-smooth;
+  will-change: opacity;
+
+  &.is-on { opacity: 1; scale: 1; }
+}
+
+// A room that takes a picture's colour: its layers (the colour, softened into frosted glass) under a
+// glass that keeps the room dark, the colour glowing strongest near the middle and falling away to
+// near-black at the edges and beneath. The lightbox's, and the palette page's (_colour.scss).
+@mixin wash {
+  overflow: hidden;
+
+  > * {
+    position: absolute;
+    inset: -12%;
+    filter: blur(36px) saturate(1.5) brightness(0.42);
+    @include wash-layer;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 25%, transparent 60%, rgba(6, 6, 8, 0.55)),
+      radial-gradient(ellipse 80% 70% at 50% 42%, rgba(6, 6, 8, 0.1), rgba(6, 6, 8, 0.72) 100%);
+  }
+}

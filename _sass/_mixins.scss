@@ -76,6 +76,19 @@
 
 
 /*
+   Film grain
+   ==========================================================================
+   One small noise tile, repeated over the view and drawn once: the grain on
+   Home and About's backdrop, and the frost on the palette page's room.
+*/
+
+@mixin film-grain {
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/*
    Cinematic atmospheric backdrop
    ==========================================================================
    Fixed gradient mesh + film-grain overlay on the body (Home + About), so
@@ -104,9 +117,7 @@
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    opacity: 0.05;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    @include film-grain;
   }
 }
 
@@ -122,12 +133,10 @@
 /*
    Dark glass surface fill
    ==========================================================================
-   The near-black frosted fill — background + blur/saturate — was hand-copied
-   identically between `%subscribe-slip-glass` (_subscribe.scss) and
-   `.welcome-toast__inner` (_welcome-toast.scss), each also hand-writing the
-   -webkit-/standard backdrop-filter pair instead of using the mixin above.
-   Border, radius and box-shadow stay at the callsite — they differ between
-   the two (component-specific knobs), only the fill itself is shared.
+   The near-black frosted fill — background + blur/saturate — for the
+   subscribe slip's glass (`%subscribe-slip-glass`, _subscribe.scss), with the
+   -webkit-/standard backdrop-filter pair written once. Border, radius and
+   box-shadow stay at the callsite; only the fill is here.
 */
 
 @mixin dark-glass-fill {

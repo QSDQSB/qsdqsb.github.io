@@ -1,0 +1,53 @@
+---
+title: "QSD's Palette"
+layout: default
+permalink: /palette/
+preload: [/assets/palettes.json]
+modules: [/assets/js/colour/palette.js, /assets/js/colour/vat.js, /assets/js/colour/cards.js, /assets/js/photobook/tip.js, /assets/js/photobook/wash.js]
+excerpt: "The paint behind the pictures."
+og_image: https://img.qsdqsb.com/t/990e1b53c65edf0a/1920.jpg # the door's lake, for a shared link
+door_image: https://img.qsdqsb.com/t/990e1b53c65edf0a/4096.webp # Kandersteg, Oeschinensee (dscf8452)
+door_view: "40% 100% / auto 380%" # the lake's reflections, close: paint more than place
+body_class: photobook colour-page
+seo_description: "The colours of every voyage, and of every photograph in it: QSD's palettes, set like wall labels."
+masthead_back_url: /voyage/
+masthead_back_label: Back to the voyages
+---
+{%- comment -%}
+  QSD's Palette: one page, a voyage to each anchor (/palette/#london, /palette/#prague/twilight).
+  Beside it all, every voyage by place: a column on a laptop (folded away to a slim strip and back),
+  a sheet on a phone (opened from "Voyages"). The way back is the masthead's ‹, as in a book: to
+  the voyages, or on a voyage's palette to its book. Then the rail: every voyage's dye vat, by colour, to step from one to the next. Without an
+  anchor, every voyage's palette in a column; with one, "QSD's Palette for <voyage>":
+  its signature and colour line, then every frame as a print with its own palette, in the book's
+  sequence or by colour (24 dots, dark to light). ?at=<slug> marks the frame a reader came from.
+  Data: /assets/palettes.json. Script: assets/js/colour/palette.js. Styles: _sass/_colour.scss.
+{%- endcomment -%}
+<main class="palette-page" id="palette-page">
+  <aside class="palette-voyages" id="palette-voyages" aria-label="Every voyage, by place">
+    <div class="palette-voyages__head">
+      <h2>Voyages</h2>
+      <button type="button" class="palette-voyages__fold" aria-label="Hide the voyages" aria-expanded="true">
+        <svg class="palette-voyages__panel" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="10" rx="2"/><path d="M6.5 3v10"/></svg>
+        <svg class="palette-voyages__x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+      </button>
+    </div>
+    <div class="palette-voyages__list"></div>
+  </aside>
+  <div class="palette-page__body">
+    <div class="palette-page__bar">
+      <button type="button" class="palette-page__menu" aria-controls="palette-voyages" aria-expanded="false"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4.5h10M3 8h10M3 11.5h10"/></svg>Voyages</button>
+    </div>
+    <nav class="palette-rail" aria-label="Every voyage's dye vat, by colour"></nav>
+    <header class="colour-head palette-page__head">
+      <p class="colour-kicker"><a href="{{ '/palette/' | relative_url }}" class="palette-page__home">QSD's Palette</a></p>
+      <h1 tabindex="-1">QSD's Palette</h1>
+    </header>
+    <div class="palette-page__stage"></div>
+    <p class="visually-hidden" role="status" id="palette-status"></p>
+    <noscript><p class="colour-empty">The palettes are drawn by a script; with it off, each voyage's photographs are in its book:</p>
+      <ul>{% assign docs = site.voyage | concat: site.subvoyage %}{% for d in docs %}{% include photobook-ready.html doc=d %}{% if d.gallery_name and photobook_ready %}<li><a href="{{ d.url | relative_url }}">{{ d.title | strip_html }}</a></li>{% endif %}{% endfor %}</ul></noscript>
+  </div>
+  <footer class="colour-end">{% include presented-by-qsd.html line="Shot by QSD." %}</footer>
+</main>
+<script type="module" src="{{ '/assets/js/colour/palette.js' | relative_url }}"></script>

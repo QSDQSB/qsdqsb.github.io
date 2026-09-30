@@ -67,18 +67,27 @@ body:hover .visually-hidden button {
    Skip links
    ========================================================================== */
 
+// _includes/skip-link.html: first in the tab order, out of sight until the keyboard reaches it,
+// then a small glass label in the corner, above the masthead.
 .skip-link {
   position: fixed;
-  z-index: 20;
-  margin: 0;
-  font-family: $sans-serif;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10000;
+  padding: 0.55rem 0.95rem;
+  border: 1px solid rgba($intriguing-word-color, 0.6);
+  border-radius: 999px;
+  background: rgba(10, 10, 12, 0.9);
+  color: $lighter-gray;
+  font: 500 max(0.66rem, 11px) $barlow-font-family;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
   white-space: nowrap;
-}
+  transform: translateY(-300%);
 
-.skip-link li {
-  height: 0;
-  width: 0;
-  list-style: none;
+  &:focus,
+  &:focus-visible { transform: none; color: $lighter-gray; text-decoration: none; }
 }
 
 
@@ -685,6 +694,9 @@ html.motion-off .text-type-writer span span { animation: none; }
    transition: $cubic-bezier-default-05s;
    background: linear-gradient(var(--linear-gradient-animation-degree), rgba(255, 255, 196, 1.000) 0%, rgba(255, 97, 100, 1.000) 55%, rgb(198, 74, 68) 100%);
    animation: infinite-gradient-animation 15s ease-in-out infinite;
+}
+@include responsive-reduced-motion {
+  .background-color-peach-pink-animated { animation: none; }
 }
 
 @keyframes infinite-gradient-animation {

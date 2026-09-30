@@ -19,6 +19,11 @@ export function book({ frames, onOpen, onLayout, onScreen, onPrefetch }) {
   // The view the reader last chose, on any voyage, is where the next one opens.
   const saved = (() => { try { return localStorage.getItem('photobook-view'); } catch { return null; } })();
   let film = '', view = saved === 'sheet' ? 'sheet' : 'book';
+  // The sheet's order: the book's sequence, or by colour (a gradient worked out at build time).
+  const colourSeq = (sheetEl?.dataset.colour || '').split(',').filter(Boolean).map(Number);
+  const orderEl = document.querySelector('.photobook-sheet__order');
+  let order = (() => { try { return colourSeq.length && localStorage.getItem('photobook-sheet-order') === 'colour' ? 'colour' : 'sequence'; } catch { return 'sequence'; } })();
+  const byColour = () => view === 'sheet' && order === 'colour' && colourSeq.length === figures.length;
 
   const shown = () => figures.filter((f) => !film || f.dataset.film === film);
 
@@ -43,17 +48,30 @@ export function book({ frames, onOpen, onLayout, onScreen, onPrefetch }) {
         <figcaption class="photobook-frame__caption"><span class="photobook-sheet__frame-no">${esc(p.frame)}</span>${p.film ? `<span class="photobook-film" style="--film:${p.hue}" title="${esc(p.film)}"><i></i><span>${esc(p.film)}</span></span>` : ''}</figcaption></figure>`).join('');
     }
     for (const f of sheetEl.children) f.hidden = !keep.has(Number(f.dataset.i));
+    // Frames are moved, never re-made: the same figures, in the sequence or along the gradient.
+    const at = [...sheetEl.children].sort((a, b) => a.dataset.i - b.dataset.i);
+    const seq = byColour() ? colourSeq.map((i) => at[i]) : at;
+    if (seq.some((f, k) => sheetEl.children[k] !== f)) sheetEl.append(...seq);
   }
 
   function layout() {
     bookEl.hidden = view !== 'book';
     sheetEl.hidden = view !== 'sheet';
+    if (orderEl) {
+      orderEl.hidden = view !== 'sheet';
+      for (const b of orderEl.querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.order === order));
+    }
     if (view === 'book') relayBook(); else relaySheet();
     const cover = document.getElementById('photobook-cover');
     const targets = view === 'book' ? [...bookEl.children] : [...sheetEl.children].filter((f) => !f.hidden);
     onLayout?.([cover, ...targets].filter(Boolean));
   }
-  const keepOrder = () => shown().map((f) => Number(f.dataset.i));
+  const keepOrder = () => {
+    const kept = shown().map((f) => Number(f.dataset.i));
+    if (!byColour()) return kept;
+    const k = new Set(kept);
+    return colourSeq.filter((i) => k.has(i));
+  };
 
   const main = document.querySelector('.photobook-main');
   const still = () => window.QSD?.motionOff?.() || matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -140,6 +158,29 @@ export function book({ frames, onOpen, onLayout, onScreen, onPrefetch }) {
     for (const x of views.querySelectorAll('button[data-view]')) x.setAttribute('aria-pressed', String(x.dataset.view === view));
     layout(); toTop();
   });
+  // Sequence or colour: the frames on screen travel to their new places (a view transition), or the
+  // sheet simply re-lays where there is none or motion is off.
+  orderEl?.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-order]');
+    if (!b || b.dataset.order === order) return;
+    const apply = () => { order = b.dataset.order; layout(); };
+    try { localStorage.setItem('photobook-sheet-order', b.dataset.order); } catch { /* this page only */ }
+    if (still() || !document.startViewTransition) return apply();
+    const named = [...sheetEl.children].filter((x) => !x.hidden);
+    named.forEach((x) => { x.style.viewTransitionName = `photobook-f${x.dataset.i}`; });
+    document.documentElement.classList.add('is-reordering');
+    document.startViewTransition(apply).finished.finally(() => {
+      named.forEach((x) => { x.style.viewTransitionName = ''; });
+      document.documentElement.classList.remove('is-reordering');
+    });
+  });
+
+  // The colophon's barcode: a sliver opens its frame, among the whole book.
+  document.querySelector('.photobook-barcode')?.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-i]'); if (!b) return;
+    onOpen?.(Number(b.dataset.i), figures.map((f) => Number(f.dataset.i)), null);
+  });
+
   // The bar steps below the masthead only when the expanded masthead would reach over it: across (the
   // step does not move it sideways) and down (the bar is stuck at the top, not still in the page's flow).
   const bar = document.querySelector('.photobook-bar'), mast = document.querySelector('.masthead');

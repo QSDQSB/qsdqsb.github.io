@@ -2,9 +2,11 @@
 
 {% assign post_urls = "" %}
 {% for post in include.posts %}
+  {%- comment -%} A voyage whose Photobook is still empty has no card on the page to land on. {%- endcomment -%}
+  {% if post.collection == "voyage" or post.collection == "subvoyage" %}{% include photobook-ready.html doc=post %}{% unless photobook_ready %}{% continue %}{% endunless %}{% endif %}
   {% assign anchor = post.title | slugify %}
   {% assign prepender = '"' | append: '#' %}
-  {% if forloop.first %}
+  {% if post_urls == "" %}
     {% assign post_urls = prepender | append: anchor | append: '"' %}
   {% else %}
     {% assign post_urls = post_urls | append: ', ' | append: prepender | append: anchor | append: '"' %}

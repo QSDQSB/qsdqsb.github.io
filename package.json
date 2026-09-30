@@ -69,7 +69,8 @@
     "check:js-sync": "python3 scripts/check-js-sync.py",
     "check:frontmatter": "node scripts/check-frontmatter.js",
     "check:gallery": "node scripts/check-gallery-integrity.js",
-    "visual:build": "RUBYOPT=\"-E utf-8:utf-8\" bundle exec ruby -e 'srand(7); load Gem.bin_path(\"jekyll\", \"jekyll\")' -- build",
+    "check:mobile-overflow": "node scripts/check-mobile-overflow.mjs",
+    "visual:build": "RUBYOPT=\"-E utf-8:utf-8\" bundle exec ruby -e 'srand(7); load Gem.bin_path(\"jekyll\", \"jekyll\")' -- build --config _config.yml,_config_visual.yml",
     "visual:capture": "node scripts/visual-baseline.mjs capture",
     "visual:diff": "node scripts/visual-baseline.mjs diff",
     "visual:audit": "node scripts/visual-baseline.mjs audit"
