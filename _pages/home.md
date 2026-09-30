@@ -2,6 +2,7 @@
 permalink: /
 layout: home
 title: "QSD's House of Wonders"
+seo_description: "QSD's House of Wonders: essays in English and Chinese, photobooks from journeys across Europe and Asia, and the colours those photographs are made of."
 ticker-tape: true
 left_tarot_card: 'the-lovers'
 left_tarot_href: /voyage/porto

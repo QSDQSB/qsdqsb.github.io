@@ -1,0 +1,15 @@
+---
+layout: null
+sitemap: false
+---
+{%- comment -%}
+  Every coloured photograph on the site, for The Colour of Light and Drift (assets/js/colour/):
+  _data/photo_manifests/colour-atlas.json (written by `npm run photos:fetch` when palettes are
+  known, scripts/photos/lib/atlas.mjs), with each gallery's page and voyage title added here, where
+  the pages are known. With no atlas, an empty one: the pages say the colours are still to come.
+{%- endcomment -%}
+{%- assign atlas = site.data.photo_manifests["colour-atlas"] -%}
+{%- assign docs = site.voyage | concat: site.subvoyage | where_exp: "d", "d.gallery_name" -%}
+{"pages":{ {%- for d in docs -%}{{ d.gallery_name | jsonify }}:{"url":{{ d.url | relative_url | jsonify }},"title":{{ d.title | strip_html | jsonify }}}{% unless forloop.last %},{% endunless %}{%- endfor -%} },
+"bands":{% if atlas %}{{ atlas.bands | jsonify }}{% else %}[]{% endif %},
+"photos":{% if atlas %}{{ atlas.photos | jsonify }}{% else %}[]{% endif %}}

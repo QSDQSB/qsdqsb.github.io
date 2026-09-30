@@ -5,7 +5,7 @@ photos:
   dscf2816:
     suggested: Brühl's Terrace, Dresden
     landmark: Brühl's Terrace
-    street: Brühl's Terrace
+    street: Schloßplatz
     city: Dresden
     country: Germany
     gps: present
@@ -22,6 +22,29 @@ photos:
     suggested: Altmarkt, Dresden
     landmark: Altmarkt
     street: An der Kreuzkirche
+    city: Dresden
+    country: Germany
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf3021:
+    suggested: Zwinger, Dresden
+    landmark: Zwinger
+    street: Theaterplatz
+    city: Dresden
+    country: Germany
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf3080:
+    suggested: Milchpavillon, Dresden
+    landmark: Milchpavillon
+    street: Große Meißner Straße
+    city: Dresden
+    country: Germany
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf3102:
+    suggested: Carolaplatz, Dresden
+    street: Carolaplatz
     city: Dresden
     country: Germany
     gps: present

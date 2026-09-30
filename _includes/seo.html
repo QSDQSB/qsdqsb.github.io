@@ -11,6 +11,8 @@
      (SERP + browser tab only; the visible page heading is untouched) so they
      match long-tail photography queries. {% endcomment %}
   {% assign _title_core = page.title %}
+  {% comment %} seo_title: a fuller title for search and the tab, where the page's own heading is short (Ridgway's Colours, after the book it holds). {% endcomment %}
+  {% if page.seo_title %}{% assign _title_core = page.seo_title %}{% endif %}
   {% if page.collection == 'voyage' or page.collection == 'subvoyage' %}
     {% assign _title_core = page.title | append: " — Travel Photography" %}
   {% endif %}
@@ -39,7 +41,7 @@
     copy (page.description / excerpt) so shares stay evocative.
   - meta_description → <meta name="description"> for search engines.
 {% endcomment %}
-{% assign social_description = page.description | default: page.excerpt | default: site.description %}
+{% assign social_description = page.description | default: page.excerpt | default: page.seo_description | default: site.description %}
 {% if social_description %}
   {% assign social_description = social_description | markdownify | strip_html | strip_newlines | escape_once %}
 {% endif %}
@@ -108,7 +110,7 @@
   <meta property="og:url" content="{{ page.url | prepend: seo_url | replace: "/index.html", "/" }}">
 {% endif %}
 
-{% if page.description or page.excerpt %}
+{% if page.description or page.excerpt or page.seo_description %}
   <meta property="og:description" content="{{ social_description }}">
 {% endif %}
 
@@ -160,6 +162,9 @@
   <meta property="og:image:height" content="630">
 {% elsif page.header.overlay_image %}
   <meta property="og:image" content="{% if page.header.overlay_image contains "://" %}{{ page.header.overlay_image }}{% else %}{{ page.header.overlay_image | prepend: "/images/" | prepend: base_path }}{% endif %}">
+{% elsif page.og_image %}
+  {%- comment -%} A page with no hero of its own names its share image (the colour pages). {%- endcomment %}
+  <meta property="og:image" content="{{ page.og_image }}">
 {% endif %}
 
 {% if page.date %}

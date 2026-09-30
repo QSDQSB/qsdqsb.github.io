@@ -1,0 +1,14 @@
+{%- comment -%}
+  The keyboard's way past the masthead: to the page's main content, whichever element holds it
+  (#main on most layouts, a <main> on the Photobook and the colour pages). Styled in _utilities.scss.
+{%- endcomment -%}
+<a class="skip-link" href="#main">Skip to content</a>
+<script>
+  document.querySelector(".skip-link").addEventListener("click", function (e) {
+    var target = document.getElementById("main") || document.querySelector("main");
+    if (!target) return;
+    e.preventDefault();
+    if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+    target.focus();
+  });
+</script>

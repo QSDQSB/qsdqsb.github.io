@@ -37,6 +37,7 @@
     {%- if pb.count > 0 -%}
     {%- assign c = pb.book.colophon -%}
     <dl class="photobook-facts">
+      {%- if page.date %}<div><dt>When</dt><dd><time datetime="{{ page.date | date: "%Y-%m" }}">{{ page.date | date: "%b %Y" }}</time></dd></div>{% endif %}
       <div><dt>Frames</dt><dd>{{ pb.count }}</dd></div>
       {%- if c.lenses.size > 0 %}<div><dt>Lenses</dt><dd>{{ c.lenses.size }}</dd></div>{% endif -%}
       {%- if c.films.size > 0 %}<div><dt>Films</dt><dd>{{ c.films.size }}</dd></div>{% endif -%}

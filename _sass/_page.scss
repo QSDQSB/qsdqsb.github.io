@@ -534,8 +534,10 @@ body.collection--posts .page__inner-wrap .page__content {
 
 @include responsive-down(tablet) {
   .page__hero--overlay {
-    aspect-ratio: unquote("4 / 3");
-    min-height: 17rem;
+    // A 4:3 band at least 17rem tall, as a height, not an aspect-ratio: with a min-height above it
+    // (17rem on a narrow phone, About's 76svh) Safari keeps the ratio by widening the band past the
+    // screen, and the whole page zooms out.
+    min-height: unquote("max(17rem, 75vw)");
     padding: clamp(3.35rem, 10vw, 4.35rem) 0 clamp(0.85rem, 3vw, 1.1rem);
     align-items: flex-end;
   }
@@ -999,4 +1001,40 @@ tradingview-widget-container {
       width: 30%;
     }
   }
+}
+
+// The colophon (_includes/colophon.html): the way on, in the Photobook's spaced capitals, below
+// the page's own signature so that signature stays the last thing drawn large.
+.site-colophon {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 1rem 2.75rem;
+}
+
+.site-colophon__links {
+  @include onward-links;
+  justify-content: center;
+  gap: 0.8rem 1.6rem;
+}
+
+// The 404's way back (_pages/404.md): one line in the hero's italic, then the sections as the
+// colophon sets them.
+.notfound-way {
+  display: grid;
+  justify-items: center;
+  gap: 1.1rem;
+  margin: 0 auto 3rem;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.notfound-way__line {
+  @include lede;
+  margin: 0;
+  color: rgba($lighter-gray, 0.82);
+}
+
+.notfound-way__links {
+  @include onward-links;
+  justify-content: center;
 }

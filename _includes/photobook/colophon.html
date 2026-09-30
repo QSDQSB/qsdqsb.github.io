@@ -1,8 +1,16 @@
 {%- comment -%}
   Three bars on one baseline: the films, the lenses, and the hours the frames were made (one dot
   per frame at its local time, stacked where frames gather; gold for a low sun, blue after dusk).
+  Beneath them, when the frames' palettes are known, QSD's Palette for the voyage: every frame as
+  its own dye vat in the book's order (poured by assets/js/photobook/index.js; each stands in with its
+  frame's colours top to bottom until then; one opens its frame); the voyage's own colours as a bar, like the specs panel's (no black or white; the bar
+  leads to the voyage's palette page; the hex codes beneath are text to select); beside them, the
+  voyage's dye vat, the same one its palette page shows (poured by assets/js/photobook/index.js when
+  the reader nears it; empty without script or WebGL); and the way on to the pages that look across
+  every voyage by colour.
 {%- endcomment -%}
 {%- assign c = include.book.book.colophon -%}
+{%- assign colour = include.book.book.colour -%}
 {%- assign lens_shades = "var(--photobook-ink),var(--photobook-ink-2),var(--photobook-ink-3),var(--photobook-line)" | split: "," -%}
 <section class="photobook-colophon" aria-labelledby="photobook-colophon-title">
   <h2 class="photobook-kicker" id="photobook-colophon-title">Colophon</h2>
@@ -31,6 +39,23 @@
         {%- if c.phases.golden > 0 %}<i class="photobook-hours__dot photobook-hours__dot--golden"></i><span>Low sun</span><span class="photobook-legend__n">{{ c.phases.golden }}</span>{% endif -%}
         {%- if c.phases.night > 0 %}<i class="photobook-hours__dot photobook-hours__dot--night"></i><span>Blue hour, night</span><span class="photobook-legend__n">{{ c.phases.night }}</span>{% endif -%}
       </div>
+    </div>
+    {%- endif %}
+    {%- if colour %}
+    <div class="photobook-colophon__colours">
+      <h3>QSD's Palette for {{ page.title | strip_html }}</h3>
+      <a class="photobook-colophon__vat" href="{{ '/palette/' | relative_url }}#{{ include.book.gallery }}" data-vat="{{ colour.palette | jsonify | escape }}" data-g="{{ include.book.gallery | escape }}" data-tip="The dye vat of {{ page.title | strip_html | escape }}" data-tip-side="top" aria-label="The dye vat of {{ page.title | strip_html | escape }}, on its palette page"></a>
+      <div class="photobook-barcode" style="--n:{{ colour.barcode.size }}" role="group" aria-label="Every frame's colours, in the book's order">
+        {%- for b in colour.barcode -%}
+        {%- if b.strip %}<button type="button" data-i="{{ b.i }}" style="--t:{{ b.strip[0] }};--m:{{ b.strip[1] }};--b:{{ b.strip[2] }}" aria-label="Frame {{ b.i | plus: 1 }}: {{ b.name | escape }}" data-tip="{{ b.name | escape }}"></button>{% else %}<span></span>{% endif -%}
+        {%- endfor -%}
+      </div>
+      <div class="palette-strip photobook-colophon__palette">
+        <a class="palette-strip__bar" href="{{ '/palette/' | relative_url }}#{{ include.book.gallery }}" data-tip="QSD's Palette for {{ page.title | strip_html | escape }}" data-tip-side="top" aria-label="QSD's Palette for {{ page.title | strip_html | escape }}">{% for s in colour.palette %}<i style="--c:{{ s.hex }};flex:{{ s.pc | at_least: 1 }}"></i>{% endfor %}</a>
+        <p class="palette-strip__hex">{% for s in colour.palette %}<span><i style="--c:{{ s.hex }}"></i>{{ s.hex | remove: "#" | upcase }}<b>{{ s.pc }}%</b>{% if s.accent %}<small>accent</small>{% endif %}</span>{% endfor %}</p>
+      </div>
+      {%- assign reverie_from = include.book.photos[include.book.book.cover] | default: include.book.photos.first %}
+      <p class="photobook-colophon__onward"><a href="{{ '/palette/' | relative_url }}#{{ include.book.gallery }}">QSD's Palette for {{ page.title | strip_html }} <span aria-hidden="true">→</span></a><a href="{{ '/reverie/' | relative_url }}?from={{ include.book.gallery | append: '/' | append: reverie_from.slug | url_encode }}">Reverie from here <span aria-hidden="true">→</span></a></p>
     </div>
     {%- endif %}
   </div>

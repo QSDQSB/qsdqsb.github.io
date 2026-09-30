@@ -33,6 +33,14 @@
   //   motionOff()            — reduce motion, OR the kill-switch above flagged an
   //                            automated renderer; either way animations must land
   //                            on their final state, never a mid-flight frame.
+  // A reader who closed the subscribe slip (its ×, assets/js/subscribe.js) never
+  // sees it again on this browser; set before first paint so it cannot flash.
+  try {
+    if (window.localStorage.getItem("qsd-subscribe-dismissed")) {
+      document.documentElement.classList.add("subscribe-dismissed");
+    }
+  } catch (e) { /* storage blocked: the slip shows as before */ }
+
   window.QSD = window.QSD || {};
   window.QSD.prefersReducedMotion = function () {
     return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -44,7 +52,7 @@
 
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="mask-icon" href="{{ base_path }}/images/safari-pinned-tab.svg" color="#000000">
-<meta name="theme-color" content="#f0f0f0">
+<meta name="theme-color" content="#151515">
 <!-- Self-hosted Font Awesome 6 Free (woff2). Replaces the remote kit + legacy
      local FA5 vendor import — one FA6 source, no third-party async dependency. -->
 <link rel="stylesheet" href="{{ base_path }}/assets/css/fontawesome.min.css"/>
@@ -100,5 +108,16 @@
   crossorigin="" defer></script>
 <script src="{{ base_path }}/assets/js/map.js" defer></script>
 {% endif %}
+
+{%- comment -%} A page's own data and modules, fetched while the page is read rather than once its
+  script has loaded and asked (front matter `preload:` for JSON, `modules:` for ES modules; the colour
+  pages). The data is fetched here and its promise handed on (assets/js/colour/cards.js json), not
+  preloaded: Safari does not reuse a preloaded fetch, and would download it twice. {%- endcomment -%}
+{%- if page.preload %}
+<script>window.QSD_pre = {};{% for p in page.preload %}{% assign u = p | relative_url %}window.QSD_pre[{{ u | jsonify }}] = fetch({{ u | jsonify }}).then(function (r) { return r.ok ? r.json() : null; }, function () { return null; });{% endfor %}</script>
+{%- endif %}
+{%- for m in page.modules %}
+<link rel="modulepreload" href="{{ m | relative_url }}">
+{%- endfor %}
 
 <!-- end custom head snippets -->

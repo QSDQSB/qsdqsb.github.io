@@ -60,9 +60,13 @@ export function filmDial(el, onChoose) {
     e.stopPropagation();                                       // the mark under the finger is not chosen
   }, true);
 
+  // A choice turns the face under a still pointer, and another mark slides beneath it: that mark is
+  // not previewed until the pointer moves again (the name stays the film chosen).
+  let chose = false;
+  face.addEventListener('pointermove', () => { chose = false; });
   marks.forEach((m, i) => {
-    m.addEventListener('click', () => { if (!turned) choose(i); });
-    m.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse' && !held && i !== sel) say(i, true); });
+    m.addEventListener('click', () => { if (!turned) { chose = true; choose(i); } });
+    m.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse' && !held && !chose && i !== sel) say(i, true); });
     m.addEventListener('pointerleave', () => { if (!held) say(sel); });
   });
 
