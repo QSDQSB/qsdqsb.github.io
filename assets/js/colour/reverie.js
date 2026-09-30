@@ -4,8 +4,9 @@
  * picture at least), the one it was found in first. The colour leads: a chip of it, exact and flat,
  * labelled with its hex and its name, standing on its dye, which fills the screen and stays there, the
  * room the page stands in (a rectangular vat, the colour given the most of it and that photograph's
- * colours round it), its hex set large. The rest rises over it as a sheet of dark glass, darker as the
- * dye is lighter (--veil), so the prints are judged on near-black whatever the colour. On it, the
+ * colours round it), its hex set large. The rest rises over it on a pane of liquid glass afloat in the
+ * dye, the dye running on beside it; the glass dims what it shows the more the lighter the dye
+ * (--glass-light), so the prints are judged on near-black whatever the colour. On it, the
  * colours nearby, a step away each, to wander to; then the photographs, as the palette page's cards but
  * bare: prints and their words, nothing laid over the mood; or, switched, each as its own dye in the
  * print's place, the print coming back under the pointer (or the keyboard's focus; on a touch screen,
@@ -40,11 +41,12 @@ const body = root?.querySelector('.reverie__stage');
 const base = new URL('../../../', import.meta.url).pathname;
 const room = root?.querySelector('.reverie__room');
 
-/** How dark the glass over the dye (_colour.scss .reverie__sheet): its black's opacity, 0.8 over a deep
- *  dye, up to 0.92 over the lightest, by the dye's light (its colours' luminance, each by its share). */
-const veilFor = (palette) => {
+/** How much of the dye's light the glass lets through (_colour.scss .reverie__sheet, its backdrop's
+ *  brightness): 0.64 of a deep dye's, down to 0.26 of the lightest's, by the dye's light (its colours'
+ *  luminance, each by its share). */
+const glassFor = (palette) => {
   const Y = palette.reduce((a, [h, pc]) => { const n = parseInt(h.slice(1), 16); return a + (pc / 100) * (0.2126 * lin(n >> 16) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255)); }, 0);
-  return (0.8 + 0.12 * Math.sqrt(Math.min(1, Y))).toFixed(3);
+  return (0.64 - 0.384 * Math.sqrt(Math.min(1, Y))).toFixed(3);
 };
 
 /** The photographs as prints, or as their dyes (kept for the next visit: a reader's preference, no more). */
@@ -53,6 +55,16 @@ let palettes = false;
 try { palettes = localStorage.getItem(VIEW) === 'palettes'; } catch { /* prints, then */ }
 
 async function main() {
+  // The page's glass and the colophon's made one pane (_colour.scss .reverie__sheet::before): the page's
+  // reaches down behind the colophon, as far as the colophon is tall.
+  const foot = document.querySelector('.site-colophon');
+  if (foot && 'ResizeObserver' in window) {
+    new ResizeObserver(() => {
+      root.style.setProperty('--reverie-foot', `${foot.offsetHeight}px`);
+      root.classList.add('is-joined');
+    }).observe(foot);
+  }
+
   // The colour the address asks for, at once, while the photographs are read: its hex and its flat
   // colour where the dye will pour.
   const asked = new URLSearchParams(location.search).get('c');
@@ -175,7 +187,7 @@ async function main() {
       hero = { field, live: null, spec: [focused, { shape: 'rect', width: fw, height: fh, seed, stir: 'hold', speed: 20 }], want: false };
       room.prepend(field);
       room.classList.add('is-poured');
-      document.documentElement.style.setProperty('--veil', veilFor(focused)); // the page's glass and the site's colophon beneath it
+      document.documentElement.style.setProperty('--glass-light', glassFor(focused)); // the page's glass and the site's colophon beneath it
       dye.style.setProperty('--shade', shadeFor(hex));
       codeEl.textContent = HEX;
       chipEl.style.background = hex;

@@ -120,8 +120,10 @@
 // A field of flat colour given a surface to lie on: plastered wall or primed canvas, its relief caught
 // by a raking light from the upper left, the grain in it. One still image (an SVG's noise lit as a
 // surface), laid over the colour on an ::after; the colour beneath keeps its hue (soft light).
-// Reverie's opening, a colour's frame in the lightbox, Drift's colour.
-@mixin surface-relief {
+// Reverie's room, a colour's frame in the lightbox, Drift's colour.
+// $w, $h: the image's field, its grain fixed within it. Laid larger, the same grain is drawn finer: a
+// field that covers a whole screen takes a wider one, or its plaster swells to stucco.
+@mixin surface-relief($w: 1800, $h: 600) {
   content: "";
   position: absolute;
   inset: 0;
@@ -131,7 +133,7 @@
   // One image over the whole field, never a repeated tile: a lighting filter works out each point's
   // slope from its neighbours, and at a tile's edge, having none, draws a seam that repeats as a grid.
   // The filter reaches past the image on every side, so its own edge never shows either.
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1800' height='600' viewBox='0 0 1800 600'%3E%3Cfilter id='r' filterUnits='userSpaceOnUse' x='-40' y='-40' width='1880' height='680'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' seed='7' result='n'/%3E%3CfeDiffuseLighting in='n' surfaceScale='2.6' diffuseConstant='1.1' lighting-color='%23fff'%3E%3CfeDistantLight azimuth='225' elevation='38'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect x='-40' y='-40' width='1880' height='680' filter='url(%23r)'/%3E%3C/svg%3E") center / cover no-repeat;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='#{$w}' height='#{$h}' viewBox='0 0 #{$w} #{$h}'%3E%3Cfilter id='r' filterUnits='userSpaceOnUse' x='-40' y='-40' width='#{$w + 80}' height='#{$h + 80}'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' seed='7' result='n'/%3E%3CfeDiffuseLighting in='n' surfaceScale='2.6' diffuseConstant='1.1' lighting-color='%23fff'%3E%3CfeDistantLight azimuth='225' elevation='38'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect x='-40' y='-40' width='#{$w + 80}' height='#{$h + 80}' filter='url(%23r)'/%3E%3C/svg%3E") center / cover no-repeat;
 }
 
 @mixin icon-button-quiet($size: 2rem) {
