@@ -2,7 +2,7 @@
   "rules": [
     {
       "allowed": {
-        "origins": ["https://qsdqsb.com", "http://localhost:4000"],
+        "origins": ["https://qsdqsb.com", "https://*.qsdqsb-house-of-wonders.pages.dev", "http://localhost:4000"],
         "methods": ["GET", "HEAD"]
       },
       "maxAgeSeconds": 86400

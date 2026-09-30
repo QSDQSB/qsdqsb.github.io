@@ -1,3 +1,7 @@
 # Authored layer for gallery/budapest — captions, order, stories.
 # Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: dscf6363
+  focus: [0.5, 0.703]
 photos: {}

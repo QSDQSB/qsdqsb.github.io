@@ -4,4 +4,8 @@
 # or a sun; the temperature is the standard atmosphere's at cruising height.
 aerial:
   altitude_ft: 33000
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: dscf5863
+  focus: [0.533, 0.589]
 photos: {}

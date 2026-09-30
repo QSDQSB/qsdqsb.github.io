@@ -20,6 +20,9 @@
  *   data-depth-motion "smooth" | "spring"     (default smooth)
  *   data-depth-dpr    device-pixel-ratio cap  (default 2; home uses 1 — the
  *                     7px frost makes retina resolution pure waste)
+ *   data-depth-centre "x y", 0–1: the point the crop keeps central, as the CSS
+ *                     background's position does (a voyage cover's focus;
+ *                     default the middle)
  */
 (function () {
   'use strict';
@@ -45,6 +48,7 @@
     'uniform sampler2D uDepth;',
     'uniform vec2 uTilt;',
     'uniform vec2 uCover;',
+    'uniform vec2 uShift;',
     'uniform float uAmp;',
     'uniform float uFocus;',
     'uniform float uZoom;',
@@ -52,7 +56,7 @@
     'uniform vec2 uVeil;',
     'uniform vec4 uFilter;',
     'void main() {',
-    '  vec2 uv = (vUv - 0.5) * uCover * 0.94 + 0.5;',
+    '  vec2 uv = (vUv - 0.5) * uCover * 0.94 + 0.5 + uShift;',
     '  vec2 off = uTilt * uAmp;',
     '  float d = texture2D(uDepth, uv).r;',
     '  vec2 p = uv + off * (d - uFocus);',
@@ -100,6 +104,8 @@
     const GLOW = (glowRaw >= 0 && glowRaw <= 100 ? glowRaw : 0) / 100 * 1.5;
     // "start end" opacities of the host's darkening gradient, applied
     // in-shader (luminance-keyed) instead of as a flat CSS layer above.
+    const centre = (media.getAttribute('data-depth-centre') || '').split(/\s+/).map(parseFloat);
+    const CENTRE = centre.length === 2 && centre.every(function (v) { return v >= 0 && v <= 1; }) ? centre : [0.5, 0.5];
     const veilParts = (media.getAttribute('data-depth-veil') || '').split(/\s+/).map(parseFloat);
     const VEIL = veilParts.length === 2 && veilParts.every(function (v) { return v >= 0 && v <= 1; })
       ? veilParts : [0, 0];
@@ -146,7 +152,7 @@
     gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
     const U = {};
-    ['uPhoto', 'uDepth', 'uTilt', 'uCover', 'uAmp', 'uFocus', 'uZoom', 'uGlow', 'uVeil', 'uFilter'].forEach(function (n) {
+    ['uPhoto', 'uDepth', 'uTilt', 'uCover', 'uShift', 'uAmp', 'uFocus', 'uZoom', 'uGlow', 'uVeil', 'uFilter'].forEach(function (n) {
       U[n] = gl.getUniformLocation(prog, n);
     });
     gl.uniform4f(U.uFilter, filterRGBA[0], filterRGBA[1], filterRGBA[2], filterRGBA[3]);
@@ -156,6 +162,8 @@
     function loadTexture(unit, src, isPhoto, done) {
       const tex = gl.createTexture();
       const img = new Image();
+      // A cover's photo comes from the photo host: a texture must be fetched in CORS mode.
+      if (new URL(src, location.href).origin !== location.origin) img.crossOrigin = 'anonymous';
       img.onload = function () {
         if (isPhoto) imgAspect = img.naturalWidth / img.naturalHeight;
         gl.activeTexture(gl.TEXTURE0 + unit);
@@ -173,6 +181,7 @@
 
     const hero = media.closest('.page__hero--overlay, .home__hero') || media.parentElement;
     const cover = [1, 1];
+    const shift = [0, 0];
     function resize() {
       const dpr = Math.min(window.devicePixelRatio || 1, dprCap);
       const w = media.clientWidth;
@@ -188,6 +197,11 @@
       } else {
         cover[0] = 1;
         cover[1] = imgAspect / canvasAspect;
+      }
+      // Keep CENTRE in the middle of the visible window, as far as the photo's edges allow.
+      for (let i = 0; i < 2; i++) {
+        const half = cover[i] * 0.94 / 2;
+        shift[i] = Math.min(1 - half, Math.max(half, CENTRE[i])) - 0.5;
       }
     }
     window.addEventListener('resize', resize);
@@ -278,6 +292,7 @@
 
       gl.uniform2f(U.uTilt, tilt.x, tilt.y);
       gl.uniform2f(U.uCover, cover[0], cover[1]);
+      gl.uniform2f(U.uShift, shift[0], shift[1]);
       gl.uniform1f(U.uAmp, AMP);
       gl.uniform1f(U.uFocus, FOCUS);
       gl.uniform1f(U.uZoom, zoom);

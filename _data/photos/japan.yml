@@ -1,0 +1,5 @@
+# Authored layer for the voyage japan, in parts.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: kyoto/dscf7379
+  focus: [0.459, 0.58]

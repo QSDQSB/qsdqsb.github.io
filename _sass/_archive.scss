@@ -133,7 +133,7 @@
   box-sizing: border-box;
   --bg-filter-opacity: 0.32;
   background-size: cover;
-  background-position: center;
+  background-position: var(--bg-pos, center); // a voyage cover's focus, for this 3.5:1 (_includes/archive-single.html)
   // A cover parked in --bg-later (_includes/archive-single.html defer_cover) waits on
   // assets/js/card-covers.js with only the scrim; without JS it takes the cover at once.
   background-image: linear-gradient(rgba(12,12,12,var(--bg-filter-opacity)),rgba(0,0,0,var(--bg-filter-opacity))), var(--bg-img, none);

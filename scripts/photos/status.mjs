@@ -141,7 +141,8 @@ function authoredGalleries(dir) {
     if (!fs.existsSync(abs)) return;
     for (const e of fs.readdirSync(abs, { withFileTypes: true })) {
       if (e.isDirectory()) walk(path.join(abs, e.name), rel ? `${rel}/${e.name}` : e.name);
-      else if (e.name.endsWith('.yml')) out.push(rel ? `${rel}/${e.name.slice(0, -4)}` : e.name.slice(0, -4));
+      // <x>.yml beside a folder <x>/ is a voyage in parts' own file (its cover), not a gallery.
+      else if (e.name.endsWith('.yml') && !fs.existsSync(path.join(abs, e.name.slice(0, -4)))) out.push(rel ? `${rel}/${e.name.slice(0, -4)}` : e.name.slice(0, -4));
     }
   };
   walk(dir, '');

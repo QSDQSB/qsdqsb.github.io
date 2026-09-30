@@ -1,0 +1,37 @@
+# Authored layer for gallery/titlis — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: dscf3991
+  focus: [0.66, 0.36]
+photos:
+  dscf3877:
+    caption:
+  dscf3926:
+    caption:
+  dscf3940:
+    caption:
+  dscf3968:
+    caption:
+  dscf3991:
+    caption:
+  dscf4004:
+    caption:
+  dscf4009:
+    caption:
+  dscf5022:
+    caption:
+  dscf5024:
+    caption:
+  dscf5027:
+    caption:
+  dscf5039:
+    caption:
+  dscf5054:
+    caption:
+  dscf5056:
+    caption:
+  dscf5083:
+    caption:
+  dscf5101:
+    caption:

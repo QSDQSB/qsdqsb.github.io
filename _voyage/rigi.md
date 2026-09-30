@@ -6,6 +6,4 @@ date: 2025-12-26
 tags:
   - 🏔️Alps
   - 🚞Switzerland
-header:
-  overlay_image: cover/rigi-cloud-sea-afterglow-3v1.jpg
 ---

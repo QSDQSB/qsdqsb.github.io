@@ -49,10 +49,12 @@ tags:
 #   zoom: 12
 #   minZoom: 6
 #   maxZoom: 20
-header:
-  overlay_image: /images/...
-  overlay_filter: 0.5
-  caption: "..."
+# The cover is not frontmatter: it goes in _data/photos/<name>.yml as
+# `cover: { photo: <part>/<slug>, focus: [x, y] }` (npm run covers:focus).
+# header is optional, for an overlay_filter or a caption:
+# header:
+#   overlay_filter: 0.5
+#   caption: "..."
 ---
 ```
 
@@ -67,8 +69,7 @@ date: YYYY-MM-DD
 gallery_name: <name>             # Photobook mode
 tags:
   - tag1
-header:
-  overlay_image: /images/...
+# The cover: `cover: { photo: <slug>, focus: [x, y] }` in _data/photos/<name>.yml
 ---
 ```
 
@@ -91,8 +92,7 @@ tags:
 #   query: "<better Nominatim query>"
 # map:
 #   exclude: true                # omit from the parent voyage's map
-header:
-  overlay_image: cover/<parent>/<name>-3v1.jpg
+# The cover: `cover: { photo: <slug>, focus: [x, y] }` in _data/photos/<parent>/<name>.yml
 ---
 ```
 
@@ -104,4 +104,4 @@ Tell the user:
 - If the new entry will appear on a map: confirm whether `npm run geocode` needs to be re-run (yes, in every case where new coords/queries/exclusions were added).
 - Next steps (`npm run serve` to preview; `photos:fetch` + geocode run automatically as prerequisites).
 
-Don't fabricate values — if you don't know what `overlay_image` should be, leave a placeholder and tell the user.
+Don't fabricate values. The cover needs the gallery's processed photographs: once they are in, `npm run covers:focus` picks the photo and the focus and writes the YAML; until then, say the voyage has no cover yet (`check:frontmatter` reports it).

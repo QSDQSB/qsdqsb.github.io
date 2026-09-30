@@ -2,7 +2,7 @@
 /**
  * Validate Jekyll frontmatter against this site's collection contracts.
  *
- * Jekyll does not refuse to render a page with a missing `header` or a
+ * Jekyll does not refuse to render a voyage with no cover or a
  * `gallery_name` pointing nowhere — it produces an empty shell. The failure is
  * invisible in CI and surfaces only when a reader hits a broken page. That
  * makes this exactly the wrong thing to enforce by prose instruction: the
@@ -36,8 +36,9 @@ const ROOT = path.join(__dirname, '..');
 const COLLECTIONS = {
   _posts: { required: ['title', 'date'] },
   _pages: { required: ['title'] },
-  _voyage: { required: ['title', 'date', 'header'] },
-  _subvoyage: { required: ['title', 'date', 'header'] },
+  // A voyage also needs a cover (checkCover): `header` is no longer required for it.
+  _voyage: { required: ['title', 'date'] },
+  _subvoyage: { required: ['title', 'date'] },
 };
 
 // ---------------------------------------------------------------------------
@@ -116,6 +117,23 @@ function checkGalleryName(fm, add) {
     try { count = JSON.parse(fs.readFileSync(merged, 'utf8')).count; } catch { /* unreadable: the fetch reports it */ }
     if (count === 0) add('warn', `gallery_name "${name}" → no processed photographs yet; the page shows an empty Photobook`);
   }
+}
+
+/**
+ * A voyage needs a cover: `cover:` in its photo YAML (_data/photos/<gallery_name>.yml, or for a voyage
+ * in parts _data/photos/<basename>.yml), else, as before covers moved there, `header.overlay_image`.
+ * Without either its hero, cards and link preview have no picture.
+ */
+function checkCover(fm, rel, add) {
+  if (fm.header && fm.header.overlay_image) return;
+  const own = fm.gallery_name ? String(fm.gallery_name) : fm.subgalleries === true ? path.basename(rel).replace(/\.(md|markdown|html)$/, '') : null;
+  if (own) {
+    try {
+      const doc = yaml.load(fs.readFileSync(path.join(ROOT, '_data', 'photos', `${own}.yml`), 'utf8')) || {};
+      if (doc.cover && doc.cover.photo) return;
+    } catch { /* no file: no cover */ }
+  }
+  add('error', `no cover — set \`cover: { photo, focus }\` in _data/photos/${own || '<gallery>'}.yml (npm run covers:focus), or header.overlay_image`);
 }
 
 /** A voyage is either a gallery or an enumerator — never both, never neither. */
@@ -306,6 +324,8 @@ function checkFile(absPath, tagColours) {
   checkGalleryName(fm, add);
   checkTags(fm, tagColours, collection, add);
   checkMap(fm, collection, add);
+
+  if (collection === '_voyage' || collection === '_subvoyage') checkCover(fm, rel, add);
 
   if (collection === '_voyage') {
     checkVoyageMode(fm, add);

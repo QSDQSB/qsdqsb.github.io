@@ -6,6 +6,4 @@ date: 2022-12-27
 tags:
   - 🏛️Historic
   - 🌊Coastal
-header:
-  overlay_image: cover/morocco-sahara-3v1.jpg
 ---

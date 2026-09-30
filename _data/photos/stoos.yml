@@ -1,0 +1,5 @@
+# Authored layer for gallery/stoos.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: dscf5690
+  focus: [0.48, 0.45]

@@ -1,0 +1,23 @@
+{%- comment -%}
+  Sets `vc` to include.doc's voyage cover, or nil. Every place a voyage cover is drawn (the
+  Photobook cover, the page hero, the cards, Home, the link preview) reads it through here.
+
+  The cover is authored as `cover: { photo, focus }` in _data/photos/<gallery>.yml (a voyage in
+  parts: _data/photos/<parent>.yml, photo part/slug); photos:fetch resolves it into
+  _data/photo_manifests/_covers.json:
+    { url, w, h, ratio, sizes, ph, focus,
+      pos: { card, wide, hero, og, screen, tall, portrait } }   (scripts/photos/lib/cover.mjs)
+  `pos` is the object-/background-position that centres the focus in a box of that shape.
+
+  Also sets `vc_key` (the page's key there) and `vc_og` (its link preview's path). A page with no
+  cover (posts, pages, Venice's parts) gets nil and keeps header.overlay_image.
+{%- endcomment -%}
+{%- assign vc = nil -%}
+{%- assign vc_key = nil -%}
+{%- if include.doc.gallery_name -%}
+  {%- assign vc_key = include.doc.gallery_name | replace: "/", "_" -%}
+{%- elsif include.doc.subgalleries -%}
+  {%- assign vc_key = include.doc.path | split: "/" | last | split: "." | first -%}
+{%- endif -%}
+{%- if vc_key -%}{%- assign vc = site.data.photo_manifests["_covers"][vc_key] -%}{%- endif -%}
+{%- assign vc_og = "/images/og/" | append: vc_key | append: ".jpg" -%}

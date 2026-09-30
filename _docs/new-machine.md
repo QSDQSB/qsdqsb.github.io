@@ -26,10 +26,10 @@ npx playwright install chromium webkit   # the pixel diff (Chromium) and the iPh
 
 | What | Lives at | Where it comes from | Needed for |
 |---|---|---|---|
-| rclone remote `r2` | `~/.config/rclone/rclone.conf` | Cloudflare → R2 → Manage API tokens (Object Read & Write, `qsdqsb-originals` and `qsdqsb-photos`). Written by `bash scripts/photos/setup-secrets.sh <account-id>`: answer only the R2 prompts, Enter skips the rest | `photos:fetch` (every build), push, pull, prune, trash |
+| rclone remote `r2` | `~/.config/rclone/rclone.conf` | Cloudflare → R2 → Manage API tokens (Object Read & Write, `qsdqsb-originals` and `qsdqsb-photos`). Written by `bash scripts/photos/setup-secrets.sh <account-id>`, which takes the two keys from `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` in `.env` when they are there, else asks. Answer no to replacing GitHub's R2 secrets unless this key can write both buckets; Enter skips the rest. A read-only key reads fine and fails every push with 403 | `photos:fetch` (every build), push, pull, prune, trash |
 | Cloudflare login | wrangler's own store | `npx wrangler@4 login` (a browser sign-in) | Workers, D1, R2 admin; `whoami` gives the account id |
 | GitHub login | gh's own store | `gh auth login` | PRs, `gh workflow run photos-process.yml` |
-| `.env` at the repo root | `.env` (gitignored) | `GEOAPIFY_API_KEY=` from the Geoapify dashboard. Optional: without it `photos:locate` falls back to Nominatim. May also set `PHOTOS_DIR` for originals on an external drive (→ `photos-pipeline.md`, *Local setup*) | `photos:locate` |
+| `.env` at the repo root | `.env` (gitignored) | `GEOAPIFY_API_KEY=` from the Geoapify dashboard. Optional: without it `photos:locate` falls back to Nominatim. `RESEND_API_KEY=` from the Resend dashboard (API Keys) for `scripts/send-letter.mjs`; Cloudflare's copy can't be read back. `R2_ACCESS_KEY_ID=` / `R2_SECRET_ACCESS_KEY=` (and optionally `R2_ACCOUNT_ID=`) for `setup-secrets.sh`, above. May also set `PHOTOS_DIR` for originals on an external drive (→ `photos-pipeline.md`, *Local setup*) | `photos:locate`, letters, `setup-secrets.sh` |
 
 Already in the cloud, nothing to do: the GitHub Actions secrets (`R2_*`, `CF_PAGES_DEPLOY_HOOK`),
 the Cloudflare Pages variables, and the Worker's `GITHUB_TOKEN`.

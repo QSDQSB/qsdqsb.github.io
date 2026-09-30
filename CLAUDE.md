@@ -149,8 +149,10 @@ Enforced on touched files only — no global retrofit of untouched legacy files.
 |---|---|
 | `_posts` | `title`, `date` |
 | `_pages` | `title` |
-| `_voyage` | `title`, `date`, `header` + exactly one of `gallery_name` / `subgalleries: true` |
-| `_subvoyage` | `title`, `date`, `header`, `gallery_name` |
+| `_voyage` | `title`, `date`, a cover + exactly one of `gallery_name` / `subgalleries: true` |
+| `_subvoyage` | `title`, `date`, a cover, `gallery_name` |
+
+A voyage's cover is `cover: { photo, focus }` in its photo YAML (`_data/photos/<gallery>.yml`; a voyage in parts `_data/photos/<parent>.yml`), set with `npm run covers:focus`; `header.overlay_image` only where a voyage has no processed gallery yet (Venice).
 
 Jekyll renders a broken contract as an empty shell rather than an error, so these fail silently and only surface when a reader hits the page.
 

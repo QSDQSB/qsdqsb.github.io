@@ -18,6 +18,4 @@ map:
   zoom: 13.5
   minZoom: 6
   maxZoom: 20
-header:
-  overlay_image: cover/rome-piazza-venezia-3v1.jpg
 ---

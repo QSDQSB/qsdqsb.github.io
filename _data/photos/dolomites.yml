@@ -1,0 +1,5 @@
+# Authored layer for the voyage dolomites, in parts.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+cover:
+  photo: sesto/dscf9474
+  focus: [0.5, 0.535]
