@@ -70,6 +70,10 @@
   height: 100%;
 }
 
+// The tarot cards wait unseen in the lower corners, above everything: while the panel is open a click
+// there is meant for a result, so they stand down.
+body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-events: none; }
+
 .search-content {
   position: fixed;
   top: calc(var(--search-panel-top, 0px) + #{$search-panel-offset-y});

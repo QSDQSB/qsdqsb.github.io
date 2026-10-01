@@ -413,7 +413,8 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     t.finished.catch(() => {}).finally(() => { to.style.viewTransitionName = ''; });
   }
   window.addEventListener('keydown', (e) => {
-    if (!lb.open || e.target.matches?.('input,textarea')) return;
+    // A key held with a modifier is the browser's: Cmd+F finds, Alt+← goes back, Cmd+S saves.
+    if (!lb.open || e.altKey || e.metaKey || e.ctrlKey || e.target.matches?.('input,textarea')) return;
     const k = e.key.toLowerCase();
     if ((k === ' ' || k === 'enter') && e.target.closest?.('button')) return;
     if (k === 'arrowright') next(); else if (k === 'arrowleft') prev();

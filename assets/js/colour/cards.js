@@ -123,6 +123,16 @@ export function holding(frames, hex, { near = SAME, least = 0.05, not = null } =
   }
   return out.sort((a, b) => b.score - a.score);
 }
+/** The frame that comes closest to `hex` when none holds it: the one whose nearest dot is nearest. */
+export function closest(frames, hex) {
+  const P = lab(hex);
+  let best = null, least = Infinity;
+  for (const f of frames) for (const d of dots(f)) {
+    const x = Math.hypot(P[0] - d.lab[0], P[1] - d.lab[1], P[2] - d.lab[2]);
+    if (x < least) { least = x; best = f; }
+  }
+  return best;
+}
 /** The first `most` of a ranked `holding` list, chosen so no voyage crowds the rest out: taken one at a
  *  time, each frame's score lowered by `fade` for every frame already taken from its voyage (`v`, so a
  *  trip's parts count as one). */

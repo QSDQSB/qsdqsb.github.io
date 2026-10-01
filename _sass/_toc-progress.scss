@@ -120,7 +120,8 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  overscroll-behavior: contain;
+  // Beside the text it is a rail of its own; above the text (below wide) its scroll hands back to the page.
+  @include responsive-up(wide) { overscroll-behavior: contain; }
 }
 
 /* Sticky sidebar adjustments */

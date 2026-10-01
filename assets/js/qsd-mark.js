@@ -148,11 +148,6 @@
   // oversampled (618 pts / 11 subpaths), so RDP keeps only ~28% in flight
   // (~170 pts) — the in-motion `d` string and its parse/raster shrink ~3.5×,
   // near-losslessly (sub-pixel deviation). Full fidelity returns at rest.
-  if(window.console && console.info){
-    console.info('QSD morph LOD — flight points:', liteTotal, '/ rest points:', fullTotal,
-                 '('+Math.round(100*liteTotal/fullTotal)+'% in flight)');
-  }
-
   // -------------------------- easing (cubic-bezier) --------------------------
   function cubicBezier(x1,y1,x2,y2){
     var cx=3*x1, bx=3*(x2-x1)-cx, ax=1-cx-bx;

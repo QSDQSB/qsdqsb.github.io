@@ -135,10 +135,13 @@ async function main() {
         if (!from.isConnected) return;
         // The cards above it are only estimated until drawn, so the page moves under a long glide:
         // aimed again when it lands, until the frame is in the middle (a few times at most), then ringed.
-        let tries = 0;
+        // The reader's own scroll ends it: the page is theirs, and the frame is ringed where it lies.
+        let tries = 0, theirs = false;
+        const taken = () => { theirs = true; };
+        ['wheel', 'touchmove', 'keydown'].forEach((type) => addEventListener(type, taken, { once: true, passive: true }));
         const aim = () => {
           const r = from.getBoundingClientRect(), off = r.top + r.height / 2 - innerHeight / 2;
-          if (Math.abs(off) > innerHeight * 0.2 && tries++ < 3) { from.scrollIntoView({ block: 'center', behavior: 'smooth' }); settle(); return; }
+          if (!theirs && Math.abs(off) > innerHeight * 0.2 && tries++ < 3) { from.scrollIntoView({ block: 'center', behavior: 'smooth' }); settle(); return; }
           if (!from.classList.contains('is-arrived')) land();
         };
         const settle = () => { let done = false; const go = () => { if (!done) { done = true; aim(); } }; addEventListener('scrollend', go, { once: true }); setTimeout(go, 1400); };
@@ -342,7 +345,8 @@ async function main() {
 
   // ← → step along the rail.
   addEventListener('keydown', (e) => {
-    if (e.defaultPrevented || e.altKey || e.metaKey || e.ctrlKey || e.shiftKey || e.target.closest?.('input, textarea, select, [contenteditable]')) return;
+    // A held key steps once: each step is a place in history and a new light in the room.
+    if (e.repeat || e.defaultPrevented || e.altKey || e.metaKey || e.ctrlKey || e.shiftKey || e.target.closest?.('input, textarea, select, [contenteditable]')) return;
     const dir = { ArrowLeft: '-1', ArrowRight: '1' }[e.key];
     const step = dir && railNav.querySelector(`[data-step="${dir}"]:not([hidden])`);
     if (step) { e.preventDefault(); location.hash = step.getAttribute('href'); }

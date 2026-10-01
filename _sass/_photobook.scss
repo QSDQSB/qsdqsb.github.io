@@ -1411,12 +1411,14 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   box-shadow: $shadow-floating;
   opacity: 0;
   transform: translateX(calc(100% + 1.5rem));
-  transition: transform 0.55s $cubic-bezier-smooth, opacity 0.4s $cubic-bezier-smooth;
+  // Folded away it takes no focus either: hidden once it has slid out, shown before it slides in.
+  visibility: hidden;
+  transition: transform 0.55s $cubic-bezier-smooth, opacity 0.4s $cubic-bezier-smooth, visibility 0s 0.55s;
 
   &::-webkit-scrollbar { display: none; }
 }
 
-.photobook-lightbox.has-specs .photobook-specs { opacity: 1; transform: none; }
+.photobook-lightbox.has-specs .photobook-specs { opacity: 1; transform: none; visibility: visible; transition-delay: 0s; }
 // The panel carries the place and the specs, so the band beneath the print steps aside while it shows.
 .photobook-lightbox.has-specs .photobook-lightbox__caption { opacity: 0; pointer-events: none; }
 // Open, the panel stands beside the print, a rem apart, and the print takes the caption band's height.
@@ -1903,6 +1905,8 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-frame:hover .photobook-frame__caption > *,
   .photobook-frame:focus-within .photobook-frame__caption > *,
   .photobook-specs,
+  .photobook-lightbox,
+  .photobook-lightbox__mount,
   .photobook-lightbox__chrome,
   .photobook-lightbox__rail,
   .photobook-lightbox__rail button,

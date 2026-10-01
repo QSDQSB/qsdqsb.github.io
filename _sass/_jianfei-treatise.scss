@@ -450,6 +450,9 @@ body.jianfei-treatise {
 html.motion-off.js body.jianfei-treatise {
   .jf-exhibit.jf-in .jf-day, .jf-abs-line, .jf-em, .jf-gust { animation: none; }
   .jf-day, .jf-line, .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { transition: none; }
+  // With the animation gone its last frame goes too, and the script never marks the figure drawn:
+  // show what each would have arrived at.
+  .jf-abs-line, .jf-pt, .jf-el, .jf-base, .jf-dim, .jf-dim-l { opacity: 1; }
 }
 
 @keyframes jf-abs-rise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }

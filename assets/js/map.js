@@ -39,6 +39,8 @@
   // Interaction handlers unlocked when the reader activates the map. The
   // absence of scrollWheelZoom is deliberate — see activateMap().
   const ACTIVATION_HANDLERS = ['dragging', 'doubleClickZoom', 'touchZoom', 'boxZoom', 'keyboard'];
+  // The site's one answer to "has this reader asked for stillness?" (_includes/head/custom.html).
+  const still = () => typeof window !== 'undefined' && !!(window.QSD && window.QSD.motionOff && window.QSD.motionOff());
 
   function getViewportPreset(viewportData) {
     if (viewportData) {
@@ -100,7 +102,7 @@
           //      with no curated viewport — reset = "back to cluster view").
           const effective = map._initialPreset || initialPreset;
           if (effective && effective.center && effective.zoom !== undefined) {
-            map.setView(effective.center, effective.zoom, { animate: true, duration: 0.5 });
+            map.setView(effective.center, effective.zoom, { animate: !still(), duration: 0.5 });
             return;
           }
           if (map._loadedGeoJSON) {
@@ -334,6 +336,10 @@
       touchZoom: false,
       boxZoom: false,
       keyboard: false,
+      // Leaflet's own zoom and fade animations: off for a reader who asked for stillness.
+      zoomAnimation: !still(),
+      fadeAnimation: !still(),
+      markerZoomAnimation: !still(),
       // SVG (not canvas) so the marker transitions in _map.scss actually take
       // effect — hover, selection and tag-filter changes ease instead of
       // snapping. Marker count per voyage is small, so SVG cost is negligible.

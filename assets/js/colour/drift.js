@@ -75,7 +75,9 @@ async function main() {
       back.href = came ? document.referrer : `${reverie}?c=${colour.slice(1)}${src ? `&from=${encodeURIComponent(src)}` : ''}`;
       back.setAttribute('aria-label', `Back to ${colour.toUpperCase()}`); back.dataset.tip = `Back to ${colour.toUpperCase()}`;
       back.addEventListener('click', (e) => { if (came && history.length > 1) { e.preventDefault(); history.back(); } });
-      addEventListener('keydown', (e) => { if (e.key === 'Escape') back.click(); });
+      // Escape belongs first to whatever is open over the page: search spends the key (_main.js), and
+      // the overflow menu is asked after.
+      addEventListener('keydown', (e) => { if (e.key === 'Escape' && !e.defaultPrevented && !document.querySelector('.greedy-nav--menu-open')) back.click(); });
     }
   }
 
@@ -102,10 +104,11 @@ async function main() {
       ?? (() => { const left = all.map((_, j) => j).filter((j) => !seen.has(j)); return left.length ? left[Math.floor(Math.random() * left.length)] : null; })();
   }
 
-  // The smallest rendition that fills the stage at this screen's density (named by the long edge).
+  // The smallest rendition that covers the print as drawn (it is contained in the stage, never cropped)
+  // at this screen's density, named by the long edge.
   const srcOf = (p) => {
     const r = p.r || 1.5, box = stage.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
-    const need = Math.max(box.width * dpr * Math.max(1, 1 / r), box.height * dpr * Math.max(1, r));
+    const need = Math.min(box.width * dpr * Math.max(1, 1 / r), box.height * dpr * Math.max(1, r));
     const s = p.sizes.filter((w) => w <= 2560);
     return `${p.url}/${s.find((w) => w >= need) || s[s.length - 1] || 480}.webp`;
   };
@@ -239,11 +242,12 @@ async function main() {
     const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
     if (Math.abs(dx) > 50 && Math.abs(dx) > 1.5 * Math.abs(dy)) (dx < 0 ? next : back)();
   });
+  // A key held with a modifier is the browser's (Cmd+← is Back); Space on a focused control presses it.
   addEventListener('keydown', (e) => {
-    if (e.target.closest?.('input, textarea')) return;
+    if (e.defaultPrevented || e.altKey || e.metaKey || e.ctrlKey || e.shiftKey || e.target.closest?.('input, textarea, select, [contenteditable]')) return;
     if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
     else if (e.key === 'ArrowLeft') { e.preventDefault(); back(); }
-    else if (e.key === ' ') { e.preventDefault(); setPlaying(!playing); }
+    else if (e.key === ' ' && !e.target.closest?.('button, a')) { e.preventDefault(); setPlaying(!playing); }
   });
   // A hidden tab does not drift on unseen.
   document.addEventListener('visibilitychange', () => { if (document.hidden) clearTimeout(timer); else schedule(); });

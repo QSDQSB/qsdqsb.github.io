@@ -15,7 +15,8 @@
  *   node scripts/check-journeys.mjs --only book,search     # by journey id
  *
  * A headless browser trips the site's motion kill switch (_includes/head/custom.html), so reveals
- * and transitions land at once and the walk is repeatable. Photographs come from img.qsdqsb.com and
+ * and transitions land at once and the walk is repeatable. The masthead and the opening scene stand
+ * still under that switch, so their journeys ask for motion (`?motion=on`) and a phone (`phone: true`). Photographs come from img.qsdqsb.com and
  * map tiles from the network; a failed image or tile is not a failure here, a script error is.
  *
  * A journey is added when a new route becomes one a reader depends on, and removed with the feature.
@@ -73,6 +74,41 @@ const JOURNEYS = [
     for (const href of doors) must(await ok(href), `${href} does not answer`);
   } },
 
+  { id: 'masthead-touch', phone: true, name: 'On a phone the bar stays away while reading and answers a tap at the top', async run({ page, go }) {
+    const has = (cls) => page.evaluate((c) => document.querySelector('.masthead').classList.contains(c), cls);
+    await go('/posts/shihuqiao/?motion=on', { early: true });
+    await page.waitForSelector('.masthead.is-hidden', { state: 'attached', timeout: 3000 }).catch(() => {});
+    must(await has('is-hidden'), 'the opening did not hold the bar away');
+    await page.touchscreen.tap(300, 70);
+    await page.waitForSelector('.masthead.is-nav-expanded', { state: 'attached', timeout: 2000 }).catch(() => {});
+    must(await has('is-nav-expanded'), 'a tap at the top did not end the opening and bring the bar');
+
+    await page.goto('about:blank');
+    await go('/posts/shihuqiao/?motion=on');
+    await page.waitForTimeout(4500);
+    await page.evaluate(() => window.scrollTo({ top: 1500, behavior: 'instant' }));
+    await page.waitForSelector('.masthead.is-nav-collapsed.is-nav-faded', { state: 'attached', timeout: 6000 }).catch(() => {});
+    must(await has('is-nav-faded'), 'the bar did not step away while the page was read');
+    const spot = await page.evaluate(() => [[20, 600], [370, 600], [20, 480], [195, 700]].find(([x, y]) => !document.elementFromPoint(x, y)?.closest('a, button, input, summary')) || null);
+    must(spot, 'found nowhere to tap that is not a control');
+    await page.touchscreen.tap(spot[0], spot[1]);
+    await page.waitForTimeout(700);
+    must(await has('is-nav-faded'), 'a finger on the page called the bar: it should answer only a reader looking for it');
+    await page.touchscreen.tap(300, 70);
+    await page.waitForSelector('.masthead.is-nav-expanded', { state: 'attached', timeout: 2000 }).catch(() => {});
+    must(await has('is-nav-expanded'), 'a tap at the top of the screen did not bring the bar back');
+  } },
+
+  { id: 'masthead-keys', name: 'Tab reaching the bar ends the opening', async run({ page, go }) {
+    await go('/posts/shihuqiao/?motion=on', { early: true });
+    await page.waitForSelector('.masthead.is-hidden', { state: 'attached', timeout: 3000 }).catch(() => {});
+    must(await page.evaluate(() => document.querySelector('.masthead').classList.contains('is-hidden')), 'the opening did not hold the bar away');
+    for (let i = 0; i < 3; i++) await page.keyboard.press('Tab');
+    await page.waitForSelector('.masthead.is-nav-expanded', { state: 'attached', timeout: 2000 }).catch(() => {});
+    must(await page.evaluate(() => !!document.activeElement?.closest('.masthead')), 'three Tabs did not reach the bar');
+    must(await page.evaluate(() => document.querySelector('.masthead').classList.contains('is-nav-expanded')), 'focus is in the bar and the bar is still hidden');
+  } },
+
   { id: 'voyages', name: 'The Voyage index lists voyages and a card opens one', async run({ page, go }) {
     await go('/voyage/');
     const cards = page.locator('a.card');
@@ -96,6 +132,10 @@ const JOURNEYS = [
     await page.keyboard.press('ArrowRight');
     await page.waitForFunction((h) => location.hash !== h, first, { timeout: 8000 }).catch(() => {});
     must(new URL(page.url()).hash !== first, 'the right arrow did not step to the next frame');
+    const second = new URL(page.url()).hash;
+    await page.keyboard.press('Control+ArrowRight');
+    await page.waitForTimeout(400);
+    must(new URL(page.url()).hash === second, 'a key held with a modifier stepped the lightbox; it is the browser\'s');
     await page.goBack();
     await page.waitForFunction(() => !document.querySelector('.photobook-lightbox')?.open, null, { timeout: 8000 }).catch(() => {});
     must(!(await open()), 'Back did not close the lightbox');
@@ -138,6 +178,16 @@ const JOURNEYS = [
     must(dead.length === 0, `contents links with no heading: ${dead.slice(0, 3).join(', ')}`);
   } },
 
+  { id: 'anchor', name: 'A link to a section moves the address and the focus there', async run({ page, go }) {
+    await go('/about/');
+    const id = await page.locator('.page__content a[href^="#"]').evaluateAll((as) => as.map((a) => decodeURIComponent(a.getAttribute('href').slice(1))).find((x) => x && document.getElementById(x)) || null);
+    must(id, 'About has no link to one of its own sections');
+    await page.locator(`.page__content a[href="#${id}"]`).first().click();
+    await page.waitForFunction((x) => location.hash === `#${x}`, id, { timeout: 4000 }).catch(() => {});
+    must(decodeURIComponent(new URL(page.url()).hash) === `#${id}`, 'the address did not take the section');
+    must(await page.evaluate((x) => document.activeElement?.id === x, id), 'focus did not go to the section');
+  } },
+
   { id: 'palette', name: 'Palette draws its voyages and opens one', async run({ page, go }) {
     await go('/palette/');
     await page.waitForSelector('.palette-voyages__list a[href^="#"]', { timeout: 15000 }).catch(() => {});
@@ -155,10 +205,33 @@ const JOURNEYS = [
     must(await page.locator('.palette-card__print').count() >= 1, 'no photographs for a colour that has them');
   } },
 
+  { id: 'reverie-unheld', name: 'A colour no photograph holds opens on the one that comes closest', async run({ page, go }) {
+    await go('/reverie/?c=ff00ff');
+    await page.waitForSelector('.palette-card__print', { timeout: 15000 }).catch(() => {});
+    must((await page.locator('.reverie__code').innerText()).toUpperCase().includes('FF00FF'), 'the colour asked for is not the colour shown');
+    must(await page.locator('.palette-card__print').count() >= 1, 'an unheld colour showed no photograph');
+    const from = new URL(page.url()).searchParams.get('from');
+    must(from, 'the page did not say which photograph it opened on');
+    await page.goto('about:blank');
+    await go('/reverie/?c=ff00ff');
+    await page.waitForSelector('.palette-card__print', { timeout: 15000 }).catch(() => {});
+    must(new URL(page.url()).searchParams.get('from') === from, 'the same unheld colour opened on a different photograph: it is choosing at random');
+  } },
+
   { id: 'drift', name: 'Drift opens on a photograph with its controls', async run({ page, go }) {
     await go('/drift/');
     await page.waitForSelector('.colour-drift__zone', { timeout: 15000 }).catch(() => {});
     must(await page.locator('.colour-drift__zone').count() === 2, 'Drift has no way forward or back');
+    // In a colour, Escape is the way back to it; with search open the key closes search and no more.
+    await go('/drift/?c=4a6fa5');
+    await page.waitForSelector('.colour-drift__zone', { timeout: 15000 }).catch(() => {});
+    await page.locator('.search__toggle').click();
+    await page.waitForSelector('.search-content.is--visible', { timeout: 5000 }).catch(() => {});
+    must(await page.locator('.search-content.is--visible').count() === 1, 'the search panel did not open over Drift');
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(800);
+    must(await page.locator('.search-content.is--visible').count() === 0, 'Escape did not close search');
+    must(new URL(page.url()).pathname.includes('/drift/'), 'Escape closed search and also left Drift');
   } },
 
   { id: 'lost', name: 'A wrong address gets the 404 page with ways back', async run({ page, go }) {
@@ -191,15 +264,19 @@ if (only && chosen.length !== only.length) { console.error(`Unknown journey in -
 
 let failed = 0;
 for (const journey of chosen) {
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, colorScheme: 'dark', locale: 'en-GB' });
+  const context = await browser.newContext(journey.phone
+    ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2, colorScheme: 'dark', locale: 'en-GB' }
+    : { viewport: { width: 1440, height: 900 }, colorScheme: 'dark', locale: 'en-GB' });
   const page = await context.newPage();
   const thrown = [], broken = [];
   page.on('pageerror', (e) => thrown.push(String(e.message).split('\n')[0]));
   // The site's own files only: a photograph or a map tile that fails is the network's business.
   page.on('response', (r) => { if (r.status() >= 400 && r.url().startsWith(base) && r.request().resourceType() !== 'document') broken.push(`${r.status()} ${r.url().slice(base.length)}`); });
-  const go = async (to, { expect = 200 } = {}) => {
+  // `early`: hand the page back as soon as its markup is in, for a journey that watches what happens
+  // in the first seconds (the opening), which a wait for every image would sit through.
+  const go = async (to, { expect = 200, early = false } = {}) => {
     const res = await page.goto(base + to, { waitUntil: 'domcontentloaded', timeout: 45000 });
-    await page.waitForLoadState('load', { timeout: 30000 }).catch(() => {});
+    if (!early) await page.waitForLoadState('load', { timeout: 30000 }).catch(() => {});
     const status = res ? res.status() : 0;
     if (status !== expect) throw new Failed(`${to} answered ${status}`);
     return status;

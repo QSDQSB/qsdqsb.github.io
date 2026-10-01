@@ -138,11 +138,13 @@ than the screen scrolls it inside its .home__panel-body. {% endcomment %}
     if (!doors.length || !shots.length) return;
     var plateLink = document.getElementById("doorPlateLink");
     doors.forEach(function (door, i) {
-      door.addEventListener("mouseenter", function () {
+      var show = function () {
         shots.forEach(function (s, j) { s.classList.toggle("is-on", j === i); });
         // the plate is clickable — send it wherever the door it's showing goes
         if (plateLink) plateLink.setAttribute("href", door.getAttribute("href"));
-      });
+      };
+      door.addEventListener("mouseenter", show);
+      door.addEventListener("focus", show);
     });
   })();
 </script>

@@ -99,7 +99,7 @@ layout: default
             {% endif %}
             {% assign random_posts = random_posts | sample: 4 %}
           {% for post in random_posts %}
-            {% include archive-single.html type="grid" %}
+            {% include archive-single.html type="grid" defer_cover=true %}
           {% endfor %}
         </div>
       </div>
