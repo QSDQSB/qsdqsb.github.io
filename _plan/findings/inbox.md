@@ -10,6 +10,9 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-10-01 · F049 · Palette, scroll reveal · after a fast scroll the cards in view are at 9% opacity for the first tenth of a second and reach full after about a second; a card only partly in view stays at 0. On a slow line this, not a missing placeholder, is what reads as a row of dark frames. A taste call: stage 11 (session)
+- 2026-10-01 · F048 · assets/js/photobook/develop.js, cards · when a card's photograph fails to load, WebKit draws its broken-image mark over the placeholder on Palette and Reverie; the book's frame shows none. The img should be hidden on error (session)
+- 2026-10-01 · F047 · placeholders, Safari's engine · the blurred placeholder (a 32 px image scaled up as a background) draws with a visible grid of blocks in WebKit, on the book's frames and on Palette's and Reverie's cards alike; Chromium draws it smooth. Seen in Playwright's WebKit at 390 px, 2x; a real iPhone not yet looked at. Found by the trial of the review of 2026-10-01 (session)
 - 2026-10-01 · F046 · scripts/plan.mjs take, answer, decide · with hub/daily ahead these still write in the main checkout and can conflict with the daily branch in the inbox or the queue on merge (loud, not silent); a warning on stderr would say to merge first (reviewer)
 - 2026-10-01 · F040 · scripts/lib/plan-markdown.mjs · an unpaired backtick in a table row swallows the cells after it; no plan file has one (reviewer)
 - 2026-10-01 · F038 · _pages/palette.html, Reverie · every palette and Reverie link previews the same photograph (one og_image); a preview per voyage needs an address per voyage (design lead)

@@ -27,3 +27,5 @@ A study that ends in "none of these" is still a study. Write down why.
 | Date | Question | Outcome |
 |---|---|---|
 | 2026-09-26 | [What should a voyage's parent page be?](2026-09-26-voyage-parent-pages.md) | Set aside: none of seven was extraordinary. The card view stays and is refined |
+| 2026-10-01 | [What is the QSD eye, where the design language only guessed?](2026-10-01-the-qsd-aesthetic.md) | Open: seventeen pairs, scored 1 to 5 by the owner on a page of their own |
+| 2026-10-01 | [Should the colour pages' cards show three colours while a photograph loads?](2026-10-01-a-review-card-placeholders.md) | Answered: not built. A reader's review, a day late: the fault was already fixed with the book's own blur. Three findings came out of the trial |
