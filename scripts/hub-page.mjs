@@ -114,7 +114,7 @@ const html = `<title>House of Wonders Command Centre</title>
 :root[data-theme="light"] { color-scheme: light; --ground: #f3f1ec; --ground-2: #eae7e0; --ground-3: #dedad1; --ink: #1d1c1a; --ink-2: #4a4843; --ink-3: #74716a; --rule: #cbc6ba; --brass: #7d6126; --yes: #256a55; --yes-bg: #d2e8e0; --warn: #7a5a12; --warn-bg: #f0e2bd; --bad: #9c3524; --bad-bg: #f1d9d3; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--ground); color: var(--ink); font: 400 16px/1.55 var(--ui); -webkit-font-smoothing: antialiased; }
-.sheet { max-width: 980px; margin: 0 auto; padding-inline: clamp(16px, 4vw, 40px); padding-block: 36px 96px; }
+.sheet { --gutter: clamp(16px, 4vw, 40px); max-width: 980px; margin: 0 auto; padding-inline: var(--gutter); padding-block: 36px 96px; }
 a { color: var(--brass); text-underline-offset: 3px; overflow-wrap: anywhere; }
 code { font: 400 0.84em/1.5 var(--mono); background: var(--ground-3); padding: 0.06em 0.34em; border-radius: 3px; overflow-wrap: anywhere; }
 pre { font: 400 0.78rem/1.5 var(--mono); background: var(--ground-2); border: 1px solid var(--rule); padding: 14px; overflow-x: auto; margin: 14px 0; }
@@ -129,6 +129,14 @@ section > .label { margin-bottom: 10px; }
 .sub { color: var(--ink-2); max-width: 66ch; margin-top: 6px; }
 .health { display: flex; flex-wrap: wrap; gap: 8px 10px; margin-top: 18px; }
 .chip { font: 600 10.5px/1 var(--ui); letter-spacing: 0.14em; text-transform: uppercase; padding: 5px 8px; border-radius: 3px; color: var(--ink-2); background: var(--ground-3); }
+/* The way round the page: always in reach, one row that scrolls sideways on a phone. */
+.jump { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; display: flex; gap: 8px; margin: 22px calc(-1 * var(--gutter, 20px)) 0; padding: 10px var(--gutter, 20px); overflow-x: auto; scrollbar-width: none; background: color-mix(in srgb, var(--ground) 94%, transparent); border-block: 1px solid var(--rule); }
+.jump::-webkit-scrollbar { display: none; }
+.jump .chip { flex: none; border: 0; cursor: pointer; padding: 9px 11px; white-space: nowrap; }
+.jump .chip:hover { color: var(--ink); }
+.jump .chip:focus-visible { outline: 1px solid var(--brass); outline-offset: 2px; }
+.jump .chip[aria-current="true"] { box-shadow: inset 0 -1px 0 var(--brass); color: var(--ink); }
+h2, details.doc { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 64px); }
 .chip.ok { color: var(--yes); background: var(--yes-bg); } .chip.warn { color: var(--warn); background: var(--warn-bg); } .chip.bad { color: var(--bad); background: var(--bad-bg); }
 .notes { margin: 12px 0 0; padding-left: 1.1em; color: var(--ink-2); font-size: 0.92rem; }
 .now { margin-top: 18px; padding: 18px 0; border-block: 1px solid var(--rule); display: grid; gap: 10px; }
@@ -219,14 +227,6 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     <p class="label">qsdqsb.com · built from the plan on ${built}</p>
     <h1>House of Wonders Command Centre</h1>
     <p class="sub">Where the site stands, what is waiting on you, and everything the plan holds. Generated from <code>_plan/</code>; it is rebuilt whenever the plan changes.</p>
-    <div class="health">
-      <span class="chip ${state.errors.length ? 'bad' : 'ok'}">${state.errors.length ? `Plan broken in ${state.errors.length}` : 'Plan sound'}</span>
-      <span class="chip ${state.queue.length > 8 ? 'warn' : ''}">${state.queue.length} waiting on you</span>
-      <span class="chip">${state.ideas.length} ideas · ${state.ideas.filter((i) => i.status === 'shaped').length} shaped for you</span>
-      <span class="chip ${state.inbox > 25 ? 'warn' : ''}">${state.inbox} in the inbox</span>
-      <span class="chip">${state.features.length} features · ${state.features.filter((f) => f.journeys.length).length} walked by a journey</span>
-      <span class="chip">${state.decisions.length} decisions</span>
-    </div>
     ${state.errors.length || state.warnings.length ? `<ul class="notes">${[...state.errors, ...state.warnings].map((w) => `<li>${inline(w)}</li>`).join('')}</ul>` : ''}
     <details class="doc" style="margin-top:22px">
       <summary>How to drive this</summary>
@@ -242,6 +242,15 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
       </div>
     </details>
   </header>
+
+  <nav class="jump" aria-label="Jump to a part of this page">
+    <button type="button" class="chip ${state.errors.length ? 'bad' : 'ok'}" data-to="h-now">${state.errors.length ? `Plan broken in ${state.errors.length}` : 'Plan sound'}</button>
+    <button type="button" class="chip ${state.queue.length ? 'warn' : ''}" data-to="h-queue">${state.queue.length} waiting on you</button>
+    <button type="button" class="chip ${state.ideas.some((i) => i.status === 'shaped') ? 'warn' : ''}" data-to="h-ideas">${state.ideas.length} ideas · ${state.ideas.filter((i) => i.status === 'shaped').length} shaped for you</button>
+    <button type="button" class="chip ${state.inbox > 25 ? 'warn' : ''}" data-to="h-find">${state.inbox} in the inbox</button>
+    <button type="button" class="chip" data-to="doc-features">${state.features.length} features · ${state.features.filter((f) => f.journeys.length).length} walked by a journey</button>
+    <button type="button" class="chip" data-to="h-dec">${state.decisions.length} decisions</button>
+  </nav>
 
   <section aria-labelledby="h-now">
     <p class="label">Now</p>
@@ -316,7 +325,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     ${doc('PRINCIPLES.md', 'Principles: the identity and your standing calls')}
     ${doc('WORKFLOWS.md', 'Workflows: how a fault, a feature, a piece, a choice and a thought each move')}
     ${doc('ARCHITECTURE.md', 'Architecture: the shape, the layers, the rules for new work')}
-    ${doc('FEATURES.md', `Features: ${state.features.length} of them, with their code and journeys`)}
+    ${doc('FEATURES.md', `Features: ${state.features.length} of them, with their code and journeys`).replace('<details class="doc">', '<details class="doc" id="doc-features">')}
     ${doc('README.md', 'How the plan works')}
   </section>
 </div>
@@ -358,6 +367,24 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     save(id);
   });
   draw();
+  // The row of chips at the top goes to each part, and marks the part being read.
+  var jump = document.querySelector(".jump"), still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  jump.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-to]"); if (!b) return;
+    var to = document.getElementById(b.dataset.to); if (!to) return;
+    if (to.tagName === "DETAILS") to.open = true;
+    to.scrollIntoView({ behavior: still ? "auto" : "smooth", block: "start" });
+  });
+  if ("IntersectionObserver" in window) {
+    var marks = [].slice.call(jump.querySelectorAll("[data-to]"));
+    var seen = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        marks.forEach(function (m) { m.setAttribute("aria-current", String(m.dataset.to === en.target.id)); });
+      });
+    }, { rootMargin: "-80px 0px -70% 0px" });
+    marks.forEach(function (m) { var t = document.getElementById(m.dataset.to); if (t) seen.observe(t); });
+  }
   var send = document.getElementById("idea-send"), box = document.getElementById("idea-new");
   var tell = function (t) { document.getElementById("idea-status").textContent = t; };
   send.addEventListener("click", function () {

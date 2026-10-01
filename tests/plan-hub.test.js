@@ -337,6 +337,12 @@ test('the command centre draws an idea: its questions as taps of their own, its 
     assert.match(card(), /3 objections: 1 stands, 1 changed, 1 answered/);
     assert.ok(!fs.readFileSync(out, 'utf8').includes('takes the recommended answer'), 'an unanswered question is never a yes');
 
+    // The row at the top: every chip goes somewhere that exists.
+    const page = fs.readFileSync(out, 'utf8');
+    const targets = [...page.split('<nav class="jump"')[1].split('</nav>')[0].matchAll(/data-to="([^"]+)"/g)].map((m) => m[1]);
+    assert.strictEqual(targets.length, 6);
+    for (const id of targets) assert.ok(page.includes(` id="${id}"`), `the jump to ${id} lands nowhere`);
+
     spawnSync('node', [path.join(ROOT, 'scripts/plan.mjs'), 'decide', 'I900', 'park', 'Later'], { encoding: 'utf8', env: { ...process.env, PLAN_DIR: dir } });
     assert.strictEqual(build().status, 0);
     assert.ok(!card().includes('data-o="pursue"'), 'a decided idea asks nothing more');
