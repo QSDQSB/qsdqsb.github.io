@@ -1,6 +1,6 @@
 # I001 · A palette shareable as an image
 
-**Status:** shaped · **Raised:** 2026-10-01 by the owner · **Stage:** [8](../stages/08-palette-as-image.md), which waits on this
+**Status:** study · **Raised:** 2026-10-01 by the owner · **Stage:** [8](../stages/08-palette-as-image.md), which holds what the study must show
 
 ## In the owner's words
 
@@ -18,6 +18,14 @@ reads as any gradient, or if a photograph is wanted on it (question 2).
 WebGL) and the owner's eye on all 52 voyage palettes. F006 does not gate the image; a colour the
 owner's eye finds missing from a palette may need an R2 backfill, which is their go. F036 and F037
 bind only if the codes go on the image.
+
+**The owner:** pursue · 2026-10-01 · Question 1: A, readers, from a control on the page. Question 2: B, a photograph may be on the image (a voyage's cover or a photograph's own frame). Q6 was answered the same day: A, casual saving. Tapped on the command centre, no note.
+
+**After the decision** (the lead, 2026-10-01). Readers, and a photograph may be on the image. Q6 was
+answered before question 2 was tapped, so nothing is parked. The verdict above stays as it was given;
+where it says "no photograph", and that a photograph would park the idea, the owner's decision is
+what holds. What the study must now show is under Next and in [stage 8](../stages/08-palette-as-image.md);
+what the decision makes untrue or newly open is marked "After the decision" in the tables below.
 
 ## Made explicit
 
@@ -90,6 +98,16 @@ touches the first row alone. Each row is from the files it names, read on 2026-1
 | The pictures and privacy | Nothing offers a reader a file | The first control that does. Colours, a name, an address: no photograph, no date, no camera record | small |
 | Other stages and open calls | Stage 8 waits on this; F041, F006, F036, F037 are open | F041 gates the control. F006 does not bind. F036 and F037 bind only if the codes go on. Stage 7 and Q6 untouched. Stage 11 works on the same page | small |
 | Upkeep | Journey `palette`; baseline `palette-voyage` at 1440 and 390; the iPhone check walks `/palette/#london` | A journey with `share` stubbed, and the save path. The sheet as a pixel baseline, which the harness must learn to take. Two page baselines again | medium |
+| After the decision · The pictures and privacy | The row above says no photograph | A photograph leaves inside the image, on purpose: the first file with a photograph in it that the site hands a reader. On a voyage's sheet it is that voyage's cover, which already leaves as the link preview, 1200 by 630 (`scripts/generate-cover-og.mjs`). A photograph's own frame has no such precedent | medium |
+| After the decision · Data and the photo pipeline | The row above says nothing added | `palettes.json` names no cover: a voyage there has `g`, `palette`, `order`, `photos`, `rank`. The sheet needs the cover's address: the link preview under `images/og/`, same origin, or a rendition on `img.qsdqsb.com`, which a canvas may read only from an origin the bucket allows. No object in R2 is written; the allowed origins are a Cloudflare setting, the owner's | small |
+| After the decision · The build and its weight | The row above: 325 to 380 KB, nothing fetched | A photograph is fetched, or is on the page before the tap, and the file grows: a photograph does not compress as flat colour does. Neither figure is known until the study | medium |
+| After the decision · Shared pieces | The row above | If the cover carries its line as a card does, the card's scrim and hairline shadow are reused, not drawn again | small |
+| After the decision · Other stages and open calls | The row above says stage 7 and Q6 untouched | No longer true. Q6 is answered and [stage 7](../stages/07-protecting-the-pictures.md) has a brief: it keeps a print from being saved by a gesture, while this hands one out. Each names the other. F042: Intermezzo has a palette and no cover | medium |
+| After the decision · Upkeep | The row above | A cover picked again, or focused again, changes its sheet; the sheet's baseline now depends on a photograph | small |
+
+Rows marked "After the decision" were added on 2026-10-01, when the owner allowed a photograph on the
+image. The rows above them were weighed for a sheet with none and are kept as the record. Where the
+two disagree, the later row holds.
 
 ## Can it be delivered
 
@@ -113,6 +131,16 @@ width.
 | A palette the owner finds wrong can be put right without an R2 write | Read, not run: F006's own frame (DSCF7059) holds no yellow in its stored 32 colours, and its orange at 0.4%; `paletteOf` is plain area k-means (`scripts/photos/lib/palette.mjs:143`) | open: a colour lost in the 32 cannot be recovered by weighting. Putting it right is an R2 backfill, the owner's go |
 | The 52 voyage palettes are right enough to send | Porto's read from the built data: it carries the roofs (`#89371d` 12%, `#ae7352` 11%). The other 51 not looked at | open: all 52 on one sheet for the owner's eye, in the study |
 | The image reads as this site's and not as any gradient | Cannot be tried by a program. The vat has never been shown above 176 px | open: the study, judged by the owner |
+| After the decision · A canvas may read the photograph, so the sheet can be made at all | Run by the lead, reading response headers only; the session runs it again in a browser. A cover's 1280 rendition asked for with an `Origin` header: allowed for `https://qsdqsb.com` and `http://localhost:4000`; no permission for `http://127.0.0.1:4173` (the gate's own server), for the Pages preview address, or for another site. The link previews under `images/og/` are same origin and need none | open: the live site may read a rendition; the gate's server and a preview build may not, so a journey or a baseline that draws from `img.qsdqsb.com` fails there. Either the sheet draws the same-origin link preview, or the bucket's allowed origins change (the owner's). Not yet drawn in a browser, where a copy fetched earlier without the header can still spoil the canvas |
+| After the decision · Every voyage on Palette has a cover to put on its sheet | Run by the lead on built data, to be run again: `palettes.json` against `_covers.json` and `images/og/` | failed: 51 of 52. Intermezzo has a palette and no cover (F042). For the 51 the cover is one of the voyage's own photographs and its link preview is on disk |
+| After the decision · The photograph that leaves is no larger than one the site already gives away | Read, not run: the link preview is 1200 by 630, cut round the cover's focus at every build; the sheet is 1080 wide | open: true if the sheet draws the cover, at 1080 px or less. Not true of a photograph's own frame, which has no link preview. The study states each variant's size in pixels |
+| After the decision · It is still ready inside the tap, and Safari still takes the file | Not tried. The earlier timing fetched nothing and encoded flat colour | open: timed in the study with the photograph on the page first, slowed six times, in both engines; the file's size as PNG and as JPEG; `canShare` asked again with that file |
+| After the decision · The file carries no camera record | Not tried | open: the study reads the made file for EXIF, a place and a time. A canvas writes none; proved by reading one |
+| After the decision · With a photograph on it the sheet keeps the owner's calls on photographs | Cannot be tried by a program | open: the study draws it the two ways the calls allow, for the owner's eye ([stage 8](../stages/08-palette-as-image.md)) |
+
+Rows marked "After the decision" were added on 2026-10-01. The first, second and fourth rows of the
+table were proved for a sheet with no photograph; with one on it they are open again, as the later
+rows say. Nothing above was run again.
 
 ## Does it fit
 
@@ -128,6 +156,21 @@ width.
 Nothing like it has been tried: the one study on file is of the voyage parent pages.
 
 **Fits if turned**: the numbers stay on the page, and the sheet is a door: the vat, the name, the bar.
+
+**After the decision** (2026-10-01; the table above is kept as it was judged). With a photograph
+allowed, three of its rows read differently:
+
+- Photographs: no longer "fits" by absence. The call now binds the sheet itself: "nothing laid over
+  them". The name, the bar, the vat and the address sit beside the photograph, never on it, unless
+  the photograph is set as a card's cover, where the owner's own rule for a cover line applies ("an
+  engineered scrim plus a hairline text shadow").
+- Doorways: closer to a fit than before. With the voyage's cover on it the sheet is a door in the
+  owner's own words, "One magnificent cover and its poetic line". What would break it: a second
+  photograph, a strip, a count, a frame from inside the book.
+- Colour pages: a new strain. "No voyage card there" was said of the palette page; a sheet with a
+  cover and its line is a voyage's card in all but place. And the picture every palette app makes,
+  a photograph with its swatches and codes beside it, is what the owner called "labels beside
+  plates": "a definite no".
 
 ## For and against
 
@@ -152,6 +195,12 @@ Nothing like it has been tried: the one study on file is of the voyage parent pa
   the pictures; and whether it shares or saves is the browser's choice, unseen by the reader.
 - The system's share sheet can be proved only by hand, and has not been; Android was never tried;
   and a fault in the vat today (F041) gates the control.
+
+**After the decision** (2026-10-01; the lists above are kept as they were weighed). The first line
+For no longer holds for a sheet with a photograph on it: it does give one away. What it gains in
+exchange is the lead's hardest open point: with the cover beside it, the dye reads as this voyage's
+and not as any gradient. Against gains one line: a photograph leaves in a file the site cannot call
+back, in the same week stage 7 sets out to keep prints from being saved.
 
 ## Challenged
 
@@ -205,3 +254,5 @@ Why: B is the picture every palette app makes, and nothing can be built on it wh
 ## Next
 
 A study, on the owner's Pursue. One script on this Mac draws, for three voyages, the header as a screenshot, the vat-and-name sheet and the sheet with the bar (the lead's pick), and all 52 voyage palettes on one sheet. It also runs the stubbed journey. Then stage 8 gets its brief; what the study will meet is noted there.
+
+**After the owner's decision (2026-10-01): readers, and a photograph may be on it.** The same study, with more on the table. It also draws the sheet with the voyage's cover on it, the two ways the owner's calls allow and no third: the cover as a print with the palette beneath it and nothing over it, and the cover as a card's cover with its line. Each is shown beside the number of pixels of photograph that leave, against the link preview the site already gives away (1200 by 630). The earlier sheets with no photograph stay in, so the owner compares. One specimen of a single photograph's own palette is drawn as well, because the answer allows it; whether it is wanted is a second idea, not this control. The study answers the rows marked "After the decision" under "Can it be delivered". A control is briefed in [stage 8](../stages/08-palette-as-image.md) only on the study's pictures: that is a later call of the owner's.

@@ -35,7 +35,7 @@ check counts them. Add the row when a feature ships; add its journey to
 | Word card | The end of a post, Home | `_includes/word-card.html` | | |
 | Subscribe | The slip at the end of a page | `_includes/subscribe.html` `assets/js/subscribe.js` `_sass/_subscribe.scss` `functions/api` | | D1 and Resend behind it. Never submitted by a journey. Audit X11, X18. |
 | About and CV | `/about/`, `/cv/` | `_pages/about.md` `_pages/cv.md` `_layouts/about.html` `_sass/_about.scss` | | Stage 6. The CV's way in is the end of About. |
-| Bestiary | `/bestiary/` | `_pages/bestiary.md` | | Not built. Stage 5. |
+| Bestiary | `/bestiary/` | `_pages/bestiary.md` | | Not built. Until it is, a designed holding page, kept in the navigation (the owner, Q5, 2026-10-01): to be chosen from prototypes. Stage 5. |
 | 404 | A wrong address | `_pages/404.md` | `lost` | |
 | The Jianfei treatise | One post | `assets/js/jianfei-treatise.js` `_sass/_jianfei-treatise.scss` `_includes/jianfei/weight-figure.html` | | Its CSS ships on every page: audit A04. |
 | Motion switches | Everywhere | `_includes/head/custom.html` `_sass/_motion-off.scss` | | `?motion=off` for screenshots; `prefers-reduced-motion` per component. `npm run visual:audit`. |

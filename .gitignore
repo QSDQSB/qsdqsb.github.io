@@ -1,7 +1,7 @@
 _site/
 .DS_Store
 **/.DS_Store
-node_modules/
+node_modules
 docs
 improvements.md
 for_agents/

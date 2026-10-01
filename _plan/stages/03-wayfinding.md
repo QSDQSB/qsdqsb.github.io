@@ -89,8 +89,9 @@ Not yet asked.
 - [ ] 2026-09-29 · The lightbox at 320 px: the back label shrinks to "‹ #…". It gives way so the tools
       stay on screen.
 - [ ] 2026-09-29 · Palette at 320 px: "7% · accent" runs into "16%".
-- [ ] 2026-09-29 · Home's Wonders at 320×640: overflows by about 27 px, with five doors. Q5 comes
-      first: its option B leaves four.
+- [ ] 2026-09-29 · Home's Wonders at 320×640: overflows by about 27 px, with five doors. Five it
+      stays: the owner kept Bestiary in the navigation on 2026-10-01 (Q5, option A), so the fix has
+      to fit all five.
 
 ## Exit
 

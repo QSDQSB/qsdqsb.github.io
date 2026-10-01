@@ -83,6 +83,15 @@ A faster, steadier site that looks exactly the same. Every item is a finding fro
       ask before taking it out. `/utils/`'s description is thin: its words are the owner's.
 - [ ] 2026-09-29 · Jianfei's table overflows by 1 px. Not on the audit: tier 0. Confirm it still does;
       the treatise's styles changed on 2026-10-01.
+- [ ] F043 · 2026-10-01 · `CLAUDE.md` is served on the live site: `/CLAUDE/` and `/CLAUDE.md` both
+      answered 200 on 2026-10-01. `exclude:` in `_config.yml` does not name it, nor `CONTRIBUTING.md`,
+      `package-lock.json` or `skills-lock.json`; a local build also copies `design/` and `photos/` into
+      the output (git ignores both, so they are not deployed). Not on the audit: tier 0, a fault today.
+      Nothing links to it, and the repository is public, so nothing secret is out; it is a page no
+      reader should meet. Add them to `exclude:`, and see that `sitemap.xml` does not list `/CLAUDE/`.
+      With a check that would have caught it ([0008](../decisions/0008-ready-and-done.md)): the build
+      holds no page made from a file at the repository's root that is not meant to be one.
+      `_config.yml` is a file the changelog rule watches, so it takes its line.
 
 ## Not in this stage
 

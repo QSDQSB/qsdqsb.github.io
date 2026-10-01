@@ -4,9 +4,10 @@
   "choices": {
     "link-colour": "https://claude.ai/artifact/M5UYHyu6S8Zc29AyBLR6De"
   },
-  "daily_may_push": false,
+  "daily_may_push": true,
+  "daily_agents": false,
   "published": {
     "date": "2026-10-01",
-    "hash": "e2e3826126cc0dc0"
+    "hash": "713ec846342425a5"
   }
 }
