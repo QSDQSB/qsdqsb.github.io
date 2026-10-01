@@ -40,3 +40,6 @@ tests/visual/diff/
 
 # The 24-dot lab (scripts/photos/dots-lab.mjs): generated, local only.
 /lab/
+
+# The plan is tracked; anything not for a public repo goes here.
+/_plan/private/
