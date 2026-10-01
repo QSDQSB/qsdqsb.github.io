@@ -1,0 +1,29 @@
+# Studies
+
+A study is a design question explored with real prototypes, and what was learned. It exists so an
+exploration is done once: the next session reads the verdict instead of repeating the sketch.
+
+One file per study, named `YYYY-MM-DD-topic.md`. The prototypes themselves live outside git
+(`design/`, or a worktree); their pictures live on the study's Artifact page, linked from the file.
+
+## Shape
+
+```
+# The question, as one line
+
+**Asked:** date · **Status:** open | answered | set aside · **Stage:** n
+
+## Why it was asked
+## The tests           (what a good answer does, from PRINCIPLES.md)
+## What was tried      (one entry per option: what it was, the picture, what the owner said)
+## What was learned    (the rule this leaves behind, in a line or two)
+## What it led to      (a decision, a stage, or nothing)
+```
+
+A study that ends in "none of these" is still a study. Write down why.
+
+## Index
+
+| Date | Question | Outcome |
+|---|---|---|
+| 2026-09-26 | [What should a voyage's parent page be?](2026-09-26-voyage-parent-pages.md) | Set aside: none of seven was extraordinary. The card view stays and is refined |

@@ -14,7 +14,8 @@ of work the site shows least well, and About is the page least like the site.
   characters in English (P06); about 44 glyphs in Chinese, which is right.
 - The author rail, the boxed contents list, emoji tag pills and the pager are the old theme's.
 - About: emoji bullets and a pink-to-yellow gradient notice, off the palette.
-- Long titles are cut on a phone (X03, in the queue as Q5).
+- Long titles are cut on a phone (X03: approved on 2026-10-01, a task in stage 1).
+- Tag pills overlap their emoji on a phone (P11).
 
 ## Open questions
 

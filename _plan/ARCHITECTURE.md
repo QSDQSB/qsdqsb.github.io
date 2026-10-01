@@ -67,10 +67,16 @@ A page that needs a control no piece provides adds the piece to the shared layer
 | A file is edited | The checks that apply to it run | `scripts/hooks/post-tool-edit-nudges.sh` |
 | A turn ends | House style, bundle sync, the `!important` ratchet | the Stop hooks |
 | Work is ready | Every check in one pass, the plan's own included | `scripts/gate.sh`, then `.claude/agents/site-reviewer.md` |
-| A choice between two ways | Prototypes are built and shot; a pick page goes to the owner | `/choose`, `scripts/choice-page.mjs`, `.claude/agents/prototyper.md` |
-| The owner looks | One page: roadmap, queue with answers, changes, findings | `scripts/hub-page.mjs` → the command centre Artifact |
+| A choice between two ways | Prototypes are built and shot; a pick page goes to the owner | `/choose`, `scripts/choice-page.mjs` (CSS-only options from one build), `scripts/prototype-setup.sh` and `.claude/agents/prototyper.md` (worktrees) |
+| The plan is edited | Findings, ideas, calls, answers and changelog lines are written in one shape, with ids never reused | `scripts/plan.mjs` |
+| Anything is pushed | The fast gate, and the changelog rule over a pull request | `.github/workflows/gate.yml` |
+| The owner looks | One page: the calls waiting, ideas, roadmap, changes, findings, the language and the rules | `scripts/hub-page.mjs` → the command centre Artifact |
+| The owner has an idea | It is kept verbatim, and returned with what it means made explicit, what it would change in the site as it stands, its for and against, whether it can be delivered (tried in code), what a second reader objected to, and a verdict. The owner's decision is recorded under the verdict | `/idea`, `scripts/plan.mjs idea` and `decide`, the design lead, the site reviewer ("Challenge a proposal"), `scripts/lib/plan-ideas.mjs` |
 | The owner answers | The tap is stored with the page at once. It reaches `QUEUE.md` when the next session starts, or with the daily run: a page cannot write to git | the session brief, `/hub`, `/hub-daily` |
 | Daily | The gate, the plan check, the inbox sorted, the page refreshed | `/hub-daily`, run by the scheduled tech-debt agent |
+
+Why it is built this way, with the options weighed and the ways it can fail:
+[decisions/0007](decisions/0007-the-hub-architecture.md).
 
 The pieces are plain scripts with exit codes. If the hooks are ever off (a tool that is not Claude
 Code), `npm run gate` and `node scripts/check-plan.mjs` still say the same things.

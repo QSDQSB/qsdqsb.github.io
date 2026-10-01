@@ -33,7 +33,10 @@ lift.
 - [ ] The same voyages listed two ways (`/voyage/` and `/voyage-by-tags/`): one card.
 - [ ] The tag dock that covers card titles (X14).
 - [ ] Venice: four parts "still on their way"; five processed photographs no page uses. The owner
-      chose to leave this; ask before touching.
+      chose to leave this; ask before touching. (Inbox, 2026-09-26.)
+- [ ] 2026-09-29 · Tokyo's line, "Where sakura blooms in the bustling metropolis."
+      (`_subvoyage/japan/tokyo.md`): the house-style check names "bustling". It is the card's poem, so
+      the word is the owner's. Raise it when the poem comes to phones; change nothing before.
 
 ## Design notes
 

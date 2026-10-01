@@ -18,12 +18,18 @@
  *       { "key": "a", "name": "As today", "summary": "What the reader gets.",
  *         "cost": "What it costs to build and to keep.",
  *         "url": "http://localhost:4000/posts/…",          // shot at 1440×900 and 390×844
+ *         "css": "a { color: #c3b498 }",                   // optional: laid over the page before the shot
  *         "shots": { "desktop": "a-desktop.png", "phone": "a-phone.png" } }   // or shots you made
  *     ],
  *     "recommend": { "key": "b", "why": "One or two sentences." } }
  *
  * An option gives `url` (shot here) or `shots` (paths beside choice.json), not both. `fullPage: true`
- * on an option shoots the whole page instead of the first screen. At most three options: the owner
+ * on an option shoots the whole page instead of the first screen. `css` (or `cssFile`, beside
+ * choice.json) makes an option out of the same built page: most choices of look are a few rules, and
+ * need no worktree and no second build. `scrollTo` (a selector) brings the part in question into view.
+ * `element` (a selector) shoots only that part of the page, large: use it when the difference is small
+ * (a link's colour, a focus ring), or it will be lost in a picture of the whole screen. Options shot
+ * that way are laid one under another at full width; `maxHeight` cuts a long part to its first pixels. At most three options: the owner
  * wants an opinion, not a menu.
  *
  * Writes choice.html beside choice.json, images inlined (an Artifact loads nothing from elsewhere).
@@ -55,8 +61,9 @@ for (const o of spec.options) {
 }
 if (spec.recommend && !spec.options.some((o) => o.key === spec.recommend.key)) fail('"recommend.key" names no option.');
 
-const VIEWS = { desktop: { viewport: { width: 1440, height: 900 } }, phone: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 } };
-const WIDTH = { desktop: 1440, phone: 780 };
+const VIEWS = { desktop: { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 }, phone: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 } };
+const WIDTH = { desktop: 1800, phone: 780 };
+const rows = spec.options.some((o) => o.element);
 
 /** A shot as a WebP data URI, no wider than it will be shown. */
 async function inline(buffer, view) {
@@ -82,8 +89,24 @@ for (const o of spec.options) {
       const context = await browser.newContext({ ...VIEWS[view], colorScheme: 'dark', locale: 'en-GB' });
       const page = await context.newPage();
       try { await page.goto(o.url, { waitUntil: 'networkidle', timeout: 45000 }); } catch { fail(`Option ${o.key}: ${o.url} did not load.`); }
+      const css = o.cssFile ? fs.readFileSync(path.join(dir, o.cssFile), 'utf8') : o.css;
+      if (css) await page.addStyleTag({ content: css });
+      if (o.scrollTo) await page.locator(o.scrollTo).first().scrollIntoViewIfNeeded().catch(() => fail(`Option ${o.key}: nothing matches ${o.scrollTo}.`));
       await page.waitForTimeout(1200);
-      buffer = await page.screenshot({ fullPage: !!o.fullPage });
+      if (o.element) {
+        const part = page.locator(o.element).first();
+        if (!(await part.count())) fail(`Option ${o.key}: nothing matches ${o.element}.`);
+        // The part alone: whatever is fixed over the page (the masthead, the corner cards) is put aside,
+        // and a long part is cut to its first `maxHeight` pixels.
+        await page.addStyleTag({ content: '.masthead, .floating_tarot_card_container, .subscribe-slip { visibility: hidden !important; }' });
+        // Its top brought to the top of the screen, so a cut of its first pixels is on screen to be shot.
+        await part.evaluate((el) => window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 24, behavior: 'instant' }));
+        await page.waitForTimeout(300);
+        const box = await part.boundingBox();
+        buffer = o.maxHeight && box.height > o.maxHeight
+          ? await page.screenshot({ clip: { x: box.x, y: box.y, width: box.width, height: o.maxHeight } })
+          : await part.screenshot();
+      } else buffer = await page.screenshot({ fullPage: !!o.fullPage });
       await context.close();
     }
     images[o.key][view] = await inline(buffer, view);
@@ -131,6 +154,9 @@ p { margin: 0; }
 .status { color: var(--ink-3); font-size: 0.88rem; min-height: 1.3em; }
 .options { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 28px; margin-top: 24px; }
 .option { min-width: 0; display: grid; grid-template-rows: auto auto 1fr auto; gap: 12px; }
+.options.rows { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+.options.rows .frame { justify-self: start; max-width: 100%; }
+.options.rows .frame img { width: auto; max-width: 100%; }
 .option[data-picked="true"] .frame { outline: 2px solid var(--yes); outline-offset: 3px; }
 .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; }
 .key { font: 700 1.5rem/1 var(--display); color: var(--brass); text-transform: uppercase; }
@@ -166,7 +192,7 @@ p { margin: 0; }
     </div>
     <p class="status" id="status" role="status"></p>
   </div>
-  <div class="options">
+  <div class="options${rows ? ' rows' : ''}">
     ${spec.options.map((o) => `<article class="option" data-key="${esc(o.key)}">
       <div class="head"><span class="key">${esc(o.key)}</span><h2>${esc(o.name)}</h2>${spec.recommend?.key === o.key ? '<span class="rec">Recommended</span>' : ''}</div>
       <div class="frame">

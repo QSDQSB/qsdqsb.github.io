@@ -12,7 +12,10 @@ whichever session happens to be open.
 1. **[ROADMAP.md](ROADMAP.md)** — the stages, in order, with their status. Start here, every time.
 2. **[QUEUE.md](QUEUE.md)** — the calls waiting on the owner. Short by design.
 3. **[PRINCIPLES.md](PRINCIPLES.md)** — what the site is, and the owner's standing calls.
-4. The stage you are working on, in `stages/`, and the decisions it cites, in `decisions/`.
+4. **[DESIGN-LANGUAGE.md](DESIGN-LANGUAGE.md)** — how that is expressed: the grammar every page shares and the
+   signatures that make a page itself. Read before designing or styling anything.
+5. **[WORKFLOWS.md](WORKFLOWS.md)** — the path a fault, a feature, a new piece, a choice and a thought each take.
+6. The stage you are working on, in `stages/`, and the decisions it cites, in `decisions/`.
 
 ## What lives where
 
@@ -21,10 +24,14 @@ whichever session happens to be open.
 | `ROADMAP.md` | Stages in order, one line each | When a stage starts, finishes or is re-ordered |
 | `QUEUE.md` | Open calls for the owner, each with a recommendation | Added by the design lead; cleared by the owner |
 | `PRINCIPLES.md` | Identity, standing calls, what the site refuses | Rarely, and only on the owner's word |
+| `DESIGN-LANGUAGE.md` | The grammar (ground, type, shape, glass, motion, pieces, patterns) and the registered signatures | When a decision or the owner changes the language |
+| `WORKFLOWS.md` | The six paths work takes through the hub | When a path changes |
+| `ARCHITECTURE.md`, `FEATURES.md`, `CHANGELOG.md` | How the site is built; every feature with its code and journey; what changed for a reader | With the change that makes them untrue |
 | `decisions/NNNN-*.md` | One decision each: context, options, the choice, consequences | Never edited once accepted; superseded by a new one |
 | `stages/NN-*.md` | One stage each: goal, scope, design notes, tasks, exit | As the stage moves |
 | `findings/` | Dated audits, and `inbox.md` for one-line observations | Appended; an item leaves the inbox when a stage takes it |
-| `ideas/` | Unshaped thoughts, by theme | Freely; promoted to a stage when ready |
+| `ideas/` | One file per idea: the owner's words, made explicit, weighed against the site as it stands, with its for and against and a verdict. Older thoughts gathered by theme | `/idea`; shaped by the design lead; answered by the owner |
+| `studies/` | Design questions explored with prototypes, and the verdicts | One file per study; a no is kept as carefully as a yes |
 | `private/` | Anything not for a public repo | Gitignored |
 
 ## Rules
@@ -37,8 +44,11 @@ whichever session happens to be open.
   way recorded as a decision.
 - **Who decides what** is in [decisions/0001](decisions/0001-who-decides-what.md). Read it before
   asking the owner anything, and before deciding anything visible alone.
-- **Statuses:** `idea` → `planned` → `designing` → `building` → `in review` → `done`. Findings are
-  `open`, `fix`, `later`, `leave` or `done`.
+- **Statuses:** a stage is `idea` → `planned` → `designing` → `building` → `in review` → `done`. A
+  finding is `open`, `fix`, `later`, `leave` or `done`. An idea is `raw` → `shaped` → `study` →
+  `staged`, or `parked`, or `dropped`.
+- **Routine edits go through `node scripts/plan.mjs`** (a finding, an idea, a call, an answer, a
+  changelog line), so every session writes them in the same shape and no id is used twice.
 
 ## Who keeps it
 

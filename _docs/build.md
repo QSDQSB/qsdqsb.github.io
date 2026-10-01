@@ -62,6 +62,7 @@ server before it. On a machine where Ruby comes from a login profile, run it as
 `bash -lc 'npm run gate:full'`. → `_plan/decisions/0001-who-decides-what.md`.
 
 ```bash
+node scripts/plan.mjs finding "<where>" "<what>"    # the plan's routine edits: finding, take, idea, ask, answer, log, published
 npm run hub:page                                   # the owner's command centre, from _plan/ → design/hub/hub.html
 node scripts/choice-page.mjs design/choices/<id>/choice.json   # a choice, shot and assembled
 ```
@@ -131,7 +132,7 @@ place). The old `gallery/` tree is retired and no thumbnails are generated;
 
 `/build`, `/serve`, `/geocode`, `/responsive-audit`, `/style-check`,
 `/content-check`, `/js-sync`, `/check-vars`, `/house-style`, `/commit`;
-the plan's: `/hub`, `/stage`, `/choose`, `/finding`, `/hub-daily`.
+the plan's: `/hub`, `/stage`, `/idea`, `/choose`, `/finding`, `/hub-daily`.
 
 ## Ruby on Cloudflare
 

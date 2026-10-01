@@ -1,7 +1,7 @@
 # 0006 · The hub keeps itself, and lives in this repo
 
-**Status:** In force from 2026-10-01. Where the plan lives is confirmed by the owner at the first
-push (Q1 in the [queue](../QUEUE.md)); until then nothing has left this machine.
+**Status:** In force from 2026-10-01. Where the plan lives was confirmed by the owner the same day:
+public, in this repo.
 
 ## Context
 

@@ -58,14 +58,17 @@ Build output, vendor code, and lockfiles. They duplicate or shadow source conten
 
 The site is run from **`_plan/`**. A `SessionStart` hook prints its state at the top of every session; `_plan/ROADMAP.md` is the page to open first. It exists so the site is one design across many sessions, and so the owner is not the only one making calls or catching mistakes.
 
+- **An idea of the owner's is never built from the sentence.** `/idea` keeps their words and returns the idea ready to decide on: what it means made explicit, what it would change in the site as it stands, what speaks for and against it, whether it can be delivered (tried in code, not supposed), what a second reader objected to, and a verdict. A `raw` idea in `_plan/ideas/` is shaped before anything else.
 - **Start from the stage.** Work belongs to a stage in `_plan/stages/`. Something that belongs to none is a line in `_plan/findings/inbox.md` (`/finding …`) or a call in `_plan/QUEUE.md`, not a quiet edit.
 - **Who decides** → `_plan/decisions/0001-who-decides-what.md`. Changes no reader sees, and changes that only bring something into line with an accepted decision, are Claude's, behind the gate. Anything a reader sees anew is the owner's, and goes to the queue. **An unanswered call is never a yes.**
 - **A choice between two ways arrives as prototypes** → `/choose`, `_plan/decisions/0005-…`. Never ask the owner to request one.
+- **The owner decides, hears and brainstorms; Claude verifies** → `_plan/decisions/0008-ready-and-done.md`. Two bars, *ready* (before the owner is asked) and *done* (before the owner is shown work). The owner is asked whether something is right, never whether it works.
 - **The gate.** Nothing is presented as done until `npm run gate:full` passes and the `site-reviewer` agent returns PASS. The author never reviews their own change.
 - **Write it down in the same change.** What a reader now gets → a line in `_plan/CHANGELOG.md`. A new feature → a row in `_plan/FEATURES.md` and a journey in `scripts/check-journeys.mjs`. The gate fails without them.
+- **The design language** is `_plan/DESIGN-LANGUAGE.md` (version 0: a draft until the owner confirms it; where it and `_plan/PRINCIPLES.md` differ, the principles win): a **grammar** every page shares (ground, type, shape, glass, motion, the pieces) and **signatures** that make one page itself. Ask of anything new: would a second page ever need this? Yes → it is grammar: reuse it, or add it to `_components.scss` first. No → it is a signature, and creating one is the owner's call. Read it before designing or styling.
 - **The owner's standing calls** live in `_plan/PRINCIPLES.md`. Check a design against it before proposing; quote the line when something conflicts.
 
-→ `design-lead` agent (keeps the plan, writes stage briefs), `site-reviewer` agent (the gate), `prototyper` agent (one option of a choice); `/hub`, `/stage`, `/choose`, `/finding`, `/hub-daily`; `_plan/ARCHITECTURE.md` for how the pieces run.
+→ `_plan/WORKFLOWS.md` (the path a fault, a feature, a new piece, a choice and a thought each take); `design-lead` agent (keeps the plan, writes stage briefs), `site-reviewer` agent (the gate), `prototyper` agent (one option of a choice); `/hub`, `/stage`, `/idea`, `/choose`, `/finding`, `/hub-daily`; `node scripts/plan.mjs` for every routine edit to the plan (a finding, an idea, a call, an answer, a changelog line); `_plan/ARCHITECTURE.md` for how the pieces run.
 
 ---
 
@@ -76,6 +79,8 @@ The site is run from **`_plan/`**. A `SessionStart` hook prints its state at the
 - **Colour palette:** muted & melancholic — oxblood, antique gold, verdigris, lapis, smoke-violet, ivory. No neon.
 - **Motion:** Apple-smooth defaults (short eased transitions). Cinematic only for explicit hero/landing. Always respect `prefers-reduced-motion`.
 - **Glassmorphism:** subtle depth cue, not decoration — restrain blur/transparency.
+
+→ `_plan/DESIGN-LANGUAGE.md` for the language in full; `_plan/PRINCIPLES.md` for the owner's standing calls behind it.
 
 ## Responsive Policy
 
@@ -206,7 +211,7 @@ Mechanical checks, all scoped to **changes vs `HEAD`** — never the existing ba
 | `check-new-components.sh` | — | A new component family styled in a page's partial instead of reusing `_components.scss` (a nudge, never a failure) |
 | `check-journeys.mjs` | `check:journeys` | A reader's route that no longer works: a print that does not open, a search that finds nothing, a Back that leaves the page. Walks the built site in Chromium |
 | `check-plan.mjs` | `check:plan` | A plan that has stopped being true: a stage off the roadmap, a dead link, a feature naming a file that is gone, a change readers get with no changelog line |
-| `gate.sh` | `gate`, `gate:full` | Everything above in one pass with one verdict. `--full` adds the seeded build, pixel diff, motion audit, journeys and iPhone overflow |
+| `gate.sh` | `gate`, `gate:full` | Everything above in one pass with one verdict. `--full` adds the seeded build, pixel diff, motion audit, journeys and iPhone overflow. CI runs the fast gate on every push (`.github/workflows/gate.yml`) |
 
 **Hooks.** SessionStart (`session-start-plan.sh`) prints the plan's state. PostToolUse (`post-tool-edit-nudges.sh`) runs whichever checks match the edited file and prints findings inline, non-blocking. Stop (`stop-variables-check.sh`, `stop-house-guards.sh`) exits 2 on violations introduced this session.
 

@@ -1,6 +1,12 @@
 {
   "url": "https://claude.ai/artifact/3cj4LJNAidofq1Nka5zu8g",
   "audit": "https://claude.ai/artifact/LUVt4jie4qHH9jwLYdVUP6",
-  "choices": {},
-  "daily_may_push": false
+  "choices": {
+    "link-colour": "https://claude.ai/artifact/M5UYHyu6S8Zc29AyBLR6De"
+  },
+  "daily_may_push": false,
+  "published": {
+    "date": "2026-10-01",
+    "hash": "e2e3826126cc0dc0"
+  }
 }

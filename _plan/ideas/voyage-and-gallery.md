@@ -16,3 +16,4 @@ a stage when the owner wants it; a verdict against one is recorded so it is not 
 | Search that knows places | Photo place names in the search index | Open; belongs with stage 3 |
 | A developing-print opening for the lightbox | The print develops as it opens | Offered, not chosen |
 | A focus picker | Choosing a cover's focal point by eye | Built: `npm run covers:focus` |
+| Recent Updates lands on the new frames | A voyage that gained frames links its Recent Updates card to the first new frame, not to the cover | Open; the owner's call (what is on Home). From the open items of 2026-09-29. Mind "doorways withhold": the link would carry a returning reader past the cover |

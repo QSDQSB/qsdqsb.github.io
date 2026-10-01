@@ -23,7 +23,7 @@ The lead needs from the owner, in one conversation:
   ([0003](../decisions/0003-stylesheet-organisation.md), step 6). What it has to add shows what
   the vocabulary missed.
 - It is a design before it is code: a Figma file or real pages with desktop and phone screenshots.
-- Until it is built: Q6 in the queue (a holding page, or out of the navigation).
+- Until it is built: Q5 in the queue (a holding page, or out of the navigation).
 
 ## Exit
 

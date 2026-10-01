@@ -1,0 +1,4 @@
+# The plan's changelog is append-only: two sessions that each add a line merge cleanly instead of
+# conflicting on the same spot. The findings inbox is not (a finding moves from Waiting to Taken), so
+# it merges the ordinary way and a conflict there is resolved by hand.
+_plan/CHANGELOG.md merge=union
