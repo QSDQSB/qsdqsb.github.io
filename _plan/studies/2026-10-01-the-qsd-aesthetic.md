@@ -28,7 +28,7 @@ Round 1: seventeen pairs, on a page of their own, https://claude.ai/artifact/MKX
 Each is scored 1 (A, clearly) to 5 (B, clearly), 3 for either; "Neither is the site" and a note are
 answers too. The scores are kept with the page, in its `scores` collection, one document per pair id
 (`ArtifactData`, `action: "list"`, `collection: "scores"`); `all` holds what the pairs missed. The
-page's source is `design/taste/aesthetic-pairs.src.html` (outside git, as prototypes are).
+page's source is `design/taste/aesthetic-pairs.html` (outside git, as prototypes are).
 
 | # | id | The question | A | B |
 |---|---|---|---|---|
@@ -53,7 +53,11 @@ page's source is `design/taste/aesthetic-pairs.src.html` (outside git, as protot
 Three of the pairs (6, 11, 17) put the house beside something loud on purpose: they calibrate how
 firmly the eye turns the loud thing away, which is the half of the language that kills bad designs.
 
-The owner's scores: not yet given.
+The owner's scores: not yet received. The owner scored once on 2026-10-01, in a local copy of the
+page's source opened in the app's file view. That view keeps nothing (its storage is switched off)
+and cannot reach the store, so the scores were lost: the session had left a half-made source file
+beside the page, and the page said too quietly that it could not save. Mended the same day: one file,
+a plain warning in a local copy, a "Send to Claude" button, and "Copy scores" for any view.
 
 ## What was learned
 
