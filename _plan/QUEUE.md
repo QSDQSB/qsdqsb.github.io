@@ -13,20 +13,11 @@ options as `- **A (recommended):** …`. A number is never reused: the command c
 
 ---
 
-### Q11 · Does the design language now read true, and become version 1?
-
-Asked: 2026-10-01
-
-You answered Q3 with "We need to revisit it", and settled it by eye in two rounds, both on 2026-10-01. What changed in [the language](DESIGN-LANGUAGE.md) today: it opens with "What the eye turns away", the five lines you confirmed as the test; the amounts you picked are in it; and the five places where a score met an earlier call are settled. Not every number in it is yours. These are the lead's, chosen inside or beside what you picked, and a yes here does not make them yours ([decisions/0009](decisions/0009-how-much.md) marks each; they are shown before and after and you can reverse them): a card's lift at 4 px and 1.018 with its lifted shadow (you said "Between A and B"); that the first four blocks take turns arriving; a tag's 10 px corner and its 0.15 s; which glass goes where (14 px by default, 6 px on small marks); when a card is 18 px, Home's grid among them; the ornament in the site's brass. Also still the lead's reading: grammar and signatures, the patterns' names, and the places a pick met something it did not draw. The page is on the command centre under "What the site is and how it is built". Version 1 means a session may quote it as the house's language, with every reading still marked as one.
-
-- **A (recommended):** Yes: it reads true, and becomes version 1.
-- **B:** Close: version 1 once my note is folded in.
-- **C:** Not yet: it stays a draft.
-
 ---
 
 ## Answered
 
+- 2026-10-01 · Q11 · Does the design language now read true, and become version 1? → A: Yes: it reads true, and becomes version 1. (Tapped on the command centre, 2026-10-01, no note.)
 - 2026-10-01 · Round 2 of the aesthetic pairs (picked on the pairs page, and pasted in chat) → sixteen picks, three with a note: the amounts, and the five places where round 1 met an earlier call. The record is [the study](studies/2026-10-01-the-qsd-aesthetic.md); the owner's lines are in [`PRINCIPLES.md`](PRINCIPLES.md), "The eye", round 2; the amounts as a scale to build from are [decisions/0009](decisions/0009-how-much.md). Settled: nothing springs; the wide cover does nothing under the pointer; a voyage's title stays Playfair bold; the book may speak in its empty rooms and ways on; a tag takes no colour, even hovered; "What the eye turns away" reads true. What a pick met and did not draw is listed in 0009, "Not settled", and is shown before it is changed.
 - 2026-10-01 · Round 1 of the aesthetic pairs (scored on the pairs page, and pasted in chat) → seventeen pairs scored 1 to 5, eleven with a note. The record is [the study](studies/2026-10-01-the-qsd-aesthetic.md); the lines are the owner's in [`PRINCIPLES.md`](PRINCIPLES.md), "The eye", each with its pair, its score and the note. They chose which, not how much: the amounts are round 2, on the same page. A 3 made no rule (pairs 3, 7, 9, 14). Four of the lines meet an earlier call and are asked, not read: whether the full-width voyage cover lifts ("no hover lift", 2026-09-26, against pair 12); whether a card that holds a photograph may grow; whether anything overshoots ("never bouncy"); whether the combination of plain and voiced words reaches into the Photobook.
 - 2026-10-01 · Q8 · Who writes the three lines stage 1 is waiting on? → C: only the privacy sentence is needed; leave the other two as they are. (Tapped on the command centre.) Reverie's count line and the description of /utils/ stay as they are.
