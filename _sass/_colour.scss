@@ -540,8 +540,19 @@
   // Focus comes back here when the lightbox closes: the house's mark, inside the box so the next card can't clip it.
   &:focus-visible { @include brass-focus; outline-offset: -2px; }
 
-  img { display: block; width: min(100%, calc(100% * var(--r, 1.5) / 1.7778)); height: auto; aspect-ratio: var(--r, 1.5); border-radius: 0; background: none; }
+  img { display: block; width: 100%; height: 100%; border-radius: 0; background: none; transition: opacity 0.6s $cubic-bezier-smooth; }
 }
+
+// The picture's own shape, painted with its blurred placeholder (cards.js) until the print arrives
+// and develops over it (as the book's frames do: ../photobook/develop.js), so no card cuts in.
+.palette-card__ph {
+  display: block;
+  width: min(100%, calc(100% * var(--r, 1.5) / 1.7778));
+  aspect-ratio: var(--r, 1.5);
+  background: center / cover no-repeat;
+}
+
+.is-developing .palette-card__ph img:not(.is-in) { opacity: 0; }
 
 .palette-card__row {
   display: grid;
@@ -1092,7 +1103,8 @@ body.colour-page--drift { padding-bottom: 0; }
   .palette-blocks a i,
   .reverie__near a,
   .ridgway-swatch,
-  .ridgway-swatch :is(i, b, span) { transition: none; }
+  .ridgway-swatch :is(i, b, span),
+  .palette-card__ph img { transition: none; }
   .palette-voyages__list { animation: none; }
   .palette-card.is-from .palette-card__print img { animation: none; outline-color: #fff; }
 }
