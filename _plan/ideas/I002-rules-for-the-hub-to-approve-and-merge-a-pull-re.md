@@ -1,6 +1,6 @@
 # I002 · Rules for the hub to approve and merge a pull request
 
-**Status:** shaped · **Raised:** 2026-10-01 by the owner · **Stage:** [0](../stages/00-hub.md), for the part that goes ahead
+**Status:** parked · **Raised:** 2026-10-01 by the owner · **Stage:** [0](../stages/00-hub.md), for the part that goes ahead
 
 ## In the owner's words
 
@@ -17,6 +17,8 @@ of that shows upkeep worth the machinery, and the settings are tightened.
 
 **Waits on:** the first push of `master` (GitHub has not seen the hub); a month of daily runs, each
 sorted; the two settings in question 1.
+
+**The owner:** park · 2026-10-01 · Question 1: A, tighten the two settings on GitHub now (a workflow's token reads by default; Actions may not approve pull requests). Question 2: B, the daily run's branch and Claude's unseen fixes to the site. Question 3: A, remove ecc-tools and close its pull request 87 unmerged. Tapped on the command centre, no note.
 
 ## Made explicit
 

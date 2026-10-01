@@ -75,10 +75,14 @@ taps; each is tier 0 unless it says otherwise.
       the gaps, and deny `gh pr merge` and an approving `gh pr review`. It only tightens, but it is
       the owner's permission file: the owner's word first.
 - [ ] The owner's, on GitHub (I002, question 1): a workflow's token may write by default, and Actions
-      may approve pull requests. Read on 2026-10-01. Worth tightening whatever becomes of I002.
+      may approve pull requests. Read on 2026-10-01. The owner answered the same day: tighten both.
+      They are settings on the owner's account: changed by the owner, or by a session on their word
+      in chat, with the two commands in the session's report.
 - [ ] F044 · The owner's (I002, question 3): an outside app, ecc-tools, can push a branch inside the
       repository and open a pull request from it. Number 87 is open and adds commands and skills
-      under `.claude/`. It is not to be merged unread.
+      under `.claude/`. It is not to be merged unread. The owner answered (2026-10-01): remove the app
+      and close number 87 unmerged. Removing an app is done on GitHub by the owner; closing the pull
+      request is one command, on their word in chat.
 - [x] F045 · [0006](../decisions/0006-the-hub-keeps-itself.md) says the repository is a GitHub fork.
       GitHub lists it as no fork. Noted on 0006's status line; the decision does not rest on it.
 - [x] The command centre's own note on the daily run, out of date since Q10, is rewritten

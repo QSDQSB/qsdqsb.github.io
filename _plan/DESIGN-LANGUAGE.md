@@ -40,6 +40,13 @@ What a session may rest on this page, and what it may not.
 
 ### For the conversation
 
+The owner said how it is to be had (2026-10-01): what is established is inherited; only the ambiguous
+part is asked, as pairs to score; and the language is "not to constrain the layout or ideas, but to
+have a mimicking QSD aesthetics that can kill bad designs that are cheap, overly fancy for no good
+reasons". Round 1 is the study
+[The QSD eye](studies/2026-10-01-the-qsd-aesthetic.md). The four questions below stand behind its pairs.
+
+
 It opens with a question, not a defence: **which part read false?** The idea, a particular rule, the
 tone, or the length. The answer may make the list below the wrong list. Then the four things the lead
 most wants the owner's word on, in the order it would raise them:

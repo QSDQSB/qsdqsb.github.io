@@ -115,6 +115,21 @@ Exploring that should not be repeated.
    immersive" is what stops a fourth session sketching it a fourth time.
 3. A study that ends in a yes becomes a stage, or a task in one.
 
+## 7. A review, or a fix someone proposes
+
+A reader, a reviewer or a tool says what is wrong and how to mend it. It is audited before it is
+built, however small the change sounds: "two or three lines" is a claim like any other.
+
+1. **Kept, verbatim**, in a study file ([`studies/`](studies/README.md)).
+2. **Each claim checked** against the code and against the live site, in that order of doubt: a
+   review describes the site its writer saw, which may not be today's.
+3. **Tried**: the fault reproduced (or shown gone), and the proposed fix drawn beside what ships.
+4. **Weighed**: against the principles, with what speaks for and against, and what the trial found
+   that the review did not.
+5. **A verdict**: build it, build something else, or leave it, with a plan in tasks and findings.
+   What a reader would see anew goes to the owner ([0001](decisions/0001-who-decides-what.md)); the
+   rest goes to its stage.
+
 ## What happens without being asked
 
 | When | What |

@@ -26,7 +26,7 @@ whichever session happens to be open.
 | `QUEUE.md` | Open calls for the owner, each with a recommendation | Added by the design lead; cleared by the owner |
 | `PRINCIPLES.md` | Identity, standing calls, what the site refuses | Rarely, and only on the owner's word |
 | `DESIGN-LANGUAGE.md` | The grammar (ground, type, shape, glass, motion, pieces, patterns) and the registered signatures | When a decision or the owner changes the language |
-| `WORKFLOWS.md` | The six paths work takes through the hub | When a path changes |
+| `WORKFLOWS.md` | The seven paths work takes through the hub | When a path changes |
 | `ARCHITECTURE.md`, `FEATURES.md`, `CHANGELOG.md` | How the site is built; every feature with its code and journey; what changed for a reader | With the change that makes them untrue |
 | `decisions/NNNN-*.md` | One decision each: context, options, the choice, consequences | Never edited once accepted; superseded by a new one |
 | `stages/NN-*.md` | One stage each: goal, scope, design notes, tasks, exit | As the stage moves |

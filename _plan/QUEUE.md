@@ -13,20 +13,13 @@ options as `- **A (recommended):** …`. A number is never reused: the command c
 
 ---
 
-### Q8 · Who writes the three lines stage 1 is waiting on?
-
-Asked: 2026-10-01
-
-Three tasks are finished except for their words, and words are yours. (1) Reverie, when no photograph holds the colour: the count line still reads "QSD reveries in only this photograph… for now", over a photograph that is only the closest. (2) One sentence on `/terms/` saying the site counts visits with Cloudflare Web Analytics, without cookies. (3) The description of `/utils/` for search engines, today "Small tools from QSD's House of Wonders."
-
-- **A (recommended):** The lead drafts each in the house voice; you keep, change or strike each here.
-- **B:** I will write them: leave a note with the words.
-- **C:** Only the privacy sentence is needed; leave the other two as they are.
-
 ---
 
 ## Answered
 
+- 2026-10-01 · Q8 · Who writes the three lines stage 1 is waiting on? → C: only the privacy sentence is needed; leave the other two as they are. (Tapped on the command centre.) Reverie's count line and the description of /utils/ stay as they are.
+- 2026-10-01 · How the design language is to be settled (in chat) → by scoring pairs: "Most of the design aesthetics we established should be inherited. Let's focus on the ambiguous part. The idea of the design language is not to constrain the layout or ideas, but to have a mimicking QSD aesthetics that can kill bad designs that are cheap, overly fancy for no good reasons. You can create an artifact or a local html to use side by side comparison and let me select (score 1-5) of the preference between the two options, and we approach and summarise the aesthetics". Round 1 is [the study](studies/2026-10-01-the-qsd-aesthetic.md).
+- 2026-10-01 · A reader's review of the colour pages' cards (in chat) → audited, not built: the fault it names was fixed the same day with the book's own blur. [The study](studies/2026-10-01-a-review-card-placeholders.md).
 - 2026-10-01 · Q10 · Shall the hub tend itself daily? → A: on, daily, and it may push a branch that touches only the plan (never master, never a pull request). The owner's note: "Hub can decide PRs but we need carefully crafted rules for conditions for an auto PR approval merge to master". The note is kept as idea I002; nothing merges by itself until those rules are the owner's.
 - 2026-10-01 · Q9 · What colour is a link inside a page's text? → B: brass, with a hairline underline. (Tapped on the command centre.)
 - 2026-10-01 · Q6 · What protecting the pictures means → A: casual saving (right-click, drag). (Tapped on the command centre.)

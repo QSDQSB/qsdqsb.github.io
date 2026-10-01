@@ -70,17 +70,19 @@ A faster, steadier site that looks exactly the same. Every item is a finding fro
 
 **Content**
 - [x] P04 · The privacy page no longer describes tracking the site does not do.
-- [ ] P04, second half · One sentence on what it does do (Cloudflare Web Analytics, no cookies): the owner's words.
+- [ ] P04, second half · One sentence on what it does do (Cloudflare Web Analytics, no cookies). The owner
+      (Q8, 2026-10-01): this sentence is the one that is needed. The lead drafts it in the house voice;
+      the owner keeps, changes or strikes it before it goes on the page.
 - [ ] P05 · Home's tail: zero the padding. (Whether Home wants footer links is tier 2.)
 - [ ] P12 · The 404's video fits; headings retagged.
-- [ ] X05, second half · 2026-10-01 · Reverie's count line for a colour no photograph holds still reads
-      "QSD reveries in only this photograph… for now", though the photograph shown is the closest one,
-      not one that holds the colour. The words are the owner's.
+- [x] X05, second half · 2026-10-01 · Reverie's count line for a colour no photograph holds reads
+      "QSD reveries in only this photograph… for now", though the photograph shown is the closest one.
+      The owner (Q8, 2026-10-01): leave it as it is.
 - [ ] P04 · 2026-10-01 · `/terms/`'s `seo_description` still mentions comments. Cut the word on the P04
       mark; add nothing.
 - [ ] 2026-09-29 · SEO. Not on the audit, so not under the owner's mark. Portfolio stubs out of
       `sitemap.xml`: tier 0. Venice is in it too, but the owner chose to leave Venice as it is (stage 4):
-      ask before taking it out. `/utils/`'s description is thin: its words are the owner's.
+      ask before taking it out. `/utils/`'s description stays as it is (the owner, Q8, 2026-10-01).
 - [ ] 2026-09-29 · Jianfei's table overflows by 1 px. Not on the audit: tier 0. Confirm it still does;
       the treatise's styles changed on 2026-10-01.
 - [ ] F043 · 2026-10-01 · `CLAUDE.md` is served on the live site: `/CLAUDE/` and `/CLAUDE.md` both
