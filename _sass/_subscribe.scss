@@ -4,16 +4,13 @@
 
    Lifecycle (driven by assets/js/subscribe.js):
      .is-in     — revealed on viewport entry (fade + rise)
-     .is-folded — after a 10 s dwell it folds into the one-line summary row;
-                  clicking the row unfolds it again
+     .is-folded — closed by the reader (a click on the card or its ×), or
+                  already subscribed: the one-line rule; hover peeks, a click
+                  unfolds it again
      .is-done   — successful subscription; form is replaced by the note
-     .is-leaving — the × was pressed: fades and folds shut, then
-                   html.subscribe-dismissed hides it on every page from then on
+   html.subscribe-dismissed (head/custom.html) gives a closed slip its folded
+   shape before the script arrives, so the page never makes room for the card.
    ========================================================================== */
-
-html.subscribe-dismissed .subscribe-slip {
-  display: none;
-}
 
 .subscribe-slip {
   max-width: 40rem; /* share the word-card column so post endings stay one spine */
@@ -40,7 +37,8 @@ html.subscribe-dismissed .subscribe-slip {
   overflow: hidden;
   min-height: 0;
 }
-.subscribe-slip.is-folded .subscribe-slip__body {
+.subscribe-slip.is-folded .subscribe-slip__body,
+html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__body {
   grid-template-rows: 0fr;
   opacity: 0;
 }
@@ -63,9 +61,10 @@ html.subscribe-dismissed .subscribe-slip {
   @extend %subscribe-slip-glass;
   position: relative;
   padding: 1.35rem 1.5rem 1.2rem;
+  cursor: pointer; /* a click anywhere but the form and the privacy link folds it */
 }
 
-/* Close for good: a hairline cross in the corner, as quiet as the privacy link. */
+/* Fold to the rule: a hairline cross in the corner, as quiet as the privacy link. */
 .subscribe-slip__close {
   position: absolute;
   top: 0.55rem;
@@ -102,16 +101,6 @@ html.subscribe-dismissed .subscribe-slip {
     outline-offset: 2px;
   }
   &[hidden] { display: none; }
-}
-
-.subscribe-slip.is-leaving {
-  margin-top: 0;
-  opacity: 0;
-  transition: opacity 0.4s ease, margin-top 0.8s $cubic-bezier-smooth;
-}
-.subscribe-slip.is-leaving .subscribe-slip__body {
-  grid-template-rows: 0fr;
-  opacity: 0;
 }
 
 .subscribe-slip__heading {
@@ -153,6 +142,7 @@ html.subscribe-dismissed .subscribe-slip {
   gap: 0.6rem;
   margin: 1.35rem 0 0;
   padding: 0.2rem 0.3rem 0.2rem 0.9rem;
+  cursor: auto;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 0.5rem;
   background: rgba(255, 255, 255, 0.05);
@@ -265,7 +255,8 @@ html.subscribe-dismissed .subscribe-slip {
   pointer-events: none;
   transition: max-height 0.8s $cubic-bezier-smooth, opacity 0.55s ease 0.15s;
 }
-.subscribe-slip.is-folded .subscribe-slip__summary {
+.subscribe-slip.is-folded .subscribe-slip__summary,
+html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__summary {
   max-height: 2.6rem;
   padding: 0.7rem 0;
   opacity: 1;
@@ -315,6 +306,7 @@ html.subscribe-dismissed .subscribe-slip {
 .subscribe-slip .subscribe-slip__privacy {
   margin: 0.7rem 0 0;
   text-align: right;
+  cursor: auto;
   font-family: $barlow-font-family;
   font-weight: 300;
   font-size: 0.72rem;

@@ -33,13 +33,14 @@
   //   motionOff()            — reduce motion, OR the kill-switch above flagged an
   //                            automated renderer; either way animations must land
   //                            on their final state, never a mid-flight frame.
-  // A reader who closed the subscribe slip (its ×, assets/js/subscribe.js) never
-  // sees it again on this browser; set before first paint so it cannot flash.
+  // A reader who closed the subscribe slip (assets/js/subscribe.js) finds it
+  // folded to its rule on this browser; set before first paint so the card's
+  // height is never laid out and then taken back.
   try {
     if (window.localStorage.getItem("qsd-subscribe-dismissed")) {
       document.documentElement.classList.add("subscribe-dismissed");
     }
-  } catch (e) { /* storage blocked: the slip shows as before */ }
+  } catch (e) { /* storage blocked: the slip opens as before */ }
 
   window.QSD = window.QSD || {};
   window.QSD.prefersReducedMotion = function () {
