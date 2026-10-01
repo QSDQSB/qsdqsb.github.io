@@ -10,7 +10,7 @@
 {%- assign films = include.book.book.colophon.films -%}
 <div class="photobook-bar">
   {%- if films.size > 1 %}
-  <button class="photobook-bar__mark" type="button" aria-label="A film is chosen: show the controls" data-tip="Film dial"></button>
+  <button class="photobook-bar__mark" type="button" tabindex="-1" aria-label="A film is chosen: show the controls" data-tip="Film dial"></button>
   {%- endif %}
   <div class="photobook-bar__dock">
     {%- if films.size > 1 %}

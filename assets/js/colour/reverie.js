@@ -31,7 +31,7 @@ import { crossfade } from '../photobook/wash.js';
 import { develop } from '../photobook/develop.js';
 import { lightbox } from '../photobook/lightbox.js';
 import { vat, seedOf, oklab, glow, stillness as still } from './vat.js';
-import { esc, card, reverieOf, holding, varied, SHOWN, nearby, focus, shadeFor, place, cameFrom, backLabel, measureCards, json } from './cards.js';
+import { esc, card, reverieOf, holding, closest, varied, SHOWN, nearby, focus, shadeFor, place, cameFrom, backLabel, measureCards, json } from './cards.js';
 
 const root = document.getElementById('reverie');
 // Its prints develop over their blurred placeholders, as the book's do (../photobook/develop.js).
@@ -64,6 +64,9 @@ async function main() {
     // Found in a photograph that barely holds it (a voyage's palette leads here from its best frame by
     // signature, which the dots may not bear out): the one of its voyage that holds it most, else any.
     if (f && hex && !holding([f], hex, { least: 1 / 24 }).length) f = holding(frames.filter((x) => x.g === f.g), hex, { least: 1 / 24 })[0]?.f || holding(frames, hex, { least: 0 })[0]?.f || f;
+    // A colour no photograph holds opens on the one that comes closest to it, never on nothing and
+    // never on a photograph at random. With no colour asked, any photograph, and its own colour.
+    if (!f && hex) f = closest(frames, hex);
     if (!f) f = frames[Math.floor(Math.random() * frames.length)];
     if (!hex) {
       const vivid = f.sig.filter(([h, pc]) => pc >= 8 && oklab(h)[0] > 0.3).sort((a, b) => Math.hypot(...oklab(b[0]).slice(1)) - Math.hypot(...oklab(a[0]).slice(1)));
@@ -198,7 +201,7 @@ async function main() {
       html.classList.toggle('reverie-in-place', inPlace);
       await document.startViewTransition(update).finished.catch(() => {});
       html.classList.remove('reverie-in-place');
-    }).catch(() => {});
+    }).catch(() => { wanted = shownAt; }); // a change that failed can be asked for again
     return changing;
   }
 
@@ -229,6 +232,9 @@ async function main() {
     if (!a) return;
     const url = new URL(a.href, location.href);
     e.preventDefault();
+    // The row is redrawn only when its change lands: a second press before then names the same colour,
+    // which is on its way already.
+    if (url.search === wanted) return;
     history.pushState({ colours: (history.state?.colours ?? 0) + 1 }, '', url.pathname + url.search);
     go(read(url.href), url.search, { focus: true });
   });
@@ -238,7 +244,7 @@ async function main() {
   // the other way, straight after, steps back to it instead.
   let lastStep = null;
   addEventListener('keydown', (e) => {
-    if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || e.metaKey || e.ctrlKey || e.altKey || e.shiftKey || lbEl?.open || e.target.closest?.('input, textarea, select, [contenteditable]')) return;
+    if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || e.repeat || e.metaKey || e.ctrlKey || e.altKey || e.shiftKey || lbEl?.open || e.target.closest?.('input, textarea, select, [contenteditable]')) return;
     if (lastStep && lastStep.key !== e.key && history.state?.colours === lastStep.depth) { e.preventDefault(); lastStep = null; history.back(); return; }
     const items = [...near.querySelectorAll('li')], here = items.findIndex((li) => li.querySelector('.is-here'));
     const to = items[here + (e.key === 'ArrowRight' ? 1 : -1)]?.querySelector('a[href]');

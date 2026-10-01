@@ -524,6 +524,8 @@ document.addEventListener("DOMContentLoaded", function(){
 
     document.addEventListener("keydown", function(event) {
       if (event.key === "Escape" && searchPanel.classList.contains("is--visible")) {
+        // Spent here: a page that also answers Escape (Drift's way back) checks defaultPrevented.
+        event.preventDefault();
         closeSearchPanel();
         searchToggle.focus();
       }
@@ -531,31 +533,39 @@ document.addEventListener("DOMContentLoaded", function(){
   }
 
 });
+/* In-page links glide to their section for a reader who has not asked for stillness. Either way they
+   do what a plain link does: the address names the section, Back returns from it, and focus goes
+   with the reader, so the next Tab starts from where they landed. */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
       if (e.defaultPrevented) return;
 
-      // Let the TOC's own smooth scrolling handle TOC clicks to avoid double-scrolling.
+      // The contents list's links are plain links: the browser takes them.
       if (this.closest('.toc') || this.closest('.toc__menu')) return;
 
-      const href = this.getAttribute('href');
-      const targetElement = document.querySelector(href);
+      // By id, not by selector: a footnote's id (fn:1) is no selector.
+      const id = decodeURIComponent(this.getAttribute('href').slice(1));
+      const target = id && document.getElementById(id);
+      if (!target) return;
 
-      if (targetElement) {
-          e.preventDefault();
-          targetElement.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start',
-              inline: 'nearest'
-          });
-      } else if (this.origin !== window.location.origin || this.pathname !== window.location.pathname) {
-          // If the anchor is from another page, navigate to the top of the page first
-          e.preventDefault();
-          window.location.href = this.href;
-      }
+      e.preventDefault();
+      target.scrollIntoView({
+          behavior: window.QSD.motionOff() ? 'auto' : 'smooth',
+          block: 'start',
+          inline: 'nearest'
+      });
+      // The address holds the id percent-encoded; compared decoded, or 卷 pushes again on every click.
+      var here = '';
+      try { here = decodeURIComponent(window.location.hash.slice(1)); } catch (err) { here = window.location.hash.slice(1); }
+      if (here !== id) history.pushState(history.state, '', this.getAttribute('href'));
+      // A heading takes focus by script only; a link or a button that is the target keeps its place in the Tab order.
+      if (target.tabIndex < 0) target.setAttribute('tabindex', '-1');
+      target.focus({ preventScroll: true });
   });
 });
-document.documentElement.style.scrollBehavior = 'smooth';
+// An address that arrives with a #section glides to it, then the page scrolls plainly: scripts that
+// place the reader (the Photobook holding its place, Home's return to the top) must not glide.
+if (!window.QSD.motionOff()) document.documentElement.style.scrollBehavior = 'smooth';
 setTimeout(() => {
   document.documentElement.style.scrollBehavior = 'auto';
 }, 1000);
@@ -581,7 +591,7 @@ document.querySelectorAll('[data-random-jump]').forEach(function(link) {
       var target = document.querySelector(pick);
       if (!target) return;
       var top = target.getBoundingClientRect().top + window.scrollY - 50;
-      window.scrollTo({ top: top, behavior: 'smooth' });
+      window.scrollTo({ top: top, behavior: window.QSD.motionOff() ? 'auto' : 'smooth' });
     } else {
       window.location.href = pick;
     }

@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   const body = document.body;
-  // Opt-out: the develop-in opening scene is a Home-only signature. Pages that
-  // set `no-opening-scene` (e.g. /about/) keep their overlay hero but never run
-  // the cinematic intro, so their content isn't dimmed on every visit.
+  // The opening of every page with an overlay hero: the masthead stays away while the hero
+  // arrives. Pages that set `no-opening-scene` (e.g. /about/) keep their overlay hero but
+  // never run it.
   if (body.classList.contains("no-opening-scene")) return;
   const hasOverlayHero = body.classList.contains("has-overlay-hero");
   const overlayHero = document.querySelector(".page__hero--overlay");
@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const DIM_FADE_MS = 1000;
   const EXCERPT_REVEAL_DELAY_MS = 1500;
   const SCROLL_CANCEL_DELTA = 2;
+  const TOP_INTENT_ZONE = 120; // as the masthead's own (masthead-intent.js)
+  const TAP_SLOP = 10;
   const SCROLL_KEYS = new Set([
     "PageDown",
     "PageUp",
@@ -50,6 +52,10 @@ document.addEventListener("DOMContentLoaded", function () {
     window.removeEventListener("wheel", onWheel);
     window.removeEventListener("touchmove", onTouchMove);
     document.removeEventListener("keydown", onKeyDown);
+    document.removeEventListener("focusin", onFocusIn);
+    document.removeEventListener("mousemove", onMouseMove);
+    window.removeEventListener("touchstart", onTouchStart);
+    window.removeEventListener("touchend", onTouchEnd);
   };
 
   const completeScene = function (action) {
@@ -114,6 +120,38 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // The scene holds the masthead away for immersion. A reader looking for the way ends it at once:
+  // Tab reaching the masthead (its links would take focus unseen), the pointer brought up to the
+  // top edge, a tap at the top of the screen. A pointer that was already resting there (it has just
+  // clicked a link in the bar) is not asking; it has to leave the edge and come back.
+  const seeking = function () {
+    if (!sceneCompleted && phase === "active") beginEnding("cancel");
+  };
+
+  function onFocusIn(event) {
+    const masthead = document.querySelector(".masthead");
+    if (masthead && masthead.contains(event.target)) seeking();
+  }
+
+  let pointerWasBelow = false;
+  function onMouseMove(event) {
+    if (event.clientY >= TOP_INTENT_ZONE) { pointerWasBelow = true; return; }
+    if (pointerWasBelow) seeking();
+  }
+
+  let touchStart = null;
+  function onTouchStart(event) {
+    const touch = event.touches && event.touches[0];
+    touchStart = touch ? { x: touch.clientX, y: touch.clientY } : null;
+  }
+  function onTouchEnd(event) {
+    const start = touchStart;
+    const touch = event.changedTouches && event.changedTouches[0];
+    touchStart = null;
+    if (!start || !touch || start.y >= TOP_INTENT_ZONE) return;
+    if (Math.abs(touch.clientX - start.x) <= TAP_SLOP && Math.abs(touch.clientY - start.y) <= TAP_SLOP) seeking();
+  }
+
   body.classList.add("overlay-opening-enabled");
 
   if (prefersReducedMotion) {
@@ -139,4 +177,8 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addEventListener("wheel", onWheel, { passive: true });
   window.addEventListener("touchmove", onTouchMove, { passive: true });
   document.addEventListener("keydown", onKeyDown);
+  document.addEventListener("focusin", onFocusIn);
+  document.addEventListener("mousemove", onMouseMove, { passive: true });
+  window.addEventListener("touchstart", onTouchStart, { passive: true });
+  window.addEventListener("touchend", onTouchEnd, { passive: true });
 });

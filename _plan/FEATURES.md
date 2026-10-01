@@ -10,12 +10,12 @@ check counts them. Add the row when a feature ships; add its journey to
 
 | Feature | Where a reader meets it | Code | Journey | Standing calls and notes |
 |---|---|---|---|---|
-| Masthead and navigation | Every page | `_includes/masthead.html` `_sass/_masthead.scss` `_sass/_navigation.scss` `assets/js/masthead-intent.js` `assets/js/plugins/jquery.greedy-navigation.js` `_data/navigation.yml` | `home` | Collapses to the mark on scroll. Audit X01, X02, X22. Stage 3. |
+| Masthead and navigation | Every page | `_includes/masthead.html` `_sass/_masthead.scss` `_sass/_navigation.scss` `assets/js/masthead-intent.js` `assets/js/plugins/jquery.greedy-navigation.js` `_data/navigation.yml` | `home` `masthead-touch` `masthead-keys` | Immersive without losing direction: away while reading, back on a hint of looking for it. Audit X01, X02, X22. Stage 3. |
 | Search | The magnifier, every page | `_includes/search/search_form.html` `_sass/_search.scss` `assets/js/lunr/lunr-en.js` `assets/js/lunr/lunr-store.js` `assets/js/_main.js` | `search` | Audit S03, S04, X09, X10. |
 | Home | `/` | `_layouts/home.html` `_includes/home/index.html` `_includes/home/whats-new.html` `_sass/_home.scss` | `home` | Three snap panels. No full-screen gate. |
 | The monogram and the bubbles | Home's hero | `assets/js/qsd-mark.js` `assets/js/qsd-bubbles.js` | | Loops by the owner's choice (2026-07-19). |
 | Hero and depth parallax | Every page with a hero | `_includes/page__hero.html` `assets/js/hero-depth-parallax.js` `_sass/_page.scss` | | Depth maps made by `npm run generate:depth`. Audit S02. |
-| Opening scene | Hero pages, on load | `assets/js/overlay-opening-scene.js` | | Audit X02. |
+| Opening scene | Hero pages, on load | `assets/js/overlay-opening-scene.js` | `masthead-touch` `masthead-keys` | Holds the bar away for three seconds; yields to a reader looking for it. Audit X02. |
 | Voyage index and cards | `/voyage/`, parent voyages, Posts | `_portfolio/voyage.html` `_includes/archive-single.html` `_sass/_archive.scss` `assets/js/card-covers.js` | `voyages` | A card is a magazine cover. Doorways withhold. Stage 4. |
 | The Photobook | A voyage | `_layouts/gallery.html` `_includes/photobook.html` `_includes/photobook/book.html` `_includes/photobook/frame.html` `_includes/photobook/cover.html` `_sass/_photobook.scss` `assets/js/photobook/index.js` `assets/js/photobook/book.js` | `book` | The canonical design. Immersive, English only. |
 | Film dial and view switch | A voyage's cover seam | `_includes/photobook/filmbar.html` `assets/js/photobook/dial.js` | | Minimal translucent dial; first tap opens on touch. No journey yet. |
@@ -23,11 +23,11 @@ check counts them. Add the row when a feature ships; add its journey to
 | Colophon | The end of a book | `_includes/photobook/colophon.html` `_includes/photobook/end.html` | | Hours without clock times; the voyage's vat. |
 | Photo pipeline | Not seen: every photograph | `scripts/photos/process.mjs` `scripts/photos/lib/book.mjs` `scripts/photos/fetch-manifests.mjs` | | Photographs live in R2. `_docs/photos-recipes.md`. R2 writes are the owner's. |
 | Palette | `/palette/` | `_pages/palette.html` `assets/js/colour/palette.js` `assets/js/colour/vat.js` `assets/js/colour/cards.js` `_sass/_colour.scss` | `palette` | The vat stays misty. No glass panel. |
-| Reverie | `/reverie/` | `_pages/reverie.html` `assets/js/colour/reverie.js` | `reverie` | Keyed on the colour. Audit X04, X05, P01. |
-| Drift | `/drift/` | `_pages/drift.html` `assets/js/colour/drift.js` | `drift` | Plain Drift has no door, by choice. Audit S06. |
+| Reverie | `/reverie/` | `_pages/reverie.html` `assets/js/colour/reverie.js` | `reverie` `reverie-unheld` | Keyed on the colour; one nothing holds opens on the closest photograph. Audit X04, X05, P01. |
+| Drift | `/drift/` | `_pages/drift.html` `assets/js/colour/drift.js` | `drift` | Plain Drift has no door, by choice. Escape is the way back to its colour, after search. Audit S06, X07. |
 | Ridgway's plates and utilities | `/utils/`, `/utils/ridgway/` | `_pages/utils.html` `_pages/utils-ridgway.html` `assets/js/colour/ridgway.js` | | Reached by address alone. |
 | Map and atlas | `/voyage/`, voyages in parts | `_includes/map.html` `assets/js/map.js` `_sass/_map.scss` `scripts/geocode-maps.js` | | A veil before interaction, so scroll is never taken. Audit S14, X18, X19. |
-| Posts and reading | `/year-archive/`, a post | `_layouts/single.html` `_pages/year-archive.html` `_sass/_page.scss` `_includes/toc.html` `assets/js/toc-scroll-spy.js` | `post` | The old layout. Stage 6. |
+| Posts and reading | `/year-archive/`, a post | `_layouts/single.html` `_pages/year-archive.html` `_sass/_page.scss` `_includes/toc.html` `assets/js/toc-scroll-spy.js` | `post` `anchor` | The old layout. Stage 6. In-page links are plain links that glide. |
 | Bilingual switch | Posts with two languages | `assets/js/bilingual-switch.js` `_sass/_bilingual-switch.scss` | | Posts only; the Photobook is English only. |
 | Code copy | Code blocks in posts | `assets/js/code-copy.js` `_sass/_code-copy.scss` | | Audit X18. |
 | Tags | `/tags/`, `/voyage-by-tags/` | `_pages/tag-archive.html` `_pages/tag-voyage.html` `_data/tag_colours.yml` | | Audit X14. |

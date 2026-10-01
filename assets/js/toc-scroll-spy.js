@@ -113,7 +113,7 @@
     const delta = Math.abs(currentScrollTop - targetScrollTop);
     if (delta < 4) return;
 
-    tocMenu.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
+    tocMenu.scrollTo({ top: targetScrollTop, behavior: window.QSD.motionOff() ? 'auto' : 'smooth' });
   }
 
   /**

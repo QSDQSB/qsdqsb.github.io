@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const TOP_INTENT_ZONE = 120;
   const IDLE_COLLAPSE_MS = 2600;
   const MOUSEMOVE_THROTTLE_MS = 180;
+  const TAP_SLOP = 10;
   let lastScrollY = window.scrollY;
   let directionalScrollIntent = 0;
   let scrollActivityUntil = 0;
@@ -316,11 +317,27 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addEventListener("qsd:nav-overflow-updated", syncOverflowState, { passive: true });
   window.addEventListener("qsd:overlay-opening", onOverlayOpeningState, { passive: true });
 
-  window.addEventListener("touchstart", function () {
-    onIntentExpand("touch");
+  // The bar stays away while the page is being read and comes back on a hint of looking for it:
+  // a scroll up (above), the pointer at the top edge (below), focus arriving inside it, or a tap at
+  // the top of the screen. A finger that lands to scroll, or a focus elsewhere on the page, is
+  // reading. A tap anywhere also counts on a page still at its top, where there is no scrolling up
+  // to ask with.
+  let touchStart = null;
+  window.addEventListener("touchstart", function (event) {
+    const touch = event.touches && event.touches[0];
+    touchStart = touch ? { x: touch.clientX, y: touch.clientY, scrollY: window.scrollY } : null;
   }, { passive: true });
-  document.addEventListener("focusin", function () {
-    onIntentExpand("focus");
+  window.addEventListener("touchend", function (event) {
+    const start = touchStart;
+    const touch = event.changedTouches && event.changedTouches[0];
+    touchStart = null;
+    if (!start || !touch) return;
+    const moved = Math.abs(touch.clientX - start.x) > TAP_SLOP || Math.abs(touch.clientY - start.y) > TAP_SLOP;
+    if (moved || Math.abs(window.scrollY - start.scrollY) > MIN_SCROLL_DELTA) return;
+    if (start.y < TOP_INTENT_ZONE || window.scrollY <= NEAR_TOP_Y) onIntentExpand("touch");
+  }, { passive: true });
+  document.addEventListener("focusin", function (event) {
+    if (masthead.contains(event.target)) onIntentExpand("focus");
   });
   document.addEventListener("mousemove", function (event) {
     if (event.clientY < TOP_INTENT_ZONE) {
