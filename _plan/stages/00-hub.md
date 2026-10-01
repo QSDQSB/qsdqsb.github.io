@@ -55,8 +55,9 @@ stops being the only reviewer.
       owner's checkout, not the run's worktree; the reviewer blocked the run on it (2026-10-01). Until
       a hand-off has been shown to stay inside the worktree, the run records and files only, and raw
       ideas wait for the next session. Switch it on after a week of clean runs and one proven hand-off.
-- [ ] CI's first run (`.github/workflows/gate.yml`): at the first push. It has run only in a clean
-      checkout on this Mac.
+- [x] CI's first run (`.github/workflows/gate.yml`): 2026-10-01, on the owner's first push of the hub
+      (f4bd34f). The fast gate passed on GitHub (run 36925029918, 55 s), and Cloudflare Pages built and
+      deployed the same commit: the sixteen fixes of stage 1's first batch are live.
 - [ ] A cloud session starting from the hook: unproven until one does.
 
 **From I002, which the lead advises parking (2026-10-01).** The owner's note on merging was shaped,
