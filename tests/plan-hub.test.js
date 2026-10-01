@@ -75,10 +75,14 @@ test('a call is asked with a new number and answered into Answered', () => {
   });
 });
 
+// The repository's own queue may be empty (the owner answers): each test asks its own call first.
+const ASK = ['ask', 'A call for the test?', '--body', 'One line.', '--option', 'A*: This.', '--option', 'B: That.'];
+
 test('an answer is kept as written, whatever characters it holds', () => {
   withPlanCopy((plan, read) => {
+    assert.strictEqual(plan(...ASK).status, 0);
     const before = read('QUEUE.md');
-    const first = before.match(/^### (Q\d+) · /m)[1];
+    const first = before.split('## Answered')[0].match(/^### (Q\d+) · A call for the test\?/m)[1];
     // `$&`, `$'` and a backtick would each be expanded by a replacement string.
     const said = "B: pay $& now, see `$` and $' end";
     assert.strictEqual(plan('answer', first, said).status, 0);
@@ -91,9 +95,10 @@ test('an answer is kept as written, whatever characters it holds', () => {
 
 test('an answer that cannot be recorded changes nothing', () => {
   withPlanCopy((plan, read, write) => {
+    assert.strictEqual(plan(...ASK).status, 0);
     const broken = read('QUEUE.md').replace(/## Answered[\s\S]*$/, '');
     write('QUEUE.md', broken);
-    const first = broken.match(/^### (Q\d+) · /m)[1];
+    const first = broken.match(/^### (Q\d+) · A call for the test\?/m)[1];
     const res = plan('answer', first, 'A');
     assert.notStrictEqual(res.status, 0, 'a queue with no Answered section is an error, not a silent loss');
     assert.strictEqual(read('QUEUE.md'), broken, 'the open call is still there');
