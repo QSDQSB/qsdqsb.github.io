@@ -1,13 +1,15 @@
 {% include base_path %}
 
-{% comment %} A voyage's cover (voyage-cover.html) comes as its 1280 tier, placed on its focus for the card's 3.5:1. {% endcomment %}
+{% comment %} A voyage's cover (voyage-cover.html) comes as its 1280 tier, placed on its focus for the card's 3.5:1; a deferred card lists every tier for card-covers.js. {% endcomment %}
 {% include voyage-cover.html doc=post %}
 {% assign card_pos = nil %}
+{% assign card_vc = nil %}
 {% if post.header.teaser %}
   {% capture teaser %}{{ post.header.teaser }}{% endcapture %}
 {% elsif vc %}
   {% capture teaser %}{{ vc.url }}/1280.webp{% endcapture %}
   {% assign card_pos = vc.pos.card %}
+  {% assign card_vc = vc %}
 {% else %}
   {% if post.header.overlay_image %}
     {% capture teaser %}{{ post.header.overlay_image }}{% endcapture %}
@@ -28,8 +30,14 @@
 
 {% comment %} defer_cover=true parks the cover in --bg-later until assets/js/card-covers.js sees the card near. {% endcomment %}
 {% if include.defer_cover %}{% assign cover_var = "--bg-later: url(" %}{% else %}{% assign cover_var = "--bg-img: url(" %}{% endif %}
-{%- comment -%} A deferred cover's WebP renditions (_data/cover_sizes.json, npm run covers): card-covers.js takes the smallest that fills the card. {%- endcomment -%}
-{% if include.defer_cover %}{% assign cover_sized = site.data.cover_sizes[post.header.overlay_image] %}{% else %}{% assign cover_sized = nil %}{% endif %}
+{%- comment -%} A deferred cover's WebP renditions, smallest first: a voyage cover's tiers on the photo host, else a hand-cut hero's (_data/cover_sizes.json, npm run covers). card-covers.js takes the smallest that fills the card. {%- endcomment -%}
+{%- capture covers_list -%}
+  {%- if include.defer_cover and card_vc -%}
+    {%- for w in card_vc.sizes.webp -%}{{ card_vc.url }}/{{ w }}.webp {{ w }}{% unless forloop.last %}, {% endunless %}{%- endfor -%}
+  {%- elsif include.defer_cover and site.data.cover_sizes[post.header.overlay_image] -%}
+    {%- for s in site.data.cover_sizes[post.header.overlay_image] -%}{{ s.src | relative_url }} {{ s.w }}{% unless forloop.last %}, {% endunless %}{%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
 {% assign ovl_address = ")" | prepend: teaser | prepend: cover_var %}
 
 
@@ -39,7 +47,7 @@
   {% assign post_link = post.url | prepend: base_path %}
 {% endif %}
 
-<a class="card" id="{{ title | slugify }}" href={{ post_link }} style="{{ ovl_address }}{% if card_pos %}; --bg-pos: {{ card_pos }}{% endif %}"{% if cover_sized %} data-covers="{% for s in cover_sized %}{{ s.src | relative_url }} {{ s.w }}{% unless forloop.last %}, {% endunless %}{% endfor %}"{% endif %}>
+<a class="card" id="{{ title | slugify }}" href={{ post_link }} style="{{ ovl_address }}{% if card_pos %}; --bg-pos: {{ card_pos }}{% endif %}"{% if covers_list != "" %} data-covers="{{ covers_list }}"{% endif %}>
     <div class="content">
       <h3>{{ title }}</h3>
           {% if post.read_time %}

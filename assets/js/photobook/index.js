@@ -10,6 +10,7 @@ import { glow } from './glow.js';
 import { book } from './book.js';
 import { lightbox } from './lightbox.js';
 import { tips } from './tip.js';
+import { develop } from './develop.js';
 
 tips();
 
@@ -29,19 +30,8 @@ if (dataEl) {
   lb.openFromHash();
 }
 
-// Prints develop over their placeholders as they arrive (see .is-developing in _photobook.scss);
-// one already in hand when the script runs is shown at once.
-const main = document.querySelector('.photobook-main');
-if (main) {
-  const show = (img) => img.classList.add('is-in');
-  for (const img of main.querySelectorAll('.photobook-frame__print img')) {
-    if (img.complete && img.naturalWidth) show(img);
-    else { img.addEventListener('load', () => show(img), { once: true }); img.addEventListener('error', () => show(img), { once: true }); }
-  }
-  new MutationObserver((ms) => { for (const m of ms) for (const n of m.addedNodes) n.querySelectorAll?.('.photobook-frame__print img').forEach((img) => (img.complete ? show(img) : img.addEventListener('load', () => show(img), { once: true }))); })
-    .observe(main, { childList: true, subtree: true });
-  main.classList.add('is-developing');
-}
+// Prints develop over their placeholders as they arrive (./develop.js).
+develop(document.querySelector('.photobook-main'), '.photobook-frame__print img');
 
 // The colophon's dye vat (assets/js/colour/vat.js): poured once, as the reader nears the end of the
 // book, the same vat the voyage's palette page shows. Its renderer is fetched only then.
