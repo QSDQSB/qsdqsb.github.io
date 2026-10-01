@@ -55,6 +55,85 @@ writing (least well), and the person (Home strongly, About weakly).
   hue as small ticks and dots.
 - Quiet by default: detail on hover or in hand. One control per job.
 
+### The eye (2026-10-01, from the pairs)
+
+What the design language is for, in the owner's words: "Most of the design aesthetics we established
+should be inherited. Let's focus on the ambiguous part. The idea of the design language is not to
+constrain the layout or ideas, but to have a mimicking QSD aesthetics that can kill bad designs that
+are cheap, overly fancy for no good reasons."
+
+The owner scored seventeen pairs, each drawn two ways: 1 is A, clearly; 5 is B, clearly; 3 is either.
+The record, with what each pair drew, is [the study](studies/2026-10-01-the-qsd-aesthetic.md).
+
+How to read a line. The score and the words in quotation marks are the owner's, and nothing else is.
+A 1 or a 5 is clear. A 2 or a 4 is a leaning, and is written as one. A 3 makes no rule. A score
+answers the pair as it was drawn: which of the two, never how much. The amounts are asked in round 2.
+A sentence that opens "The lead's reading" is not the owner's until they confirm it.
+
+**Colour**
+- **Tags are ink only**, not each its own colour (pair 4, score 5). "Crowded saturated colour blocks
+  are distracting visually. I prefer a consistent secondary layout for the functionality buttons, it
+  can change colour when hovered, if distinguishing colour is required."
+- **An accent is always brass**, not taken from the photograph (pair 5, score 1). "When similar
+  visually, choose the simpler one with less dependency and complexity". The lead's reading: the pair
+  drew the mark on a selected filter. The room's light (the glow, the wash, the dye) still comes from
+  the photograph; that is the room, not an accent.
+- **A heading that wants attention is white, with a brass eyebrow**, not a gradient with a glow (pair
+  6, score 1). No note. The lead's reading: the pair set the house beside something loud. It turns
+  away gradient type and glow; it does not re-ink the eyebrow, which is built in the second ink.
+- **Icons are hairline, in ink**, not filled, each in a colour (pair 17, score 1). "Again, saturated
+  pure colour blocks are distracting".
+- **Over a photograph, glass and not a solid plate** (pair 10, score 1). "Again, pure-colour block
+  distracts readers". The lead's reading: the pair asked glass or solid, not whether a plate belongs
+  there. "No opaque plates, chips or panels over the image" (Cards) stands.
+
+**Shape**
+- **A print has square corners** (pair 1, score 1). "Rounded Rectangle is for card-like elements. We
+  sometimes use rounded rectangle for pictures in the middle of article to make it more smooth".
+- **A control leans rounded, not square** (pair 2, score 2). "Doesn't have to be pills, rounded
+  rectangle is fine".
+- How a block of words is held, on the ground under a rule or in a card (pair 3, score 3): either. No
+  rule.
+
+**Type**
+- The voice of a title, serif italic or sans capitals (pair 7, score 3): either, by purpose. "Both
+  have their usecase. Italic, serif, didone font for poetic and storytelling text (like Voyage);
+  Barlow for easy readability (like Utils)". The lead's reading: the note gives each face a purpose.
+  It does not move a title off Playfair Display bold (The look, 2026-09-25); whether a storytelling
+  page's title turns italic is not yet asked.
+- **A caption is in small capitals, spaced**, not serif italic (pair 8, score 1). "Easier to read".
+- The voice of a number, serif figures or sans tabular (pair 9, score 3): either. No rule. Didot for
+  figures (The look, 2026-09-28) stands where it is built.
+
+**Depth and motion**
+- **A card leans raised off the page**, not flat under a rule (pair 11, score 4). "doesnt have to glow".
+- **Under the pointer a card lifts and grows**; it does not merely brighten (pair 12, score 5). No
+  note. This meets "no hover lift" (Cards, 2026-09-26): see below.
+- **Words lean towards a slower arrival, from below, one line after another**, not a quarter second
+  almost in place (pair 13, score 4). "Prefer B, but do not overdesign".
+
+**Words, ornament and air**
+- How the interface speaks, plain or with a voice (pair 14, score 3): "I prefer a combination. Clarity
+  when needed. For example: "34 frames; Nothing here but dust and echoes. ONWARD"".
+- **Between two passages, a brass ornament**, not a hairline (pair 15, score 5). No note.
+- **Few things, with room**, not many in rows (pair 16, score 1). No note.
+
+**Where these meet an earlier call** (the lead's notes: each is put to the owner, none is settled by
+reading)
+- Pair 12 and "no hover lift" (Cards, 2026-09-26). The later date wins on this page, so a card lifts.
+  But the earlier line was said of the full-width voyage cover and the pair drew a small card. Whether
+  the cover lifts is asked in round 2; until then nothing is taken off the cover and nothing added.
+- Pair 12 and "The photograph itself never animates on hover". The pair's card moved as one object,
+  its photograph with it; nothing moved inside the frame. Read as: a card may move, the picture in it
+  may not. To be confirmed with the amounts.
+- Pair 13 and "Short and purposeful by default" (Motion); "never bouncy" (The direction). Read as:
+  a control still answers quickly; words arriving take longer. Both B's the owner preferred were
+  drawn with a slight overshoot, which the titles did not name. Whether anything overshoots is asked
+  in round 2; until then, nothing does.
+- Pair 14 and the Photobook's own register (constrained, minimal, no jokes). The pair did not ask
+  about the book, and the owner's example counts frames. The book's call stands until the owner says
+  the combination reaches into it.
+
 ### Photographs
 - Photographs are prints: as large as the screen allows, nothing laid over them, never zoomed or
   filtered on hover.
@@ -81,7 +160,8 @@ writing (least well), and the person (Home strongly, About weakly).
 - **The one-second cover hover is deliberate.** It reads as cinematic; do not shorten it to feel
   snappy. Snappy timings are for utility controls.
 - Next refinement, on branch `gallery/voyage-doors`: full colour, the poem on phones, no hover lift
-  (2026-09-26).
+  (2026-09-26). On 2026-10-01 the owner scored "lifts and grows" for a card under the pointer (The
+  eye, pair 12): whether the cover lifts is asked again before the branch is built on.
 
 ### The Photobook
 - The gallery is **immersive, not storytelling**. Stories and captions in the book are parked; the

@@ -34,10 +34,11 @@ Something is broken, slow, inconsistent or inaccessible.
 
 1. **Brief** (the design lead, in the stage file): what a reader gets, and the lines of
    `PRINCIPLES.md` that bind it.
-2. **Place it in the language** ([`DESIGN-LANGUAGE.md`](DESIGN-LANGUAGE.md)). The language is version
-   0 and not yet the owner's (Q3, 2026-10-01: "We need to revisit it"). It places a page; a line in
-   it that is only the lead's reading decides nothing a reader sees (its section "Until the owner has
-   talked it through"):
+2. **Place it in the language** ([`DESIGN-LANGUAGE.md`](DESIGN-LANGUAGE.md)), and put it to the test
+   at its head, "What the eye turns away". The language is version 0 and the owner's in part (Q3,
+   2026-10-01: "We need to revisit it"; round 1 of the pairs scored the same day). It places a page;
+   a line in it that is only the lead's reading decides nothing a reader sees (its section "Until the
+   owner has talked it through"):
    - Which **pattern** is it: doorway, room, viewer, reading page? If none, that is the first
      question for the owner.
    - Which **pieces** does it take from the catalogue? List them.
