@@ -5,6 +5,7 @@
  */
 
 import { oklab, lin } from './vat.js';
+import { placeholder } from './thumbhash.js';
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -44,8 +45,10 @@ export const bar = (cs) => `<div class="palette-card__bar" aria-hidden="true">${
  *  `label`: where the print leads, for a screen reader; `placeHref`: where the place's name leads. */
 export function card(p, { href, i, n = i, from = false, pick = null, place = '', placeHref = null, label = 'in its book', link = null, plain = false }) {
   const size = p.sizes.find((s) => s >= 960) || p.sizes[p.sizes.length - 1] || 480, colours = !plain && p.sig?.length;
+  // The print develops over its blurred placeholder (./thumbhash.js), as in the book (../photobook/develop.js).
+  const ph = placeholder(p.th);
   return `<article class="palette-card${from ? ' is-from' : ''}${plain ? ' is-plain' : ''}" id="f-${esc(p.slug)}" data-n="${n}">
-    <a class="palette-card__print" href="${href}" aria-label="${esc(p.name || p.slug)}, ${esc(label)}"><img style="--r:${p.r || 1.5}" src="${p.url}/${size}.webp" alt="" loading="lazy" decoding="async"></a>
+    <a class="palette-card__print" href="${href}" aria-label="${esc(p.name || p.slug)}, ${esc(label)}"><span class="palette-card__ph" style="--r:${p.r || 1.5}${ph ? `;background-image:url(${ph})` : ''}"><img src="${p.url}/${size}.webp" alt="" loading="lazy" decoding="async"></span></a>
     ${colours ? blocks(p.sig, { pick, link }) : ''}
     <div class="palette-card__row"><div>
       ${place ? `<p class="palette-card__place">${placeHref ? `<a href="${placeHref}">${esc(place)}</a>` : esc(place)}</p>` : ''}

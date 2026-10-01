@@ -28,11 +28,14 @@
 
 import { tips } from '../photobook/tip.js';
 import { crossfade } from '../photobook/wash.js';
+import { develop } from '../photobook/develop.js';
 import { lightbox } from '../photobook/lightbox.js';
 import { vat, seedOf, oklab, glow, stillness as still } from './vat.js';
 import { esc, card, reverieOf, holding, varied, SHOWN, nearby, focus, shadeFor, place, cameFrom, backLabel, measureCards, json } from './cards.js';
 
 const root = document.getElementById('reverie');
+// Its prints develop over their blurred placeholders, as the book's do (../photobook/develop.js).
+develop(root, '.palette-card__ph img');
 const body = root?.querySelector('.reverie__stage');
 const base = new URL('../../../', import.meta.url).pathname;
 
