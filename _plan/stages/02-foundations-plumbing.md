@@ -1,107 +1,192 @@
 # Stage 2 · Foundations: plumbing
 
-**Status:** planned · **Tier:** 0 for structure, 1 for each visible migration under the major-delta
-threshold, 2 beyond it.
+**Status:** planned · **Tier:** 0 for structure; 1 for each visible migration under the major-delta
+threshold; 2, answered, for a move onto one of the owner's amounts
+([0009](../decisions/0009-how-much.md)); 2 for the first appearance of a new piece.
 
 ## Goal
 
-One vocabulary every later page takes its controls from, and a guard that refuses a new one.
-Implements [0002](../decisions/0002-one-control-vocabulary.md) and steps 1 to 3 of
+One vocabulary every later page takes its controls from, and a guard that refuses a new one. For a
+reader: links in brass, headings in white, words that arrive in turn, and nothing that springs.
+Implements [0002](../decisions/0002-one-control-vocabulary.md) as amended by
+[0009](../decisions/0009-how-much.md), and steps 1 to 3 of
 [0003](../decisions/0003-stylesheet-organisation.md).
 
-## What this stage rests on, and what it does not
+## What is already decided
 
-The owner was asked on 2026-10-01 whether [`DESIGN-LANGUAGE.md`](../DESIGN-LANGUAGE.md) reads true
-(Q3). The answer: not yet, and "We need to revisit it"; then how: "Most of the design aesthetics we
-established should be inherited. Let's focus on the ambiguous part", asked as pairs to score. Round 1
-was scored the same day ([the study](../studies/2026-10-01-the-qsd-aesthetic.md)). The language stays
-version 0 until the owner says it reads true. Meanwhile:
+The owner settled the language's ambiguous part on 2026-10-01 in two rounds of drawings
+([the study](../studies/2026-10-01-the-qsd-aesthetic.md)). Round 1 said which; round 2 said how
+much. Nothing here waits on an amount any longer. The language itself stays version 0 until the
+owner says it reads true (Q11): that call does not hold this stage.
 
-- **It rests on two decision records.** [0002](../decisions/0002-one-control-vocabulary.md) and
-  [0003](../decisions/0003-stylesheet-organisation.md) were accepted under delegation, and the owner
-  accepted the tiers as written on the same day (Q2). Everything under "Tier 0" below goes ahead: no
-  reader sees it.
-- **It rests on the owner's own calls**, quoted from [`PRINCIPLES.md`](../PRINCIPLES.md): white
-  headings, brass links, the findings marked Fix on the audit, and now "The eye": the round 1 lines.
-  Those say which. The ones this stage builds on:
-  - "Tags are ink only" (pair 4, score 5): "Crowded saturated colour blocks are distracting visually.
-    I prefer a consistent secondary layout for the functionality buttons, it can change colour when
-    hovered, if distinguishing colour is required."
-  - "A print has square corners" (pair 1, score 1): "Rounded Rectangle is for card-like elements."
-  - "A control leans rounded, not square" (pair 2, score 2): "Doesn't have to be pills, rounded
-    rectangle is fine".
-  - "A card leans raised off the page" (pair 11, score 4): "doesnt have to glow". "Under the pointer
-    a card lifts and grows" (pair 12, score 5).
-  - "Words lean towards a slower arrival, from below, one line after another" (pair 13, score 4):
-    "Prefer B, but do not overdesign".
-  - "Between two passages, a brass ornament" (pair 15, score 5).
-  - "An accent is always brass" (pair 5, score 1): "When similar visually, choose the simpler one
-    with less dependency and complexity". "Icons are hairline, in ink" (pair 17, score 1).
-- **It rests on what is built.** Bringing a surface into line with a shared piece that already
-  exists in `_sass/_components.scss` (`brass-focus`, `eyebrow`) is tier 1, as
-  [0001](../decisions/0001-who-decides-what.md) says.
-- **It does not rest on the lead's reading.** A line of the language with no date, no score and no
-  "built" beside it is not a reason to change anything a reader sees. The language's head lists which
-  lines those still are.
-- **No amount is the owner's yet.** Round 1 chose between two drawings; it gave no radius, distance,
-  shadow, time or curve. A change a reader sees that needs one waits for round 2, which is on the
-  pairs page.
-- **C03, C04 and C05 wait until round 2 is scored**, then split. What the owner answered is built to
-  the answer. What round 2 did not ask stands on 0002 and the owner's Fix marks, as tier 1, shown
-  before and after. The scales may be written into `_variables.scss` and `:root` meanwhile (A02, A03:
-  no pixel moves), knowing round 2 may move the steps for a card and a control.
-  - C03: round 2 asks the radius of a card and of a control. The print's square corners are settled
-    and built.
-  - C04: round 2 asks how words arrive and how a card answers the pointer. The owner's lean is
-    slower, so the sweep does not shorten an arrival to `base`. A control's own timings (`fast`,
-    `base`) are not asked: "Snappy timings are for utility controls" is the owner's (Cards). The
-    one-second cover stays.
-  - C05: round 1 chose glass over a solid plate (pair 10, score 1), not how much glass. If round 2
-    asks the depth, C05 is built to the answer; if it does not, the three depths stand on 0002.
-- **0002 has no scale for a shadow, and no ornament.** Both are new. Each is designed after round 2,
-  shown as a choice, and written into a new decision record beside 0002, which is not edited.
+- **Three decision records.** [0002](../decisions/0002-one-control-vocabulary.md) and
+  [0003](../decisions/0003-stylesheet-organisation.md), accepted under delegation, with the tiers
+  the owner accepted (Q2). [0009](../decisions/0009-how-much.md), the owner's amounts, which moves
+  steps of 0002's scales and adds a shadow scale, an ornament and an arrival.
+- **The owner's calls**, from [`PRINCIPLES.md`](../PRINCIPLES.md), The eye, round 2:
+  - "A card's corners are 10 px" (pick 1): "B or C depend on the scenario". C is 18 px.
+  - "A control is a rounded rectangle of 10 px" (pick 2), chosen over "A pill, and a round tool".
+  - "At rest a card stands just off the page, on a short shadow" (pick 3).
+  - "Under the pointer a card lifts between 3 and 6 px and grows to between 1.012 and 1.025" (pick
+    4, A, with the note "Between A and B"). The one value built, 4 px and 1.018, is the lead's. "A
+    lift takes 0.3 s" (pick 5).
+  - "Words arrive over 0.7 s, from 28 px below, one line after another, and settle" (pick 6).
+  - "The ornament is a lozenge on a rule" (pick 8). "An ornament stands only between passages of
+    prose" (pick 9).
+  - "Under the pointer a tag only brightens" (pick 10). And round 1: "Tags are ink only" (pair 4,
+    score 5).
+  - "Glass is 14 px of blur" (pick 11): "A B Both OK". A is 6 px.
+  - "Nothing springs": "It arrives and stops" (pick 12).
+  - From before the pairs: white headings; brass links (Q9); the findings marked Fix on the audit.
+- **From 0009, "Who may build what":** "A pick answers the thing it drew." Carrying an amount to a
+  different kind of thing "is shown to the owner first when the move is at or over the major-delta
+  threshold, and is tier 1 below it". "A visible change that brings a surface to an amount in this
+  record is tier 2, answered. It is built without asking again. It still passes the full gate and
+  the reviewer, and reaches the owner as pictures at both widths". "A value marked the lead's is
+  tier 1". "What round 2 did not ask stands on 0002".
+- **What is built.** Bringing a surface into line with a shared piece that already exists in
+  `_sass/_components.scss` (`brass-focus`, `eyebrow`) is tier 1
+  ([0001](../decisions/0001-who-decides-what.md)).
+- **Not the lead's reading.** A line of the language with no date, score, pick or "built" beside it
+  is not a reason to change anything a reader sees.
+- **Inherited, not re-measured.** The owner: "Most of the design aesthetics we established should be
+  inherited." The Photobook's pill, its round tools and its bar and panel of glass stay as built in
+  this stage (0009, "Not settled").
 
-**Round 2, how much** (the full wording is at the head of the language): the radius of a card and of
-a control; how far a card lifts and grows, its shadow, and whether the full-width voyage cover lifts
-at all; how slowly words arrive and whether they overshoot; which ornament and where; what colour a
-tag takes when hovered.
+## The order of work
 
-**Still to be talked through, no pair asked them:** whether "a grammar and its signatures" is the
-owner's way of seeing the site; how far the Photobook's manner reaches; which titles are storytelling
-and which are for reading (pair 7, score 3).
+1. The pixel harness's two faults (below): every before-and-after rests on the diff.
+2. Tier 0: the import order, the inks, the scales as 0009 has them, the layers, the ratchet. No
+   pixel moves.
+3. The new pieces, written in `_components.scss`, entered in `_docs/components.md` and drawn on the
+   specimen page with every state. No page adopts one yet.
+4. The shared moves a reader sees: the link, the headings, the arrival, then C02 and C06, the chrome
+   first. One surface per change. The corners, the timings and the glass that the owner has not
+   seen go to them first ("Shown to the owner first", below).
+5. Surfaces take the pieces in their own stages: the cards in [4](04-voyage-and-cards.md), the
+   ornament and article pictures in [6](06-posts-and-about.md), the tag pages in [10](10-tags.md).
 
 ## Scope
 
 **Tier 0: no pixel moves**
+- [ ] 2026-10-01 · The pixel harness is blind below about 16,700 px: full-page shots are blank past it
+      (post-notices desktop 17,075–40,390 of 42,501, mobile 16,677–51,713 of 53,423; voyage-by-tags
+      mobile; the treatise's figure on a phone). Shoot long pages in tiles. First: the arrival below
+      changes every post, and half of a long post is unseen today.
+- [ ] 2026-09-26 · The pixel harness's phone shots differ run to run (intermittent masks, image load
+      timing). Same reason, same place in the order: a diff that cries wolf gets re-captured, not read.
 - [ ] A01 · Import `components` directly after `responsive-policy`.
-- [ ] The specimen page: every piece that is built today, drawn with the site's own stylesheet, at
-      desktop and at phone width, each labelled built, the owner's, or decided under delegation. It
-      is where the owner sees the pieces whole, and once it is in the pixel baseline a change
-      to a shared piece shows on one page. It must not ship to readers: a page of the seeded visual
-      build only, or a page outside the site. A page a reader can reach is a new page, and the
-      owner's. A piece that is decided but not built is not drawn as though it were settled.
-- [ ] A05 · Delete the CSS and script that nothing renders (about 700 lines).
 - [ ] A03 · Inks and glass on `:root` under neutral names; old names kept as aliases.
-- [ ] A02 · The scales in `_variables.scss`, each introduced with its first two uses.
+- [ ] A02 · The scales in `_variables.scss`, as 0002 amended by 0009, each introduced with its first
+      two uses: corners `none`, `hair` 3, `picture` 8, `soft` 10, `large` 18, `pill`, `round`;
+      durations `fast`, `base`, `slow`, `arrive` 0.7 s, `cover`, `scene`; shadows `rest` and
+      `lifted`; glass `glass` 14 px and `thin` 6 px.
 - [ ] C09 · Depth as six named layers; every literal z-index mapped to one.
-- [ ] The ratchet: counts stored, an increase fails, wired into the hook and the gate.
+- [ ] The ratchet: counts stored, an increase fails, wired into the hook and the gate. It also counts
+      a curve with a point above 1 or below 0 (0009, "Nothing springs"): two today. One is inert
+      and goes with A05 (`_sass/_page.scss:210`); the other is the bubbles on Home
+      (`assets/js/qsd-bubbles.js:356`), a signature's, which stays and is the count's floor.
+- [ ] The specimen page: every piece, drawn with the site's own stylesheet, at desktop and at phone
+      width, each labelled built, the owner's amount, the lead's value, or decided under delegation.
+      It is where the owner sees the pieces whole, and once it is in the pixel baseline a change to a
+      shared piece shows on one page. It must not ship to readers: a page of the seeded visual build
+      only, or a page outside the site. A page a reader can reach is a new page, and the owner's.
+- [ ] A05 · Delete the CSS and script that nothing renders (about 700 lines). Among it, found
+      2026-10-01: `.card .tags .tag` and `.card .hidden_item` (`_sass/_archive.scss:192-199`,
+      `213-218`, `288-302`). No include emits either: `_includes/archive-single.html` writes no tag.
+      And the transition on `.page-no-right-sidebar` (`_sass/_page.scss:208-211`), on a curve that
+      overshoots (`cubic-bezier(0.175, 0.885, 0.32, 1.275)`): read 2026-10-01, nothing in `_sass/`,
+      the layouts, the includes or the scripts ever sets a transform or an opacity on that element,
+      so it never runs and no reader sees it. Confirm in the build, then delete.
 - [ ] A09 · Docs and comments corrected to match the code. One more, found 2026-10-01: the comment in
       `assets/colour-atlas.json` still names The Colour of Light, a page retired on 2026-09-29.
 - [ ] Split `_photobook.scss` and `_colour.scss` by part, after confirming the guards walk subfolders.
-- [ ] 2026-10-01 · The pixel harness is blind below about 16,700 px: full-page shots are blank past it
-      (post-notices desktop 17,075–40,390 of 42,501, mobile 16,677–51,713 of 53,423; voyage-by-tags
-      mobile; the treatise's figure on a phone). Shoot long pages in tiles. Done before the first tier 1
-      change below: every before-and-after in this stage rests on the diff.
-- [ ] 2026-09-26 · The pixel harness's phone shots differ run to run (intermittent masks, image load
-      timing). Same reason, same place in the order: a diff that cries wolf gets re-captured, not read.
 
-**Tier 1: brought into line, shown before and after**
+**The new pieces: tier 2, answered by the picks; each lead's value tier 1.** Written once, in the
+catalogue, with every state (rest, hover, focus, pressed, unavailable, on a photograph, on the
+ground), and put to "What the eye turns away" before it is shown.
+- [ ] `card` (picks 1, 3, 4, 5, 12). Corners 10 px, and 18 px as `large`. At rest
+      `0 6px 18px rgba(0, 0, 0, 0.45)`, no border. Under the pointer and under keyboard focus
+      `translateY(-4px) scale(1.018)` and `0 14px 32px rgba(0, 0, 0, 0.5)`, over 0.3 s on the
+      standard curve; the lift and its shadow are the lead's values inside the owner's range. The
+      photograph does not move inside the frame. Stillness beside it: no transition and no
+      transform, the shadow alone answers. First adopted in [stage 4](04-voyage-and-cards.md).
+- [ ] `tag` (pair 4, score 5; pick 10; audit C08, marked Fix): one look for every tag. The second
+      ink, a one-pixel line, no fill; under the pointer the words go to the first ink and the line
+      to the second, in `fast`; no colour. Corners 10 px (the lead's: the pick drew it square).
+      Replaces five recipes; the surfaces are stages [6](06-posts-and-about.md) and
+      [10](10-tags.md).
+- [ ] The text `button`, solid and quiet: a rounded rectangle of 10 px (pick 2).
+- [ ] The ornament (picks 8 and 9): a lozenge 14 px across, outlined at one pixel with a smaller
+      filled one inside, on a one-pixel rule at about half strength, 12 px clear of it, in the
+      site's brass. It is new, not the emblem rule (`_includes/qsd-emblem-horizontal-rule.html`, a
+      signature, in two posts, which stays). First used in [stage 6](06-posts-and-about.md).
+
+**The arrival: tier 2, answered (picks 6 and 12), for what it reaches today.** One mechanism, and
+it exists. The owner was shown three lines arriving: an eyebrow, a title, a lede. The mechanism is
+wider than that drawing, and this says how.
+- [ ] `reveal-on-scroll` takes the owner's amounts. Today (`_sass/_scroll-animations.scss:8-13`,
+      `assets/js/scroll-animations.js`): every direct child of `.page__content` rises 12 px, fading
+      over 0.5 s and moving over 0.65 s, the moment it comes into view, together. It becomes: from
+      28 px, fade and rise both 0.7 s, the rise on `$cubic-bezier-smooth` (which is the curve
+      drawn), each 0.12 s after the one before among those that come into view together. The first
+      four take turns and the rest arrive with the fourth (the lead's value: "Prefer B, but do not
+      overdesign").
+      - What takes turns is a block, not a line of type: a paragraph, a heading, a list, a table, a
+        code block, a figure. The script also reveals a picture (`.article-image`) and the
+        children of a few wrappers (a centred block, lyrics, a bilingual panel), so it is not words
+        only. The owner chose against "As built today", which was this same mechanism; a picture
+        arriving with the words around it is part of what is built.
+      - Where it reaches: every page with a `.page__content`. That is a post, About
+        (`_layouts/about.html`), the CV, Terms, the 404, Bestiary (`_layouts/single.html`) and a
+        splash page. Not a book, not the Voyage index, not Home.
+      - Not Palette's photographs. `assets/js/colour/palette.js:166` puts the same class on them:
+        they keep today's amounts until F049 is settled in [stage 11](11-colour-pages.md). The
+        treatise and Nocturne set their own.
+      - It must not cost a reader the page: jump to the foot of a long post and no screen is left
+        without words. Measured, and held by the `arrival` journey below.
+      - Stillness as built: under reduced motion and `html.motion-off` everything lands and is
+        never hidden. `npm run visual:audit` proves it.
+      - Shown to the owner as short captures at both widths: `/posts/shihuqiao/`, a bilingual post,
+        and `/about/`, which is not a post. A still cannot show it. If blocks of prose arriving
+        28 px apart read as too much beside the three lines the owner was shown, that is said with
+        the captures, not decided by the session.
+
+**Shown to the owner first.** Each carries an amount to a surface the owner did not see drawn, by a
+move at or over the major-delta threshold (20 per cent, or 0.25rem). Nothing here is built on the
+pick alone. They go to the owner together, from the specimen page, as pictures at both widths
+([0005](../decisions/0005-choices-arrive-as-prototypes.md)).
+- [ ] C03, the sorted list. Every literal radius in `_sass/` is sorted: print, article picture,
+      control, card, panel of glass, pill or round, other, with the value today and the value it
+      would take (a control and a card 10 px, a card that is the scene 18 px). The sorting is the
+      lead's judgement and some moves are half the value (20 px in five places; 30 px on the search
+      panel). The list, with a picture of each surface that would change, goes to the owner before
+      any radius moves. Tier 0 to make; the moves are the owner's. Not on the list: the 18 pills and
+      28 circles (inherited); the wide cover's own clamp (stage 4); the surfaces stages 6 and 10
+      redraw.
+- [ ] C05, the panels of words. The search panel's glass is 25 px and 30 px
+      (`_sass/_search.scss:109,399`) and the map's panel 18 px (`_sass/_map.scss:390`). The owner's
+      14 px was drawn as a name on a plate over a cover, not as a panel of dense text, and 30 to 14
+      px is a move of 53 per cent. Each is drawn at 14 px beside what is built, with the
+      Photobook's bar and panel, and the owner chooses.
+- [ ] C05, the bilingual switch. Its glass is 4 px (`_sass/_bilingual-switch.scss:50`); `thin` is 6
+      px. That is 2 px and 50 per cent: under the absolute threshold and over the relative one, so
+      it is not tier 1. Shown with the panels.
+- [ ] C04, the one-second controls. `$cubic-bezier-default` puts one second on seven properties,
+      twenty uses in seven files, the navigation, the copy button and the sidebar among them. One second to `base` (0.3 s) is 70 per cent. "Snappy timings are for utility
+      controls" is the owner's (Cards), but which of the twenty is a control is the lead's sorting:
+      the list goes to the owner, each with a capture, before a timing moves. The wide cover's use
+      is stage 4's.
+- [ ] The built pill and round tool beside the 10 px control (0009, "Not settled").
+
+**Tier 1: brought into line, under the threshold, shown before and after**
 - [ ] C02 · `brass-focus` as the one focus ring, surface by surface.
-- [ ] C03 · Radii onto the scale where the move is under 0.25rem. Waits for round 2 (above): a card's
-      and a control's radius are asked there.
-- [ ] C04 · Durations and curves onto the scale. The one-second cover hover stays. Waits for round 2
-      (above): arrivals and a card's answer to the pointer are asked there, and are not shortened.
-- [ ] C05 · Glass onto three depths. Waits for round 2 (above).
+- [ ] C03, under the threshold · A radius the sorted list moves by less than 0.25rem and less than
+      20 per cent, once the owner has seen the list.
+- [ ] C04, under the threshold · A timing within a fifth of its step moves onto it (0.28 s to
+      `base`); bare `ease` and the ad hoc curves go to the two curves where the duration does not
+      change. Anything further is in "Shown to the owner first".
+- [ ] C05, under the threshold · `control` (12 px) folds into `glass` (14 px): 2 px, 17 per cent.
 - [ ] C06 · Hand-written labels onto `eyebrow`.
 - [ ] C12 · Small dialects swept once the scales exist: hover direction, dates, ellipses, rules, one `scroll-padding-top`.
 
@@ -111,36 +196,30 @@ and which are for reading (pair 7, score 3).
       owner picked option B of three prototypes on 2026-10-01 (`design/choices/link-colour/`; the page
       is `choices.link-colour` in `_plan/hub.json`). Built as "The link, as chosen" below.
 - [ ] C07 · The lede on older heroes takes the shared Didot italic (marked Fix).
-- [ ] C08 · One `tag` replacing five (marked Fix); the tag pages themselves are stage 10. Ink only,
-      one look for every tag (pair 4, score 5). `_data/tag_colours.yml` no longer fills a tag at rest;
-      whether a tag takes a colour under the pointer, and which, is round 2.
 - [ ] C10 · Roboto leaves the two font stacks, so Android reads as Apple does (marked Fix).
 
-**Tier 2: queued when reached**
-- Any radius or timing move at or over the threshold.
-- The first appearance of each new piece (`button`, `tag`, `card`, the ornament).
+## What needs the owner
 
-**New from round 1: the kind is the owner's, the design is not yet.** Each needs round 2's amount,
-then the owner's eye on a drawing (a `/choose`, [0005](../decisions/0005-choices-arrive-as-prototypes.md)).
-None is decided in detail. Tier 2.
-- [ ] The card's lift, as part of the `card` piece: raised at rest by a shadow, no glow (pair 11,
-      score 4: "doesnt have to glow"); it lifts and grows under the pointer (pair 12, score 5). How
-      far, which shadow and how fast are round 2's. The card moves as one object; the photograph in it
-      does not move inside its frame ("The photograph itself never animates on hover"). First used in
-      [stage 4](04-voyage-and-cards.md), where the cover's own lift is an open question.
-- [ ] A brass ornament between passages (pair 15, score 5): a new piece of grammar. Check it is new
-      first: its relative in the code is the emblem rule (`_includes/qsd-emblem-horizontal-rule.html`,
-      a signature, in two posts). Which ornament and where it may stand are round 2's. First used on
-      a reading page ([stage 6](06-posts-and-about.md)).
-- [ ] How words arrive: one shared arrival, from below, one line after another (pair 13, score 4:
-      "Prefer B, but do not overdesign"). How slowly, from how far and whether it overshoots are round
-      2's ("never bouncy" is in the principles). With its reduced-motion and `html.motion-off` rule
-      beside it. One mechanism, and it exists: `reveal-on-scroll` (`_sass/_scroll-animations.scss`), a
-      12 px rise over half a second, all at once. It sits between the two the owner was shown (a
-      quarter second and 4 px; 0.7 s and 42 px, in turn). The task is its amounts and the turn-taking,
-      not a second mechanism.
-- [ ] A shadow scale and the ornament, written as a decision record beside 0002 once the amounts are
-      the owner's.
+- **Nothing before it starts.** Q11 (does the language read true) is open and holds nothing here.
+- **At the specimen page, with pictures** ([0005](../decisions/0005-choices-arrive-as-prototypes.md);
+  not in the queue until the page exists to shoot): everything under "Shown to the owner first".
+  That is the sorted list of corners; the search and map panels and the book's bar and panel
+  beside 14 px of glass; the bilingual switch; the one-second controls; the built pill and round
+  tool beside the 10 px control. The unsettled ones are in 0009, "Not settled".
+- **The arrival, as captures**, on two posts and on About: it is answered, and it reaches more than
+  the three lines the owner was shown.
+- **Which white a heading is** (the ivory ink, or pure white): shown before it is built.
+- Any other move at or over the threshold on a surface the owner has not seen at its new amount.
+
+## Journeys
+
+`post`, `anchor`, `home`, `search`, `masthead-touch` and `masthead-keys` must pass unchanged. To add:
+
+- `arrival` · on a long post, a jump to the foot leaves no screen without words: what is in view
+  reaches full strength within a second and nothing in view stays hidden. With motion off, nothing
+  is ever hidden.
+
+The `tag`, the `card` and the ornament get theirs where a page first uses them.
 
 ## The link, as chosen (Q9)
 
@@ -192,18 +271,19 @@ A link that wraps a picture takes no underline.
 
 ## Design notes
 
-- The owner's calls and decisions 0002 and 0003 are what this stage implements.
-  [`DESIGN-LANGUAGE.md`](../DESIGN-LANGUAGE.md) describes them on one page and is a draft, the
-  owner's in part: see "What this stage rests on" above.
+- The owner's calls and decisions 0002, 0003 and 0009 are what this stage implements.
+  [`DESIGN-LANGUAGE.md`](../DESIGN-LANGUAGE.md) describes them on one page; its head says which
+  lines are the owner's and which are still the lead's reading.
 - The chrome first (masthead, search, subscribe), because it is on every page and has the most
   private recipes. Then the map. The older pages' own controls wait for their stages.
 - One surface per change, so a pixel-diff delta has one cause.
-- New pieces (`button`, `tag`, `card`, the ornament) are designed in the catalogue with every state
-  before any page adopts them: rest, hover, focus, pressed, disabled, on a photograph, on the page
-  ground. A text button may be a rounded rectangle (pair 2, score 2).
-- Every new piece is put to "What the eye turns away" (the head of the language) before it is shown.
+- `_docs/components.md` gains each new piece and the amended scales in the same change that writes
+  them. It is outside `_plan/`: the session that builds makes the edit.
 
 ## Exit
 
 The ratchet's counts are lower than on 2026-10-01 and committed as the baseline. `npm run gate:full`
-passes. The digest shows each tier 1 change before and after, desktop and phone.
+passes and the reviewer returns PASS. The digest shows each tier 1 change before and after, and each
+tier 2, answered change as pictures at desktop and at phone width, with the pick it answers; the
+arrival as captures. Nothing under "Shown to the owner first" has moved without the owner's word. A baseline is re-captured only for a page meant to change, named in its
+changelog line.

@@ -9,7 +9,7 @@ Last reviewed: 2026-10-01.
 |---|---|---|---|---|
 | 0 | [The hub](stages/00-hub.md) | Nothing yet: the plan, the lead and the gate | **done** 2026-10-01 | 0 |
 | 1 | [Foundations: unseen fixes](stages/01-foundations-unseen.md) | A faster, steadier site that looks the same | building | 0 |
-| 2 | [Foundations: plumbing](stages/02-foundations-plumbing.md) | Nothing directly; one vocabulary for everything after | planned | 0, some 1 |
+| 2 | [Foundations: plumbing](stages/02-foundations-plumbing.md) | One vocabulary for everything after; brass links, white headings, words that arrive in turn | planned | 0, 1, some 2 (answered) |
 | 3 | [Wayfinding](stages/03-wayfinding.md) | A site that is easy to get around and obvious to use | planned | 2 |
 | 4 | [Voyage and the cards](stages/04-voyage-and-cards.md) | The doorway to the photographs, refurbished | designing (branch `gallery/voyage-doors`) | 2 |
 | 5 | [Bestiary](stages/05-bestiary.md) | A page that exists; first, a holding page worth arriving at | idea (the holding page is decided, and comes as a choice) | 2 |
@@ -31,16 +31,23 @@ Last reviewed: 2026-10-01.
 - **5 after 4.** The Bestiary is the first page built only from the vocabulary, so it comes after
   one older page has been migrated and the vocabulary has been tested. Its holding page (the owner,
   2026-10-01) does not wait: it uses only pieces that are built, and moves up when the owner wants it.
-- **2's visible moves wait for round 2.** The owner has not yet accepted the design language ("We
-  need to revisit it", 2026-10-01) and is settling it by scoring pairs. Round 1 said which (a card
-  lifts, a tag is ink, a brass ornament); round 2 asks how much. Stage 2's unseen work goes ahead;
-  its moves onto the radii, timings and glass depths, and its three new pieces (the card's lift, the
-  ornament, how words arrive), wait for the amounts.
+- **2's visible moves no longer wait.** The owner settled the design language's ambiguous part by
+  eye on 2026-10-01: round 1 said which, round 2 said how much
+  ([0009](decisions/0009-how-much.md)). A move onto one of those amounts is tier 2, answered: built
+  without asking again, through the full gate and the reviewer, and shown as pictures at both
+  widths. A pick answers the thing it drew: an amount carried to a surface the owner did not see
+  (a panel of words, a corner sorted by the lead) is shown to them first. The language stays version 0 until the owner says it reads true (Q11); that holds nothing.
+- **The scale and the pieces first, then the surfaces.** Stage 2 writes the scales and the `card`,
+  the `tag`, the ornament and the arrival once. Then, each waiting only on its piece: the still
+  cover and Home's cards (4), article pictures, the ornament and a post's tags (6), the colour off
+  the tag pages (10; the colours file itself is kept until the owner says). The book's words in its
+  empty rooms and ways on (3) wait on no piece: the lead drafts, the owner keeps or strikes.
 - **7 and 8 are small and independent**, and now touch: 7 keeps a print from being saved by a
   gesture, 8 hands a reader an image that may hold a voyage's cover. Each is tried before the owner
   is asked anything more, and they are tried together before 8's control ships.
-- **10 waits on 2 and 3.** It needs the `tag` piece (ink only: the owner, 2026-10-01), and the
-  wayfinding walk decides what tags are for.
+- **10 waits on 2 and 3.** It needs the `tag` piece (ink, and only brightening under the pointer:
+  the owner, 2026-10-01), and the wayfinding walk decides what tags are for. Taking the colour off
+  today's tags waits on 2 alone.
 - **11 is small and can run beside 1.** Its faults are marked Fix; only its taste calls wait on the owner.
 - **9 runs in the background.** Its budgets start with stage 1; its larger changes wait for 2.
 
@@ -68,3 +75,10 @@ Last reviewed: 2026-10-01.
   [`PRINCIPLES.md`](PRINCIPLES.md) as "The eye", and the [design language](DESIGN-LANGUAGE.md) now
   opens with the test they make: what the eye turns away. Where the draft had guessed flat cards and
   a quiet hover, the owner chose lift. Stages 2, 4, 5, 6 and 10 carry what follows.
+- 2026-10-01 · The owner picked round 2 of the pairs, sixteen times: the amounts. They are in
+  [`PRINCIPLES.md`](PRINCIPLES.md) under "The eye", and as a scale to build from in
+  [0009](decisions/0009-how-much.md), which amends 0002. Five places where round 1 met an earlier
+  call are settled: nothing springs, the wide cover is still, a voyage's title stays Playfair bold,
+  the book may speak in its empty rooms and ways on, a tag takes no colour. "What the eye turns
+  away" is the owner's test. Stages 2, 3, 4, 6 and 10 carry the tasks; Q11 asks whether the
+  [design language](DESIGN-LANGUAGE.md) now reads true.
