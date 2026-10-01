@@ -28,7 +28,7 @@ import { holding } from '../../../assets/js/colour/cards.js';
 export function palettesOf(books) {
   const voyages = books.filter(m => m.book?.colour).map(m => ({
     g: m.gallery, palette: m.book.colour.palette, order: m.book.colour.order,
-    photos: m.photos.map(p => ({ slug: p.slug, name: p.name || null, light: p.light?.text || null, url: p.url, r: p.ratio ? +p.ratio.toFixed(3) : null, sizes: (p.sizes?.webp || []).filter(s => s <= 2560), sig: p.signature || null })),
+    photos: m.photos.map(p => ({ slug: p.slug, name: p.name || null, light: p.light?.text || null, url: p.url, r: p.ratio ? +p.ratio.toFixed(3) : null, sizes: (p.sizes?.webp || []).filter(s => s <= 2560), sig: p.signature || null, th: p.thumbhash || null })),
   }));
   // Each voyage's place on the rail of vats that leads from one to the next: its signature carried
   // into every other's (the earth mover's distance), laid on one line dark to light, like with like.
@@ -87,7 +87,7 @@ export function atlasOf(books, kindred = {}) {
       if (!p.swatches || !p.hash) continue;
       photos.push({
         hash: p.hash, g: m.gallery, v: voyageOf(m.gallery), slug: p.slug, url: p.url,
-        sizes: (p.sizes?.webp || []).filter(s => s <= 2560), r: p.ratio,
+        sizes: (p.sizes?.webp || []).filter(s => s <= 2560), r: p.ratio, th: p.thumbhash || null, // its blurred placeholder, drawn in the browser (assets/js/colour/thumbhash.js)
         name: p.name || null, city: p.place?.city || null,
         alt: p.light ? p.light.alt : null, phase: p.light?.phase || null, light: p.light?.text || null,
         strip: p.strip, sw: p.swatches.map(([h]) => h), pc: p.swatches.map(([, w]) => Math.round(w)), sig: p.signature || null, dots: p.dots || null,

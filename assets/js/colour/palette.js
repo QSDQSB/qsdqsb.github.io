@@ -15,11 +15,14 @@
 import { tips } from '../photobook/tip.js';
 import { vat, seedOf, oklab, glow, stillness as still } from './vat.js';
 import { crossfade } from '../photobook/wash.js';
+import { develop } from '../photobook/develop.js';
 import { esc, blocks, bar, card, kindred, dripper, reverieOf, place, cameFrom, backLabel, measureCards, json } from './cards.js';
 
 const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* this visit only */ } } };
 
 const root = document.getElementById('palette-page');
+// Its prints develop over their blurred placeholders, as the book's do (../photobook/develop.js).
+develop(root, '.palette-card__ph img');
 const stage = root?.querySelector('.palette-page__stage');
 const title = root?.querySelector('h1'), status = document.getElementById('palette-status');
 const kicker = root?.querySelector('.palette-page__home');
