@@ -2,7 +2,10 @@
 
 **Status:** Accepted 2026-10-01 under delegation (see [0001](0001-who-decides-what.md)). The
 structure is decided. Each visible migration it causes is tiered on its own: in line with this
-record and under the major-delta threshold is tier 1; anything larger is the owner's.
+record and under the major-delta threshold is tier 1; anything larger is the owner's. **Amended
+2026-10-01 by [0009](0009-how-much.md)**: the owner's amounts (round 2 of the pairs) move steps of the
+radius, duration and glass scales below and add a shadow scale, an ornament and an arrival. Where the
+two differ, 0009 holds; the body of this record is left as it was accepted.
 **Answers:** C02 to C09, A01, A02 in the [2026-10-01 audit](../findings/2026-10-01-ui-audit.md).
 
 ## Context

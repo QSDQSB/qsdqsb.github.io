@@ -18,6 +18,11 @@ back.**
 - A minimal, consistent footer on every page that scrolls. Home has none today (audit P05).
 - The tarot cards need a new purpose; the wheel of fortune stays liked.
 - The Voyage index's length (audit P03) is marked Later.
+- **"The book may speak too, in its empty rooms and ways on"** (The eye, round 2, pick 15, over "The
+  book stays plain throughout"). It amends the book's register (2026-09-24: constrained and minimal,
+  no over-explaining, no jokes) for those two places, and only there. From round 1 (pair 14, score
+  3): "I prefer a combination. Clarity when needed. For example: "34 frames; Nothing here but dust
+  and echoes. ONWARD"".
 
 ## What the audit already saw
 
@@ -92,6 +97,34 @@ Not yet asked.
 - [ ] 2026-09-29 · Home's Wonders at 320×640: overflows by about 27 px, with five doors. Five it
       stays: the owner kept Bestiary in the navigation on 2026-10-01 (Q5, option A), so the fix has
       to fit all five.
+
+**The book's empty rooms and its ways on (pick 15). Tier 2: words a reader reads.** That the book
+may speak there is answered. The words are the owner's: the lead drafts, the owner keeps, changes or
+strikes each line before it goes on a page, as for Q8. It needs no piece from stage 2 and can be
+drafted at any time. The places, read 2026-10-01:
+
+| Place | Today | Code |
+|---|---|---|
+| An empty room: a book with no photographs yet (Venice's four parts) | "The photographs of this voyage are still on their way." | `_includes/photobook.html:31` |
+| A way on: from the colophon | "QSD's Palette for (the voyage) →" · "Reverie from here →" | `_includes/photobook/colophon.html:58` |
+| A way on: the end of the book | "Other (Prague)" · "Elsewhere" | `_includes/photobook/end.html:16,22` |
+
+What stays plain, by the owner's "Clarity when needed" and the call of 2026-09-24: a tool's name
+(Specs, Slideshow, Book, Sheet), a count, a date, a film's name, the specs. Where that line falls is
+the lead's reading. A drafted line that says where a link goes keeps the name of the place.
+
+- [ ] Draft, with the `sound-like-qsd` skill, one line for each place above, and at most one
+      alternative. English only: the Photobook speaks one language. Put them to the owner on one
+      page, each beside the line it would replace, with "keep today's" as an answer.
+- [ ] Build what the owner keeps. A line that changes a link's words keeps its address; the `book`
+      journey still passes, and gains the empty room: a book with no photographs says so and offers
+      a way on.
+
+## What needs the owner
+
+- The drafted lines for the book, above: not in the queue until they are drafted.
+- The open questions above, when the walk is done; the footer and the tarot cards, as choices.
+- The three faults at 320 px, as one call.
 
 ## Exit
 

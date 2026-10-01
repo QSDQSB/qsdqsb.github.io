@@ -70,6 +70,16 @@ a reader would take. For behaviour you can exercise from the command line, do: a
 
 Against the record, not your taste:
 
+- **What the eye turns away** (`_plan/DESIGN-LANGUAGE.md`, at its head; the owner's, 2026-10-01).
+  The first test, before any other: a saturated block of colour in the interface that is not a
+  photograph; glow, and type that is a gradient; a mechanism or a dependency that changes nothing
+  the eye sees; crowding, many things where few would do; an effect that draws the eye to itself.
+  A change that does one of these is sent back, quoting the line.
+- **The amounts** (`_plan/decisions/0009-how-much.md`). Corners, the shadow of a card, the lift and
+  its time, how words arrive, glass, the ornament, a tag under the pointer. A value off that scale is
+  a fault; a curve that overshoots is a fault ("nothing springs"). A change the owner's pick decides
+  ("tier 2, answered") is built without asking again, but your report must show it: pictures at both
+  widths beside the pick it answers, and a capture where it moves.
 - **Vocabulary** (`_plan/decisions/0002-one-control-vocabulary.md`, `_docs/components.md`). A new
   radius, curve, duration, backdrop blur, z-index or focus ring written as a literal. A control
   styled in a page's own partial that a shared piece already provides. A piece restyled where it is

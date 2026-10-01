@@ -35,10 +35,10 @@ Something is broken, slow, inconsistent or inaccessible.
 1. **Brief** (the design lead, in the stage file): what a reader gets, and the lines of
    `PRINCIPLES.md` that bind it.
 2. **Place it in the language** ([`DESIGN-LANGUAGE.md`](DESIGN-LANGUAGE.md)), and put it to the test
-   at its head, "What the eye turns away". The language is version 0 and the owner's in part (Q3,
-   2026-10-01: "We need to revisit it"; round 1 of the pairs scored the same day). It places a page;
-   a line in it that is only the lead's reading decides nothing a reader sees (its section "Until the
-   owner has talked it through"):
+   at its head, "What the eye turns away", which is the owner's (2026-10-01). The language is
+   version 0 until the owner says it reads true (Q11); its head says which lines are the owner's
+   after the two rounds of pairs. It places a page; a line in it that is only the lead's reading
+   decides nothing a reader sees:
    - Which **pattern** is it: doorway, room, viewer, reading page? If none, that is the first
      question for the owner.
    - Which **pieces** does it take from the catalogue? List them.
@@ -58,7 +58,8 @@ A control, a surface, a label or a mark that a second page could need.
    an existing one with a different word in it.
 2. **Design all its states** before any page uses it: at rest, under the pointer, focused, on,
    pressed, unavailable; on the page ground and over a photograph; at desktop and phone.
-3. **Its values come from the scales** ([0002](decisions/0002-one-control-vocabulary.md)). A value
+3. **Its values come from the scales** ([0002](decisions/0002-one-control-vocabulary.md), as amended
+   by the owner's amounts in [0009](decisions/0009-how-much.md)). A value
    off the scale is a change to the scale, argued as one.
 4. **Add it** to `_sass/_components.scss` with a line in `_docs/components.md` and in the pieces
    table of `DESIGN-LANGUAGE.md`. Never in a page's own partial.

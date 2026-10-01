@@ -49,8 +49,8 @@ writing (least well), and the person (Home strongly, About weakly).
 ### The look
 - Dark editorial boutique: premium, minimal, classy, informative. Not skeuomorphic, and not an
   AI-generated showpiece.
-- Playfair Display bold for titles, on every page, a voyage's included (2026-09-25). Barlow for UI,
-  places and labels. Didot for figures and for hex codes; Playfair's digits read badly (2026-09-28).
+- Playfair Display bold for titles, on every page, a voyage's included (2026-09-25; kept on
+  2026-10-01, The eye, round 2, pick 14). Barlow for UI, places and labels. Didot for figures and for hex codes; Playfair's digits read badly (2026-09-28).
 - Gold belongs to the sun alone in the specs. Weather marks are monotone ink. Films carry their own
   hue as small ticks and dots.
 - Quiet by default: detail on hover or in hand. One control per job.
@@ -62,13 +62,18 @@ should be inherited. Let's focus on the ambiguous part. The idea of the design l
 constrain the layout or ideas, but to have a mimicking QSD aesthetics that can kill bad designs that
 are cheap, overly fancy for no good reasons."
 
-The owner scored seventeen pairs, each drawn two ways: 1 is A, clearly; 5 is B, clearly; 3 is either.
-The record, with what each pair drew, is [the study](studies/2026-10-01-the-qsd-aesthetic.md).
+Two rounds, the same day. In round 1 the owner scored seventeen pairs, each drawn two ways: 1 is A,
+clearly; 5 is B, clearly; 3 is either. In round 2 the owner picked one of two to four strengths of
+the same thing, sixteen times. The record, with what each drew, is
+[the study](studies/2026-10-01-the-qsd-aesthetic.md).
 
-How to read a line. The score and the words in quotation marks are the owner's, and nothing else is.
-A 1 or a 5 is clear. A 2 or a 4 is a leaning, and is written as one. A 3 makes no rule. A score
-answers the pair as it was drawn: which of the two, never how much. The amounts are asked in round 2.
-A sentence that opens "The lead's reading" is not the owner's until they confirm it.
+How to read a line. The score or the pick, and the words in quotation marks, are the owner's, and
+nothing else is. A 1 or a 5 is clear. A 2 or a 4 is a leaning, and is written as one. A 3 makes no
+rule. A round 1 score answers the pair as it was drawn: which of the two, never how much. The
+amounts are round 2's, further down. A sentence that opens "The lead's reading" is not the owner's
+until they confirm it.
+
+**Round 1: which**
 
 **Colour**
 - **Tags are ink only**, not each its own colour (pair 4, score 5). "Crowded saturated colour blocks
@@ -98,9 +103,8 @@ A sentence that opens "The lead's reading" is not the owner's until they confirm
 **Type**
 - The voice of a title, serif italic or sans capitals (pair 7, score 3): either, by purpose. "Both
   have their usecase. Italic, serif, didone font for poetic and storytelling text (like Voyage);
-  Barlow for easy readability (like Utils)". The lead's reading: the note gives each face a purpose.
-  It does not move a title off Playfair Display bold (The look, 2026-09-25); whether a storytelling
-  page's title turns italic is not yet asked.
+  Barlow for easy readability (like Utils)". The note gives each face a purpose. It does not move a
+  title off Playfair Display bold: asked of a voyage's title in round 2, the owner kept it (pick 14).
 - **A caption is in small capitals, spaced**, not serif italic (pair 8, score 1). "Easier to read".
 - The voice of a number, serif figures or sans tabular (pair 9, score 3): either. No rule. Didot for
   figures (The look, 2026-09-28) stands where it is built.
@@ -118,21 +122,108 @@ A sentence that opens "The lead's reading" is not the owner's until they confirm
 - **Between two passages, a brass ornament**, not a hairline (pair 15, score 5). No note.
 - **Few things, with room**, not many in rows (pair 16, score 1). No note.
 
-**Where these meet an earlier call** (the lead's notes: each is put to the owner, none is settled by
-reading)
-- Pair 12 and "no hover lift" (Cards, 2026-09-26). The later date wins on this page, so a card lifts.
-  But the earlier line was said of the full-width voyage cover and the pair drew a small card. Whether
-  the cover lifts is asked in round 2; until then nothing is taken off the cover and nothing added.
-- Pair 12 and "The photograph itself never animates on hover". The pair's card moved as one object,
-  its photograph with it; nothing moved inside the frame. Read as: a card may move, the picture in it
-  may not. To be confirmed with the amounts.
-- Pair 13 and "Short and purposeful by default" (Motion); "never bouncy" (The direction). Read as:
-  a control still answers quickly; words arriving take longer. Both B's the owner preferred were
-  drawn with a slight overshoot, which the titles did not name. Whether anything overshoots is asked
-  in round 2; until then, nothing does.
-- Pair 14 and the Photobook's own register (constrained, minimal, no jokes). The pair did not ask
-  about the book, and the owner's example counts frames. The book's call stands until the owner says
-  the combination reaches into it.
+**Round 2: how much**
+
+A pick is the option as it was drawn and labelled; the options it was chosen from are in brackets.
+The same amounts as a scale to build from, with the single values the lead chose inside a range the
+owner gave, are [decisions/0009](decisions/0009-how-much.md).
+
+1. **A card's corners are 10 px** (pick B, of 4 px, 10 px and 18 px). "B or C depend on the
+   scenario". C is 18 px.
+2. **A control is a rounded rectangle of 10 px** (pick B, of a rounded rectangle of 4 px, one of 10
+   px, and "A pill, and a round tool"). No note.
+3. **At rest a card stands just off the page, on a short shadow** (pick B, of a hairline and no
+   shadow, a short shadow, and a deep shadow). No note.
+4. **Under the pointer a card lifts between 3 and 6 px and grows to between 1.012 and 1.025**: pick
+   A (3 px and 1.012), with the note "Between A and B"; B is 6 px and 1.025. (Chosen of those two;
+   10 px and 1.05 with a spring; and as built, 4 px and 1.03 over a second.) The one value a session
+   builds, 4 px and 1.018, is the lead's, not the owner's ([decisions/0009](decisions/0009-how-much.md)).
+5. **A lift takes 0.3 s** (pick A, of 0.3 s, 0.6 s, and "A full second, as built"). No note.
+6. **Words arrive over 0.7 s, from 28 px below, one line after another, and settle** (pick B, of as
+   built, which is half a second, 12 px, together; this; and the same with a spring at the end). No
+   note.
+7. **A picture inside an article has corners of 8 px** (pick B, of square, 8 px and 16 px). No note.
+8. **The ornament is a lozenge on a rule** (pick A, of that, a star on a rule, three points, and a
+   short brass rule). No note.
+9. **An ornament stands only between passages of prose** (pick A, the nearest of three; the others
+   reached under a title, and between groups in the interface). No note.
+10. **Under the pointer a tag only brightens** (pick C, of "It turns brass", "It takes its own muted
+    colour" and "It only brightens"). No note.
+11. **Glass is 14 px of blur** (pick B, of 6 px, 14 px and 26 px). "A B Both OK". A is 6 px.
+12. **Nothing springs**: "It arrives and stops" (pick A, over "It goes a little past, and settles
+    back"). No note. The pick drew a card. One thing built does spring, the bubbles on Home's hero,
+    which belong to a signature: they are not a fault on this line, and are not changed unasked
+    (see "Not settled", below).
+13. **The wide cover of a voyage does nothing under the pointer**: "Nothing moves, nothing changes"
+    (pick A, over "The picture brightens; nothing moves" and "It lifts, as a small card does"). No
+    note.
+14. **A voyage's title stays as built: Playfair, bold, upright** (pick A, over "Italic, lighter"). No
+    note.
+15. **"The book may speak too, in its empty rooms and ways on"** (pick B, over "The book stays plain
+    throughout"). No note.
+16. **"What the eye turns away" reads true**: "Use it as the test" (pick A, over close with a note,
+    and not yet). The five lines, as the owner was shown them. A design that does any of these is
+    sent back before anything else is asked of it:
+    - "A saturated block of colour in the interface that is not a photograph."
+    - "Glow, and type that is a gradient."
+    - "A mechanism or a dependency that changes nothing the eye sees."
+    - "Crowding: many things where few would do."
+    - "An effect that draws the eye to itself."
+
+**Where these meet an earlier call**
+
+Settled by round 2. The later word is the owner's, asked directly each time:
+- **Nothing springs.** "Never bouncy" (The direction) stands. The two drawings the owner preferred in
+  round 1 (pairs 12 and 13) overshot, and their labels did not say so. Asked directly, the owner
+  chose "It arrives and stops" (pick 12). Nothing new springs; the one built exception is under
+  "Not settled".
+- **The wide cover does nothing under the pointer.** "No hover lift" (Cards, 2026-09-26) stands (pick
+  13), and "The photograph itself never animates on hover" with it. A small card lifts (pair 12;
+  picks 4 and 5).
+- **A voyage's title stays Playfair Display bold** (The look, 2026-09-25; pick 14). The didone italic
+  of pair 7 is for storytelling text, not for the title.
+- **The Photobook's words** (2026-09-24: constrained and minimal, no over-explaining, no jokes) are
+  amended, for two places: the book may speak in its empty rooms and in its ways on (pick 15), and
+  only there. Everywhere else in the book the call of 2026-09-24 stands.
+- **A tag takes no colour, even under the pointer.** Pair 4's note allowed one: "it can change colour
+  when hovered, if distinguishing colour is required". Asked how, the owner chose "It only brightens"
+  over brass and over the tag's own colour (pick 10).
+- **Quick and slow.** "Short and purposeful by default" (Motion) and a slower arrival are both the
+  owner's now, each with its amount: a card answers in 0.3 s (pick 5); words arrive over 0.7 s (pick
+  6).
+
+Not settled by round 2. Each is the lead's reading, not the owner's call. Where a stage builds on
+one it says so, and the owner is shown the result ([decisions/0009](decisions/0009-how-much.md), "Not
+settled"):
+- **A card moves; the photograph in it does not.** Every card drawn in round 2 held a photograph and
+  moved as one object. Read as: "never animates on hover" is about the photograph inside its frame
+  (no zoom, no shift, no filter), not about the card that carries it.
+- **"The one-second cover hover is deliberate"** (Cards). Pick 5 chose 0.3 s for a card's lift over
+  "A full second, as built", and pick 13 leaves the wide cover no lift to time. Read as: the second
+  stands for what is left of the cover's hover, the words that come under the pointer; no lift takes
+  a second.
+- **The words a wide cover shows under the pointer** (its line, its date). Pick 13's drawing had
+  none. To the letter, "nothing changes" removes them or sets them at rest; "Quiet by default:
+  detail on hover or in hand" lets them come. Asked with the refined card (stage 4).
+- **"Of a voyage."** Pick 13 named a voyage's cover; the same piece carries a post. Read as: one
+  piece, one behaviour.
+- **The Photobook's built pill, round tools and glass.** Pick 2 chose a rounded rectangle over "A
+  pill, and a round tool"; pick 11 chose 14 px, and the book's bar and panel are 18 and 24. Read
+  with the owner's "Most of the design aesthetics we established should be inherited": they stay as
+  built, and are shown beside the new amounts before anything is changed.
+- **Does a cover take a plate of glass?** Pair 10 and pick 11 both drew a name on a plate over a
+  cover. "No opaque plates, chips or panels over the image" (Cards) stands; whether a cover takes a
+  glass one has still not been asked. The scrim stays.
+- **The bubbles on Home's hero** turn with a spring (`assets/js/qsd-bubbles.js:356`). They belong
+  to a signature (the monogram), and pick 12 drew a card. They stay as built, and are not a fault
+  against "Nothing springs", until the owner has been shown them beside a still turn.
+- **The wide cover at rest: its corners and its shadow.** Picks 1 and 3 drew a small card. The cover
+  on `master` is rounded, on a shadow; the branch `gallery/voyage-doors` draws it square and flat.
+  Neither is settled; it is chosen with the refined card (stage 4).
+- **8 px beside 10 px.** A picture in an article is 8 px (pick 7) and a card 10 px (pick 1): both the
+  owner's, and near each other. Whether one step would do for both has not been asked; 8 px is built.
+- **Other glass.** Pick 11 drew a name on a plate over a cover. A panel of dense text (search, the
+  map's panel) was not drawn: bringing one to 14 px is shown first.
 
 ### Photographs
 - Photographs are prints: as large as the screen allows, nothing laid over them, never zoomed or
@@ -158,14 +249,20 @@ reading)
   scrim plus a hairline text shadow, assuming the worst lighting.
 - The photograph itself never animates on hover.
 - **The one-second cover hover is deliberate.** It reads as cinematic; do not shorten it to feel
-  snappy. Snappy timings are for utility controls.
+  snappy. Snappy timings are for utility controls. On 2026-10-01 the owner chose 0.3 s for a card's
+  lift, over "A full second, as built", and no lift at all for the wide cover (The eye, round 2,
+  picks 5 and 13): what the second still times is under "Not settled by round 2" there.
 - Next refinement, on branch `gallery/voyage-doors`: full colour, the poem on phones, no hover lift
-  (2026-09-26). On 2026-10-01 the owner scored "lifts and grows" for a card under the pointer (The
-  eye, pair 12): whether the cover lifts is asked again before the branch is built on.
+  (2026-09-26). Asked again on 2026-10-01, with the wide cover itself drawn: "Nothing moves, nothing
+  changes" (The eye, round 2, pick 13). A small card lifts (picks 4 and 5); the wide cover does not.
 
 ### The Photobook
 - The gallery is **immersive, not storytelling**. Stories and captions in the book are parked; the
   Photobook is English only (2026-09-26).
+- The book's words are constrained and minimal: no over-explaining, no jokes (2026-09-24). Amended on
+  2026-10-01 for two places: "The book may speak too, in its empty rooms and ways on" (The eye, round
+  2, pick 15). Everywhere else in the book the call of 2026-09-24 stands. The words themselves are
+  the owner's: a session drafts, the owner keeps or strikes.
 - The specs panel stays pinned by default (auto-hide was declined). Specs and sun in the book
   appear on hover only.
 - The film filter is a minimal translucent dial; first tap opens on touch. Controls step away over

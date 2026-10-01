@@ -1,6 +1,8 @@
 # Stage 6 · Posts and About
 
-**Status:** idea. **Tier:** 2.
+**Status:** idea. **Tier:** 2. Three things the owner's picks of 2026-10-01 answer are tier 2,
+answered ([0009](../decisions/0009-how-much.md)), and may be built as soon as
+[stage 2](02-foundations-plumbing.md) has the pieces; they do not wait for the reading design.
 
 ## Goal
 
@@ -17,28 +19,62 @@ of work the site shows least well, and About is the page least like the site.
 - Long titles are cut on a phone (X03: approved on 2026-10-01, a task in stage 1).
 - Tag pills overlap their emoji on a phone (P11).
 
-## What the pairs settled (the owner, 2026-10-01; `PRINCIPLES.md`, The eye)
+## What is already decided
 
-- "Between two passages, a brass ornament" (pair 15, score 5). A reading page is where it is first
-  used. The piece is not designed: which ornament and where it may stand are round 2's, then a choice
-  ([stage 2](02-foundations-plumbing.md)). Two posts already carry the emblem rule.
-- A picture inside an article may be a rounded rectangle: "We sometimes use rounded rectangle for
-  pictures in the middle of article to make it more smooth" (pair 1). How round is round 2's.
-- "Italic, serif, didone font for poetic and storytelling text (like Voyage); Barlow for easy
-  readability (like Utils)" (pair 7, score 3). Which of the two a post's title and body are is this
-  stage's open question, now with the owner's two purposes to sort by.
-- "Tags are ink only" (pair 4, score 5): the tag that replaces the emoji pills carries no fill. The
-  emoji themselves are an open question in [stage 10](10-tags.md).
+The owner, 2026-10-01 ([`PRINCIPLES.md`](../PRINCIPLES.md), The eye):
+
+- "A picture inside an article has corners of 8 px" (round 2, pick 7). From round 1: "We sometimes
+  use rounded rectangle for pictures in the middle of article to make it more smooth" (pair 1).
+- "The ornament is a lozenge on a rule" (pick 8). "An ornament stands only between passages of
+  prose" (pick 9): not under a title, not between groups in the interface.
+- "Tags are ink only" (pair 4, score 5). "Under the pointer a tag only brightens" (pick 10).
+- "Words arrive over 0.7 s, from 28 px below, one line after another, and settle" (pick 6): built in
+  stage 2, and seen first on a post.
+- "A voyage's title stays as built: Playfair, bold, upright" (pick 14). "Italic, serif, didone font
+  for poetic and storytelling text (like Voyage); Barlow for easy readability (like Utils)" (pair 7,
+  score 3). The title is not what turns italic. Which of the two a post's body is, is still this
+  stage's question.
 - "Few things, with room" (pair 16, score 1).
-- About's pink-to-yellow gradient notice and its emoji bullets: the lead's reading of pairs 4, 10 and
-  17 ("saturated colour blocks are distracting") turns them away. No pair drew them, so they are
-  shown before and after, not removed in passing.
+- "Photographs are prints: as large as the screen allows, nothing laid over them, never zoomed or
+  filtered on hover" (Photographs).
+
+The lead's reading, not the owner's: About's pink-to-yellow gradient notice and its emoji bullets
+are turned away by "A saturated block of colour in the interface that is not a photograph" and
+"Glow, and type that is a gradient". No pair drew them, so they are shown before and after, not
+removed in passing.
+
+## Scope: answered, to build after stage 2's pieces
+
+Each is tier 2, answered: pictures at desktop and at phone width, on a post in English and one in
+Chinese.
+
+- [ ] A picture in an article takes 8 px (pick 7). Today: `figure img` is 10 px
+      (`_sass/_base.scss:261-263`); `.article-image img` is 1em, about 16 to 18 px
+      (`_sass/_page.scss:64-90`).
+- [ ] The same picture grows by 5 per cent under the pointer, onto six shadows
+      (`_sass/_page.scss:81-88`). That is against "never zoomed or filtered on hover". The lead's
+      reading: it goes, tier 1, in line with a standing call, shown before and after. If the owner
+      holds a picture in an article to be a card and not a print, it lifts as a card does instead.
+- [ ] The ornament between passages of prose (picks 8 and 9). A thematic break in a post is
+      written `---` and drawn today as a grey bar, 2 px thick and 38.2% wide
+      (`_sass/_base.scss:197-203`); eight posts hold a `---` beyond their front matter. Inside an
+      article's text it becomes the lozenge on its rule. The markup does not change: an author still writes `---`.
+      First sort every `hr` a page draws: one between two passages takes the ornament; one that
+      closes a title, or parts a list, a table or a group of controls, stays a line. The emblem
+      rule in two posts is a signature and stays.
+- [ ] The pills at the foot of a post, and at the end of a book, take the `tag` piece (C08, marked
+      Fix): ink, one look, brightening under the pointer. Today each wears its own colour as its
+      words and a 2 px line, and fills with it under the pointer (`_includes/tag-list.html`,
+      `_sass/_page.scss:807-823`). A search result's tags are the same class, coloured from
+      `assets/js/lunr/lunr-store.js`, and change with them. The inline `--tag-color` leaves both.
+      The emoji in the names stay until the owner says ([stage 10](10-tags.md)).
 
 ## Open questions
 
 - A reading design for posts: measure, title scale, where the contents list lives, what the hero
   is for on a text page.
 - One measure for both languages, or one each?
+- Is a post's body the storytelling face or the reading one (pair 7)? It may differ post by post.
 - What About is for: an introduction, a colophon of the person, a letter?
 
 ## Scope, once designed
@@ -46,8 +82,26 @@ of work the site shows least well, and About is the page least like the site.
 - [ ] Post layout on the Photobook shell.
 - [ ] The Posts index.
 - [ ] About.
-- [ ] `tag` from the vocabulary replaces the emoji pills (C08).
+
+## Shared pieces
+
+Uses: the ornament, the `tag`, the `picture` corner, the arrival, the brass link, `eyebrow`,
+`display-title`, `lede`. New: nothing in the answered tasks. The reading design may need one (a
+contents list); if so it is said in the catalogue first.
+
+## What needs the owner
+
+- Nothing for the answered tasks, beyond seeing the pictures.
+- The reading design, About, and About's notice and bullets: a choice, with prototypes
+  ([0005](../decisions/0005-choices-arrive-as-prototypes.md)). Not in the queue yet.
+
+## Journeys
+
+`post` and `anchor` must pass. To add: `post-tags`, a tag at the foot of a post leads to its place
+on `/tags/`.
 
 ## Exit
 
-Chosen from prototypes. Written after stage 4, so the card and the shell are already proven.
+The answered tasks: `npm run gate:full` passes, the reviewer returns PASS, baselines re-captured
+for the post pages and no others. The rest: chosen from prototypes, written after stage 4, so the
+card and the shell are already proven.

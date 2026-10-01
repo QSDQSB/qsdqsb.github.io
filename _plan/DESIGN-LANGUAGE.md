@@ -1,104 +1,87 @@
 # The QSD design language
 
-**Version 0, 2026-10-01. A draft, and the owner's in part.** Asked whether it reads true (Q3), the
-owner answered "We need to revisit it", and said how: what is established is inherited, and the
-ambiguous part is asked as pairs to score. Round 1 was scored the same day
-([the study](studies/2026-10-01-the-qsd-aesthetic.md)). The lines it answered are the owner's now,
-recorded in [`PRINCIPLES.md`](PRINCIPLES.md) under "The eye", and may be rested on. The page stays
-version 0 until the owner says it reads true, and where it and the principles differ, the principles
-win.
+**Version 0, 2026-10-01. The owner's wherever a line says so; version 1 when the owner says the
+page reads true (Q11, in [`QUEUE.md`](QUEUE.md)).** Asked to accept it unread (Q3), the owner
+answered "We need to revisit it", and settled the ambiguous part by eye: seventeen pairs scored
+(round 1, which) and sixteen picks (round 2, how much), both on 2026-10-01
+([the study](studies/2026-10-01-the-qsd-aesthetic.md)). Those calls are in
+[`PRINCIPLES.md`](PRINCIPLES.md) under "The eye"; the amounts, as a scale to build from, are
+[decisions/0009](decisions/0009-how-much.md). Where this page and the principles differ, the
+principles win.
 
 What it is for (the owner, 2026-10-01): "not to constrain the layout or ideas, but to have a
 mimicking QSD aesthetics that can kill bad designs that are cheap, overly fancy for no good reasons".
 So this page describes an eye. It is not a rulebook for layouts: a layout or an idea is free, and is
 then put to the test below.
 
-Three kinds of line are in it, and each is marked. **The owner's** is a call the owner made: dated,
-quoted, or given as a pair and its score ("12: 5" is pair 12, scored 5; a 2 or a 4 is a leaning; a 3
-is either and makes no rule). **Built** is what the code does today. **The lead's reading** is this
-page's own ordering of the two: every rule without a date, a score or a "built" is one of those.
-Where the code does not yet do what a line says, the line says so.
+**How a line is marked.** **The owner's** is a call the owner made: dated, quoted, or given by its
+pair or pick ("12: 5" is round 1, pair 12, scored 5; a 2 or a 4 is a leaning, a 3 makes no rule;
+"r2: 4" is round 2, pick 4). **Built** is what the code does today. **The lead's reading** is this
+page's own ordering of the two: every rule with no date, score, pick or "built" beside it.
+
+**After two rounds.**
+
+- **The owner's:** the test below; no block of colour in the interface, brass as the one accent,
+  tags and icons in ink, glass and not a solid plate; the corners of a print, a card, a control and
+  an article's picture; a card's shadow, the range of its lift and how long it takes; the wide
+  cover that does nothing; how words arrive; that nothing springs (but for the bubbles, section 5);
+  the ornament and where it stands; how much glass; Playfair bold titles; captions in spaced
+  capitals; few things, with room; the book's voice in its empty rooms and ways on. And every dated
+  call quoted on this page.
+- **Left free by the owner** (a 3): how a block of words is held; the face of a number; plain words
+  or voiced, which is a combination.
+- **Still the lead's reading:** the split into grammar and signatures, and its test; the patterns'
+  names and the Shell row's "never"; what protects a signature beyond the owner's own quoted call;
+  the test carried to things no pair drew (the type badges, About's notice); the single values
+  chosen inside a range the owner gave, and the places a pick met something it did not draw (both
+  listed in 0009). A lead's reading decides nothing a reader sees. It may place a page (which
+  pattern, which pieces) and be the reason a question is asked; a fit check against it says "the
+  lead's reading" beside its verdict.
+- **Building on it:** a visible change that brings a surface to one of the owner's amounts is tier
+  2, answered: built without asking again, through the full gate and the reviewer, and shown as
+  pictures at both widths (0009, "Who may build what"). No signature is added, retired or re-ranked
+  on this page's say.
 
 [`PRINCIPLES.md`](PRINCIPLES.md) is why. This page is how. `_docs/components.md` is the catalogue of
 the pieces in code. [`WORKFLOWS.md`](WORKFLOWS.md) is how to work with all three.
 
 ## What the eye turns away
 
-The test a proposed design is put to before anything else. **The wording is the lead's, drawn from
-the owner's scores, until the owner confirms it.** Each line names the pairs it stands on.
+The test a proposed design is put to before anything else. **The owner's** (r2: 16: "It reads
+true", "Use it as the test"). The five lines are as the owner was shown them; the pairs named after
+each are the lead's note of what it rests on.
 
-A design is turned away when it has:
+A design that does any of these is sent back before anything else is asked of it:
 
-1. **A saturated block of colour that is not a photograph**: on a tag (4: 5), an icon (17: 1), a
-   plate over a picture (10: 1). "Crowded saturated colour blocks are distracting visually."
-2. **Glow.** A card may lift; it "doesnt have to glow" (11: 4). A heading does not glow (6: 1).
-3. **Type that is a gradient** (6: 1).
-4. **A dependency or a mechanism that changes nothing the eye sees.** "When similar visually, choose
+1. **A saturated block of colour in the interface that is not a photograph.** On a tag (4: 5), an
+   icon (17: 1), a plate over a picture (10: 1). "Crowded saturated colour blocks are distracting
+   visually."
+2. **Glow, and type that is a gradient.** A heading does neither (6: 1). A card may lift; it
+   "doesnt have to glow" (11: 4).
+3. **A mechanism or a dependency that changes nothing the eye sees.** "When similar visually, choose
    the simpler one with less dependency and complexity" (5: 1).
-5. **Crowding.** Few things, with room (16: 1).
-6. **An effect that draws the eye to itself.** "Prefer B, but do not overdesign" (13: 4); "aesthetic
-   but not distracting" (on hover and focus, the audit's C02).
+4. **Crowding: many things where few would do.** Few things, with room (16: 1).
+5. **An effect that draws the eye to itself.** "Prefer B, but do not overdesign" (13: 4); nothing
+   springs (r2: 12).
 
 It kills the cheap and the needlessly fancy. It does not ask for plainness: the owner chose lift
 (12: 5) and ornament (15: 5) over the quiet option each time. And passing it is not the bar. It only
 means a design has not been refused.
 
-## Until the owner has talked it through
+## Still to be talked through
 
-The conversation has begun. Round 1 settled **which**. It did not settle **how much**.
-
-- **Settled, and the owner's** (quote [`PRINCIPLES.md`](PRINCIPLES.md), The eye, not this page): a
-  print is square and a card is a rounded rectangle; tags and icons are ink, with no block of colour;
-  the accent is brass; glass, not a solid plate; a card lifts and grows under the pointer; a brass
-  ornament between passages; few things, with room; a caption in spaced small capitals. As leanings
-  (a 2 or a 4): a control is rounded, a card is raised at rest, words arrive more slowly and from
-  below.
-- **Left free** (a 3): how a block of words is held; the face of a number; the voice of a title,
-  which goes by purpose; plain words or voiced, which is a combination.
-- **Not settled: every amount.** A radius, a distance, a shadow, a time, a curve. A change a reader
-  sees that needs one of those waits for round 2. So do the four places where a score meets an
-  earlier call (`PRINCIPLES.md`, "Where these meet an earlier call").
-- **Not asked at all, and still the lead's reading**: the split into grammar and signatures and its
-  test; the patterns' names and the Shell row's "never"; what protects a signature beyond the owner's
-  own quoted call; the wording of "What the eye turns away"; section 11. A lead's reading decides
-  nothing a reader sees. It may place a page (which pattern, which pieces) and be the reason a
-  question is asked. It is not quoted to the owner as a rule, and a fit check against it says "the
-  lead's reading" beside its verdict.
-- **A line marked built is a fact about the code.** Bringing a surface into line with a shared piece
-  that is built is tier 1, as before ([0001](decisions/0001-who-decides-what.md)).
-- **The scales and the pieces marked "decided, not built"** stand on
-  [0002](decisions/0002-one-control-vocabulary.md) and
-  [0003](decisions/0003-stylesheet-organisation.md), accepted under delegation. Work on them that
-  moves no pixel goes ahead. A move a reader can see onto a radius, a duration, a curve or a depth of
-  glass waits until round 2 is scored. Then what the owner answered is built to the answer; what was
-  not asked stands on 0002 and the owner's Fix marks on the audit, as tier 1, shown before and after.
-- **No signature is added, retired or re-ranked** on this page's say.
-
-### For the conversation
-
-**Round 2, on the pairs page: how much, not which.**
-
-1. The radius of a card, and of a control.
-2. How far a card lifts and grows, and what shadow it casts. With it: whether the full-width voyage
-   cover lifts at all (the owner said "no hover lift" of it on 2026-09-26).
-3. How slowly words arrive, and whether they overshoot ("never bouncy" is in the principles).
-4. Which ornament, and where it may stand.
-5. What colour a tag takes when hovered, if any.
-
-The pairs page is the record of what was asked. Where it asks more than these five, this list is
-behind it.
-
-**Still to be talked through. No pair asked them.**
+No pair asked these.
 
 - **Is "a grammar and its signatures" the owner's way of seeing the site?** Everything below hangs on
   it. The six lines it grows from ("What makes the site itself", in `PRINCIPLES.md`) are a draft the
   owner has not corrected. Twelve signatures are registered: which are missing, and which would the
   owner not protect? Is the list of signatures where whimsy lives?
-- **How far does the Photobook's manner reach?** Its shell under every new page. And its register of
-  words: the interface speaks in a combination (14: 3), but the book's constraint is the owner's
-  earlier call, for the book, and the pair did not ask about the book.
-- **Which titles are storytelling and which are for reading** (7: 3). Every title is Playfair bold
-  today. Does a voyage's title turn italic? Is a utility's title Barlow?
+- **Does the Photobook's shell stand under every new page?** Its words are settled (section 10).
+- **Is a utility's title Barlow?** A voyage's title stays Playfair bold (r2: 14); pair 7 gave Barlow
+  to "easy readability (like Utils)" and no pick asked about a title there.
+- **What a pick met and did not draw**: the built pill and round tool, the book's deeper glass, the
+  words a wide cover shows under the pointer, and the rest of "Not settled" in
+  [0009](decisions/0009-how-much.md).
 
 ## The one idea: a grammar and its signatures
 
@@ -126,9 +109,9 @@ attention.
 |---|---|---|
 | Ground | Near-black. Black is the canvas, never a colour among others. | `$background-color` #151515 |
 | Light | **The photograph is the light source.** A room takes its colour from the picture in view: the glow, the wash, the dye. Built, and the lead's reading of it. | `glow.js`, `wash`, `vat.js` |
-| The interface | **No block of colour of its own** (the owner: 4: 5, 10: 1, 17: 1). Ink, glass and brass. A control that must be told apart "can change colour when hovered, if distinguishing colour is required": which colour is round 2. | Not yet so: `_data/tag_colours.yml` tints the tag pages and a post's pills; the type badges; About's notice |
+| The interface | **No block of colour of its own** (the owner: 4: 5, 10: 1, 17: 1). Ink, glass and brass. **A tag takes no colour, even under the pointer: it only brightens** (r2: 10). | Not yet so: `_data/tag_colours.yml` tints the tag pages, the pills under a post and at a book's end, and a search result's tags; the type badges; About's notice. The atlas colours its markers from the same file: a dot on a map, which no pair drew |
 | Ink | Three inks and a line: ivory for what is read, a quieter grey for what supports it, a third for what waits. | `--photobook-ink`, `-ink-2`, `-ink-3`, `-line` (moving to `--ink…`, [0002](decisions/0002-one-control-vocabulary.md)) |
-| Brass | The one metal and **the one accent** (the owner, 5: 1: always brass, never taken from the photograph): marks, the focus ring, what is on, a title's accent. Aged, never bright. | `$intriguing-word-color` #c3b498, `$h2-color` |
+| Brass | The one metal and **the one accent** (the owner, 5: 1: always brass, never taken from the photograph): marks, the focus ring, what is on, a title's accent, the ornament. Aged, never bright. | `$intriguing-word-color` #c3b498, `$h2-color` |
 | Gold | The sun's alone, in the specs. | `--photobook-gold` |
 | Film hues | A film carries its own hue, as a tick or a dot, nowhere larger. | the dial, the colophon |
 | Headings | **White by default.** The owner, 2026-10-01: "Titles should be default white coloured"; "retire the overly colourful H1 to H6 font colour". Never a gradient, never a glow (6: 1). Which white (the ivory ink, or pure white) is shown before it is built. | Not yet built: `_sass/_base.scss:63-85` still colours h2 to h5 |
@@ -143,8 +126,8 @@ faces are the owner's; the rows are the lead's arrangement of them.
 
 | Voice | Face | For |
 |---|---|---|
-| The title | Playfair Display bold | A page's title, every page's, a voyage's included (the owner, 2026-09-25). `display-title` |
-| The poetic and the storytelling | Didone, serif, italic. Built as Didot italic | The lede under a title; the poetic line at a doorway. `lede` |
+| The title | Playfair Display bold, upright | A page's title, every page's, a voyage's included (the owner, 2026-09-25; kept, r2: 14). `display-title` |
+| The poetic and the storytelling | Didone, serif, italic. Built as Didot italic | The lede under a title; the poetic line at a doorway. Never the title. `lede` |
 | What must be read easily | Barlow | The interface, a utility, anything that names |
 | The label and the caption | Barlow, spaced capitals | Eyebrows, places, and the line under a print (the owner, 8: 1: "Easier to read"). Never under 11 px. `eyebrow` |
 | The figure | Didot (the owner, 2026-09-28) | Numbers read as figures; hex codes. Serif or sans tabular scored either (9: 3), so a figure in Barlow is not a fault. In code only Reverie's large hex is Didot (finding F036). Didot is a system face: where a device lacks it the stack falls to CMU Serif, then Playfair |
@@ -160,46 +143,47 @@ to justify.
 
 ## 3. Shape and space
 
+The corners are the owner's ([0009](decisions/0009-how-much.md)).
+
 | | Rule |
 |---|---|
-| A print | **Square corners** (the owner, 1: 1). Nothing laid over it ("photographs are prints"). Built in the book and the viewers |
-| A picture inside an article | May be a rounded rectangle. The owner: "We sometimes use rounded rectangle for pictures in the middle of article to make it more smooth" |
-| A card | **A rounded rectangle** (the owner: "Rounded Rectangle is for card-like elements"). How round is round 2; 16 px in 0002 |
+| A print | **Square** (1: 1). Nothing laid over it ("photographs are prints"). Built in the book and the viewers |
+| A picture inside an article | **8 px** (r2: 7). "We sometimes use rounded rectangle for pictures in the middle of article to make it more smooth". Built at 10 px and at 1em |
+| A card | **10 px; 18 px where the scenario wants it** (r2: 1: "B or C depend on the scenario"). The lead's reading of the scenario: 18 px where the card is itself the scene, as wide as its column or the largest thing on its screen |
 | A cover on a card | Takes the card's corners. Built |
-| A control | **Rounded**: round (a tool), a pill, or a rounded rectangle. The owner (2: 2, a leaning): "Doesn't have to be pills, rounded rectangle is fine". Not hard-square. How round is round 2 |
+| A control | **A rounded rectangle of 10 px** (r2: 2, chosen over "A pill, and a round tool"). The lead's reading: the built pill and round tool are inherited as they are, and nothing new is drawn as a pill |
 | A panel of glass | 10 px (0002; not asked) |
 | A line | One pixel, in the line ink. It organises |
-| An ornament | **Between two passages, a brass ornament, not a hairline** (the owner, 15: 5). New grammar, not yet designed: which ornament and where it may stand is round 2. Its relative in the code is the emblem rule, a signature |
+| An ornament | **A lozenge on a brass rule** (15: 5; r2: 8), **only between passages of prose** (r2: 9): not under a title, not between groups in the interface. Not built. The emblem rule is a signature and stays |
 | How words are held | On the ground under a rule, or in a card: either (3: 3). No rule |
-| Space | **Few things, with room** (the owner, 16: 1). The gutter is `clamp(1rem, 3vw, 2.4rem)`; prints sit `clamp(6px, 0.7vw, 12px)` apart |
+| Space | **Few things, with room** (16: 1). The gutter is `clamp(1rem, 3vw, 2.4rem)`; prints sit `clamp(6px, 0.7vw, 12px)` apart |
 
-The radius scale is six steps (none, 3, 10, 16, pill, round). The code has thirty-six values today;
-the scale is decided and not yet built ([0002](decisions/0002-one-control-vocabulary.md)), and round
-2 may move its steps for a card and a control.
+The radius scale: none, 3, 8, 10, 18, pill, round. The code has thirty-six values today.
 
 ## 4. Depth and glass
 
 Two things lift off the page: glass, and a card.
 
 **Glass** says "this floats above the photograph". Where something must lie over a picture it is
-glass, never a solid plate (the owner, 10: 1: "pure-colour block distracts readers"). It is a depth
-cue, not decoration.
+glass, never a solid plate (10: 1: "pure-colour block distracts readers"). It is a depth cue, not
+decoration.
 
 | Depth | Blur | For |
 |---|---|---|
-| Control | 12 px | A round tool, a tooltip |
-| Bar | 18 px, saturate 140% | A pill, the dial's well, the masthead |
-| Panel | 24 px, saturate 130% | The specs, a sheet |
+| Glass | **14 px**, saturate 120% (r2: 11) | The default for anything new. An older panel of dense text (search, the map) is shown beside it before it moves: the pick drew a name on a cover. The blur is in code already (`dark-glass-fill`), under a darker tint |
+| Thin | **6 px** (r2: 11: "A B Both OK": either is the owner's) | The lead's reading of which goes where: thin on a small mark over a picture or over code (the type badge on a cover, the copy button), where it is built at 6 px today |
+| Bar | 18 px, saturate 140% | Built, inherited: a pill, the dial's well, the masthead. Not drawn in round 2 |
+| Panel | 24 px, saturate 130% | Built, inherited: the specs, a sheet. Not drawn in round 2 |
 
-One edge: a hairline of white at about a tenth. Over a pale sky a bar is darkened behind
-(`glass-bar`) so its marks keep their contrast. A cover carries a scrim and no plate (the owner,
-Cards: "No opaque plates, chips or panels over the image"); pair 10 chose glass over solid and did
-not ask whether a cover takes a plate.
+Nothing new is thicker than 14 px: the 26 px option was shown and passed over. One edge: a hairline
+of white at about a tenth. Over a pale sky a bar is darkened behind (`glass-bar`) so its marks keep
+their contrast. A cover carries a scrim and no plate (the owner, Cards: "No opaque plates, chips or
+panels over the image"); pair 10 and pick 11 chose among plates of glass and did not ask whether a
+cover takes one.
 
-**A card** is raised off the page, by a shadow (the owner, 11: 4, a leaning: "doesnt have to glow").
-No glow. The draft had only controls and panels floating: the lead's guess, and the owner leans the
-other way. How far, and which shadow, is round 2. 0002 has no scale for a shadow: one is decided once the amounts
-are the owner's, in a record of its own.
+**A card** stands just off the page on a short shadow (11: 4; r2: 3): one layer,
+`0 6px 18px rgba(0, 0, 0, 0.45)`, no border, no glow ("doesnt have to glow"). Not built: the code's
+cards carry stacks of two to six.
 
 Layers, lowest first: the page, what sticks (the control bar), the masthead, what lies over the
 page (a sheet, search), a modal, a tooltip.
@@ -210,26 +194,29 @@ page (a sheet, search), a modal, a tooltip.
 
 | Step | Time | For |
 |---|---|---|
-| Fast | 0.15 s | A control answering: a press, a tick |
-| Base | 0.3 s | A control's hover and focus, a colour or border change |
+| Fast | 0.15 s | A control answering: a press, a tick, a tag brightening |
+| Base | 0.3 s | A control's hover and focus; **a card's lift** (r2: 5) |
 | Slow | 0.6 s | A print developing, a panel moving |
-| Cover | 1 s | A magazine cover answering the pointer. Deliberate, cinematic; never shortened to feel snappy |
+| Arrive | 0.7 s | **Words arriving** (r2: 6) |
+| Cover | 1 s | What is left of the wide cover's hover: its words. The owner's deliberate second (Cards); the lead's reading of what it still times |
 | Scene | 1.1 s and over | A room's light changing, an opening |
 
-Two curves: standard for things leaving, smooth for things arriving. The cover has its own. Not yet
-so: the code has eight (audit C04).
+Two curves: standard for things answering and leaving, smooth for things arriving. Not yet so: the
+code has eight (audit C04).
 
-- **A card answers the pointer by lifting and growing** (the owner, 12: 5), not by brightening. The
-  draft guessed the quiet hover; the owner chose the other. How far is round 2. The card moves as one
-  object: nothing moves inside its frame.
-- **Words arrive from below, one line after another, and take their time** (the owner, 13: 4, a
-  leaning: "Prefer B, but do not overdesign"). The draft said "not by sliding in"; that was the
-  lead's. Built today: `reveal-on-scroll`, a 12 px rise over half a second, all at once. How slowly,
-  from how far, and the turn-taking are round 2.
+- **A card lifts and grows under the pointer** (12: 5): between 3 and 6 px and between 1.012 and
+  1.025 (r2: 4: "Between A and B"), in 0.3 s (r2: 5). To be built at 4 px and 1.018, the lead's
+  value inside that range. It moves as one object: nothing moves inside its frame.
+- **The wide cover does nothing under the pointer**: "Nothing moves, nothing changes" (r2: 13; "no
+  hover lift", 2026-09-26). Not yet so: on `master` it rises, grows by 3 per cent and changes shape
+  over a second.
+- **Words arrive from 28 px below over 0.7 s, one line after another, 0.12 s apart, and settle**
+  (13: 4; r2: 6). Built today: `reveal-on-scroll`, 12 px over half a second, together.
+- **Nothing springs** (r2: 12: "It arrives and stops"; "never bouncy"). Nothing new goes past its
+  end. One built exception, not a fault and not changed unasked: the bubbles on Home's hero turn
+  with a spring, and they belong to a signature.
 - **Formation.** Things become: a print develops over its placeholder, a wash crossfades as the
   light shifts.
-- **Nothing new overshoots** until the owner says so: "never bouncy" (`PRINCIPLES.md`, The
-  direction). Round 2 asks.
 - **Keep the reader's place.** A change of film does not scroll the page away.
 - **Still when asked.** Every motion has its reduced-motion and `html.motion-off` rule beside it.
 - **Never the photograph.** It does not zoom, shift or filter under the pointer.
@@ -265,12 +252,13 @@ The grammar's parts. Most are mixins in `_sass/_components.scss`; three are clas
 |---|---|---|
 | Words | Eyebrow, display title, lede, onward links | Built |
 | Controls | Pill, round tool, quiet icon button, segmented toggle, tooltip | Built |
-| Controls | A text button (solid and quiet; a rounded rectangle is fine, 2: 2). One tag: ink only, one look for every tag (4: 5) | Decided, not built |
+| Controls | A text button, solid and quiet, a rounded rectangle of 10 px (r2: 2). One tag: ink, one look for every tag, brightening under the pointer (4: 5; r2: 10) | The owner's amounts; not built |
 | Surfaces | Bar glass, wash, surface relief | Built |
-| Surfaces | Glass at three named depths. One card: raised, and it lifts and grows under the pointer (11: 4, 12: 5) | Decided, not built |
+| Surfaces | Glass at 14 px, and thin at 6 px (r2: 11). One card: 10 px, a short shadow, a lift of 0.3 s (r2: 1, 3, 4, 5) | The owner's amounts; not built |
 | Marks | Brass focus; the palette strip | Built |
-| Marks | One mark for "current" | Decided, not built |
-| Marks | A brass ornament between passages (15: 5) | The owner's; not designed |
+| Marks | One mark for "current" | Decided (0002), not built |
+| Marks | The ornament: a lozenge on a brass rule, between passages of prose (r2: 8, 9) | The owner's; not built |
+| Motion | The arrival: 0.7 s, 28 px, in turn (r2: 6) | The owner's amounts; built at other amounts (`reveal-on-scroll`) |
 
 ## 8. Patterns
 
@@ -303,7 +291,7 @@ call ([0001](decisions/0001-who-decides-what.md)) and arrives as a prototype
 | The hero's depth | Every hero | |
 | The opening | Hero pages | The masthead stays away, then returns; it yields to a reader looking for the way |
 | The map's veil | The atlas | The map never takes the scroll |
-| The word card, the emblem rule | Posts, Home | |
+| The word card, the emblem rule | Posts, Home | The ornament does not replace the emblem rule |
 | The tarot cards | Corners of several pages | Under review (the owner, 2026-10-01): a new purpose is wanted; the wheel of fortune that spins to a random voyage is liked |
 
 ## 10. Words
@@ -316,25 +304,26 @@ The voice is the owner's: ornate, ironic, melancholic, in two languages. The `so
   is said plainly (a count, a date, a tool's name); an empty room and a way on may carry the voice.
 - A tool is named by a plain noun: Specs, Slideshow, Book, Sheet.
 - The poetic line belongs to doorways. A count does not ("Doorways withhold").
-- In the Photobook, the owner's call (2026-09-24): constrained and minimal, no over-explaining, no
-  jokes. It stands for the book until the owner says the combination reaches into it.
+- **In the Photobook**: constrained and minimal, no over-explaining, no jokes (the owner,
+  2026-09-24), except that "The book may speak too, in its empty rooms and ways on" (r2: 15). There,
+  and nowhere else in the book. The words are the owner's: a session drafts, the owner keeps or
+  strikes.
 - Never a clock time. Dates only.
 
 ## 11. What the language refuses
 
 Beyond the eye's test at the head of this page. From the owner's standing calls: a colour of its own
 for each heading level; an opaque plate over a cover; a photograph that moves under the pointer;
-numbers at a doorway; anything that looks generated ("not an AI-generated showpiece"). The lead's
-reading: a new button for one page; a label where a mark is enough, and a mark with no name for a
-screen reader.
+numbers at a doorway; a spring; anything that looks generated ("not an AI-generated showpiece"). The
+lead's reading: a new button for one page; a label where a mark is enough, and a mark with no name
+for a screen reader.
 
 ## What is settled, decided, open
 
 | | |
 |---|---|
-| **The owner's, and built** | Doorways withhold; a card is a magazine cover; photographs are prints, square, with nothing over them; Playfair titles, Barlow labels, Didot figures; gold for the sun alone; the misty vat; one viewer; the monogram's loop; the masthead that hides and returns |
+| **The owner's, and built** | Doorways withhold; a card is a magazine cover; photographs are prints, square, with nothing over them; Playfair bold titles, Barlow labels, Didot figures; gold for the sun alone; the misty vat; one viewer; the monogram's loop; the masthead that hides and returns |
 | **Built, and the lead's reading of it** | "The photograph is the light source"; the grammar and its signatures; the patterns' names; the pieces marked Built. The tarot cards are built and under review |
-| **The owner's, not yet built** | White headings; brass links with a hairline underline (Q9); tags in ink only; no block of colour in the interface; brass as the one accent on every page |
-| **The owner's from the pairs, waiting on an amount** (round 2) | A card's corners, its lift at rest and under the pointer; a control's corners; how words arrive; the brass ornament; a tag's colour when hovered |
-| **Decided under delegation, not yet built** ([0002](decisions/0002-one-control-vocabulary.md), [0003](decisions/0003-stylesheet-organisation.md)) | The six radii, five durations, three glass depths, six layers; inks on `:root`; the text button, tag and card; one focus ring; two curves; the ratchet |
-| **Open** (the owner's, in conversation or to come) | Whether this page reads true: round 1 scored, round 2 asked; the wording of "What the eye turns away"; grammar and signatures; how far the book's manner reaches; which titles are storytelling; body face and measure for reading; the footer; the tarot cards' next life |
+| **The owner's, with its amount, not yet built** ([0009](decisions/0009-how-much.md)) | A card's corners, shadow and lift; a still wide cover; a control's corners; an article picture's corners; how words arrive; the lozenge between passages of prose; tags in ink that only brighten; glass at 14 px; the book's voice in its empty rooms and ways on. And from before the pairs: white headings; brass links with a hairline underline (Q9) |
+| **Decided under delegation, not yet built** ([0002](decisions/0002-one-control-vocabulary.md), [0003](decisions/0003-stylesheet-organisation.md)) | What 0009 did not move: the hair radius, the fast, base, slow and scene durations, six layers; inks on `:root`; the text button and one mark for "current"; one focus ring; two curves; the ratchet |
+| **Open** (the owner's, in conversation or to come) | Whether this page reads true and becomes version 1 (Q11); grammar and signatures; what a pick met and did not draw (0009, "Not settled"); body face and measure for reading; the footer; the tarot cards' next life |

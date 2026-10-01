@@ -1,6 +1,6 @@
 # What is the QSD eye, where the design language only guessed?
 
-**Asked:** 2026-10-01 · **Status:** open (round 1 answered, round 2 asked) · **Stage:** 2
+**Asked:** 2026-10-01 · **Status:** answered (two rounds, 2026-10-01) · **Stage:** 2
 
 ## Why it was asked
 
@@ -102,7 +102,68 @@ of round 1 against the owner's earlier calls.
 | 15 | `r2-book-words` | Do the words with a voice reach into the Photobook? (against the book's register, 2026-09-24) | The book stays plain | The book may speak too | | |
 | 16 | `r2-turns-away` | "What the eye turns away": does it read true? | It reads true | Close, with a note | Not yet | |
 
-The owner's picks: not yet given.
+**The owner's picks, round 2** (2026-10-01; in the page's store and pasted in chat; notes verbatim).
+
+| # | Question | Pick | Which is | The owner's note |
+|---|---|---|---|---|
+| 1 | How round is a card | B | 10 px | "B or C depend on the scenario" (C is 18 px) |
+| 2 | How round is a control | B | A rounded rectangle, 10 px | |
+| 3 | A card at rest | B | A short shadow | |
+| 4 | How far a card lifts | A | 3 px, scale 1.012 | "Between A and B" (B is 6 px, scale 1.025) |
+| 5 | How long a lift takes | A | 0.3 s | |
+| 6 | How words arrive | B | 0.7 s, 28 px, one line after another, settling | |
+| 7 | A picture inside an article | B | 8 px | |
+| 8 | Which ornament | A | A lozenge on a rule | |
+| 9 | Where an ornament may stand | A | Only between passages of prose | |
+| 10 | A tag under the pointer | C | It only brightens | |
+| 11 | How much glass | B | As round 1 (14 px blur) | "A B Both OK" (A is 6 px) |
+| 12 | Does anything spring? | A | It arrives and stops | |
+| 13 | The wide cover under the pointer | A | Nothing moves, nothing changes | |
+| 14 | The title of a voyage | A | As built: Playfair, bold, upright | |
+| 15 | Do the voiced words reach into the Photobook? | B | The book may speak too, in its empty rooms and ways on | |
+| 16 | "What the eye turns away" | A | It reads true: use it as the test | |
+
+What round 2 settles, read from the picks:
+
+- **Nothing springs.** Round 1's two preferred drawings overshot; asked directly, the owner chose
+  "arrives and stops" (12). "Never bouncy" stands.
+- **A card**: 10 px corners, 18 px where the scene wants it (1); a short shadow at rest (3); under the
+  pointer it rises between 3 and 6 px and grows between 1.2 and 2.5 per cent, in a third of a second
+  (4, 5). That is quicker and smaller than the voyage cards do today (4 px, 3 per cent, one second).
+- **The wide cover of a voyage does nothing under the pointer** (13): the call of 2026-09-26 stands,
+  and is now stricter than what was drawn as "brightens".
+- **A control** is a rounded rectangle of 10 px (2). **A picture in an article**: 8 px (7).
+- **Words arrive** over 0.7 s from 28 px below, one line after another, and settle (6): slower and
+  further than the built reveal (0.5 s, 12 px, together).
+- **The ornament** is a lozenge on a rule (8), and stands only between passages of prose (9).
+- **A tag** is ink, and only brightens under the pointer (10): no colour, even on hover.
+- **Glass** at 14 px of blur; 6 px is also fine (11).
+- **A voyage's title stays Playfair bold, upright** (14): the call of 2026-09-25 stands; the didone
+  italic is for storytelling text, not for the title.
+- **The Photobook may speak** in its empty rooms and its ways on (15): this amends the book's register
+  of 2026-09-24, for those two places.
+- **"What the eye turns away" reads true** (16): it is the owner's now, and is the first test a
+  design is put to.
+
+**Round 2, read against the table** (the design lead, 2026-10-01). The eleven lines above hold. What
+they leave out:
+
+- **Pick 4 is a range.** The pick is A and the note is "Between A and B". Between 3 and 6 px and
+  between 1.012 and 1.025 is the owner's; the one value a session builds (4 px, 1.018) is the
+  lead's, and is marked so in [0009](../decisions/0009-how-much.md).
+- **"The scenario"** (pick 1's note) is the owner's word and is not explained. When a card is 18 px
+  is the lead's reading.
+- **What a pick met and did not draw.** Pick 2 chose a rounded rectangle over "A pill, and a round
+  tool", and the Photobook's way back is a pill and its tools are round. Pick 11 chose 14 px, and
+  the book's bar and panel are 18 and 24. Pick 13 drew a cover with no words appearing; the built
+  cover shows its line and date under the pointer. Pick 13 said "of a voyage"; the same piece
+  carries a post. Pick 12 drew a card; the bubbles on Home spring. None is settled by reading: 0009,
+  "Not settled".
+- **The one-second cover hover** (the owner's, Cards) was option C of pick 5 and was not chosen for
+  a card's lift; pick 13 leaves the wide cover no lift. What the second still times is a reading.
+- **The page's brass** is #c9a86a; the site's is #c3b498, the one the link was picked in. The
+  ornament is built in the site's.
+- **A tag was drawn square** in pick 10; a control is 10 px by pick 2. The tag's corner is a reading.
 
 ## What was learned
 
@@ -132,7 +193,8 @@ the rest is the session's reading of the scores and is marked so where it goes b
 8. **Left free.** How a block of words is held (3) and the face of a number (9): either. No rule is
    written for these.
 
-**What it turns away** (the session's reading, to be confirmed as the test a design is put to):
+**What it turns away** (the session's reading; confirmed by the owner in round 2, pick 16, in the
+wording shown there):
 a saturated block of colour in the interface; glow, and type that is a gradient; a dependency or a
 mechanism that changes nothing the eye sees; crowding; an effect that draws the eye to itself.
 
@@ -170,17 +232,22 @@ above are a reading of it. Where the reading goes further than a score or a note
 - **Pair 12 and the voyage cover.** The owner said "no hover lift" of the full-width cover on
   2026-09-26. The pair drew a small card. Which holds for the cover is asked, not read.
 - **Already built.** Content arrives by rising 12 px over half a second (`reveal-on-scroll`), between
-  pair 13's two drawings. A voyage card's tags take their colour only under the pointer, as the note
-  on pair 4 allows. The voyage card on `master` lifts and grows today.
+  pair 13's two drawings. The voyage card on `master` lifts and grows today. (Corrected the same
+  day: this line also said a voyage card's tags take their colour under the pointer. The rule is in
+  `_sass/_archive.scss`, and no card emits a tag: it is dead.)
 
 ## What it led to
 
-- The owner's lines: [`PRINCIPLES.md`](../PRINCIPLES.md), "The eye (2026-10-01, from the pairs)", each
-  with its pair, its score and the note, and the four places where a line meets an earlier call.
-- [`DESIGN-LANGUAGE.md`](../DESIGN-LANGUAGE.md): the lead's readings the pairs answered are replaced;
-  it opens with the test, "What the eye turns away" (the lead's wording, to be confirmed).
-- Stages [2](../stages/02-foundations-plumbing.md) (three new pieces: the card's lift, the ornament,
-  how words arrive), [4](../stages/04-voyage-and-cards.md) (does the cover lift),
-  [5](../stages/05-bestiary.md), [6](../stages/06-posts-and-about.md) and
-  [10](../stages/10-tags.md) (ink only; the colours file; the emoji).
-- Round 2 follows on the same page: how much, not which.
+- The owner's lines: [`PRINCIPLES.md`](../PRINCIPLES.md), "The eye (2026-10-01, from the pairs)":
+  round 1 with each pair, score and note; round 2 with each pick, what it was chosen from, and the
+  note; then where a line meets an earlier call, settled or not.
+- The amounts as a scale to build from: [decisions/0009](../decisions/0009-how-much.md), which
+  amends 0002 and lists what the picks did not settle.
+- [`DESIGN-LANGUAGE.md`](../DESIGN-LANGUAGE.md): it opens with the test, "What the eye turns away",
+  which is the owner's (pick 16); every "waits for round 2" is replaced by its amount. Whether the
+  page now reads true is Q11.
+- What may be built, tier 2, answered: stages [2](../stages/02-foundations-plumbing.md) (the scales,
+  the `card`, the `tag`, the ornament, the arrival), [3](../stages/03-wayfinding.md) (the book's
+  words, drafted for the owner), [4](../stages/04-voyage-and-cards.md) (the still cover; Home's
+  cards), [6](../stages/06-posts-and-about.md) (article pictures, the ornament, a post's tags) and
+  [10](../stages/10-tags.md) (the colour off the tags).
