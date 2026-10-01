@@ -19,7 +19,9 @@ A site that stays fast as the archive grows. Implements
 - [ ] A06 · The Photobook's four scale limits, or a designed ceiling for a book (in the queue when
       a book nears 100 frames).
 - [ ] C11 · One shared module for the colour pages' keys, way back and rendition choice.
-- [ ] Page bundles, if `main.css` is still over 200 KB raw after stage 2.
+- [ ] A04 · Page bundles: a base stylesheet and one per kind of page (marked Fix). After stage 2.
+- [ ] S01, second half · Renditions for the 13 post covers outside `images/cover/`.
+- [ ] S16 · Three surfaces that repaint for effects that could be composited: measure first.
 
 ## Design notes
 

@@ -3,7 +3,9 @@
  * The command centre: one page for the owner, built from `_plan/`.
  *
  * Where the site stands (the current stage and its progress), what is waiting on the owner (the
- * queue, each call answerable in one tap), the roadmap, what changed, what has been found, every
+ * queue, each call answerable in one tap), the ideas (a box to say a new one, and each shaped one
+ * with the lead's verdict, its for and against, what it changes, its questions as taps, and Pursue,
+ * Park and Drop), the roadmap, what changed, what has been found, every
  * decision, the feature map, and the principles and architecture in full. It is generated, never
  * written by hand, so it cannot disagree with the plan it shows (_plan/decisions/0006).
  *
@@ -11,7 +13,9 @@
  *
  * Publish it with the Artifact tool to the address in `_plan/hub.json` (capabilities
  * { db: {}, user: {} }). The owner's answers land in the page's `answers` collection, one document
- * per queue id; a session reads them back with ArtifactData and records them in QUEUE.md.
+ * per queue id, idea id (`I001`) or idea question (`I001-2`), and a new idea in `ideas`; a session reads them back with ArtifactData,
+ * records the answers in QUEUE.md (`plan.mjs answer`), the owner's decision on an idea in its file
+ * (`plan.mjs decide`), and files each new idea with `plan.mjs idea`.
  *
  * Exit codes: 0 written · 2 the plan could not be read
  */
@@ -19,9 +23,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { esc, inline, markdown } from './lib/plan-markdown.mjs';
+import { OPTION } from './lib/plan-ideas.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const PLAN = path.join(ROOT, '_plan');
+// `PLAN_DIR` and `--out <file>` build the page from another plan, somewhere else (the tests do).
+const PLAN = process.env.PLAN_DIR ? path.resolve(process.env.PLAN_DIR) : path.join(ROOT, '_plan');
+const outAt = process.argv.indexOf('--out');
+const OUT = outAt > 0 ? path.resolve(process.argv[outAt + 1]) : path.join(ROOT, 'design', 'hub', 'hub.html');
 const read = (rel) => fs.readFileSync(path.join(PLAN, rel), 'utf8');
 
 let state;
@@ -30,59 +39,6 @@ try {
   const out = (() => { try { return execFileSync('node', [path.join(ROOT, 'scripts/check-plan.mjs'), '--json'], { cwd: ROOT, encoding: 'utf8' }); } catch (e) { return e.stdout; } })();
   state = JSON.parse(out);
 } catch (e) { console.error(`The plan could not be read: ${e.message}`); process.exit(2); }
-
-const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-/** Inline Markdown: code, bold, emphasis, links. A link into the plan becomes its path; the page cannot open a file. */
-const inline = (s) => esc(s)
-  .replace(/`([^`]+)`/g, '<code>$1</code>')
-  .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-  .replace(/(^|[\s(])\*([^*\s][^*]*)\*(?=[\s).,;:]|$)/g, '$1<em>$2</em>')
-  .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2">$1</a>')
-  .replace(/\[([^\]]+)\]\([^)\s]+\)/g, '$1')
-  .replace(/(^|\s)(https?:\/\/[^\s<]+[^\s<.,;:])/g, '$1<a href="$2">$2</a>');
-
-/** Block Markdown, as much of it as the plan uses: headings, paragraphs, lists, tables, fences, rules. */
-function markdown(src, { skipTitle = true } = {}) {
-  const lines = src.replace(/\r/g, '').split('\n');
-  const out = [];
-  let i = 0, titled = !skipTitle;
-  const isBlockStart = (l) => /^(#{1,6} |```|\||- |\d+\. |---\s*$|> )/.test(l);
-  while (i < lines.length) {
-    const l = lines[i];
-    if (!l.trim()) { i++; continue; }
-    if (l.startsWith('```')) {
-      const buf = []; i++;
-      while (i < lines.length && !lines[i].startsWith('```')) buf.push(lines[i++]);
-      i++; out.push(`<pre>${esc(buf.join('\n'))}</pre>`); continue;
-    }
-    const h = l.match(/^(#{1,6}) (.+)$/);
-    if (h) { i++; if (h[1].length === 1 && !titled) { titled = true; continue; } out.push(`<h${Math.min(6, h[1].length + 2)}>${inline(h[2])}</h${Math.min(6, h[1].length + 2)}>`); continue; }
-    if (/^---\s*$/.test(l)) { i++; out.push('<hr>'); continue; }
-    if (l.startsWith('|')) {
-      const rows = [];
-      while (i < lines.length && lines[i].startsWith('|')) rows.push(lines[i++]);
-      const cells = (r) => r.replace(/^\||\|\s*$/g, '').split('|').map((c) => c.trim());
-      const body = rows.filter((r, n) => !(n === 1 && /^[\s|:-]+$/.test(r)));
-      out.push(`<div class="scroll"><table><thead><tr>${cells(body[0]).map((c) => `<th>${inline(c)}</th>`).join('')}</tr></thead><tbody>${body.slice(1).map((r) => `<tr>${cells(r).map((c) => `<td>${inline(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`);
-      continue;
-    }
-    if (/^(- |\d+\. )/.test(l)) {
-      const ordered = /^\d+\. /.test(l), items = [];
-      while (i < lines.length && (/^(- |\d+\. )/.test(lines[i]) || (/^\s{2,}\S/.test(lines[i]) && items.length))) {
-        if (/^(- |\d+\. )/.test(lines[i])) items.push(lines[i].replace(/^(- |\d+\. )/, ''));
-        else items[items.length - 1] += ` ${lines[i].trim()}`;
-        i++;
-      }
-      const item = (t) => t.replace(/^\[( |x)\] /i, (m, c) => `<span class="tick" data-done="${c !== ' '}"></span>`);
-      out.push(`<${ordered ? 'ol' : 'ul'}>${items.map((t) => `<li>${item(inline(t))}</li>`).join('')}</${ordered ? 'ol' : 'ul'}>`);
-      continue;
-    }
-    const para = [];
-    while (i < lines.length && lines[i].trim() && !isBlockStart(lines[i])) para.push(lines[i++].trim());
-    out.push(`<p>${inline(para.join(' '))}</p>`);
-  }
-  return out.join('\n');
-}
 
 const roadmapRows = read('ROADMAP.md').split('\n').map((l) => l.match(/^\|\s*(\d+)\s*\|\s*\[([^\]]+)\]\([^)]+\)\s*\|\s*([^|]*)\|\s*([^|]*)\|\s*([^|]*)\|/)).filter(Boolean)
   .map((m) => ({ n: Number(m[1]), name: m[2], gets: m[3].trim(), tier: m[5].trim() }));
@@ -93,6 +49,52 @@ const built = new Date().toISOString().slice(0, 10);
 const now = state.now;
 const choices = Object.entries(state.hub.choices || {});
 const doc = (rel, title) => `<details class="doc"><summary>${esc(title)}</summary><div class="md">${markdown(read(rel))}</div></details>`;
+
+// An idea comes back with four things, in the order the owner needs them: the verdict, what speaks
+// for and against it, what it would change in the site as it stands, and how the sentence was read.
+const VERDICT_TONE = { Pursue: 'ok', 'Pursue, turned': 'ok', Park: 'warn', Drop: 'bad' };
+const VERDICT_TAP = { Pursue: 'pursue', 'Pursue, turned': 'pursue', Park: 'park', Drop: 'drop' };
+const more = (title, body, hint = '') => (body ? `<details class="more"><summary>${esc(title)}${hint ? `<span>${esc(hint)}</span>` : ''}</summary><div class="md">${markdown(body, { skipTitle: false })}</div></details>` : '');
+function ideaCard(i) {
+  const head = `<h3><span class="id">${i.id}</span>${inline(i.title)} <span class="st ${i.status === 'shaped' ? 'designing' : i.status === 'staged' ? 'done' : ''}">${esc(i.status)}</span></h3>
+      ${i.by === 'lead' ? '<p class="label" style="margin-top:10px">Proposed by the lead</p>' : ''}
+      <p class="words">${inline(i.words)}</p>`;
+  const count = (tally, order) => order.filter((k) => tally[k]).map((k) => `${tally[k]} ${k}`).join(', ');
+  if (i.status === 'raw') return `<article class="call" id="${i.id}" data-answered="false">${head}<p class="muted" style="margin-top:10px">Kept. Not yet worked through: the next session makes it explicit, weighs it and brings it back with a verdict.</p></article>`;
+  const sizes = ['large', 'medium', 'small'].filter((k) => i.sizes[k]).map((k) => `${i.sizes[k]} ${k}`).join(', ');
+  // The questions stay for as long as the idea is live: one left untapped at Pursue is still open.
+  const live = ['shaped', 'study'].includes(i.status), open = live && !i.owner;
+  return `<article class="call" id="${i.id}" data-answered="false">${head}
+      ${i.verdict ? `<div class="verdict"><p class="label">The lead's verdict</p><p><span class="chip ${VERDICT_TONE[i.verdict]}">${esc(i.verdict)}</span></p><div class="md">${markdown(i.verdictText, { skipTitle: false })}</div></div>` : ''}
+      ${i.waitsOn ? `<p class="waits"><b>Waits on</b>${inline(i.waitsOn)}</p>` : ''}
+      ${i.owner ? `<p class="decided"><span class="chip ok">You: ${esc(i.owner.decision)}</span> ${esc(i.owner.date)}${i.owner.note ? ` · ${inline(i.owner.note)}` : ''}</p>` : ''}
+      ${i.pros.length || i.cons.length ? `<div class="weigh">
+        <div><p class="label">For</p><ul>${i.pros.map((t) => `<li>${inline(t)}</li>`).join('')}</ul></div>
+        <div><p class="label">Against</p><ul>${i.cons.map((t) => `<li>${inline(t)}</li>`).join('')}</ul></div>
+      </div>` : ''}
+      ${i.changes.length ? `<details class="more"><summary>What it changes in the site as it stands<span>${i.touched} part${i.touched === 1 ? '' : 's'} touched${sizes ? `: ${sizes}` : ''}</span></summary>
+        <dl class="changes">${i.changes.map((r) => `<div><dt>${inline(r.part)}<span class="size ${esc(r.size.split(/[ ,]/)[0].toLowerCase())}">${inline(r.size)}</span></dt><dd><b>Today</b>${inline(r.today)}</dd><dd><b>With it</b>${inline(r.after)}</dd></div>`).join('')}</dl>
+        ${i.changesNote ? `<div class="md">${markdown(i.changesNote, { skipTitle: false })}</div>` : ''}</details>` : ''}
+      ${i.delivery.length ? `<details class="more"><summary>Can it be delivered<span>${esc(count(i.results, ['proved', 'failed', 'open']))}</span></summary>
+        <dl class="changes">${i.delivery.map((r) => `<div><dt>${inline(r.claim)}<span class="size ${esc(r.is || '')}">${esc(r.is || '')}</span></dt><dd><b>Tried</b>${inline(r.tried)}</dd><dd><b>Result</b>${inline(r.result)}</dd></div>`).join('')}</dl>
+        ${i.deliveryNote ? `<div class="md">${markdown(i.deliveryNote, { skipTitle: false })}</div>` : ''}</details>` : ''}
+      ${i.objections.length ? `<details class="more"><summary>Argued against by ${esc(i.challengedBy.replace(/^the /, 'the '))}<span>${i.objections.length} objection${i.objections.length === 1 ? '' : 's'}: ${esc(count(i.outcomes, ['stands', 'changed', 'answered']))}</span></summary>
+        <ul class="objections">${i.objections.map((o) => `<li><span class="size ${esc(o.is || '')}">${esc(o.is || '')}</span>${inline(o.text)}</li>`).join('')}</ul></details>` : ''}
+      ${more('How the sentence was read', i.explicit)}
+      ${more('The shapes it could take', i.shapes)}
+      ${more('Does it fit the site', i.fit)}
+      ${live && i.questions.length ? `<p class="label" style="margin-top:18px">Questions for you</p>${i.questions.map((q) => `<div class="ask">
+        <h4>${q.n} · ${inline(q.title)}</h4>
+        <div class="opts">${q.options.map((o) => `<button type="button" class="opt" data-q="${i.id}-${q.n}" data-o="${o.key}" aria-pressed="false"><b>${o.key}</b><span>${inline(o.text)}${o.recommended ? '<span class="rec">Recommended</span>' : ''}</span></button>`).join('')}</div>
+        ${q.why ? `<p class="muted">${inline(q.why)}</p>` : ''}
+      </div>`).join('')}` : ''}
+      ${i.next ? `<p class="muted" style="margin-top:14px">Next: ${inline(i.next.replace(/\n+/g, ' '))}</p>` : ''}
+      ${open ? `<p class="label" style="margin-top:18px">Your decision</p>
+      <p class="muted" style="margin-top:6px">Pursue takes the next step above and nothing more. What a reader sees is a later call of yours.</p>
+      <div class="opts row">${[['pursue', 'Pursue'], ['park', 'Park'], ['drop', 'Drop']].map(([k, t]) => `<button type="button" class="opt" data-q="${i.id}" data-o="${k}" aria-pressed="false"><span>${t}${VERDICT_TAP[i.verdict] === k ? '<span class="rec">The lead</span>' : ''}</span></button>`).join('')}</div>
+      <input class="note" id="note-${i.id}" data-q="${i.id}" type="text" placeholder="A note: what to change, or why (optional)" aria-label="Note for ${i.id}">` : ''}
+    </article>`;
+}
 
 const html = `<title>House of Wonders Command Centre</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,700;1,500&family=JetBrains+Mono:wght@400&display=swap">
@@ -141,11 +143,50 @@ section > .label { margin-bottom: 10px; }
 .opt { display: grid; grid-template-columns: 2rem minmax(0, 1fr); gap: 2px 10px; align-items: start; text-align: left; width: 100%; font: 400 0.95rem/1.45 var(--ui); color: var(--ink-2); background: none; border: 1px solid var(--rule); border-radius: 4px; padding: 11px 12px; cursor: pointer; }
 .opt:hover { border-color: var(--ink-3); color: var(--ink); }
 .opt b { font: 700 1.05rem/1.3 var(--display); color: var(--brass); }
+.opts.row .opt { display: block; text-align: center; font-weight: 500; }
 .opt .rec { display: inline-block; margin-left: 8px; font: 600 10px/1 var(--ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--yes); }
 .opt[aria-pressed="true"] { background: var(--yes-bg); border-color: var(--yes); color: var(--ink); }
 .note { width: 100%; margin-top: 10px; font: 400 0.92rem/1.3 var(--ui); color: var(--ink); background: var(--ground-2); border: 1px solid var(--rule); border-radius: 4px; padding: 8px 10px; }
 .note::placeholder { color: var(--ink-3); }
 .status { color: var(--ink-3); font-size: 0.86rem; min-height: 1.3em; margin-top: 10px; }
+.opts.row { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+.new { display: grid; gap: 10px; margin-top: 18px; padding: 18px 0; border-block: 1px solid var(--rule); }
+.new label { font: 500 11px/1 var(--ui); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); }
+.new textarea { width: 100%; min-height: 5.2rem; resize: vertical; font: 400 1rem/1.5 var(--ui); color: var(--ink); background: var(--ground-2); border: 1px solid var(--rule); border-radius: 4px; padding: 10px 12px; }
+.send { justify-self: start; font: 600 0.9rem/1 var(--ui); color: var(--ground); background: var(--ink); border: 0; border-radius: 4px; padding: 11px 18px; cursor: pointer; }
+.send:disabled { opacity: 0.45; cursor: default; }
+.sent { margin: 0; padding: 0; list-style: none; color: var(--ink-2); font-size: 0.92rem; display: grid; gap: 6px; }
+.sent li::before { content: "Waiting to be filed · "; color: var(--ink-3); }
+.words { margin: 10px 0 0; padding-left: 14px; border-left: 2px solid var(--brass); color: var(--ink); font: italic 500 1.05rem/1.45 var(--display); max-width: 60ch; }
+.call .md { padding-bottom: 6px; }
+.call details.more { margin-top: 2px; }
+.call .weigh + details.more { margin-top: 12px; }
+.call details.more > summary span { color: var(--ink-3); margin-left: 10px; }
+.verdict { margin-top: 16px; }
+.verdict .md { color: var(--ink); max-width: 64ch; margin-top: 8px; }
+.waits { margin-top: 10px; color: var(--ink-2); font-size: 0.95rem; max-width: 64ch; }
+.waits b, .changes dd b { display: inline-block; margin-right: 8px; font: 600 10.5px/1 var(--ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--warn); }
+.changes { margin: 10px 0 4px; }
+.changes > div { padding: 10px 0; border-top: 1px solid var(--rule); }
+.changes dt { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; color: var(--ink); font: 500 0.95rem/1.4 var(--ui); }
+.changes dd { margin: 4px 0 0; color: var(--ink-2); font-size: 0.92rem; line-height: 1.5; max-width: 72ch; }
+.changes dd b { color: var(--ink-3); min-width: 4.2rem; }
+.size { font: 600 10.5px/1.3 var(--ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); text-align: right; }
+.size.medium, .size.open, .size.changed { color: var(--warn); } .size.large, .size.failed, .size.stands { color: var(--bad); } .size.small, .size.answered { color: var(--ink-2); } .size.proved { color: var(--yes); }
+.objections { list-style: none; margin: 10px 0 4px; padding: 0; }
+.objections li { padding: 10px 0; border-top: 1px solid var(--rule); color: var(--ink-2); font-size: 0.92rem; line-height: 1.5; max-width: 72ch; }
+.objections .size { display: block; margin-bottom: 6px; }
+.decided { margin-top: 12px; color: var(--ink-2); font-size: 0.92rem; }
+.weigh { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 6px 28px; margin-top: 16px; }
+.weigh ul { margin: 8px 0 0; padding-left: 1.1em; color: var(--ink-2); font-size: 0.95rem; line-height: 1.5; }
+.weigh li + li { margin-top: 6px; }
+.weigh .label { margin-top: 10px; }
+.ask { margin-top: 12px; }
+.ask h4 { margin: 0; font: 500 1rem/1.4 var(--ui); color: var(--ink); }
+.ask .opts { margin-top: 8px; }
+.ask .muted { margin-top: 6px; }
+.call details.more > summary { cursor: pointer; color: var(--brass); font: 500 0.86rem/1.3 var(--ui); list-style: none; padding: 10px 0; }
+.call details.more > summary::-webkit-details-marker { display: none; }
 .scroll { overflow-x: auto; margin-top: 16px; }
 table { border-collapse: collapse; width: 100%; font-size: 0.92rem; min-width: 520px; }
 th { text-align: left; font: 500 11px/1.2 var(--ui); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); padding: 0 14px 9px 0; border-bottom: 1px solid var(--rule); vertical-align: bottom; }
@@ -169,6 +210,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
 .md p { margin: 10px 0; } .md ul, .md ol { margin: 10px 0; padding-left: 1.2em; } .md li + li { margin-top: 5px; }
 .md strong { color: var(--ink); font-weight: 600; } .md hr { border: 0; border-top: 1px solid var(--rule); margin: 18px 0; }
 .md table { min-width: 460px; }
+.md blockquote { margin: 14px 0; padding-left: 14px; border-left: 2px solid var(--brass); color: var(--ink); font: italic 500 1.05rem/1.45 var(--display); }
 .tick { display: inline-block; width: 0.8em; height: 0.8em; margin-right: 0.5em; border: 1px solid var(--ink-3); vertical-align: -0.05em; }
 .tick[data-done="true"] { background: var(--yes); border-color: var(--yes); }
 </style>
@@ -180,11 +222,25 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     <div class="health">
       <span class="chip ${state.errors.length ? 'bad' : 'ok'}">${state.errors.length ? `Plan broken in ${state.errors.length}` : 'Plan sound'}</span>
       <span class="chip ${state.queue.length > 8 ? 'warn' : ''}">${state.queue.length} waiting on you</span>
+      <span class="chip">${state.ideas.length} ideas · ${state.ideas.filter((i) => i.status === 'shaped').length} shaped for you</span>
       <span class="chip ${state.inbox > 25 ? 'warn' : ''}">${state.inbox} in the inbox</span>
       <span class="chip">${state.features.length} features · ${state.features.filter((f) => f.journeys.length).length} walked by a journey</span>
       <span class="chip">${state.decisions.length} decisions</span>
     </div>
     ${state.errors.length || state.warnings.length ? `<ul class="notes">${[...state.errors, ...state.warnings].map((w) => `<li>${inline(w)}</li>`).join('')}</ul>` : ''}
+    <details class="doc" style="margin-top:22px">
+      <summary>How to drive this</summary>
+      <div class="md">
+        <ul>
+          <li><strong>Answer a call:</strong> tap an option under "Waiting on you". Add a note if the answer needs one.</li>
+          <li><strong>Have an idea:</strong> write it in the box under "Ideas", as it occurs to you. It comes back made explicit, weighed against the site as it stands, with its for and against and a verdict; you tap Pursue, Park or Drop.</li>
+          <li><strong>Choose between two ways:</strong> a choice arrives with its prototypes on a page of its own, linked from its call. Tap one there.</li>
+          <li><strong>Notice something wrong:</strong> say it to any Claude session in the repo (<code>/finding</code>), or leave it as a note on a call.</li>
+          <li><strong>Start work:</strong> in a session, <code>/hub</code> says where things stand and <code>/stage</code> builds the next thing that needs nobody.</li>
+        </ul>
+        <p>A tap is stored with this page at once. It is written into the plan when the next session starts, or by the daily run if you switch it on. Nothing is pushed without you.</p>
+      </div>
+    </details>
   </header>
 
   <section aria-labelledby="h-now">
@@ -202,11 +258,25 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     <p class="status" id="status" role="status"></p>
     ${state.queue.map((q) => `<article class="call" id="${q.id}" data-answered="false">
       <h3><span class="id">${q.id}</span>${inline(q.title)}</h3>
-      <div class="body">${markdown(q.text.replace(/^- \*\*[A-Z]\b.*$/gm, '').trim(), { skipTitle: false })}</div>
+      <div class="body">${markdown(q.text.replace(OPTION, '').trim(), { skipTitle: false })}</div>
       <div class="opts">${q.options.map((o) => `<button type="button" class="opt" data-q="${q.id}" data-o="${o.key}" aria-pressed="false"><b>${o.key}</b><span>${inline(o.text)}${o.recommended ? '<span class="rec">Recommended</span>' : ''}</span></button>`).join('')}</div>
       <input class="note" id="note-${q.id}" data-q="${q.id}" type="text" placeholder="A note for Claude (optional)" aria-label="Note for ${q.id}">
     </article>`).join('\n')}
     ${choices.length ? `<p class="label" style="margin-top:28px">Choices with prototypes</p><ul class="list">${choices.map(([id, url]) => `<li><a href="${esc(url)}">${esc(id)}</a></li>`).join('')}</ul>` : ''}
+  </section>
+
+  <section aria-labelledby="h-ideas">
+    <p class="label">Ideas</p>
+    <h2 id="h-ideas">Say an idea; it comes back weighed</h2>
+    <p class="sub">Write it as it occurs to you. The next session keeps your words exactly and works the idea through: how the sentence can be read and which reading it took, the shapes it could take, what it would change in the site as it stands, what speaks for it and against it, and a verdict. It comes back here for you to pursue, park or drop. Before it reaches you it has been tried, not supposed (what must be true for it to be built, and what happened when that was tried), and argued against by a reviewer who did not shape it. The verdict is advice; the decision is yours. A question you leave untapped stays open: nothing is built on a guess at your answer.</p>
+    <div class="new">
+      <label for="idea-new">A new idea, in your own words</label>
+      <textarea id="idea-new" placeholder="I want the palette to be shareable as an image"></textarea>
+      <button type="button" class="send" id="idea-send">Send it to the workshop</button>
+      <p class="status" id="idea-status" role="status"></p>
+      <ul class="sent" id="idea-sent"></ul>
+    </div>
+    ${state.ideas.map(ideaCard).join('\n')}
   </section>
 
   <section aria-labelledby="h-road">
@@ -240,9 +310,11 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
   </section>
 
   <section aria-labelledby="h-rules">
-    <p class="label">Philosophy, rules and architecture</p>
+    <p class="label">Language, philosophy, workflows and architecture</p>
     <h2 id="h-rules">What the site is and how it is built</h2>
+    ${doc('DESIGN-LANGUAGE.md', 'The QSD design language: the grammar and its signatures')}
     ${doc('PRINCIPLES.md', 'Principles: the identity and your standing calls')}
+    ${doc('WORKFLOWS.md', 'Workflows: how a fault, a feature, a piece, a choice and a thought each move')}
     ${doc('ARCHITECTURE.md', 'Architecture: the shape, the layers, the rules for new work')}
     ${doc('FEATURES.md', `Features: ${state.features.length} of them, with their code and journeys`)}
     ${doc('README.md', 'How the plan works')}
@@ -254,10 +326,11 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
   try { answers = JSON.parse(localStorage.getItem(LS) || "{}") || {}; } catch (e) {}
   var say = function (t) { document.getElementById("status").textContent = t; };
   function draw() {
+    // By each button's own id: an idea's questions sit inside its card and are answered apart from it.
+    document.querySelectorAll(".opt").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.o === (answers[b.dataset.q] || {}).option)); });
     document.querySelectorAll(".call").forEach(function (c) {
       var a = answers[c.id] || {};
       c.dataset.answered = String(!!a.option);
-      c.querySelectorAll(".opt").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.o === a.option)); });
       var n = document.getElementById("note-" + c.id);
       if (n && document.activeElement !== n) n.value = a.note || "";
     });
@@ -285,8 +358,23 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     save(id);
   });
   draw();
+  var send = document.getElementById("idea-send"), box = document.getElementById("idea-new");
+  var tell = function (t) { document.getElementById("idea-status").textContent = t; };
+  send.addEventListener("click", function () {
+    var text = box.value.trim();
+    if (!text) { tell("Write the idea first."); return; }
+    if (!db) { tell("This view cannot store it. Say it to Claude in chat instead: /idea, then your words."); return; }
+    send.disabled = true; tell("Sending…");
+    db.collection("ideas").add({ text: text, at: new Date().toISOString() })
+      .then(function () { box.value = ""; tell("Kept. The next session files it and brings it back shaped."); }, function () { tell("Could not store it here. Say it to Claude in chat instead."); })
+      .then(function () { send.disabled = false; });
+  });
   if (window.claude && window.claude.use) window.claude.use("db").then(function (ns) {
     if (!ns) return; db = ns;
+    db.collection("ideas").onSnapshot(function (snap) {
+      var ul = document.getElementById("idea-sent"); ul.textContent = "";
+      snap.docs.forEach(function (d) { var li = document.createElement("li"); li.textContent = (d.data() || {}).text || ""; ul.appendChild(li); });
+    }, function () {});
     db.collection("answers").onSnapshot(function (snap) {
       var remote = {};
       snap.docs.forEach(function (d) { var v = d.data() || {}; remote[d.id] = { option: v.option || "", note: v.note || "" }; });
@@ -300,7 +388,6 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
 </script>
 `;
 
-const outDir = path.join(ROOT, 'design', 'hub');
-fs.mkdirSync(outDir, { recursive: true });
-fs.writeFileSync(path.join(outDir, 'hub.html'), html);
-console.log(`design/hub/hub.html · ${(html.length / 1024).toFixed(0)} KB · ${state.queue.length} calls, ${state.stages.length} stages, ${state.decisions.length} decisions`);
+fs.mkdirSync(path.dirname(OUT), { recursive: true });
+fs.writeFileSync(OUT, html);
+console.log(`${path.relative(ROOT, OUT)} · ${(html.length / 1024).toFixed(0)} KB · ${state.queue.length} calls, ${state.stages.length} stages, ${state.decisions.length} decisions`);

@@ -18,10 +18,17 @@
  *   - a decision out of sequence or with no Status line
  *   - a relative link in `_plan/` that leads nowhere
  *   - a feature row naming a file or a journey that does not exist
+ *   - an id used twice (a finding's F number, a call's Q number, an idea's I number)
+ *   - a queue whose shape `plan.mjs` and the command centre cannot read: no rule and "## Answered"
+ *     after the open calls, or an open call with fewer than two options (it would draw no buttons)
+ *   - a stage citing a call that is not in the queue; an idea file with no id, name or status
+ *   - an idea returned to the owner (shaped, or further on) without its verdict, its reading made
+ *     explicit, what it changes in the site as it stands, its for and against, its trial ("Can it
+ *     be delivered") or its challenge by someone who did not shape it (decisions/0008)
  *   - a change to what readers get (styles, layouts, includes, scripts, pages, navigation) with no
  *     line in `_plan/CHANGELOG.md` beside it
- * What only warns: a roadmap not reviewed in a month, a long queue, a full inbox. A warning that
- * failed the gate would be muted within a week.
+ * What only warns: a roadmap not reviewed in a month, a long queue, a full inbox, a command centre
+ * published before the plan last changed. A warning that failed the gate would be muted within a week.
  *
  * Exit codes: 0 sound (warnings allowed) · 1 broken · 2 not a plan
  */
@@ -29,9 +36,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { planHash } from './lib/plan-hash.mjs';
+import { readIdea, optionsOf } from './lib/plan-ideas.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const PLAN = path.join(ROOT, '_plan');
+// `PLAN_DIR` points the check at another folder (the tests use a copy); the site's files stay ROOT's.
+const PLAN = process.env.PLAN_DIR ? path.resolve(process.env.PLAN_DIR) : path.join(ROOT, '_plan');
 const args = process.argv.slice(2);
 const sinceAt = args.indexOf('--since');
 const since = sinceAt >= 0 ? args[sinceAt + 1] : null;
@@ -40,12 +50,14 @@ const mode = args.includes('--brief') ? 'brief' : args.includes('--json') ? 'jso
 if (!fs.existsSync(PLAN)) { console.error('No _plan/ folder.'); process.exit(2); }
 
 const STATUSES = ['idea', 'planned', 'designing', 'building', 'in review', 'done'];
-const REQUIRED = ['README.md', 'ROADMAP.md', 'QUEUE.md', 'PRINCIPLES.md', 'ARCHITECTURE.md', 'FEATURES.md', 'CHANGELOG.md', 'findings/inbox.md'];
+const REQUIRED = ['README.md', 'ROADMAP.md', 'QUEUE.md', 'PRINCIPLES.md', 'DESIGN-LANGUAGE.md', 'WORKFLOWS.md', 'ARCHITECTURE.md', 'FEATURES.md', 'CHANGELOG.md', 'findings/inbox.md'];
 // What a reader gets. Posts, voyages and captions are content, and their own record.
 const READER_FACING = [/^_sass\//, /^_layouts\//, /^_includes\//, /^assets\/js\//, /^assets\/css\//, /^_pages\//, /^_data\/navigation\.yml$/, /^_config\.yml$/];
 const NOT_READER_FACING = [/^assets\/js\/vendor\//];
 
-const errors = [], warnings = [];
+// errors fail the gate; warnings ask for upkeep and go in every session's brief; notes are standing
+// facts worth seeing but not worth repeating to every session (a warning said daily is wallpaper).
+const errors = [], warnings = [], notes = [];
 const read = (rel) => fs.readFileSync(path.join(PLAN, rel), 'utf8');
 const exists = (rel) => fs.existsSync(path.join(PLAN, rel));
 const daysSince = (iso) => Math.floor((Date.now() - new Date(`${iso}T00:00:00Z`).getTime()) / 86400000);
@@ -118,10 +130,14 @@ if (exists('QUEUE.md')) {
     if (!head) { errors.push(`QUEUE.md: "${block.split('\n')[0]}" is not "### Qn · question".`); continue; }
     const asked = block.match(/Asked:\s*(\d{4}-\d{2}-\d{2})/)?.[1] || null;
     if (!asked) warnings.push(`${head[1]} has no "Asked: YYYY-MM-DD" line.`);
-    const options = [...block.matchAll(/^- \*\*([A-Z])\b[^*]*\*\*:?\s*(.+)$/gm)].map((o) => ({ key: o[1], recommended: /recommended/i.test(o[0].split('**')[1]), text: o[2].trim() }));
+    const options = optionsOf(block);
     const text = block.split('\n').slice(1).join('\n').replace(/^Asked:.*$/m, '').replace(/^---\s*$/m, '').trim();
     queue.push({ id: head[1], title: head[2].trim(), asked, options, text });
   }
+  const allQ = [...read('QUEUE.md').matchAll(/^### (Q\d+) · |^- \d{4}-\d{2}-\d{2} · (Q\d+) · /gm)].map((m) => m[1] || m[2]);
+  for (const id of new Set(allQ.filter((q, n) => allQ.indexOf(q) !== n))) errors.push(`${id} is used twice in QUEUE.md: a number is never reused. Renumber the later one.`);
+  if (!/\n---\n+## Answered\n/.test(read('QUEUE.md'))) errors.push('QUEUE.md must end its open calls with a rule (---) and a "## Answered" heading: plan.mjs writes between them.');
+  for (const q of queue) if (q.options.length < 2) errors.push(`${q.id} has ${q.options.length} option(s): a call needs at least two, written "- **A:** …", or the command centre draws no buttons.`);
   if (queue.length > 8) warnings.push(`The queue has ${queue.length} open calls; it is meant to hold about seven.`);
   const oldest = queue.map((q) => q.asked).filter(Boolean).sort()[0];
   if (oldest && daysSince(oldest) > 21) warnings.push(`The oldest call in the queue has waited ${daysSince(oldest)} days.`);
@@ -146,11 +162,54 @@ if (exists('FEATURES.md')) {
     features.push({ name, where, journeys: ids });
   }
   const bare = features.filter((f) => !f.journeys.length).length;
-  if (features.length && bare) warnings.push(`${bare} of ${features.length} features have no journey walking them.`);
+  if (features.length && bare) notes.push(`${bare} of ${features.length} features have no journey walking them.`);
+}
+
+/* ── findings that have fallen through ─────────────────────────────────── */
+const stageText = fs.existsSync(path.join(PLAN, 'stages')) ? fs.readdirSync(path.join(PLAN, 'stages')).filter((f) => f.endsWith('.md')).map((f) => read(`stages/${f}`)).join('\n') : '';
+if (fs.existsSync(path.join(PLAN, 'findings'))) {
+  const unhomed = [];
+  for (const f of fs.readdirSync(path.join(PLAN, 'findings')).filter((x) => /audit\.md$/.test(x))) {
+    for (const m of read(`findings/${f}`).matchAll(/^### ([A-Z]\d{2}) · [^\n]*\n\n[^\n]*\*\*Status:\*\* (fix|partly)/gm)) {
+      if (!new RegExp(`\\b${m[1]}\\b`).test(stageText)) unhomed.push(m[1]);
+    }
+  }
+  if (unhomed.length) warnings.push(`${unhomed.length} finding(s) marked Fix are named in no stage (${unhomed.join(', ')}): give each a home.`);
+}
+if (exists('QUEUE.md')) {
+  const answered = new Set([...(read('QUEUE.md').split(/^## Answered/m)[1] || '').matchAll(/^- \d{4}-\d{2}-\d{2} · (Q\d+) · /gm)].map((m) => m[1]));
+  const known = new Set([...read('QUEUE.md').matchAll(/\b(Q\d+)\b/g)].map((m) => m[1]));
+  for (const s of stages) {
+    if (!exists(s.file)) continue;
+    for (const id of new Set([...read(s.file).matchAll(/\b(Q\d+)\b/g)].map((m) => m[1]))) {
+      if (!known.has(id)) errors.push(`_plan/${s.file} cites ${id}, which is not in the queue.`);
+      else if (answered.has(id) && /blocked on|in the queue/i.test(read(s.file).split('\n').find((l) => l.includes(id)) || '')) warnings.push(`_plan/${s.file} still waits on ${id}, which is answered.`);
+    }
+  }
+}
+
+/* ── ideas ──────────────────────────────────────────────────────────────── */
+const ideas = [];
+if (fs.existsSync(path.join(PLAN, 'ideas'))) {
+  for (const f of fs.readdirSync(path.join(PLAN, 'ideas')).filter((x) => /^I\d{3,}-.*\.md$/.test(x)).sort()) {
+    const { idea, errors: wrong } = readIdea(read(`ideas/${f}`), f);
+    errors.push(...wrong);
+    if (!idea) continue;
+    if (ideas.some((i) => i.id === idea.id)) errors.push(`${idea.id} is used by two idea files: a number is never reused.`);
+    ideas.push(idea);
+  }
+  const proposed = ideas.filter((i) => i.by === 'lead' && ['raw', 'shaped'].includes(i.status));
+  if (proposed.length > 2) warnings.push(`${proposed.length} proposals of the lead's wait on the owner (${proposed.map((i) => i.id).join(', ')}): two at most, so the owner hears proposals and is not buried in them.`);
+  const raw = ideas.filter((i) => i.status === 'raw');
+  if (raw.length) warnings.push(`${raw.length} idea(s) are still raw (${raw.map((i) => i.id).join(', ')}): shape them (the design lead, "Shape an idea").`);
 }
 
 /* ── inbox and changelog ────────────────────────────────────────────────── */
 const inbox = exists('findings/inbox.md') ? (read('findings/inbox.md').split(/^## Taken/m)[0].match(/^- /gm) || []).length : 0;
+if (exists('findings/inbox.md')) {
+  const allF = [...read('findings/inbox.md').matchAll(/^- \d{4}-\d{2}-\d{2} · (F\d{3,}) · /gm)].map((m) => m[1]);
+  for (const id of new Set(allF.filter((f, n) => allF.indexOf(f) !== n))) errors.push(`${id} appears twice in findings/inbox.md. If one line is in Waiting and one in Taken, a merge brought a taken finding back: delete the Waiting line. If they are two findings, renumber the later one.`);
+}
 if (inbox > 25) warnings.push(`The findings inbox holds ${inbox} items; sort it into stages.`);
 const changelog = exists('CHANGELOG.md') ? [...read('CHANGELOG.md').matchAll(/^- (\d{4}-\d{2}-\d{2})\s*·\s*(.+)$/gm)].map((m) => ({ date: m[1], text: m[2] })) : [];
 
@@ -167,7 +226,9 @@ if (seen.length && !changed.has('_plan/CHANGELOG.md')) {
 /* ── out ────────────────────────────────────────────────────────────────── */
 const now = stages.find((s) => ['building', 'in review'].includes(s.status)) || stages.find((s) => s.status === 'planned') || null;
 const hub = fs.existsSync(path.join(PLAN, 'hub.json')) ? JSON.parse(read('hub.json')) : {};
-const state = { reviewed, stages, now, queue, decisions, features, inbox, changelog: changelog.slice(0, 20), hub, errors, warnings };
+const fingerprint = planHash(PLAN);
+if (hub.url && hub.published?.hash !== fingerprint) warnings.push(`The command centre is behind the plan (last published ${hub.published?.date || 'before the plan last changed'}): rebuild and republish it with /hub page.`);
+const state = { reviewed, stages, now, queue, decisions, features, ideas, inbox, changelog: changelog.slice(0, 20), hub, fingerprint, errors, warnings, notes };
 
 if (mode === 'json') { console.log(JSON.stringify(state, null, 1)); process.exit(errors.length ? 1 : 0); }
 
@@ -179,8 +240,10 @@ if (mode === 'brief') {
   out.push(`Owner's queue: ${queue.length} open${queue.length ? ` (${queue.map((q) => q.id).join(', ')})` : ''} → _plan/QUEUE.md. Never treat an unanswered call as a yes.`);
   if (hub.url) out.push(`The owner answers on the command centre: ${hub.url} — read new answers first (ArtifactData, action "list", collection "answers"), then record them in QUEUE.md.`);
   out.push(`Findings inbox: ${inbox} waiting → _plan/findings/inbox.md. File what you notice there, one line, dated.`);
-  if (changelog.length) out.push(`Last changes: ${changelog.slice(0, 3).map((c) => `${c.date} ${c.text}`).join(' | ')}`);
-  out.push('Rules: who decides → _plan/decisions/0001 · a choice between two ways → /choose (prototypes first) · before the owner sees work → npm run gate:full and the site-reviewer agent · a change readers get → a line in _plan/CHANGELOG.md.');
+  if (ideas.length) out.push(`Ideas: ${ideas.filter((i) => i.status === 'raw').length} raw, ${ideas.filter((i) => i.status === 'shaped').length} shaped and waiting on the owner → _plan/ideas/. The owner's new ideas may be on the command centre (collection "ideas"): file each with node scripts/plan.mjs idea, then shape it.`);
+  const short = (t) => (t.length > 84 ? `${t.slice(0, 82).replace(/\s+\S*$/, '')}…` : t);
+  if (changelog.length) out.push(`Last changes (${changelog[0].date}): ${changelog.slice(0, 3).map((c) => short(c.text.replace(/ · tier \d.*$/, ''))).join(' | ')}`);
+  out.push('Rules: who decides → _plan/decisions/0001 · the language → _plan/DESIGN-LANGUAGE.md · an idea of the owner\'s → /idea · a choice between two ways → /choose (prototypes first) · before the owner sees work → npm run gate:full and the site-reviewer agent · a change readers get → node scripts/plan.mjs log.');
   if (errors.length) out.push(`The plan is broken (${errors.length}): ${errors[0]} Run node scripts/check-plan.mjs.`);
   if (warnings.length) out.push(`Upkeep: ${warnings.join(' ')}`);
   console.log(out.join('\n'));
@@ -189,7 +252,8 @@ if (mode === 'brief') {
 
 errors.forEach((e) => console.log(`✗  ${e}`));
 warnings.forEach((w) => console.log(`!  ${w}`));
+notes.forEach((n) => console.log(`·  ${n}`));
 console.log(errors.length
   ? `The plan is broken in ${errors.length} place(s).`
-  : `The plan is sound: ${stages.length} stages, ${decisions.length} decisions, ${queue.length} open calls, ${features.length} features, ${inbox} in the inbox.`);
+  : `The plan is sound: ${stages.length} stages, ${decisions.length} decisions, ${queue.length} open calls, ${ideas.length} ideas, ${features.length} features, ${inbox} in the inbox.`);
 process.exit(errors.length ? 1 : 0);

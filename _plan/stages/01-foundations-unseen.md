@@ -43,6 +43,8 @@ A faster, steadier site that looks exactly the same. Every item is a finding fro
 - [x] X16 · No focus on things that cannot be seen.
 - [x] X17 · Palette's glide yields to the reader; key repeat ignored.
 - [ ] X18 · State changes are announced.
+- [ ] F041 · The vat does not throw where there is no WebGL (`assets/js/colour/vat.js:122`: `shared?.gl`
+  stops at null, not at false). Found by I001's trial. With a journey run with 3D off.
 - [x] X19 · Reduced motion and motion-off honoured by the map's zooms and reset, the lightbox's mount and the treatise.
 - [ ] X19, the rest · The map's keyboard pans and `panTo` still ease (F039).
 - [ ] X10, X16 · 2026-10-01 · Their journeys: tarot corners take no click with search open (X10); a folded

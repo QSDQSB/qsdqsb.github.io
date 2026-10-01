@@ -31,11 +31,19 @@ passes, and the pages it should be judged on. If any of these is missing, stop a
   removes it.
 - **One session's worth.** If an honest prototype needs more, stop and report what it would take.
 
+## Before you start
+
+A fresh worktree has the tracked files and nothing else. From the main checkout:
+
+```bash
+bash scripts/prototype-setup.sh <your worktree>    # links the packages, copies the fetched data
+```
+
 ## Before you report
 
 ```bash
 bash scripts/gate.sh                       # must pass
-bash -lc 'npm run visual:build'            # the built site, for the shots
+bash -lc 'npm run visual:build'            # the built site, for the shots (about ten seconds)
 node scripts/check-journeys.mjs            # must pass
 ```
 

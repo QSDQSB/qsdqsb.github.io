@@ -31,7 +31,7 @@ esac
 
 passed=0
 failed=0
-skipped=0
+skipped=""
 report=""
 
 check() {
@@ -49,7 +49,7 @@ check() {
 
 skip() {
   printf '–  %s (skipped: %s)\n' "$1" "$2"
-  skipped=$((skipped + 1))
+  skipped=$(( ${skipped:-0} + 1 ))
 }
 
 check "Unit tests"               npm test --silent
@@ -59,11 +59,23 @@ check "Breakpoint policy"        bash scripts/check-responsive-policy.sh
 check "Single-use variables"     python3 scripts/check-single-use-variables.py --new-only
 check "House style"              python3 scripts/check-house-style.py --new-only
 check "Frontmatter contracts"    node scripts/check-frontmatter.js
-check "Gallery integrity"        node scripts/check-gallery-integrity.js
+# The manifests come from R2 (npm run photos:fetch). Where they cannot be fetched (CI has no key)
+# the check is skipped, said so, and the rest of the gate still stands.
+if [ -f _data/photo_manifests/_index.json ]; then
+  check "Gallery integrity"      node scripts/check-gallery-integrity.js
+else
+  skip "Gallery integrity" "no photo manifests here: npm run photos:fetch"
+fi
 check "The plan"                 node scripts/check-plan.mjs
 
 if [ "$mode" = "full" ]; then
+  # A build under a Ruby other than the lockfile's rewrites Gemfile.lock. If it was clean before, it
+  # is put back after: a gate that leaves the tree dirty fails the next run's own checks.
+  lock_was_clean=0
+  git diff --quiet -- Gemfile.lock 2>/dev/null && lock_was_clean=1
+  restore_lock() { [ "$lock_was_clean" -eq 1 ] && git checkout -- Gemfile.lock 2>/dev/null; return 0; }
   if out=$(npm run --silent visual:build 2>&1); then
+    restore_lock
     printf '✓  %s\n' "Seeded build"
     passed=$((passed + 1))
     check "Pixel diff"           npm run --silent visual:diff
@@ -80,6 +92,7 @@ if [ "$mode" = "full" ]; then
     kill "$server_pid" 2>/dev/null
     trap - EXIT
   else
+    restore_lock
     printf '✗  %s\n' "Seeded build"
     report+="── Seeded build ──"$'\n'"$(printf '%s' "$out" | tail -n 25)"$'\n\n'
     failed=$((failed + 1))
@@ -93,13 +106,13 @@ fi
 echo
 if [ "$failed" -eq 0 ]; then
   if [ "$mode" = "fast" ]; then
-    echo "GATE: PASS (fast) — ${passed} checks. A change to _sass/, _layouts/, _includes/ or assets/js/ also needs --full."
+    echo "GATE: PASS (fast) — ${passed} checks${skipped:+, ${skipped} skipped}. A change to _sass/, _layouts/, _includes/ or assets/js/ also needs --full."
   else
-    echo "GATE: PASS (full) — ${passed} checks."
+    echo "GATE: PASS (full) — ${passed} checks${skipped:+, ${skipped} skipped}."
   fi
   exit 0
 fi
 
 printf '%s' "$report"
-echo "GATE: FAIL — ${failed} of $((passed + failed)) checks."
+echo "GATE: FAIL — ${failed} of $((passed + failed)) checks${skipped:+, ${skipped} skipped}."
 exit 1

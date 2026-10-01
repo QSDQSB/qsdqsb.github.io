@@ -1,0 +1,53 @@
+name: Gate
+
+# The fast gate on everything pushed: the unit tests, the static guards and the plan's own check
+# (scripts/gate.sh). The hooks only run inside Claude Code; this is what catches a change made by
+# hand or in another tool: a stale bundle, a new !important, a raw breakpoint, a plan that has
+# stopped being true, a change readers get with no line in _plan/CHANGELOG.md.
+#
+# What it can and cannot see. Several guards judge a change against HEAD (the ratchet, house style,
+# single-use variables), and a fresh checkout is HEAD: here they only prove they still run. The
+# checks that stand on their own do the work: the tests, the bundle in sync with its sources, the
+# breakpoint policy, the plan's structure, and on a pull request the changelog rule over the whole
+# branch.
+#
+# Not here: the seeded build, the pixel diff, the reader journeys and the iPhone check
+# (scripts/gate.sh --full). They need the photo manifests, which are private, and Ruby; they run
+# on the machine that makes the change, before the owner sees it. See _plan/decisions/0007.
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # check-plan compares against the base of a pull request, so it needs the history.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        # Scripts off: nothing here needs a browser download or a native build beyond sharp's prebuilt.
+        run: npm ci
+
+      - name: The fast gate
+        run: bash scripts/gate.sh
+
+      - name: A change readers get is written down
+        # On a pull request, judged over the whole branch, not only its last commit.
+        if: github.event_name == 'pull_request'
+        run: node scripts/check-plan.mjs --since "origin/${{ github.base_ref }}"

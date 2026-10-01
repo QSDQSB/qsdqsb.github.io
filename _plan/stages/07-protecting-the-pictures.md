@@ -1,6 +1,6 @@
 # Stage 7 · Protecting the pictures
 
-**Status:** idea. Blocked on Q7 in the [queue](../QUEUE.md). **Tier:** 2.
+**Status:** idea. Blocked on Q6 in the [queue](../QUEUE.md). **Tier:** 2.
 
 ## Goal
 

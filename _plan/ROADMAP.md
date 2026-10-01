@@ -8,7 +8,7 @@ Last reviewed: 2026-10-01.
 | # | Stage | What a reader gets | Status | Mostly tier |
 |---|---|---|---|---|
 | 0 | [The hub](stages/00-hub.md) | Nothing yet: the plan, the lead and the gate | **done** 2026-10-01 | 0 |
-| 1 | [Foundations: unseen fixes](stages/01-foundations-unseen.md) | A faster, steadier site that looks the same | planned | 0 |
+| 1 | [Foundations: unseen fixes](stages/01-foundations-unseen.md) | A faster, steadier site that looks the same | building | 0 |
 | 2 | [Foundations: plumbing](stages/02-foundations-plumbing.md) | Nothing directly; one vocabulary for everything after | planned | 0, some 1 |
 | 3 | [Wayfinding](stages/03-wayfinding.md) | A site that is easy to get around and obvious to use | planned | 2 |
 | 4 | [Voyage and the cards](stages/04-voyage-and-cards.md) | The doorway to the photographs, refurbished | designing (branch `gallery/voyage-doors`) | 2 |
@@ -17,6 +17,8 @@ Last reviewed: 2026-10-01.
 | 7 | [Protecting the pictures](stages/07-protecting-the-pictures.md) | Nothing visible, if done well | idea | 2 |
 | 8 | [A palette as an image](stages/08-palette-as-image.md) | A palette that can be shared | idea | 2 |
 | 9 | [Weight and scale](stages/09-weight-and-scale.md) | A site that stays fast as the archive grows | planned | 0 |
+| 10 | [Tags, from scratch](stages/10-tags.md) | Tag pages worth using | idea | 2 |
+| 11 | [The colour pages](stages/11-colour-pages.md) | Palette, Reverie and Drift, finished | planned | 0, 1, some 2 |
 
 ## Why this order
 
@@ -29,9 +31,17 @@ Last reviewed: 2026-10-01.
 - **5 after 4.** The Bestiary is the first page built only from the vocabulary, so it comes after
   one older page has been migrated and the vocabulary has been tested.
 - **7 and 8 are small and independent.** They move up whenever the owner wants them.
+- **10 waits on 2 and 3.** It needs the `tag` piece, and the wayfinding walk decides what tags are for.
+- **11 is small and can run beside 1.** Its faults are marked Fix; only its taste calls wait on the owner.
 - **9 runs in the background.** Its budgets start with stage 1; its larger changes wait for 2.
 
 ## Recently done
 
 - 2026-10-01 · Stage 0. `_plan/`, the design lead, the site reviewer, `scripts/gate.sh`,
-  `scripts/check-journeys.mjs`. The [audit](findings/2026-10-01-ui-audit.md) of 73 findings.
+  `scripts/check-journeys.mjs`. The [audit](findings/2026-10-01-ui-audit.md) of 73 findings, marked by
+  the owner the same day. The [design language](DESIGN-LANGUAGE.md) (version 0), the
+  [workflows](WORKFLOWS.md), the idea workshop, studies, `scripts/plan.mjs`, CI, and the hub's own
+  architecture ([0007](decisions/0007-the-hub-architecture.md)), and the two bars a thing passes
+  before it reaches the owner ([0008](decisions/0008-ready-and-done.md)).
+- 2026-10-01 · Stage 1, first batch: sixteen findings fixed, through the gate and the reviewer
+  (two passes: the first was blocked on three faults).

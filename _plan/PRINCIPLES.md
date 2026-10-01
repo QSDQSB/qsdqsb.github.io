@@ -27,7 +27,8 @@ sequences, the Dolomites). Principles to extract, never motifs to copy.
 
 ## What makes the site itself
 
-A first reading from the 2026-10-01 audit. **Draft: the owner has not yet corrected it.**
+A first reading from the 2026-10-01 audit. **Draft: the owner has not yet corrected it.** How these are
+expressed, piece by piece, is in [`DESIGN-LANGUAGE.md`](DESIGN-LANGUAGE.md).
 
 1. **The photograph is the light source.** Rooms take the colour of the picture in view: the
    Photobook's glow, the lightbox wash, Reverie's dye, Drift.
@@ -109,6 +110,23 @@ writing (least well), and the person (Home strongly, About weakly).
 - Palette is a door and a masthead item. The CV left the masthead; its way in is at the end of
   About (2026-09-29).
 
+### Finding the way (2026-10-01)
+- **Immersive without losing direction.** The masthead hides itself while a page is read and comes
+  back when the reader scrolls up: a hint of looking for something. A fix to it keeps that philosophy.
+- A minimal, consistent footer across the site, on pages that scroll.
+- The tarot cards were a fun easter egg; the site has grown heavy and they need a new purpose. The
+  wheel of fortune that spins to a random voyage is liked.
+- The tag pages, for posts and for voyages, are to be redesigned from scratch.
+
+### Controls (2026-10-01)
+- Hover and focus: **smooth but not heavy; aesthetic but not distracting.**
+- "Titles should be default white coloured." "Retire the overly colourful H1 to H6 font colour." (in chat)
+- Inline code needs no blur.
+- On the lightbox's and Drift's keys: "change to not conflicting shortcuts". Read as: a key never takes
+  a shortcut the browser owns. Said of those two; taken as the rule for any page's keys unless the owner
+  says otherwise.
+- A colour no photograph holds shows the most adjacent match. It never shows nothing.
+
 ### Motion
 - Short and purposeful by default; cinematic only where it is the point. Keep the reader's place.
 - Every motion stops under `prefers-reduced-motion` and `html.motion-off`.
@@ -119,6 +137,14 @@ writing (least well), and the person (Home strongly, About weakly).
 - New visual directions are reviewed as a design first (Figma, or real pages with desktop and phone
   screenshots) before they are built.
 - Reuse the site's own mechanism before writing a parallel one.
+- 2026-10-01 · The owner decides, hears and brainstorms; Claude verifies. "User should make important
+  decisions, hear Claude's well discussed proposal and ideas, brainstorm with Claude. Claude should
+  have the essential automatic process to make sure the idea is justifiable and deliverable instead of
+  wasting user's time to verify and amend the product quality". How the hub does it (Claude's construction, the owner's to amend) is
+  [decisions/0008](decisions/0008-ready-and-done.md).
+- 2026-10-01 · What an idea owes before it is decided on: "An idea needs verdict, an idea needs
+  brainstorm to get explicit, an idea needs an evaluation of its influence to the existing structure,
+  pros and cons".
 
 ## Hard rules
 
