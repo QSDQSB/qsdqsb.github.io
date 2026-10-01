@@ -21,12 +21,39 @@ chapter cards: none felt immersive. "By the light" (labels beside plates, ordere
 definite no. "Hang" and "cinema": competent, not extraordinary. "Through the doors" (scroll moves
 through each cover's depth map): fine as the moment of entering, must not replace the card view.
 
-**Next step the owner named:** today's card view, refined: full colour, the poem on phones, no hover
-lift.
+**Next step the owner named (2026-09-26):** today's card view, refined: full colour, the poem on
+phones, no hover lift.
+
+**From the pairs (the owner, 2026-10-01; `PRINCIPLES.md`, The eye).** "A card leans raised off the
+page" (pair 11, score 4): "doesnt have to glow". "Under the pointer a card lifts and grows" (pair 12,
+score 5). "Over a photograph, glass and not a solid plate" (pair 10, score 1). "Few things, with room"
+(pair 16, score 1).
+
+**Two of these pull against an earlier call. Neither is settled by reading; both are asked.**
+
+- **Does the cover lift?** "No hover lift" (2026-09-26) was said of this card. Pair 12 (score 5) says
+  a card lifts and grows; it drew a small card, not a full-width cover. In `PRINCIPLES.md` the later
+  date wins, which would keep the lift. The card on `master` lifts and grows today
+  (`_sass/_archive.scss:170-184`: up a quarter em, to 1.03, under a deeper shadow, over the owner's
+  one second); the branch takes the lift off. Asked in round 2 of [the pairs](../studies/2026-10-01-the-qsd-aesthetic.md),
+  with the cover itself drawn. Until it is answered the branch's removal is not merged as decided,
+  and nothing is added to the cover.
+- **Does a cover take a glass plate?** Pair 10 drew a name on a plate over a cover, in glass and in
+  solid, and the owner chose glass. The standing call is "No opaque plates, chips or panels over the
+  image": a scrim and a hairline shadow. The pair asked which plate, not whether. The scrim stays
+  unless the owner asks for the plate.
 
 ## Scope
 
 - [ ] The refined card (branch `gallery/voyage-doors`): bring up to date with master, run the gate.
+      Its hover waits on "Does the cover lift?" above.
+- [ ] The tags on a card: today each takes its own colour under the pointer and none at rest
+      (`_sass/_archive.scss`, the card's hover), which is what the owner's note on pair 4 allows ("it
+      can change colour when hovered, if distinguishing colour is required"). Kept as it is until
+      round 2 says what colour a hovered tag takes.
+- [ ] The card's lift, once round 2 gives the amounts: how far, which shadow, no glow. From the
+      `card` piece ([stage 2](02-foundations-plumbing.md)); shown to the owner as a choice. The card
+      moves as one object; the photograph does not move inside its frame.
 - [ ] Parent pages (Prague, Rome, Japan, Dolomites, Venice) off the old card-list layout.
 - [ ] The Voyage index and its length (P03), decided with stage 3's wayfinding walk.
 - [ ] Related-post and grid cards get the cover's scrim (P07).

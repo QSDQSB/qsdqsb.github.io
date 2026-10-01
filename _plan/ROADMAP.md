@@ -31,13 +31,16 @@ Last reviewed: 2026-10-01.
 - **5 after 4.** The Bestiary is the first page built only from the vocabulary, so it comes after
   one older page has been migrated and the vocabulary has been tested. Its holding page (the owner,
   2026-10-01) does not wait: it uses only pieces that are built, and moves up when the owner wants it.
-- **2's visible moves wait for a conversation.** The owner has not yet accepted the design language
-  ("We need to revisit it", 2026-10-01). Stage 2's unseen work goes ahead; its moves onto the radii,
-  timings and glass depths wait until the language has been talked through.
+- **2's visible moves wait for round 2.** The owner has not yet accepted the design language ("We
+  need to revisit it", 2026-10-01) and is settling it by scoring pairs. Round 1 said which (a card
+  lifts, a tag is ink, a brass ornament); round 2 asks how much. Stage 2's unseen work goes ahead;
+  its moves onto the radii, timings and glass depths, and its three new pieces (the card's lift, the
+  ornament, how words arrive), wait for the amounts.
 - **7 and 8 are small and independent**, and now touch: 7 keeps a print from being saved by a
   gesture, 8 hands a reader an image that may hold a voyage's cover. Each is tried before the owner
   is asked anything more, and they are tried together before 8's control ships.
-- **10 waits on 2 and 3.** It needs the `tag` piece, and the wayfinding walk decides what tags are for.
+- **10 waits on 2 and 3.** It needs the `tag` piece (ink only: the owner, 2026-10-01), and the
+  wayfinding walk decides what tags are for.
 - **11 is small and can run beside 1.** Its faults are marked Fix; only its taste calls wait on the owner.
 - **9 runs in the background.** Its budgets start with stage 1; its larger changes wait for 2.
 
@@ -60,3 +63,8 @@ Last reviewed: 2026-10-01.
   [I002](ideas/I002-rules-for-the-hub-to-approve-and-merge-a-pull-re.md): shaped, tried and
   challenged the same day, and returned with the lead's advice to park it. Its useful part is stage
   0 work.
+- 2026-10-01 · The owner scored round 1 of the aesthetic pairs
+  ([the study](studies/2026-10-01-the-qsd-aesthetic.md)). The lines are in
+  [`PRINCIPLES.md`](PRINCIPLES.md) as "The eye", and the [design language](DESIGN-LANGUAGE.md) now
+  opens with the test they make: what the eye turns away. Where the draft had guessed flat cards and
+  a quiet hover, the owner chose lift. Stages 2, 4, 5, 6 and 10 carry what follows.

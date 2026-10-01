@@ -23,6 +23,11 @@ a building site. Then the Bestiary.
   for the prototype."
 - [`PRINCIPLES.md`](../PRINCIPLES.md), The look: "Dark editorial boutique: premium, minimal, classy,
   informative. Not skeuomorphic, and not an AI-generated showpiece." And: "Quiet by default".
+- `PRINCIPLES.md`, The eye (2026-10-01), on how the interface speaks (pair 14, score 3): "I prefer a
+  combination. Clarity when needed. For example: "34 frames; Nothing here but dust and echoes.
+  ONWARD"". The lead's reading, for the frame: that nothing is inside yet is said plainly; the line
+  about the binding may keep its voice.
+  And "Few things, with room" (pair 16, score 1).
 - `PRINCIPLES.md`, Finding the way: "**Immersive without losing direction.**"
 - `PRINCIPLES.md`, How the owner likes to be asked: "Reuse the site's own mechanism before writing a
   parallel one."

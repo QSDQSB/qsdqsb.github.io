@@ -12,39 +12,63 @@ Implements [0002](../decisions/0002-one-control-vocabulary.md) and steps 1 to 3 
 ## What this stage rests on, and what it does not
 
 The owner was asked on 2026-10-01 whether [`DESIGN-LANGUAGE.md`](../DESIGN-LANGUAGE.md) reads true
-(Q3). The answer: not yet, and "We need to revisit it". The language stays version 0, a draft, until
-it has been talked through with the owner. That conversation is in chat, not a call waiting on a tap.
-Until it has happened:
+(Q3). The answer: not yet, and "We need to revisit it"; then how: "Most of the design aesthetics we
+established should be inherited. Let's focus on the ambiguous part", asked as pairs to score. Round 1
+was scored the same day ([the study](../studies/2026-10-01-the-qsd-aesthetic.md)). The language stays
+version 0 until the owner says it reads true. Meanwhile:
 
-- **This stage rests on two decision records, not on the language.**
-  [0002](../decisions/0002-one-control-vocabulary.md) and
+- **It rests on two decision records.** [0002](../decisions/0002-one-control-vocabulary.md) and
   [0003](../decisions/0003-stylesheet-organisation.md) were accepted under delegation, and the owner
   accepted the tiers as written on the same day (Q2). Everything under "Tier 0" below goes ahead: no
   reader sees it.
 - **It rests on the owner's own calls**, quoted from [`PRINCIPLES.md`](../PRINCIPLES.md): white
-  headings, brass links, and the findings marked Fix on the audit.
+  headings, brass links, the findings marked Fix on the audit, and now "The eye": the round 1 lines.
+  Those say which. The ones this stage builds on:
+  - "Tags are ink only" (pair 4, score 5): "Crowded saturated colour blocks are distracting visually.
+    I prefer a consistent secondary layout for the functionality buttons, it can change colour when
+    hovered, if distinguishing colour is required."
+  - "A print has square corners" (pair 1, score 1): "Rounded Rectangle is for card-like elements."
+  - "A control leans rounded, not square" (pair 2, score 2): "Doesn't have to be pills, rounded
+    rectangle is fine".
+  - "A card leans raised off the page" (pair 11, score 4): "doesnt have to glow". "Under the pointer
+    a card lifts and grows" (pair 12, score 5).
+  - "Words lean towards a slower arrival, from below, one line after another" (pair 13, score 4):
+    "Prefer B, but do not overdesign".
+  - "Between two passages, a brass ornament" (pair 15, score 5).
+  - "An accent is always brass" (pair 5, score 1): "When similar visually, choose the simpler one
+    with less dependency and complexity". "Icons are hairline, in ink" (pair 17, score 1).
 - **It rests on what is built.** Bringing a surface into line with a shared piece that already
   exists in `_sass/_components.scss` (`brass-focus`, `eyebrow`) is tier 1, as
   [0001](../decisions/0001-who-decides-what.md) says.
-- **It does not rest on the lead's reading.** A line of the language with no date and no "built"
-  beside it is not a reason to change anything a reader sees. The language's own head lists which
-  lines those are.
-- **C03, C04 and C05 wait for the conversation.** They move pixels onto values (six radii, five
-  durations and two curves, three depths of glass) that 0002 decided under delegation and the
-  language repeats. The values are one of the four things the conversation is to cover. The scales
-  may be written into `_variables.scss` and `:root` meanwhile (A02, A03: no pixel moves); no surface
-  moves onto them until the owner has seen them. If the stage reaches them first, that is said to
-  the owner then. They are not built on a guess.
+- **It does not rest on the lead's reading.** A line of the language with no date, no score and no
+  "built" beside it is not a reason to change anything a reader sees. The language's head lists which
+  lines those still are.
+- **No amount is the owner's yet.** Round 1 chose between two drawings; it gave no radius, distance,
+  shadow, time or curve. A change a reader sees that needs one waits for round 2, which is on the
+  pairs page.
+- **C03, C04 and C05 wait until round 2 is scored**, then split. What the owner answered is built to
+  the answer. What round 2 did not ask stands on 0002 and the owner's Fix marks, as tier 1, shown
+  before and after. The scales may be written into `_variables.scss` and `:root` meanwhile (A02, A03:
+  no pixel moves), knowing round 2 may move the steps for a card and a control.
+  - C03: round 2 asks the radius of a card and of a control. The print's square corners are settled
+    and built.
+  - C04: round 2 asks how words arrive and how a card answers the pointer. The owner's lean is
+    slower, so the sweep does not shorten an arrival to `base`. A control's own timings (`fast`,
+    `base`) are not asked: "Snappy timings are for utility controls" is the owner's (Cards). The
+    one-second cover stays.
+  - C05: round 1 chose glass over a solid plate (pair 10, score 1), not how much glass. If round 2
+    asks the depth, C05 is built to the answer; if it does not, the three depths stand on 0002.
+- **0002 has no scale for a shadow, and no ornament.** Both are new. Each is designed after round 2,
+  shown as a choice, and written into a new decision record beside 0002, which is not edited.
 
-**For the conversation** (the full wording is at the head of the language):
+**Round 2, how much** (the full wording is at the head of the language): the radius of a card and of
+a control; how far a card lifts and grows, its shadow, and whether the full-width voyage cover lifts
+at all; how slowly words arrive and whether they overshoot; which ornament and where; what colour a
+tag takes when hovered.
 
-1. Is "a grammar and its signatures" the owner's way of seeing the site, and is the list of twelve
-   signatures right? Where does whimsy live?
-2. Is the colour rule "nothing but the photograph, the brass and the inks"? Two of the owner's calls
-   point that way; the rule itself is the lead's.
-3. How far does the Photobook's manner reach: its shell under every new page, its register of words
-   across the whole interface?
-4. The numbers that would move pixels: seen on the specimen page before any surface moves?
+**Still to be talked through, no pair asked them:** whether "a grammar and its signatures" is the
+owner's way of seeing the site; how far the Photobook's manner reaches; which titles are storytelling
+and which are for reading (pair 7, score 3).
 
 ## Scope
 
@@ -52,7 +76,7 @@ Until it has happened:
 - [ ] A01 · Import `components` directly after `responsive-policy`.
 - [ ] The specimen page: every piece that is built today, drawn with the site's own stylesheet, at
       desktop and at phone width, each labelled built, the owner's, or decided under delegation. It
-      is what the owner looks at in the conversation, and once it is in the pixel baseline a change
+      is where the owner sees the pieces whole, and once it is in the pixel baseline a change
       to a shared piece shows on one page. It must not ship to readers: a page of the seeded visual
       build only, or a page outside the site. A page a reader can reach is a new page, and the
       owner's. A piece that is decided but not built is not drawn as though it were settled.
@@ -73,10 +97,11 @@ Until it has happened:
 
 **Tier 1: brought into line, shown before and after**
 - [ ] C02 · `brass-focus` as the one focus ring, surface by surface.
-- [ ] C03 · Radii onto the scale where the move is under 0.25rem. Waits for the conversation (above).
-- [ ] C04 · Durations and curves onto the scale. The one-second cover hover stays. Waits for the
-      conversation (above).
-- [ ] C05 · Glass onto three depths. Waits for the conversation (above).
+- [ ] C03 · Radii onto the scale where the move is under 0.25rem. Waits for round 2 (above): a card's
+      and a control's radius are asked there.
+- [ ] C04 · Durations and curves onto the scale. The one-second cover hover stays. Waits for round 2
+      (above): arrivals and a card's answer to the pointer are asked there, and are not shortened.
+- [ ] C05 · Glass onto three depths. Waits for round 2 (above).
 - [ ] C06 · Hand-written labels onto `eyebrow`.
 - [ ] C12 · Small dialects swept once the scales exist: hover direction, dates, ellipses, rules, one `scroll-padding-top`.
 
@@ -86,12 +111,36 @@ Until it has happened:
       owner picked option B of three prototypes on 2026-10-01 (`design/choices/link-colour/`; the page
       is `choices.link-colour` in `_plan/hub.json`). Built as "The link, as chosen" below.
 - [ ] C07 · The lede on older heroes takes the shared Didot italic (marked Fix).
-- [ ] C08 · One `tag` replacing five (marked Fix); the tag pages themselves are stage 10.
+- [ ] C08 · One `tag` replacing five (marked Fix); the tag pages themselves are stage 10. Ink only,
+      one look for every tag (pair 4, score 5). `_data/tag_colours.yml` no longer fills a tag at rest;
+      whether a tag takes a colour under the pointer, and which, is round 2.
 - [ ] C10 · Roboto leaves the two font stacks, so Android reads as Apple does (marked Fix).
 
 **Tier 2: queued when reached**
 - Any radius or timing move at or over the threshold.
-- The first appearance of each new piece (`button`, `tag`, `card`).
+- The first appearance of each new piece (`button`, `tag`, `card`, the ornament).
+
+**New from round 1: the kind is the owner's, the design is not yet.** Each needs round 2's amount,
+then the owner's eye on a drawing (a `/choose`, [0005](../decisions/0005-choices-arrive-as-prototypes.md)).
+None is decided in detail. Tier 2.
+- [ ] The card's lift, as part of the `card` piece: raised at rest by a shadow, no glow (pair 11,
+      score 4: "doesnt have to glow"); it lifts and grows under the pointer (pair 12, score 5). How
+      far, which shadow and how fast are round 2's. The card moves as one object; the photograph in it
+      does not move inside its frame ("The photograph itself never animates on hover"). First used in
+      [stage 4](04-voyage-and-cards.md), where the cover's own lift is an open question.
+- [ ] A brass ornament between passages (pair 15, score 5): a new piece of grammar. Check it is new
+      first: its relative in the code is the emblem rule (`_includes/qsd-emblem-horizontal-rule.html`,
+      a signature, in two posts). Which ornament and where it may stand are round 2's. First used on
+      a reading page ([stage 6](06-posts-and-about.md)).
+- [ ] How words arrive: one shared arrival, from below, one line after another (pair 13, score 4:
+      "Prefer B, but do not overdesign"). How slowly, from how far and whether it overshoots are round
+      2's ("never bouncy" is in the principles). With its reduced-motion and `html.motion-off` rule
+      beside it. One mechanism, and it exists: `reveal-on-scroll` (`_sass/_scroll-animations.scss`), a
+      12 px rise over half a second, all at once. It sits between the two the owner was shown (a
+      quarter second and 4 px; 0.7 s and 42 px, in turn). The task is its amounts and the turn-taking,
+      not a second mechanism.
+- [ ] A shadow scale and the ornament, written as a decision record beside 0002 once the amounts are
+      the owner's.
 
 ## The link, as chosen (Q9)
 
@@ -144,13 +193,15 @@ A link that wraps a picture takes no underline.
 ## Design notes
 
 - The owner's calls and decisions 0002 and 0003 are what this stage implements.
-  [`DESIGN-LANGUAGE.md`](../DESIGN-LANGUAGE.md) describes them on one page and is a draft: see "What
-  this stage rests on" above.
+  [`DESIGN-LANGUAGE.md`](../DESIGN-LANGUAGE.md) describes them on one page and is a draft, the
+  owner's in part: see "What this stage rests on" above.
 - The chrome first (masthead, search, subscribe), because it is on every page and has the most
   private recipes. Then the map. The older pages' own controls wait for their stages.
 - One surface per change, so a pixel-diff delta has one cause.
-- New pieces (`button`, `tag`, `card`) are designed in the catalogue with every state before any
-  page adopts them: rest, hover, focus, pressed, disabled, on a photograph, on the page ground.
+- New pieces (`button`, `tag`, `card`, the ornament) are designed in the catalogue with every state
+  before any page adopts them: rest, hover, focus, pressed, disabled, on a photograph, on the page
+  ground. A text button may be a rounded rectangle (pair 2, score 2).
+- Every new piece is put to "What the eye turns away" (the head of the language) before it is shown.
 
 ## Exit
 
