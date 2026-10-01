@@ -91,6 +91,17 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/hooks/session-start-plan.sh"
+          }
+        ]
+      }
     ]
   }
 }

@@ -45,6 +45,25 @@ npm run check:important           # !important count vs HEAD (ratchet, the style
 npm run check:frontmatter         # collection contracts; gallery_name must be known to the photo pipeline
 npm run check:gallery             # every gallery_name has a processed manifest; orphans under photos/
 python3 scripts/check-single-use-variables.py --all
+npm run check:journeys            # ten reader routes walked in Chromium against _site/ (or --base <url>)
+npm run check:plan                # _plan/ still true: roadmap, links, features, changelog
+```
+
+## The gate
+
+```bash
+npm run gate         # every static check above, one verdict, a few seconds
+npm run gate:full    # + seeded build, pixel diff, motion audit, journeys, iPhone overflow
+```
+
+`scripts/gate.sh` is what a change passes before the owner sees it; the
+`site-reviewer` agent runs it first. `--full` builds `_site/`, so stop the dev
+server before it. On a machine where Ruby comes from a login profile, run it as
+`bash -lc 'npm run gate:full'`. → `_plan/decisions/0001-who-decides-what.md`.
+
+```bash
+npm run hub:page                                   # the owner's command centre, from _plan/ → design/hub/hub.html
+node scripts/choice-page.mjs design/choices/<id>/choice.json   # a choice, shot and assembled
 ```
 
 Most of these also run automatically via hooks — see the Guards section in
@@ -111,7 +130,8 @@ place). The old `gallery/` tree is retired and no thumbnails are generated;
 ## Slash commands
 
 `/build`, `/serve`, `/geocode`, `/responsive-audit`, `/style-check`,
-`/content-check`, `/js-sync`, `/check-vars`, `/house-style`, `/commit`.
+`/content-check`, `/js-sync`, `/check-vars`, `/house-style`, `/commit`;
+the plan's: `/hub`, `/stage`, `/choose`, `/finding`, `/hub-daily`.
 
 ## Ruby on Cloudflare
 

@@ -32,6 +32,7 @@ scripts/             Build scripts (geocode-maps.js, photos/*) + check-*.py|sh g
 workers/             Cloudflare Workers (photos-trigger: R2 upload → processing workflow)
 tests/               Node-test files (`node --test tests/*.test.js` via `npm test`)
 _docs/               Reference docs — layouts.md, build.md
+_plan/               The command centre: roadmap, queue, principles, decisions, stages, findings, features, changelog
 for_agents/          Prior implementation notes + execution plans (gitignored — local only)
 ```
 
@@ -50,6 +51,21 @@ Build output, vendor code, and lockfiles. They duplicate or shadow source conten
 | `package-lock.json`, `Gemfile.lock` | Dependency lockfiles. |
 
 `.claude/settings.json` `permissions.deny` blocks `Read` of these mechanically. For `find`/`grep`/`rg`, pass `--exclude-dir=_site --exclude-dir=node_modules --exclude-dir=.sass-cache --exclude-dir=vendor`.
+
+---
+
+## The Plan — read before design or architecture work
+
+The site is run from **`_plan/`**. A `SessionStart` hook prints its state at the top of every session; `_plan/ROADMAP.md` is the page to open first. It exists so the site is one design across many sessions, and so the owner is not the only one making calls or catching mistakes.
+
+- **Start from the stage.** Work belongs to a stage in `_plan/stages/`. Something that belongs to none is a line in `_plan/findings/inbox.md` (`/finding …`) or a call in `_plan/QUEUE.md`, not a quiet edit.
+- **Who decides** → `_plan/decisions/0001-who-decides-what.md`. Changes no reader sees, and changes that only bring something into line with an accepted decision, are Claude's, behind the gate. Anything a reader sees anew is the owner's, and goes to the queue. **An unanswered call is never a yes.**
+- **A choice between two ways arrives as prototypes** → `/choose`, `_plan/decisions/0005-…`. Never ask the owner to request one.
+- **The gate.** Nothing is presented as done until `npm run gate:full` passes and the `site-reviewer` agent returns PASS. The author never reviews their own change.
+- **Write it down in the same change.** What a reader now gets → a line in `_plan/CHANGELOG.md`. A new feature → a row in `_plan/FEATURES.md` and a journey in `scripts/check-journeys.mjs`. The gate fails without them.
+- **The owner's standing calls** live in `_plan/PRINCIPLES.md`. Check a design against it before proposing; quote the line when something conflicts.
+
+→ `design-lead` agent (keeps the plan, writes stage briefs), `site-reviewer` agent (the gate), `prototyper` agent (one option of a choice); `/hub`, `/stage`, `/choose`, `/finding`, `/hub-daily`; `_plan/ARCHITECTURE.md` for how the pieces run.
 
 ---
 
@@ -188,8 +204,11 @@ Mechanical checks, all scoped to **changes vs `HEAD`** — never the existing ba
 | `check-seo-descriptions.py` | `check:seo` | Pages with no real meta description |
 | `check-mobile-overflow.mjs` | `check:mobile-overflow` | A page wider than an iPhone in Safari's engine (WebKit at 390 and 320 px) — Chromium, and so the pixel diff, forgives what Safari does not. Needs a served site and `npx playwright install webkit` |
 | `check-new-components.sh` | — | A new component family styled in a page's partial instead of reusing `_components.scss` (a nudge, never a failure) |
+| `check-journeys.mjs` | `check:journeys` | A reader's route that no longer works: a print that does not open, a search that finds nothing, a Back that leaves the page. Walks the built site in Chromium |
+| `check-plan.mjs` | `check:plan` | A plan that has stopped being true: a stage off the roadmap, a dead link, a feature naming a file that is gone, a change readers get with no changelog line |
+| `gate.sh` | `gate`, `gate:full` | Everything above in one pass with one verdict. `--full` adds the seeded build, pixel diff, motion audit, journeys and iPhone overflow |
 
-**Hooks.** PostToolUse (`post-tool-edit-nudges.sh`) runs whichever checks match the edited file and prints findings inline, non-blocking. Stop (`stop-variables-check.sh`, `stop-house-guards.sh`) exits 2 on violations introduced this session.
+**Hooks.** SessionStart (`session-start-plan.sh`) prints the plan's state. PostToolUse (`post-tool-edit-nudges.sh`) runs whichever checks match the edited file and prints findings inline, non-blocking. Stop (`stop-variables-check.sh`, `stop-house-guards.sh`) exits 2 on violations introduced this session.
 
 ### Skills carry code, not just prose
 
@@ -207,8 +226,5 @@ The same false-positive discipline applies to every check, not just the house-st
 
 Before scaffolding new work in domains where the site already has a system (maps, voyages, design tokens, motion, governance), check:
 
-- `for_agents/IMPLEMENTATIONS/` — notes on completed functionality batches.
-- `for_agents/PROJECT_TRACKER.md` — long-running execution plans.
-- `for_agents/MAP_SETUP_GUIDE.md` and other domain guides.
-
-These capture decisions and constraints not recoverable from `git log` alone. Note: `for_agents/` is gitignored — a fresh clone won't have it.
+- `_plan/` — the roadmap, the decisions and why they were made, the owner's standing calls, the feature map, the ideas already tried and judged.
+- `for_agents/` — older implementation notes and handoffs (gitignored, so a fresh clone won't have it). Its open items were folded into `_plan/` on 2026-10-01; new notes go in `_plan/`.
