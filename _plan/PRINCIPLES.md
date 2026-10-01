@@ -126,6 +126,8 @@ writing (least well), and the person (Home strongly, About weakly).
   a shortcut the browser owns. Said of those two; taken as the rule for any page's keys unless the owner
   says otherwise.
 - A colour no photograph holds shows the most adjacent match. It never shows nothing.
+- A link inside a page's text is brass, with a hairline underline (Q9, option B, picked from three
+  prototypes on the command centre). Blue leaves the text.
 
 ### Motion
 - Short and purposeful by default; cinematic only where it is the point. Keep the reader's place.
@@ -152,4 +154,11 @@ These are never anyone's call but the owner's, each time.
 
 - Writes to R2, and removals from it. Removals: list first, then the owner types `QSD`.
 - Opening or merging a pull request; pushing.
+  - 2026-10-01 · One standing exception, the owner's (Q10, option A, tapped on the command centre):
+    the daily run may push a branch that touches only the plan (`_plan/`). Never `master`, never a
+    pull request. Every other push is still asked for, each time.
+  - The owner's note beside that answer: "Hub can decide PRs but we need carefully crafted rules for
+    conditions for an auto PR approval merge to master". It grants nothing yet: opening and merging
+    stay the owner's, each time, until those rules are theirs
+    ([I002](ideas/I002-rules-for-the-hub-to-approve-and-merge-a-pull-re.md)).
 - Committing image bytes, `photos/`, `_data/photo_manifests/`, keys or `.env`: never.

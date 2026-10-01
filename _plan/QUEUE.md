@@ -13,51 +13,6 @@ options as `- **A (recommended):** …`. A number is never reused: the command c
 
 ---
 
-### Q2 · Are the tiers right?
-
-Asked: 2026-10-01
-
-[Decision 0001](decisions/0001-who-decides-what.md) lets Claude decide changes no reader sees, and
-changes that only bring something into line with an accepted decision, behind the reviewer and the
-gate. Everything a reader sees anew stays yours.
-
-- **A (recommended):** Accept as written, and tighten later if something ships that you would have stopped.
-- **B:** Tier 1 also waits for me: only unseen changes go ahead alone.
-
-### Q3 · Does the design language read true?
-
-Asked: 2026-10-01
-
-[`DESIGN-LANGUAGE.md`](DESIGN-LANGUAGE.md) is version 0 of the QSD design language: a grammar every page
-shares and a register of signatures that make a page itself, with the six identity traits in
-[`PRINCIPLES.md`](PRINCIPLES.md) behind it. Both are on the command centre, under "What the site is". Every
-later design call is tested against them, so a wrong line there is worth a note.
-
-- **A:** It reads true. Make it version 1.
-- **B:** Close, with corrections: leave a note with what is wrong or missing.
-- **C:** Not yet: I want to talk it through.
-
-### Q5 · Bestiary until it is built
-
-Asked: 2026-10-01
-
-It is one of five masthead items and one of five doors on Home, and leads to an under-construction
-notice.
-
-- **A (recommended):** A designed holding page in the house's language, kept in the navigation.
-- **B:** Out of the navigation until stage 5.
-
-### Q6 · What protecting the pictures means
-
-Asked: 2026-10-01
-
-[Stage 7](stages/07-protecting-the-pictures.md) cannot be designed until this is chosen; the options
-there cost very different things. Say what you want to prevent and the lead writes the brief.
-
-- **A:** Casual saving (right-click, drag).
-- **B:** Print-quality reuse of the large files.
-- **C:** Scraping, including for training.
-
 ### Q8 · Who writes the three lines stage 1 is waiting on?
 
 Asked: 2026-10-01
@@ -68,30 +23,16 @@ Three tasks are finished except for their words, and words are yours. (1) Reveri
 - **B:** I will write them: leave a note with the words.
 - **C:** Only the privacy sentence is needed; leave the other two as they are.
 
-### Q9 · What colour is a link inside a page's text?
-
-Asked: 2026-10-01
-
-Links in posts and on About are bright blue, the one colour on the site that comes from neither a photograph, the brass nor the inks. Three options are prototyped on the same lines of the About page, side by side: https://claude.ai/artifact/M5UYHyu6S8Zc29AyBLR6De. Pick there, or here.
-
-- **A:** As today: blue.
-- **B (recommended):** Brass, with a hairline underline.
-- **C:** Ivory, underlined in brass.
-
-### Q10 · Shall the hub tend itself daily?
-
-Asked: 2026-10-01
-
-The hub has a daily upkeep written (`/hub-daily`): it runs the gate on `master`, reads your answers and new ideas from the command centre, shapes raw ideas, sorts the findings inbox, rebuilds this page, and reports in ten lines. It changes nothing a reader sees. Scheduling it is a standing instruction, so it is yours to switch on. It costs one agent run a day.
-
-- **A (recommended):** On, daily, and it may push a branch that touches only the plan (never master, never a pull request).
-- **B:** On, daily, reporting only: nothing is pushed, so its plan edits wait for a local session.
-- **C:** Not yet: sessions do the upkeep when they start.
-
 ---
 
 ## Answered
 
+- 2026-10-01 · Q10 · Shall the hub tend itself daily? → A: on, daily, and it may push a branch that touches only the plan (never master, never a pull request). The owner's note: "Hub can decide PRs but we need carefully crafted rules for conditions for an auto PR approval merge to master". The note is kept as idea I002; nothing merges by itself until those rules are the owner's.
+- 2026-10-01 · Q9 · What colour is a link inside a page's text? → B: brass, with a hairline underline. (Tapped on the command centre.)
+- 2026-10-01 · Q6 · What protecting the pictures means → A: casual saving (right-click, drag). (Tapped on the command centre.)
+- 2026-10-01 · Q5 · Bestiary until it is built → A: a designed holding page in the house's language, kept in the navigation. (Tapped on the command centre.)
+- 2026-10-01 · Q3 · Does the design language read true? → C: not yet, the owner wants to talk it through. The owner's note: "We need to revisit it". The design language stays version 0, a draft; where it and the principles differ, the principles win.
+- 2026-10-01 · Q2 · Are the tiers right? → A: accept the tiers as written, and tighten later if something ships that the owner would have stopped. (Tapped on the command centre.)
 - 2026-10-01 · Who verifies (in chat) → Claude does, before the owner looks: "User should make important decisions, hear Claude's well discussed proposal and ideas, brainstorm with Claude. Claude should have the essential automatic process to make sure the idea is justifiable and deliverable instead of wasting user's time to verify and amend the product quality". Built as [0008](decisions/0008-ready-and-done.md): an idea is tried and argued against before it is returned.
 - 2026-10-01 · What an idea owes (in chat) → "An idea needs verdict, an idea needs brainstorm to get explicit, an idea needs an evaluation of its influence to the existing structure, pros and cons". The idea file's shape and `check-plan` were changed to match ([`ideas/README.md`](ideas/README.md)).
 - 2026-10-01 · Headings (in chat) → white by default; the colourful h1 to h6 retired. The owner's words: "We should probably also retire the overly colourful H1 to H6 font colour. Add that to the list"; "Titles should be default white coloured".

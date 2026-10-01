@@ -1,7 +1,9 @@
 # 0006 · The hub keeps itself, and lives in this repo
 
 **Status:** In force from 2026-10-01. Where the plan lives was confirmed by the owner the same day:
-public, in this repo.
+public, in this repo. One fact under "Where it lives" has since been found untrue (F045, 2026-10-01):
+GitHub does not list this repository as a fork, so the note that it "cannot be made private in place"
+does not hold. The decision does not rest on it.
 
 ## Context
 

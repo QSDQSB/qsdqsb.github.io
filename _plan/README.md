@@ -13,7 +13,8 @@ whichever session happens to be open.
 2. **[QUEUE.md](QUEUE.md)** — the calls waiting on the owner. Short by design.
 3. **[PRINCIPLES.md](PRINCIPLES.md)** — what the site is, and the owner's standing calls.
 4. **[DESIGN-LANGUAGE.md](DESIGN-LANGUAGE.md)** — how that is expressed: the grammar every page shares and the
-   signatures that make a page itself. Read before designing or styling anything.
+   signatures that make a page itself. Read before designing or styling anything. Version 0: a draft
+   the owner has not yet accepted; its head says what may be rested on it meanwhile.
 5. **[WORKFLOWS.md](WORKFLOWS.md)** — the path a fault, a feature, a new piece, a choice and a thought each take.
 6. The stage you are working on, in `stages/`, and the decisions it cites, in `decisions/`.
 

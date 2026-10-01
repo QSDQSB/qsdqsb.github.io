@@ -36,7 +36,7 @@ const read = (rel) => fs.readFileSync(path.join(PLAN, rel), 'utf8');
 let state;
 try {
   // Exit 1 means "broken", and the page should say so rather than not be built.
-  const out = (() => { try { return execFileSync('node', [path.join(ROOT, 'scripts/check-plan.mjs'), '--json'], { cwd: ROOT, encoding: 'utf8' }); } catch (e) { return e.stdout; } })();
+  const out = (() => { try { return execFileSync('node', [path.join(ROOT, 'scripts/check-plan.mjs'), '--json'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }); } catch (e) { return e.stdout; } })();
   state = JSON.parse(out);
 } catch (e) { console.error(`The plan could not be read: ${e.message}`); process.exit(2); }
 
@@ -238,7 +238,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
           <li><strong>Notice something wrong:</strong> say it to any Claude session in the repo (<code>/finding</code>), or leave it as a note on a call.</li>
           <li><strong>Start work:</strong> in a session, <code>/hub</code> says where things stand and <code>/stage</code> builds the next thing that needs nobody.</li>
         </ul>
-        <p>A tap is stored with this page at once. It is written into the plan when the next session starts, or by the daily run if you switch it on. Nothing is pushed without you.</p>
+        <p>A tap is stored with this page at once. It is written into the plan by the next session, or by the daily run. The daily run may push a branch that touches only the plan; nothing reaches <code>master</code>, and no pull request is opened or merged, without you.</p>
       </div>
     </details>
   </header>

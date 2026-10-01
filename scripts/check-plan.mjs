@@ -68,6 +68,9 @@ const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) =
 });
 const git = (...a) => { try { return execFileSync('git', a, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }); } catch { return ''; } };
 
+// A doubt is a no: a base that cannot be read must not pass the changelog rule by reading nothing.
+if (sinceAt >= 0 && !git('rev-parse', '--verify', '--quiet', `${since || 'nothing'}^{commit}`).trim()) { console.error(`--since ${since || ''}: no such commit here (in CI, fetch the base first).`); process.exit(2); }
+
 for (const f of REQUIRED) if (!exists(f)) errors.push(`_plan/${f} is missing.`);
 if (errors.length && mode === 'check') { errors.forEach((e) => console.log(`✗  ${e}`)); process.exit(1); }
 
@@ -228,17 +231,24 @@ const now = stages.find((s) => ['building', 'in review'].includes(s.status)) || 
 const hub = fs.existsSync(path.join(PLAN, 'hub.json')) ? JSON.parse(read('hub.json')) : {};
 const fingerprint = planHash(PLAN);
 if (hub.url && hub.published?.hash !== fingerprint) warnings.push(`The command centre is behind the plan (last published ${hub.published?.date || 'before the plan last changed'}): rebuild and republish it with /hub page.`);
+// The daily run keeps one branch and never touches master: what it recorded waits there until a
+// session, with the owner's word, merges it.
+const waiting = git('rev-list', '--count', 'HEAD..hub/daily').trim();
+if (Number(waiting) > 0) warnings.push(`The daily run's branch (hub/daily) holds ${waiting} commit(s) not here: the owner's answers and ideas it recorded. Ask the owner, then merge it (git merge hub/daily).`);
 const state = { reviewed, stages, now, queue, decisions, features, ideas, inbox, changelog: changelog.slice(0, 20), hub, fingerprint, errors, warnings, notes };
 
-if (mode === 'json') { console.log(JSON.stringify(state, null, 1)); process.exit(errors.length ? 1 : 0); }
-
-if (mode === 'brief') {
+// Written, then left to drain: exiting straight after a write cuts a pipe off at 64 KiB, and the
+// command centre reads this through one.
+if (mode === 'json') {
+  process.stdout.write(`${JSON.stringify(state, null, 1)}\n`);
+  process.exitCode = errors.length ? 1 : 0;
+} else if (mode === 'brief') {
   const out = ['THE PLAN — this repo is run from _plan/. Read _plan/ROADMAP.md before any design or architecture work.'];
   if (now) out.push(`Now: stage ${now.n}, ${now.name} (${now.status}), ${now.done} of ${now.done + now.open} tasks done → _plan/${now.file}`);
   const live = stages.filter((s) => s.status === 'designing');
   if (live.length) out.push(`In design: ${live.map((s) => `stage ${s.n}, ${s.name}`).join('; ')}`);
   out.push(`Owner's queue: ${queue.length} open${queue.length ? ` (${queue.map((q) => q.id).join(', ')})` : ''} → _plan/QUEUE.md. Never treat an unanswered call as a yes.`);
-  if (hub.url) out.push(`The owner answers on the command centre: ${hub.url} — read new answers first (ArtifactData, action "list", collection "answers"), then record them in QUEUE.md.`);
+  if (hub.url) out.push(`The owner answers on the command centre: ${hub.url} — read new answers first (ArtifactData, action "list", collection "answers"), then record them in QUEUE.md. Read them again before you report to the owner: they answer while you work.`);
   out.push(`Findings inbox: ${inbox} waiting → _plan/findings/inbox.md. File what you notice there, one line, dated.`);
   if (ideas.length) out.push(`Ideas: ${ideas.filter((i) => i.status === 'raw').length} raw, ${ideas.filter((i) => i.status === 'shaped').length} shaped and waiting on the owner → _plan/ideas/. The owner's new ideas may be on the command centre (collection "ideas"): file each with node scripts/plan.mjs idea, then shape it.`);
   const short = (t) => (t.length > 84 ? `${t.slice(0, 82).replace(/\s+\S*$/, '')}…` : t);
@@ -246,14 +256,13 @@ if (mode === 'brief') {
   out.push('Rules: who decides → _plan/decisions/0001 · the language → _plan/DESIGN-LANGUAGE.md · an idea of the owner\'s → /idea · a choice between two ways → /choose (prototypes first) · before the owner sees work → npm run gate:full and the site-reviewer agent · a change readers get → node scripts/plan.mjs log.');
   if (errors.length) out.push(`The plan is broken (${errors.length}): ${errors[0]} Run node scripts/check-plan.mjs.`);
   if (warnings.length) out.push(`Upkeep: ${warnings.join(' ')}`);
-  console.log(out.join('\n'));
-  process.exit(0);
+  process.stdout.write(`${out.join('\n')}\n`);
+} else {
+  errors.forEach((e) => console.log(`✗  ${e}`));
+  warnings.forEach((w) => console.log(`!  ${w}`));
+  notes.forEach((n) => console.log(`·  ${n}`));
+  console.log(errors.length
+    ? `The plan is broken in ${errors.length} place(s).`
+    : `The plan is sound: ${stages.length} stages, ${decisions.length} decisions, ${queue.length} open calls, ${ideas.length} ideas, ${features.length} features, ${inbox} in the inbox.`);
+  process.exitCode = errors.length ? 1 : 0;
 }
-
-errors.forEach((e) => console.log(`✗  ${e}`));
-warnings.forEach((w) => console.log(`!  ${w}`));
-notes.forEach((n) => console.log(`·  ${n}`));
-console.log(errors.length
-  ? `The plan is broken in ${errors.length} place(s).`
-  : `The plan is sound: ${stages.length} stages, ${decisions.length} decisions, ${queue.length} open calls, ${ideas.length} ideas, ${features.length} features, ${inbox} in the inbox.`);
-process.exit(errors.length ? 1 : 0);

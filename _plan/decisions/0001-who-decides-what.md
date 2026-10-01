@@ -1,8 +1,12 @@
 # 0001 · Who decides what, and the gate
 
-**Status:** In force from 2026-10-01, on the owner's instruction ("Claude should save my time
-without jeopardising the site quality we deliver"). The tier boundaries are Claude's proposal; the
-owner amends them here.
+**Status:** In force from 2026-10-01; the tiers confirmed by the owner the same day (Q2). Made on the
+owner's instruction ("Claude should save my time without jeopardising the site quality we deliver").
+The tier boundaries were Claude's proposal; the owner accepted them as written on 2026-10-01 (Q2,
+option A, tapped on the command centre: accept the tiers as written, and tighten later if something
+ships that the owner would have stopped). The owner amends them here. One standing exception to
+"pushing" has been made since, by the owner (Q10, the same day):
+[`PRINCIPLES.md`](../PRINCIPLES.md), Hard rules.
 **Supersedes:** nothing. It adds to `CLAUDE.md` (Decision Confidence, Responsive Policy, the SCSS
 major-delta rule), and loosens none of them.
 

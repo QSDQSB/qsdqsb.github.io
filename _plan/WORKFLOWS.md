@@ -5,7 +5,8 @@ the steps; this page says which path a piece of work is on.
 
 Every path ends the same way: `npm run gate:full`, the `site-reviewer` agent, a line in
 [`CHANGELOG.md`](CHANGELOG.md) if a reader gets something different, the stage file ticked. Nothing
-is pushed without the owner.
+is pushed without the owner, with one standing exception of the owner's own (Q10, 2026-10-01): the
+daily run's branch, when it touches only `_plan/`. Nothing is merged without the owner at all.
 
 ```
                        ┌──────────────── the owner ────────────────┐
@@ -33,7 +34,10 @@ Something is broken, slow, inconsistent or inaccessible.
 
 1. **Brief** (the design lead, in the stage file): what a reader gets, and the lines of
    `PRINCIPLES.md` that bind it.
-2. **Place it in the language** ([`DESIGN-LANGUAGE.md`](DESIGN-LANGUAGE.md)):
+2. **Place it in the language** ([`DESIGN-LANGUAGE.md`](DESIGN-LANGUAGE.md)). The language is version
+   0 and not yet the owner's (Q3, 2026-10-01: "We need to revisit it"). It places a page; a line in
+   it that is only the lead's reading decides nothing a reader sees (its section "Until the owner has
+   talked it through"):
    - Which **pattern** is it: doorway, room, viewer, reading page? If none, that is the first
      question for the owner.
    - Which **pieces** does it take from the catalogue? List them.
@@ -120,7 +124,7 @@ Exploring that should not be repeated.
 | A turn ends | House style, bundle sync, the `!important` ratchet |
 | Before anything is called done | The gate and the reviewer |
 | Anything is pushed | CI runs the fast gate and, on a pull request, the changelog rule over the branch |
-| Daily | `/hub-daily`: the gate on `master`, answers and ideas read, raw ideas shaped, the inbox sorted, the command centre rebuilt |
+| Daily | `/hub-daily`: the gate on `master`, answers and new ideas recorded, findings filed, the command centre rebuilt. Raw ideas and the inbox wait for the next session until `daily_agents` is switched on. Its work stays on one branch, `hub/daily`, until a session merges it with the owner's word |
 
 ## Who does what
 

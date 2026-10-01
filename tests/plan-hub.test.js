@@ -308,6 +308,8 @@ test('the same decision read again from the page changes nothing', () => {
     const first = fs.readFileSync(file, 'utf8');
     assert.strictEqual(on('2031-01-03', 'decide', 'I900', 'pursue', '1: A').status, 0);
     assert.strictEqual(fs.readFileSync(file, 'utf8'), first, 'the daily run reads the same answer every day');
+    assert.strictEqual(on('2031-01-03', 'decide', 'I900', 'pursue').status, 0);
+    assert.strictEqual(fs.readFileSync(file, 'utf8'), first, 'and a bare repeat does not strike the note');
     assert.strictEqual(on('2031-01-04', 'decide', 'I900', 'pursue', '1: B').status, 0);
     assert.match(fs.readFileSync(file, 'utf8'), /\*\*The owner:\*\* pursue · 2031-01-04 · 1: B/);
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
@@ -341,4 +343,90 @@ test('the command centre draws an idea: its questions as taps of their own, its 
     assert.match(card(), /data-q="I900-1" data-o="A"/, 'an untapped question is still there to answer');
     assert.ok(!card().includes('data-q="I900" data-o="pursue"'));
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+});
+
+/** A throwaway repository with a plan, a site file and this checkout's own plan.mjs, on a branch off master. */
+function withRepo(run) {
+  const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'only-plan-')));
+  const git = (...a) => execFileSync('git', a, { cwd: dir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+  const put = (rel, body) => { fs.mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true }); fs.writeFileSync(path.join(dir, rel), body); };
+  const commit = (msg) => { git('add', '-A'); git('-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', msg); };
+  const only = (base = 'master') => spawnSync('node', ['scripts/plan.mjs', 'only-plan', base], { cwd: dir, encoding: 'utf8' });
+  try {
+    git('init', '-q');
+    fs.cpSync(path.join(ROOT, 'scripts/plan.mjs'), path.join(dir, 'scripts/plan.mjs'), { recursive: true });
+    fs.cpSync(path.join(ROOT, 'scripts/lib'), path.join(dir, 'scripts/lib'), { recursive: true });
+    put('_plan/QUEUE.md', 'queue\n'); put('_includes/head.html', '<head>\n'); put('.gitignore', 'node_modules\n');
+    commit('start');
+    git('branch', '-M', 'master');
+    git('checkout', '-q', '-b', 'hub/daily');
+    return run({ dir, git, put, commit, only });
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+}
+
+test('a branch that touches only the plan passes, with a linked node_modules and names of any shape', () => {
+  withRepo(({ dir, put, commit, only }) => {
+    put('_plan/findings/a finding – déjà vu.md', 'x\n');
+    commit('plan');
+    put('_plan/ideas/I900-new.md', 'not committed yet\n');
+    fs.symlinkSync(os.tmpdir(), path.join(dir, 'node_modules'));
+    const res = only();
+    assert.strictEqual(res.status, 0, res.stderr);
+    assert.match(res.stdout, /Only the plan: hub\/daily against master/);
+  });
+});
+
+test('anything else on the branch is refused: a site file, a rename into the plan, a link, a change and its revert', () => {
+  const refused = (make, why) => withRepo((r) => { make(r); const res = r.only(); assert.strictEqual(res.status, 1, `${why}: ${res.stdout}`); return res.stderr; });
+  assert.match(refused(({ put, commit }) => { put('_includes/head.html', '<head><!-- -->\n'); commit('site'); }, 'a site file'), /_includes\/head\.html is outside _plan\//);
+  assert.match(refused(({ put }) => { put('_includes/new.html', 'x\n'); }, 'an untracked site file'), /not committed: _includes\/new\.html/);
+  assert.match(refused(({ git, commit }) => { git('mv', '_includes/head.html', '_plan/head.html'); commit('moved in'); }, 'a rename into the plan'), /_includes\/head\.html is outside _plan\//);
+  assert.match(refused(({ git }) => { git('mv', '_includes/head.html', '_plan/head.html'); }, 'a staged rename'), /_includes\/head\.html/);
+  assert.match(refused(({ dir, commit }) => { fs.symlinkSync('/etc/hosts', path.join(dir, '_plan/linked.md')); commit('a link'); }, 'a link'), /_plan\/linked\.md is not an ordinary file \(mode 120000\)/);
+  assert.match(refused(({ put, commit, git }) => { put('_includes/head.html', 'changed\n'); commit('site'); git('-c', 'user.name=t', '-c', 'user.email=t@t', 'revert', '--no-edit', 'HEAD'); }, 'a change and its revert'), /commit [0-9a-f]{7}: _includes\/head\.html/);
+  assert.match(refused(({ git }) => { git('rm', '-q', '_includes/head.html'); }, 'a deleted site file'), /_includes\/head\.html/);
+  // In the owner's checkout, on the base itself, there is no branch to judge: the run is in the wrong place.
+  assert.match(refused(({ git, put }) => { git('checkout', '-q', 'master'); put('_plan/QUEUE.md', 'edited on master\n'); }, 'the base itself'), /is on master itself/);
+  // A commit with no parent, merged in and then emptied, still put a site file into the history.
+  assert.match(refused(({ git, put, commit }) => {
+    git('checkout', '-q', '--orphan', 'side'); git('rm', '-rqf', '.'); put('_includes/orphan.html', 'x\n'); commit('orphan');
+    git('checkout', '-q', 'hub/daily');
+    git('-c', 'user.name=t', '-c', 'user.email=t@t', 'merge', '-q', '--allow-unrelated-histories', '--no-edit', 'side');
+    git('rm', '-q', '_includes/orphan.html'); commit('dropped');
+  }, 'an orphan commit'), /_includes\/orphan\.html is outside _plan\//);
+});
+
+test('the daily branch after a merge of master that brought site commits still holds only the plan', () => {
+  withRepo(({ git, put, commit, only }) => {
+    put('_plan/findings/day-one.md', 'x\n'); commit('day one');
+    git('checkout', '-q', 'master'); put('_includes/head.html', '<head>new\n'); commit('the owner, on master');
+    git('checkout', '-q', 'hub/daily');
+    git('-c', 'user.name=t', '-c', 'user.email=t@t', 'merge', '-q', '--no-edit', 'master');
+    put('_plan/findings/day-two.md', 'y\n'); commit('day two');
+    const res = only();
+    assert.strictEqual(res.status, 0, res.stderr);
+  });
+});
+
+test('only-plan judges nothing it cannot read, and plan.mjs refuses to act on another checkout', () => {
+  withRepo(({ dir, only }) => {
+    assert.strictEqual(only('nosuchbranch').status, 2);
+    // This checkout's copy, called from inside the other repository: the wrong tree, so it refuses.
+    const res = spawnSync('node', [path.join(ROOT, 'scripts/plan.mjs'), 'only-plan', 'master'], { cwd: dir, encoding: 'utf8' });
+    assert.strictEqual(res.status, 2);
+    assert.match(res.stderr, /Run the copy in the checkout you are in/);
+  });
+});
+
+test('the plan check gives its whole state through a pipe, however large, and refuses a base it cannot read', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'plan-'));
+  fs.cpSync(PLAN, dir, { recursive: true });
+  try {
+    // Past 64 KiB, where a pipe used to be cut off.
+    for (let n = 900; n < 906; n++) fs.writeFileSync(path.join(dir, `ideas/I${n}-a-test-idea.md`), SHAPED.replace(/I900/g, `I${n}`).replace('Build the small one.', `Build the small one. ${'More words. '.repeat(900)}`));
+    const res = spawnSync('node', [path.join(ROOT, 'scripts/check-plan.mjs'), '--json'], { encoding: 'utf8', env: { ...process.env, PLAN_DIR: dir }, maxBuffer: 64 * 1024 * 1024 });
+    assert.ok(res.stdout.length > 100000, `only ${res.stdout.length} bytes`);
+    assert.strictEqual(JSON.parse(res.stdout).ideas.filter((i) => i.id.startsWith('I90')).length, 6);
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+  assert.strictEqual(spawnSync('node', [path.join(ROOT, 'scripts/check-plan.mjs'), '--since', 'nosuchref'], { encoding: 'utf8' }).status, 2);
 });

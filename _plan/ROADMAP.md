@@ -12,10 +12,10 @@ Last reviewed: 2026-10-01.
 | 2 | [Foundations: plumbing](stages/02-foundations-plumbing.md) | Nothing directly; one vocabulary for everything after | planned | 0, some 1 |
 | 3 | [Wayfinding](stages/03-wayfinding.md) | A site that is easy to get around and obvious to use | planned | 2 |
 | 4 | [Voyage and the cards](stages/04-voyage-and-cards.md) | The doorway to the photographs, refurbished | designing (branch `gallery/voyage-doors`) | 2 |
-| 5 | [Bestiary](stages/05-bestiary.md) | A page that exists | idea | 2 |
+| 5 | [Bestiary](stages/05-bestiary.md) | A page that exists; first, a holding page worth arriving at | idea (the holding page is decided, and comes as a choice) | 2 |
 | 6 | [Posts and About](stages/06-posts-and-about.md) | Writing and the person, in the house's own language | idea | 2 |
-| 7 | [Protecting the pictures](stages/07-protecting-the-pictures.md) | Nothing visible, if done well | idea | 2 |
-| 8 | [A palette as an image](stages/08-palette-as-image.md) | A palette that can be shared | idea | 2 |
+| 7 | [Protecting the pictures](stages/07-protecting-the-pictures.md) | Nothing visible, if done well: a print is not saved by a right-click, a drag or a long press | planned (a trial first) | 2 |
+| 8 | [A palette as an image](stages/08-palette-as-image.md) | A palette that can be shared | planned (a study first) | 2 |
 | 9 | [Weight and scale](stages/09-weight-and-scale.md) | A site that stays fast as the archive grows | planned | 0 |
 | 10 | [Tags, from scratch](stages/10-tags.md) | Tag pages worth using | idea | 2 |
 | 11 | [The colour pages](stages/11-colour-pages.md) | Palette, Reverie and Drift, finished | planned | 0, 1, some 2 |
@@ -29,8 +29,14 @@ Last reviewed: 2026-10-01.
 - **3 beside 4.** Wayfinding decides how a reader reaches a voyage; the Voyage stage builds the
   door. They are designed together and built in that order.
 - **5 after 4.** The Bestiary is the first page built only from the vocabulary, so it comes after
-  one older page has been migrated and the vocabulary has been tested.
-- **7 and 8 are small and independent.** They move up whenever the owner wants them.
+  one older page has been migrated and the vocabulary has been tested. Its holding page (the owner,
+  2026-10-01) does not wait: it uses only pieces that are built, and moves up when the owner wants it.
+- **2's visible moves wait for a conversation.** The owner has not yet accepted the design language
+  ("We need to revisit it", 2026-10-01). Stage 2's unseen work goes ahead; its moves onto the radii,
+  timings and glass depths wait until the language has been talked through.
+- **7 and 8 are small and independent**, and now touch: 7 keeps a print from being saved by a
+  gesture, 8 hands a reader an image that may hold a voyage's cover. Each is tried before the owner
+  is asked anything more, and they are tried together before 8's control ships.
 - **10 waits on 2 and 3.** It needs the `tag` piece, and the wayfinding walk decides what tags are for.
 - **11 is small and can run beside 1.** Its faults are marked Fix; only its taste calls wait on the owner.
 - **9 runs in the background.** Its budgets start with stage 1; its larger changes wait for 2.
@@ -45,3 +51,12 @@ Last reviewed: 2026-10-01.
   before it reaches the owner ([0008](decisions/0008-ready-and-done.md)).
 - 2026-10-01 · Stage 1, first batch: sixteen findings fixed, through the gate and the reviewer
   (two passes: the first was blocked on three faults).
+- 2026-10-01 · The owner answered six calls and one idea on the command centre. The tiers stand as
+  written (Q2). The design language is not yet theirs and is to be talked through (Q3). Bestiary gets
+  a designed holding page and keeps its place (Q5). Protecting the pictures means casual saving (Q6).
+  Links in text are brass with a hairline underline (Q9). The daily run is on and may push a branch
+  that touches only the plan (Q10). A palette as an image is pursued, for readers, and a photograph
+  may be on it (I001). The owner's note on merging is kept as
+  [I002](ideas/I002-rules-for-the-hub-to-approve-and-merge-a-pull-re.md): shaped, tried and
+  challenged the same day, and returned with the lead's advice to park it. Its useful part is stage
+  0 work.

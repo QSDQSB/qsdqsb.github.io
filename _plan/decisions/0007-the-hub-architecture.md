@@ -1,7 +1,9 @@
 # 0007 · The hub's architecture
 
 **Status:** Accepted 2026-10-01 under delegation ([0001](0001-who-decides-what.md)); the structure is
-tier 0. Two switches in it are the owner's: the daily run, and whether that run may push.
+tier 0. Two switches in it are the owner's: the daily run, and whether that run may push. The owner
+switched both on on 2026-10-01 (Q10, option A): daily, and it may push a branch that touches only the
+plan; never `master`, never a pull request.
 **Date:** 2026-10-01
 **Deciders:** the owner (the switches, and anything that leaves this machine); Claude (the rest)
 **Builds on:** [0006](0006-the-hub-keeps-itself.md), which says why the hub must keep itself. This
@@ -115,7 +117,8 @@ anything urgent.
 | The SessionStart hook does not run (another tool, no Node) | No brief | `CLAUDE.md`, always loaded, routes to `_plan/` itself |
 | A change ships with no record | Nothing, at first | `check-plan` in the gate; CI on push; the review on the pull request |
 | The plan names a file that moved | `check-plan` fails, naming the row | The gate, on the change that moved it |
-| Two sessions append to the inbox or the changelog | A clean merge | `merge=union` on those files |
+| Two sessions append to the changelog | A clean merge | `merge=union` on that file |
+| Two sessions append to the inbox | A conflict, settled by hand: a union would hide two findings given the same id | `plan.mjs` refuses to give out an id while the daily run's branch holds ids this checkout lacks |
 | Two sessions take the same id | `check-plan` fails, naming the id | The gate after the merge |
 | The owner's answers sit unread | The brief repeats it every session | The daily run reads them |
 | The command centre is behind the plan | The brief says so; the page shows its build date | `/hub page`, the daily run |
@@ -145,10 +148,17 @@ anything urgent.
    they mean, what they would change, their for and against, a trial, a challenge and a verdict
    ([0008](0008-ready-and-done.md); `scripts/lib/plan-ideas.mjs` reads the shape; `check-plan`
    refuses an idea returned without it).
-3. [x] `merge=union` for the append-only files.
+3. [x] `merge=union` for the changelog (not the inbox: its ids must not be merged blind).
 4. [x] `check-plan`: duplicate ids fail; a command centre behind the plan warns.
 5. [x] `gate.sh` leaves the tree as it found it.
 6. [x] CI: the fast gate on every push and pull request (`.github/workflows/gate.yml`). Written and
    run in a clean checkout on this Mac; its first run on GitHub is at the first push.
 7. [x] Choices that are only CSS are shot from one build; a worktree is set up by a script.
-8. [ ] The daily run switched on (the owner's), and whether it may push (the owner's).
+8. [x] The daily run switched on (the owner's), and whether it may push (the owner's). The owner
+   switched both on on 2026-10-01 (Q10, option A, tapped on the command centre): on, daily, and it
+   may push a branch that touches only the plan; never `master`, never a pull request. The schedule
+   itself is made by the main session; until it has run once, [stage 0](../stages/00-hub.md) carries
+   it under "Still owed". The owner's note beside the answer ("Hub can decide PRs but we need
+   carefully crafted rules for conditions for an auto PR approval merge to master") is not part of
+   this switch: it is kept as [I002](../ideas/I002-rules-for-the-hub-to-approve-and-merge-a-pull-re.md),
+   and nothing merges by itself until those rules are the owner's.

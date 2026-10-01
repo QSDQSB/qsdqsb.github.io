@@ -1,17 +1,70 @@
 # The QSD design language
 
-**Version 0, 2026-10-01. A draft until the owner confirms it** (Q3 in the [queue](QUEUE.md)). It
-describes the language the site already speaks at its best (the Photobook and the colour pages) and
-the owner's calls, so every page can speak it.
+**Version 0, 2026-10-01. A draft, and not yet the owner's.** The owner was asked whether it reads
+true (Q3) and answered the same day: not yet, and "We need to revisit it". It is to be talked through
+with the owner in conversation, not in the queue. Until they say otherwise it stays version 0, and
+where it and [`PRINCIPLES.md`](PRINCIPLES.md) differ, the principles win. It describes the language
+the site already speaks at its best (the Photobook and the colour pages) and the owner's calls, so
+every page can speak it.
 
 Three kinds of line are in it, and each is marked. **The owner's** is a call the owner made, dated or
 quoted; [`PRINCIPLES.md`](PRINCIPLES.md) holds the record. **Built** is what the code does today.
-**The lead's reading** is this page's own ordering of the two, not yet the owner's: every rule
-without a date or a "built" is one of those, and is what Q3 asks about. Where the code does not yet
-do what a line says, the line says so.
+**The lead's reading** is this page's own ordering of the two, not the owner's: every rule without a
+date or a "built" is one of those. Where the code does not yet do what a line says, the line says so.
 
 [`PRINCIPLES.md`](PRINCIPLES.md) is why. This page is how. `_docs/components.md` is the catalogue of
 the pieces in code. [`WORKFLOWS.md`](WORKFLOWS.md) is how to work with all three.
+
+## Until the owner has talked it through
+
+What a session may rest on this page, and what it may not.
+
+- **The owner's lines hold**, because [`PRINCIPLES.md`](PRINCIPLES.md) holds them. Quote the
+  principle, not this page.
+- **A line marked built is a fact about the code.** Bringing a surface into line with a shared piece
+  that is built is tier 1, as before ([0001](decisions/0001-who-decides-what.md)).
+- **The scales and the pieces marked "decided, not built"** stand on
+  [0002](decisions/0002-one-control-vocabulary.md) and
+  [0003](decisions/0003-stylesheet-organisation.md), which were accepted under delegation, not on
+  this page. Work on them that moves no pixel goes ahead. A move a reader can see onto a radius, a
+  duration, a curve or a depth of glass waits for the conversation: the values are among the things
+  to be talked through, and a migration is cheaper to hold than to reverse.
+- **The lead's reading decides nothing a reader sees.** It may place a page (which pattern, which
+  pieces) and it may be the reason a question is asked. It is not the reason a visible change is made
+  without the owner, it is not quoted to the owner as a rule, and a fit check against it says "the
+  lead's reading" beside its verdict. That covers the split into grammar and signatures and its test;
+  "chrome never brings its own colour" and the Refused row; the count of four voices; square corners
+  as a rule; the patterns' names and the Shell row's "never"; what protects a signature beyond the
+  owner's own quoted call; the interface's words in section 10; and section 11.
+- **No signature is added, retired or re-ranked** on this page's say.
+
+### For the conversation
+
+It opens with a question, not a defence: **which part read false?** The idea, a particular rule, the
+tone, or the length. The answer may make the list below the wrong list. Then the four things the lead
+most wants the owner's word on, in the order it would raise them:
+
+1. **Is "a grammar and its signatures" your way of seeing the site?** Everything else on the page
+   hangs on it. It says most of what a session builds "takes no decision at all", and that every
+   one-of-a-kind thing is your call. The six lines it grows from ("What makes the site itself", in
+   `PRINCIPLES.md`) are still a draft you have not corrected. Two of them, the private heraldry and
+   the things hidden for the curious, have no home in a grammar except the list of signatures: is
+   that where whimsy lives? And the list itself: twelve are registered. Which are missing, and which
+   would you not protect?
+2. **Colour: is the rule "nothing but the photograph, the brass and the inks"?** You made two calls
+   that point that way on 2026-10-01: white headings, brass links. The page stretches them into a
+   rule that refuses every other colour. If the rule is yours, the tag colours
+   (`_data/tag_colours.yml`), the type badges and About's gradient notice follow it in their stages.
+   If it is not, the page needs to say where colour is welcome.
+3. **How far does the Photobook's manner reach?** The page stands every new page on the Photobook's
+   shell, and leaves open whether the Photobook's register of words (constrained, minimal, no jokes:
+   your call of 2026-09-24, for the book) holds for the whole interface. Posts, About, the Bestiary
+   and the tag pages are each built on the answer. Is a page of writing a room in the book's manner,
+   or a register of its own?
+4. **The numbers that would move pixels.** Six radii, five durations and two curves, three depths of
+   glass, one brass focus ring. Do you want to see them drawn on one page (stage 2's specimen)
+   before any surface moves onto them? Two readings in particular are the lead's alone: square
+   corners on every print, and a control that is either round or a pill.
 
 ## The one idea: a grammar and its signatures
 
@@ -44,9 +97,8 @@ attention.
 | Gold | The sun's alone, in the specs. | `--photobook-gold` |
 | Film hues | A film carries its own hue, as a tick or a dot, nowhere larger. | the dial, the colophon |
 | Headings | **White by default.** The owner, 2026-10-01: "Titles should be default white coloured"; "retire the overly colourful H1 to H6 font colour". Which white (the ivory ink, or pure white) is shown before it is built. | Not yet built: `_sass/_base.scss:63-85` still colours h2 to h5 |
+| A link in a page's text | **Brass, with a hairline underline.** The owner, 2026-10-01 (Q9, option B, picked from three prototypes). Hover brightens to ivory. | Not yet built: `_sass/_base.scss:31-41` still colours every link `$link-color` #6fcdff. A task in [stage 2](stages/02-foundations-plumbing.md) |
 | Refused | Neon. Saturated fills. A colour that is not from a photograph, the brass, or the inks. | |
-
-Open: in-content links are blue (`$link-color` #6fcdff), outside this palette.
 
 ## 2. Type
 
@@ -217,5 +269,6 @@ generated.
 |---|---|
 | **The owner's, and built** | Doorways withhold; a card is a magazine cover; photographs are prints, with nothing over them; Playfair titles, Barlow labels, Didot figures; gold for the sun alone; the misty vat; one viewer; the monogram's loop; the masthead that hides and returns |
 | **Built, and the lead's reading of it** | "The photograph is the light source"; the grammar and its signatures; the four voices; the patterns' names; the pieces marked Built. The tarot cards are built and under review |
-| **Decided, not yet built** | The six radii, five durations, three glass depths, six layers; inks on `:root`; the text button, tag and card; white headings; one focus ring; two curves; the ratchet |
-| **Open** (the owner's, in the queue or to come) | Link colour; body face and measure for reading; the footer; the tarot cards' next life; whether this page reads true |
+| **The owner's, not yet built** | White headings; brass links with a hairline underline (Q9) |
+| **Decided under delegation, not yet built** ([0002](decisions/0002-one-control-vocabulary.md), [0003](decisions/0003-stylesheet-organisation.md)) | The six radii, five durations, three glass depths, six layers; inks on `:root`; the text button, tag and card; one focus ring; two curves; the ratchet |
+| **Open** (the owner's, in conversation or to come) | Whether this page reads true: not yet (Q3, 2026-10-01), to be talked through; body face and measure for reading; the footer; the tarot cards' next life |

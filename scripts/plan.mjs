@@ -15,6 +15,7 @@
  *   node scripts/plan.mjs answer Q5 "A: a designed holding page"   # the owner answered
  *   node scripts/plan.mjs log "<what a reader now gets>" [--ids X03,X11] [--tier 1]
  *   node scripts/plan.mjs published                      # the command centre was just republished
+ *   node scripts/plan.mjs only-plan [base]               # exit 1 if anything outside _plan/ differs from base
  *   node scripts/plan.mjs status                         # the session brief
  *
  * Ids are never reused: F numbers count up across Waiting and Taken, Q numbers across open and
@@ -41,6 +42,23 @@ const usage = (why) => { console.error(`${why}\nSee the head of scripts/plan.mjs
 const missing = (why) => { console.error(why); process.exit(1); };
 const oneLine = (s) => String(s).replace(/\s+/g, ' ').trim();
 
+// This copy keeps this checkout's plan. Called by its path from inside another checkout (a worktree
+// calling the main one's script), it would judge or write the wrong tree: refuse.
+if (!process.env.PLAN_DIR) {
+  let here = '';
+  try { here = fs.realpathSync(execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim()); } catch { /* not in a checkout: nothing to mistake */ }
+  if (here && here !== fs.realpathSync(ROOT)) usage(`This is ${ROOT}'s copy of plan.mjs, called from ${here}. Run the copy in the checkout you are in: node scripts/plan.mjs …`);
+}
+
+/** The daily run records on its own branch. While that branch holds commits this checkout lacks,
+ *  an id given out here could be one it has already given out: merge it first. */
+function idsAreSafeHere() {
+  if (process.env.PLAN_DIR) return;
+  const git = (...a) => { try { return execFileSync('git', a, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim(); } catch { return ''; } };
+  const ahead = Number(git('rev-list', '--count', 'HEAD..hub/daily'));
+  if (ahead > 0) missing(`The daily run's branch (hub/daily) holds ${ahead} commit(s) this checkout does not, with findings, calls or ideas already numbered. Ask the owner, merge it (git merge hub/daily), then run this again.`);
+}
+
 const [command, ...rest] = process.argv.slice(2);
 const flags = {}, words = [];
 for (let i = 0; i < rest.length; i++) {
@@ -63,6 +81,7 @@ switch (command) {
   case 'finding': {
     const [where, what] = words;
     if (!where || !what) usage('finding needs two things: where, and what was seen.');
+    idsAreSafeHere();
     const box = inbox();
     const id = nextId(box.waiting + box.taken, 'F');
     const line = `- ${today()} · ${id} · ${oneLine(where)} · ${oneLine(what)} (${flag('by') || 'session'})`;
@@ -75,6 +94,7 @@ switch (command) {
   case 'idea': {
     const [said] = words;
     if (!said) usage('idea needs the idea, in the words it was said in.');
+    idsAreSafeHere();
     const dir = file('ideas');
     const taken = fs.readdirSync(dir).map((f) => Number(f.match(/^I(\d{3,})-/)?.[1] || 0));
     const id = `I${String(Math.max(0, ...taken) + 1).padStart(3, '0')}`;
@@ -107,9 +127,10 @@ switch (command) {
     const end = after < 0 ? body.length : after;
     // The lead's verdict stays as written; the owner's line sits under it, and a second decision replaces the first.
     const kept = body.slice(at, end).replace(/^\*\*The owner:\*\*.*\n?/m, '').replace(/\n+$/, '');
-    // The same decision read again from the page (the daily run does) is not a new decision: the date stays.
+    // The same decision read again from the page (the daily run does) is not a new decision: the date
+    // stays, and so does the note unless a new one is given.
     const was = body.slice(at, end).match(/^\*\*The owner:\*\*\s*(\w+) · \d{4}-\d{2}-\d{2}(?: · (.+))?$/m);
-    if (was && was[1] === what && (was[2] || '') === (note ? oneLine(note) : '') && new RegExp(`\\*\\*Status:\\*\\*\\s*${to}\\b`).test(body)) { console.log(`${id}: already ${what}, unchanged.`); break; }
+    if (was && was[1] === what && (!note || (was[2] || '') === oneLine(note)) && new RegExp(`\\*\\*Status:\\*\\*\\s*${to}\\b`).test(body)) { console.log(`${id}: already ${what}, unchanged.`); break; }
     const line = `**The owner:** ${what} · ${today()}${note ? ` · ${oneLine(note)}` : ''}`;
     const next = `${body.slice(0, at)}${kept}\n\n${line}\n${body.slice(end)}`.replace(/(\*\*Status:\*\*\s*)[a-z]+/, (m, lead) => `${lead}${to}`);
     write(rel, next);
@@ -134,6 +155,7 @@ switch (command) {
     const [question] = words;
     const options = flags.option || [];
     if (!question || !flag('body') || options.length < 2) usage('ask needs a question, --body, and at least two --option entries ("A*: …" marks the recommendation).');
+    idsAreSafeHere();
     const body = read('QUEUE.md');
     const at = body.search(/\n---\n+## Answered/);
     if (at < 0) usage('QUEUE.md has lost its rule and "## Answered" heading: nothing was changed.');
@@ -189,6 +211,51 @@ switch (command) {
     hub.published = { date: today(), hash: planHash(PLAN) };
     write('hub.json', `${JSON.stringify(hub, null, 2)}\n`);
     console.log(`The command centre is recorded as published on ${hub.published.date} (${hub.published.hash}).`);
+    break;
+  }
+
+  case 'only-plan': {
+    // The daily run's one promise, as a check and not a sentence: its branch holds nothing but the
+    // plan. Judged commit by commit as well as end to end (a site change and its revert are both
+    // refused), with renames off (a site file moved into _plan/ is a site file deleted), and only
+    // ordinary files allowed (a link under _plan/ can point anywhere).
+    const base = words[0] || 'master';
+    const git = (...a) => execFileSync('git', a, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 });
+    try { git('rev-parse', '--verify', '--quiet', `${base}^{commit}`); } catch { usage(`only-plan: "${base}" is not a commit here. Nothing was judged.`); }
+    // Run on the base itself it would be judging the owner's checkout, where the run must not be.
+    const branch = git('rev-parse', '--abbrev-ref', 'HEAD').trim();
+    if (branch === base) missing(`only-plan judges a branch against ${base}; this checkout (${ROOT}) is on ${base} itself. The daily run works in its own worktree: you are in the wrong place.`);
+    const bad = [];
+    const inPlan = (f) => f.startsWith('_plan/');
+    // `--raw -z`: ":old new sha sha S\0path\0" per file; a merge's has a colon and a mode per
+    // parent, then the result's. The mode judged is the one the commit leaves.
+    const raw = (where, out) => {
+      const t = out.split('\0');
+      for (let i = 0; i + 1 < t.length; i += 2) {
+        const parents = t[i].match(/^:+/)[0].length, mode = t[i].replace(/^:+/, '').split(' ')[parents], f = t[i + 1];
+        if (!inPlan(f)) bad.push(`${where}: ${f} is outside _plan/`);
+        else if (mode !== '100644' && mode !== '000000') bad.push(`${where}: ${f} is not an ordinary file (mode ${mode})`);
+      }
+    };
+    const short = (c) => c.slice(0, 7);
+    for (const c of git('rev-list', '--no-merges', `${base}..HEAD`).split('\n').filter(Boolean)) raw(`commit ${short(c)}`, git('diff-tree', '--root', '-r', '--raw', '-z', '--no-renames', '--no-commit-id', c));
+    // A merge of the base into the branch brings the base's own files; what a merge may not do is
+    // change something neither side had.
+    for (const c of git('rev-list', '--merges', `${base}..HEAD`).split('\n').filter(Boolean)) raw(`merge ${short(c)}`, git('diff-tree', '-c', '-r', '--raw', '-z', '--no-renames', '--no-commit-id', c));
+    raw('the branch as a whole', git('diff', '--raw', '-z', '--no-renames', `${base}...HEAD`));
+    // What is not committed yet: "XY path\0", and a rename's old path as the token after it.
+    const st = git('status', '--porcelain', '-z', '--untracked-files=all').split('\0');
+    for (let i = 0; i < st.length; i++) {
+      if (!st[i]) continue;
+      const xy = st[i].slice(0, 2), paths = [st[i].slice(3)];
+      if (/[RC]/.test(xy)) paths.push(st[++i]);
+      for (const f of paths) {
+        if (!inPlan(f)) bad.push(`not committed: ${f} is outside _plan/`);
+        else { const at = path.join(ROOT, f); if (fs.existsSync(at) && !fs.lstatSync(at).isFile()) bad.push(`not committed: ${f} is not an ordinary file`); }
+      }
+    }
+    if (bad.length) missing(`Not only the plan (${branch} against ${base}, in ${ROOT}):\n${[...new Set(bad)].map((l) => `  ${l}`).join('\n')}`);
+    console.log(`Only the plan: ${branch} against ${base}, in ${ROOT}.`);
     break;
   }
 
