@@ -25,6 +25,14 @@
  * (assets/js/colour/palette.js) and the book's colophon (assets/js/photobook/index.js).
  */
 
+// How decisively a spot belongs to its strongest colour: each colour's hold raised to this power before
+// the mix (in FRAG, and the same in settle, so the shares still come true). At 1 every spot averaged all
+// five and the middle tone took the vat: Rigi's mauve covered 94% of it for a 25% share, Morocco's blue
+// 96% for 36%. At 2 it still blends like watercolour, misty, no edge to be seen, and each colour shows
+// nearer its share (Rigi's worst colour 69 points off → 37, Morocco 60 → 30). Chosen with the owner on
+// 2026-10-01 over 3–12, which read as patches: the mist comes first, the percentages second.
+const MIST = 2;
+
 const FRAG = `
 precision highp float;
 uniform vec2 res, org; uniform float seed, t, calm, tilt, aspect; uniform int shape;
@@ -57,13 +65,14 @@ void main() {
   vec2 along = vec2(cos(seed * 0.37), sin(seed * 0.37)), across = vec2(-along.y, along.x);
   pw += (1.0 - calm) * along * 0.28 * sin(dot(pw, across) * 2.4 + seed * 0.11 + t * 0.03);
   mat2 lean = mat2(cos(tilt), -sin(tilt), sin(tilt), cos(tilt));
-  // Each colour's hold here: its gain (set so its area is its share), fading softly from where it was poured.
+  // Each colour's hold here: its gain (set so its area is its share), fading softly from where it was poured,
+  // raised to MIST so the strongest colour leads a spot rather than all five averaging.
   float ws[5]; float tot = 0.0;
   for (int k = 0; k < 5; k++) { ws[k] = 0.0; if (k >= n) continue;
     vec2 d = lean * (pw - pos[k] * vec2(shape == 1 ? aspect : 1.0, 1.0)); // spread along a rectangle's length
     // A layer reaches across the vat; a drop (the accent) stays a drop.
     float layer = calm * (1.0 - drop[k]);
-    ws[k] = gain[k] * exp(-(d.x * d.x * (1.0 - 0.94 * layer) + d.y * d.y) / mix(0.26, 0.1, calm)); tot += ws[k]; }
+    ws[k] = pow(gain[k], ${MIST.toFixed(1)}) * exp(-${MIST.toFixed(1)} * (d.x * d.x * (1.0 - 0.94 * layer) + d.y * d.y) / mix(0.26, 0.1, calm)); tot += ws[k]; }
   for (int k = 0; k < 5; k++) ws[k] /= tot;
   float L = 0.0, C = 0.0; vec2 ab = vec2(0.0);
   for (int k = 0; k < 5; k++) { if (k >= n) continue; L += ws[k] * col[k].x; ab += ws[k] * col[k].yz; C += ws[k] * length(col[k].yz); }
@@ -163,7 +172,7 @@ function set(r, P, gain) {
 // Weighing a vat: how much of it each colour covers, adjusted until each is its share (settle,
 // below). Once per palette and seed in a visit: kept here for the next vat of the same.
 const gains = new Map();
-const step = (P, gain, areas) => { for (let k = 0; k < P.n; k++) gain[k] *= ((P.share[k] + 1e-3) / (areas[k] + 1e-3)) ** 0.8; };
+const step = (P, gain, areas) => { for (let k = 0; k < P.n; k++) gain[k] *= ((P.share[k] + 1e-3) / (areas[k] + 1e-3)) ** (0.8 / MIST); }; // a gain's change shows MIST-fold in its area
 
 /**
  * A vat as a canvas, drawn at once; `canvas.ready` resolves with it.
@@ -289,12 +298,12 @@ function field(P) {
   return { pull, cells };
 }
 // Each colour's weight, set until it covers its share within a tenth of a point.
-function settle(P, { tol = 0.001, rounds = 60 } = {}) {
+function settle(P, { tol = 0.001, rounds = 120 } = {}) {
   const { pull, cells } = field(P), gain = P.share.slice(), n = P.n;
   let areas = [];
   for (let it = 0; it < rounds; it++) {
     areas = new Array(n).fill(0);
-    for (let e = 0; e < cells * n; e += n) { let t = 0; for (let k = 0; k < n; k++) t += gain[k] * pull[e + k]; if (t > 0) for (let k = 0; k < n; k++) areas[k] += gain[k] * pull[e + k] / t; }
+    for (let e = 0; e < cells * n; e += n) { let t = 0; for (let k = 0; k < n; k++) t += (gain[k] * pull[e + k]) ** MIST; if (t > 0) for (let k = 0; k < n; k++) areas[k] += (gain[k] * pull[e + k]) ** MIST / t; }
     for (let k = 0; k < n; k++) areas[k] /= cells;
     if (areas.every((a, k) => Math.abs(a - P.share[k]) < tol)) break;
     step(P, gain, areas);
