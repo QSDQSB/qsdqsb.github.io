@@ -10,8 +10,10 @@
  * the expansion (never re-folds). A browser that already subscribed peeks to a
  * quiet acknowledgement, not a fresh form.
  *
- * The × closes it for good on this browser: the slip fades and folds shut, and
- * head/custom.html hides it before first paint on every later page.
+ * A click on the card — anywhere but the form and the privacy link — or on its
+ * × folds it to the same rule, and the browser remembers: on every later page
+ * the slip arrives folded (head/custom.html reserves that shape before first
+ * paint), still peeking and opening as the rule always does.
  */
 (function () {
   "use strict";
@@ -26,7 +28,6 @@
   var PEEK_REFOLD_GRACE_MS = 2000; // unhurried retreat — the card lingers before folding back
   var DONE_KEY = "qsd-subscribe-done";
   var DISMISSED_KEY = "qsd-subscribe-dismissed"; // read in head/custom.html too
-  var LEAVE_MS = 800; // the fold's own duration (.subscribe-slip__body)
 
   var MSG_INVALID = "That address doesn’t look right.";
   var MSG_FAILED = "That didn’t go through. Try once more.";
@@ -58,8 +59,8 @@
     this.hp = root.querySelector(".subscribe-slip__hp input");
     this.okNote = root.querySelector(".subscribe-slip__note--ok");
     this.errNote = root.querySelector(".subscribe-slip__note--err");
-    this.close = root.querySelector(".subscribe-slip__close");
-    this.close.hidden = false; // without JS it could not work, so it stays hidden
+    this.card = root.querySelector(".subscribe-slip__card");
+    root.querySelector(".subscribe-slip__close").hidden = false; // no use without JS
 
     this.bind();
 
@@ -69,11 +70,15 @@
       return;
     }
 
-    if (storageGet(DONE_KEY)) {
-      // Already subscribed on this browser — rest as the quiet rule, and mark
-      // the card done so a peek reveals the acknowledgement, not a fresh form.
-      this.root.classList.add("is-in", "is-done");
-      this.okNote.hidden = false;
+    var done = storageGet(DONE_KEY);
+    if (done || storageGet(DISMISSED_KEY)) {
+      // Already subscribed, or closed, on this browser — rest as the quiet rule.
+      this.root.classList.add("is-in");
+      if (done) {
+        // A peek reveals the acknowledgement, not a fresh form.
+        this.root.classList.add("is-done");
+        this.okNote.hidden = false;
+      }
       this.fold(true);
     }
   }
@@ -82,7 +87,12 @@
     var self = this;
 
     this.summary.addEventListener("click", function () { self.engage(true); });
-    this.close.addEventListener("click", function () { self.dismiss(); });
+    // The whole card folds on a click (its × included), bar the parts a reader
+    // is there to use.
+    this.card.addEventListener("click", function (event) {
+      if (event.target.closest(".subscribe-slip__form, .subscribe-slip__privacy")) return;
+      self.dismiss();
+    });
 
     this.root.addEventListener("pointerenter", function () {
       self.hovering = true;
@@ -195,18 +205,14 @@
   /* ---------- dismiss ---------- */
 
   Slip.prototype.dismiss = function () {
-    var root = this.root;
-    this.cancelRefold();
     storageSet(DISMISSED_KEY, String(Date.now()));
-    if (reduced) {
-      document.documentElement.classList.add("subscribe-dismissed");
-      return;
+    // Focus on the × would be lost with the card: hand it to the rule, before
+    // the rule counts as folded, so it does not read as a request to peek.
+    if (this.card.contains(document.activeElement)) {
+      this.summary.hidden = false;
+      this.summary.focus({ preventScroll: true });
     }
-    // Fade and fold shut, so the page below closes up rather than jumping.
-    root.classList.add("is-leaving");
-    window.setTimeout(function () {
-      document.documentElement.classList.add("subscribe-dismissed");
-    }, LEAVE_MS);
+    this.fold();
   };
 
   /* ---------- submission ---------- */
