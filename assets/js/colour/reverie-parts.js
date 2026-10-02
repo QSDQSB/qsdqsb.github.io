@@ -8,7 +8,8 @@
 import { vat, oklab } from './vat.js';
 import { card, focus, holding, closest, varied, nearby, reverieOf, SHOWN } from './cards.js';
 
-const PALETTE = new URL('../../../palette/', import.meta.url).pathname;
+/** The palette page, where a voyage's name leads (`#<gallery>`). */
+export const PALETTE = new URL('../../../palette/', import.meta.url).pathname;
 
 /** Ridgway's names (/assets/ridgway.json `colours`, [name, hex] each) as a way to name a colour: the
  *  nearest of his within half again the eye's match of it, else none (''). */

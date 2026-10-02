@@ -24,7 +24,7 @@ import { tips } from '../photobook/tip.js';
 import { develop } from '../photobook/develop.js';
 import { vat, seedOf } from './vat.js';
 import { esc, blocks, bar, card, kindred, dripper, reverieOf, shadeFor, measureCards, json } from './cards.js';
-import { namer, opening, gather, pour, nearRow, countLine, prints } from './reverie-parts.js';
+import { namer, opening, gather, pour, nearRow, countLine, prints, PALETTE } from './reverie-parts.js';
 
 // Each file fetched once, when a figure first wants it.
 const wanted = {};
@@ -37,7 +37,6 @@ const voyageOf = async (g) => {
 const names = async () => namer((await data('ridgway')).colours);
 const hexOf = (six) => (/^[0-9a-f]{6}$/i.test(six) ? `#${six.toLowerCase()}` : null);
 const { drip } = dripper();
-const PALETTE = new URL('../../../palette/', import.meta.url).pathname;
 
 // A plate's head, the page it is a piece of; and its foot, what it does in the hand (`hover`: said
 // only where a pointer can rest on things).
@@ -62,7 +61,7 @@ const draw = {
     const shown = asked.length ? asked.map((slug) => v.photos.findIndex((p) => p.slug === slug)).filter((i) => i >= 0) : v.photos.map((_, i) => i);
     // Folded, the frames are a strip of small prints over their bars: the story at a glance, and a
     // tenth of the room. The cards (and their full prints) are drawn only once the reader opens it.
-    const strip = shown.map((i) => { const p = v.photos[i]; return `<span class="colour-frames__thumb"><img src="${p.url}/480.webp" alt="" loading="lazy" decoding="async">${bar(p.sig)}</span>`; }).join('');
+    const strip = shown.map((i) => { const p = v.photos[i]; return `<span class="colour-frames__thumb"><img src="${p.url}/${p.sizes.find((s) => s >= 480) || p.sizes[p.sizes.length - 1] || 480}.webp" alt="" loading="lazy" decoding="async">${bar(p.sig)}</span>`; }).join('');
     el.innerHTML = `<article class="colour-plate">${head(v, page)}
       <details class="colour-frames">
         <summary><span class="colour-frames__strip">${strip}</span><span class="colour-frames__toggle"><span class="colour-frames__show">Show the ${shown.length} frames and their colours</span><span class="colour-frames__hide">Fold the frames away</span></span></summary>
@@ -126,7 +125,11 @@ if (figures.length) {
   for (const el of figures) develop(el, '.palette-card__ph img');
   // A figure that cannot be drawn (no data, a voyage or colour gone) keeps its link.
   const fill = (el) => draw[el.dataset.figure](el).then(() => el.classList.add('is-drawn'), () => {});
-  if (!('IntersectionObserver' in window)) figures.forEach(fill);
+  // A link to a section (#…) has the browser scroll before the figures above it have their height:
+  // drawn all at once then, and the reader set back on the heading asked for once they stand.
+  const asked = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if (asked) Promise.all(figures.map(fill)).then(() => { if (scrollY > 0 || asked.getBoundingClientRect().top > innerHeight) asked.scrollIntoView({ block: 'start', behavior: 'instant' }); });
+  else if (!('IntersectionObserver' in window)) figures.forEach(fill);
   else {
     const near = new IntersectionObserver((seen) => { for (const e of seen) if (e.isIntersecting) { near.unobserve(e.target); fill(e.target); } }, { rootMargin: '100% 0px' });
     figures.forEach((el) => near.observe(el));

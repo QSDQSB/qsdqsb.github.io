@@ -5,5 +5,5 @@
   `c` is six hex figures, no #. Set inside a link where the hex leads to its Reverie.
   Styles: _sass/_colour.scss .colour-code.
 {%- endcomment -%}
-<span class="colour-code"><i style="--c:#{{ include.c | downcase }}" aria-hidden="true"></i>{% if include.label %}{{ include.label }}{% else %}#{{ include.c | upcase }}{% endif %}</span>
+<span class="colour-code{% unless include.label %} colour-code--hex{% endunless %}"><i style="--c:#{{ include.c | downcase }}" aria-hidden="true"></i>{% if include.label %}{{ include.label }}{% else %}#{{ include.c | upcase }}{% endif %}</span>
 {%- comment -%} no trailing newline: it sits in a line of text {%- endcomment -%}

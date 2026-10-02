@@ -10,6 +10,11 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-10-02 · F060 · _sass/_page.scss, a post between 1536 and 1560 px · the hero's title sits 6 px left of the text's edge while the spread is still squeezed (reviewer)
+- 2026-10-02 · F059 · assets/js/colour/cards.js place(), Reverie and every post · in Playwright's WebKit, Back from Reverie to a post lands at the top (history.scrollRestoration reads manual on the post afterwards); Chromium keeps the place; not confirmed on a real Safari (reviewer)
+- 2026-10-02 · F058 · images/posts/all-souls-sun-dial.jpg · 435 KB at 3250 px for a column of at most 1200 px, with no smaller rendition for a phone (reviewer)
+- 2026-10-02 · F057 · _sass/_colour.scss, .colour-frames__toggle · the fold's label rewrites the onward-link dress by hand (0.24em tracking against 0.22em) on a control that toggles; share the mixin, or wait for the text button (reviewer)
+- 2026-10-02 · F056 · _sass/_colour.scss, the colour plate · the first built card on 0009's scale (18 px, one short shadow), but its radius, ground and shadow are literals in a page's partial; 0002 asks for a card mixin in _components.scss (reviewer)
 - 2026-10-02 · F055 · QSD's Palette, a frame's blocks · At a card about 370 px wide the last block's share wraps: '17.4% ·' then 'accent' on a second line, which drops that card's name and bar below its neighbour's (Rigi dscf5741; seen in the post's frames figure, and the palette page lays the same card) (session)
 - 2026-10-02 · F054 · scripts/hub-page.mjs, the daily run · the command centre is 360 KB because every stage, decision and document is inside it. When the daily run republished it (2026-10-02), the next session could not publish without reading all 1,091 lines of that copy first. The daily run no longer republishes; a smaller page (the live part apart from the library of documents) would let it (session)
 - 2026-10-01 · F053 · scripts/hub-page.mjs, the command centre · the published page always says of itself that it is behind the plan: it is built before plan.mjs published records the new hash, so the note is baked in (seen in the live page of 2026-10-01 and in the page built on 2026-10-02) (daily)
