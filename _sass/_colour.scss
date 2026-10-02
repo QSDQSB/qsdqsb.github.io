@@ -1116,9 +1116,11 @@ body.colour-page--drift { padding-bottom: 0; }
   .palette-card .is-accent b::after { content: "accent"; display: block; }
 
   // A frame's specs: the panel's own type again, where the post's p, dt and dd would be set instead.
+  // Of a label (dt) only what the post takes, never its size: the panel's own floor on a phone
+  // (_photobook.scss, "no smaller than about 11 px") must still reach it.
   .photobook-specs__gear { margin: 0; font-size: 0.74rem; }
   .palette-strip__hex { margin: 0; font-size: 0.58rem; }
-  .photobook-specs__settings dt { margin-top: 0; font: 500 0.52rem $barlow-font-family; }
+  .photobook-specs__settings dt { margin-top: 0; font-family: $barlow-font-family; font-weight: 500; }
   .photobook-specs__settings dd { margin-left: 0; font: 400 0.7rem $barlow-font-family; }
 }
 
@@ -1301,15 +1303,11 @@ html.motion-off .colour-plate__hint--hover { display: none; }
   .photobook-specs__inner { padding: 1.2rem 0 0; }
 
   @include responsive-container-up(44rem) {
-    @include photobook-specs-band;
-
     // In a column of prose the band is narrower than under a lightbox's print: the place's column
     // gives room to the settings (two abreast), and the camera stands right under the place.
-    .photobook-specs__inner {
-      grid-template-columns: minmax(10rem, 1fr) minmax(0, 2.2fr) minmax(0, 2.1fr);
-      grid-template-rows: auto 1fr;
-      padding: 1.3rem 0 0;
-    }
+    @include photobook-specs-band($columns: minmax(10rem, 1fr) minmax(0, 2.2fr) minmax(0, 2.1fr), $padding: 1.3rem 0 0);
+
+    .photobook-specs__inner { grid-template-rows: auto 1fr; }
   }
 }
 

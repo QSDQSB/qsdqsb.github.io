@@ -252,6 +252,8 @@ const JOURNEYS = [
     await rows.first().click();
     await page.waitForFunction(() => location.hash.length > 1, null, { timeout: 5000 }).catch(() => {});
     must(new URL(page.url()).hash.length > 1, 'choosing a voyage did not change the address');
+    // At the foot of a voyage's palette, the way on to the essay on how the colours came by their names.
+    must(await page.locator('.palette-page .colour-next a[href$="/posts/in-the-naming-of-light/"]').count() === 1, "a voyage's palette has no way on to In the Naming of Light");
   } },
 
   { id: 'reverie', name: 'Reverie shows a colour and the photographs that hold it', async run({ page, go }) {
@@ -259,6 +261,7 @@ const JOURNEYS = [
     await page.waitForSelector('.palette-card__print', { timeout: 15000 }).catch(() => {});
     must((await page.locator('.reverie__code').innerText()).toUpperCase().includes('4A6FA5'), 'the colour asked for is not the colour shown');
     must(await page.locator('.palette-card__print').count() >= 1, 'no photographs for a colour that has them');
+    must(await page.locator('.reverie__credit a[href$="/posts/in-the-naming-of-light/"]').count() === 1, 'Reverie has no way on to In the Naming of Light');
   } },
 
   { id: 'reverie-unheld', name: 'A colour no photograph holds opens on the one that comes closest', async run({ page, go }) {
