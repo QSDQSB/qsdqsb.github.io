@@ -10,6 +10,9 @@
       each colour: its swatch, its name in Ridgway's book when one lies close, its hex
     include colour-figure.html kind="reverie" colour="ce7d99"
       a colour's Reverie as a card: dye, hex and name, the colours nearby, the count, the photographs
+    include colour-figure.html kind="frame" voyage="rigi" frame="dscf5789"
+      one frame of a voyage: the print, and beneath it its specs as the book's lightbox sets them
+      (assets/js/photobook/specs.js). Its data is written into the page from the voyage's manifest.
 
   `voyage` is a gallery (`gallery_name`); colours are six hex figures, no #. Until the script has
   drawn it (and with scripts off, or in a feed) the figure is the link it stands for. Its words are
@@ -22,11 +25,24 @@
   {%- assign cf_doc = cf_docs | where: "gallery_name", include.voyage | first -%}
   {%- assign cf_title = cf_doc.title | default: include.voyage | strip_html | escape -%}
 {%- endif -%}
+{%- if include.kind == "frame" -%}
+  {%- assign cf_key = include.voyage | replace: "/", "_" -%}
+  {%- assign cf_book = cf_doc.url | relative_url -%}
+{%- endif -%}
 <div class="colour-figure colour-figure--{{ include.kind }}" data-figure="{{ include.kind }}" lang="en"
   {%- if include.voyage %} data-voyage="{{ include.voyage | escape }}"{% endif -%}
   {%- if include.frames %} data-frames="{{ include.frames | escape }}"{% endif -%}
   {%- if include.colours %} data-colours="{{ include.colours | escape }}"{% endif -%}
-  {%- if include.colour %} data-colour="{{ include.colour | escape }}"{% endif -%}>
+  {%- if include.colour %} data-colour="{{ include.colour | escape }}"{% endif -%}
+  {%- if include.kind == "frame" %} data-book="{{ cf_book }}" data-title="{{ cf_title }}"{% endif -%}>
+  {%- if include.kind == "frame" -%}
+    {%- comment -%} The frame as the book's lightbox has it, and its place on the roll. {%- endcomment -%}
+    {%- for f in site.data.photo_manifests[cf_key].book.lightbox -%}
+      {%- if f.slug == include.frame %}
+  <script type="application/json" data-n="{{ forloop.index }}">{{ f | jsonify }}</script>
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif %}
   <p class="colour-figure__wait">
   {%- case include.kind -%}
     {%- when "palette" -%}
@@ -38,6 +54,8 @@
       {%- for c in cf_colours -%}
       <a href="{{ cf_reverie }}?c={{ c | downcase | escape }}">Reverie in #{{ c | upcase | escape }} <span aria-hidden="true">→</span></a>
       {%- endfor -%}
+    {%- when "frame" -%}
+      <a href="{{ cf_book }}#{{ include.frame | escape }}">{{ include.frame | upcase | escape }}, in {{ cf_title }} <span aria-hidden="true">→</span></a>
     {%- when "reverie" -%}
       <a href="{{ cf_reverie }}?c={{ include.colour | downcase | escape }}">Reverie in #{{ include.colour | upcase | escape }} <span aria-hidden="true">→</span></a>
   {%- endcase -%}
