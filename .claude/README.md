@@ -46,7 +46,7 @@ A typical "edit `_sass/_navigation.scss`" flow:
 3. Claude makes the edit.
 4. **`post-tool-edit-nudges.sh`** fires (PostToolUse), prints "💡 SCSS edited — consider running responsive-policy check".
 5. If `_variables.scss` was the file edited, **`post-tool-variables-check.sh`** runs `--new-only` and prints any single-use additions inline.
-6. At end of turn, **`stop-variables-check.sh`** fires. If any newly-added variable is single-use, exits 2 → forces Claude to address before yielding.
+6. At end of turn, **`stop-variables-check.sh`** fires. If any newly-added variable is single-use, exits 2 → the turn is sent back to address it (once: a turn already sent back may end).
 
 ## Slash commands (9)
 
@@ -95,7 +95,7 @@ Wired in `settings.json`.
 |---|---|---|
 | `post-tool-edit-nudges.sh` | After Edit/Write | Prints reminders for `_main.js`, SCSS, map data, gallery image edits. **Non-blocking.** |
 | `post-tool-variables-check.sh` | After Edit/Write | Runs `--new-only` var-check if `_variables.scss` was the edited file. Prints findings inline. **Non-blocking.** |
-| `stop-variables-check.sh` | End of turn | Runs `--new-only` var-check. **Exits 2 (blocking) if any newly-added variable is single-use** — forces inline-or-`@keep` resolution before turn yields. |
+| `stop-variables-check.sh` | End of turn | Runs `--new-only` var-check. **Exits 2 (blocking) if any newly-added variable is single-use** — sends the turn back, once, for an inline-or-`@keep` resolution. |
 
 ## Permissions
 
