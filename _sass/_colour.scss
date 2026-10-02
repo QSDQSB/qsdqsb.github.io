@@ -1244,6 +1244,12 @@ $plate-ground: mix(#fff, $background-color, 3%); // a hair above the page's grou
 @include responsive-reduced-motion { .colour-plate__hover { display: none; } }
 html.motion-off .colour-plate__hover { display: none; }
 
+// A hint that is all for a resting pointer: the whole line goes where there is none.
+.colour-plate__hint--hover { display: none; }
+@include responsive-hover { .colour-plate__hint--hover { display: block; } }
+@include responsive-reduced-motion { .colour-plate__hint--hover { display: none; } }
+html.motion-off .colour-plate__hint--hover { display: none; }
+
 // A colour's Reverie as a plate: the page's own opening, row, count and photographs, its dye to the
 // card's edges. One link lies over the whole card, to the colour's Reverie; the colours nearby and a
 // voyage's name lie above it and lead to their own.
@@ -1272,6 +1278,7 @@ html.motion-off .colour-plate__hover { display: none; }
   border-radius: inherit;
 
   &:focus-visible { @include brass-focus; outline-offset: -4px; }
+  &.is-on-dot { cursor: crosshair; } // the pointer on the hex's dot, which stirs the dye (figures.js)
 }
 
 .reverie-card__body { padding: 1.4rem var(--photobook-gutter) 1.8rem; }

@@ -24,7 +24,7 @@ import { tips } from '../photobook/tip.js';
 import { develop } from '../photobook/develop.js';
 import { vat, seedOf } from './vat.js';
 import { esc, blocks, bar, card, kindred, dripper, reverieOf, shadeFor, measureCards, json } from './cards.js';
-import { namer, opening, gather, pour, nearRow, countLine, prints, PALETTE } from './reverie-parts.js';
+import { namer, opening, gather, pour, nearRow, countLine, prints, stirring, PALETTE } from './reverie-parts.js';
 
 // Each file fetched once, when a figure first wants it.
 const wanted = {};
@@ -41,7 +41,9 @@ const { drip } = dripper();
 // A plate's head, the page it is a piece of; and its foot, what it does in the hand (`hover`: said
 // only where a pointer can rest on things).
 const head = (v, page) => `<p class="colour-plate__head"><a href="${PALETTE}#${v.g}">QSD's Palette for ${esc(page.title)} <span aria-hidden="true">→</span></a></p>`;
-const hint = (rest, hover = '') => `<p class="colour-plate__hint">${hover ? `<span class="colour-plate__hover">${hover} </span>` : ''}${rest}</p>`;
+const hint = (rest, hover = '') => (rest
+  ? `<p class="colour-plate__hint">${hover ? `<span class="colour-plate__hover">${hover} </span>` : ''}${rest}</p>`
+  : `<p class="colour-plate__hint colour-plate__hint--hover">${hover}</p>`); // a hint for a resting pointer alone: none where there is no hover
 
 const draw = {
   async palette(el) {
@@ -105,13 +107,21 @@ const draw = {
         <nav class="reverie__near" aria-label="Colours nearby">${nearRow(around)}</nav>
         <div class="reverie__count">${countLine(found.length, all)}</div>
         ${prints(found, pages, { href: () => to, label: 'in its Reverie' })}
-        ${hint('The card opens this colour’s Reverie. Each colour nearby opens its own.')}
+        ${hint('', 'Note the dot next to HEX RGB code? Hover on it!')}
       </div>
     </article>`;
-    const dye = el.querySelector('.reverie__dye'), { field } = pour(dye, focused, seedOf(`${f.g}/${f.slug}`));
+    const seed = seedOf(`${f.g}/${f.slug}`), dye = el.querySelector('.reverie__dye'), { field, width, height } = pour(dye, focused, seed);
     await field.ready;
     dye.prepend(field);
     dye.classList.add('is-poured');
+    // The dot after the hex stirs the dye, as on Reverie's own page (./reverie-parts.js stirring). The
+    // card's link lies over it, so the link watches for the pointer coming to rest on the dot.
+    const hero = { field, live: null, spec: [focused, { shape: 'rect', width, height, seed, stir: 'hold', speed: 20 }], want: false };
+    const stir = stirring(() => hero), chip = el.querySelector('.reverie__chip'), open = el.querySelector('.reverie-card__open');
+    let over = false;
+    const point = (e, on) => { if (on === over) return; over = on; open.classList.toggle('is-on-dot', on); if (on) stir.enter(e); else stir.leave(); };
+    open.addEventListener('pointermove', (e) => { const r = chip.getBoundingClientRect(), reach = 6; point(e, e.clientX >= r.left - reach && e.clientX <= r.right + reach && e.clientY >= r.top - reach && e.clientY <= r.bottom + reach); });
+    open.addEventListener('pointerleave', (e) => point(e, false));
     // The prints lead where the card does: one stop for the keyboard, the card's own link.
     for (const print of el.querySelectorAll('.palette-card__print')) print.tabIndex = -1;
     measureCards(el);
