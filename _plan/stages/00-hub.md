@@ -45,7 +45,7 @@ stops being the only reviewer.
       day before's upkeep and give out the same ids. The daily run keeps one branch, `hub/daily`,
       and merges `master` into it each day (`.claude/commands/hub-daily.md`). No pull request and no
       setting. The plan check tells a session when that branch holds commits to merge, and `/hub`
-      asks the owner first.
+      merges it once it has seen that it holds only the plan (asking first until 2026-10-02).
 - [x] The daily run's first run, 2026-10-02, with the owner approving its commands: it recorded Q11,
       filed F050 to F053 and left `hub/daily` local because `master` held an unpushed commit. It asked
       for dozens of approvals, so its mechanical steps became one script (`scripts/hub-daily.sh`),
@@ -56,6 +56,21 @@ stops being the only reviewer.
       the tap, at most once in twenty seconds, ids and letters only; a session watching the page wakes,
       records and replies in the thread (`/hub`). With no session watching, the daily run records.
       Proved against a stand-in for the runtime; in the real viewer: the owner's first tap.
+- [ ] The daily run made fully automatic (the owner, 2026-10-02: "IT SHOULD BE FULLY AUTOMATIC"). Its
+      first scheduled run, 07:34 that day, sat for two hours on a shell command of its own making in
+      the debt hunt, waiting for an approval; and its finish would have thrown the day away because
+      another session was at work in the owner's checkout. Built the same day, with tests: recording
+      the store is a program (`plan.mjs sync`, from a dump; every id and letter checked against the
+      plan, nothing written twice, nothing stored printed back, a change of mind named and not
+      written); the debt hunt is a program (`plan.mjs debt`); the finish writes its own commit line
+      and report, and says that the owner's checkout changed without refusing for it; the copy of
+      `hub-daily.sh` that runs is `master`'s whatever branch the checkout is on; and `/hub` merges
+      `hub/daily` without asking once `only-plan master --of hub/daily` passes. The box is ticked
+      when a scheduled run has ended with nobody approving anything. Two things it still leans on:
+      a checkout whose own copy of the script predates the hand-over (a branch cut before it) runs
+      the old finish until it takes `master` in, and the old stop hooks, which judge the checkout's
+      uncommitted work (another session's included) and sent a turn back every time. On `master`
+      they now send it back once (`scripts/hooks/stop-*.sh`).
 - [ ] The daily run's agents (`"daily_agents"` in `hub.json`, off). An agent handed work starts in the
       owner's checkout, not the run's worktree; the reviewer blocked the run on it (2026-10-01). Until
       a hand-off has been shown to stay inside the worktree, the run records and files only, and raw
