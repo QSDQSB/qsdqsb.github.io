@@ -27,7 +27,7 @@ A faster, steadier site that looks exactly the same. Every item is a finding fro
       compared). A 1x screen is given the 2880 px rendition, a denser one the picture as it was. A proper
       `sizes` for plates is stage 9's, with S12.
 - [ ] S09 · CMU Serif self-hosted. Waits on the owner's go: it means downloading the face's files and
-      committing them (font bytes, under the SIL Open Font Licence).
+      committing them (font bytes, under the SIL Open Font Licence): asked as Q14.
 - [x] S10 · Home's hero: a 1920 px rendition (318 KB to 84 KB), cut at build by `npm run covers` and
       gitignored like the other renditions, and preloaded.
 - [x] S11 · Lightbox prefetch: none on touch, sized from the mat, cancelled when passed. Six quick steps
@@ -94,7 +94,7 @@ A faster, steadier site that looks exactly the same. Every item is a finding fro
 - [ ] P04, second half · One sentence on what it does do (Cloudflare Web Analytics, no cookies). The owner
       (Q8, 2026-10-01): this sentence is the one that is needed. The lead drafts it in the house voice;
       the owner keeps, changes or strikes it before it goes on the page.
-      Drafted 2026-10-02, to be asked with one fact to confirm: no page of the live site carries Cloudflare's
+      Drafted 2026-10-02 and asked as Q13, with one fact to confirm: no page of the live site carries Cloudflare's
       counting script (checked that day), so either the counting is done at Cloudflare's edge, with nothing
       sent from the reader's browser, or it is off. The draft, for the first case: "**Counting visits.**
       Cloudflare, which serves this site, counts its visits as they pass: how many, to which pages, from
@@ -164,29 +164,7 @@ the changelog. The reviewer returns PASS. The audit's Status is updated for ever
   (Escape in Drift with search open; the wheel's focus move; no journey for the masthead), all fixed, and
   five journeys were added.
 
-## Seen in this batch, not yet filed
+## Seen in this batch
 
-The inbox gives out no number while `hub/daily` holds commits this branch lacks. These wait for that
-merge, then go in with `node scripts/plan.mjs finding`:
-
-- The pixel diff cannot see a coarse-pointer rule: a full-page capture is rendered with the query off
-  (`scripts/visual-baseline.mjs`, Playwright's Chromium), so the 16 px subscribe field left only 2 px
-  of page height in ten baselines, and the touch rules in `_photobook.scss` and `_archive.scss` have
-  never been in one (reviewer).
-- The 404's embed reads "This video is unavailable" in the old baseline and the new: perhaps only in a
-  headless browser; to be looked at in a real one (reviewer).
-- Home's door plates on a dense screen fetch the same bytes as before, only later (Palette's is
-  1.26 MB): a plate is a crop of a wide picture and wants a `sizes` of its own. Stage 9, with S12.
-- Opened from a larger print, the lightbox still fetches the smaller rendition its mat asks for and swaps
-  to it (a phone at 1x: 480 after 960). A wasted fetch; skipping it changes which file is drawn, so it
-  needs its baseline re-captured. Stage 9.
-- Search finds nothing for a single Chinese character ("光"): the index holds a lone character only
-  where it stands alone in the text.
-- `_portfolio/architecture.md` is dated 2021-04-31, a day April does not have.
-- A local build rewrites the tracked `assets/maps/voyage-atlas.geojson`: the copy in git is behind its
-  sources, and every build leaves the tree dirty.
-- A failed search script is tried again at the next opening or the next thing typed, but nothing tells
-  the reader search did not load; the words for that are the owner's.
-- In the lightbox on a slow line, a reader who presses F while a frame's placeholder is standing sees an
-  empty screen until the print lands: the last print has left, and picture only hides the mount. Narrow
-  (the mode changed mid-load); read, not run (reviewer).
+Filed on 2026-10-02, once the daily run's branch was merged, as F063 to F072 in
+[`findings/inbox.md`](../findings/inbox.md), for the lead to sort.
