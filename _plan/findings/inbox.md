@@ -10,6 +10,8 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-10-02 · F062 · scripts/plan.mjs sync, the daily run's dump · nothing removes the store's dump: it rests on each run having a scratchpad of its own (true of the one real run seen). If a scratchpad is ever reused, a tap the owner has since cleared is read again. Have sync say, or refuse, when the newest file in the dump is more than an hour old (reviewer)
+- 2026-10-02 · F061 · tests/plan-hub.test.js, the stop-hook test · its first assertion (a turn already sent back may end) passes with the case line removed whenever the tree has no violation, which is whenever the gate is green. Plant a violation in a temporary repository for that assertion (reviewer)
 - 2026-10-02 · F060 · _sass/_page.scss, a post between 1536 and 1560 px · the hero's title sits 6 px left of the text's edge while the spread is still squeezed (reviewer)
 - 2026-10-02 · F059 · assets/js/colour/cards.js place(), Reverie and every post · in Playwright's WebKit, Back from Reverie to a post lands at the top (history.scrollRestoration reads manual on the post afterwards); Chromium keeps the place; not confirmed on a real Safari (reviewer)
 - 2026-10-02 · F058 · images/posts/all-souls-sun-dial.jpg · 435 KB at 3250 px for a column of at most 1200 px, with no smaller rendition for a phone (reviewer)

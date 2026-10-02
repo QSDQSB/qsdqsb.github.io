@@ -215,7 +215,7 @@ Mechanical checks, all scoped to **changes vs `HEAD`** — never the existing ba
 | `essay-font.py --check` | `check:essay-font` | A Chinese character in an essay (`body_class: essay`) that the shipped subset of Noto Serif SC lacks: it would show in the device's sans among the Song. `npm run fonts:essay` cuts the subset again |
 | `gate.sh` | `gate`, `gate:full` | Everything above in one pass with one verdict. `--full` adds the seeded build, pixel diff, motion audit, journeys, the served-files check and iPhone overflow. CI runs the fast gate on every push (`.github/workflows/gate.yml`) |
 
-**Hooks.** SessionStart (`session-start-plan.sh`) prints the plan's state. PostToolUse (`post-tool-edit-nudges.sh`) runs whichever checks match the edited file and prints findings inline, non-blocking. Stop (`stop-variables-check.sh`, `stop-house-guards.sh`) exits 2 on violations introduced this session.
+**Hooks.** SessionStart (`session-start-plan.sh`) prints the plan's state. PostToolUse (`post-tool-edit-nudges.sh`) runs whichever checks match the edited file and prints findings inline, non-blocking. Stop (`stop-variables-check.sh`, `stop-house-guards.sh`) exits 2 on violations introduced this session, once: a turn it has already sent back may end, so another session's unfinished work in the same checkout, or an unattended run told to fix nothing, is never held for ever.
 
 ### Skills carry code, not just prose
 

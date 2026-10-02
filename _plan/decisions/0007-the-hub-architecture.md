@@ -121,7 +121,7 @@ anything urgent.
 | Two sessions append to the inbox | A conflict, settled by hand: a union would hide two findings given the same id | `plan.mjs` refuses to give out an id while the daily run's branch holds ids this checkout lacks |
 | Two sessions take the same id | `check-plan` fails, naming the id | The gate after the merge |
 | The owner's answers sit unread | The brief repeats it every session | The daily run reads them |
-| The command centre is behind the plan | The brief says so; the page shows its build date | `/hub page`, the daily run |
+| The command centre is behind the plan | The brief says so; the page shows its build date | `/hub page`, in the next session (the daily run no longer republishes it: F054) |
 | The daily run is off | The roadmap's review date ages; the brief warns after a month | The owner's switch |
 | The gate cries wolf (pixel noise, a build's lockfile) | A red gate on a clean tree | Fixed the same day, or the check goes: a muted gate protects nothing |
 | The reviewer misses a fault | A reader meets it | The fault adds a journey or a check, every time |
