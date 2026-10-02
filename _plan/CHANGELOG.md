@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-02 · In the post's figures: the eight Rigi frames fold to a contact strip that opens on a press; named chips sit centred; the Reverie card's dye melts into the card at its foot; the Rigi palette's plate is more compact · tier 2
 - 2026-10-02 · In the Naming of Light is set as an essay: one accent, brass (links in its text are brass on a hairline), white chapter titles, air where a chapter begins; each Latin chapter title has its translation beneath it in two lines, the English in brass italic. This post only, ahead of the same for every post (Q9) · tier 2
 - 2026-10-02 · On a wide window a post is one centred spread: the profile, the text and the contents list sit together, the title stands over the text, and from 1920 px the whole post steps up a size with the window (20, 22, 24 px), a line still holding 44 glyphs. Nothing changes below 1536 px or on a phone (Q12) · tier 2
 - 2026-10-02 · A post's hero can hold its photograph off centre (header.overlay_position), so a subject is not cut or covered by the title; no other page moves · tier 0

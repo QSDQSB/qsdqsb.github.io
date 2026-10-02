@@ -1131,20 +1131,24 @@ body.colour-page--drift { padding-bottom: 0; }
 .colour-figure__wait { @include onward-links; }
 .colour-figure .colour-figure__wait { margin: 0; }
 
-// Colours as chips: a plate's swatches (.ridgway-swatch), a few in a row. One Ridgway does not name
-// keeps its place, and says so in the third ink.
+// Colours as chips: a plate's swatches (.ridgway-swatch), a few in a row, centred in the column as
+// every graphic between passages is (the owner, 2026-10-02). One Ridgway does not name keeps its
+// place, and says so in the third ink.
 .colour-figure--chips ol {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(6.5rem, 100%), 8rem));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1.2rem 0.9rem;
   margin: 0;
   padding: 0;
   list-style: none;
 
-  li { padding-left: 0; } // on the column's own edge, as the palette above it is
+  li { flex: 0 1 8rem; padding-left: 0; text-align: center; }
 }
 
 .ridgway-swatch.is-unnamed b { color: var(--photobook-ink-3); }
+
+$plate-ground: mix(#fff, $background-color, 3%); // a hair above the page's ground
 
 // A plate: a piece of a colour page set in a post, as a card on a card's short shadow and as wide as
 // the column, so its edge says where the page's own design begins and ends. Its head names the page
@@ -1157,14 +1161,14 @@ body.colour-page--drift { padding-bottom: 0; }
   overflow: hidden;
   padding: 1.3rem var(--photobook-gutter) 1.4rem;
   border-radius: 18px;
-  background: mix(#fff, $background-color, 3%);
+  background: $plate-ground;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
 }
 
 .colour-plate__head { @include onward-links; }
 
 .colour-figure {
-  .colour-plate__head { margin: 0 0 1.5rem; }
+  .colour-plate__head { margin: 0 0 1.1rem; }
 
   .colour-plate__hint {
     margin: 1.5rem 0 0;
@@ -1173,6 +1177,58 @@ body.colour-page--drift { padding-bottom: 0; }
     color: var(--photobook-ink-3);
   }
 }
+
+// The frames, folded: a contact strip of the prints, each over its palette's bar, until the reader
+// opens the plate to the palette page's own cards. A native disclosure, so the keyboard and a screen
+// reader have it for nothing; it opens on a press, never under the pointer (a page that grows by a
+// screen's height under a resting pointer jumps).
+.colour-frames {
+  summary {
+    display: block;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker { display: none; }
+    &:focus-visible { @include brass-focus; }
+  }
+
+  &[open] .colour-frames__strip,
+  &[open] .colour-frames__show,
+  &:not([open]) .colour-frames__hide { display: none; }
+
+  .palette-cards { margin-top: 1.5rem; }
+}
+
+.colour-frames__strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(4rem, 1fr));
+  gap: 0.5rem;
+}
+
+.colour-frames__thumb {
+  display: block;
+
+  img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 0; }
+  .palette-card__bar { height: 4px; margin-top: 0.35rem; }
+}
+
+.colour-frames__toggle {
+  @include eyebrow;
+  display: inline-block;
+  margin-top: 1.1rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--photobook-line);
+  transition: color 0.3s $cubic-bezier-smooth, border-color 0.3s $cubic-bezier-smooth;
+  html.motion-off & { transition: none; }
+
+  summary:hover &,
+  summary:focus-visible & { color: var(--photobook-ink); border-color: var(--photobook-ink-3); }
+}
+
+.colour-frames[open] .colour-frames__toggle { margin-top: 0; }
+
+// A voyage's palette on a plate keeps a smaller vat than its page's: a figure in a column of prose.
+.colour-plate .palette-voyage__vat { width: 7.5rem; }
 
 // Said only where a pointer can rest on things and the dye may move: a finger has no hover to stir
 // the vat with, and a reader who asked for stillness gets a still vat (vat.js).
@@ -1187,7 +1243,11 @@ html.motion-off .colour-plate__hover { display: none; }
 .reverie-card {
   padding: 0;
 
-  .reverie__dye { min-height: 14rem; padding-top: 2rem; padding-bottom: 1.5rem; }
+  .reverie__dye { min-height: 14rem; padding-top: 2rem; padding-bottom: 2.4rem; }
+  // On its page the dye ends at the window's own horizon; in a card that line is a cut through the
+  // colour. Here its foot melts into the card's ground instead, as a hero's does into its page, and
+  // the words stand clear above it.
+  .reverie__dye::before { box-shadow: inset 0 -3.6rem 2.4rem -1.4rem $plate-ground; }
   .reverie__dye .reverie__hex { font-size: clamp(2.4rem, 5.2vw, 4rem); }
   .reverie__count { margin: 1.5rem 0 1.1rem; }
 

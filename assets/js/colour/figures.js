@@ -5,8 +5,9 @@
  *
  *   palette  a voyage's palette as on its palette page: its blocks, each to its colour's Reverie, and
  *            its dye vat, stirred under the pointer (./vat.js)
- *   frames   a voyage's frames as the palette page's cards (./cards.js card), in the book's sequence
- *            or as the post lists them; a print opens in its book
+ *   frames   a voyage's frames, in the book's sequence or as the post lists them: folded, a contact strip
+ *            of the prints, each over its palette's bar; opened (a native disclosure), the palette
+ *            page's cards (./cards.js card), where a print opens in its book
  *   chips    colours, each a swatch with its hex and its name in Ridgway's book when one lies close
  *            (./reverie-parts.js namer), as his plates set them (.ridgway-swatch); each to its Reverie
  *   reverie  a colour's Reverie as a card: its dye, hex and name, the colours nearby, the count and the
@@ -22,7 +23,7 @@
 import { tips } from '../photobook/tip.js';
 import { develop } from '../photobook/develop.js';
 import { vat, seedOf } from './vat.js';
-import { esc, blocks, card, kindred, dripper, reverieOf, shadeFor, measureCards, json } from './cards.js';
+import { esc, blocks, bar, card, kindred, dripper, reverieOf, shadeFor, measureCards, json } from './cards.js';
 import { namer, opening, gather, pour, nearRow, countLine, prints } from './reverie-parts.js';
 
 // Each file fetched once, when a figure first wants it.
@@ -59,9 +60,16 @@ const draw = {
     const { v, page } = await voyageOf(el.dataset.voyage);
     const asked = (el.dataset.frames || '').split(/\s+/).filter(Boolean);
     const shown = asked.length ? asked.map((slug) => v.photos.findIndex((p) => p.slug === slug)).filter((i) => i >= 0) : v.photos.map((_, i) => i);
+    // Folded, the frames are a strip of small prints over their bars: the story at a glance, and a
+    // tenth of the room. The cards (and their full prints) are drawn only once the reader opens it.
+    const strip = shown.map((i) => { const p = v.photos[i]; return `<span class="colour-frames__thumb"><img src="${p.url}/480.webp" alt="" loading="lazy" decoding="async">${bar(p.sig)}</span>`; }).join('');
     el.innerHTML = `<article class="colour-plate">${head(v, page)}
-      <div class="palette-cards">${shown.map((i) => { const p = v.photos[i]; return card(p, { href: `${page.url}#${encodeURIComponent(p.slug)}`, i, link: (h) => reverieOf(v.g, p.slug, h) }); }).join('')}</div>
-      ${hint('Each print opens in its book. Each colour opens its Reverie.')}</article>`;
+      <details class="colour-frames">
+        <summary><span class="colour-frames__strip">${strip}</span><span class="colour-frames__toggle"><span class="colour-frames__show">Show the ${shown.length} frames and their colours</span><span class="colour-frames__hide">Fold the frames away</span></span></summary>
+        <div class="palette-cards">${shown.map((i) => { const p = v.photos[i]; return card(p, { href: `${page.url}#${encodeURIComponent(p.slug)}`, i, link: (h) => reverieOf(v.g, p.slug, h) }); }).join('')}</div>
+        ${hint('Each print opens in its book. Each colour opens its Reverie.')}
+      </details></article>`;
+    el.querySelector('details').addEventListener('toggle', () => measureCards(el));
     const key = (slot) => `${v.g}/${v.photos[slot.dataset.i].slug}`;
     drip(el.querySelectorAll('.palette-card__vat'), key, (slot) => vat(v.photos[slot.dataset.i].sig, { size: 44, seed: seedOf(key(slot)) }));
     measureCards(el);
