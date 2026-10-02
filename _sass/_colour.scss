@@ -1120,7 +1120,7 @@ body.colour-page--drift { padding-bottom: 0; }
     display: inline-block;
     width: 0.62em;
     height: 0.62em;
-    margin-right: 0.32em;
+    margin: 0 0.32em 0 0.14em; // a breath before it where it follows a Han character with no space
     border-radius: 50%;
     background: var(--c);
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
