@@ -143,6 +143,9 @@ header:
   depth_parallax: false   # opt out entirely (default: on when a depth map exists)
   depth_amp: 60           # lean amplitude, default 60
   depth_focus: 75         # depth value that stays pinned, default 75 (near field)
+  overlay_position: "15% 70%"  # where the photograph is held when the hero or a card crops it
+                               # (a CSS background-position; default centre). For a subject that
+                               # sits off centre, or that the title would otherwise cover on a phone
 ```
 
 The home hero (`_layouts/home.html`) runs a second variant of the same module:
@@ -176,6 +179,21 @@ screenshot workflow.
 
 - `default.html` — base wrapper (masthead, search, scripts).
 - `single.html` — post/page view with sidebar + TOC.
+  A post (`body.collection--posts`) keeps a reading measure of 50rem, about 44 CJK glyphs a line.
+  From 1536 px it is one spread on the window's centre line: profile, text and contents list side
+  by side, either side of the article the same width, the hero's words over the text's left edge;
+  from 1920 px the post's root size steps up with the window (20, 22, 24 px), so the whole spread
+  grows and the line still holds its measure (`_sass/_page.scss`, "POST READING MODE"; the owner's
+  pick, Q12, 2026-10-02). Other pages keep the 18 px root on those windows.
+  `body_class: essay` sets a post to the owner's standing calls for a reading page ahead of
+  their site-wide build: brass links on a hairline, white chapter titles, air at chapter breaks,
+  one rhythm for pictures (`_sass/_page.scss`, "ESSAY"). `blockquote.gloss` and the colour
+  figures are in `_docs/components.md`.
+  An essay's Chinese is a Song face behind Playfair's Latin: the device's Songti on a Mac, else a
+  subset of Noto Serif SC the site carries (`assets/fonts/NotoSerifSC/`, 119 KB for 549
+  characters; OFL). After writing or changing a Chinese essay run `npm run fonts:essay` (needs
+  fonttools and the font's source, see `scripts/essay-font.py`); the gate fails if a character
+  is missing from the subset.
 - `splash.html` — hero/landing.
 - `archive.html`, `archive-taxonomy.html` — tag/category archives.
 - `search.html`, `compress.html` — specialised.

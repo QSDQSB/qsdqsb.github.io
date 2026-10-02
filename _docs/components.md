@@ -18,6 +18,8 @@ That is what made it look like a different site (2026-09-27).
 | Display title | `display-title` | A page's title, as every hero page and book cover sets it | `.photobook-cover__title h1`, `.colour-head h1` |
 | Lede | `lede` | The Didot italic line under a title (font only; the page sets width and colour) | `.photobook-cover__lede`, `.colour-lede` |
 | Onward links | `onward-links` | Spaced-capital links over hairlines, in a wrapping row | `.photobook-colophon__onward`, `.colour-next` |
+| Gloss | class `blockquote.gloss` (`_page.scss`) | A heading's translation, set beneath it in two lines as an inscription is: the first small and widely spaced, the Latin-script one the `lede` in brass. Written `> 中文 *English*` then `{: .gloss}` | a post whose chapters are named in another language |
+| Colour code | `_includes/colour-code.html` (`.colour-code`) | A hex named in a line of prose, a dot of the exact colour before it | posts |
 
 ## Controls
 
@@ -38,6 +40,8 @@ That is what made it look like a different site (2026-09-27).
 | Bar glass | `glass-bar` | The darkened glass controls sit in over a photograph | the Photobook's dial and switch |
 | Surface relief | `surface-relief` | A flat colour field given a surface: wall or canvas relief under a raking light (a still SVG tile, soft light) | Reverie's opening, a colour's lightbox frame, Drift's colour |
 | Wash | `wash` (+ `wash-layer`) | A room lit by a picture's colour, crossfading layer to layer (`assets/js/photobook/wash.js`) | the lightbox, the palette page's room |
+| Plate | class `.colour-plate` (`_colour.scss`) | A piece of a colour page set in a post: a card on a card's short shadow, as wide as the column, its head naming the page (onward link), its foot a small hint | the colour figures in a post (`_includes/colour-figure.html`, `assets/js/colour/figures.js`) |
+| Folded frames | class `.colour-frames` (`_colour.scss`), a native `<details>` | A voyage's frames in a post: folded, a contact strip of small prints over their palette bars; opened on a press, the palette page's cards | the frames figure (`assets/js/colour/figures.js`) |
 
 ## Motion
 

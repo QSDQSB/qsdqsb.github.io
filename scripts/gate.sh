@@ -67,6 +67,7 @@ else
   skip "Gallery integrity" "no photo manifests here: npm run photos:fetch"
 fi
 check "The plan"                 node scripts/check-plan.mjs
+check "Essay font covers essays" python3 scripts/essay-font.py --check
 
 if [ "$mode" = "full" ]; then
   # A build under a Ruby other than the lockfile's rewrites Gemfile.lock. If it was clean before, it
