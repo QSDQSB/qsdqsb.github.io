@@ -34,7 +34,7 @@ import { crossfade } from '../photobook/wash.js';
 import { develop } from '../photobook/develop.js';
 import { lightbox } from '../photobook/lightbox.js';
 import { vat, seedOf, glow, stillness as still } from './vat.js';
-import { esc, reverieOf, shadeFor, place, cameFrom, backLabel, measureCards, json } from './cards.js';
+import { esc, reverieOf, ESSAY, shadeFor, place, cameFrom, backLabel, measureCards, json } from './cards.js';
 import { namer, opening, gather, pour, nearRow, countLine, prints, stirring } from './reverie-parts.js';
 
 const root = document.getElementById('reverie');
@@ -149,7 +149,7 @@ async function main() {
         <h2 class="visually-hidden">The photographs</h2>
         ${prints(found, pages, { href: (p) => `${base}drift/?from=${encodeURIComponent(`${p.g}/${p.slug}`)}&c=${hex.slice(1)}&src=${encodeURIComponent(`${f.g}/${f.slug}`)}&open`, label: 'full screen, in this colour' })}
         <p class="colour-next"><a href="${base}drift/?from=${encodeURIComponent(`${f.g}/${f.slug}`)}&c=${hex.slice(1)}">Drift in this colour <span aria-hidden="true">→</span></a><a href="${base}palette/?at=${encodeURIComponent(f.slug)}#${f.g}">QSD's Palette for ${esc(page.title)} <span aria-hidden="true">→</span></a></p>
-        <p class="reverie__credit"><a href="${base}utils/ridgway/">Colour names after Robert Ridgway, 1912 <span aria-hidden="true">→</span></a></p>`;
+        <p class="reverie__credit">${ESSAY}<a href="${base}utils/ridgway/">Colour names after Robert Ridgway, 1912 <span aria-hidden="true">→</span></a></p>`;
       measureCards(body);
       shown = { f, hex, found, focused };
       if (lbBack) { lbBack.lastChild.textContent = HEX; lbBack.setAttribute('aria-label', `Back to ${HEX}`); lbBack.dataset.tip = `Back to ${HEX} · Esc`; }
