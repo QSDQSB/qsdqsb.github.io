@@ -291,11 +291,16 @@ body.collection--posts .page__inner-wrap .page__content {
    ========================================================================== */
 
 body.essay .page__content {
-  // One family of forms in two scripts: the Latin in Playfair, the Chinese falling through to Songti
-  // (a Song face has the same thin horizontals and wedged ends), not to the system's sans. Figures
-  // at the height of the Han characters they stand among.
-  font-family: "Playfair Display", "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+  // One family of forms in two scripts: the Latin in Playfair, as everywhere, and the Chinese falling
+  // through to a Song face (the same thin horizontals and wedged ends), not to the system's sans: the
+  // device's own Songti where it has one (a Mac), else the subset of Noto Serif SC the site carries
+  // (_custom.scss; an iPhone lets a page use no Songti of its own). Figures at the height of the Han
+  // characters they stand among.
+  font-family: "Playfair Display", "Songti SC", "STSong", "Noto Serif SC", serif;
   font-variant-numeric: lining-nums;
+
+  // The gloss's Chinese line with the prose's faces (a blockquote sets its own); its English is the lede.
+  blockquote.gloss { font-family: inherit; }
 
   // Links in the prose only: a figure's own links keep their pieces' dress.
   > :is(p, ul, ol, blockquote) a,
