@@ -314,8 +314,17 @@ body.essay .page__content {
   }
 
   h2 {
-    margin-top: 3.6rem;
+    margin-top: 5.2rem; // a movement, not a subhead: well clear of a figure's own margin
     color: $lighter-gray;
+    text-wrap: balance;
+
+    @include responsive-up(desktop) { font-size: 1.85rem; } // the inscription leads its translation
+  }
+
+  // A title with its gloss is one inscription: no rule between the motto and what it says.
+  h2:has(+ blockquote.gloss) {
+    padding-bottom: 0;
+    border-bottom: 0;
   }
 
   > figure { margin: 2.4rem 0; }
@@ -416,20 +425,20 @@ body.essay .page__content {
   // first line small and widely spaced, as letters cut in stone are; the second, the Latin-script one,
   // the line beneath a title (lede) in the house's brass. No box and no rule: it belongs to the heading.
   blockquote.gloss {
-    margin: 0.9rem 0 2.2rem;
+    margin: 0.7rem 0 2.6rem;
     padding: 0;
     border: 0;
     border-radius: 0;
     background: none;
     text-align: left;
 
-    p { font-size: 0.92rem; line-height: 1.7; letter-spacing: 0.3em; color: $lighter-gray; }
+    p { font-size: 0.92rem; line-height: 1.7; letter-spacing: 0.3em; color: $lighter-gray; text-wrap: balance; }
 
     em {
       display: block;
       margin-top: 0.2rem;
       @include lede;
-      font-size: 1.36em;
+      font-size: 1.22em; // beneath the title's size: the motto leads, its translation follows
       line-height: 1.35; // room for an italic's descenders
       letter-spacing: 0.01em;
       color: $intriguing-word-color;

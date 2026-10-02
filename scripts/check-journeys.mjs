@@ -203,7 +203,8 @@ const JOURNEYS = [
     const hex = (await card.locator('.reverie__code').innerText()).replace('#', '').toLowerCase();
     must(/^[0-9a-f]{6}$/.test(hex), 'the Reverie card names no colour');
     must(await card.locator('.palette-card__print').count() >= 1, 'the Reverie card shows no photograph');
-    await card.locator('.reverie-card__open').click();
+    // On the dye: each photograph's card lies above the card's own link, wherever the centre falls.
+    await card.locator('.reverie-card__open').click({ position: { x: 40, y: 40 } });
     await page.waitForURL(/\/reverie\/\?/, { timeout: 8000 }).catch(() => {});
     must(new URL(page.url()).searchParams.get('c') === hex, "the card did not open its colour's Reverie");
     await page.waitForSelector('.palette-card__print', { timeout: 15000 }).catch(() => {});

@@ -1109,6 +1109,10 @@ body.colour-page--drift { padding-bottom: 0; }
 
   // Its palette alone: no frames follow for the rule to part it from.
   .palette-voyage { padding-bottom: 0; border-bottom: 0; }
+
+  // In a card's narrow blocks "3.9% · accent" ran into the next share and read as its label: the word
+  // goes beneath its own figure. (The palette page's cards have the same fault: F055.)
+  .palette-card .is-accent b::after { content: "accent"; display: block; }
 }
 
 // A colour named in a line of prose (_includes/colour-code.html): a dot of it before its hex, exact

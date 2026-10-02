@@ -127,8 +127,11 @@ if (figures.length) {
   const fill = (el) => draw[el.dataset.figure](el).then(() => el.classList.add('is-drawn'), () => {});
   // A link to a section (#…) has the browser scroll before the figures above it have their height:
   // drawn all at once then, and the reader set back on the heading asked for once they stand.
-  const asked = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
-  if (asked) Promise.all(figures.map(fill)).then(() => { if (scrollY > 0 || asked.getBoundingClientRect().top > innerHeight) asked.scrollIntoView({ block: 'start', behavior: 'instant' }); });
+  // Not if the reader has scrolled on meanwhile: the page is theirs.
+  let asked = null;
+  try { asked = location.hash ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null; } catch { /* a hash that is no address: drawn as they near, as ever */ }
+  const from = scrollY;
+  if (asked) Promise.all(figures.map(fill)).then(() => { if (Math.abs(scrollY - from) < 4) asked.scrollIntoView({ block: 'start', behavior: 'instant' }); });
   else if (!('IntersectionObserver' in window)) figures.forEach(fill);
   else {
     const near = new IntersectionObserver((seen) => { for (const e of seen) if (e.isIntersecting) { near.unobserve(e.target); fill(e.target); } }, { rootMargin: '100% 0px' });
