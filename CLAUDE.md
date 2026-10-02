@@ -213,7 +213,7 @@ Mechanical checks, all scoped to **changes vs `HEAD`** — never the existing ba
 | `check-plan.mjs` | `check:plan` | A plan that has stopped being true: a stage off the roadmap, a dead link, a feature naming a file that is gone, a change readers get with no changelog line |
 | `gate.sh` | `gate`, `gate:full` | Everything above in one pass with one verdict. `--full` adds the seeded build, pixel diff, motion audit, journeys and iPhone overflow. CI runs the fast gate on every push (`.github/workflows/gate.yml`) |
 
-**Hooks.** SessionStart (`session-start-plan.sh`) prints the plan's state. PostToolUse (`post-tool-edit-nudges.sh`) runs whichever checks match the edited file and prints findings inline, non-blocking. Stop (`stop-variables-check.sh`, `stop-house-guards.sh`) exits 2 on violations introduced this session.
+**Hooks.** SessionStart (`session-start-plan.sh`) prints the plan's state. PostToolUse (`post-tool-edit-nudges.sh`) runs whichever checks match the edited file and prints findings inline, non-blocking. Stop (`stop-variables-check.sh`, `stop-house-guards.sh`) exits 2 on violations introduced this session, once: a turn it has already sent back may end, so another session's unfinished work in the same checkout, or an unattended run told to fix nothing, is never held for ever.
 
 ### Skills carry code, not just prose
 
