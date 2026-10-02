@@ -189,6 +189,11 @@ screenshot workflow.
   their site-wide build: brass links on a hairline, white chapter titles, air at chapter breaks,
   one rhythm for pictures (`_sass/_page.scss`, "ESSAY"). `blockquote.gloss` and the colour
   figures are in `_docs/components.md`.
+  An essay's Chinese is a Song face behind Playfair's Latin: the device's Songti on a Mac, else a
+  subset of Noto Serif SC the site carries (`assets/fonts/NotoSerifSC/`, 119 KB for 549
+  characters; OFL). After writing or changing a Chinese essay run `npm run fonts:essay` (needs
+  fonttools and the font's source, see `scripts/essay-font.py`); the gate fails if a character
+  is missing from the subset.
 - `splash.html` — hero/landing.
 - `archive.html`, `archive-taxonomy.html` — tag/category archives.
 - `search.html`, `compress.html` — specialised.
