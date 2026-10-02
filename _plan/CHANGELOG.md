@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-02 · In the Naming of Light: a chapter's Latin title and its translation read as one inscription (no rule between them, the title a size larger, more air above each chapter, even line breaks in the gloss); in the opened frames the word accent sits under its own share · tier 2
 - 2026-10-02 · In a post's Reverie card the voyage's name now answers the pointer (it leads to its palette, as it did for the keyboard); a hex in prose is set in Didot; a link to a section of a post with colour figures lands on its heading · tier 1
 - 2026-10-02 · In the Naming of Light: the unnamed chip is a colour from the archive (a Wengen blue Ridgway does not name), and Klein blue is a dot of its colour before its name in the sentence · tier 2
 - 2026-10-02 · In the post's figures: the eight Rigi frames fold to a contact strip that opens on a press; named chips sit centred; the Reverie card's dye melts into the card at its foot; the Rigi palette's plate is more compact · tier 2
