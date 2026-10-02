@@ -10,6 +10,16 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-10-02 · F072 · scripts/check-journeys.mjs, atlas · it counts tiles by the host's address (basemaps.cartocdn.com): a change of tile host fails it with 'no tile was asked for', which is right, but the message should name the host it looked for (session)
+- 2026-10-02 · F071 · the lightbox on a slow line, picture only entered mid-load · a reader who presses F while a frame's placeholder is standing sees an empty screen until the print lands: the last print has left, and picture only hides the mount. Narrow; read, not run (reviewer)
+- 2026-10-02 · F070 · search, a script that fails to load · it is tried again at the next opening or the next thing typed, but nothing tells the reader search did not load; the words for that are the owner's (session)
+- 2026-10-02 · F069 · assets/maps/voyage-atlas.geojson, scripts/.geocode-cache.json · a local build rewrites both tracked files: the copies in git are behind their sources, and every build leaves the tree dirty (session)
+- 2026-10-02 · F068 · _portfolio/architecture.md · dated 2021-04-31, a day April does not have (session)
+- 2026-10-02 · F067 · search, a single Chinese character · searching 光 finds nothing: the index holds a lone character only where it stands alone in the text (session)
+- 2026-10-02 · F066 · assets/js/photobook/lightbox.js show(), opened from a larger print · it still fetches the smaller rendition its mat asks for and swaps to it (a phone at 1x: 480 after 960): a wasted fetch; skipping it changes which file is drawn, so its baseline must be re-captured with it. Stage 9 (session)
+- 2026-10-02 · F065 · Home, the door plates on a dense screen · they fetch the same bytes as before, only later (Palette's is 1.26 MB): a plate is a crop of a wide picture and wants a sizes of its own. Stage 9, with S12 (session)
+- 2026-10-02 · F064 · /404.html, the embedded video · it reads "This video is unavailable" in the old baseline and the new; perhaps only in a headless browser, to be looked at in a real one (reviewer)
+- 2026-10-02 · F063 · scripts/visual-baseline.mjs, the pixel diff · it cannot see a coarse-pointer rule: a full-page capture is rendered with the query off (Playwright's Chromium), so the 16 px subscribe field left only 2 px of page height in ten baselines, and the touch rules in _photobook.scss and _archive.scss have never been in one (reviewer)
 - 2026-10-02 · F062 · scripts/plan.mjs sync, the daily run's dump · nothing removes the store's dump: it rests on each run having a scratchpad of its own (true of the one real run seen). If a scratchpad is ever reused, a tap the owner has since cleared is read again. Have sync say, or refuse, when the newest file in the dump is more than an hour old (reviewer)
 - 2026-10-02 · F061 · tests/plan-hub.test.js, the stop-hook test · its first assertion (a turn already sent back may end) passes with the case line removed whenever the tree has no violation, which is whenever the gate is green. Plant a violation in a temporary repository for that assertion (reviewer)
 - 2026-10-02 · F060 · _sass/_page.scss, a post between 1536 and 1560 px · the hero's title sits 6 px left of the text's edge while the spread is still squeezed (reviewer)

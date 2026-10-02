@@ -13,6 +13,26 @@ options as `- **A (recommended):** …`. A number is never reused: the command c
 
 ---
 
+### Q13 · Does Cloudflare count the site's visits, and may the privacy page say so in this sentence?
+
+Asked: 2026-10-02
+
+Stage 1's last word on the privacy page (P04, second half; you said on Q8 that this sentence is the one needed). No page of the live site carries Cloudflare's counting script (checked 2026-10-02), so either visits are counted at Cloudflare's edge with nothing sent from the reader's browser, or nothing counts them. Only the Cloudflare dashboard says which, and this session cannot see it. The draft, for the first case: "Counting visits. Cloudflare, which serves this site, counts its visits as they pass: how many, to which pages, from which countries. It sets no cookie and keeps nothing in your browser, and I see numbers, never people."
+
+- **A (recommended):** Cloudflare counts them: use the draft as written (or with your note's changes)
+- **B:** Nothing counts them: say so in one sentence instead, and drop the Log Files section's claims
+- **C:** Leave the privacy page as it is
+
+### Q14 · May the site carry CMU Serif itself, instead of fetching it from a third-party font service on every page?
+
+Asked: 2026-10-02
+
+Audit S09, marked Fix. CMU Serif's stylesheet comes from fonts.cdnfonts.com and holds back the first paint of every page; if that service is slow or blocked, the page waits. It is used by the treatise and a few base rules. Carrying it ourselves means downloading the face's files (CMU Serif is free under the SIL Open Font Licence) and committing them under assets/fonts/, as Barlow and Playfair already are: font bytes in git, which is why it is asked.
+
+- **A (recommended):** Yes: download the faces the site uses, from the font's own release (CTAN, cm-unicode), subset to Latin, and commit them
+- **B:** No files: keep the service, but load its stylesheet so it no longer holds back the page
+- **C:** Leave it as it is
+
 ---
 
 ## Answered
