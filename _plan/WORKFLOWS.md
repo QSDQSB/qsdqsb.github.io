@@ -36,7 +36,7 @@ Something is broken, slow, inconsistent or inaccessible.
    `PRINCIPLES.md` that bind it.
 2. **Place it in the language** ([`DESIGN-LANGUAGE.md`](DESIGN-LANGUAGE.md)), and put it to the test
    at its head, "What the eye turns away", which is the owner's (2026-10-01). The language is
-   version 0 until the owner says it reads true (Q11); its head says which lines are the owner's
+   version 1 (the owner, Q11, 2026-10-01); its head says which lines are the owner's
    after the two rounds of pairs. It places a page; a line in it that is only the lead's reading
    decides nothing a reader sees:
    - Which **pattern** is it: doorway, room, viewer, reading page? If none, that is the first

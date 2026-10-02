@@ -37,7 +37,9 @@ const PLAN = process.env.PLAN_DIR ? path.resolve(process.env.PLAN_DIR) : path.jo
 const file = (rel) => path.join(PLAN, rel);
 const read = (rel) => fs.readFileSync(file(rel), 'utf8');
 const write = (rel, body) => fs.writeFileSync(file(rel), body);
-const today = () => process.env.PLAN_TODAY || new Date().toISOString().slice(0, 10);
+// The owner's day, not UTC's: a run after midnight here is today's.
+const localDay = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const today = () => process.env.PLAN_TODAY || localDay();
 const usage = (why) => { console.error(`${why}\nSee the head of scripts/plan.mjs for the commands.`); process.exit(2); };
 const missing = (why) => { console.error(why); process.exit(1); };
 const oneLine = (s) => String(s).replace(/\s+/g, ' ').trim();
@@ -96,6 +98,11 @@ switch (command) {
     if (!said) usage('idea needs the idea, in the words it was said in.');
     idsAreSafeHere();
     const dir = file('ideas');
+    // The page's store keeps an idea until its file is on master, so the daily run meets it again:
+    // the same words are filed once.
+    const quoted = (body) => (body.match(/^> ?.*$/gm) || []).map((l) => l.replace(/^> ?/, '')).join('\n').trim();
+    const twin = fs.readdirSync(dir).filter((f) => /^I\d{3,}-.*\.md$/.test(f)).find((f) => oneLine(quoted(fs.readFileSync(path.join(dir, f), 'utf8'))) === oneLine(said));
+    if (twin) { console.log(`Already filed as ${twin.split('-')[0]} (_plan/ideas/${twin}): nothing was written.`); break; }
     const taken = fs.readdirSync(dir).map((f) => Number(f.match(/^I(\d{3,})-/)?.[1] || 0));
     const id = `I${String(Math.max(0, ...taken) + 1).padStart(3, '0')}`;
     // A short name: given, or the first few words that carry meaning.

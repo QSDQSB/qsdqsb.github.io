@@ -36,7 +36,7 @@ Last reviewed: 2026-10-01.
   ([0009](decisions/0009-how-much.md)). A move onto one of those amounts is tier 2, answered: built
   without asking again, through the full gate and the reviewer, and shown as pictures at both
   widths. A pick answers the thing it drew: an amount carried to a surface the owner did not see
-  (a panel of words, a corner sorted by the lead) is shown to them first. The language stays version 0 until the owner says it reads true (Q11); that holds nothing.
+  (a panel of words, a corner sorted by the lead) is shown to them first. The language is version 1 (the owner, Q11, 2026-10-01).
 - **The scale and the pieces first, then the surfaces.** Stage 2 writes the scales and the `card`,
   the `tag`, the ornament and the arrival once. Then, each waiting only on its piece: the still
   cover and Home's cards (4), article pictures, the ornament and a post's tags (6), the colour off

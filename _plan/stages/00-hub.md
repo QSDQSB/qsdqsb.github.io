@@ -32,11 +32,6 @@ stops being the only reviewer.
 - [ ] The vocabulary ratchet ([0002](../decisions/0002-one-control-vocabulary.md)); built in stage 2.
 - [x] The owner's two switches for the daily run (`/hub-daily`). Answered 2026-10-01, Q10, option A: on,
       daily, and it may push a branch that touches only the plan; never `master`, never a pull request.
-- [ ] The daily run's first run. The schedule was made on 2026-10-01 and `_plan/hub.json` reads
-      `"daily_may_push": true`; the first run is 2026-10-02. It still pushes nothing until the owner
-      has pushed `master`: a branch cut from a `master` GitHub has not seen would carry the owner's
-      unpushed work with it (`.claude/commands/hub-daily.md`, step 6). Proven when one run has left
-      its branch, holding nothing but the plan.
 - [x] "Touches only the plan" is a check: `node scripts/plan.mjs only-plan`, built 2026-10-01. The
       challenge to [I002](../ideas/I002-rules-for-the-hub-to-approve-and-merge-a-pull-re.md) found it
       wrong the same day (it passed a site file renamed into `_plan/`, a symlink, and a site commit
@@ -51,6 +46,16 @@ stops being the only reviewer.
       and merges `master` into it each day (`.claude/commands/hub-daily.md`). No pull request and no
       setting. The plan check tells a session when that branch holds commits to merge, and `/hub`
       asks the owner first.
+- [x] The daily run's first run, 2026-10-02, with the owner approving its commands: it recorded Q11,
+      filed F050 to F053 and left `hub/daily` local because `master` held an unpushed commit. It asked
+      for dozens of approvals, so its mechanical steps became one script (`scripts/hub-daily.sh`),
+      pre-approved by one line in `.claude/settings.json` on the owner's word. It no longer republishes
+      the command centre (F054).
+- [x] A tap on the command centre tells Claude (the owner, 2026-10-02: "there's no automatic cloud
+      response… I have to tell you manually"). The page leaves a comment addressed to Claude inside
+      the tap, at most once in twenty seconds, ids and letters only; a session watching the page wakes,
+      records and replies in the thread (`/hub`). With no session watching, the daily run records.
+      Proved against a stand-in for the runtime; in the real viewer: the owner's first tap.
 - [ ] The daily run's agents (`"daily_agents"` in `hub.json`, off). An agent handed work starts in the
       owner's checkout, not the run's worktree; the reviewer blocked the run on it (2026-10-01). Until
       a hand-off has been shown to stay inside the worktree, the run records and files only, and raw
@@ -75,15 +80,17 @@ taps; each is tier 0 unless it says otherwise.
       the form the daily command tells the run to use. Read, not tried: trying one is a push. Close
       the gaps, and deny `gh pr merge` and an approving `gh pr review`. It only tightens, but it is
       the owner's permission file: the owner's word first.
-- [ ] The owner's, on GitHub (I002, question 1): a workflow's token may write by default, and Actions
-      may approve pull requests. Read on 2026-10-01. The owner answered the same day: tighten both.
-      They are settings on the owner's account: changed by the owner, or by a session on their word
-      in chat, with the two commands in the session's report.
-- [ ] F044 · The owner's (I002, question 3): an outside app, ecc-tools, can push a branch inside the
+- [x] The owner's, on GitHub (I002, question 1). 2026-10-01: on the owner's word a session set a
+      workflow's token to read by default and stopped Actions approving pull requests. 2026-10-02: the
+      owner asked "what if we let PR to auto approve?", heard the case against, and switched approval
+      back on themselves. As it stands, and as the owner wants it kept: tokens read by default;
+      Actions may approve pull requests. Auto-merge is still off and `master` names no required check,
+      so nothing merges by itself.
+- [x] F044 · The owner's (I002, question 3): an outside app, ecc-tools, can push a branch inside the
       repository and open a pull request from it. Number 87 is open and adds commands and skills
       under `.claude/`. It is not to be merged unread. The owner answered (2026-10-01): remove the app
-      and close number 87 unmerged. Removing an app is done on GitHub by the owner; closing the pull
-      request is one command, on their word in chat.
+      and close number 87 unmerged. Done on 2026-10-01: the owner removed the app, and number 87 was
+      closed unmerged on their word.
 - [x] F045 · [0006](../decisions/0006-the-hub-keeps-itself.md) says the repository is a GitHub fork.
       GitHub lists it as no fork. Noted on 0006's status line; the decision does not rest on it.
 - [x] The command centre's own note on the daily run, out of date since Q10, is rewritten

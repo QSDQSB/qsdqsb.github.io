@@ -1,7 +1,8 @@
 # The QSD design language
 
-**Version 0, 2026-10-01. The owner's wherever a line says so; version 1 when the owner says the
-page reads true (Q11, in [`QUEUE.md`](QUEUE.md)).** Asked to accept it unread (Q3), the owner
+**Version 1, 2026-10-01: the owner said the page reads true (Q11, answered A). It is the owner's
+wherever a line says so; a number marked the lead's is still the lead's, and stays reversible
+([decisions/0009](decisions/0009-how-much.md)).** Asked to accept it unread (Q3), the owner
 answered "We need to revisit it", and settled the ambiguous part by eye: seventeen pairs scored
 (round 1, which) and sixteen picks (round 2, how much), both on 2026-10-01
 ([the study](studies/2026-10-01-the-qsd-aesthetic.md)). Those calls are in
@@ -326,4 +327,4 @@ for a screen reader.
 | **Built, and the lead's reading of it** | "The photograph is the light source"; the grammar and its signatures; the patterns' names; the pieces marked Built. The tarot cards are built and under review |
 | **The owner's, with its amount, not yet built** ([0009](decisions/0009-how-much.md)) | A card's corners, shadow and lift; a still wide cover; a control's corners; an article picture's corners; how words arrive; the lozenge between passages of prose; tags in ink that only brighten; glass at 14 px; the book's voice in its empty rooms and ways on. And from before the pairs: white headings; brass links with a hairline underline (Q9) |
 | **Decided under delegation, not yet built** ([0002](decisions/0002-one-control-vocabulary.md), [0003](decisions/0003-stylesheet-organisation.md)) | What 0009 did not move: the hair radius, the fast, base, slow and scene durations, six layers; inks on `:root`; the text button and one mark for "current"; one focus ring; two curves; the ratchet |
-| **Open** (the owner's, in conversation or to come) | Whether this page reads true and becomes version 1 (Q11); grammar and signatures; what a pick met and did not draw (0009, "Not settled"); body face and measure for reading; the footer; the tarot cards' next life |
+| **Open** (the owner's, in conversation or to come) | Grammar and signatures; what a pick met and did not draw (0009, "Not settled"); body face and measure for reading; the footer; the tarot cards' next life |
