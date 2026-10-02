@@ -16,8 +16,8 @@ Implements [0002](../decisions/0002-one-control-vocabulary.md) as amended by
 
 The owner settled the language's ambiguous part on 2026-10-01 in two rounds of drawings
 ([the study](../studies/2026-10-01-the-qsd-aesthetic.md)). Round 1 said which; round 2 said how
-much. Nothing here waits on an amount any longer. The language itself stays version 0 until the
-owner says it reads true (Q11): that call does not hold this stage.
+much. Nothing here waits on an amount any longer. The language is version 1: the owner said it reads true
+(Q11, 2026-10-01).
 
 - **Three decision records.** [0002](../decisions/0002-one-control-vocabulary.md) and
   [0003](../decisions/0003-stylesheet-organisation.md), accepted under delegation, with the tiers

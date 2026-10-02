@@ -12,7 +12,8 @@
  *   node scripts/hub-page.mjs            # writes design/hub/hub.html (design/ is gitignored)
  *
  * Publish it with the Artifact tool to the address in `_plan/hub.json` (capabilities
- * { db: {}, user: {} }). The owner's answers land in the page's `answers` collection, one document
+ * { db: {}, user: {}, comments: {} }: the last lets the page tell a watching session that the owner
+ * has answered). The owner's answers land in the page's `answers` collection, one document
  * per queue id, idea id (`I001`) or idea question (`I001-2`), and a new idea in `ideas`; a session reads them back with ArtifactData,
  * records the answers in QUEUE.md (`plan.mjs answer`), the owner's decision on an idea in its file
  * (`plan.mjs decide`), and files each new idea with `plan.mjs idea`.
@@ -96,6 +97,10 @@ function ideaCard(i) {
     </article>`;
 }
 
+// The page is built before the publish is recorded, so "the command centre is behind" would be baked
+// into every copy of it (F053). That warning is for sessions, not for the page.
+const pageWarnings = state.warnings.filter((w) => !/^The command centre is behind/.test(w));
+
 const html = `<title>House of Wonders Command Centre</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,700;1,500&family=JetBrains+Mono:wght@400&display=swap">
 <style>
@@ -135,6 +140,9 @@ section > .label { margin-bottom: 10px; }
 .jump .chip { flex: none; border: 0; cursor: pointer; padding: 9px 11px; white-space: nowrap; }
 .jump .chip:hover { color: var(--ink); }
 .jump .chip:focus-visible { outline: 1px solid var(--brass); outline-offset: 2px; }
+.heard { margin: 10px 0 0; min-height: 1.3em; color: var(--ink-3); font-size: 0.86rem; }
+.tell { margin-left: 6px; font: 600 0.8rem/1 var(--ui); color: var(--brass); background: none; border: 1px solid var(--brass); border-radius: 3px; padding: 6px 10px; cursor: pointer; }
+.tell:hover { color: var(--ink); border-color: var(--ink-2); }
 .jump .chip[aria-current="true"] { box-shadow: inset 0 -1px 0 var(--brass); color: var(--ink); }
 h2, details.doc { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 64px); }
 .chip.ok { color: var(--yes); background: var(--yes-bg); } .chip.warn { color: var(--warn); background: var(--warn-bg); } .chip.bad { color: var(--bad); background: var(--bad-bg); }
@@ -227,7 +235,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     <p class="label">qsdqsb.com · built from the plan on ${built}</p>
     <h1>House of Wonders Command Centre</h1>
     <p class="sub">Where the site stands, what is waiting on you, and everything the plan holds. Generated from <code>_plan/</code>; it is rebuilt whenever the plan changes.</p>
-    ${state.errors.length || state.warnings.length ? `<ul class="notes">${[...state.errors, ...state.warnings].map((w) => `<li>${inline(w)}</li>`).join('')}</ul>` : ''}
+    ${state.errors.length || pageWarnings.length ? `<ul class="notes">${[...state.errors, ...pageWarnings].map((w) => `<li>${inline(w)}</li>`).join('')}</ul>` : ''}
     <details class="doc" style="margin-top:22px">
       <summary>How to drive this</summary>
       <div class="md">
@@ -251,6 +259,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     <button type="button" class="chip" data-to="doc-features">${state.features.length} features · ${state.features.filter((f) => f.journeys.length).length} walked by a journey</button>
     <button type="button" class="chip" data-to="h-dec">${state.decisions.length} decisions</button>
   </nav>
+  <p class="heard" role="status"><span id="heard-text"></span> <button type="button" class="tell" id="tell" hidden>Tell Claude</button></p>
 
   <section aria-labelledby="h-now">
     <p class="label">Now</p>
@@ -358,13 +367,13 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     var b = e.target.closest(".opt"); if (!b) return;
     var id = b.dataset.q, cur = answers[id] || {};
     answers[id] = { option: cur.option === b.dataset.o ? "" : b.dataset.o, note: cur.note || "" };
-    draw(); save(id);
+    draw(); save(id); queueTell(id, answers[id].option || "cleared");
   });
   document.addEventListener("change", function (e) {
     if (!e.target.classList.contains("note")) return;
     var id = e.target.dataset.q, cur = answers[id] || {};
     answers[id] = { option: cur.option || "", note: e.target.value.trim() };
-    save(id);
+    save(id); queueTell(id, "note");
   });
   draw();
   // The row of chips at the top goes to each part, and marks the part being read.
@@ -385,6 +394,64 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     }, { rootMargin: "-80px 0px -70% 0px" });
     marks.forEach(function (m) { var t = document.getElementById(m.dataset.to); if (t) seen.observe(t); });
   }
+  // Telling Claude. A tap is stored with this page at once, but nothing wakes a session by itself.
+  // The page can: it leaves a comment addressed to Claude, which reaches any session watching the
+  // page. The send is made inside the tap itself (the runtime refuses one made on a timer), and no
+  // more than once in twenty seconds: later taps wait for the next tap after that, or for the
+  // "Tell Claude" button. Ids and letters only, never the words of a note (the session reads those
+  // from the store). With no session watching, it says so: the daily run, or the next session,
+  // records the answers.
+  var comments = null, can = "", toTell = {}, lastTold = 0, off = false, THREAD = LS + "-thread", APART = 20000;
+  var tellBtn = document.getElementById("tell"), heard = function (t) { document.getElementById("heard-text").textContent = t; };
+  var KEPT = "Your taps are kept with this page. A session records them when it next reads the page, and so does the daily run.";
+  var waiting = function () { return Object.keys(toTell).length; };
+  function listening() {
+    if (!comments || off) { tellBtn.hidden = true; if (!off) heard(KEPT); return; }
+    comments.canSendToClaude().then(function (s) {
+      can = s;
+      heard(s === "available" ? (waiting() ? "Not told yet: " + waiting() + " change" + (waiting() === 1 ? "" : "s") + " since Claude was last told." : "A Claude session is listening: it is told when you tap, and replies in this page's comments.")
+        : s === "no_session" ? "No Claude session is listening just now. " + KEPT : KEPT);
+      tellBtn.hidden = !(s === "available" && waiting());
+    }, function () { tellBtn.hidden = true; heard(KEPT); });
+  }
+  function tellNow() {
+    var ids = Object.keys(toTell); if (!comments || off || !ids.length) return;
+    var text = "Answers changed on the command centre: " + ids.map(function (id) { return id + ": " + toTell[id]; }).join("; ") + ". Please read this page's store and record them in the plan.";
+    // An anchor is asked for, then handed on: the runtime takes plain data, not a promise of it.
+    var fresh = function () { return comments.anchorFor(document.getElementById("h-queue")).then(function (a) { return comments.sendToClaude({ anchor: a, text: text }); }); };
+    var tid = null; try { tid = localStorage.getItem(THREAD); } catch (e) {}
+    var sent = tid ? comments.sendToClaude({ threadId: tid, text: text }).catch(function (e) { if (e && e.code === "not_found") return fresh(); throw e; }) : fresh();
+    lastTold = Date.now(); toTell = {}; tellBtn.hidden = true;
+    sent.then(function (r) {
+      try { if (r && r.threadId) localStorage.setItem(THREAD, r.threadId); } catch (e) {}
+      heard("Claude was told at " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + ". Its reply appears in this page's comments.");
+    }, function (e) {
+      var c = e && e.code;
+      ids.forEach(function (id) { if (!(id in toTell)) toTell[id] = "changed"; });
+      if (c === "forbidden" || c === "not_granted" || c === "capability_disabled" || c === "capability_removed") {
+        // Permanent for this view: the button goes, and the page says why.
+        off = true; tellBtn.hidden = true;
+        heard("Telling Claude from this page is switched off here. " + KEPT);
+        return;
+      }
+      lastTold = 0; tellBtn.hidden = false;
+      heard(c === "consent_required" ? "Not told yet: allow this page to comment as you, then press Tell Claude."
+        : c === "claude_unavailable" ? "Claude could not be told just now (no session was listening, or the tap was too long ago). Press Tell Claude, or leave it: " + KEPT
+        : c === "rate_limited" ? "Told too often just now. Press Tell Claude in a moment."
+        : "Claude could not be told. " + KEPT);
+    });
+  }
+  // Called inside a tap or a typed change. Sends at once if Claude was not told in the last twenty
+  // seconds; otherwise the change waits, and the button says so.
+  function queueTell(id, value) {
+    toTell[id] = value;
+    if (!comments || off) return;
+    // Whether a session is listening was asked when the page opened and after each tap; with none, nothing is sent.
+    if (can === "available" && Date.now() - lastTold > APART) tellNow(); else listening();
+  }
+  tellBtn.addEventListener("click", function () { tellNow(); });
+  if (window.claude && window.claude.use) window.claude.use("comments").then(function (ns) { comments = ns; listening(); }, function () { heard(KEPT); }); else heard(KEPT);
+
   var send = document.getElementById("idea-send"), box = document.getElementById("idea-new");
   var tell = function (t) { document.getElementById("idea-status").textContent = t; };
   send.addEventListener("click", function () {
@@ -393,7 +460,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     if (!db) { tell("This view cannot store it. Say it to Claude in chat instead: /idea, then your words."); return; }
     send.disabled = true; tell("Sending…");
     db.collection("ideas").add({ text: text, at: new Date().toISOString() })
-      .then(function () { box.value = ""; tell("Kept. The next session files it and brings it back shaped."); }, function () { tell("Could not store it here. Say it to Claude in chat instead."); })
+      .then(function () { box.value = ""; tell("Kept. The next session files it and brings it back shaped."); queueTell("a new idea", "added"); }, function () { tell("Could not store it here. Say it to Claude in chat instead."); })
       .then(function () { send.disabled = false; });
   });
   if (window.claude && window.claude.use) window.claude.use("db").then(function (ns) {

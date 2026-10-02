@@ -342,6 +342,8 @@ test('the command centre draws an idea: its questions as taps of their own, its 
     const targets = [...page.split('<nav class="jump"')[1].split('</nav>')[0].matchAll(/data-to="([^"]+)"/g)].map((m) => m[1]);
     assert.strictEqual(targets.length, 6);
     for (const id of targets) assert.ok(page.includes(` id="${id}"`), `the jump to ${id} lands nowhere`);
+    assert.ok(page.includes('id="tell"') && page.includes('sendToClaude'), 'the page can tell a watching session that the owner answered');
+    assert.ok(!/<ul class="notes">[^<]*<li>[^<]*The command centre is behind/.test(page), 'the page does not say of itself that it is behind');
 
     spawnSync('node', [path.join(ROOT, 'scripts/plan.mjs'), 'decide', 'I900', 'park', 'Later'], { encoding: 'utf8', env: { ...process.env, PLAN_DIR: dir } });
     assert.strictEqual(build().status, 0);
@@ -440,4 +442,94 @@ test('the plan check gives its whole state through a pipe, however large, and re
     assert.strictEqual(JSON.parse(res.stdout).ideas.filter((i) => i.id.startsWith('I90')).length, 6);
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
   assert.strictEqual(spawnSync('node', [path.join(ROOT, 'scripts/check-plan.mjs'), '--since', 'nosuchref'], { encoding: 'utf8' }).status, 2);
+});
+
+test('the same idea is filed once, however often the daily run meets it', () => {
+  withPlanCopy((plan, read) => {
+    const first = plan('idea', 'I want a second\nthing, with `code` in it');
+    assert.strictEqual(first.status, 0, first.stderr);
+    const id = first.stdout.match(/^(I\d{3,})/)[1];
+    const again = plan('idea', 'I want a second\nthing, with `code` in it');
+    assert.strictEqual(again.status, 0);
+    assert.match(again.stdout, new RegExp(`Already filed as ${id}`));
+    assert.strictEqual(plan('idea', 'I want a third thing').stdout.match(/^(I\d{3,})/)[1], `I${String(Number(id.slice(1)) + 1).padStart(3, '0')}`);
+  });
+});
+
+/** A throwaway repository with a bare remote, a plan, the hub's own scripts, and stand-ins for the
+ *  gate and the worktree setup (the real gate runs these tests, and would never end). */
+function withDailyRepo(run) {
+  const base = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'hub-daily-')));
+  const dir = path.join(base, 'repo'), remote = path.join(base, 'origin.git');
+  const GIT = fs.existsSync('/usr/bin/git') ? '/usr/bin/git' : 'git';
+  const git = (cwd, ...a) => execFileSync(GIT, a, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+  const put = (rel, body, mode) => { fs.mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true }); fs.writeFileSync(path.join(dir, rel), body, mode ? { mode } : undefined); };
+  const daily = (...args) => spawnSync('bash', ['scripts/hub-daily.sh', ...args], { cwd: dir, encoding: 'utf8', env: { ...process.env, PLAN_DIR: '' } });
+  try {
+    fs.mkdirSync(dir);
+    git(dir, 'init', '-q');
+    for (const f of ['hub-daily.sh', 'plan.mjs', 'check-plan.mjs']) fs.cpSync(path.join(ROOT, 'scripts', f), path.join(dir, 'scripts', f));
+    fs.cpSync(path.join(ROOT, 'scripts/lib'), path.join(dir, 'scripts/lib'), { recursive: true });
+    put('scripts/gate.sh', 'echo "GATE: PASS (stand-in)"\n');
+    put('scripts/prototype-setup.sh', 'exit 0\n');
+    put('_plan/findings/inbox.md', '# Inbox\n\n## Waiting\n\n## Taken\n');
+    put('_plan/hub.json', '{ "daily_may_push": true }\n');
+    put('_includes/head.html', '<head>\n');
+    put('.gitignore', '.claude/worktrees/\n');
+    git(dir, 'add', '-A'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'start');
+    git(dir, 'branch', '-M', 'master');
+    git(base, 'clone', '-q', '--bare', dir, remote);
+    git(dir, 'remote', 'add', 'origin', remote); git(dir, 'fetch', '-q', 'origin');
+    return run({ dir, remote, git, put, daily });
+  } finally { fs.rmSync(base, { recursive: true, force: true }); }
+}
+
+test('the daily script records in a place of its own, commits on hub/daily, pushes that branch and tidies up', () => {
+  withDailyRepo(({ dir, remote, git, daily }) => {
+    assert.strictEqual(daily('finish', 'too soon').status, 2, 'there is no worktree before begin');
+    const begin = daily('begin');
+    assert.strictEqual(begin.status, 0, begin.stdout + begin.stderr);
+    assert.match(begin.stdout, /Worktree: .*hub-daily \(branch hub\/daily, master merged in\)/);
+    assert.strictEqual(daily('plan', 'finding', 'a place', 'a thing seen', '--by', 'daily').status, 0);
+    assert.strictEqual(git(dir, 'status', '--porcelain'), '', 'nothing is written in the owner\'s checkout');
+    const finish = daily('finish', 'one finding,\nfiled "today" $(touch should-not-exist)');
+    assert.strictEqual(finish.status, 0, finish.stdout + finish.stderr);
+    assert.match(finish.stdout, /Push: hub\/daily pushed\./);
+    assert.ok(!fs.existsSync(path.join(dir, 'should-not-exist')), 'a summary is words, never a command');
+    assert.strictEqual(git(dir, 'log', '--format=%s', '-1', 'hub/daily').trim(), '📐 Daily upkeep: one finding, filed "today" $(touch should-not-exist)');
+    assert.strictEqual(git(dir, 'diff', '--name-only', 'master', 'hub/daily').trim(), '_plan/findings/inbox.md');
+    assert.strictEqual(git(remote, 'rev-parse', 'hub/daily'), git(dir, 'rev-parse', 'hub/daily'), 'the one branch reached the remote');
+    assert.strictEqual(git(remote, 'rev-parse', 'master'), git(dir, 'rev-parse', 'master'), 'master was not pushed');
+    assert.ok(!fs.existsSync(path.join(dir, '.claude/worktrees/hub-daily')), 'the worktree is gone');
+    assert.strictEqual(git(dir, 'rev-parse', '--abbrev-ref', 'HEAD').trim(), 'master');
+
+    // The next day carries the branch forward: the id after yesterday's, and nothing to do is no commit.
+    assert.strictEqual(daily('begin').status, 0);
+    assert.match(daily('plan', 'finding', 'another place', 'another thing').stdout, /F002/);
+    assert.strictEqual(daily('finish', 'day two').status, 0);
+    assert.strictEqual(daily('begin').status, 0);
+    assert.match(daily('finish', 'nothing').stdout, /Nothing to record today: no commit\./);
+  });
+});
+
+test('the daily script keeps nothing when the owner\'s checkout changed under it, or master holds unpushed work', () => {
+  withDailyRepo(({ dir, remote, git, put, daily }) => {
+    assert.strictEqual(daily('begin').status, 0);
+    assert.strictEqual(daily('plan', 'finding', 'a place', 'a thing seen').status, 0);
+    put('_plan/findings/inbox.md', '# Inbox\n\n## Waiting\n\n- a stray line\n\n## Taken\n');
+    const refused = daily('finish', 'should not be kept');
+    assert.strictEqual(refused.status, 1);
+    assert.match(refused.stderr, /REFUSED: the owner's checkout or its master changed/);
+    assert.strictEqual(git(dir, 'rev-parse', 'hub/daily'), git(dir, 'rev-parse', 'master'), 'no commit was made');
+    assert.ok(!fs.existsSync(path.join(dir, '.claude/worktrees/hub-daily')));
+
+    // The owner commits that line and does not push: the branch is cut from it, so it stays local.
+    git(dir, 'add', '-A'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'the owner, unpushed');
+    assert.strictEqual(daily('begin').status, 0);
+    assert.strictEqual(daily('plan', 'finding', 'a place', 'a thing seen').status, 0);
+    const local = daily('finish', 'kept local');
+    assert.strictEqual(local.status, 0, local.stdout + local.stderr);
+    assert.match(local.stdout, /Push: left local\. master holds 1 commit/);
+    assert.throws(() => git(remote, 'rev-parse', '--verify', '--quiet', 'refs/heads/hub/daily'), 'nothing reached the remote');
+  });
 });
