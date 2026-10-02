@@ -1,8 +1,9 @@
 {%- comment -%}
   A colour named in a line of prose: its hex, a dot of the colour itself before it (exact and flat).
-    include colour-code.html c="c4695d"     →  ● #C4695D
+    include colour-code.html c="c4695d"                    →  ● #C4695D
+    include colour-code.html c="002fa7" label="克莱因蓝"     →  ● 克莱因蓝   (a colour named in words)
   `c` is six hex figures, no #. Set inside a link where the hex leads to its Reverie.
   Styles: _sass/_colour.scss .colour-code.
 {%- endcomment -%}
-<span class="colour-code"><i style="--c:#{{ include.c | downcase }}" aria-hidden="true"></i>#{{ include.c | upcase }}</span>
+<span class="colour-code"><i style="--c:#{{ include.c | downcase }}" aria-hidden="true"></i>{% if include.label %}{{ include.label }}{% else %}#{{ include.c | upcase }}{% endif %}</span>
 {%- comment -%} no trailing newline: it sits in a line of text {%- endcomment -%}

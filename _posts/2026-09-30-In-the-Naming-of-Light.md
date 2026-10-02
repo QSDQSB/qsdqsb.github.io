@@ -70,9 +70,9 @@ QSD 最后找到的是一本 1912 年的书：美国鸟类学家 Robert Ridgway 
 
 {% include colour-figure.html kind="chips" colours="c4695d 2f3d59" %}
 
-离得不够近的，就没有名字。这些颜色需要等人来命名，比如克莱因蓝。
+离得不够近的，就没有名字。这些颜色需要等人来命名，比如{% include colour-code.html c="002fa7" label="克莱因蓝" %}。
 
-{% include colour-figure.html kind="chips" colours="002fa7" %}
+{% include colour-figure.html kind="chips" colours="326b8b" %}
 
 
 ## III. Horas non numero nisi serenas
