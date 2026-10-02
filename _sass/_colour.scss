@@ -1116,6 +1116,9 @@ body.colour-page--drift { padding-bottom: 0; }
 .colour-code {
   white-space: nowrap;
 
+  // A hex is a figure: Didot, as Reverie sets it (a colour named in words keeps the prose's face).
+  &--hex { font-family: $didot-family; }
+
   i {
     display: inline-block;
     width: 0.62em;
@@ -1251,8 +1254,11 @@ html.motion-off .colour-plate__hover { display: none; }
   .reverie__dye .reverie__hex { font-size: clamp(2.4rem, 5.2vw, 4rem); }
   .reverie__count { margin: 1.5rem 0 1.1rem; }
 
+  // Above the card's own link: the colours nearby, and each photograph's card (it paints only near
+  // the screen, content-visibility, which makes it a stacking context of its own: a z-index on the
+  // voyage's name inside it would never rise past the card's link).
   .reverie__near a,
-  .palette-card__place a { position: relative; z-index: 2; }
+  .palette-card { position: relative; z-index: 2; }
 }
 
 .reverie-card__open {

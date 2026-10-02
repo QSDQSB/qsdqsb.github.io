@@ -28,11 +28,12 @@ test('the count is said as Reverie says it', async () => {
 
 test('a colour opens on the photograph that holds it most, and one nothing holds on the closest', async () => {
   const { opening } = await lib();
+  const { closest } = await import('../assets/js/colour/cards.js');
   const frames = [frame('rigi', 'a', '#ce7d99', 0.3), frame('rigi', 'b', '#ce7d99', 0.6), frame('bled', 'c', '#3a6ea5', 0.5)];
   assert.equal(opening(frames, { hex: '#ce7d99' }).f.slug, 'b');
   assert.equal(opening(frames, { hex: '#ce7d99', from: 'rigi/a' }).f.slug, 'a', 'the photograph it was found in is kept');
   assert.equal(opening(frames, { hex: '#3a6fa6', from: 'rigi/a' }).f.slug, 'c', 'a photograph that does not hold it gives way to one that does');
-  assert.equal(opening(frames, { hex: '#00ff00' }).f.slug, opening(frames, { hex: '#00ff00' }).f.slug, 'never at random');
+  assert.equal(opening(frames, { hex: '#00ff00' }).f, closest(frames, '#00ff00'), 'a colour nothing holds opens on the closest photograph, never one at random');
   assert.match(opening(frames, { from: 'bled/c' }).hex, /^#[0-9a-f]{6}$/, 'without a colour, the photograph\'s own');
 });
 
