@@ -1,0 +1,49 @@
+{%- comment -%}
+  A colour figure in a post's column: the Palette's and Reverie's own pieces, drawn from the site's
+  colour data by assets/js/colour/figures.js, so the figure stays true as the photographs change.
+
+    include colour-figure.html kind="palette" voyage="rigi"
+      a voyage's palette: its blocks and its dye vat, as at the head of /palette/#rigi
+    include colour-figure.html kind="frames" voyage="rigi" frames="dscf5721 dscf5730"
+      those frames as the palette page's cards, in that order (every frame, in the book's, without `frames`)
+    include colour-figure.html kind="chips" colours="c4695d 2f3d59"
+      each colour: its swatch, its name in Ridgway's book when one lies close, its hex
+    include colour-figure.html kind="reverie" colour="ce7d99"
+      a colour's Reverie as a card: dye, hex and name, the colours nearby, the count, the photographs
+
+  `voyage` is a gallery (`gallery_name`); colours are six hex figures, no #. Until the script has
+  drawn it (and with scripts off, or in a feed) the figure is the link it stands for. Its words are
+  the interface's, in English whatever the post's language (`lang`).
+  Styles: _sass/_colour.scss, "In a post's column".
+{%- endcomment -%}
+{%- assign cf_reverie = '/reverie/' | relative_url -%}
+{%- if include.voyage -%}
+  {%- assign cf_docs = site.voyage | concat: site.subvoyage -%}
+  {%- assign cf_doc = cf_docs | where: "gallery_name", include.voyage | first -%}
+  {%- assign cf_title = cf_doc.title | default: include.voyage | strip_html | escape -%}
+{%- endif -%}
+<div class="colour-figure colour-figure--{{ include.kind }}" data-figure="{{ include.kind }}" lang="en"
+  {%- if include.voyage %} data-voyage="{{ include.voyage | escape }}"{% endif -%}
+  {%- if include.frames %} data-frames="{{ include.frames | escape }}"{% endif -%}
+  {%- if include.colours %} data-colours="{{ include.colours | escape }}"{% endif -%}
+  {%- if include.colour %} data-colour="{{ include.colour | escape }}"{% endif -%}>
+  <p class="colour-figure__wait">
+  {%- case include.kind -%}
+    {%- when "palette" -%}
+      <a href="{{ '/palette/' | relative_url }}#{{ include.voyage | escape }}">QSD's Palette for {{ cf_title }} <span aria-hidden="true">→</span></a>
+    {%- when "frames" -%}
+      <a href="{{ '/palette/' | relative_url }}#{{ include.voyage | escape }}">The frames of {{ cf_title }}, and their colours <span aria-hidden="true">→</span></a>
+    {%- when "chips" -%}
+      {%- assign cf_colours = include.colours | split: " " -%}
+      {%- for c in cf_colours -%}
+      <a href="{{ cf_reverie }}?c={{ c | downcase | escape }}">Reverie in #{{ c | upcase | escape }} <span aria-hidden="true">→</span></a>
+      {%- endfor -%}
+    {%- when "reverie" -%}
+      <a href="{{ cf_reverie }}?c={{ include.colour | downcase | escape }}">Reverie in #{{ include.colour | upcase | escape }} <span aria-hidden="true">→</span></a>
+  {%- endcase -%}
+  </p>
+</div>
+{%- unless colour_figures_script -%}
+  {%- assign colour_figures_script = true %}
+<script type="module" src="{{ '/assets/js/colour/figures.js' | relative_url }}"></script>
+{%- endunless -%}

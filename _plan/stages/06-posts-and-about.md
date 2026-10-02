@@ -72,7 +72,12 @@ Chinese.
 ## Open questions
 
 - A reading design for posts: measure, title scale, where the contents list lives, what the hero
-  is for on a text page.
+  is for on a text page. One part is answered: on a wide window a post is a centred spread that
+  grows with the window (Q12, the owner, 2026-10-02: option C of
+  [the choice](https://claude.ai/artifact/Cov1emhETSfm9XZeULkVWs); built in `_sass/_page.scss`).
+  Option C was chosen with its cost stated: the masthead grows on a post at those widths and not
+  yet on other pages (68 px elsewhere; 75, 82 and 90 px on a post at 1920, 2400 and 2880).
+  Still open from it: whether the same root steps go to every page.
 - One measure for both languages, or one each?
 - Is a post's body the storytelling face or the reading one (pair 7)? It may differ post by post.
 - What About is for: an introduction, a colophon of the person, a letter?
