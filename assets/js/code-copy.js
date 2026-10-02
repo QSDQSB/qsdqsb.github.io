@@ -57,6 +57,20 @@
     return ok;
   }
 
+  // One polite live region for every block's button: what the button shows is
+  // also said, since its label ("Copy code to clipboard") does not change.
+  let live = null;
+  function say(text) {
+    if (!live) {
+      live = document.createElement('span');
+      live.className = 'visually-hidden';
+      live.setAttribute('role', 'status');
+      document.body.appendChild(live);
+    }
+    live.textContent = '';
+    window.setTimeout(() => { live.textContent = text; }, 50);
+  }
+
   function enhance(container) {
     if (!container || container.querySelector('.code-copy-btn')) return;
 
@@ -89,6 +103,7 @@
         btn.classList.add('is-error');
         btn.textContent = 'Failed';
       }
+      say(btn.textContent);
 
       resetTimer = window.setTimeout(() => {
         btn.classList.remove('is-copied', 'is-error');

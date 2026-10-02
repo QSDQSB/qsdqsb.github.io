@@ -33,12 +33,13 @@ permalink: /sitemap.xml
   <url>
     <loc>{{ site.url }}/portfolio/</loc>
   </url>
-  {% for post in site.portfolio %}
+  {%- comment -%} A page that asks to be left out (`sitemap: false`: the portfolio's unwritten stubs) is. {%- endcomment -%}
+  {% for post in site.portfolio %}{% unless post.sitemap == false %}
     <url>
       <loc>{{ site.url }}{{ post.url }}</loc>
       <lastmod>{{ post.updated | default: post.date | date: "%Y-%m-%d" }}</lastmod>
     </url>
-  {% endfor %}
+  {% endunless %}{% endfor %}
   <url>
     <loc>{{ site.url }}/voyage-by-tags/</loc>
   </url>

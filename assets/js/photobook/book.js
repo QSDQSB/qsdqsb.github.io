@@ -225,13 +225,14 @@ export function book({ frames, onOpen, onLayout, onScreen, onPrefetch }) {
 
   window.addEventListener('resize', () => { stuck(); under(); });
   // Any frame, in the book or on the sheet, opens the lightbox over the frames currently shown.
-  // A print the pointer rests on (or a finger touches) starts fetching its full size for the lightbox.
+  // A print the pointer rests on starts fetching its full size for the lightbox. Not a finger: a
+  // touch that begins on a print is most often a scroll, and would download a print each time.
   let restT = 0;
   const main_ = document.querySelector('.photobook-main');
   main_?.addEventListener('pointerover', (e) => {
     const b = e.target.closest?.('.photobook-frame__print'); clearTimeout(restT); if (!b) return;
     const i = Number(b.closest('.photobook-frame').dataset.i);
-    if (e.pointerType === 'mouse') restT = setTimeout(() => onPrefetch?.(i), 120); else onPrefetch?.(i);
+    if (e.pointerType !== 'touch') restT = setTimeout(() => onPrefetch?.(i), 120);
   });
   document.querySelector('.photobook-main')?.addEventListener('click', (e) => {
     const b = e.target.closest('.photobook-frame__print'); if (!b) return;

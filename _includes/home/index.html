@@ -33,7 +33,23 @@
           {% assign dp = door_pages | where: "url", link.url | first %}
           {%- comment -%} door_view: "<background-position> / <background-size>", a crop of the plate's own (Palette's: the lake's reflections). {%- endcomment -%}
           {%- assign dv = dp.door_view | split: " / " %}
-          <div class="door-shot{% if forloop.first %} is-on{% endif %}" style="background-image:url('{% include home/overlay-src.html page=dp %}');{% if dv[0] %}background-position:{{ dv[0] }};{% endif %}{% if dv[1] %}background-size:{{ dv[1] }};{% endif %}"></div>
+          {%- comment -%}
+            Only the first plate is painted with the page; the others wait in data-plate until the panel
+            shows or a door is pointed at (_layouts/home.html), so the hero does not pay for four
+            pictures below it. A plate shows a crop of a wide picture, so it wants most of the
+            picture's pixels: a screen at 1x is given the 2880 px rendition where there is one
+            (data-plate-1x: a hand-cut hero's from npm run covers, a photograph's on the photo host),
+            a denser one the picture as it was.
+          {%- endcomment -%}
+          {%- capture plate %}{% include home/overlay-src.html page=dp %}{% endcapture %}
+          {%- assign plate = plate | strip -%}
+          {%- assign plate_key = dp.door_image | default: dp.header.overlay_image -%}
+          {%- assign plate_cut = site.data.cover_sizes[plate_key] | where: "w", 2880 | first -%}
+          {%- assign plate_1x = "" -%}
+          {%- if plate_cut -%}{%- assign plate_1x = plate_cut.src | relative_url -%}
+          {%- elsif plate contains "img.qsdqsb.com/t/" and plate contains "/4096.webp" -%}{%- assign plate_1x = plate | replace: "/4096.webp", "/2880.webp" -%}
+          {%- endif %}
+          <div class="door-shot{% if forloop.first %} is-on{% endif %}"{% unless forloop.first %} data-plate="{{ plate }}"{% if plate_1x != "" %} data-plate-1x="{{ plate_1x }}"{% endif %}{% endunless %} style="{% if forloop.first %}background-image:url('{{ plate }}');{% endif %}{% if dv[0] %}background-position:{{ dv[0] }};{% endif %}{% if dv[1] %}background-size:{{ dv[1] }};{% endif %}"></div>
           {% endfor %}
           <span class="door-plate__vignette"></span>
           <span class="door-plate__grain"></span>

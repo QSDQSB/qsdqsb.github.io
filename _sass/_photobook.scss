@@ -1105,6 +1105,17 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 
 .photobook-lightbox:is(.is-bare, .is-zoomed) .photobook-lightbox__mount { opacity: 0; }
 
+// A frame's placeholder, held on the mount while its print is on a slow way in (lightbox.js).
+.photobook-lightbox__held {
+  position: absolute;
+  inset: 0;
+  background: center / cover no-repeat;
+  opacity: 0;
+  transition: opacity var(--xf, 0.55s) $cubic-bezier-standard;
+
+  &.is-on { opacity: 1; }
+}
+
 // A painted frame (away from the book: a colour, in Reverie): the print's own box, filled by the page.
 .photobook-lightbox__painted {
   position: absolute;

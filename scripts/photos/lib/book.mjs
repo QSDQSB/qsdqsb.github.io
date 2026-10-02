@@ -216,14 +216,18 @@ export function settingsOf(p) {
   return out;
 }
 
-/** What the lightbox needs per frame, and nothing more: the page carries it as one JSON block. */
+/**
+ * What the lightbox needs per frame, and nothing more: the page carries it as one JSON block. Not the
+ * placeholder: it is on the frame's own print already (_includes/photobook/frame.html), some 7 KB a
+ * frame, and the page's script reads it from there (assets/js/photobook/index.js).
+ */
 export function lightboxOf(photos) {
   return photos.map(p => ({
     slug: p.slug, frame: p.frame, url: p.url, sizes: p.sizes?.webp || [], ratio: p.ratio,
     name: p.name, alt: p.alt || p.name, place: p.place?.name || null, city: p.place?.city || null,
     shots: p.shutterCount ?? null, focal: p.focal ?? null, aperture: p.aperture ?? null, shutter: p.shutter ?? null,
     iso: p.iso ?? null, bias: p.exposureBias ?? null, camera: cameraName(p.camera), lens: lensName(p.lens),
-    film: p.film ?? null, hue: p.filmHue ?? null, code: filmCode(p.film), light: p.light, weather: p.aloft || weatherOf(p.weather, p.light), glow: p.glow, ph: p.ph, settings: settingsOf(p), signature: p.signature || null,
+    film: p.film ?? null, hue: p.filmHue ?? null, code: filmCode(p.film), light: p.light, weather: p.aloft || weatherOf(p.weather, p.light), glow: p.glow, settings: settingsOf(p), signature: p.signature || null,
   }));
 }
 

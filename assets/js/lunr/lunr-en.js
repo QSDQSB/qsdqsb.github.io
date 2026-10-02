@@ -9,47 +9,56 @@ var SEARCH_MAX_RENDERED_RESULTS = 30;
 var SEARCH_HAN_PATTERN = /[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/;
 var SEARCH_HAN_RUN_PATTERN = /[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]+/g;
 
-// Building the index is a multi-second synchronous pass over the whole-site store;
-// at load it froze the main thread (and held back the Home's door reveal). Build it
-// lazily, on the first query, so first paint / interactivity stay unblocked.
+// Building the index is one pass over the whole-site store (87 entries, about 60 ms
+// on a laptop on 2026-10-02, several times that on a phone, and it grows with the
+// site). In one go, on the first query, it held the page while the reader was
+// typing. This script arrives when the search panel is first opened
+// (assets/js/_main.js), and the index is built from then, a few entries at a time
+// with the page given its turn between; a query typed meanwhile is answered when
+// it is ready (searchWhenReady). Never at page load: the Home hero's morph runs on
+// the main thread, and the build lands behind the search panel, out of its view.
 var idx = null;
-function buildSearchIndex() {
-  if (idx) { return idx; }
-  idx = lunr(function () {
-    this.field('title', { boost: 16 })
-    this.field('search_keywords', { boost: 14 })
-    this.field('tags', { boost: 11 })
-    this.field('excerpt', { boost: 8 })
-    this.field('categories', { boost: 6 })
-    this.field('content_excerpt', { boost: 4 })
-    this.field('cjk_terms', { boost: 14 })
-    this.ref('id')
+var searchWhenReady = null;
+(function buildSearchIndex() {
+  var SLICE_MS = 8;
+  // As lunr() sets a builder up, less the trimmer (it would strip CJK terms).
+  var builder = new lunr.Builder();
+  builder.pipeline.add(lunr.stopWordFilter, lunr.stemmer);
+  builder.searchPipeline.add(lunr.stemmer);
+  builder.field('title', { boost: 16 })
+  builder.field('search_keywords', { boost: 14 })
+  builder.field('tags', { boost: 11 })
+  builder.field('excerpt', { boost: 8 })
+  builder.field('categories', { boost: 6 })
+  builder.field('content_excerpt', { boost: 4 })
+  builder.field('cjk_terms', { boost: 14 })
+  builder.ref('id')
 
-    this.pipeline.remove(lunr.trimmer)
-
-    for (var item in store) {
-      var rawTags = store[item].tags;
+  var at = 0;
+  var slice = function () {
+    var began = Date.now();
+    for (; at < store.length && Date.now() - began < SLICE_MS; at++) {
+      var rawTags = store[at].tags;
       var indexTags = Array.isArray(rawTags)
         ? rawTags.map(function(t) { return String(t || '').replace(/^[^\p{L}]+/u, ''); }).join(' ')
         : String(rawTags || '').replace(/^[^\p{L}]+/u, '');
-      this.add({
-        title: store[item].title,
-        excerpt: store[item].excerpt,
-        content_excerpt: store[item].content_excerpt,
-        categories: store[item].categories,
+      builder.add({
+        title: store[at].title,
+        excerpt: store[at].excerpt,
+        content_excerpt: store[at].content_excerpt,
+        categories: store[at].categories,
         tags: indexTags,
-        search_keywords: store[item].search_keywords,
-        cjk_terms: store[item].cjk_terms,
-        id: item
+        search_keywords: store[at].search_keywords,
+        cjk_terms: store[at].cjk_terms,
+        id: at
       })
     }
-  });
-  return idx;
-}
-
-// Not warmed on idle: the Home hero runs a continuous main-thread rAF morph while
-// on screen, so a background build would stutter it. Build on first query instead —
-// the one-off cost lands behind the search overlay, out of the morph's view.
+    if (at < store.length) { window.setTimeout(slice, 0); return; }
+    idx = builder.build();
+    if (searchWhenReady) { var run = searchWhenReady; searchWhenReady = null; run(); }
+  };
+  slice();
+}());
 
 function searchHasHanText(value) {
   return SEARCH_HAN_PATTERN.test(String(value || ""));
@@ -149,9 +158,17 @@ function searchHighlightText(escapedText, terms) {
   return output;
 }
 
+// What the results say of themselves (a status, or how many were found), said
+// to a screen reader in #results-live: the results are not themselves a live region.
+function searchAnnounce(text) {
+  var live = document.getElementById('results-live');
+  if (live) live.textContent = text;
+}
+
 function searchRenderStatus(resultdiv, statusText) {
   resultdiv.innerHTML = '';
   resultdiv.insertAdjacentHTML('beforeend', '<p class="results__status">' + searchEscapeHtml(statusText) + '</p>');
+  searchAnnounce(statusText);
 }
 
 function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
@@ -160,6 +177,7 @@ function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
     foundText += ' · Showing top ' + renderedCount;
   }
   resultdiv.insertAdjacentHTML('afterbegin', '<p class="results__found">' + searchEscapeHtml(foundText) + '</p>');
+  searchAnnounce(foundText);
 }
 
 (function() {
@@ -189,11 +207,11 @@ function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
       return;
     }
 
-    // First query builds the index (one-off). Paint a status first, then build +
-    // re-run on a later tick so the message shows before the main thread blocks.
+    // The index is still being built (it began when the panel opened): say so, and
+    // answer whatever stands in the field once it is ready.
     if (!idx) {
       searchRenderStatus(resultdiv, '{{ site.data.ui-text[site.locale].search_indexing | default: "Preparing search…" }}');
-      window.setTimeout(function () { buildSearchIndex(); runSearch(rawQuery); }, 32);
+      searchWhenReady = function () { runSearch(searchInput.value); };
       return;
     }
 
@@ -203,7 +221,7 @@ function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
       .filter(Boolean);
     var cjkTerms = searchBuildCjkQueryTerms(normalizedQuery);
     var result =
-      buildSearchIndex().query(function (q) {
+      idx.query(function (q) {
         latinTerms.forEach(function (term) {
           if (!term || searchHasHanText(term)) return;
           q.term(term, { boost: 100 })
