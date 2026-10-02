@@ -10,6 +10,7 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-10-02 · F056 · scripts/plan.mjs sync, the daily run's dump · nothing removes the store's dump: it rests on each run having a scratchpad of its own (true of the one real run seen). If a scratchpad is ever reused, a tap the owner has since cleared is read again. Have sync say, or refuse, when the newest file in the dump is more than an hour old (reviewer)
 - 2026-10-02 · F055 · tests/plan-hub.test.js, the stop-hook test · its first assertion (a turn already sent back may end) passes with the case line removed whenever the tree has no violation, which is whenever the gate is green. Plant a violation in a temporary repository for that assertion (reviewer)
 - 2026-10-02 · F054 · scripts/hub-page.mjs, the daily run · the command centre is 360 KB because every stage, decision and document is inside it. When the daily run republished it (2026-10-02), the next session could not publish without reading all 1,091 lines of that copy first. The daily run no longer republishes; a smaller page (the live part apart from the library of documents) would let it (session)
 - 2026-10-01 · F053 · scripts/hub-page.mjs, the command centre · the published page always says of itself that it is behind the plan: it is built before plan.mjs published records the new hash, so the note is baked in (seen in the live page of 2026-10-01 and in the page built on 2026-10-02) (daily)

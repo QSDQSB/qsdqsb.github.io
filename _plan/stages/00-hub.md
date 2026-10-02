@@ -71,7 +71,9 @@ stops being the only reviewer.
       the dump goes to the run's own scratch folder. The second try, started at 11:14 the way the
       schedule starts one, ended by itself in a minute and a half with nobody approving anything:
       the gate passed, 15 answers read and none new, no debt, no commit. Not yet seen in a real
-      run: an answer that is new, and the first run the schedule itself starts (07:34). Two things it still leans on:
+      run: an answer that is new; the first run the schedule itself starts (07:34); and the hand-over,
+      the new finish and the once-only hooks, because that run used the checkout's old copy of the
+      script (it printed no Report) and will until the branch the checkout is on takes `master` in. Two things it still leans on:
       a checkout whose own copy of the script predates the hand-over (a branch cut before it) runs
       the old finish until it takes `master` in, and the old stop hooks, which judge the checkout's
       uncommitted work (another session's included) and sent a turn back every time. On `master`
