@@ -108,7 +108,7 @@ QSD 最后找到的是一本 1912 年的书：美国鸟类学家 Robert Ridgway 
 
 Palette 的调色板也跟着太阳走。前三张的 accent 只是一点暖色，3.6% 到 3.9%。第四张的太阳贴着云海落下去，accent 涨到 17.4%。到第五、第六张，预报里没有的卷云被映成粉紫，占了画面的 62.8% 和 52.5%。只有一小撮特别不一样的颜色会被标记成 accent；当粉色铺满整片天，就再也找不到「和其他颜色都不一样」的颜色了。那两张照片没有 accent。
 
-那天的晚霞，在 Ridgway 的书里叫 Old Rose、Deep Hyssop Violet 和 Eupatorium Purple。Hyssop 是《诗篇》里用来洁净的牛膝草。Eupatorium 是一种野草，学名来自本都国王米特拉达梯六世，就是那位据说每天服一点毒药、好让自己毒不死的国王。阿尔卑斯的晚霞名字绕了一圈，落在一个怕被毒死的国王身上，Ridgway 大概没想过这些，他写这本书，是给动物学家、植物学家、病理学家和矿物学家用的。
+那天的晚霞，在 Ridgway 的书里叫 Old Rose、Deep Hyssop Violet 和 Eupatorium Purple。Eupatorium 是一种野草，学名来自本都国王米特拉达梯六世，就是那位据说每天服一点毒药、好让自己毒不死的国王。阿尔卑斯的晚霞名字绕了一圈，落在一个怕被毒死的国王身上，Ridgway 大概没想过这些，他写这本书，是给动物学家、植物学家、病理学家和矿物学家用的。
 
 {% include colour-figure.html kind="chips" colours="d27071 7f667f af7c9c" %}
 
