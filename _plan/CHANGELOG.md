@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-02 · From one palette to the next, the way on to the essay fades and rises with the rest of the page · tier 1
 - 2026-10-02 · On a phone the frame's settings in the essay are labelled at the lightbox's own size (11 px), not smaller · tier 1
 - 2026-10-02 · QSD's Palette and every colour's Reverie lead on to the essay, In the Naming of Light: at the foot of the Palette's pages, and before the Ridgway line on Reverie · tier 2
 - 2026-10-02 · In the Naming of Light: Chapter IV ends on its last frame, DSCF5789, the print over its specs as the book's lightbox sets them (the sun at −10°, Night); the print opens in its book · tier 2

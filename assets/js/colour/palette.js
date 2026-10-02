@@ -356,7 +356,7 @@ async function main() {
 
   // From one voyage to the next: the words and frames fade out, the page returns to the top unseen,
   // the new ones rise in; the light and the dye vat meanwhile take the new colours.
-  const parts = () => [title, ...stage.querySelectorAll('.palette-page__order, .palette-cards, .colour-lede, .palette-index')];
+  const parts = () => [title, ...stage.querySelectorAll('.palette-page__order, .palette-cards, .colour-lede, .palette-index, .colour-next')];
 
   // From one voyage's palette to the next, the blocks stay and take the new dye: each colour flows
   // into the next through OKLab (so navy to rust passes a clean plum, never a grey-brown), in a wave
