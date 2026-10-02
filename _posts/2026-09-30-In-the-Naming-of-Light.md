@@ -77,7 +77,7 @@ QSD 最后找到的是一本 1912 年的书：美国鸟类学家 Robert Ridgway 
 
 ## III. Horas non numero nisi serenas
 {: lang="la"}
-> 我只计算晴朗的时辰 *I count only the sunny hours.*{: lang="en"}
+> 我只计算晴朗的时辰 *I count no hours but the serene.*{: lang="en"}
 {: .gloss}
 
 哈兹里特有一篇随笔叫[《论日晷》](http://essays.quotidiana.org/hazlitt/sun-dial/)，开头就是这句话。他说这是威尼斯附近一座日晷上的铭文，然后感叹：「多么温和、多么消愁解忧的感受！」
