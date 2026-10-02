@@ -12,8 +12,10 @@
  *            (./reverie-parts.js namer), as his plates set them (.ridgway-swatch); each to its Reverie
  *   reverie  a colour's Reverie as a card: its dye, hex and name, the colours nearby, the count and the
  *            photographs, worked out as the page works them out (./reverie-parts.js); the card opens it
+ *   frame    one frame of a voyage: the print, whole, and beneath it its specs as the book's lightbox
+ *            sets them (../photobook/specs.js); the print opens in its book. Its data is in the page
  *
- * The palette, the frames and the Reverie each stand on a plate: a card, as wide as the column, that
+ * The palette, the frames, the Reverie and the frame each stand on a plate: a card, as wide as the column, that
  * says which page it is a piece of (its head leads there) and, at its foot, what it does in the hand.
  * Until a figure is drawn it holds the link it stands for (and keeps it with scripts off, or in a feed).
  *
@@ -22,6 +24,7 @@
 
 import { tips } from '../photobook/tip.js';
 import { develop } from '../photobook/develop.js';
+import { specsHTML } from '../photobook/specs.js';
 import { vat, seedOf } from './vat.js';
 import { esc, blocks, bar, card, kindred, dripper, reverieOf, shadeFor, measureCards, json } from './cards.js';
 import { namer, opening, gather, pour, nearRow, countLine, prints, stirring, PALETTE } from './reverie-parts.js';
@@ -125,6 +128,18 @@ const draw = {
     // The prints lead where the card does: one stop for the keyboard, the card's own link.
     for (const print of el.querySelectorAll('.palette-card__print')) print.tabIndex = -1;
     measureCards(el);
+  },
+
+  async frame(el) {
+    const held = el.querySelector('script[type="application/json"]');
+    if (!held) throw new Error('no frame');
+    const p = JSON.parse(held.textContent), n = Number(held.dataset.n) || 1, { voyage, book, title } = el.dataset;
+    // The print as a palette card sets it (whole, over its placeholder), at the column's width.
+    const sizes = p.sizes.filter((s) => s <= 2560), last = sizes[sizes.length - 1] || 960;
+    el.innerHTML = `<article class="colour-plate frame-plate">
+      <a class="palette-card__print" href="${book}#${encodeURIComponent(p.slug)}" aria-label="${esc(p.name || p.frame)}, in its book"><span class="palette-card__ph" style="--r:${p.ratio || 1.5}${p.ph ? `;background-image:url(${p.ph})` : ''}"><img src="${p.url}/${last}.webp" srcset="${sizes.map((s) => `${p.url}/${s}.webp ${s}w`).join(', ')}" sizes="(min-width: 1000px) 1000px, 100vw" alt="" loading="lazy" decoding="async"></span></a>
+      <div class="photobook-specs__inner">${specsHTML(p, n, { base: PALETTE, gallery: voyage, title: `QSD's Palette for ${title}` })}</div>
+    </article>`;
   },
 };
 

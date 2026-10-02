@@ -16,7 +16,7 @@ import { tips } from '../photobook/tip.js';
 import { vat, seedOf, oklab, glow, stillness as still } from './vat.js';
 import { crossfade } from '../photobook/wash.js';
 import { develop } from '../photobook/develop.js';
-import { esc, blocks, bar, card, kindred, dripper, reverieOf, place, cameFrom, backLabel, measureCards, json } from './cards.js';
+import { esc, blocks, bar, card, kindred, dripper, reverieOf, ESSAY, place, cameFrom, backLabel, measureCards, json } from './cards.js';
 
 const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* this visit only */ } } };
 
@@ -78,7 +78,8 @@ async function main() {
     for (const t of byPlace) { if (!t.parts && runs.at(-1)?.label === '') runs.at(-1).vs.push(...t.vs); else runs.push({ label: t.parts ? t.label : '', vs: [...t.vs] }); }
     const entry = (v) => `<li><a href="#${v.g}" data-g="${v.g}"><i class="palette-index__vat"></i><span><span class="palette-index__name">${esc(nameOf(v))}</span>${bar(sig(v))}</span></a></li>`;
     stage.innerHTML = `<p class="colour-lede">The paint behind the pictures.</p>
-      <div class="palette-index">${runs.map(({ label, vs }) => `<section>${label ? `<h2>${esc(label)}</h2>` : ''}<ol>${vs.map(entry).join('')}</ol></section>`).join('')}</div>`;
+      <div class="palette-index">${runs.map(({ label, vs }) => `<section>${label ? `<h2>${esc(label)}</h2>` : ''}<ol>${vs.map(entry).join('')}</ol></section>`).join('')}</div>
+      <p class="colour-next">${ESSAY}</p>`;
     const gOf = (i) => i.parentElement.dataset.g;
     drip(stage.querySelectorAll('.palette-index__vat'), (i) => `index/${gOf(i)}`, (i) => vat(voyages.find((x) => x.g === gOf(i)).palette, { size: 52, seed: seedOf(gOf(i)) }));
   }
@@ -106,7 +107,8 @@ async function main() {
         <button type="button" aria-pressed="${order === 'colour'}" data-order="colour">Colour</button>
       </div>
       <h2 class="visually-hidden">The frames</h2>
-      <div class="palette-cards">${seq.map((i) => { const p = v.photos[i]; return card(p, { href: `${page.url}#${encodeURIComponent(p.slug)}`, i, from: p.slug === at, link: (h) => reverieOf(v.g, p.slug, h) }); }).join('')}</div>`;
+      <div class="palette-cards">${seq.map((i) => { const p = v.photos[i]; return card(p, { href: `${page.url}#${encodeURIComponent(p.slug)}`, i, from: p.slug === at, link: (h) => reverieOf(v.g, p.slug, h) }); }).join('')}</div>
+      <p class="colour-next">${ESSAY}</p>`;
     stage.querySelector('[data-vat]').replaceWith(vatBox);
     fillVat(v);
     pour(v, stage.querySelectorAll('.palette-card__vat'));

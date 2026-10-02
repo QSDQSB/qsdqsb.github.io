@@ -28,6 +28,10 @@ export const shadeFor = (h) => {
 export const REVERIE = new URL('../../../reverie/', import.meta.url).pathname;
 export const reverieOf = (g, slug, hex = null) => `${REVERIE}?${[hex ? `c=${hex.slice(1).toLowerCase()}` : '', g ? `from=${encodeURIComponent(`${g}/${slug}`)}` : ''].filter(Boolean).join('&')}`;
 
+/** The essay on how the colours came by their names (_posts/2026-09-30-In-the-Naming-of-Light.md),
+ *  among a colour page's ways on (QSD's Palette, Reverie). */
+export const ESSAY = `<a href="${new URL('../../../posts/in-the-naming-of-light/', import.meta.url).pathname}">In the Naming of Light <span aria-hidden="true">→</span></a>`;
+
 /** A palette as blocks: equal widths, the hex inside (text to select), the share beneath. `pick`: the
  *  colour chosen, marked by a white line inside its block. `link(hex)`: where a block leads, if anywhere. */
 export const blocks = (cs, { pick = null, link = null } = {}) => `<div class="palette-blocks">${cs.map(([h, pc, accent]) => {
