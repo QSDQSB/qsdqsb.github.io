@@ -908,7 +908,7 @@ body.colour-page--drift { padding-bottom: 0; }
 
 // The photographs, bare: the print and its words. The first, where the colour was found, keeps its ring.
 .palette-card.is-plain .palette-card__row { grid-template-columns: minmax(0, 1fr); }
-.reverie .palette-card.is-from .palette-card__print img { animation: none; outline-width: 1px; outline-color: var(--photobook-ink-3); }
+:is(.reverie, .reverie-card) .palette-card.is-from .palette-card__print img { animation: none; outline-width: 1px; outline-color: var(--photobook-ink-3); }
 
 
 .reverie__chip {
@@ -1088,6 +1088,123 @@ body.colour-page--drift { padding-bottom: 0; }
   &.is-unheld :is(b, span) { opacity: 0.4; transition: opacity 0.3s $cubic-bezier-smooth; }
   &.is-unheld:is(:hover, :focus-visible) :is(b, span) { opacity: 0.8; }
 }
+
+/* ── In a post's column ─────────────────────────────────────────────── */
+// The Palette's and Reverie's own pieces where a post speaks of them (_includes/colour-figure.html,
+// assets/js/colour/figures.js): a voyage's palette, its frames as cards, colours as Ridgway's plates
+// set them, a colour's Reverie as a card. They bring the book's inks with them, and set aside the
+// post's reading measure (_page.scss: its leading and tracking are for prose).
+.colour-figure {
+  @include photobook-inks;
+  margin: 2.4rem 0;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-align: left;
+
+  // A post sets its every p and li (_page.scss, later and as specific as a piece's own class): the
+  // pieces' own are stated again here, one class deeper.
+  .reverie__near-label { @include eyebrow; }
+  .palette-card__place { @include eyebrow; margin: 0.8rem 0 0; color: var(--photobook-ink-3); }
+  ol li { font-size: 1rem; }
+
+  // Its palette alone: no frames follow for the rule to part it from.
+  .palette-voyage { padding-bottom: 0; border-bottom: 0; }
+}
+
+// A colour named in a line of prose (_includes/colour-code.html): a dot of it before its hex, exact
+// and flat, ringed as the colours nearby are so a dark one is still seen on the dark page.
+.colour-code {
+  white-space: nowrap;
+
+  i {
+    display: inline-block;
+    width: 0.62em;
+    height: 0.62em;
+    margin-right: 0.32em;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
+  }
+}
+
+// Until its figure is drawn, and where none can be: the way to the page it shows.
+.colour-figure__wait { @include onward-links; }
+.colour-figure .colour-figure__wait { margin: 0; }
+
+// Colours as chips: a plate's swatches (.ridgway-swatch), a few in a row. One Ridgway does not name
+// keeps its place, and says so in the third ink.
+.colour-figure--chips ol {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(6.5rem, 100%), 8rem));
+  gap: 1.2rem 0.9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li { padding-left: 0; } // on the column's own edge, as the palette above it is
+}
+
+.ridgway-swatch.is-unnamed b { color: var(--photobook-ink-3); }
+
+// A plate: a piece of a colour page set in a post, as a card on a card's short shadow and as wide as
+// the column, so its edge says where the page's own design begins and ends. Its head names the page
+// and leads there; its foot says, small, what the piece does in the hand. Still under the pointer, as
+// a wide cover is.
+.colour-plate {
+  --photobook-gutter: clamp(1rem, 3vw, 1.6rem);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 1.3rem var(--photobook-gutter) 1.4rem;
+  border-radius: 18px;
+  background: mix(#fff, $background-color, 3%);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+.colour-plate__head { @include onward-links; }
+
+.colour-figure {
+  .colour-plate__head { margin: 0 0 1.5rem; }
+
+  .colour-plate__hint {
+    margin: 1.5rem 0 0;
+    font: 400 max(0.72rem, 12px)/1.5 $barlow-font-family;
+    letter-spacing: 0.02em;
+    color: var(--photobook-ink-3);
+  }
+}
+
+// Said only where a pointer can rest on things and the dye may move: a finger has no hover to stir
+// the vat with, and a reader who asked for stillness gets a still vat (vat.js).
+.colour-plate__hover { display: none; }
+@include responsive-hover { .colour-plate__hover { display: inline; } }
+@include responsive-reduced-motion { .colour-plate__hover { display: none; } }
+html.motion-off .colour-plate__hover { display: none; }
+
+// A colour's Reverie as a plate: the page's own opening, row, count and photographs, its dye to the
+// card's edges. One link lies over the whole card, to the colour's Reverie; the colours nearby and a
+// voyage's name lie above it and lead to their own.
+.reverie-card {
+  padding: 0;
+
+  .reverie__dye { min-height: 14rem; padding-top: 2rem; padding-bottom: 1.5rem; }
+  .reverie__dye .reverie__hex { font-size: clamp(2.4rem, 5.2vw, 4rem); }
+  .reverie__count { margin: 1.5rem 0 1.1rem; }
+
+  .reverie__near a,
+  .palette-card__place a { position: relative; z-index: 2; }
+}
+
+.reverie-card__open {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+
+  &:focus-visible { @include brass-focus; outline-offset: -4px; }
+}
+
+.reverie-card__body { padding: 1.4rem var(--photobook-gutter) 1.8rem; }
 
 @mixin colour-still {
   .colour-drift__wash i,

@@ -178,6 +178,28 @@ const JOURNEYS = [
     must(dead.length === 0, `contents links with no heading: ${dead.slice(0, 3).join(', ')}`);
   } },
 
+  { id: 'post-figures', name: "A post's colour figures are drawn from the site's data, and its Reverie card opens that colour", async run({ page, go }) {
+    await go('/posts/in-the-naming-of-light/');
+    // Each figure is drawn as it nears the screen: walk the page down to them.
+    const figures = page.locator('.colour-figure');
+    const count = await figures.count();
+    must(count >= 1, 'the post has no colour figures');
+    for (let i = 0; i < count; i++) { await figures.nth(i).scrollIntoViewIfNeeded(); await page.waitForTimeout(150); }
+    await page.waitForFunction(() => !document.querySelector('.colour-figure:not(.is-drawn)'), null, { timeout: 15000 }).catch(() => {});
+    must(await page.locator('.colour-figure:not(.is-drawn)').count() === 0, 'a colour figure was left as its link: its data did not arrive, or its voyage or colour is gone');
+    must(await page.locator('.colour-figure--palette .palette-blocks a').count() >= 3, "the voyage's palette shows no colours");
+    must(await page.locator('.colour-figure--frames .palette-card').count() >= 1, 'the frames figure shows no frames');
+    const card = page.locator('.reverie-card');
+    const hex = (await card.locator('.reverie__code').innerText()).replace('#', '').toLowerCase();
+    must(/^[0-9a-f]{6}$/.test(hex), 'the Reverie card names no colour');
+    must(await card.locator('.palette-card__print').count() >= 1, 'the Reverie card shows no photograph');
+    await card.locator('.reverie-card__open').click();
+    await page.waitForURL(/\/reverie\/\?/, { timeout: 8000 }).catch(() => {});
+    must(new URL(page.url()).searchParams.get('c') === hex, "the card did not open its colour's Reverie");
+    await page.waitForSelector('.palette-card__print', { timeout: 15000 }).catch(() => {});
+    must((await page.locator('.reverie__code').innerText()).toLowerCase().includes(hex), 'Reverie opened on another colour than the card showed');
+  } },
+
   { id: 'anchor', name: 'A link to a section moves the address and the focus there', async run({ page, go }) {
     await go('/about/');
     const id = await page.locator('.page__content a[href^="#"]').evaluateAll((as) => as.map((a) => decodeURIComponent(a.getAttribute('href').slice(1))).find((x) => x && document.getElementById(x)) || null);

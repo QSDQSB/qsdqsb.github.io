@@ -10,6 +10,7 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-10-02 · F055 · QSD's Palette, a frame's blocks · At a card about 370 px wide the last block's share wraps: '17.4% ·' then 'accent' on a second line, which drops that card's name and bar below its neighbour's (Rigi dscf5741; seen in the post's frames figure, and the palette page lays the same card) (session)
 - 2026-10-02 · F054 · scripts/hub-page.mjs, the daily run · the command centre is 360 KB because every stage, decision and document is inside it. When the daily run republished it (2026-10-02), the next session could not publish without reading all 1,091 lines of that copy first. The daily run no longer republishes; a smaller page (the live part apart from the library of documents) would let it (session)
 - 2026-10-01 · F053 · scripts/hub-page.mjs, the command centre · the published page always says of itself that it is behind the plan: it is built before plan.mjs published records the new hash, so the note is baked in (seen in the live page of 2026-10-01 and in the page built on 2026-10-02) (daily)
 - 2026-10-01 · F052 · _plan/FEATURES.md · 18 of 30 features have no journey: the monogram and bubbles, hero and depth parallax, film dial, colophon, photo pipeline, Ridgway and utilities, map and atlas, bilingual switch, code copy, tags, tarot cards, word card, subscribe, About and CV, Bestiary, the Jianfei treatise, motion switches, view transitions. The plan check counts them and names none (daily)

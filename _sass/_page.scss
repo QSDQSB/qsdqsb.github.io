@@ -222,13 +222,98 @@ body.has-overlay-hero {
    the measure naturally get the full width.
    ========================================================================== */
 
+$post-measure: 50rem; // about 44 CJK glyphs a line at the post's body size
+
 body.collection--posts .page__inner-wrap .page__content {
   float: none;
-  max-width: 50rem;
+  max-width: $post-measure;
   margin-left: auto;
   margin-right: auto;
 }
 
+// On a wide window (from `ultra`) a post is one spread on the window's centre line: the profile, the
+// text and the contents list side by side, a margin apart, where before the two rails were pinned to
+// the window's edges and the text stood alone between them. Either side of the article is the same
+// width (a rail and its margin, or that much room where a post has no rail), so the text is centred
+// whatever the post shows, and the hero's words stand above it on the same edge. The owner's pick
+// (Q12, 2026-10-02: "the spread that grows"). At `ultra` itself the gap is the shell's own, so
+// nothing jumps at the breakpoint.
+@include responsive-up(ultra) {
+  body.collection--posts {
+    --post-gap: clamp(#{$responsive-single-shell-gap}, calc((100vw - 1536px) * 0.2 + #{$responsive-single-shell-gap}), 3rem);
+    // What stands either side of the article: the contents list's 14rem (the profile's 13rem and a
+    // rem beside it), and the gap.
+    --post-rail: calc(14rem + var(--post-gap));
+
+    #main {
+      justify-content: center;
+      gap: 0;
+
+      &::after { content: none; } // the clearfix's box would be a third thing in the row
+    }
+
+    #main > .sidebar { margin: 0 var(--post-gap) 0 1rem; }
+
+    // As wide as the text and its card's padding, with the contents list's side beside it; narrower
+    // when the window is (the shell shrinks it, and the text takes what there is, as before).
+    #main > .page,
+    #main > .page-no-right-sidebar {
+      flex: 0 1 calc(#{$post-measure} + 4rem + var(--post-rail));
+      padding-right: var(--post-rail);
+    }
+
+    #main.no-left-sidebar > .page,
+    #main.no-left-sidebar > .page-no-right-sidebar {
+      flex-basis: calc(#{$post-measure} + 4rem + 2 * var(--post-rail));
+      padding-left: var(--post-rail);
+    }
+
+    // The hero's words on the text's own left edge.
+    .page__hero--overlay .wrapper { max-width: calc(#{$post-measure} + 4.8rem); }
+  }
+}
+
+// And the spread grows with the window: on one wider than a laptop's a post steps up a size, as the
+// site already does between a phone and a desktop. The type is in rem, so the one number moves the
+// text, the measure, the rails and the pictures together, and a line still holds its 44 glyphs.
+// Posts only, for now: on these windows the masthead grows with a post and not yet with other pages.
+@include responsive-up(120rem) { html:has(body.collection--posts) { font-size: 20px; } } // from 1920px
+@include responsive-up(150rem) { html:has(body.collection--posts) { font-size: 22px; } } // from 2400px
+@include responsive-up(180rem) { html:has(body.collection--posts) { font-size: 24px; } } // from 2880px
+
+/* ==========================================================================
+   ESSAY: a post set to the owner's standing calls for a reading page, ahead
+   of their being built for every post (stage 2, stage 6): one accent, brass
+   (a link in the text is brass on a hairline, Q9 option B); titles white;
+   air where a chapter begins; one rhythm for every picture between passages.
+   Opt in per post with `body_class: essay` in front matter.
+   ========================================================================== */
+
+body.essay .page__content {
+  // Links in the prose only: a figure's own links keep their pieces' dress.
+  > :is(p, ul, ol, blockquote) a,
+  > :is(p, ul, ol, blockquote) a:visited {
+    color: $intriguing-word-color;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    text-decoration-color: rgba($intriguing-word-color, 0.5);
+  }
+
+  > :is(p, ul, ol, blockquote) a:hover,
+  > :is(p, ul, ol, blockquote) a:focus-visible {
+    color: $lighter-gray;
+    text-decoration-color: currentColor;
+  }
+
+  h2 {
+    margin-top: 3.6rem;
+    color: $lighter-gray;
+  }
+
+  > figure { margin: 2.4rem 0; }
+  > figure img { margin-bottom: 0; }
+}
 
 .page__title {
   margin-top: 0;
@@ -319,6 +404,30 @@ body.collection--posts .page__inner-wrap .page__content {
     padding-left: 1.25rem;
   }
 
+  // A heading's gloss: what it says in the reader's languages, set beneath it as an inscription is, in
+  // two lines (a post whose chapters are named in Latin: `> 中文 *English*` then `{: .gloss}`). The
+  // first line small and widely spaced, as letters cut in stone are; the second, the Latin-script one,
+  // the line beneath a title (lede) in the house's brass. No box and no rule: it belongs to the heading.
+  blockquote.gloss {
+    margin: 0.9rem 0 2.2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    text-align: left;
+
+    p { font-size: 0.92rem; line-height: 1.7; letter-spacing: 0.3em; color: $lighter-gray; }
+
+    em {
+      display: block;
+      margin-top: 0.2rem;
+      @include lede;
+      font-size: 1.36em;
+      line-height: 1.35; // room for an italic's descenders
+      letter-spacing: 0.01em;
+      color: $intriguing-word-color;
+    }
+  }
 }
 
 .page__hero {
@@ -346,7 +455,7 @@ body.collection--posts .page__inner-wrap .page__content {
       z-index: 0;
       background-size: cover;
       background-repeat: no-repeat;
-      background-position: center;
+      background-position: var(--hero-pos, center); // header.overlay_position, where a hero's subject sits off centre
       transform: translateZ(0);
       -webkit-mask-image:
         linear-gradient(
@@ -544,7 +653,7 @@ body.collection--posts .page__inner-wrap .page__content {
 
   .page__hero--overlay .page__hero-media,
   .page__hero--overlay .page__hero-media::before {
-    background-position: center center;
+    background-position: var(--hero-pos, center center);
   }
 
   .page__hero--overlay .wrapper {
