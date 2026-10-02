@@ -80,9 +80,16 @@ $responsive-single-min-content-width: 46rem !default;
   }
 }
 
+@mixin responsive-container-up($point) {
+  $min: responsive-resolve($point);
+  @container (min-width: #{$min}) {
+    @content;
+  }
+}
+
 @mixin responsive-container-down($point) {
   $max: responsive-resolve($point) - $responsive-epsilon;
-  @container (max-width: $max) {
+  @container (max-width: #{$max}) {
     @content;
   }
 }

@@ -54,7 +54,7 @@ Implementation大概花了一天（Thanks to Claude）。然后开始给这个fu
   <img src="/images/posts/all-souls-sun-dial.jpg" alt="牛津 All Souls 学院图书馆上方的日晷，底下的卷轴上刻着 PEREUNT ET IMPUTANTUR" width="3250" height="1828" loading="lazy" decoding="async">
 </figure>
 
-All Souls图书馆的入口上方有一座日晷，据说出自Christopher Wren之手。底下的卷轴上刻着 _Pereunt et imputantur_，出自马提亚尔：时辰一个个过去，都记在我们账上。
+All Souls图书馆的入口上方有一座日晷，出自Christopher Wren之手。底下的卷轴上刻着 _Pereunt et imputantur_：时辰一个个过去，都记在我们账上。
 
 这座日晷用四年的时间教会了QSD，很多日晷底下都会刻一句拉丁文。所以QSD给这篇文章的每个章节选了一句日晷底下的刻文作为标题。
 
@@ -66,18 +66,18 @@ Palette 做的事情差不多就是记账。每张照片先被读成 24 个颜�
 
 QSD 最后找到的是一本 1912 年的书：美国鸟类学家 Robert Ridgway 的 [_Color Standards and Color Nomenclature_](https://www.gutenberg.org/files/63087/63087-h/63087-h.htm)。他断断续续做了二十多年，给 1,115 种颜色起了名字。他在前言里说，「没有标准，颜色的命名就只能停在 absolute chaos」。QSD不喜欢chaos。
 
-于是 {% include colour-code.html c="c4695d" %} 有了名字，叫 Cinnamon-Rufous；[{% include colour-code.html c="2f3d59" %}](/reverie/?c=2f3d59) 叫 Indulin Blue。
+于是 {% include colour-code.html c="c4695d" %} 有了名字，叫 Cinnamon-Rufous，「肉桂赭色」；[{% include colour-code.html c="2f3d59" %}](/reverie/?c=2f3d59) 叫 Indulin Blue，「引杜林蓝」。
 
 {% include colour-figure.html kind="chips" colours="c4695d 2f3d59" %}
 
-离得不够近的，就没有名字。这些颜色需要等人来命名，比如{% include colour-code.html c="002fa7" label="克莱因蓝" %}。
+离得不够近的，就没有名字。这些颜色需要等人来命名。
 
 {% include colour-figure.html kind="chips" colours="326b8b" %}
 
 
 ## III. Horas non numero nisi serenas
 {: lang="la"}
-> 我只计算晴朗的时辰 *I count only the sunny hours.*{: lang="en"}
+> 我只计算晴朗的时辰 *I count no hours but the serene.*{: lang="en"}
 {: .gloss}
 
 哈兹里特有一篇随笔叫[《论日晷》](http://essays.quotidiana.org/hazlitt/sun-dial/)，开头就是这句话。他说这是威尼斯附近一座日晷上的铭文，然后感叹：「多么温和、多么消愁解忧的感受！」
@@ -108,13 +108,15 @@ QSD 最后找到的是一本 1912 年的书：美国鸟类学家 Robert Ridgway 
 
 Palette 的调色板也跟着太阳走。前三张的 accent 只是一点暖色，3.6% 到 3.9%。第四张的太阳贴着云海落下去，accent 涨到 17.4%。到第五、第六张，预报里没有的卷云被映成粉紫，占了画面的 62.8% 和 52.5%。只有一小撮特别不一样的颜色会被标记成 accent；当粉色铺满整片天，就再也找不到「和其他颜色都不一样」的颜色了。那两张照片没有 accent。
 
-那天的晚霞，在 Ridgway 的书里叫 Old Rose、Deep Hyssop Violet 和 Eupatorium Purple。Hyssop 是《诗篇》里用来洁净的牛膝草。Eupatorium 是一种野草，学名来自本都国王米特拉达梯六世，就是那位据说每天服一点毒药、好让自己毒不死的国王。阿尔卑斯的晚霞名字绕了一圈，落在一个怕被毒死的国王身上，Ridgway 大概没想过这些，他写这本书，是给动物学家、植物学家、病理学家和矿物学家用的。
+那天的晚霞，在 Ridgway 的书里叫 Old Rose、Deep Hyssop Violet 和 Eupatorium Purple。Eupatorium 是一种野草，学名来自本都国王米特拉达梯六世，就是那位据说每天服一点毒药、好让自己毒不死的国王。阿尔卑斯的晚霞名字绕了一圈，落在一个怕被毒死的国王身上，Ridgway 大概没想过这些，他写这本书，是给动物学家、植物学家、病理学家和矿物学家用的。
 
 {% include colour-figure.html kind="chips" colours="d27071 7f667f af7c9c" %}
 
 日晷无法在夜晚计算时间，古罗马人也遇到过这个问题。卡塔尼亚那座不准的日晷被换掉之后又过了五年，西庇阿·纳西卡在罗马立起第一座水钟，白天黑夜都能报时，古罗马人终于能在阴天知道现在是几点了。
 
 网站算太阳角度的那段代码，大概就是我们的水钟。最后那张照片里已经没有影子可读了，代码精确算出太阳在地平线下六度以下。我们给图片标上 Night。
+
+{% include colour-figure.html kind="frame" voyage="rigi" frame="dscf5789" %}
 
 ## V. Ultima latet ut observentur omnes
 {: lang="la"}

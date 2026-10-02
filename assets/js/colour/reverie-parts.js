@@ -68,6 +68,32 @@ export function pour(el, focused, seed) {
   return { field: vat(focused, { shape: 'rect', width, height, seed }), width, height };
 }
 
+/**
+ * Pointing at a colour's dot stirs its dye; leaving it, the dye stays as it was left. `hero()` gives
+ * the dye now on show, `{ field, spec, live, want }`: its still field, and what a stirring one of the
+ * same is made from (./vat.js, `stir: 'hold'`). The stirring field is made on the first point (the
+ * same dye, measured already, so it takes the still one's place unseen), and kept for that dye only.
+ * Returns the two handlers: for the dot itself, or for whatever lies over it.
+ */
+export function stirring(hero) {
+  return {
+    enter(e) {
+      if (e?.pointerType === 'touch') return;
+      const h = hero(); h.want = true;
+      if (h.live) { h.live.stir(true); return; }
+      if (h.making) return;
+      h.making = true;
+      const live = vat(...h.spec);
+      live.ready.then(() => {
+        if (hero() !== h) { live.release?.(); return; }
+        h.field.replaceWith(live); h.live = live;
+        if (h.want) live.stir(true);
+      });
+    },
+    leave() { const h = hero(); h.want = false; h.live?.stir(false); },
+  };
+}
+
 /** The row of colours nearby: each a way to its own Reverie, the colour here marked among them. */
 export const nearRow = (around) => `<p class="reverie__near-label">Nearby</p><ol>${around.map((c) => `<li>${c.here
   ? `<span class="is-here" style="--c:${c.hex}" aria-current="true"><span class="visually-hidden">${c.hex.toUpperCase()}, here</span></span>`

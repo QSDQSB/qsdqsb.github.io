@@ -14,18 +14,18 @@
    _variables.scss. Breakpoints through _responsive-policy.scss only.
    ========================================================================== */
 
-// The inks and the hairline: the book's, and a colour figure's in a post's column (_colour.scss),
+// The inks, the hairline and the sun's gold: the book's, and a colour figure's in a post's column (_colour.scss),
 // where the book's pieces stand outside a book.
 @mixin photobook-inks {
   --photobook-ink: #{$lighter-gray};
   --photobook-ink-2: #{$light-gray};
   --photobook-ink-3: #8b9296;
   --photobook-line: #{$darker-gray};
+  --photobook-gold: rgba(229, 207, 169, 0.85);
 }
 
 .photobook {
   @include photobook-inks;
-  --photobook-gold: rgba(229, 207, 169, 0.85);
   --photobook-night: #7f9cc0;
   --photobook-glass: rgba(10, 10, 12, 0.44);
   --photobook-glass-edge: rgba(255, 255, 255, 0.1);
@@ -1452,18 +1452,10 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-specs__settings { gap: 0.45rem 0.4rem; > div { gap: 0.15rem; } dd { font-size: 0.66rem; } }
 }
 
-// Beneath the print (lightbox.js placeSpecs, when that leaves the print larger): the specs run as a
-// low band across the width, in three columns: the place and the camera; the figures in one row
-// with the film strip; the settings, flowing into as many columns as fit.
-.photobook-lightbox.has-specs.is-pinned.is-specs-below {
-  .photobook-specs {
-    top: var(--band-top, auto);
-    left: var(--side);
-    right: var(--side);
-    width: auto;
-    max-height: calc(100dvh - var(--band-top, 0px) - var(--side));
-  }
-
+// The specs as a low band across a width, in three columns: the place and the camera; the figures in
+// one row with the film strip; the settings, flowing into as many columns as fit. Under the print in
+// the lightbox, and under a frame in a post's column (_colour.scss).
+@mixin photobook-specs-band {
   .photobook-specs__inner {
     grid-template-columns: minmax(12rem, 1fr) minmax(0, 2.3fr) minmax(0, 1.9fr);
     align-items: start;
@@ -1485,6 +1477,19 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 
   .photobook-specs__highlights { grid-column: 2; grid-template-columns: repeat(auto-fit, minmax(5.2rem, 1fr)); gap: 0.9rem 0.6rem; }
   .photobook-specs__settings { grid-column: 3; grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr)); }
+}
+
+// Beneath the print (lightbox.js placeSpecs, when that leaves the print larger): the band.
+.photobook-lightbox.has-specs.is-pinned.is-specs-below {
+  .photobook-specs {
+    top: var(--band-top, auto);
+    left: var(--side);
+    right: var(--side);
+    width: auto;
+    max-height: calc(100dvh - var(--band-top, 0px) - var(--side));
+  }
+
+  @include photobook-specs-band;
 }
 
 .photobook-specs__inner {

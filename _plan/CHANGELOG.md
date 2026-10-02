@@ -11,6 +11,9 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-02 · QSD's Palette and every colour's Reverie lead on to the essay, In the Naming of Light: at the foot of the Palette's pages, and before the Ridgway line on Reverie · tier 2
+- 2026-10-02 · In the Naming of Light: Chapter IV ends on its last frame, DSCF5789, the print over its specs as the book's lightbox sets them (the sun at −10°, Night); the print opens in its book · tier 2
+- 2026-10-02 · In a post's Reverie card the dot after the hex stirs the dye under the pointer, as on Reverie's page, and the card's hint says so; the line that explained what the card opens is gone · tier 2
 - 2026-10-02 · An essay's Chinese is set in a Song face on every device: where a phone or a PC has no Songti of its own (an iPhone, Android, Windows) the page carries a 119 KB subset of Noto Serif SC, fetched only there; the Latin stays Playfair · tier 2
 - 2026-10-02 · In the Naming of Light: a chapter's Latin title and its translation read as one inscription (no rule between them, the title a size larger, more air above each chapter, even line breaks in the gloss); in the opened frames the word accent sits under its own share · tier 2
 - 2026-10-02 · In a post's Reverie card the voyage's name now answers the pointer (it leads to its palette, as it did for the keyboard); a hex in prose is set in Didot; a link to a section of a post with colour figures lands on its heading · tier 1

@@ -192,6 +192,12 @@ const JOURNEYS = [
     await page.locator('.colour-frames summary').click();
     await page.waitForTimeout(400);
     must(await page.locator('.colour-figure--frames .palette-card__print').first().isVisible(), 'the frames did not open to their cards');
+    // One frame, with its specs as the lightbox sets them: the print leads to its book.
+    const frame = page.locator('.colour-figure--frame');
+    if (await frame.count()) {
+      must(await frame.locator('.photobook-specs__highlights b').count() >= 4, "the frame's specs are not set under its print");
+      must(/\/voyage\/.+#\w+/.test(await frame.locator('.palette-card__print').getAttribute('href') || ''), "the frame's print does not lead to its book");
+    }
     // In the Reverie card a voyage's name leads to its palette, not to the card's own Reverie.
     await page.locator('.reverie-card .palette-card__place a').first().click();
     await page.waitForURL(/\/palette\//, { timeout: 8000 }).catch(() => {});
