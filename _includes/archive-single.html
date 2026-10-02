@@ -13,6 +13,7 @@
 {% else %}
   {% if post.header.overlay_image %}
     {% capture teaser %}{{ post.header.overlay_image }}{% endcapture %}
+    {% assign card_pos = post.header.overlay_position %}
   {% else %}
     {% assign teaser = site.teaser %}
   {% endif %}

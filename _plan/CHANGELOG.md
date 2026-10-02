@@ -11,6 +11,14 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-02 · In the Naming of Light: a chapter's Latin title and its translation read as one inscription (no rule between them, the title a size larger, more air above each chapter, even line breaks in the gloss); in the opened frames the word accent sits under its own share · tier 2
+- 2026-10-02 · In a post's Reverie card the voyage's name now answers the pointer (it leads to its palette, as it did for the keyboard); a hex in prose is set in Didot; a link to a section of a post with colour figures lands on its heading · tier 1
+- 2026-10-02 · In the Naming of Light: the unnamed chip is a colour from the archive (a Wengen blue Ridgway does not name), and Klein blue is a dot of its colour before its name in the sentence · tier 2
+- 2026-10-02 · In the post's figures: the eight Rigi frames fold to a contact strip that opens on a press; named chips sit centred; the Reverie card's dye melts into the card at its foot; the Rigi palette's plate is more compact · tier 2
+- 2026-10-02 · In the Naming of Light is set as an essay: one accent, brass (links in its text are brass on a hairline), white chapter titles, air where a chapter begins; each Latin chapter title has its translation beneath it in two lines, the English in brass italic. This post only, ahead of the same for every post (Q9) · tier 2
+- 2026-10-02 · On a wide window a post is one centred spread: the profile, the text and the contents list sit together, the title stands over the text, and from 1920 px the whole post steps up a size with the window (20, 22, 24 px), a line still holding 44 glyphs. Nothing changes below 1536 px or on a phone (Q12) · tier 2
+- 2026-10-02 · A post's hero can hold its photograph off centre (header.overlay_position), so a subject is not cut or covered by the title; no other page moves · tier 0
+- 2026-10-02 · A new post, In the Naming of Light, shows the colour pages inside its text: Rigi's palette with its dye vat, its eight frames with their colours, named colour chips and a Reverie card for #CE7D99, each drawn from the site's own data and leading to its page; a hex in the prose carries a dot of its colour; a chapter's Latin title has its translation hung beneath it (asked for by the owner) · tier 2
 - 2026-10-01 · Posts, Tags, Portfolio and the related posts under a post load each cover as it comes near, not all at once (S01) · tier 0
 - 2026-10-01 · Drift asks for a photograph the size it draws, about a quarter of the bytes on a phone (S06) · tier 0
 - 2026-10-01 · The masthead stays away while a page is read: it no longer opens on every touch and every focus. It returns on a scroll up, the pointer at the top edge, focus inside it, or a tap at the top of the screen (X01) · tier 1

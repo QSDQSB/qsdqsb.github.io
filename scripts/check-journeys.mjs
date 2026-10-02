@@ -178,6 +178,56 @@ const JOURNEYS = [
     must(dead.length === 0, `contents links with no heading: ${dead.slice(0, 3).join(', ')}`);
   } },
 
+  { id: 'post-figures', name: "A post's colour figures are drawn from the site's data, and its Reverie card opens that colour", async run({ page, go }) {
+    await go('/posts/in-the-naming-of-light/');
+    // Each figure is drawn as it nears the screen: walk the page down to them.
+    const figures = page.locator('.colour-figure');
+    const count = await figures.count();
+    must(count >= 1, 'the post has no colour figures');
+    for (let i = 0; i < count; i++) { await figures.nth(i).scrollIntoViewIfNeeded(); await page.waitForTimeout(150); }
+    await page.waitForFunction(() => !document.querySelector('.colour-figure:not(.is-drawn)'), null, { timeout: 15000 }).catch(() => {});
+    must(await page.locator('.colour-figure:not(.is-drawn)').count() === 0, 'a colour figure was left as its link: its data did not arrive, or its voyage or colour is gone');
+    must(await page.locator('.colour-figure--palette .palette-blocks a').count() >= 3, "the voyage's palette shows no colours");
+    // The frames are folded to a strip: opened, the cards and their prints are there to see.
+    await page.locator('.colour-frames summary').click();
+    await page.waitForTimeout(400);
+    must(await page.locator('.colour-figure--frames .palette-card__print').first().isVisible(), 'the frames did not open to their cards');
+    // In the Reverie card a voyage's name leads to its palette, not to the card's own Reverie.
+    await page.locator('.reverie-card .palette-card__place a').first().click();
+    await page.waitForURL(/\/palette\//, { timeout: 8000 }).catch(() => {});
+    must(new URL(page.url()).pathname.endsWith('/palette/'), "the voyage's name in the Reverie card did not lead to its palette");
+    await go('/posts/in-the-naming-of-light/');
+    await page.locator('.colour-figure--reverie').scrollIntoViewIfNeeded();
+    await page.waitForSelector('.colour-figure--reverie.is-drawn', { timeout: 15000 }).catch(() => {});
+    const card = page.locator('.reverie-card');
+    const hex = (await card.locator('.reverie__code').innerText()).replace('#', '').toLowerCase();
+    must(/^[0-9a-f]{6}$/.test(hex), 'the Reverie card names no colour');
+    must(await card.locator('.palette-card__print').count() >= 1, 'the Reverie card shows no photograph');
+    // On the dye: each photograph's card lies above the card's own link, wherever the centre falls.
+    await card.locator('.reverie-card__open').click({ position: { x: 40, y: 40 } });
+    await page.waitForURL(/\/reverie\/\?/, { timeout: 8000 }).catch(() => {});
+    must(new URL(page.url()).searchParams.get('c') === hex, "the card did not open its colour's Reverie");
+    await page.waitForSelector('.palette-card__print', { timeout: 15000 }).catch(() => {});
+    must((await page.locator('.reverie__code').innerText()).toLowerCase().includes(hex), 'Reverie opened on another colour than the card showed');
+  } },
+
+  { id: 'post-spread', name: 'On a wide window a post is one centred spread, with and without a profile', async run({ page, go }) {
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    for (const [url, profile] of [['/posts/in-the-naming-of-light/', true], ['/posts/shihuqiao/', false]]) {
+      await go(url);
+      const at = await page.evaluate(() => {
+        const box = (sel) => { const e = document.querySelector(sel); return e ? e.getBoundingClientRect() : null; };
+        const text = box('.page__content'), toc = box('.sidebar__right .toc'), side = box('#main > .sidebar');
+        return { centre: text.left + text.width / 2, mid: innerWidth / 2, root: getComputedStyle(document.documentElement).fontSize, toc: !!toc && toc.width > 0, side: !!side && side.width > 0, over: document.documentElement.scrollWidth - innerWidth };
+      });
+      must(Math.abs(at.centre - at.mid) <= 2, `${url}: the text stands ${Math.round(at.centre - at.mid)} px off the window's centre`);
+      must(at.root === '20px', `${url}: the post did not step up a size at 1920 px (root ${at.root})`);
+      must(at.toc, `${url}: the contents list is gone`);
+      must(at.side === profile, `${url}: the profile is ${profile ? 'missing' : 'shown where the post has none'}`);
+      must(at.over <= 0, `${url}: the page scrolls sideways by ${at.over} px`);
+    }
+  } },
+
   { id: 'anchor', name: 'A link to a section moves the address and the focus there', async run({ page, go }) {
     await go('/about/');
     const id = await page.locator('.page__content a[href^="#"]').evaluateAll((as) => as.map((a) => decodeURIComponent(a.getAttribute('href').slice(1))).find((x) => x && document.getElementById(x)) || null);
