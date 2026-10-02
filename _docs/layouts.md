@@ -190,8 +190,8 @@ screenshot workflow.
   one rhythm for pictures (`_sass/_page.scss`, "ESSAY"). `blockquote.gloss` and the colour
   figures are in `_docs/components.md`.
   An essay's Chinese is a Song face behind Playfair's Latin: the device's Songti on a Mac, else a
-  subset of Noto Serif SC the site carries (`assets/fonts/NotoSerifSC/`, 119 KB for 549
-  characters; OFL). After writing or changing a Chinese essay run `npm run fonts:essay` (needs
+  subset of Noto Serif SC the site carries (`assets/fonts/NotoSerifSC/`, about 120 KB for the few
+  hundred characters the essays use; OFL). After writing or changing a Chinese essay run `npm run fonts:essay` (needs
   fonttools and the font's source, see `scripts/essay-font.py`); the gate fails if a character
   is missing from the subset.
 - `splash.html` — hero/landing.

@@ -66,7 +66,7 @@ Palette 做的事情差不多就是记账。每张照片先被读成 24 个颜�
 
 QSD 最后找到的是一本 1912 年的书：美国鸟类学家 Robert Ridgway 的 [_Color Standards and Color Nomenclature_](https://www.gutenberg.org/files/63087/63087-h/63087-h.htm)。他断断续续做了二十多年，给 1,115 种颜色起了名字。他在前言里说，「没有标准，颜色的命名就只能停在 absolute chaos」。QSD不喜欢chaos。
 
-于是 {% include colour-code.html c="c4695d" %} 有了名字，叫 Cinnamon-Rufous；[{% include colour-code.html c="2f3d59" %}](/reverie/?c=2f3d59) 叫 Indulin Blue。
+于是 {% include colour-code.html c="c4695d" %} 有了名字，叫 Cinnamon-Rufous，「肉桂赭色」；[{% include colour-code.html c="2f3d59" %}](/reverie/?c=2f3d59) 叫 Indulin Blue，「引杜林蓝」。
 
 {% include colour-figure.html kind="chips" colours="c4695d 2f3d59" %}
 
