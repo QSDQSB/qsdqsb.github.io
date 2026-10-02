@@ -66,7 +66,9 @@ stops being the only reviewer.
       and report, and says that the owner's checkout changed without refusing for it; the copy of
       `hub-daily.sh` that runs is `master`'s whatever branch the checkout is on; and `/hub` merges
       `hub/daily` without asking once `only-plan master --of hub/daily` passes. The box is ticked
-      when a scheduled run has ended with nobody approving anything. Two things it still leans on:
+      when a scheduled run has ended with nobody approving anything. A first try the same morning
+      stopped at the store's dump: saved into the repository's folder it waited for an approval, so
+      the dump goes to the run's own scratch folder. Two things it still leans on:
       a checkout whose own copy of the script predates the hand-over (a branch cut before it) runs
       the old finish until it takes `master` in, and the old stop hooks, which judge the checkout's
       uncommitted work (another session's included) and sent a turn back every time. On `master`

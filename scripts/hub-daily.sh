@@ -36,7 +36,6 @@ REPO="$(cd "$("$GIT" rev-parse --path-format=absolute --git-common-dir 2>/dev/nu
 [ -n "${REPO:-}" ] && [ -d "$REPO/_plan" ] || { echo "Run this from the repository." >&2; exit 2; }
 WT="$REPO/.claude/worktrees/hub-daily"
 BEFORE="$REPO/.claude/worktrees/hub-daily.before"
-STORE="$REPO/.claude/worktrees/hub-daily.store"     # where the run dumps the command centre's store
 BRANCH=hub/daily
 
 if [ -z "${HUB_DAILY_FROM_MASTER:-}" ]; then
@@ -56,7 +55,6 @@ tidy() {
   "$GIT" -C "$REPO" worktree remove --force "$WT" 2>/dev/null
   "$GIT" -C "$REPO" worktree prune 2>/dev/null
   rm -f "$BEFORE" "$REPO/.claude/worktrees/hub-daily.txt" "$REPO/.claude/worktrees/hub-daily.gate"
-  [ -d "$STORE" ] && rm -r "$STORE"
   return 0
 }
 # What the worktree holds that is not committed yet, as a line: the commit's own words.
@@ -79,7 +77,6 @@ case "${1:-}" in
     "$GIT" -C "$REPO" show master:scripts/hub-daily.sh >/dev/null 2>&1 || { echo "STOP: the hub's daily tools are not on master yet." >&2; exit 2; }
     mkdir -p "$REPO/.claude/worktrees"
     tidy                                   # whatever a run that died left behind
-    mkdir -p "$STORE"                      # where the store is dumped: empty until it is
     snapshot > "$BEFORE"
     "$GIT" -C "$REPO" fetch origin 2>&1 | tail -1
     "$GIT" -C "$REPO" show-ref --verify --quiet "refs/heads/$BRANCH" || "$GIT" -C "$REPO" branch "$BRANCH" master
@@ -97,8 +94,8 @@ case "${1:-}" in
     (cd "$WT" && bash scripts/gate.sh > "$REPO/.claude/worktrees/hub-daily.gate" 2>&1; grep -E "^(✗|✖)" "$REPO/.claude/worktrees/hub-daily.gate" | head -12; tail -1 "$REPO/.claude/worktrees/hub-daily.gate")
     echo "── Next, each as written and nothing else"
     url="$(cd "$WT" && node -e 'try{process.stdout.write(String(JSON.parse(require("fs").readFileSync("_plan/hub.json","utf8")).url||""))}catch(e){}')"
-    echo "1. ArtifactData, action list, url ${url:-(none in _plan/hub.json: skip to 3)}, out_dir $STORE: once for collection answers, once for collection ideas"
-    echo "2. bash scripts/hub-daily.sh plan sync $STORE"
+    echo "1. ArtifactData, action list, url ${url:-(none in _plan/hub.json: skip to 3)}, out_dir <your scratchpad directory>/hub-store: once for collection answers, once for collection ideas"
+    echo "2. bash scripts/hub-daily.sh plan sync <your scratchpad directory>/hub-store"
     echo "3. bash scripts/hub-daily.sh plan debt"
     echo "4. bash scripts/hub-daily.sh finish \"daily upkeep\""
     ;;

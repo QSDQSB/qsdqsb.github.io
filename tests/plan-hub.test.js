@@ -567,7 +567,7 @@ test('the copy of the daily script that runs is master\'s, whatever the owner\'s
     assert.strictEqual(begin.status, 0, begin.stdout + begin.stderr);
     assert.match(begin.stdout, /Worktree: .*hub-daily \(branch hub\/daily, master merged in\)/);
     assert.ok(!/the working copy ran/.test(begin.stdout) && !fs.existsSync(path.join(dir, 'should-not-exist')));
-    assert.match(begin.stdout, /plan sync .*hub-daily\.store\n.*plan debt\n.*finish/, 'begin names the steps that follow, as commands');
+    assert.match(begin.stdout, /plan sync .*hub-store\n.*plan debt\n.*finish/, 'begin names the steps that follow, as commands');
     assert.strictEqual(daily('abort').status, 0);
   });
 });
@@ -753,8 +753,7 @@ test('a day of the daily run, end to end: the store recorded, the commit and the
     put('_plan/ideas/I900-a-test-idea.md', SHAPED);
     git(dir, 'add', '-A'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'a queue and an idea'); git(dir, 'push', '-q', 'origin', 'master');
     assert.strictEqual(daily('begin').status, 0);
-    const store = path.join(dir, '.claude/worktrees/hub-daily.store');
-    assert.ok(fs.statSync(store).isDirectory(), 'begin makes the folder the store is dumped to');
+    const store = fs.mkdtempSync(path.join(os.tmpdir(), 'store-'));   // the run's own scratch folder, outside the repository
     for (const [rel, data] of [['answers/Q1.json', { option: 'B', note: '' }], ['answers/I900.json', { option: 'park', note: 'not now' }], ['ideas/x.json', { text: 'A new thing to try' }]]) {
       fs.mkdirSync(path.dirname(path.join(store, rel)), { recursive: true }); fs.writeFileSync(path.join(store, rel), JSON.stringify(data));
     }
@@ -766,7 +765,7 @@ test('a day of the daily run, end to end: the store recorded, the commit and the
     assert.strictEqual(finish.status, 0, finish.stdout + finish.stderr);
     assert.strictEqual(git(dir, 'log', '--format=%s', '-1', 'hub/daily').trim(), '📐 Daily upkeep: Q1 answered; decided: I900 park; I901 filed as raw ideas; F001 filed');
     assert.match(finish.stdout, /Kept today: Q1 answered; decided: I900 park; I901 filed as raw ideas; F001 filed\./);
-    assert.ok(!fs.existsSync(store), 'the dump does not outlive the run');
+    fs.rmSync(store, { recursive: true, force: true });
     assert.ok(!fs.existsSync(path.join(dir, '.claude/worktrees/hub-daily')));
   });
 });
