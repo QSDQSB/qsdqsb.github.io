@@ -22,6 +22,9 @@
  * Beneath the hex, its name in Robert Ridgway's Color Standards and Color Nomenclature (1912), when
  * one of his colours lies within half again the eye's match of it (four colours in five have one).
  *
+ * What a colour holds (its photograph, name, photographs, colours nearby, dye) is worked out in
+ * ./reverie-parts.js, which a post's card of a colour shares (./figures.js).
+ *
  * Data: /assets/colour-atlas.json (scripts/photos/lib/atlas.mjs atlasOf); /assets/ridgway.json
  * (scripts/colour/ridgway.mjs).
  */
@@ -30,8 +33,9 @@ import { tips } from '../photobook/tip.js';
 import { crossfade } from '../photobook/wash.js';
 import { develop } from '../photobook/develop.js';
 import { lightbox } from '../photobook/lightbox.js';
-import { vat, seedOf, oklab, glow, stillness as still } from './vat.js';
-import { esc, card, reverieOf, holding, closest, varied, SHOWN, nearby, focus, shadeFor, place, cameFrom, backLabel, measureCards, json } from './cards.js';
+import { vat, seedOf, glow, stillness as still } from './vat.js';
+import { esc, reverieOf, shadeFor, place, cameFrom, backLabel, measureCards, json } from './cards.js';
+import { namer, opening, gather, pour, nearRow, countLine, prints } from './reverie-parts.js';
 
 const root = document.getElementById('reverie');
 // Its prints develop over their blurred placeholders, as the book's do (../photobook/develop.js).
@@ -55,34 +59,15 @@ async function main() {
   const frames = (data?.photos || []).filter((p) => pages[p.g] && p.dots && p.sig?.length);
   if (!frames.length) { body.innerHTML = '<p class="colour-empty">The colours are still being read from the photographs.</p>'; return; }
 
-  /** The colour and the photograph it was found in, from an address. */
+  /** The colour and the photograph it was found in, from an address (./reverie-parts.js opening). */
   function read(url) {
-    const q = new URL(url, location.href).searchParams, from = q.get('from') || '', cut = from.lastIndexOf('/');
-    let f = frames.find((x) => x.g === from.slice(0, cut) && x.slug === from.slice(cut + 1));
-    let hex = /^[0-9a-f]{6}$/i.test(q.get('c') || '') ? `#${q.get('c').toLowerCase()}` : null;
-    if (!f && hex) f = holding(frames, hex, { least: 0 })[0]?.f;
-    // Found in a photograph that barely holds it (a voyage's palette leads here from its best frame by
-    // signature, which the dots may not bear out): the one of its voyage that holds it most, else any.
-    if (f && hex && !holding([f], hex, { least: 1 / 24 }).length) f = holding(frames.filter((x) => x.g === f.g), hex, { least: 1 / 24 })[0]?.f || holding(frames, hex, { least: 0 })[0]?.f || f;
-    // A colour no photograph holds opens on the one that comes closest to it, never on nothing and
-    // never on a photograph at random. With no colour asked, any photograph, and its own colour.
-    if (!f && hex) f = closest(frames, hex);
-    if (!f) f = frames[Math.floor(Math.random() * frames.length)];
-    if (!hex) {
-      const vivid = f.sig.filter(([h, pc]) => pc >= 8 && oklab(h)[0] > 0.3).sort((a, b) => Math.hypot(...oklab(b[0]).slice(1)) - Math.hypot(...oklab(a[0]).slice(1)));
-      hex = (vivid[0] || [...f.sig].sort((a, b) => b[1] - a[1])[0])[0];
-    }
-    return { f, hex };
+    const q = new URL(url, location.href).searchParams;
+    return opening(frames, { hex: /^[0-9a-f]{6}$/i.test(q.get('c') || '') ? `#${q.get('c').toLowerCase()}` : null, from: q.get('from') || '' });
   }
 
   const dye = root.querySelector('.reverie__dye'), codeEl = root.querySelector('.reverie__code'), namedEl = root.querySelector('.reverie__named'), chipEl = root.querySelector('.reverie__chip'), hexEl = root.querySelector('.reverie__hex');
-  // Ridgway's names, each with its colour in OKLab; a colour is named by the nearest within reach.
-  const ridgway = (await names).colours.map(([n, h]) => [n.replace(/\s*\(\d\)$/, ''), oklab(`#${h}`)]);
-  const nameOf = (hex) => {
-    const P = oklab(hex); let best = null;
-    for (const [n, L] of ridgway) { const x = Math.hypot(P[0] - L[0], P[1] - L[1], P[2] - L[2]); if (!best || x < best.x) best = { n, x }; }
-    return best && best.x <= 0.03 ? best.n : '';
-  };
+  // Ridgway's names: a colour is named by the nearest within reach.
+  const nameOf = namer((await names).colours);
   const near = root.querySelector('.reverie__near');
   const back = document.querySelector('.masthead__back'), came = cameFrom();
   // The room below the opening, faintly lit by the photograph's dye (the palette page's room,
@@ -133,21 +118,15 @@ async function main() {
    */
   async function prepare({ f, hex }) {
     const page = pages[f.g], HEX = hex.toUpperCase(), seed = seedOf(`${f.g}/${f.slug}`);
+    // The photographs that hold it: the one it was found in first, then the nearest others, no voyage
+    // crowding the rest out; and the colours a step away (./reverie-parts.js gather).
+    const { focused, found, all, around } = gather(frames, { f, hex });
     // The opening: the photograph's colours turned toward this one (./cards.js focus) and poured into the
     // whole width (a rectangular vat, ./vat.js), so it lies in the middle and the others run as currents
-    // round it. Drawn at an eighth of the size it is shown and let soften as it is spread: a mood.
-    const focused = focus(f.sig, hex);
-    const box = dye.getBoundingClientRect();
-    // Still, from the shared context (no context of its own to make, no program to compile): the colour
-    // changes at once. The stirrable one is made only when the dot is first pointed at (below).
-    const fw = Math.max(1, Math.round(box.width / 8)), fh = Math.max(1, Math.round(box.height / 8));
-    const field = vat(focused, { shape: 'rect', width: fw, height: fh, seed });
+    // round it. Still, from the shared context (no context of its own to make, no program to compile):
+    // the colour changes at once. The stirrable one is made only when the dot is first pointed at (below).
+    const { field, width: fw, height: fh } = pour(dye, focused, seed);
     await field.ready;
-    // The photographs that hold it: the one it was found in first, then the nearest others, no voyage
-    // crowding the rest out; and the colours a step away.
-    const others = holding(frames, hex, { not: f }), all = others.length + 1;
-    const found = [{ f }, ...varied(others, { most: SHOWN - 1 })];
-    const around = [...nearby(frames, hex), { hex, f, here: true }].sort((a, b) => oklab(a.hex)[0] - oklab(b.hex)[0]);
 
     return function put() {
       document.title = document.title.replace(/^[^·]*·/, `Reverie in ${HEX} ·`);
@@ -163,14 +142,12 @@ async function main() {
       chipEl.style.background = hex;
       const named = nameOf(hex);
       namedEl.textContent = named; // its line kept, named or not, so the hex never moves between colours
-      near.innerHTML = `<p class="reverie__near-label">Nearby</p><ol>${around.map((c) => `<li>${c.here
-        ? `<span class="is-here" style="--c:${c.hex}" aria-current="true"><span class="visually-hidden">${c.hex.toUpperCase()}, here</span></span>`
-        : `<a href="${reverieOf(c.f.g, c.f.slug, c.hex)}" style="--c:${c.hex}" data-tip="${c.hex.toUpperCase()}" data-tip-side="top" aria-label="${c.hex.toUpperCase()}"></a>`}</li>`).join('')}</ol>`;
+      near.innerHTML = nearRow(around);
       // The photographs, bare: the print and its words; the first, where the colour was found, ringed.
       body.innerHTML = `
-        <p class="reverie__count">${all > found.length ? `QSD reveries: the ${found.length} nearest of ${all} photographs` : (all === 1 ? 'QSD reveries in only this photograph… for now' : `QSD reveries in ${all} photographs`)}</p>
+        <p class="reverie__count">${countLine(found.length, all)}</p>
         <h2 class="visually-hidden">The photographs</h2>
-        <div class="palette-cards">${found.map(({ f: p }, i) => card(p, { href: `${base}drift/?from=${encodeURIComponent(`${p.g}/${p.slug}`)}&c=${hex.slice(1)}&src=${encodeURIComponent(`${f.g}/${f.slug}`)}&open`, label: 'full screen, in this colour', i, from: i === 0, place: pages[p.g].title, placeHref: `${base}palette/?at=${encodeURIComponent(p.slug)}#${p.g}`, plain: true })).join('')}</div>
+        ${prints(found, pages, { href: (p) => `${base}drift/?from=${encodeURIComponent(`${p.g}/${p.slug}`)}&c=${hex.slice(1)}&src=${encodeURIComponent(`${f.g}/${f.slug}`)}&open`, label: 'full screen, in this colour' })}
         <p class="colour-next"><a href="${base}drift/?from=${encodeURIComponent(`${f.g}/${f.slug}`)}&c=${hex.slice(1)}">Drift in this colour <span aria-hidden="true">→</span></a><a href="${base}palette/?at=${encodeURIComponent(f.slug)}#${f.g}">QSD's Palette for ${esc(page.title)} <span aria-hidden="true">→</span></a></p>
         <p class="reverie__credit"><a href="${base}utils/ridgway/">Colour names after Robert Ridgway, 1912 <span aria-hidden="true">→</span></a></p>`;
       measureCards(body);

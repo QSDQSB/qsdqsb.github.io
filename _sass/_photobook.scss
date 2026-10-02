@@ -14,11 +14,17 @@
    _variables.scss. Breakpoints through _responsive-policy.scss only.
    ========================================================================== */
 
-.photobook {
+// The inks and the hairline: the book's, and a colour figure's in a post's column (_colour.scss),
+// where the book's pieces stand outside a book.
+@mixin photobook-inks {
   --photobook-ink: #{$lighter-gray};
   --photobook-ink-2: #{$light-gray};
   --photobook-ink-3: #8b9296;
   --photobook-line: #{$darker-gray};
+}
+
+.photobook {
+  @include photobook-inks;
   --photobook-gold: rgba(229, 207, 169, 0.85);
   --photobook-night: #7f9cc0;
   --photobook-glass: rgba(10, 10, 12, 0.44);
