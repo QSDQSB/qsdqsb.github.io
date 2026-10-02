@@ -1,7 +1,7 @@
 ---
 permalink: /terms/
 title: "Terms and Privacy Policy"
-seo_description: "Terms of use and privacy policy for QSD's House of Wonders — how the site handles email subscriptions, comments, data and content."
+seo_description: "Terms of use and privacy policy for QSD's House of Wonders — how the site handles email subscriptions, data and content."
 toc: true
 toc_sticky: true
 modified: 2026-08-11

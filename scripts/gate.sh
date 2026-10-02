@@ -82,6 +82,7 @@ if [ "$mode" = "full" ]; then
     check "Pixel diff"           npm run --silent visual:diff
     check "Motion-off audit"     npm run --silent visual:audit
     check "Reader journeys"      node scripts/check-journeys.mjs
+    check "Only the site is served" node scripts/check-served-files.mjs
 
     # check-mobile-overflow wants a served site; serve the build for its run only.
     port=4173
@@ -100,6 +101,7 @@ if [ "$mode" = "full" ]; then
     skip "Pixel diff" "no build"
     skip "Motion-off audit" "no build"
     skip "Reader journeys" "no build"
+    skip "Only the site is served" "no build"
     skip "iPhone overflow (WebKit)" "no build"
   fi
 fi

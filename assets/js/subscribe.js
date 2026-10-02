@@ -264,11 +264,31 @@
 
   Slip.prototype.succeed = function () {
     var self = this;
+    // The form goes with success, and the reader's focus with it: it is handed
+    // to the note that takes the form's place.
+    var hadFocus = this.form.contains(document.activeElement);
     this.root.classList.add("is-done");
+    // A live region says a change of its words, not its unhiding: the note's
+    // words are set again a frame after it shows, so a screen reader hears them.
+    var words = this.okNote.textContent;
+    this.okNote.textContent = "";
     this.okNote.hidden = false;
+    if (hadFocus) {
+      this.okNote.tabIndex = -1;
+      this.okNote.focus({ preventScroll: true });
+    }
+    window.requestAnimationFrame(function () { self.okNote.textContent = words; });
     storageSet(DONE_KEY, String(Date.now()));
     // The card has done its job — retire it to the quiet rule after a beat.
-    window.setTimeout(function () { self.fold(); }, FOLD_AFTER_SUCCESS_MS);
+    // Focus left on the form would be lost with it: handed to the rule first,
+    // before the rule counts as folded (as dismiss does).
+    window.setTimeout(function () {
+      if (self.card.contains(document.activeElement)) {
+        self.summary.hidden = false;
+        self.summary.focus({ preventScroll: true });
+      }
+      self.fold();
+    }, FOLD_AFTER_SUCCESS_MS);
   };
 
   Slip.prototype.fail = function (message) {

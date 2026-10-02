@@ -396,9 +396,58 @@ document.addEventListener("DOMContentLoaded", function(){
     searchPanel.style.setProperty("--search-panel-top", panelTop + "px");
   };
 
+  // Search's own scripts (lunr, the whole-site store, the results' renderer:
+  // _includes/search/lunr-search-scripts.html) are fetched when the panel is first
+  // opened, or the pointer first comes to its button: most readers never open it.
+  // They run in order; the renderer, last, takes whatever has been typed by then.
+  var searchScripts = null;
+  var loadSearchScripts = function() {
+    if (searchScripts) return searchScripts;
+    var held = document.getElementById("search-scripts");
+    var urls = [];
+    try { urls = JSON.parse(held.textContent); } catch (error) { urls = []; }
+    if (!urls.length) return (searchScripts = Promise.resolve());
+
+    var results = document.getElementById("results");
+    var live = document.getElementById("results-live");
+    var wait = null;
+    if (results && !results.childElementCount && held.dataset.wait) {
+      wait = document.createElement("p");
+      wait.className = "results__status";
+      wait.textContent = held.dataset.wait;
+      results.appendChild(wait);
+      if (live) live.textContent = held.dataset.wait;
+    }
+    searchScripts = Promise.all(urls.map(function(url) {
+      return new Promise(function(resolve, reject) {
+        var script = document.createElement("script");
+        script.src = url;
+        script.async = false; // fetched together, run in this order
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    })).then(function() {
+      // The suggestions are drawn from the store, which has only now arrived.
+      searchSuggestionCache = null;
+      if (searchPanel.classList.contains("is--visible") && document.activeElement === searchInput) {
+        renderSearchSuggestions(searchInput.value);
+      }
+    });
+    // A fetch that failed is tried again at the next opening, or the next thing typed;
+    // until then nothing says search is on its way.
+    searchScripts.catch(function() {
+      searchScripts = null;
+      if (wait && wait.parentNode) wait.parentNode.removeChild(wait);
+      if (live) live.textContent = "";
+    });
+    return searchScripts;
+  };
+
   var openSearchPanel = function() {
     if (!searchPanel || !searchInput) return;
 
+    loadSearchScripts();
     cancelSearchBlurTimer();
     updateSearchPanelPosition();
     searchPanel.classList.add("is--visible");
@@ -434,6 +483,8 @@ document.addEventListener("DOMContentLoaded", function(){
 
     searchToggle.setAttribute("aria-controls", "site-search-panel");
     searchToggle.setAttribute("aria-expanded", "false");
+    searchToggle.addEventListener("pointerenter", loadSearchScripts, { once: true });
+    searchToggle.addEventListener("focus", loadSearchScripts, { once: true });
 
     searchToggle.addEventListener("click", function(event) {
       event.preventDefault();
@@ -445,6 +496,7 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 
     searchInput.addEventListener("input", function() {
+      loadSearchScripts();
       cancelSearchBlurTimer();
       renderSearchSuggestions(this.value);
     });

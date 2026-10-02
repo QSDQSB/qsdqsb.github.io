@@ -42,6 +42,13 @@
     }
   } catch (e) { /* storage blocked: the slip opens as before */ }
 
+  // A page entered by a view transition is marked before its first frame: the browser carries
+  // the masthead across (_sass/_view-transitions.scss), so the bar's own fade-in from nothing
+  // stands down (_sass/_masthead.scss).
+  window.addEventListener("pagereveal", function (e) {
+    if (e.viewTransition) document.documentElement.classList.add("by-transition");
+  });
+
   window.QSD = window.QSD || {};
   window.QSD.prefersReducedMotion = function () {
     return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);

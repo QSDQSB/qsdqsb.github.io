@@ -687,11 +687,15 @@ body.essay .page__content {
     width: min(100%, 18rem);
   }
 
+  // A title longer than the screen wraps, its lines balanced, rather than run off the edge
+  // mid-word: as wide as the hero lets it be, so one that fits on a line today still does.
   .page__hero--overlay .page__title {
+    width: 100%;
     max-width: none;
     font-size: clamp(1.2rem, 5vw, 1.65rem);
     line-height: 1;
-    white-space: nowrap;
+    white-space: normal;
+    text-wrap: balance;
   }
 
   .page__hero--overlay .page__lead {

@@ -45,7 +45,8 @@ npm run check:important           # !important count vs HEAD (ratchet, the style
 npm run check:frontmatter         # collection contracts; gallery_name must be known to the photo pipeline
 npm run check:gallery             # every gallery_name has a processed manifest; orphans under photos/
 python3 scripts/check-single-use-variables.py --all
-npm run check:journeys            # ten reader routes walked in Chromium against _site/ (or --base <url>)
+npm run check:journeys            # the reader routes walked in Chromium against _site/ (or --base <url>)
+npm run check:served              # nothing at the repository's root is in _site/ that readers are not meant to open
 npm run check:plan                # _plan/ still true: roadmap, links, features, changelog
 ```
 

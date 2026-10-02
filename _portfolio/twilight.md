@@ -3,6 +3,7 @@ title: "Twilight"
 layout: single
 permalink: /portfolio/twilight
 date: 2022-02-26
+sitemap: false  # a stub, not yet written: kept out of sitemap.xml
 excerpt: "The Sunset of Romanticism"
 header:
   overlay_image: Twilight2-5v2.jpg

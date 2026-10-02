@@ -3,7 +3,7 @@
 The stages in order. One line each; the detail is in the stage's file. Read
 [`QUEUE.md`](QUEUE.md) next: it lists what is waiting on the owner.
 
-Last reviewed: 2026-10-01.
+Last reviewed: 2026-10-02.
 
 | # | Stage | What a reader gets | Status | Mostly tier |
 |---|---|---|---|---|
@@ -61,6 +61,11 @@ Last reviewed: 2026-10-01.
   before it reaches the owner ([0008](decisions/0008-ready-and-done.md)).
 - 2026-10-01 · Stage 1, first batch: sixteen findings fixed, through the gate and the reviewer
   (two passes: the first was blocked on three faults). Live the same day, on the owner's push.
+- 2026-10-02 · Stage 1, second batch: twenty-one findings fixed or closed (search loads on demand, a
+  voyage's page a third lighter, the lightbox on a slow line, Home's weight and its doors, the map, what a
+  screen reader hears, two phone fixes), through the gate and the reviewer (two passes: the first was
+  blocked on three faults the gate could not see, now each held by a journey). Six tasks remain, each
+  waiting on the owner or on a design job. On the branch `stage/1-second-batch`; not pushed.
 - 2026-10-01 · The owner answered six calls and one idea on the command centre. The tiers stand as
   written (Q2). The design language is not yet theirs and is to be talked through (Q3). Bestiary gets
   a designed holding page and keeps its place (Q5). Protecting the pictures means casual saving (Q6).

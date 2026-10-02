@@ -1,0 +1,8 @@
+{%- comment -%}
+  The landing page's hero photograph, as an address. It is painted under a blur and drawn on the
+  depth canvas at 1x, so its 1920 px rendition serves every screen (npm run covers,
+  _data/cover_sizes.json); the original where there is none. One address for the hero's CSS, its
+  depth canvas (_layouts/home.html) and the preload (_includes/head.html), so it is fetched once.
+{%- endcomment -%}
+{%- assign hero_cut = site.data.cover_sizes["QSD_Night_5v2.jpg"] | where: "w", 1920 | first -%}
+{{- hero_cut.src | default: "/images/QSD_Night_5v2.jpg" | relative_url -}}
