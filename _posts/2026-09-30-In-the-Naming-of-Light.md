@@ -121,9 +121,9 @@ Palette 的调色板也跟着太阳走。前三张的 accent 只是一点暖色�
 > 最后一个时辰被藏起来，好让我们留心每一个 *The last hour is hidden, so that we watch them all.*{: lang="en"}
 {: .gloss}
 
-{% include colour-figure.html kind="reverie" colour="ce7d99" %}
-
 网站上给颜色找名字的页面叫 [Reverie](/reverie/)：点开一个颜色，写上离它最近的 Ridgway 名字，再找出所有含有这个颜色的照片。
+
+{% include colour-figure.html kind="reverie" colour="ce7d99" %}
 
 Reverie来自古法语 _resver_，本来的意思是「游荡、说胡话」，后来才变成 _rêver_，「做梦」。QSD 想要的就是这种游荡。Palette按照地点记录，Reverie该允许我们在记忆中畅游，一个颜色就是全部的线索。布拉格的暮色可以排在 Rigi 的晚霞旁边，中间隔着好几年和好几个国家。页面下面还有一排 Nearby，是离这个颜色一步之遥的颜色。点开一个就走进另一场 Reverie。
 

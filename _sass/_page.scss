@@ -285,11 +285,18 @@ body.collection--posts .page__inner-wrap .page__content {
    ESSAY: a post set to the owner's standing calls for a reading page, ahead
    of their being built for every post (stage 2, stage 6): one accent, brass
    (a link in the text is brass on a hairline, Q9 option B); titles white;
-   air where a chapter begins; one rhythm for every picture between passages.
+   air where a chapter begins; one rhythm for every picture between passages;
+   Chinese in Songti beside Playfair's Latin.
    Opt in per post with `body_class: essay` in front matter.
    ========================================================================== */
 
 body.essay .page__content {
+  // One family of forms in two scripts: the Latin in Playfair, the Chinese falling through to Songti
+  // (a Song face has the same thin horizontals and wedged ends), not to the system's sans. Figures
+  // at the height of the Han characters they stand among.
+  font-family: "Playfair Display", "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+  font-variant-numeric: lining-nums;
+
   // Links in the prose only: a figure's own links keep their pieces' dress.
   > :is(p, ul, ol, blockquote) a,
   > :is(p, ul, ol, blockquote) a:visited {
