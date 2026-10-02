@@ -30,10 +30,11 @@
       {% assign doc = combined[idx] %}
       {% assign img = doc.header.overlay_image %}
       {% assign firstchar = img | slice: 0 %}
-      {% if firstchar == '/' %}{% assign cover = img %}{% else %}{% assign cover = img | prepend: '/images/' %}{% endif %}
+      {% comment %} As page__hero.html resolves it: an absolute address as it is, a root path as it is, else under /images/. {% endcomment %}
+      {% if img contains '://' or firstchar == '/' %}{% assign cover = img %}{% else %}{% assign cover = img | prepend: '/images/' %}{% endif %}
       {% comment %} A voyage's cover (voyage-cover.html): the lead and the 3:1 banner (1, 4) take the 1920 tier, the small two 1280. {% endcomment %}
       {% include voyage-cover.html doc=doc %}
-      {% assign cover_pos = nil %}
+      {% assign cover_pos = doc.header.overlay_position %}
       {% if vc %}
         {% if forloop.index == 1 or forloop.index == 4 %}{% assign vc_w = 1920 %}{% else %}{% assign vc_w = 1280 %}{% endif %}
         {% capture cover %}{{ vc.url }}/{{ vc_w }}.webp{% endcapture %}
