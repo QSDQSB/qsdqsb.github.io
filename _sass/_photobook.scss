@@ -1454,13 +1454,13 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 
 // The specs as a low band across a width, in three columns: the place and the camera; the figures in
 // one row with the film strip; the settings, flowing into as many columns as fit. Under the print in
-// the lightbox, and under a frame in a post's column (_colour.scss).
-@mixin photobook-specs-band {
+// the lightbox, and under a frame in a post's column (_colour.scss), which cuts the columns to its width.
+@mixin photobook-specs-band($columns: minmax(12rem, 1fr) minmax(0, 2.3fr) minmax(0, 1.9fr), $padding: 1rem 1.3rem) {
   .photobook-specs__inner {
-    grid-template-columns: minmax(12rem, 1fr) minmax(0, 2.3fr) minmax(0, 1.9fr);
+    grid-template-columns: $columns;
     align-items: start;
     column-gap: 1.6rem;
-    padding: 1rem 1.3rem;
+    padding: $padding;
 
     > * { padding: 0; border-top: 0; }
   }
@@ -1558,7 +1558,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 .photobook-specs__sun .photobook-sun__glyph { width: 1.375em; height: 1.1em; color: var(--photobook-ink-3); }
 
 .photobook-weather__glyph {
-  width: calc(var(--ink, 1.25) * 1.1em); // the box is cut to the mark's ink (lightbox.js)
+  width: calc(var(--ink, 1.25) * 1.1em); // the box is cut to the mark's ink (specs.js)
   height: 1.1em;
 
   // In the specs the mark illustrates the word under the temperature, at the label's size; the
