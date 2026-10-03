@@ -13,6 +13,7 @@
 #                                                #   plan debt            files nothing loads, not yet in the inbox
 #                                                #   plan finding "<where>" "<what>" --by daily
 #   bash scripts/hub-daily.sh check              # the plan check, inside the worktree
+#   bash scripts/hub-daily.sh brief [day]        # the day brief, for yesterday unless a day is given; prints the file and where it is published
 #   bash scripts/hub-daily.sh page               # build the command centre there; prints the file to publish
 #   bash scripts/hub-daily.sh finish ["<words>"] # the check, the commit, the push if allowed, the tidying, the report
 #   bash scripts/hub-daily.sh abort              # the tidying alone: nothing is kept
@@ -41,6 +42,7 @@ REPO="$(cd "$("$GIT" rev-parse --path-format=absolute --git-common-dir 2>/dev/nu
 [ -n "${REPO:-}" ] && [ -d "$REPO/_plan" ] || { echo "Run this from the repository." >&2; exit 2; }
 WT="$REPO/.claude/worktrees/hub-daily"
 BEFORE="$REPO/.claude/worktrees/hub-daily.before"
+RUNS="$REPO/.claude/worktrees/hub-runs.log"          # one line a run, for the day brief: start, end, what was kept, the push
 BRANCH=hub/daily
 BASE=master; "$GIT" -C "$REPO" rev-parse --verify --quiet refs/remotes/origin/master >/dev/null && BASE=origin/master
 
@@ -65,7 +67,7 @@ snapshot() { "$GIT" -C "$REPO" rev-parse master; "$GIT" -C "$REPO" status --porc
 tidy() {
   "$GIT" -C "$REPO" worktree remove --force "$WT" 2>/dev/null
   "$GIT" -C "$REPO" worktree prune 2>/dev/null
-  rm -f "$BEFORE" "$REPO/.claude/worktrees/hub-daily.txt" "$REPO/.claude/worktrees/hub-daily.gate"
+  rm -f "$BEFORE" "$REPO/.claude/worktrees/hub-daily.txt" "$REPO/.claude/worktrees/hub-daily.gate" "$REPO/.claude/worktrees/hub-daily.started"
   return 0
 }
 # What the worktree holds that is not committed yet, as a line: the commit's own words.
@@ -81,24 +83,28 @@ summarise() {
   [ -n "$f" ] && out="$out; $f filed"
   printf '%s' "${out#; }"
 }
+logrun() { printf '%s\t%s\t%s\t%s\n' "$(cat "$REPO/.claude/worktrees/hub-daily.started" 2>/dev/null || date -u +%Y-%m-%dT%H:%M:%SZ)" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$1" "$2" >> "$RUNS"; }
 in_wt() { [ -d "$WT/_plan" ] || { echo "No worktree: run 'bash scripts/hub-daily.sh begin' first." >&2; exit 2; }; }
 
 case "${1:-}" in
   begin)
     "$GIT" -C "$REPO" show "$BASE:scripts/hub-daily.sh" >/dev/null 2>&1 || { echo "STOP: the hub's daily tools are not on $BASE yet." >&2; exit 2; }
     mkdir -p "$REPO/.claude/worktrees"
+    # A run that died left its start behind: say so in the log before the tidying forgets it.
+    [ -f "$REPO/.claude/worktrees/hub-daily.started" ] && logrun "DIED: the run before this one never finished" ""
     tidy                                   # whatever a run that died left behind
     snapshot > "$BEFORE"
+    date -u +%Y-%m-%dT%H:%M:%SZ > "$REPO/.claude/worktrees/hub-daily.started"
     "$GIT" -C "$REPO" fetch --prune origin 2>&1 | tail -1   # --prune: a branch deleted on GitHub is forgotten here too
     "$GIT" -C "$REPO" show-ref --verify --quiet "refs/heads/$BRANCH" || "$GIT" -C "$REPO" branch --no-track "$BRANCH" "$BASE"
     # The run's own commits: on the branch, on neither master (an older one may have been merged in),
     # and not already on GitHub's by patch (a session took them and its pull request was merged).
     was="$("$GIT" -C "$REPO" rev-parse "$BRANCH")"
     own="$("$GIT" -C "$REPO" rev-list --reverse --no-merges --right-only --cherry-pick "$BASE...$BRANCH" ^master)"
-    "$GIT" -C "$REPO" worktree add "$WT" "$BRANCH" >/dev/null 2>&1 || { echo "STOP: could not make the worktree at $WT." >&2; tidy; exit 2; }
+    "$GIT" -C "$REPO" worktree add "$WT" "$BRANCH" >/dev/null 2>&1 || { echo "STOP: could not make the worktree at $WT." >&2; logrun "STOP: no worktree" ""; tidy; exit 2; }
     bash "$REPO/scripts/prototype-setup.sh" "$WT" >/dev/null 2>&1 || echo "Note: the worktree has no fetched data (prototype-setup.sh); the gate will skip what needs it."
     id=(-c user.name="${GIT_AUTHOR_NAME:-Claude}" -c user.email="${GIT_AUTHOR_EMAIL:-noreply@anthropic.com}")
-    restore() { "$GIT" -C "$WT" cherry-pick --abort 2>/dev/null; "$GIT" -C "$WT" checkout -q --no-track -B "$BRANCH" "$was"; echo "STOP: $1 That is the owner's to settle." >&2; tidy; exit 1; }
+    restore() { "$GIT" -C "$WT" cherry-pick --abort 2>/dev/null; "$GIT" -C "$WT" checkout -q --no-track -B "$BRANCH" "$was"; echo "STOP: $1 That is the owner's to settle." >&2; logrun "STOP: $1" ""; tidy; exit 1; }
     # A branch that will not take GitHub's master, or that then holds more than the plan (a local
     # master merged in on an earlier day, with work GitHub has not seen), starts again from $BASE
     # with the run's own commits on top. If those do not go on cleanly, nothing changes and the run stops.
@@ -132,12 +138,20 @@ case "${1:-}" in
     echo "1. ArtifactData, action list, url ${url:-(none in _plan/hub.json: skip to 3)}, out_dir <your scratchpad directory>/hub-store: once for collection answers, once for collection ideas"
     echo "2. bash scripts/hub-daily.sh plan sync <your scratchpad directory>/hub-store"
     echo "3. bash scripts/hub-daily.sh plan debt"
-    echo "4. bash scripts/hub-daily.sh finish \"daily upkeep\""
+    echo "4. bash scripts/hub-daily.sh brief"
+    echo "5. bash scripts/hub-daily.sh finish \"daily upkeep\""
+    echo "6. Only then, with the Artifact tool: read the address the brief printed, and publish its file there"
     ;;
 
   plan)  in_wt; shift; cd "$WT" && node scripts/plan.mjs "$@" ;;
   check) in_wt; cd "$WT" && node scripts/check-plan.mjs ;;
   page)  in_wt; cd "$WT" && node scripts/hub-page.mjs && echo "Publish: $WT/design/hub/hub.html" ;;
+  brief)
+    in_wt
+    (cd "$WT" && node scripts/hub-brief.mjs --day "${2:-yesterday}" --ref "$BASE" --runs "$RUNS" --out "$REPO/.claude/worktrees/hub-brief.html") || exit 1
+    url="$(cd "$WT" && node -e 'try{process.stdout.write(String(JSON.parse(require("fs").readFileSync("_plan/hub.json","utf8")).brief||""))}catch(e){}')"
+    echo "At: ${url:-(no brief address in _plan/hub.json: do not publish)}"
+    ;;
 
   finish)
     in_wt
@@ -148,7 +162,7 @@ case "${1:-}" in
       echo "Note: the owner's checkout changed while the run worked ($(snapshot | diff "$BEFORE" - | grep -c '^[<>]') line(s) of its state). The run writes only in its own worktree."
     fi
     # The branch holds nothing but the plan.
-    if ! (cd "$WT" && node scripts/plan.mjs only-plan "$BASE"); then tidy; exit 1; fi
+    if ! (cd "$WT" && node scripts/plan.mjs only-plan "$BASE"); then logrun "REFUSED: the branch held more than the plan" ""; tidy; exit 1; fi
     kept="nothing new"
     if [ -z "$("$GIT" -C "$WT" status --porcelain)" ]; then
       echo "Nothing to record today: no commit."
@@ -156,8 +170,8 @@ case "${1:-}" in
       summary="$(summarise)"; [ -n "$summary" ] || summary="${given:-the plan, kept}"
       "$GIT" -C "$WT" add -A _plan
       "$GIT" -C "$WT" -c user.name="${GIT_AUTHOR_NAME:-Claude}" -c user.email="${GIT_AUTHOR_EMAIL:-noreply@anthropic.com}" \
-        commit -q -m "📐 Daily upkeep: $summary" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" || { echo "REFUSED: the commit failed. Nothing is kept." >&2; tidy; exit 1; }
-      if ! (cd "$WT" && node scripts/plan.mjs only-plan "$BASE" >/dev/null); then echo "REFUSED after the commit: the branch holds more than the plan." >&2; tidy; exit 1; fi
+        commit -q -m "📐 Daily upkeep: $summary" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" || { echo "REFUSED: the commit failed. Nothing is kept." >&2; logrun "REFUSED: the commit failed" ""; tidy; exit 1; }
+      if ! (cd "$WT" && node scripts/plan.mjs only-plan "$BASE" >/dev/null); then echo "REFUSED after the commit: the branch holds more than the plan." >&2; logrun "REFUSED: the branch held more than the plan" ""; tidy; exit 1; fi
       echo "Committed on $BRANCH: $("$GIT" -C "$WT" log --oneline -1)"
       kept="$summary"
     fi
@@ -179,6 +193,7 @@ case "${1:-}" in
       if push_it --force-with-lease="refs/heads/$BRANCH:$there"; then push="$BRANCH pushed (started again from $BASE)."; else push="failed; the branch is local."; fi
     else push="left local. GitHub's $BRANCH holds commits this run does not have; they are not overwritten."; fi
     echo "Push: $push"
+    logrun "$kept" "$push"
     # The report, whole: the run's last words are these lines.
     echo "── Report"
     [ -f "$REPO/.claude/worktrees/hub-daily.gate" ] && echo "Gate on $BASE: $(tail -1 "$REPO/.claude/worktrees/hub-daily.gate")"
@@ -190,7 +205,7 @@ case "${1:-}" in
     echo "Tidied: the worktree is gone; the branch stays."
     ;;
 
-  abort) tidy; echo "Tidied. Nothing was kept." ;;
+  abort) [ -f "$REPO/.claude/worktrees/hub-daily.started" ] && logrun "STOP: aborted, nothing kept" ""; tidy; echo "Tidied. Nothing was kept." ;;
 
   *) sed -n '2,30p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
 esac
