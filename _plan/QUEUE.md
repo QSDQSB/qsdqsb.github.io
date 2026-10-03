@@ -17,6 +17,7 @@ options as `- **A (recommended):** …`. A number is never reused: the command c
 
 ## Answered
 
+- 2026-10-03 · Who opens a pull request (in chat) → Claude, for its own finished batch, with the push of that batch's branch: "you should create pr instead of asking me to". Merging and pushing `master` stay the owner's.
 - 2026-10-03 · Q19 · The arrival as built: is it right on prose, and should the first screen arrive too? → A: keep the arrival as built, and the first screen arrives in turn in every browser, as the owner's drawing did
 - 2026-10-03 · Q18 · Which white is a heading: the text's own ivory, or pure white? → A: the ivory ink, as the text and every display title already are
 - 2026-10-03 · Q17 · Do the Photobook's pill and round tools stay as built, beside the new 10 px button? → B: bring the Photobook's pill and round tools to the 10 px rectangle too, shown before and after first
