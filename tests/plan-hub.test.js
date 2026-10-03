@@ -799,7 +799,7 @@ test('the store\'s dump is recorded once: an open call, a shaped idea\'s decisio
     const out = first.stdout;
     assert.match(out, /^Read: 19 answer\(s\), 0 idea\(s\) from the store's dump\.$/m);
     assert.match(out, new RegExp(`^Recorded: I900 pursue; ${open} answered B\\.$`, 'm'));
-    assert.match(out, /^Already in the plan: 4\.$/m, 'the idea already parked, the idea and the call the plan settled later, the call kept as it was');
+    assert.match(out, /^Already in the plan: 4\. And 1 answer\(s\) to an idea's questions, kept with that idea's decision\.$/m, 'the idea already parked, the idea and the call the plan settled later, the call kept as it was; every document is accounted for');
     assert.match(out, /^A question answered, its idea not yet decided: I777-1\./m);
     for (const said of [`${changed}: the plan says C, the page now says A`, `${noted}: the page holds a note the plan does not`, 'I902: the plan holds another decision', 'I903: it is staged with no line of the owner\'s, and the page says drop']) assert.ok(out.split('\n').find((l) => l.startsWith('For a session to weigh')).includes(said), said);
     for (const said of ['I904: still raw', 'I905: something that is not a plain name is not pursue, park or drop', 'I778: no such idea', '--by: not a call or an idea', 'broken: its file is not JSON', 'something that is not a plain name: not a call or an idea']) assert.ok(out.split('\n').find((l) => l.startsWith('Skipped')).includes(said), said);
@@ -817,7 +817,7 @@ test('the store\'s dump is recorded once: an open call, a shaped idea\'s decisio
     const after = read('QUEUE.md');
     const again = plan('sync', store);
     assert.match(again.stdout, /^Recorded: nothing new\.$/m);
-    assert.match(again.stdout, /^Already in the plan: 6\.$/m);
+    assert.match(again.stdout, /^Already in the plan: 6\. And 1 answer\(s\) to an idea's questions/m);
     assert.ok(again.stdout.includes(`${changed}: the plan says C, the page now says A`), 'a call under Answered is still found after a note that held the heading');
     assert.strictEqual(read('QUEUE.md'), after);
     // A number in a note is not a call's number.
