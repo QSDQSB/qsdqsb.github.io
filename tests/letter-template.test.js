@@ -53,3 +53,14 @@ test('welcome falls back to the canonical site URL and mirrors in plaintext', as
   assert.ok(text.includes(`Unsubscribe: ${UNSUB}`));
   assert.ok(text.includes('Enter the house: https://qsdqsb.com'));
 });
+
+test('a letter carries its picture inline, linked, between its words and its way in', async () => {
+  const { renderLetterHtml, renderLetterText } = await import('../scripts/letter-template.mjs');
+  const figure = { cid: 'reverie-ce7d99', width: 560, height: 820, alt: 'Reverie in #CE7D99, Daphne Pink', href: 'https://qsdqsb.com/reverie/?c=ce7d99&from=rigi%2Fdscf5760' };
+  const html = renderLetterHtml({ ...LETTER, figure }, UNSUB);
+  assert.ok(html.includes('src="cid:reverie-ce7d99" width="560" height="820" alt="Reverie in #CE7D99, Daphne Pink"'), 'the picture, by its Content-ID, with its size and name');
+  assert.ok(html.includes('href="https://qsdqsb.com/reverie/?c=ce7d99&amp;from=rigi%2Fdscf5760"'), 'it leads to its Reverie');
+  assert.ok(html.indexOf('cid:reverie-ce7d99') > html.indexOf(LETTER.excerpt) && html.indexOf('cid:reverie-ce7d99') < html.indexOf('Read it'), 'after the words, before the way in');
+  assert.ok(renderLetterText({ ...LETTER, figure }, UNSUB).includes(`${figure.alt}: ${figure.href}`), 'the text letter names it and its address');
+  assert.ok(!renderLetterHtml(LETTER, UNSUB).includes('cid:reverie'), 'no picture unless one is given');
+});
