@@ -69,6 +69,16 @@ You retired the colour per heading level; what is left is which white. Both shot
 - **A (recommended):** the ivory ink, as the text and every display title already are
 - **B:** pure white, a step brighter than the text
 
+### Q19 · The arrival as built: is it right on prose, and should the first screen arrive too?
+
+Asked: 2026-10-03
+
+Built to your picks (28 px, 0.7 s, in turn 0.12 s apart). It reaches whole blocks of a post, About, the CV and Terms, which is more than the three lines you were shown; recorded at desktop and phone in design/arrival/ (sent to you in chat). On a first load Chrome fades the first screen in while Safari shows it at once (F082): the two should agree.
+
+- **A (recommended):** keep it, and the first screen arrives in turn in every browser, as your drawing did
+- **B:** keep it, and the first screen simply stands; only what is scrolled to arrives
+- **C:** too much on prose: the same turns, a smaller rise (12 px) for paragraphs
+
 ---
 
 ## Answered
