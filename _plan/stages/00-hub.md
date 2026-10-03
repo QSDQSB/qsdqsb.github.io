@@ -84,6 +84,14 @@ stops being the only reviewer.
       session takes only the run's own commits (`/hub`, by cherry-pick), and a commit so taken is
       counted as here. With tests. The box is ticked when a run built on GitHub's `master` has ended
       by itself.
+- [ ] A day brief (the owner, 2026-10-03: "a daily brief / one-page … to have a high-level understanding
+      of what was performed in today's automated workflows … with necessary visualisations"). One page,
+      read and never typed (`scripts/hub-brief.mjs`): the day's runs, calls, commits by kind, pull
+      requests, the gate on GitHub, how far each stage moved, what readers got, who moves next. The
+      07:34 run builds it for the day before and republishes it at `brief` in `hub.json`; it keeps a
+      log of its own runs for it (`.claude/worktrees/hub-runs.log`). The first, for 3 October, was
+      made by hand the same evening. With tests. Its first publish from the run asks the owner once.
+      Ticked when a run has built and published one.
 - [ ] The daily run's agents (`"daily_agents"` in `hub.json`, off). An agent handed work starts in the
       owner's checkout, not the run's worktree; the reviewer blocked the run on it (2026-10-01). Until
       a hand-off has been shown to stay inside the worktree, the run records and files only, and raw

@@ -48,7 +48,12 @@ too: every merged pull request reaches it, and the local `master` moves only whe
    head says how it is loaded, leave it and say so in the report; otherwise run the line it
    printed, exactly as printed. File nothing else. A fault you happen to see is for the report,
    not for a search of your own.
-4. **Finish.** `bash scripts/hub-daily.sh finish "daily upkeep"`
+4. **The day brief.** `bash scripts/hub-daily.sh brief`
+   It writes one page on yesterday (what reached `master`, the runs, the calls, the gate, how far the
+   plan moved, who moves next) to a file outside the worktree, and prints the file and the address
+   it is published at. It is published after the finish (step 6), so a publish that waits never
+   holds up the commit and the push.
+5. **Finish.** `bash scripts/hub-daily.sh finish "daily upkeep"`
    It checks that the branch holds nothing but the plan, commits on `hub/daily` in its own words,
    pushes that branch only if the owner's switch is on (built on GitHub's `master`, it carries
    nothing else GitHub has not seen), removes the worktree, and prints the report. If the owner worked in their checkout
@@ -57,7 +62,11 @@ too: every merged pull request reaches it, and the local `master` moves only whe
    (someone pushed there, or that branch was merged on GitHub by squash), say so in the report:
    the owner, or a session with the owner's word, deletes GitHub's `hub/daily`, and the next run
    pushes its own again.
-5. **Report.** Repeat the lines under `── Report` as they are, with anything a step said that the
+6. **Publish the brief.** With the `Artifact` tool: `action: "read"` with the address step 4
+   printed (the tool asks for a read before a publish over a page from another conversation), then
+   `action: "publish"` with `file_path` the printed file and `url` that address. Write nothing into
+   the page yourself. If either call is refused or fails, say so in the report.
+7. **Report.** Repeat the lines under `── Report` as they are, with anything a step said that the
    owner should know (a STOP, a store that could not be read, what `sync` named for a session, what
    it skipped). Under ten lines.
 
