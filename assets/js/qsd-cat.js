@@ -16,7 +16,7 @@
     simple cheer (cup raised, a wink) when it first comes into view and again on a click, then
     nothing runs. Same file as the hero's, so a reader who met the cat there has it cached.
     `say="…"` is a line spoken from above its head: it arrives with the cup, and the page styles
-    it through ::part(say) (_components.scss, a line on the glass; choice cat-speaks, B).        */
+    it through ::part(say) (_components.scss, a comic bubble; choice cat-speaks, C).        */
 (() => {
   const SVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="70 44 884 876" width="884" height="876" class="qc" role="img" aria-label="QSD orange cat sigil">
 <!-- The drawing's notes (structure, pivots, the loop's timing) are in images/QSDSigils/qsd-cat-animated.svg. -->
@@ -199,9 +199,13 @@
       const quiet = this.getAttribute('aria-hidden') === 'true';
       const once = this.hasAttribute('cheer'), say = this.getAttribute('say');
       root.innerHTML = '<style>:host{display:inline-block;position:relative;line-height:0}' +
-        '.say{position:absolute;left:68%;bottom:80%;white-space:nowrap;line-height:1.2;pointer-events:none;' +
+        '.say{position:absolute;left:calc(65% - .5em);bottom:calc(74% + .9em);white-space:nowrap;line-height:1.2;pointer-events:none;' +
         'opacity:0;transform:translateY(.3em);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.22,1,.36,1)}' +
         '.say.is-said{opacity:1;transform:none}' +
+        // the tail, down to its ear: an ink wedge, and the fill's wedge inset by the outline, both leaning left
+        '.say::before,.say::after{content:"";position:absolute;top:100%;width:0;height:0;border-style:solid;border-color:transparent;transform:skewX(-24deg);transform-origin:0 0}' +
+        '.say::before{left:1em;border-width:.9em .9em 0 0;border-top-color:var(--say-ink,#0d0908)}' +
+        '.say::after{left:calc(1em + var(--say-edge,.19em));border-width:calc(.9em - 2.414 * var(--say-edge,.19em)) calc(.9em - 2.414 * var(--say-edge,.19em)) 0 0;border-top-color:var(--say-fill,#fff6d8)}' +
         '.qc{display:block;width:100%;height:100%;max-width:var(--qsd-cat-size,none);max-height:var(--qsd-cat-size,none);margin:auto;outline:none;overflow:visible;pointer-events:none;-webkit-tap-highlight-color:transparent;' +
         'opacity:0;transition:opacity 1.1s cubic-bezier(.16,1,.3,1)}.qc.is-in{opacity:1}' +
         '.qc>g{pointer-events:visiblePainted;cursor:pointer;touch-action:pan-y pinch-zoom}' +

@@ -64,17 +64,25 @@
   a:focus-visible { color: var(--photobook-ink, #{$lighter-gray}); border-color: var(--photobook-ink-3, #8b9296); text-decoration: none; }
 }
 
-// What the orange cat says (<qsd-cat say="…">, assets/js/qsd-cat.js): a line in the lede's italic
-// on the glass, from above its head. The 404's and the subscribe slip's. The `glass` and the `soft`
-// corner of 0009, the corner nearest its head drawn in.
+// What the orange cat says (<qsd-cat say="…">, assets/js/qsd-cat.js): a comic bubble from above its
+// head, in the drawing's own register, not the site's: its pale, its outline ink, bold Barlow, and a
+// tail down to its ear (drawn in the component from the same three values). Sized in em, so the
+// outline keeps near the drawing's own weight: the page sets the size where it places the cat.
+// The 404's and the subscribe slip's. The owner's pick (choice cat-speaks, C, 2026-10-03).
+qsd-cat {
+  --say-fill: #fff6d8;   // the drawing's pale, the light in its eyes
+  --say-ink: #0d0908;    // the drawing's outline
+  --say-edge: 0.19em;
+}
+
 qsd-cat::part(say) {
-  padding: 0.28em 0.8em 0.34em;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 10px 10px 10px 3px;
-  background: rgba(21, 21, 21, 0.42);
-  @include backdrop-blur(blur(14px) saturate(1.2));
-  color: rgba($lighter-gray, 0.92);
-  font: italic 400 1rem/1.2 $didot-family;
+  padding: 0.32em 0.75em 0.4em;   // Barlow sits high: a little more below
+  border: var(--say-edge) solid var(--say-ink);
+  border-radius: 1em;
+  background: var(--say-fill);
+  color: var(--say-ink);
+  font: 700 1em/1.1 $barlow-font-family;
+  letter-spacing: 0.01em;
 }
 
 /* ── controls ────────────────────────────────────────────────────────── */
