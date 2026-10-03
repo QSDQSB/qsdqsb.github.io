@@ -56,6 +56,14 @@
   window.QSD.motionOff = function () {
     return window.QSD_MOTION_OFF === true || window.QSD.prefersReducedMotion();
   };
+
+  // Words arrive as they come into view (assets/js/scroll-animations.js). A page's blocks are held
+  // from its first frame, so none is ever drawn shown, hidden, and then made to rise: the flash
+  // before an arrival. The script takes them over and lifts the hold; should it never run,
+  // _sass/_scroll-animations.scss shows them after four seconds.
+  if (!window.QSD.motionOff() && "IntersectionObserver" in window) {
+    document.documentElement.classList.add("reveal-pending");
+  }
 </script>
 
 <link rel="icon" href="/favicon.ico" sizes="any">

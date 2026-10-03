@@ -34,6 +34,18 @@
   }
 }
 
+/* The hold (_includes/head/custom.html, before the first frame): a page's blocks wait unseen until the
+   script above takes them over, so none is drawn and then hidden. The contents list is not held. If the
+   script never runs (a failed download, an error), the blocks show after four seconds. */
+html.reveal-pending .page__content > :not(.sidebar__right) {
+  opacity: 0;
+  animation: reveal-held 0s linear 4s forwards;
+}
+
+@keyframes reveal-held {
+  to { opacity: 1; }
+}
+
 /* Motion off (automated renderers): the reveal lands, it never hides. */
 html.motion-off.js.scroll-reveal-ready .reveal-on-scroll,
 html.motion-off.js.scroll-reveal-ready .reveal-on-scroll.arrives:not(.is-visible) {
