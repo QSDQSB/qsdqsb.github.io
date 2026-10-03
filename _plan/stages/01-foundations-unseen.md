@@ -26,8 +26,9 @@ A faster, steadier site that looks exactly the same. Every item is a finding fro
       a plate is a crop of a wide picture, and at 1920 Palette's lost its ripples on a dense screen (shot and
       compared). A 1x screen is given the 2880 px rendition, a denser one the picture as it was. A proper
       `sizes` for plates is stage 9's, with S12.
-- [ ] S09 · CMU Serif self-hosted. Waits on the owner's go: it means downloading the face's files and
-      committing them (font bytes, under the SIL Open Font Licence): asked as Q14.
+- [x] S09 · CMU Serif self-hosted. Done 2026-10-03 (Q14, A): cm-unicode 0.7.0 from CTAN, four faces cut to
+      Latin, Greek and mathematics, in `assets/fonts/CMUSerif/` with its OFL, set to the service's copy's line metrics and widths
+      (`scripts/cmu-metrics.json`) so no line moves or breaks elsewhere; cut again with `npm run fonts:cmu`.
 - [x] S10 · Home's hero: a 1920 px rendition (318 KB to 84 KB), cut at build by `npm run covers` and
       gitignored like the other renditions, and preloaded.
 - [x] S11 · Lightbox prefetch: none on touch, sized from the mat, cancelled when passed. Six quick steps
