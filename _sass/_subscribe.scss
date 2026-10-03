@@ -236,7 +236,8 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__body {
   display: block;
   width: 5.5rem;
   aspect-ratio: 884 / 876;   // the drawing's own box, held before the script draws it
-  margin: 2.2rem 0 0;
+  margin: 2.6rem 0 0;        // room for what it says
+  font-size: 0.8rem;         // its bubble, kept to the small cat's weight
 }
 
 .subscribe-slip.is-done .subscribe-slip__form,

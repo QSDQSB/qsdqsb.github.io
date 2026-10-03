@@ -1163,7 +1163,8 @@ tradingview-widget-container {
 .notfound-way__cat {
   width: clamp(9rem, 16vw, 11.5rem);
   aspect-ratio: 884 / 876;   // the drawing's own box, held before the script draws it
-  margin-top: 2.4rem;
+  margin-top: 3rem;          // room for what it says
+  font-size: 1rem;           // its bubble's size
 }
 
 .notfound-way__line {
