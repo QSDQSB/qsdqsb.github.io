@@ -24,6 +24,7 @@ test('text letter mirrors the essentials', async () => {
   const text = renderLetterText(LETTER, UNSUB);
   assert.ok(text.includes(LETTER.title));
   assert.ok(text.includes(`Unsubscribe: ${UNSUB}`));
+  assert.ok(text.includes('Sent because you subscribed at qsdqsb.com.'), 'the footnote says why it came');
   assert.ok(text.includes(`Onward: ${LETTER.url}`));
 });
 
@@ -94,4 +95,15 @@ test('a letter says what kind of thing has come, small above its title', async (
   assert.ok(html.indexOf('Fresh ink from QSD') < html.indexOf('A Letter of', body), 'above the title');
   assert.ok(renderLetterText({ ...LETTER, kicker: 'Fresh ink from QSD' }, UNSUB).includes('FRESH INK FROM QSD\nA Letter of'));
   assert.ok(!renderLetterHtml(LETTER, UNSUB).includes('letter-spacing:3px;text-transform:uppercase;color:#8a8d8f'), 'none unless given');
+});
+
+test('a quote may carry its English beneath it, quieter, and never without the quote', async () => {
+  const { renderLetterHtml, renderLetterText } = await import('../scripts/letter-template.mjs');
+  const quote = '写了一篇日志：[Palette](https://qsdqsb.com/palette/)。', gloss = 'A diary entry: [Palette](https://qsdqsb.com/palette/).';
+  const html = renderLetterHtml({ ...LETTER, quote, gloss }, UNSUB);
+  assert.ok(html.indexOf('写了一篇日志') < html.indexOf('A diary entry'), 'the English beneath the Chinese');
+  assert.ok(/lang="en" style="[^"]*font-style:italic/.test(html), 'in italic, said to be English');
+  assert.ok(html.includes('<a href="https://qsdqsb.com/palette/" style="color:#8a8d8f;text-decoration:underline;">Palette</a>'), 'its links in its own grey');
+  assert.ok(!renderLetterHtml({ ...LETTER, gloss }, UNSUB).includes('A diary entry'), 'no English for a quote that is not there');
+  assert.ok(renderLetterText({ ...LETTER, quote, gloss }, UNSUB).includes('A diary entry: Palette (https://qsdqsb.com/palette/).'));
 });
