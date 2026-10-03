@@ -7,7 +7,7 @@
 # tidying up. The agent's part is what is left: reading the owner's answers from
 # the command centre, recording them, and filing what it notices.
 #
-#   bash scripts/hub-daily.sh begin              # a worktree on hub/daily, master merged in, the checks run
+#   bash scripts/hub-daily.sh begin              # a worktree on hub/daily, GitHub's master merged in, the checks run
 #   bash scripts/hub-daily.sh plan <args…>       # node scripts/plan.mjs <args…>, inside the worktree:
 #                                                #   plan sync <folder>   record what the page's store holds
 #                                                #   plan debt            files nothing loads, not yet in the inbox
@@ -18,12 +18,17 @@
 #   bash scripts/hub-daily.sh abort              # the tidying alone: nothing is kept
 #
 # It never writes in the owner's checkout, never touches master, and pushes one
-# branch only: hub/daily, and only when _plan/hub.json says the owner allows it
-# and master holds nothing GitHub has not seen.
+# branch only: hub/daily, and only when _plan/hub.json says the owner allows it.
+#
+# What the run builds on is GitHub's master as last fetched (origin/master): every
+# merged pull request reaches it, while the local master moves only when someone
+# pulls it, and a plan read from a stale master misses the calls asked since.
+# Without a remote, the local master.
 #
 # Whatever branch the owner's checkout is on, the copy of this file that runs is
-# master's: the first thing it does is hand over to it. So the run does not change
-# with the owner's work in progress, and a fix on master is the fix that runs.
+# that master's: the first thing it does is hand over to it (to the local master's
+# copy while GitHub's predates the hand-over). So the run does not change with the
+# owner's work in progress, and a fix on master is the fix that runs.
 # (The plan's tools run from the worktree, which is master's too; the worktree's
 # setup, prototype-setup.sh, is the checkout's, and writes only what git ignores.)
 #
@@ -37,15 +42,21 @@ REPO="$(cd "$("$GIT" rev-parse --path-format=absolute --git-common-dir 2>/dev/nu
 WT="$REPO/.claude/worktrees/hub-daily"
 BEFORE="$REPO/.claude/worktrees/hub-daily.before"
 BRANCH=hub/daily
+BASE=master; "$GIT" -C "$REPO" rev-parse --verify --quiet refs/remotes/origin/master >/dev/null && BASE=origin/master
 
 if [ -z "${HUB_DAILY_FROM_MASTER:-}" ]; then
   mkdir -p "$REPO/.claude/worktrees"
-  # Written beside, then moved into place: a copy still being read by an earlier call is not rewritten under it.
-  if "$GIT" -C "$REPO" show master:scripts/hub-daily.sh > "$REPO/.claude/worktrees/hub-daily.run.$$.sh" 2>/dev/null \
-     && mv -f "$REPO/.claude/worktrees/hub-daily.run.$$.sh" "$REPO/.claude/worktrees/hub-daily.run.sh"; then
-    HUB_DAILY_FROM_MASTER=1 exec bash "$REPO/.claude/worktrees/hub-daily.run.sh" "$@"
-  fi
-  rm -f "$REPO/.claude/worktrees/hub-daily.run.$$.sh"
+  # A day starts from what GitHub holds now, so begin and finish run the same copy.
+  [ "${1:-}" = begin ] && "$GIT" -C "$REPO" fetch -q origin 2>/dev/null
+  run="$REPO/.claude/worktrees/hub-daily.run.$$.sh"
+  for src in "$BASE" master; do
+    # Written beside, then moved into place: a copy still being read by an earlier call is not rewritten under it.
+    if "$GIT" -C "$REPO" show "$src:scripts/hub-daily.sh" > "$run" 2>/dev/null && grep -q HUB_DAILY_FROM_MASTER "$run" \
+       && mv -f "$run" "$REPO/.claude/worktrees/hub-daily.run.sh"; then
+      HUB_DAILY_FROM_MASTER=1 exec bash "$REPO/.claude/worktrees/hub-daily.run.sh" "$@"
+    fi
+  done
+  rm -f "$run"
 fi
 unset HUB_DAILY_FROM_MASTER   # for this call only: the gate's own tests run this script too, and must hand over themselves
 
@@ -74,22 +85,46 @@ in_wt() { [ -d "$WT/_plan" ] || { echo "No worktree: run 'bash scripts/hub-daily
 
 case "${1:-}" in
   begin)
-    "$GIT" -C "$REPO" show master:scripts/hub-daily.sh >/dev/null 2>&1 || { echo "STOP: the hub's daily tools are not on master yet." >&2; exit 2; }
+    "$GIT" -C "$REPO" show "$BASE:scripts/hub-daily.sh" >/dev/null 2>&1 || { echo "STOP: the hub's daily tools are not on $BASE yet." >&2; exit 2; }
     mkdir -p "$REPO/.claude/worktrees"
     tidy                                   # whatever a run that died left behind
     snapshot > "$BEFORE"
     "$GIT" -C "$REPO" fetch origin 2>&1 | tail -1
-    "$GIT" -C "$REPO" show-ref --verify --quiet "refs/heads/$BRANCH" || "$GIT" -C "$REPO" branch "$BRANCH" master
+    "$GIT" -C "$REPO" show-ref --verify --quiet "refs/heads/$BRANCH" || "$GIT" -C "$REPO" branch --no-track "$BRANCH" "$BASE"
+    # The run's own commits: on the branch, on neither master (an older one may have been merged in),
+    # and not already on GitHub's by patch (a session took them and its pull request was merged).
+    was="$("$GIT" -C "$REPO" rev-parse "$BRANCH")"
+    own="$("$GIT" -C "$REPO" rev-list --reverse --no-merges --right-only --cherry-pick "$BASE...$BRANCH" ^master)"
     "$GIT" -C "$REPO" worktree add "$WT" "$BRANCH" >/dev/null 2>&1 || { echo "STOP: could not make the worktree at $WT." >&2; tidy; exit 2; }
     bash "$REPO/scripts/prototype-setup.sh" "$WT" >/dev/null 2>&1 || echo "Note: the worktree has no fetched data (prototype-setup.sh); the gate will skip what needs it."
-    if ! "$GIT" -C "$WT" -c user.name="${GIT_AUTHOR_NAME:-Claude}" -c user.email="${GIT_AUTHOR_EMAIL:-noreply@anthropic.com}" merge --no-edit master >/dev/null 2>&1; then
-      "$GIT" -C "$WT" merge --abort 2>/dev/null
-      echo "STOP: master and $BRANCH have met in one file. That is the owner's to settle: merge or re-record what $BRANCH holds, then delete the branch; the next run starts a new one." >&2
-      tidy; exit 1
+    id=(-c user.name="${GIT_AUTHOR_NAME:-Claude}" -c user.email="${GIT_AUTHOR_EMAIL:-noreply@anthropic.com}")
+    restore() { "$GIT" -C "$WT" cherry-pick --abort 2>/dev/null; "$GIT" -C "$WT" checkout -q --no-track -B "$BRANCH" "$was"; echo "STOP: $1 That is the owner's to settle." >&2; tidy; exit 1; }
+    # A branch that will not take GitHub's master, or that then holds more than the plan (a local
+    # master merged in on an earlier day, with work GitHub has not seen), starts again from $BASE
+    # with the run's own commits on top. If those do not go on cleanly, nothing changes and the run stops.
+    merged=1
+    if ! "$GIT" "${id[@]}" -C "$WT" merge --no-edit "$BASE" >/dev/null 2>&1; then "$GIT" -C "$WT" merge --abort 2>/dev/null; merged=0; fi
+    if [ "$merged" = 0 ] || ! (cd "$WT" && node scripts/plan.mjs only-plan "$BASE" >/dev/null 2>&1); then
+      "$GIT" -C "$WT" checkout -q --no-track -B "$BRANCH" "$BASE"
+      for c in $own; do
+        "$GIT" "${id[@]}" -C "$WT" cherry-pick "$c" >/dev/null 2>&1 && continue
+        # Nothing left of it once on GitHub's (the same lines got there another way): pass over it.
+        if "$GIT" -C "$WT" diff --quiet && "$GIT" -C "$WT" diff --cached --quiet && [ -z "$("$GIT" -C "$WT" ls-files -u)" ]; then
+          "$GIT" -C "$WT" cherry-pick --skip >/dev/null 2>&1 && continue
+        fi
+        restore "$BRANCH could not take $BASE, and its own commits do not go onto it cleanly."
+      done
+      (cd "$WT" && node scripts/plan.mjs only-plan "$BASE" >/dev/null 2>&1) || restore "$BRANCH's own commits hold more than the plan."
+      echo "Note: $BRANCH could not go on as it was (an older master merged in); it starts again from $BASE with its own $(printf '%s' "$own" | grep -c .) commit(s)."
     fi
-    echo "Worktree: $WT (branch $BRANCH, master merged in)"
-    echo "── The plan, against origin/master"
-    (cd "$WT" && node scripts/check-plan.mjs --since origin/master 2>&1 | tail -6)
+    # Everything the branch held has reached GitHub (a session took it, and its pull request was
+    # merged): it starts again from there, so nothing already merged is counted as the run's own.
+    if "$GIT" -C "$WT" diff --quiet "$BASE" HEAD && [ "$("$GIT" -C "$WT" rev-parse HEAD)" != "$("$GIT" -C "$WT" rev-parse "$BASE")" ]; then
+      "$GIT" -C "$WT" checkout -q --no-track -B "$BRANCH" "$BASE"
+    fi
+    echo "Worktree: $WT (branch $BRANCH, $BASE merged in)"
+    echo "── The plan, against $BASE"
+    (cd "$WT" && node scripts/check-plan.mjs --since "$BASE" 2>&1 | tail -6)
     echo "── The gate"
     (cd "$WT" && bash scripts/gate.sh > "$REPO/.claude/worktrees/hub-daily.gate" 2>&1; grep -E "^(✗|✖)" "$REPO/.claude/worktrees/hub-daily.gate" | head -12; tail -1 "$REPO/.claude/worktrees/hub-daily.gate")
     echo "── Next, each as written and nothing else"
@@ -113,7 +148,7 @@ case "${1:-}" in
       echo "Note: the owner's checkout changed while the run worked ($(snapshot | diff "$BEFORE" - | grep -c '^[<>]') line(s) of its state). The run writes only in its own worktree."
     fi
     # The branch holds nothing but the plan.
-    if ! (cd "$WT" && node scripts/plan.mjs only-plan master); then tidy; exit 1; fi
+    if ! (cd "$WT" && node scripts/plan.mjs only-plan "$BASE"); then tidy; exit 1; fi
     kept="nothing new"
     if [ -z "$("$GIT" -C "$WT" status --porcelain)" ]; then
       echo "Nothing to record today: no commit."
@@ -122,28 +157,35 @@ case "${1:-}" in
       "$GIT" -C "$WT" add -A _plan
       "$GIT" -C "$WT" -c user.name="${GIT_AUTHOR_NAME:-Claude}" -c user.email="${GIT_AUTHOR_EMAIL:-noreply@anthropic.com}" \
         commit -q -m "📐 Daily upkeep: $summary" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" || { echo "REFUSED: the commit failed. Nothing is kept." >&2; tidy; exit 1; }
-      if ! (cd "$WT" && node scripts/plan.mjs only-plan master >/dev/null); then echo "REFUSED after the commit: the branch holds more than the plan." >&2; tidy; exit 1; fi
+      if ! (cd "$WT" && node scripts/plan.mjs only-plan "$BASE" >/dev/null); then echo "REFUSED after the commit: the branch holds more than the plan." >&2; tidy; exit 1; fi
       echo "Committed on $BRANCH: $("$GIT" -C "$WT" log --oneline -1)"
       kept="$summary"
     fi
-    ahead="$("$GIT" -C "$REPO" rev-list --count "master..$BRANCH")"
+    ahead="$("$GIT" -C "$REPO" rev-list --count --no-merges "$BASE..$BRANCH")"
     # The one push. Never master.
     may="$(cd "$WT" && node -e 'try{process.stdout.write(String(JSON.parse(require("fs").readFileSync("_plan/hub.json","utf8")).daily_may_push===true))}catch(e){process.stdout.write("false")}')"
-    unpushed="$("$GIT" -C "$REPO" rev-list --count origin/master..master 2>/dev/null || echo 1)"
     here="$("$GIT" -C "$REPO" rev-parse "$BRANCH")"; there="$("$GIT" -C "$REPO" rev-parse --verify --quiet "refs/remotes/origin/$BRANCH" || true)"
-    if [ "$ahead" = "0" ] || [ "$here" = "$there" ]; then push="nothing new to push."
+    push_it() { "$GIT" -C "$WT" -c http.postBuffer=524288000 push "$@" origin "$BRANCH:refs/heads/$BRANCH" >/dev/null 2>&1; }
+    # What GitHub's copy of the branch holds that this one does not, by patch: someone else's work.
+    theirs() { "$GIT" -C "$REPO" rev-list --no-merges --right-only --cherry-pick "$here...$there"; }
+    if [ "$here" = "$there" ] || { [ -z "$there" ] && [ "$ahead" = "0" ]; }; then push="nothing new to push."
     elif [ "$may" != "true" ]; then push="left local. The owner's switch (daily_may_push) is off."
-    elif [ "$unpushed" != "0" ]; then push="left local. master holds $unpushed commit(s) GitHub has not seen, and the branch would carry them."
-    elif "$GIT" -C "$WT" -c http.postBuffer=524288000 push origin "$BRANCH:refs/heads/$BRANCH" >/dev/null 2>&1; then push="$BRANCH pushed."
-    else push="failed; the branch is local."; fi
+    elif [ "$BASE" != "origin/master" ]; then push="left local. There is no GitHub master to build on."
+    elif [ -z "$there" ] || "$GIT" -C "$REPO" merge-base --is-ancestor "$there" "$here"; then
+      if push_it; then push="$BRANCH pushed."; else push="failed; the branch is local."; fi
+    # Started again from GitHub's master (on this run or an earlier one): it replaces GitHub's copy,
+    # but only when everything that copy holds is here already, and with a lease on it as fetched.
+    elif [ -z "$(theirs)" ]; then
+      if push_it --force-with-lease="refs/heads/$BRANCH:$there"; then push="$BRANCH pushed (started again from $BASE)."; else push="failed; the branch is local."; fi
+    else push="left local. GitHub's $BRANCH holds commits this run does not have; they are not overwritten."; fi
     echo "Push: $push"
     # The report, whole: the run's last words are these lines.
     echo "── Report"
-    [ -f "$REPO/.claude/worktrees/hub-daily.gate" ] && echo "Gate on master: $(tail -1 "$REPO/.claude/worktrees/hub-daily.gate")"
+    [ -f "$REPO/.claude/worktrees/hub-daily.gate" ] && echo "Gate on $BASE: $(tail -1 "$REPO/.claude/worktrees/hub-daily.gate")"
     echo "Plan: $(cd "$WT" && node scripts/check-plan.mjs 2>&1 | tail -1)"
     echo "Kept today: $kept."
     echo "Waiting: $(cd "$WT" && node scripts/check-plan.mjs --brief 2>/dev/null | grep -E "^(Owner's queue|Findings inbox|Ideas):" | sed 's/ →.*//' | tr '\n' ' ')"
-    echo "$BRANCH holds $ahead commit(s) that master does not. Push: $push"
+    echo "$BRANCH holds $ahead commit(s) that $BASE does not. Push: $push"
     tidy
     echo "Tidied: the worktree is gone; the branch stays."
     ;;

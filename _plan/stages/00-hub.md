@@ -55,8 +55,10 @@ stops being the only reviewer.
       response… I have to tell you manually"). The page leaves a comment addressed to Claude inside
       the tap, at most once in twenty seconds, ids and letters only; a session watching the page wakes,
       records and replies in the thread (`/hub`). With no session watching, the daily run records.
-      Proved against a stand-in for the runtime; in the real viewer: the owner's first tap.
-- [ ] The daily run made fully automatic (the owner, 2026-10-02: "IT SHOULD BE FULLY AUTOMATIC"). Its
+      Proved against a stand-in for the runtime, then for real on 2026-10-03: the owner tapped Q13
+      at 08:18, and Q14 to Q19 in the next three minutes; each was recorded and answered in the
+      thread within a minute. Two sessions watching the page both replied; one stopped watching.
+- [x] The daily run made fully automatic (the owner, 2026-10-02: "IT SHOULD BE FULLY AUTOMATIC"). Its
       first scheduled run, 07:34 that day, sat for two hours on a shell command of its own making in
       the debt hunt, waiting for an approval; and its finish would have thrown the day away because
       another session was at work in the owner's checkout. Built the same day, with tests: recording
@@ -68,11 +70,20 @@ stops being the only reviewer.
       `hub/daily` without asking once `only-plan master --of hub/daily` passes. The box is ticked
       when a scheduled run has ended with nobody approving anything. A first try the same morning
       stopped at the store's dump: saved into the repository's folder it waited for an approval, so
-      the dump goes to the run's own scratch folder. Two things it still leans on:
-      a checkout whose own copy of the script predates the hand-over (a branch cut before it) runs
-      the old finish until it takes `master` in, and the old stop hooks, which judge the checkout's
-      uncommitted work (another session's included) and sent a turn back every time. On `master`
-      they now send it back once (`scripts/hooks/stop-*.sh`).
+      the dump goes to the run's own scratch folder. The next try (11:14) ended by
+      itself in a minute and a half; the first run the schedule itself started (2026-10-03, 07:34)
+      ended by itself too, with the new finish and its report. Not yet seen in a real run: an answer that
+      is new (the taps of 2026-10-03 were all recorded by an open session first).
+- [ ] The daily run built on GitHub's `master` (2026-10-03). It read the local `master`, which moves
+      only when someone pulls it: the owner now works branch, pull request, merge on GitHub, so a
+      call asked since (Q13 to Q19 that day) was not in the plan it read, and an answer to it would
+      have been skipped. Now the run fetches and builds on `origin/master`; the copy of the script
+      that runs is GitHub's (the local `master`'s while GitHub's predates the hand-over); a branch
+      that carried an older local `master` starts again from GitHub's with the run's own commits; an
+      answer to a call not yet merged stays in the store and is named, and a later run records it; a
+      session takes only the run's own commits (`/hub`, by cherry-pick), and a commit so taken is
+      counted as here. With tests. The box is ticked when a run built on GitHub's `master` has ended
+      by itself.
 - [ ] The daily run's agents (`"daily_agents"` in `hub.json`, off). An agent handed work starts in the
       owner's checkout, not the run's worktree; the reviewer blocked the run on it (2026-10-01). Until
       a hand-off has been shown to stay inside the worktree, the run records and files only, and raw
