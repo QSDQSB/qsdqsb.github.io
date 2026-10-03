@@ -19,6 +19,11 @@
  *
  * Overrides: --title "…" --excerpt "…" --url https://… --subject "…"
  *
+ * --card <hex>       → the letter carries that colour's Reverie card, drawn on the
+ *                      site as readers see it (scripts/letter-card.mjs, from
+ *                      SITE_URL) and attached inline like the crest. The preview
+ *                      writes the pictures beside the HTML, so it shows them.
+ *
  * Requirements:
  *   RESEND_API_KEY   in the environment (never in the repo).
  *   `npx wrangler login` done once — the script reads subscribers via
@@ -41,6 +46,7 @@ import {
   LOGO_CID,
   WELCOME_SUBJECT,
 } from "./letter-template.mjs";
+import { reverieCard } from "./letter-card.mjs";
 
 // Repo-level secrets: load KEY=VALUE lines from a gitignored .env at the repo
 // root (next to package.json), without overriding anything already exported.
@@ -65,9 +71,10 @@ const D1_NAME = "qsdqsb-subscribers";
 const SEND_DELAY_MS = Number(process.env.RESEND_SEND_DELAY_MS || 700);
 
 // The brass hexagon crest travels inline (Content-ID), not as a remote URL —
-// see letter-template.mjs. Read it once, base64, and attach it to every send.
+// see letter-template.mjs. Read it once, and attach it to every send.
 const LOGO_PATH = join(repoRoot, "images", "email", "qsd-hexagon.png");
-const LOGO_B64 = existsSync(LOGO_PATH) ? readFileSync(LOGO_PATH).toString("base64") : null;
+// Every picture the letter carries inline: the crest, and a card when one is asked for.
+const inline = existsSync(LOGO_PATH) ? [{ filename: "qsd-hexagon.png", content: readFileSync(LOGO_PATH), content_id: LOGO_CID }] : [];
 
 /* ---------- CLI ---------- */
 
@@ -99,6 +106,7 @@ const optTitle = takeOption("--title");
 const optExcerpt = takeOption("--excerpt");
 const optUrl = takeOption("--url");
 const optSubject = takeOption("--subject");
+const optCard = takeOption("--card");
 const postPath = args.find((a) => !a.startsWith("--")) || null;
 
 if (optWelcome) {
@@ -106,6 +114,7 @@ if (optWelcome) {
   // send exactly one with --send-test. Bulk-mailing every subscriber a fresh
   // "welcome" would be nonsense, so --send is refused here.
   if (optSend) fail("--welcome is the confirmation email — preview it, or send one with --send-test <addr>. It is never bulk-sent.");
+  if (optCard) fail("--card goes with a letter, not the welcome.");
 } else if (!postPath && !(optTitle && optUrl)) {
   fail("usage: node scripts/send-letter.mjs <post.md> [--send-test addr | --send --yes] [--title/--excerpt/--url/--subject overrides]\n   or: node scripts/send-letter.mjs --welcome [--send-test addr]");
 }
@@ -149,7 +158,8 @@ if (optWelcome) {
   if (postPath) fm = parseFrontmatter(postPath);
 
   const title = optTitle || fm.title || fail("post has no title: — pass --title");
-  const excerpt = optExcerpt ?? (fm.seo_description || fm.excerpt || fm.description || "");
+  // The display line, as the site shows the piece; seo_description is for search engines alone.
+  const excerpt = optExcerpt ?? (fm.excerpt || fm.description || fm.seo_description || "");
   let url = optUrl;
   if (!url) {
     if (fm.permalink) url = SITE_URL + fm.permalink;
@@ -161,9 +171,16 @@ if (optWelcome) {
     : "";
 
   const letter = { title, excerpt, url, dateLine };
+  if (optCard) {
+    const card = await reverieCard(optCard, { site: SITE_URL });
+    const cid = `reverie-${card.hex.slice(1).toLowerCase()}`;
+    letter.figure = { cid, width: card.width, height: card.height, href: card.href, alt: `Reverie in ${card.hex}${card.name ? `, ${card.name}` : ""}` };
+    inline.push({ filename: `${cid}.jpg`, content: card.jpeg, content_id: cid });
+  }
   renderHtml = (unsub) => renderLetterHtml(letter, unsub);
   renderText = (unsub) => renderLetterText(letter, unsub);
   headerLines = [`Letter: “${title}”`, `Link:   ${url}`];
+  if (letter.figure) headerLines.push(`Card:   ${letter.figure.alt}, ${letter.figure.width}×${letter.figure.height} (cid:${letter.figure.cid}, ${(inline.at(-1).content.length / 1024).toFixed(0)} KB) → ${letter.figure.href}`);
 }
 
 /* ---------- subscribers via wrangler d1 ---------- */
@@ -202,8 +219,8 @@ async function resendSend(to, token) {
       subject: subject,
       html: renderHtml(unsub),
       text: renderText(unsub),
-      attachments: LOGO_B64
-        ? [{ filename: "qsd-hexagon.png", content: LOGO_B64, content_id: LOGO_CID }]
+      attachments: inline.length
+        ? inline.map((a) => ({ filename: a.filename, content: a.content.toString("base64"), content_id: a.content_id }))
         : undefined,
       headers: {
         // One-click unsubscribe (RFC 8058): mailbox providers surface their
@@ -227,7 +244,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 for (const line of headerLines) console.log(line);
 console.log(`From:   ${FROM}`);
-console.log(`Crest:  ${LOGO_B64 ? "inline (cid:" + LOGO_CID + ")" : "MISSING — images/email/qsd-hexagon.png not found"}`);
+console.log(`Crest:  ${inline.some((a) => a.content_id === LOGO_CID) ? "inline (cid:" + LOGO_CID + ")" : "MISSING — images/email/qsd-hexagon.png not found"}`);
 console.log(`Key:    RESEND_API_KEY ${process.env.RESEND_API_KEY ? "set" : "MISSING"}\n`);
 
 if (optSendTest) {
@@ -267,7 +284,14 @@ if (optSendTest) {
   const htmlPath = join(dir, `${stem}.preview.html`);
   const textPath = join(dir, `${stem}.preview.txt`);
   const previewUnsub = unsubscribeUrlFor("«personal-token-per-recipient»");
-  writeFileSync(htmlPath, renderHtml(previewUnsub));
+  // A mail client finds the inline pictures by Content-ID; a browser opening the preview cannot,
+  // so they are written beside it and named as files.
+  let html = renderHtml(previewUnsub);
+  for (const a of inline) {
+    writeFileSync(join(dir, a.filename), a.content);
+    html = html.split(`cid:${a.content_id}`).join(a.filename);
+  }
+  writeFileSync(htmlPath, html);
   writeFileSync(textPath, renderText(previewUnsub));
   console.log("Preview only — nothing sent.");
   console.log(`  HTML: ${htmlPath}`);

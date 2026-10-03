@@ -82,6 +82,7 @@
     "hub:page": "node scripts/hub-page.mjs",
     "check:mobile-overflow": "node scripts/check-mobile-overflow.mjs",
     "check:served": "node scripts/check-served-files.mjs",
+    "letter:card": "node scripts/letter-card.mjs",
     "visual:build": "RUBYOPT=\"-E utf-8:utf-8\" bundle exec ruby -e 'srand(7); load Gem.bin_path(\"jekyll\", \"jekyll\")' -- build --config _config.yml,_config_visual.yml",
     "visual:capture": "node scripts/visual-baseline.mjs capture",
     "visual:diff": "node scripts/visual-baseline.mjs diff",

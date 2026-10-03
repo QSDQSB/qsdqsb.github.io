@@ -30,7 +30,7 @@ const SANS = "Barlow, 'Helvetica Neue', Helvetica, Arial, sans-serif";
 const INK = "#e4e5e5"; // ivory text
 const BRASS = "#c3b498"; // aged brass
 const MUTE = "#8a8d8f"; // quiet gray
-const GROUND = "#151515"; // near-black
+export const GROUND = "#151515"; // near-black (the card picture is flattened on it: letter-card.mjs)
 const RULE_TOP = "#4d453a"; // lit brass hairline under the masthead
 const RULE_FOOT = "#33302b"; // dimmer hairline above the footer
 
@@ -154,12 +154,25 @@ function houseEmailText({ bodyLines, footerNote, unsubscribeUrl }) {
 const LETTER_FOOTER_NOTE =
   "You asked to hear when something new was published. This is that, and nothing more.";
 
+// A picture the letter carries between its words and its way in: a colour's Reverie card
+// (letter-card.mjs), say. It travels inline like the crest, under its own Content-ID, and leads
+// where it leads on the site. Shown at the letter's column width; a phone's mail scales it down.
+const figureRow = (f) => `<tr>
+            <td align="center" style="padding:0 20px 36px;">
+              <a href="${escapeHtml(f.href)}" style="text-decoration:none;border:0;">
+                <img src="cid:${escapeHtml(f.cid)}" width="${f.width}" height="${f.height}" alt="${escapeHtml(f.alt)}" style="display:block;margin:0 auto;width:100%;max-width:${f.width}px;height:auto;border:0;outline:none;text-decoration:none;">
+              </a>
+            </td>
+          </tr>`;
+
 /**
  * @param {object} letter
  * @param {string} letter.title      Post title (plain text)
  * @param {string} letter.excerpt    One-paragraph description (plain text)
  * @param {string} letter.url        Absolute URL of the piece
  * @param {string} letter.dateLine   e.g. "August 2026"
+ * @param {object} [letter.figure]   A picture to carry: { cid, width, height, alt, href }, its
+ *                                   bytes attached by the sender under `cid`
  * @param {string} unsubscribeUrl    THIS recipient's personal unsubscribe link
  */
 export function renderLetterHtml(letter, unsubscribeUrl) {
@@ -183,6 +196,7 @@ export function renderLetterHtml(letter, unsubscribeUrl) {
               ${excerpt}
             </td>
           </tr>` : ""}
+          ${letter.figure ? figureRow(letter.figure) : ""}
           <tr>
             <td align="center" style="padding:4px 8px 40px;">
               <table role="presentation" cellpadding="0" cellspacing="0" border="0">
@@ -213,6 +227,8 @@ export function renderLetterText(letter, unsubscribeUrl) {
     "",
     letter.excerpt ? letter.excerpt : null,
     letter.excerpt ? "" : null,
+    letter.figure ? `${letter.figure.alt}: ${letter.figure.href}` : null,
+    letter.figure ? "" : null,
     `Read it: ${letter.url}`,
   ].filter((l) => l !== null);
   return houseEmailText({ bodyLines, footerNote: LETTER_FOOTER_NOTE, unsubscribeUrl });
