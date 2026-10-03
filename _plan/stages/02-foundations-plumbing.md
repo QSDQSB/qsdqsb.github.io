@@ -195,7 +195,8 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
       controls" is the owner's (Cards), but which of the twenty is a control is the lead's sorting:
       the list goes to the owner, each with a capture, before a timing moves. The wide cover's use
       is stage 4's.
-- [ ] The built pill and round tool beside the 10 px control (0009, "Not settled").
+- [x] The built pill and round tool beside the 10 px control (0009, "Not settled"). Settled 2026-10-03: brought to
+      the 10 px rectangle (Q17, B), shown before and after (https://claude.ai/artifact/VnsZ39qDGSbUkvebTymwCn) and approved.
 
 **Tier 1: brought into line, under the threshold, shown before and after**
 - [ ] C02 · `brass-focus` as the one focus ring, surface by surface.

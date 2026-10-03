@@ -89,7 +89,6 @@
   outline-offset: 2px;
 }
 
-// A quiet control: a mark in the label's ink, lit under the pointer; no ring, no fill.
 // A viewer's round tool, top right of a full-screen photograph (slideshow, specs, picture only, the
 // way to its book): a square of glass, a control's corners of 10 px (0009, pick 2; Q17), with a line
 // mark; lit when on. The lightbox's, and Drift's.
@@ -131,6 +130,7 @@
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1800' height='600' viewBox='0 0 1800 600'%3E%3Cfilter id='r' filterUnits='userSpaceOnUse' x='-40' y='-40' width='1880' height='680'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' seed='7' result='n'/%3E%3CfeDiffuseLighting in='n' surfaceScale='2.6' diffuseConstant='1.1' lighting-color='%23fff'%3E%3CfeDistantLight azimuth='225' elevation='38'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect x='-40' y='-40' width='1880' height='680' filter='url(%23r)'/%3E%3C/svg%3E") center / cover no-repeat;
 }
 
+// A quiet control: a mark in the label's ink, lit under the pointer; no ring, no fill.
 @mixin icon-button-quiet($size: 2rem) {
   display: grid;
   place-items: center;
