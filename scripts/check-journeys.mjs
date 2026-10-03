@@ -411,6 +411,62 @@ const JOURNEYS = [
     must(await page.evaluate((x) => document.activeElement?.id === x, id), 'focus did not go to the section');
   } },
 
+  { id: 'arrival', name: 'On a long post a jump to the foot leaves no screen without words', async run({ page, go }) {
+    // Words arrive as they come into view (_scroll-animations.scss, "The arrival"): the first four
+    // blocks in turn, 0.12 s apart, each over 0.7 s, so all of a screen is in by 1.06 s.
+    const hidden = () => page.evaluate(() => [...document.querySelectorAll('.page__content .reveal-on-scroll')].filter((el) => {
+      const r = el.getBoundingClientRect();
+      return r.height > 0 && r.bottom > 0 && r.top < innerHeight * 0.9 && parseFloat(getComputedStyle(el).opacity) < 0.99;
+    }).length);
+    await go('/posts/leetcode-july-challenge/?motion=on');
+    must(await page.locator('.page__content .reveal-on-scroll.arrives').count() > 10, 'the post\'s blocks do not arrive');
+    // To the end of the post's words (below them the footer fills the screen).
+    const toEnd = () => page.evaluate(() => {
+      const last = [...document.querySelectorAll('.page__content > *')].filter((el) => el.getBoundingClientRect().height > 0).pop();
+      scrollTo({ top: last.getBoundingClientRect().bottom + scrollY - innerHeight * 0.8, behavior: 'instant' });
+    });
+    await toEnd();
+    await page.waitForTimeout(400);
+    const seen = await page.evaluate(() => [...document.querySelectorAll('.page__content .reveal-on-scroll')].some((el) => {
+      const r = el.getBoundingClientRect();
+      return r.bottom > 0 && r.top < innerHeight && parseFloat(getComputedStyle(el).opacity) > 0.2;
+    }));
+    must(seen, 'at the foot of the post nothing has begun to show after 0.4 s');
+    await page.waitForTimeout(900);
+    const left = await hidden();
+    must(left === 0, `${left} block(s) in view are still not at full strength 1.3 s after the jump`);
+    // Stillness: with motion off nothing is ever hidden.
+    await go('/posts/leetcode-july-challenge/');
+    await toEnd();
+    await page.waitForTimeout(100);
+    must(await hidden() === 0, 'with motion off a block in view was hidden');
+  } },
+
+  { id: 'language-arrival', name: 'A switch of language shows the other text at once, in turn', async run({ page, go }) {
+    // The panel just shown arrives as a screen does: its first block at once, not after the blocks
+    // already on the screen have taken the turns.
+    await go('/posts/defined-by-archive/?motion=on');
+    await page.evaluate(() => scrollTo({ top: innerHeight * 1.5, behavior: 'instant' }));
+    await page.waitForTimeout(1500);
+    const other = page.locator('.bilingual-switch__button[aria-pressed="false"]').first();
+    must(await other.count() === 1, 'the post has no other language to switch to');
+    await other.evaluate((b) => b.click()); // a click where it stands: the page is not scrolled to it
+    const strength = (min) => page.evaluate((m) => {
+      const inView = [...document.querySelectorAll('.bilingual-switch__panel:not([hidden]) .reveal-on-scroll')].filter((el) => {
+        const r = el.getBoundingClientRect();
+        return r.height > 0 && r.bottom > 0 && r.top < innerHeight * 0.9;
+      });
+      return { n: inView.length, shown: inView.filter((el) => parseFloat(getComputedStyle(el).opacity) > m).length };
+    }, min);
+    await page.waitForTimeout(400);
+    const early = await strength(0.2);
+    must(early.n > 0, 'after the switch no block of the other language is in view');
+    must(early.shown > 0, 'nothing of the other language shows 0.4 s after the switch');
+    await page.waitForTimeout(900);
+    const late = await strength(0.99);
+    must(late.shown === late.n, `${late.n - late.shown} block(s) of the other language are not at full strength 1.3 s after the switch`);
+  } },
+
   { id: 'palette', name: 'Palette draws its voyages and opens one', async run({ page, go }) {
     await go('/palette/');
     await page.waitForSelector('.palette-voyages__list a[href^="#"]', { timeout: 15000 }).catch(() => {});

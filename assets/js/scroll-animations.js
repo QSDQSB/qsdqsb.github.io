@@ -73,39 +73,55 @@
 
   if (candidates.length === 0) return;
 
-  candidates.forEach((el) => el.classList.add('reveal-on-scroll'));
+  candidates.forEach((el) => el.classList.add('reveal-on-scroll', 'arrives'));
+
+  // Blocks that come into view together take turns, 0.12 s apart, in the order they are read; the
+  // first four take turns and the rest arrive with the fourth (_scroll-animations.scss, "The arrival").
+  const STEP = 0.12;
+  const TURNS = 4;
+  const inOrder = (a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
+  function arrive(els) {
+    // Only those not yet shown take turns: after a language switch the blocks already on the screen
+    // are collected again, and must not hold the new panel back.
+    els.filter((el) => !el.classList.contains('is-visible')).sort(inOrder).forEach((el, i) => {
+      el.style.setProperty('--arrive-delay', `${Math.min(i, TURNS - 1) * STEP}s`);
+      el.classList.add('is-visible');
+    });
+  }
 
   const observer = new IntersectionObserver(
     (entries, obs) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-visible');
-        obs.unobserve(entry.target);
-      });
+      const now = entries.filter((entry) => entry.isIntersecting).map((entry) => entry.target);
+      now.forEach((el) => obs.unobserve(el));
+      arrive(now);
     },
     {
       root: null,
-      // Reveal a bit before it fully enters; avoids “late” reveals.
+      // A block arrives once its top is a tenth of the screen above the bottom edge. Any part showing is enough: a
+      // block taller than the screen (a long code block, a table) would never show 12 per cent of
+      // itself at once, and would stay hidden.
       rootMargin: '0px 0px -10% 0px',
-      threshold: 0.12
+      threshold: 0
     }
   );
 
   function registerCandidates(nodes) {
     const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const inView = [];
 
     nodes.forEach((el) => {
-      el.classList.add('reveal-on-scroll');
+      el.classList.add('reveal-on-scroll', 'arrives');
       observer.observe(el);
 
-      // If the active language was switched while the element is already in
-      // view, reveal it immediately instead of waiting for the next scroll.
+      // A block already in view (the first screen, or a panel a language switch has just shown)
+      // arrives now, in turn with the others in view, instead of waiting for the next scroll.
       const rect = el.getBoundingClientRect();
       if (rect.bottom > 0 && rect.top < viewportHeight) {
-        el.classList.add('is-visible');
+        inView.push(el);
         observer.unobserve(el);
       }
     });
+    arrive(inView);
   }
 
   // Observe normally so elements animate as they scroll into view.
