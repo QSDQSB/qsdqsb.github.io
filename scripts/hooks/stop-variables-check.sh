@@ -12,6 +12,13 @@ set -uo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT_DIR"
 
+# Said once, not for ever. When the turn is already going on because a stop hook sent it back,
+# let it end: what is left may be another session's work in this checkout, or an unattended
+# run's that is told to fix nothing, and a hook that refuses every time never lets it stop.
+# Read with a limit: run by hand from a tool, stdin is open and nothing ever comes.
+payload=""; [ -t 0 ] || IFS= read -r -t 2 -d '' payload || true
+case "$payload" in *'"stop_hook_active":true'*|*'"stop_hook_active": true'*) exit 0 ;; esac
+
 if out=$(python3 scripts/check-single-use-variables.py --new-only 2>&1); then
   exit 0
 fi

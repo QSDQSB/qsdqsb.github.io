@@ -243,10 +243,14 @@ async function main() {
   changing = prepare(first).then((put) => {
     put(); shownAt = location.search;
     if (returning) requestAnimationFrame(() => kept().restore());
-    // A link to one of its photographs (#slug) opens it.
+    // A link to one of its photographs (#slug), or to the colour as the lightbox's first frame
+    // (#colour), opens it.
     const slug = decodeURIComponent(location.hash.slice(1));
-    const k = slug ? shown.found.findIndex(({ f: p }) => p.slug === slug) : -1;
-    if (k >= 0) openAt(k + 1);
+    const at = !slug ? -1 : slug === 'colour' ? 0 : shown.found.findIndex(({ f: p }) => p.slug === slug) + 1 || -1;
+    if (at >= 0) openAt(at);
+    // The lightbox's frames are wanted by the first print opened: asked for once the page has drawn
+    // and is at rest, so that first press opens at once (not where the reader is saving data).
+    else if (!navigator.connection?.saveData) (window.requestIdleCallback || ((f) => setTimeout(f, 1200)))(() => books());
   });
 }
 

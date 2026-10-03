@@ -19,6 +19,10 @@
   -webkit-animation-delay: 0.15s;
           animation-delay: 0.15s;
 
+  // Entered by a view transition (pagereveal, _includes/head/custom.html), the bar is carried across
+  // by the browser; fading in from nothing beneath that, it went out and came back on every page.
+  html.by-transition & { animation: none; }
+
   &__inner-wrap {
     @include clearfix;
     margin-left: 0;

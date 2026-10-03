@@ -1,0 +1,25 @@
+/* ==========================================================================
+   TOKENS — the site's inks, glass and curves, as custom properties on :root
+   (decisions/0002, "The inks"; 0003, the layers).
+
+   Named for what they are, not for the page that first had them: they were the Photobook's and
+   lived only on .photobook. The Photobook's names (--photobook-ink and the rest, _photobook.scss)
+   are kept as aliases of these until their last use has moved over, then they go.
+   ========================================================================== */
+
+:root {
+  // Three inks and a line: ivory for what is read, a quieter grey for what supports it, a third for
+  // what waits; the hairline that organises.
+  --ink: #{$lighter-gray};
+  --ink-2: #{$light-gray};
+  --ink-3: #8b9296;
+  --line: #{$darker-gray};
+  // Glass, its edge, and a control's fill at rest and under the pointer.
+  --glass: rgba(10, 10, 12, 0.44);
+  --glass-edge: rgba(255, 255, 255, 0.1);
+  --control: rgba(255, 255, 255, 0.07);
+  --control-hover: rgba(255, 255, 255, 0.16);
+  // The site's two curves, for scripts too (the palette page reads them), so one vocabulary of motion.
+  --ease-standard: #{$cubic-bezier-standard};
+  --ease-smooth: #{$cubic-bezier-smooth};
+}

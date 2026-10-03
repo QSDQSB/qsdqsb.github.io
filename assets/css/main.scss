@@ -9,8 +9,12 @@
  *
 */
 @import "variables";
+@import "tokens";
 @import "mixins";
 @import "responsive-policy";
+// The shared pieces come before anything that could use them (decisions/0003, A01): they emit only
+// mixins, so their place changes no rule's effect.
+@import "components";
 
 @import "reset";
 @import "base";
@@ -28,7 +32,6 @@
 @import "custom";
 @import "syntax";
 @import "code-copy";
-@import "components";
 @import "photobook";
 @import "colour";
 @import "forms";

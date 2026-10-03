@@ -7,16 +7,16 @@
    ========================================================================== */
 
 /* system typefaces */
-$sans-serif                 : "Playfair Display", apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
+$sans-serif                 : "Playfair Display", apple-system, ".SFNSText-Regular", "San Francisco", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
 $monospace                  : "Monaco", ui-monospace, Menlo, Consolas, "Lucida Console", monospace; // ui-monospace: SF Mono on an iPhone
 $didot-family              : "Didot", "CMU Serif", "Playfair Display", "Songti SC", "STSong", serif;
 /* sans serif typefaces */
 $cmu-serif-family           : "CMU Serif", "Playfair Display", "Songti SC", "STSong", serif;
-$sans-serif-narrow          : "Roboto", $sans-serif;
+$sans-serif-narrow          : $sans-serif; // no Roboto: it is never loaded, and an Android reader saw the masthead in it (audit C10)
 $barlow-font-family         : "Barlow", $sans-serif-narrow;
 
 $global-font-family         : $sans-serif;
-$caption-font-family        : "Roboto", "PT Serif", Georgia, Times, serif;
+$caption-font-family        : "PT Serif", Georgia, Times, serif;
 $tag-font-family            : "Barlow", $sans-serif-narrow;
 
 /* type scale — rem-based (root-relative), so sizes never compound through
@@ -89,6 +89,17 @@ $right-sidebar-width: 15rem !default;
 
 
 $border-radius: 10px;
+// The scales the owner's amounts set (decisions/0009, amending 0002). A step is a step whether one
+// rule or ten use it, so each is kept. Corners: a control, a card and a panel are $border-radius
+// (10 px); a card that is itself the scene is large.
+$radius-large: 18px; // @keep — a scale step (0009, pick 1)
+// Durations: a control answering; a control's hover and a card's lift.
+$duration-fast: 0.15s; // @keep — a scale step (0002)
+$duration-base: 0.3s; // @keep — a scale step (0009, pick 5)
+// A card at rest stands just off the page (pick 3); lifted, its shadow is the lead's value between
+// the two the owner was shown.
+$shadow-rest: 0 6px 18px rgba(0, 0, 0, 0.45); // @keep — a scale step (0009, pick 3)
+$shadow-lifted: 0 14px 32px rgba(0, 0, 0, 0.5); // @keep — a scale step (0009, the lead's)
 $box-shadow: 0 1px 1px rgba(50, 50, 50, 0.25);
 $navicon-width: 1.5rem;
 $navicon-height: 0.25rem;

@@ -142,6 +142,15 @@ exclude:
   - workers          # Cloudflare Workers source (photos-trigger) — deployed by wrangler, not site content
   - tests            # node tests + the visual baseline PNGs (~100 MB) — never part of the deploy
   - for_agents       # local-only agent scratch space (gitignored) — raw Liquid inside breaks builds
+  # Files for the people and agents who work on the site, not for its readers. Jekyll copies
+  # whatever at the root is not named here: scripts/check-served-files.mjs fails the gate on one.
+  - CLAUDE.md
+  - CONTRIBUTING.md
+  - package-lock.json
+  - skills-lock.json
+  - docs             # local notes
+  - design           # local design files (gitignored)
+  - photos           # the local mirror of the originals (gitignored): they are served from R2
 keep_files:
   - .git
   - .svn

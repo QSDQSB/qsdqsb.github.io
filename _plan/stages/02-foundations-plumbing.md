@@ -1,6 +1,6 @@
 # Stage 2 · Foundations: plumbing
 
-**Status:** planned · **Tier:** 0 for structure; 1 for each visible migration under the major-delta
+**Status:** building (from 2026-10-03) · **Tier:** 0 for structure; 1 for each visible migration under the major-delta
 threshold; 2, answered, for a move onto one of the owner's amounts
 ([0009](../decisions/0009-how-much.md)); 2 for the first appearance of a new piece.
 
@@ -69,29 +69,43 @@ much. Nothing here waits on an amount any longer. The language is version 1: the
 ## Scope
 
 **Tier 0: no pixel moves**
-- [ ] 2026-10-01 · The pixel harness is blind below about 16,700 px: full-page shots are blank past it
+- [x] 2026-10-01 · Done 2026-10-03: a page taller than 8,000 px is shot in tiles and joined
+      (`scripts/visual-baseline.mjs`, `fullPageShot`); eight long shots re-captured, now drawn to the foot.
+      As first written: The pixel harness is blind below about 16,700 px: full-page shots are blank past it
       (post-notices desktop 17,075–40,390 of 42,501, mobile 16,677–51,713 of 53,423; voyage-by-tags
       mobile; the treatise's figure on a phone). Shoot long pages in tiles. First: the arrival below
       changes every post, and half of a long post is unseen today.
-- [ ] 2026-09-26 · The pixel harness's phone shots differ run to run (intermittent masks, image load
+- [x] 2026-09-26 · Found with the tiling, 2026-10-03: in a single full-page shot a mask could land short
+      of its element (post-toc on a phone showed 80 px of the sampled cards it was meant to cover); shot in
+      tiles, each mask lands on its box. Checked by two diffs on an unchanged tree (see the Log). As first written:
+      The pixel harness's phone shots differ run to run (intermittent masks, image load
       timing). Same reason, same place in the order: a diff that cries wolf gets re-captured, not read.
-- [ ] A01 · Import `components` directly after `responsive-policy`.
-- [ ] A03 · Inks and glass on `:root` under neutral names; old names kept as aliases.
+- [x] A01 · Import `components` directly after `responsive-policy`. The compiled stylesheet holds the same
+      lines before and after, one block moved (2026-10-03).
+- [x] A03 · Inks and glass on `:root` under neutral names; old names kept as aliases. `_sass/_tokens.scss`
+      (2026-10-03), with the two curves; the weather glyphs' own `--ink` became `--glyph-w` so the name is free.
 - [ ] A02 · The scales in `_variables.scss`, as 0002 amended by 0009, each introduced with its first
       two uses: corners `none`, `hair` 3, `picture` 8, `soft` 10, `large` 18, `pill`, `round`;
       durations `fast`, `base`, `slow`, `arrive` 0.7 s, `cover`, `scene`; shadows `rest` and
       `lifted`; glass `glass` 14 px and `thin` 6 px.
 - [ ] C09 · Depth as six named layers; every literal z-index mapped to one.
-- [ ] The ratchet: counts stored, an increase fails, wired into the hook and the gate. It also counts
+- [x] The ratchet: `scripts/check-vocabulary-ratchet.py` (2026-10-03), counts against HEAD as the
+      `!important` ratchet does, in the gate, the edit hook and the stop hook. Today: radius 95, curve 90,
+      overshoot 1 (the bubbles), blur 19, focus 40, z-index 99 (focus counts only a block that draws a ring of its
+      own, an outline, a shadow or a border, since the reviewer's note of 2026-10-03: a hover-and-focus pair that
+      only colours is not a ring, and counting it would have pushed authors to drop `:focus-visible`). As first written: counts stored, an increase fails, wired into the hook and the gate. It also counts
       a curve with a point above 1 or below 0 (0009, "Nothing springs"): two today. One is inert
       and goes with A05 (`_sass/_page.scss:210`); the other is the bubbles on Home
       (`assets/js/qsd-bubbles.js:356`), a signature's, which stays and is the count's floor.
-- [ ] The specimen page: every piece, drawn with the site's own stylesheet, at desktop and at phone
+- [x] The specimen page (2026-10-03: `_specimen/`, in the visual build only, shot as `specimen`): every piece, drawn with the site's own stylesheet, at desktop and at phone
       width, each labelled built, the owner's amount, the lead's value, or decided under delegation.
       It is where the owner sees the pieces whole, and once it is in the pixel baseline a change to a
       shared piece shows on one page. It must not ship to readers: a page of the seeded visual build
       only, or a page outside the site. A page a reader can reach is a new page, and the owner's.
-- [ ] A05 · Delete the CSS and script that nothing renders (about 700 lines). Among it, found
+- [ ] A05 · Delete the CSS and script that nothing renders (about 700 lines). Done 2026-10-03: `.card .tags`
+      and the springing transition on `.page-no-right-sidebar`. Not dead after all: `.card .hidden_item`
+      (the Lontananza post uses it). The rest of the list overlaps three draft pull requests of August
+      (#56, #57, #64), which are the owner's to merge or close first. As first written: Among it, found
       2026-10-01: `.card .tags .tag` and `.card .hidden_item` (`_sass/_archive.scss:192-199`,
       `213-218`, `288-302`). No include emits either: `_includes/archive-single.html` writes no tag.
       And the transition on `.page-no-right-sidebar` (`_sass/_page.scss:208-211`), on a curve that
@@ -105,19 +119,19 @@ much. Nothing here waits on an amount any longer. The language is version 1: the
 **The new pieces: tier 2, answered by the picks; each lead's value tier 1.** Written once, in the
 catalogue, with every state (rest, hover, focus, pressed, unavailable, on a photograph, on the
 ground), and put to "What the eye turns away" before it is shown.
-- [ ] `card` (picks 1, 3, 4, 5, 12). Corners 10 px, and 18 px as `large`. At rest
+- [x] `card` (picks 1, 3, 4, 5, 12). Written 2026-10-03, on the specimen page; shown to the owner there before any page adopts it. Corners 10 px, and 18 px as `large`. At rest
       `0 6px 18px rgba(0, 0, 0, 0.45)`, no border. Under the pointer and under keyboard focus
       `translateY(-4px) scale(1.018)` and `0 14px 32px rgba(0, 0, 0, 0.5)`, over 0.3 s on the
       standard curve; the lift and its shadow are the lead's values inside the owner's range. The
       photograph does not move inside the frame. Stillness beside it: no transition and no
       transform, the shadow alone answers. First adopted in [stage 4](04-voyage-and-cards.md).
-- [ ] `tag` (pair 4, score 5; pick 10; audit C08, marked Fix): one look for every tag. The second
+- [x] `tag` (written 2026-10-03, on the specimen page) (pair 4, score 5; pick 10; audit C08, marked Fix): one look for every tag. The second
       ink, a one-pixel line, no fill; under the pointer the words go to the first ink and the line
       to the second, in `fast`; no colour. Corners 10 px (the lead's: the pick drew it square).
       Replaces five recipes; the surfaces are stages [6](06-posts-and-about.md) and
       [10](10-tags.md).
-- [ ] The text `button`, solid and quiet: a rounded rectangle of 10 px (pick 2).
-- [ ] The ornament (picks 8 and 9): a lozenge 14 px across, outlined at one pixel with a smaller
+- [x] The text `button`, solid and quiet: a rounded rectangle of 10 px (pick 2). `text-button`, 2026-10-03, on the specimen page.
+- [x] The ornament (written 2026-10-03, on the specimen page) (picks 8 and 9): a lozenge 14 px across, outlined at one pixel with a smaller
       filled one inside, on a one-pixel rule at about half strength, 12 px clear of it, in the
       site's brass. It is new, not the emblem rule (`_includes/qsd-emblem-horizontal-rule.html`, a
       signature, in two posts, which stays). First used in [stage 6](06-posts-and-about.md).
@@ -125,7 +139,11 @@ ground), and put to "What the eye turns away" before it is shown.
 **The arrival: tier 2, answered (picks 6 and 12), for what it reaches today.** One mechanism, and
 it exists. The owner was shown three lines arriving: an eyebrow, a title, a lede. The mechanism is
 wider than that drawing, and this says how.
-- [ ] `reveal-on-scroll` takes the owner's amounts. Today (`_sass/_scroll-animations.scss:8-13`,
+- [x] `reveal-on-scroll` takes the owner's amounts. Built 2026-10-03: a second class, `arrives`, carries them,
+      so Palette's frames (which add only `reveal-on-scroll`) keep the older ones; the observer fires at any
+      part showing (threshold 0), so a block taller than the screen is never left hidden; journey `arrival`
+      (checked with teeth: at 0.5 s turns it fails). Captures for the owner in `design/arrival/` (not in git).
+      As first written: Today (`_sass/_scroll-animations.scss:8-13`,
       `assets/js/scroll-animations.js`): every direct child of `.page__content` rises 12 px, fading
       over 0.5 s and moving over 0.65 s, the moment it comes into view, together. It becomes: from
       28 px, fade and rise both 0.7 s, the rise on `$cubic-bezier-smooth` (which is the curve
@@ -177,7 +195,8 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
       controls" is the owner's (Cards), but which of the twenty is a control is the lead's sorting:
       the list goes to the owner, each with a capture, before a timing moves. The wide cover's use
       is stage 4's.
-- [ ] The built pill and round tool beside the 10 px control (0009, "Not settled").
+- [x] The built pill and round tool beside the 10 px control (0009, "Not settled"). Settled 2026-10-03: brought to
+      the 10 px rectangle (Q17, B), shown before and after (https://claude.ai/artifact/VnsZ39qDGSbUkvebTymwCn) and approved.
 
 **Tier 1: brought into line, under the threshold, shown before and after**
 - [ ] C02 · `brass-focus` as the one focus ring, surface by surface.
@@ -191,12 +210,16 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
 - [ ] C12 · Small dialects swept once the scales exist: hover direction, dates, ellipses, rules, one `scroll-padding-top`.
 
 **Decided by the owner on 2026-10-01, to build**
-- [ ] Headings white by default; the hue-per-level h2 to h5 in `_sass/_base.scss` retired. Shown before and after.
-- [ ] Q9 · A link inside a page's text is brass, with a hairline underline. Tier 2, answered: the
+- [x] Headings white by default; the hue-per-level h2 to h5 in `_sass/_base.scss` retired. Shown before and after.
+      Built 2026-10-03 in the ivory ink (Q18, A). Links inside headings stay F078's.
+- [x] Q9 · Built 2026-10-03 (`_sass/_page.scss`, "A link in a page's text"): prose under `.page__content`
+      and under its `.barlow` wrapper (the CV); notices are paragraphs, so their mint went with it. Still
+      blue and filed: a link in a heading (F078, with the headings below), About's typewriter (F079), the
+      '#' on Voyage by tags (F080). As first written: A link inside a page's text is brass, with a hairline underline. Tier 2, answered: the
       owner picked option B of three prototypes on 2026-10-01 (`design/choices/link-colour/`; the page
       is `choices.link-colour` in `_plan/hub.json`). Built as "The link, as chosen" below.
 - [ ] C07 · The lede on older heroes takes the shared Didot italic (marked Fix).
-- [ ] C10 · Roboto leaves the two font stacks, so Android reads as Apple does (marked Fix).
+- [x] C10 · Roboto leaves the two font stacks, so Android reads as Apple does (marked Fix). Done 2026-10-03 (`_sass/_variables.scss`).
 
 ## What needs the owner
 
@@ -216,7 +239,7 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
 `post`, `anchor`, `home`, `search`, `masthead-touch` and `masthead-keys` must pass unchanged. To add:
 
 - `arrival` · on a long post, a jump to the foot leaves no screen without words: what is in view
-  reaches full strength within a second and nothing in view stays hidden. With motion off, nothing
+  reaches full strength by about 1.1 s (three turns of 0.12 s, then 0.7 s) and nothing in view stays hidden. With motion off, nothing
   is ever hidden.
 
 The `tag`, the `card` and the ornament get theirs where a page first uses them.
@@ -287,3 +310,14 @@ passes and the reviewer returns PASS. The digest shows each tier 1 change before
 tier 2, answered change as pictures at desktop and at phone width, with the pick it answers; the
 arrival as captures. Nothing under "Shown to the owner first" has moved without the owner's word. A baseline is re-captured only for a page meant to change, named in its
 changelog line.
+
+## Log
+
+- 2026-10-03 · First batch: the harness's two faults, A01, A03, A05 (in part), C10, Q9, the ratchet, the
+  specimen page and the four pieces (card, tag, text button, ornament), none adopted by a page yet. The
+  harness's determinism, honestly: two full diffs on an unchanged tree after the tiling came back with one
+  and three shots over tolerance (home on a phone, 68 px against 59 allowed; palette-voyage at desktop,
+  about 2,700 px; portfolio on a phone, 84 px). The palette ones were vats caught mid-pour (F077): the
+  harness now waits until the canvases stop arriving and reshoots a blank vat. What remains is a few
+  antialiased pixels that move between runs, so a diff over tolerance is shot a second time before it
+  fails, and the report says so ("on a second shot"). A real change fails twice.

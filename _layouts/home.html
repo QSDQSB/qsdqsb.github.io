@@ -10,7 +10,8 @@ scroll — and masthead-intent.js — keeps working; a panel whose content is ta
 than the screen scrolls it inside its .home__panel-body. {% endcomment %}
 <div id="main" role="main" class="home home--reel">
 
-  <section class="home__panel home__hero" style="--hero-photo: url('{{ '/images/QSD_Night_5v2.jpg' | relative_url }}');">
+  {%- capture hero_src %}{% include home/hero-src.html %}{% endcapture %}
+  <section class="home__panel home__hero" style="--hero-photo: url('{{ hero_src | strip }}');">
     <div class="home__hero-media" aria-hidden="true">
       {%- comment -%} Depth parallax (Lontananza): spring-motion variant of the
         page-hero effect. The wrapper re-applies the frost recipe (blur, mask,
@@ -21,7 +22,7 @@ than the screen scrolls it inside its .home__panel-body. {% endcomment %}
       {%- if home_depth -%}
       <div class="home__hero-depth"
         data-depth-map="{{ '/images/depth/QSD_Night_5v2.jpg.depth.jpg' | relative_url }}"
-        data-depth-photo="{{ '/images/QSD_Night_5v2.jpg' | relative_url }}"
+        data-depth-photo="{{ hero_src | strip }}"
         data-depth-motion="spring"
         data-depth-amp="55"
         data-depth-focus="75"
@@ -118,17 +119,24 @@ than the screen scrolls it inside its .home__panel-body. {% endcomment %}
     var els = Array.prototype.slice.call(document.querySelectorAll(".home .reveal, .home__index"));
     if (!els.length) return;
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Arrived, then settled once the reveal has run: the doors' stagger is the reveal's alone
+    // (_home.scss), and is gone by the time a pointer reaches them.
+    var arrive = function (el) {
+      if (el.classList.contains("is-in")) return;
+      el.classList.add("is-in");
+      window.setTimeout(function () { el.classList.add("is-settled"); }, 1400);
+    };
     if (reduce || !("IntersectionObserver" in window)) {
-      els.forEach(function (el) { el.classList.add("is-in"); });
+      els.forEach(function (el) { el.classList.add("is-in", "is-settled"); });
       return;
     }
     document.documentElement.classList.add("home-reveal-ready");
     var vh = window.innerHeight || document.documentElement.clientHeight;
     var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } });
+      entries.forEach(function (e) { if (e.isIntersecting) { arrive(e.target); io.unobserve(e.target); } });
     }, { rootMargin: "0px 0px -10% 0px", threshold: 0.12 });
-    els.forEach(function (el) { if (el.getBoundingClientRect().top < vh) el.classList.add("is-in"); else io.observe(el); });
-    window.setTimeout(function () { els.forEach(function (el) { el.classList.add("is-in"); }); }, 6000);
+    els.forEach(function (el) { if (el.getBoundingClientRect().top < vh) arrive(el); else io.observe(el); });
+    window.setTimeout(function () { els.forEach(arrive); }, 6000);
   })();
 
   // Index: develop the plate to the hovered door. No revert — it holds on the
@@ -138,8 +146,27 @@ than the screen scrolls it inside its .home__panel-body. {% endcomment %}
     var shots = Array.prototype.slice.call(document.querySelectorAll(".door-shot"));
     if (!doors.length || !shots.length) return;
     var plateLink = document.getElementById("doorPlateLink");
+    // The first plate came with the page. The others are painted when the panel first shows at the
+    // foot of the screen, or a door is first pointed at, whichever is sooner; never on a phone,
+    // where the stage is not shown.
+    var paint = function () {
+      var dense = (window.devicePixelRatio || 1) > 1.25;
+      shots.forEach(function (s) {
+        if (!s.dataset.plate) return;
+        s.style.backgroundImage = "url('" + ((!dense && s.dataset.plate1x) || s.dataset.plate) + "')";
+        delete s.dataset.plate;
+      });
+    };
+    var panel = document.getElementById("home-enter");
+    if (panel && "IntersectionObserver" in window) {
+      var near = new IntersectionObserver(function (entries) {
+        if (entries.some(function (e) { return e.isIntersecting; })) { near.disconnect(); paint(); }
+      }, { rootMargin: "0px 0px -1px 0px" });   // a panel that only touches the screen's foot (the hero at rest) has not shown
+      near.observe(panel);
+    } else paint();
     doors.forEach(function (door, i) {
       var show = function () {
+        paint();
         shots.forEach(function (s, j) { s.classList.toggle("is-on", j === i); });
         // the plate is clickable — send it wherever the door it's showing goes
         if (plateLink) plateLink.setAttribute("href", door.getAttribute("href"));

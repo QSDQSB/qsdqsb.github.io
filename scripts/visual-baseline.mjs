@@ -54,11 +54,16 @@
  * it is not. It is the behavioural test behind the pixel one: a screenshot
  * proves the final frame, the audit proves nothing is still moving.
  *
+ * Long pages. Chromium draws nothing below about 16,700 px in a full-page capture, so a page
+ * taller than TILE px is captured in tiles and joined into one PNG (fullPageShot).
+ *
  * Tolerance. pixelmatch runs with anti-aliasing detection on, and a page
  * still passes if the remaining delta is at most DIFF_TOLERANCE of its
  * pixels (or ABS_TOLERANCE pixels, whichever is larger). That covers font
  * hinting jitter; it does not cover a moved border or a changed colour.
- * A size mismatch always fails.
+ * A size mismatch always fails. A shot that differs is taken once more before it counts: a change
+ * in the site differs both times, a moment of the browser's under load does not. Pages with dye vats
+ * (`vats: true`) are held until the vats are poured, and one drawn blank is shot again.
  *
  * Options:
  *   --only <id>[,<id>]   restrict to these page ids
@@ -95,6 +100,9 @@ const DIFF_TOLERANCE = 0.00005; // 0.005 % of the page's pixels
 const ABS_TOLERANCE = 40;       // or this many pixels, whichever is larger
 const PIXELMATCH_THRESHOLD = 0.1;
 const SETTLE_MS = 7000; // longest page-side timer (Home reveal fallback) + margin
+// Chromium leaves a full-page capture blank below about 16,700 px (2026-10-01: the notices post was
+// blank from 17,046 to 40,390 of 42,501), so a page taller than this is shot in tiles and joined.
+const TILE = 8000;
 
 /**
  * The page set. `setup` runs after load for pages reached by interaction.
@@ -131,7 +139,7 @@ const PAGES = [
   // The Photobook: a gallery page, and its lightbox opened by a frame link (#slug). Its rows skip
   // rendering off screen (content-visibility: auto), which a full-page shot would record as blank,
   // so the shot draws them all; the scroll-through that follows loads their images.
-  { id: 'photobook', url: '/voyage/london/', setup: drawAllRows },
+  { id: 'photobook', url: '/voyage/london/', setup: drawAllRows, vats: true },
   {
     id: 'photobook-lightbox',
     url: '/voyage/london/#dscf7406',
@@ -144,13 +152,19 @@ const PAGES = [
   },
   // The colour pages, drawn by their scripts: the shot waits for the stage, and draws every card
   // (they skip rendering off screen, as the book's rows do); their vats pour on the scroll-through.
-  { id: 'palette', url: '/palette/', setup: drawColourStage },
-  { id: 'palette-voyage', url: '/palette/#london', setup: drawColourStage },
-  { id: 'reverie', url: '/reverie/?c=4a6fa5', setup: drawColourStage },
+  { id: 'palette', url: '/palette/', setup: drawColourStage, vats: true },
+  // Its list of voyages keeps the voyage on the page in view by scrolling itself, and where a
+  // full-page shot leaves that scroll (the window stretched to the page's height for a moment) is the
+  // capture's, not the page's: painted over here; the overview's shot above draws the list.
+  { id: 'palette-voyage', url: '/palette/#london', setup: drawColourStage, vats: true, mask: ['.palette-voyages__list'] },
+  { id: 'reverie', url: '/reverie/?c=4a6fa5', setup: drawColourStage, vats: true },
   { id: 'voyage-by-tags', url: '/voyage-by-tags/' },
   { id: 'about', url: '/about/' },
   { id: 'portfolio', url: '/portfolio/' },
   { id: '404', url: '/404.html' },
+  // Every shared piece in every state (_specimen/, built by visual:build only): a change to a piece
+  // shows here even before a page adopts it.
+  { id: 'specimen', url: '/specimen/' },
   {
     id: 'search',
     url: '/',
@@ -329,7 +343,51 @@ function motionOff(baseUrl, url) {
   return `${baseUrl}${pathPart}${pathPart.includes('?') ? '&' : '?'}motion=off${hash ? `#${hash}` : ''}`;
 }
 
-async function shoot(browser, baseUrl, pageDef, viewportName, outDir) {
+/**
+ * The colour pages pour their dye vats one at a time as each comes near (assets/js/colour/cards.js,
+ * dripper), a few a second on a voyage's palette page: how many are drawn when the shot is taken
+ * depended on the machine's load (2026-10-03). So a page with vats is read down once, and held until
+ * the number of drawn canvases has not changed for two seconds (at most thirty).
+ */
+async function vatsAtRest(page) {
+  // A vat is poured only as its card nears the screen, and a full-page shot does not scroll: the page
+  // is read down once, a screen at a time, and taken back to the top, so every card has come near.
+  await page.evaluate(async () => {
+    for (let y = 0; y < document.documentElement.scrollHeight; y += innerHeight) {
+      scrollTo({ top: y, behavior: 'instant' });
+      await new Promise((r) => setTimeout(r, 120));
+    }
+    scrollTo({ top: 0, behavior: 'instant' });
+  });
+  let last = -1, still = 0;
+  for (let waited = 0; waited < 30000 && still < 2000; waited += 500) {
+    const n = await page.evaluate(() => document.querySelectorAll('canvas').length);
+    still = n === last ? still + 500 : 0;
+    last = n;
+    await page.waitForTimeout(500);
+  }
+}
+
+/**
+ * Vats drawn blank: a vat is drawn by WebGL, and under load a context can fail to start, leaving an
+ * empty disc. That is the browser's moment, not the site's, so the shot is taken again.
+ */
+async function blankVats(page) {
+  return page.evaluate(() => {
+    let n = 0;
+    for (const c of document.querySelectorAll('canvas.colour-vat')) {
+      const ctx = c.width && c.height ? c.getContext('2d') : null;
+      if (!ctx) continue; // a live vat draws in its own WebGL context: nothing to read here
+      const d = ctx.getImageData(0, 0, c.width, c.height).data;
+      let a = 0;
+      for (let i = 3; i < d.length && !a; i += 16) a = d[i];
+      if (!a) n++;
+    }
+    return n;
+  });
+}
+
+async function shoot(browser, baseUrl, pageDef, viewportName, outDir, attempt = 1) {
   const { context, page } = await openPage(browser, viewportName);
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
@@ -340,12 +398,60 @@ async function shoot(browser, baseUrl, pageDef, viewportName, outDir) {
     await page.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
     if (pageDef.setup) await pageDef.setup(page);
     await settle(page, startedAt);
+    if (pageDef.vats) {
+      await vatsAtRest(page);
+      // A full-page capture resizes the window; a scroller sized to it (Palette's list) scrolls
+      // again, and a smooth scroll could be caught halfway. On these pages every scroll lands at once.
+      // (Only here: the extra style tag nudges a glyph's antialiasing elsewhere, Home's magnifier.)
+      await page.addStyleTag({ content: '*, *::before, *::after { scroll-behavior: auto !important; }' });
+      await page.waitForTimeout(200);
+    }
+    const blank = await blankVats(page);
+    if (blank && attempt < 3) {
+      console.log(`          ${pageDef.id}--${viewportName}: ${blank} vat(s) drawn blank; shooting again`);
+      await context.close();
+      return shoot(browser, baseUrl, pageDef, viewportName, outDir, attempt + 1);
+    }
     const file = path.join(outDir, `${pageDef.id}--${viewportName}.png`);
-    await page.screenshot({ path: file, fullPage: !pageDef.screenOnly, animations: 'disabled', mask: [...SAMPLED, ...MOVING].map((s) => page.locator(s)), maskColor: '#2a2a2a' });
+    const options = { animations: 'disabled', mask: [...SAMPLED, ...MOVING, ...(pageDef.mask || [])].map((s) => page.locator(s)), maskColor: '#2a2a2a' };
+    if (pageDef.screenOnly) await page.screenshot({ ...options, path: file });
+    else await fullPageShot(page, file, options);
     return { file, errors };
   } finally {
     await context.close();
   }
+}
+
+/**
+ * The whole page as one PNG. Up to TILE px it is one full-page capture, as it always was; a longer
+ * page is captured TILE px at a time (each a clip of the full page, so masks and fixed elements
+ * fall where they would in one shot) and the tiles are joined. The size is measured the way
+ * Playwright measures a full page, so a joined shot has the size a single one would.
+ */
+async function fullPageShot(page, file, options) {
+  const { width, height } = await page.evaluate(() => {
+    const d = document.documentElement, b = document.body;
+    return {
+      width: Math.max(b.scrollWidth, d.scrollWidth, b.offsetWidth, d.offsetWidth, b.clientWidth, d.clientWidth),
+      height: Math.max(b.scrollHeight, d.scrollHeight, b.offsetHeight, d.offsetHeight, b.clientHeight, d.clientHeight),
+    };
+  });
+  if (height <= TILE) {
+    await page.screenshot({ ...options, path: file, fullPage: true });
+    return;
+  }
+  // A full-page shot stretches the window to the page's height for a moment, and an inner scroller
+  // (Palette's list of voyages) is clamped to the taller box and stays there. One shot thrown away
+  // first, so every tile is taken after the clamp, not the first tile before it and the rest after.
+  await page.screenshot({ ...options, fullPage: true, clip: { x: 0, y: 0, width, height: Math.min(TILE, height) } });
+  await page.waitForTimeout(300);
+  const whole = new PNG({ width, height });
+  for (let y = 0; y < height; y += TILE) {
+    const h = Math.min(TILE, height - y);
+    const tile = PNG.sync.read(await page.screenshot({ ...options, fullPage: true, clip: { x: 0, y, width, height: h } }));
+    PNG.bitblt(tile, whole, 0, 0, Math.min(width, tile.width), Math.min(h, tile.height), 0, y);
+  }
+  fs.writeFileSync(file, PNG.sync.write(whole));
 }
 
 /** Elements still moving under motion-off. Empty is the only passing answer. */
@@ -471,7 +577,19 @@ async function main() {
           console.log(`captured  ${label}`);
           continue;
         }
-        const result = compare(pageDef.id, viewportName);
+        let result = compare(pageDef.id, viewportName);
+        // A shot that differs is taken once more before it counts. A change in the site differs both
+        // times; a moment of the browser's under load (a glyph's antialiasing, a vat poured a beat
+        // late: 2026-10-03, one shot in four full runs) does not, and is reported as such.
+        if (result.status !== 'ok') {
+          const first = result;
+          await shoot(browser, baseUrl, pageDef, viewportName, outDir);
+          result = compare(pageDef.id, viewportName);
+          if (result.status === 'ok') {
+            result.detail = `${result.detail}, on a second shot (the first: ${first.detail})`;
+            fs.rmSync(path.join(DIFF_DIR, `${pageDef.id}--${viewportName}.png`), { force: true });
+          }
+        }
         const ok = result.status === 'ok';
         if (!ok) failures += 1;
         console.log(`${ok ? 'ok      ' : 'FAIL    '}  ${label}  ${result.status}${result.detail ? ` — ${result.detail}` : ''}`);

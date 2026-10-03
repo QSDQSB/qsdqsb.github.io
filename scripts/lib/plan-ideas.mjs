@@ -40,7 +40,8 @@ export function readIdea(body, file) {
   const number = file.split('-')[0];
   if (!head || head[1] !== number) return { idea: null, errors: [`_plan/ideas/${file} must open with "# ${number} · a name".`] };
   const id = head[1];
-  const status = body.match(/\*\*Status:\*\*\s*([a-z]+)/)?.[1];
+  // The status line is a line of its own: the same words inside a title or the owner's quoted idea are not it.
+  const status = body.match(/^\*\*Status:\*\*\s*([a-z]+)/m)?.[1];
   if (!IDEA_STATUSES.includes(status)) errors.push(`_plan/ideas/${file}: "${status}" is not a status (${IDEA_STATUSES.join(', ')}).`);
   const section = (name) => sectionOf(body, name);
 
@@ -106,9 +107,9 @@ export function readIdea(body, file) {
   return {
     idea: {
       id, title: head[2].trim(), file: `ideas/${file}`, status,
-      raised: body.match(/\*\*Raised:\*\*\s*(\d{4}-\d{2}-\d{2})/)?.[1] || null,
+      raised: body.match(/^\*\*Status:\*\*.*\*\*Raised:\*\*\s*(\d{4}-\d{2}-\d{2})/m)?.[1] || null,
       // Most ideas are the owner's. The lead may propose one of its own; it takes the same path.
-      by: /\*\*Raised:\*\*[^·\n]*\bby the lead\b/.test(body) || /^## As proposed\s*$/m.test(body) ? 'lead' : 'owner',
+      by: /^\*\*Status:\*\*.*\*\*Raised:\*\*[^·\n]*\bby the lead\b/m.test(body) || /^## As proposed\s*$/m.test(body) ? 'lead' : 'owner',
       words: (section("In the owner's words") || section('As proposed')).replace(/^> ?/gm, ''),
       verdict, verdictText: leads.replace(/^\*\*[^*]+\*\*\s*/, ''), waitsOn,
       owner: owner ? { decision: owner[1], date: owner[2], note: owner[3] || '' } : null,

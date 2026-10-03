@@ -36,10 +36,10 @@
   {%- if include.colour %} data-colour="{{ include.colour | escape }}"{% endif -%}
   {%- if include.kind == "frame" %} data-book="{{ cf_book }}" data-title="{{ cf_title }}"{% endif -%}>
   {%- if include.kind == "frame" -%}
-    {%- comment -%} The frame as the book's lightbox has it, and its place on the roll. {%- endcomment -%}
+    {%- comment -%} The frame as the book's lightbox has it, its place on the roll, and its placeholder (the photo's own: the lightbox's data leaves it out). {%- endcomment -%}
     {%- for f in site.data.photo_manifests[cf_key].book.lightbox -%}
       {%- if f.slug == include.frame %}
-  <script type="application/json" data-n="{{ forloop.index }}">{{ f | jsonify }}</script>
+  <script type="application/json" data-n="{{ forloop.index }}" data-ph="{{ site.data.photo_manifests[cf_key].photos[forloop.index0].ph }}">{{ f | jsonify }}</script>
       {%- endif -%}
     {%- endfor -%}
   {%- endif %}

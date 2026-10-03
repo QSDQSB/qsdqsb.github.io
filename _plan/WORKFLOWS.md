@@ -141,7 +141,7 @@ built, however small the change sounds: "two or three lines" is a claim like any
 | A turn ends | House style, bundle sync, the `!important` ratchet |
 | Before anything is called done | The gate and the reviewer |
 | Anything is pushed | CI runs the fast gate and, on a pull request, the changelog rule over the branch |
-| Daily | `/hub-daily`: the gate on `master`, answers and new ideas recorded, findings filed, the command centre rebuilt. Raw ideas and the inbox wait for the next session until `daily_agents` is switched on. Its work stays on one branch, `hub/daily`, until a session merges it with the owner's word |
+| Daily | `/hub-daily`: the gate on `master`, answers and new ideas recorded, a file nothing loads filed. It keeps the books and fixes nothing: raw ideas and the inbox wait for the next session until `daily_agents` is switched on. Its work stays on one branch, `hub/daily`, until the next session merges it (plan only, so without asking; pushing `master` is the owner's) |
 
 ## Who does what
 

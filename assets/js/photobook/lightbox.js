@@ -16,7 +16,7 @@
 import { crossfade } from './wash.js';
 import { esc, sunGlyph, specsHTML } from './specs.js';
 
-const DWELL = 7000, MAX_CROP = 0.15;
+const DWELL = 7000, MAX_CROP = 0.15, HOLD = 200, SLOW = 160;
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch { /* private mode */ } },
@@ -29,7 +29,7 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
   const $ = (s) => lb.querySelector(s);
   const mat = $('.photobook-lightbox__mat'), wash = $('.photobook-lightbox__wash');
   const specsEl = $('.photobook-specs'), specsIn = $('.photobook-specs__inner');
-  let order = frames.map((_, i) => i), pos = -1, timer = 0, raf = 0, t0 = 0, idleT = 0, lastFocus = null;
+  let order = frames.map((_, i) => i), pos = -1, timer = 0, raf = 0, t0 = 0, idleT = 0, lastFocus = null, turn = 0, holdT = 0, slowT = 0;
   let specOpen = store.get('photobook-specs') !== 'closed';
   const cur = () => frames[order[pos]];
   // Where a frame's print stands on the page, to close back into: in the book, its frame.
@@ -42,8 +42,8 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
   // Renditions are named by their long edge, so a portrait needs a larger name for the same width.
   const srcFor = (p) => {
     if (p.paint) return null;
-    const r = p.ratio || 1.5, box = mat.getBoundingClientRect(), bare = lb.classList.contains('is-bare'), zoomed = lb.classList.contains('is-zoomed');
-    const [bw, bh] = box.width ? [box.width, box.height] : [window.innerWidth, window.innerHeight];
+    const r = p.ratio || 1.5, bare = lb.classList.contains('is-bare'), zoomed = lb.classList.contains('is-zoomed');
+    const [bw, bh] = matBox();
     const fill = bare && lb.style.getPropertyValue('--fit') === 'cover';
     const width = (fill ? Math.max : Math.min)(bw, bh * r) * Math.min(window.devicePixelRatio || 1, 3) * (zoomed ? Math.max(2.2, zoom) : 1);
     const want = width / Math.min(1, r);
@@ -52,9 +52,34 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     const w = fit.find((s) => s >= want) || fit[fit.length - 1] || p.sizes[0] || 1920;
     return `${p.url}/${w}.webp`;
   };
+  // The mat's room for a print. Closed, the dialog has no layout to measure, so a print asked for
+  // ahead (prefetch) is sized from the mat as it last stood open, kept on this browser as its share of
+  // the window; before any opening there is nothing to go by, and nothing is asked for.
+  let matShare = (store.get('photobook-mat') || '').split(',').map(Number);
+  if (!(matShare[0] > 0 && matShare[0] <= 1 && matShare[1] > 0 && matShare[1] <= 1)) matShare = null;
+  const matBox = () => {
+    const box = mat.getBoundingClientRect();
+    if (box.width) return [box.width, box.height];
+    return matShare ? [matShare[0] * window.innerWidth, matShare[1] * window.innerHeight] : [0, 0];
+  };
+  // Kept when the mat has come to rest (its inset eases as the specs fold) and as the lightbox closes.
+  const keepMat = () => {
+    const box = mat.getBoundingClientRect();
+    if (!box.width || lb.classList.contains('is-bare')) return;
+    matShare = [box.width / window.innerWidth, box.height / window.innerHeight];
+    store.set('photobook-mat', matShare.map((x) => x.toFixed(3)).join(','));
+  };
   // Renditions already fetched: a frame whose full print is in hand shows it at once, no light one first.
-  const seen = new Set();
-  const fetchImg = (src) => { const x = new Image(); x.src = src; x.decode().then(() => seen.add(src), () => {}); return x; };
+  // Those on their way are kept by address, so one is never asked for twice, and those no longer
+  // wanted (the frame was passed) are let go.
+  const seen = new Set(), loading = new Map();
+  const fetchImg = (src) => {
+    let x = loading.get(src); if (x) return x;
+    x = new Image(); loading.set(src, x); x.src = src;
+    x.decode().then(() => seen.add(src), () => {}).finally(() => { if (loading.get(src) === x) loading.delete(src); });
+    return x;
+  };
+  const letGo = (keep) => { for (const [src, x] of loading) if (!keep.has(src)) { loading.delete(src); x.src = ''; } };
 
   // Picture only fills the screen when the frame's shape is close to it: at most 15% is cropped,
   // so a 16:9 frame fills a MacBook's screen. Further apart it is shown whole on black.
@@ -79,16 +104,24 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     history.scrollRestoration = 'manual';
     if (!history.state?.photobook) history.pushState({ photobook: true }, '', location.href);
     pushed = true;
-    const run = () => { lb.showModal(); buildRail(); applySpecs(); show(Math.max(0, order.indexOf(i)), { instant: true }); wake(); };
+    const at = Math.max(0, order.indexOf(i));
+    const run = () => { lb.showModal(); buildRail(at); applySpecs(); show(at, { instant: true }); wake(); };
     if (document.startViewTransition && fromImg && !still()) {
       fromImg.style.viewTransitionName = 'photobook-print';
-      const t = document.startViewTransition(() => {
+      const t = document.startViewTransition(async () => {
         fromImg.style.viewTransitionName = '';
         run();
-        const on = mat.querySelector('img.is-on'); if (on) on.style.viewTransitionName = 'photobook-print';
+        // The print just laid on the mat is the one the page's print grows into: named here, shown
+        // without its own fade and decoded, so the transition's picture of it is the photograph.
+        const on = mat.querySelector(':scope > img');
+        if (!on) return;
+        on.style.transition = 'none'; on.classList.add('is-on'); on.style.viewTransitionName = 'photobook-print';
+        // The page stands still while this waits, so it waits only for a picture already in hand
+        // (the page's own print, loaded), and never long.
+        if (fromImg.complete && fromImg.naturalWidth) await Promise.race([on.decode().catch(() => {}), new Promise((r) => setTimeout(r, 200))]);
       });
       t.ready.catch(() => {});
-      t.finished.catch(() => {}).finally(() => mat.querySelectorAll('img').forEach((im) => { im.style.viewTransitionName = ''; }));
+      t.finished.catch(() => {}).finally(() => mat.querySelectorAll('img').forEach((im) => { im.style.viewTransitionName = ''; im.style.transition = ''; }));
     } else run();
   }
 
@@ -101,6 +134,7 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     lb.classList.remove('has-specs', 'is-pinned', 'is-bare', 'is-idle', 'is-painted'); pressed('bare', false); setZoom(1); placeSpecs();
     if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
     mat.replaceChildren(); wash.replaceChildren(); pos = -1;
+    clearTimeout(holdT); clearTimeout(slowT); turn++; letGo(new Set());
     const back = here || lastFocus;
     if (pushed && !popping) { stepping = true; returnTo = back; returnY = was; history.back(); }
     else { history.replaceState(null, '', location.pathname + location.search); settle(back, was); }
@@ -127,33 +161,73 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     fitFor(p);
     // The mount beneath the print takes this frame's shape (_photobook.scss, .photobook-lightbox__mount).
     if (!mat.querySelector('.photobook-lightbox__mount')) mat.prepend(Object.assign(document.createElement('div'), { className: 'photobook-lightbox__mount' }));
+    const mount = mat.querySelector('.photobook-lightbox__mount');
     lb.style.setProperty('--pr', String(p.ratio || 1.5));
     // The print drifts in from the side it came from; the old one leaves the other way.
-    const old = [...mat.querySelectorAll(':scope > img, :scope > .photobook-lightbox__painted')];
+    const old = [...mat.querySelectorAll(':scope > img, :scope > .photobook-lightbox__painted')], stale = [...mount.children];
+    const mine = ++turn;
+    clearTimeout(holdT); clearTimeout(slowT);
     const wasPainted = lb.classList.contains('is-painted');
     lb.classList.toggle('is-painted', !!p.paint);
-    let im;
+    let im, full = null, quick = null;
     if (p.paint) { im = p.paint(); im.classList.add('photobook-lightbox__painted'); firstQuick = null; }
     else {
       // A light rendition shows at once; the full one takes its place as soon as it is decoded.
-      im = new Image(); const full = srcFor(p);
-      const quick = firstQuick || `${p.url}/${p.sizes.find((s) => s >= 960) || p.sizes[0] || 960}.webp`; firstQuick = null;
+      im = new Image(); full = srcFor(p);
+      quick = firstQuick || `${p.url}/${p.sizes.find((s) => s >= 960) || p.sizes[0] || 960}.webp`; firstQuick = null;
       im.alt = p.alt || p.name; im.draggable = false; im.decoding = 'async'; im.src = seen.has(full) ? full : quick;
-      if (!seen.has(full) && full !== quick) fetchImg(full).decode().then(() => { if (im.isConnected) im.src = full; }, () => {});
     }
+    // The full print, and the frames either side, are asked for once this frame has held a moment
+    // (at once when the lightbox opens on it): a reader stepping through, or holding an arrow,
+    // downloads none of the frames passed, and what a passed frame had started is let go.
+    const beside = [1, -1].map((d) => frames[order[(pos + d + order.length) % order.length]]).filter((q) => q && q !== p && !q.paint).map(srcFor);
+    letGo(new Set([full, ...beside]));
+    holdT = setTimeout(() => {
+      if (full && !seen.has(full) && full !== quick) fetchImg(full).decode().then(() => { if (im.isConnected) im.src = full; }, () => {});
+      for (const f of beside) if (!seen.has(f)) fetchImg(f);
+    }, instant ? 0 : HOLD);
     im.style.setProperty('--d', String(dir));
     mat.style.setProperty('--xf', still() ? '0s' : slow ? '1.6s' : '.55s');
     mat.appendChild(im);
+    const leave = () => {
+      for (const o of old.splice(0)) { o.style.scale = getComputedStyle(o).scale; o.style.setProperty('--d', String(-dir)); o.classList.remove('is-on'); setTimeout(() => o.remove(), slow ? 1700 : 900); }
+      for (const h of stale.splice(0)) { h.classList.remove('is-on'); setTimeout(() => h.remove(), slow ? 1700 : 900); }   // a passed frame's placeholder
+    };
+    let held = null;
     const reveal = () => requestAnimationFrame(() => {
-      im.classList.add('is-on');
-      for (const o of old) { o.style.scale = getComputedStyle(o).scale; o.style.setProperty('--d', String(-dir)); o.classList.remove('is-on'); setTimeout(() => o.remove(), slow ? 1700 : 900); }
+      if (mine !== turn) return;                        // stepped past since: not brought on when its file arrives late
+      im.classList.add('is-on'); leave();
+      if (held) setTimeout(() => held.remove(), slow ? 1700 : 900);   // beneath the print until it is fully in
     });
-    if (instant || p.paint || im.complete) reveal(); else im.decode().then(reveal, reveal);
-    // The room takes the print's colour, from its placeholder (already soft, so no blur); away from
-    // its book, from its glow; a painted frame brings its own.
+    if (instant || p.paint || im.complete) reveal();
+    // Picture only shows no words and no mount (so no placeholder either): there the last print
+    // stays until this one is in hand, as it always did.
+    else if (lb.classList.contains('is-bare')) im.decode().then(reveal, reveal);
+    else {
+      // On a slow line the words would change under the last frame's picture. After a moment the
+      // last print leaves and this frame's own placeholder stands on the mount, the print's own box
+      // (in the book; away from it, the bare mount over the room's colour), and the print develops
+      // over it when it arrives, as the book's prints do.
+      // The timer is this turn's own: a passed frame's print, landing late, must not clear the
+      // timer of the frame now on show.
+      const mySlow = slowT = setTimeout(() => requestAnimationFrame(() => {
+        if (mine !== turn || im.classList.contains('is-on') || lb.classList.contains('is-bare')) return;
+        leave();
+        if (!p.ph) return;
+        held = Object.assign(document.createElement('div'), { className: 'photobook-lightbox__held' });
+        held.style.backgroundImage = p.ph;
+        mount.append(held);
+        requestAnimationFrame(() => held?.classList.add('is-on'));
+      }), SLOW);
+      const done = () => { clearTimeout(mySlow); reveal(); };
+      im.decode().then(done, done);
+    }
+    // The room takes the print's colour, from its placeholder (already soft, so no blur; a CSS image,
+    // read from the frame's own print by ./index.js); away from its book, from its glow; a painted
+    // frame brings its own.
     if (p.room) crossfade(wash, p.room());
     else if (p.ph) {
-      const a = document.createElement('div'); a.style.backgroundImage = `url(${p.ph})`;
+      const a = document.createElement('div'); a.style.backgroundImage = p.ph;
       crossfade(wash, a);
     } else if (p.glow?.length) {
       const a = document.createElement('div'), [x, y = x, z = y] = p.glow;
@@ -177,7 +251,6 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
       if (on && mark) rail.scrollTo({ left: b.offsetLeft - (rail.clientWidth - b.offsetWidth) / 2, behavior: instant || still() ? 'instant' : 'smooth' });
     }
     $('.photobook-lightbox__live').textContent = `${p.name}, ${pos + 1} of ${order.length}`;
-    for (const d of [1, -1]) { const q = frames[order[(pos + d + order.length) % order.length]]; if (q && !q.paint && !seen.has(srcFor(q))) fetchImg(srcFor(q)); }
     history.replaceState({ photobook: true }, '', `#${p.slug}`);
     if (timer) restart();
     return i;
@@ -202,10 +275,21 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
   const specsHint = () => (store.get('photobook-specs') ? '' : `<p class="photobook-specs__hint">${matchMedia('(hover: none), (pointer: coarse)').matches ? 'Swipe down to fold these away' : 'Press I to fold these away'}</p>`);
 
   const rail = $('.photobook-lightbox__rail');
-  function buildRail() {
+  let marking = 0;
+  function buildRail(at = 0) {
     rail.innerHTML = order.map((i, k) => `<button type="button" data-k="${k}" tabindex="-1" aria-label="Frame ${k + 1}: ${esc(frames[i].name)}"><span class="photobook-lightbox__peek"></span></button>`).join('');
     rail.classList.toggle('has-marks', !!mark);
-    if (mark) [...rail.children].forEach((b, k) => { const m = mark(frames[order[k]]); if (m) b.prepend(m); });
+    cancelAnimationFrame(marking);
+    if (!mark) return;
+    // The page's marks (away from the book, each frame's dye vat) are made one a frame of the screen,
+    // the one on show first and outward from it, so a long rail never stalls the opening.
+    const bs = [...rail.children], todo = bs.map((_, k) => k).sort((a, b) => Math.abs(a - at) - Math.abs(b - at));
+    const pour = () => {
+      const k = todo.shift(); if (k === undefined) return;
+      const m = mark(frames[order[k]]); if (m) bs[k].prepend(m);
+      marking = requestAnimationFrame(pour);
+    };
+    pour();
   }
   // A preview is only fetched the first time the pointer (or a finger) rests on its mark; it is kept on screen.
   const peekOf = (b) => {
@@ -315,14 +399,14 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
   }
   const bigger = (a, b) => Number(a.match(/\/(\d+)\.webp$/)?.[1] || 0) > Number(b.match(/\/(\d+)\.\w+$/)?.[1] || 0);
   // The print's area grows when the specs close or the window widens: a larger file follows, never a smaller.
-  mat.addEventListener('transitionend', (e) => { if (e.target === mat && /^(top|right|bottom|left)$/.test(e.propertyName)) upgrade(); });
+  mat.addEventListener('transitionend', (e) => { if (e.target === mat && /^(top|right|bottom|left)$/.test(e.propertyName)) { upgrade(); keepMat(); } });
   function wake() { lb.classList.remove('is-idle'); clearTimeout(idleT); idleT = setTimeout(() => lb.classList.add('is-idle'), lb.classList.contains('is-bare') ? 1000 : 3200); }
 
   // The slideshow: a slow crossfade, a gentle push, a gold hairline for the dwell. Any touch stops it.
   const progress = $('.photobook-lightbox__progress'), playGlyph = $('.photobook-lightbox__play');
   function restart() { clearTimeout(timer); cancelAnimationFrame(raf); t0 = performance.now(); tick(); timer = setTimeout(() => show(pos + 1, { slow: true }), DWELL); }
   function tick() { progress.style.width = `${Math.min(100, (performance.now() - t0) / DWELL * 100)}%`; if (timer) raf = requestAnimationFrame(tick); }
-  function play() { lb.classList.add('is-playing'); lb.style.setProperty('--dwell', `${DWELL + 1600}ms`); pressed('play', true); playGlyph.setAttribute('d', 'M9 6v12M15 6v12'); timer = 1; restart(); }
+  function play() { if (order.length < 2) return; lb.classList.add('is-playing'); lb.style.setProperty('--dwell', `${DWELL + 1600}ms`); pressed('play', true); playGlyph.setAttribute('d', 'M9 6v12M15 6v12'); timer = 1; restart(); }
   function stop() { lb.classList.remove('is-playing'); pressed('play', false); playGlyph.setAttribute('d', 'M8 5.5v13l10.5-6.5z'); clearTimeout(timer); cancelAnimationFrame(raf); timer = 0; progress.style.width = '0'; }
 
   const next = () => { stop(); show(pos + 1, { dir: 1 }); };
@@ -343,11 +427,20 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     else shut();
   });
 
+  // In full screen Esc is the browser's: it leaves full screen and tells the dialog nothing, so
+  // picture only would stay on and want a second press. Leaving full screen ends picture only (a
+  // screening, outright), as one Esc does out of full screen.
+  document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement || !lb.open || !lb.classList.contains('is-bare')) return;
+    if (screening) shut(); else bare(false);
+  });
+
   // Every way out closes through here: the print shrinks back into its place in the book (a view
   // transition, the reverse of the opening), the page behind first brought to that place unseen.
   // A screening, or a frame not on the page, simply fades.
   function shut() {
     if (!lb.open) return;
+    keepMat();
     const on = mat.querySelector('img.is-on');
     const box = !screening && pos >= 0 && printFor(order[pos]), to = box?.querySelector('img');
     if (!document.startViewTransition || still() || !on || !to) return lb.close();
@@ -367,7 +460,7 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     else if (k === 'z') setZoom(zoom > 1.02 ? 1 : 2.2); else return;
     e.preventDefault(); wake();
   });
-  window.addEventListener('resize', () => { if (lb.open && pos >= 0) { fitFor(cur()); placeSpecs(); upgrade(); } });
+  window.addEventListener('resize', () => { if (lb.open && pos >= 0) { fitFor(cur()); placeSpecs(); upgrade(); keepMat(); } });
 
   // Loupe: double-click (or Z) to look closer, or pinch on a trackpad for any depth from 1× to 4×,
   // about the point between the fingers; the print follows the pointer.
@@ -461,8 +554,8 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     const i = slug ? frames.findIndex((p) => p.slug === slug) : -1;
     if (i >= 0) open(i);
   }
-  /** Start fetching a frame's full print before it is opened (the pointer resting on it, a finger on it). */
-  function prefetch(i) { const p = frames[i]; if (!p || p.paint) return; const f = srcFor(p); if (!seen.has(f)) fetchImg(f); }
+  /** Start fetching a frame's full print before it is opened (the pointer resting on it: ./book.js). */
+  function prefetch(i) { const p = frames[i]; if (!p || p.paint || !matBox()[0]) return; const f = srcFor(p); if (!seen.has(f)) fetchImg(f); }
 
   return { open, openFromHash, screen, prefetch };
 }

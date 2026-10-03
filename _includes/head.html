@@ -16,6 +16,10 @@
 <link rel="preload" as="image" href="{{ vc.url }}/1920.webp" media="(max-width: 47.98em)" fetchpriority="high">
 {% endif %}
 {% endif %}
+{%- comment -%} The landing page's hero is a CSS background, found only once the stylesheet is read: fetched ahead. {%- endcomment -%}
+{% if page.layout == "home" %}
+<link rel="preload" as="image" href="{% include home/hero-src.html %}" fetchpriority="high">
+{% endif %}
 <!-- <base target="_blank"> -->
 <link href="{% if site.atom_feed.path %}{{ site.atom_feed.path }}{% else %}{{ site.url | append: site.baseurl }}/feed.xml{% endif %}" type="application/atom+xml" rel="alternate" title="{{ site.title }} Feed">
 

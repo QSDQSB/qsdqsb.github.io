@@ -119,7 +119,7 @@ function renderer(canvas) {
 // the context is lost (a GPU reset, a tab sent to the background on a phone).
 let shared;
 function sharedRenderer() {
-  if (shared?.gl.isContextLost()) shared = undefined;
+  if (shared && shared.gl.isContextLost()) shared = undefined;
   if (shared === undefined) shared = renderer(document.createElement('canvas')) || false;
   return shared;
 }

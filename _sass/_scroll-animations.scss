@@ -17,21 +17,49 @@
     opacity: 1;
     transform: translateY(0);
   }
+
+  // The arrival (the owner's amounts, decision 0009): a block of a page's text rises from 28 px as it
+  // fades in, both over 0.7 s, the rise on the smooth curve. Blocks that come into view together take
+  // turns, 0.12 s apart; scroll-animations.js sets each one's delay. Palette's frames share the class
+  // above and keep its amounts (stage 11, F049).
+  .reveal-on-scroll.arrives {
+    transition:
+      opacity 0.7s $cubic-bezier-standard,
+      transform 0.7s $cubic-bezier-smooth;
+    transition-delay: var(--arrive-delay, 0s);
+  }
+
+  .reveal-on-scroll.arrives:not(.is-visible) {
+    transform: translateY(28px);
+  }
+}
+
+/* The hold (_includes/head/custom.html, before the first frame): a page's blocks wait unseen until the
+   script above takes them over, so none is drawn and then hidden. The contents list is not held. If the
+   script never runs (a failed download, an error), the blocks show after four seconds. */
+html.reveal-pending .page__content > :not(.sidebar__right) {
+  opacity: 0;
+  animation: reveal-held 0s linear 4s forwards;
+}
+
+@keyframes reveal-held {
+  to { opacity: 1; }
 }
 
 /* Motion off (automated renderers): the reveal lands, it never hides. */
-html.motion-off.js.scroll-reveal-ready .reveal-on-scroll {
+html.motion-off.js.scroll-reveal-ready .reveal-on-scroll,
+html.motion-off.js.scroll-reveal-ready .reveal-on-scroll.arrives:not(.is-visible) {
   opacity: 1;
   transform: none;
   transition: none;
 }
 
 @include responsive-reduced-motion {
-  /* Same (0,3,0) as the hiding rule above; later in the file, so it wins. */
-  .js.scroll-reveal-ready .reveal-on-scroll {
+  /* At least the specificity of the hiding rules above; later in the file, so it wins. */
+  .js.scroll-reveal-ready .reveal-on-scroll,
+  .js.scroll-reveal-ready .reveal-on-scroll.arrives:not(.is-visible) {
     opacity: 1;
     transform: none;
     transition: none;
   }
 }
-
