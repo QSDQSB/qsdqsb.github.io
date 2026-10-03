@@ -48,7 +48,10 @@ check() {
     if [ -n "$again" ]; then retried+="$again"$'\n'; fi
   else
     printf '✗  %s\n' "$label"
-    report+="── ${label} ──"$'\n'"$(printf '%s' "$out" | tail -n 25)"$'\n\n'
+    # The last lines of a test run are its totals: the failing test, with its reason, is named first.
+    local which
+    which=$(printf '%s' "$out" | grep -E -A 14 '^ *not ok ' | head -n 60 || true)
+    report+="── ${label} ──"$'\n'"${which:+$which$'\n'…$'\n'}$(printf '%s' "$out" | tail -n 25)"$'\n\n'
     failed=$((failed + 1))
   fi
 }
