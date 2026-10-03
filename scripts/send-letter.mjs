@@ -19,6 +19,9 @@
  *
  * Overrides: --title "…" --excerpt "…" --url https://… --subject "…"
  *
+ * --quote "…"        → a line or two from the piece itself, shown where the
+ *                      excerpt would be (and as the inbox's preview line).
+ *
  * --card <hex>       → the letter carries that colour's Reverie card, drawn on the
  *                      site as readers see it (scripts/letter-card.mjs, from
  *                      SITE_URL) and attached inline like the crest. The preview
@@ -107,6 +110,7 @@ const optExcerpt = takeOption("--excerpt");
 const optUrl = takeOption("--url");
 const optSubject = takeOption("--subject");
 const optCard = takeOption("--card");
+const optQuote = takeOption("--quote");
 const postPath = args.find((a) => !a.startsWith("--")) || null;
 
 if (optWelcome) {
@@ -114,7 +118,7 @@ if (optWelcome) {
   // send exactly one with --send-test. Bulk-mailing every subscriber a fresh
   // "welcome" would be nonsense, so --send is refused here.
   if (optSend) fail("--welcome is the confirmation email — preview it, or send one with --send-test <addr>. It is never bulk-sent.");
-  if (optCard) fail("--card goes with a letter, not the welcome.");
+  if (optCard || optQuote) fail("--card and --quote go with a letter, not the welcome.");
 } else if (!postPath && !(optTitle && optUrl)) {
   fail("usage: node scripts/send-letter.mjs <post.md> [--send-test addr | --send --yes] [--title/--excerpt/--url/--subject overrides]\n   or: node scripts/send-letter.mjs --welcome [--send-test addr]");
 }
@@ -170,7 +174,7 @@ if (optWelcome) {
     ? new Date(fm.date).toLocaleDateString("en-GB", { month: "long", year: "numeric" })
     : "";
 
-  const letter = { title, excerpt, url, dateLine };
+  const letter = { title, excerpt, url, dateLine, quote: optQuote || "" };
   if (optCard) {
     const card = await reverieCard(optCard, { site: SITE_URL });
     const cid = `reverie-${card.hex.slice(1).toLowerCase()}`;

@@ -26,6 +26,9 @@
 // and every mail client accepts them.
 const SERIF = "Didot, 'Playfair Display', Georgia, 'Times New Roman', serif";
 const SANS = "Barlow, 'Helvetica Neue', Helvetica, Arial, sans-serif";
+// A line quoted from a piece, in whichever script it was written: Latin in the house serif, Chinese
+// in a Song face where the reader's system has one (as the essays set it), never a sans among serifs.
+const SERIF_QUOTE = "Didot, 'Playfair Display', 'Songti SC', STSong, 'Noto Serif SC', 'Source Han Serif SC', SimSun, Georgia, serif";
 
 const INK = "#e4e5e5"; // ivory text
 const BRASS = "#c3b498"; // aged brass
@@ -171,6 +174,8 @@ const figureRow = (f) => `<tr>
  * @param {string} letter.excerpt    One-paragraph description (plain text)
  * @param {string} letter.url        Absolute URL of the piece
  * @param {string} letter.dateLine   e.g. "August 2026"
+ * @param {string} [letter.quote]    A line or two from the piece itself, set in its place of the
+ *                                   excerpt (upright: a Chinese line has no italic of its own)
  * @param {object} [letter.figure]   A picture to carry: { cid, width, height, alt, href }, its
  *                                   bytes attached by the sender under `cid`
  * @param {string} unsubscribeUrl    THIS recipient's personal unsubscribe link
@@ -180,6 +185,7 @@ export function renderLetterHtml(letter, unsubscribeUrl) {
   const excerpt = escapeHtml(letter.excerpt || "");
   const url = escapeHtml(letter.url);
   const dateLine = escapeHtml(letter.dateLine || "");
+  const quote = escapeHtml(letter.quote || "");
 
   const contentRows = `          <tr>
             <td align="center" style="padding:34px 8px 6px;font-family:${SERIF};font-size:30px;line-height:1.25;color:${INK};">
@@ -191,7 +197,11 @@ export function renderLetterHtml(letter, unsubscribeUrl) {
               ${dateLine}
             </td>
           </tr>` : ""}
-          ${excerpt ? `<tr>
+          ${quote ? `<tr>
+            <td align="center" style="padding:0 34px 32px;font-family:${SERIF_QUOTE};font-size:17px;line-height:1.9;letter-spacing:0.5px;color:${BRASS};">
+              ${quote}
+            </td>
+          </tr>` : excerpt ? `<tr>
             <td align="center" style="padding:0 30px 30px;font-family:${SERIF};font-style:italic;font-size:17px;line-height:1.6;color:${BRASS};">
               ${excerpt}
             </td>
@@ -203,7 +213,7 @@ export function renderLetterHtml(letter, unsubscribeUrl) {
                 <tr>
                   <td style="border:1px solid ${BRASS};border-radius:4px;">
                     <a href="${url}" style="display:inline-block;padding:11px 30px;font-family:${SANS};font-size:12px;letter-spacing:3px;text-transform:uppercase;color:${BRASS};text-decoration:none;">
-                      Read it
+                      Onward
                     </a>
                   </td>
                 </tr>
@@ -213,7 +223,7 @@ export function renderLetterHtml(letter, unsubscribeUrl) {
 
   return houseEmailDocument({
     documentTitle: letter.title,
-    preheader: letter.excerpt || "",
+    preheader: letter.quote || letter.excerpt || "",
     contentRows,
     footerNote: LETTER_FOOTER_NOTE,
     unsubscribeUrl,
@@ -225,11 +235,11 @@ export function renderLetterText(letter, unsubscribeUrl) {
     letter.title,
     letter.dateLine ? letter.dateLine : null,
     "",
-    letter.excerpt ? letter.excerpt : null,
-    letter.excerpt ? "" : null,
+    letter.quote || letter.excerpt || null,
+    letter.quote || letter.excerpt ? "" : null,
     letter.figure ? `${letter.figure.alt}: ${letter.figure.href}` : null,
     letter.figure ? "" : null,
-    `Read it: ${letter.url}`,
+    `Onward: ${letter.url}`,
   ].filter((l) => l !== null);
   return houseEmailText({ bodyLines, footerNote: LETTER_FOOTER_NOTE, unsubscribeUrl });
 }
