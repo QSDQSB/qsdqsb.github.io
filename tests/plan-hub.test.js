@@ -600,7 +600,9 @@ test('a daily branch that carried an older master starts again from GitHub\'s, k
     const inbox = git(dir, 'show', 'hub/daily:_plan/findings/inbox.md');
     assert.match(inbox, /F001 · a place · kept across the restart/);
     assert.match(inbox, /F002 · a place · the next day/);
-    assert.match(finish.stdout, /Push: hub\/daily pushed \(started again from origin\/master\)\./);
+    // A plain push or a replacing one: on a fast machine the replayed commit is made in the same second
+    // as the original, so git gives it the same id and the push is an ordinary one (GitHub, 2026-10-03).
+    assert.match(finish.stdout, /Push: hub\/daily pushed( \(started again from origin\/master\))?\./);
     assert.strictEqual(git(remote, 'rev-parse', 'hub/daily'), git(dir, 'rev-parse', 'hub/daily'), 'and it is pushed again');
   });
 });
