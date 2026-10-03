@@ -174,6 +174,8 @@ const figureRow = (f) => `<tr>
  * @param {string} letter.excerpt    One-paragraph description (plain text)
  * @param {string} letter.url        Absolute URL of the piece
  * @param {string} letter.dateLine   e.g. "August 2026"
+ * @param {string} [letter.kicker]   What kind of thing has come, small above the title: "Fresh ink
+ *                                   from QSD" for a post, "New prints from QSD" for a voyage
  * @param {string|string[]} [letter.quote]  Lines from the piece itself, a paragraph each, set in
  *                                   the excerpt's place (upright: a Chinese line has no italic of
  *                                   its own); [words](https://…) is a link, as in the post
@@ -201,8 +203,15 @@ export function renderLetterHtml(letter, unsubscribeUrl) {
   const dateLine = escapeHtml(letter.dateLine || "");
   const quote = paragraphs(letter.quote);
 
-  const contentRows = `          <tr>
-            <td align="center" style="padding:34px 8px 6px;font-family:${SERIF};font-size:30px;line-height:1.25;color:${INK};">
+  const kicker = escapeHtml(letter.kicker || "");
+
+  const contentRows = `          ${kicker ? `<tr>
+            <td align="center" style="padding:34px 8px 0;font-family:${SANS};font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${MUTE};">
+              ${kicker}
+            </td>
+          </tr>` : ""}
+          <tr>
+            <td align="center" style="padding:${kicker ? 12 : 34}px 8px 6px;font-family:${SERIF};font-size:30px;line-height:1.25;color:${INK};">
               ${title}
             </td>
           </tr>
@@ -242,6 +251,7 @@ export function renderLetterHtml(letter, unsubscribeUrl) {
 
 export function renderLetterText(letter, unsubscribeUrl) {
   const bodyLines = [
+    letter.kicker ? letter.kicker.toUpperCase() : null,
     letter.title,
     letter.dateLine ? letter.dateLine : null,
     "",

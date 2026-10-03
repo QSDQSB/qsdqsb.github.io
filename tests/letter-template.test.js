@@ -86,3 +86,12 @@ test('a quote of two paragraphs keeps its links, escapes its words and says it i
   const text = renderLetterText({ ...LETTER, quote }, UNSUB);
   assert.ok(text.includes('Palette (https://qsdqsb.com/palette/) 和 Reverie (https://qsdqsb.com/reverie/)'), 'the text letter spells the links out');
 });
+
+test('a letter says what kind of thing has come, small above its title', async () => {
+  const { renderLetterHtml, renderLetterText } = await import('../scripts/letter-template.mjs');
+  const html = renderLetterHtml({ ...LETTER, kicker: 'Fresh ink from QSD' }, UNSUB);
+  const body = html.indexOf('<body');
+  assert.ok(html.indexOf('Fresh ink from QSD') < html.indexOf('A Letter of', body), 'above the title');
+  assert.ok(renderLetterText({ ...LETTER, kicker: 'Fresh ink from QSD' }, UNSUB).includes('FRESH INK FROM QSD\nA Letter of'));
+  assert.ok(!renderLetterHtml(LETTER, UNSUB).includes('letter-spacing:3px;text-transform:uppercase;color:#8a8d8f'), 'none unless given');
+});
