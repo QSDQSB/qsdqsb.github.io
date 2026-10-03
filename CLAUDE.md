@@ -205,16 +205,18 @@ Mechanical checks, all scoped to **changes vs `HEAD`** — never the existing ba
 | `check-house-style.py` | `check:house-style` | Generic-AI register in prose and code |
 | `check-js-sync.py` | `check:js-sync` | `main.min.js` shipping stale |
 | `check-important-ratchet.py` | `check:important` | Any `!important` growth — the stylesheet uses none |
+| `check-vocabulary-ratchet.py` | `check:vocabulary` | A new literal radius, curve, blur, hand-made focus ring or z-index, or a curve that overshoots: counts against HEAD that may only fall (0002's guard) |
 | `check-responsive-policy.sh` | `check:responsive-policy` | Raw breakpoints outside `_responsive-policy.scss` |
 | `check-seo-descriptions.py` | `check:seo` | Pages with no real meta description |
 | `check-mobile-overflow.mjs` | `check:mobile-overflow` | A page wider than an iPhone in Safari's engine (WebKit at 390 and 320 px) — Chromium, and so the pixel diff, forgives what Safari does not. Needs a served site and `npx playwright install webkit` |
 | `check-new-components.sh` | — | A new component family styled in a page's partial instead of reusing `_components.scss` (a nudge, never a failure) |
 | `check-journeys.mjs` | `check:journeys` | A reader's route that no longer works: a print that does not open, a search that finds nothing, a Back that leaves the page. Walks the built site in Chromium |
+| `check-served-files.mjs` | `check:served` | A file at the repository's root that the build serves and no reader is meant to open (`CLAUDE.md` was live until 2026-10-02): every root entry is named in `exclude:` or meant for readers. Reads the built site |
 | `check-plan.mjs` | `check:plan` | A plan that has stopped being true: a stage off the roadmap, a dead link, a feature naming a file that is gone, a change readers get with no changelog line |
 | `essay-font.py --check` | `check:essay-font` | A Chinese character in an essay (`body_class: essay`) that the shipped subset of Noto Serif SC lacks: it would show in the device's sans among the Song. `npm run fonts:essay` cuts the subset again |
-| `gate.sh` | `gate`, `gate:full` | Everything above in one pass with one verdict. `--full` adds the seeded build, pixel diff, motion audit, journeys and iPhone overflow. CI runs the fast gate on every push (`.github/workflows/gate.yml`) |
+| `gate.sh` | `gate`, `gate:full` | Everything above in one pass with one verdict. `--full` adds the seeded build, pixel diff, motion audit, journeys, the served-files check and iPhone overflow. CI runs the fast gate on every push (`.github/workflows/gate.yml`) |
 
-**Hooks.** SessionStart (`session-start-plan.sh`) prints the plan's state. PostToolUse (`post-tool-edit-nudges.sh`) runs whichever checks match the edited file and prints findings inline, non-blocking. Stop (`stop-variables-check.sh`, `stop-house-guards.sh`) exits 2 on violations introduced this session.
+**Hooks.** SessionStart (`session-start-plan.sh`) prints the plan's state. PostToolUse (`post-tool-edit-nudges.sh`) runs whichever checks match the edited file and prints findings inline, non-blocking. Stop (`stop-variables-check.sh`, `stop-house-guards.sh`) exits 2 on violations introduced this session, once: a turn it has already sent back may end, so another session's unfinished work in the same checkout, or an unattended run told to fix nothing, is never held for ever.
 
 ### Skills carry code, not just prose
 

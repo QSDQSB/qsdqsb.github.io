@@ -30,6 +30,11 @@ npm run build:js
 # Incremental (mtime); --only <substring> filters; --force regenerates.
 npm run generate:depth
 
+# Fonts the site carries, cut to what it sets — AUTHORING-TIME, then COMMIT the
+# outputs (font sources stay out of git; each script's head says where from).
+npm run fonts:essay                      # Noto Serif SC for the essays' Chinese
+npm run fonts:cmu -- --zip cm-unicode.zip  # CMU Serif from CTAN, set to the metrics the site was laid out on
+
 # Tests
 npm test
 ```
@@ -45,7 +50,8 @@ npm run check:important           # !important count vs HEAD (ratchet, the style
 npm run check:frontmatter         # collection contracts; gallery_name must be known to the photo pipeline
 npm run check:gallery             # every gallery_name has a processed manifest; orphans under photos/
 python3 scripts/check-single-use-variables.py --all
-npm run check:journeys            # ten reader routes walked in Chromium against _site/ (or --base <url>)
+npm run check:journeys            # the reader routes walked in Chromium against _site/ (or --base <url>)
+npm run check:served              # nothing at the repository's root is in _site/ that readers are not meant to open
 npm run check:plan                # _plan/ still true: roadmap, links, features, changelog
 ```
 

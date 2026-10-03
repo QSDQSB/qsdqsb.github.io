@@ -4,7 +4,8 @@
   <nav class="pagination">
     {% if page.previous %}
       <a class="pagination--pager pagination--pager--left" href="{{ base_path }}{{ page.previous.url }}">
-        <!-- <span class="label">{{ site.data.ui-text[site.locale].pagination_previous | default: "Previous" }}</span> -->
+        {%- comment -%} Which way the door leads is drawn (an arrow); said here for a reader who cannot see it. {%- endcomment %}
+        <span class="visually-hidden">{{ site.data.ui-text[site.locale].pagination_previous | default: "Previous" }}: </span>
         <span class="title">{{ page.previous.title | markdownify }}</span>
       </a>
     {% else %}
@@ -13,7 +14,7 @@
     {% endif %}
     {% if page.next %}
       <a class="pagination--pager pagination--pager--right" href="{{ base_path }}{{ page.next.url }}">
-        <!-- <span class="label">{{ site.data.ui-text[site.locale].pagination_next | default: "Next" }}</span> -->
+        <span class="visually-hidden">{{ site.data.ui-text[site.locale].pagination_next | default: "Next" }}: </span>
         <span class="title">{{ page.next.title | markdownify }}</span>
       </a>
     {% else %}

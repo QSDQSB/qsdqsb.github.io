@@ -259,7 +259,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     <button type="button" class="chip" data-to="doc-features">${state.features.length} features · ${state.features.filter((f) => f.journeys.length).length} walked by a journey</button>
     <button type="button" class="chip" data-to="h-dec">${state.decisions.length} decisions</button>
   </nav>
-  <p class="heard" role="status"><span id="heard-text"></span> <button type="button" class="tell" id="tell" hidden>Tell Claude</button></p>
+  <p class="heard" role="status"><span id="heard-text"></span> <button type="button" class="tell" id="tell" hidden>I've decided: tell Claude</button></p>
 
   <section aria-labelledby="h-now">
     <p class="label">Now</p>
@@ -396,12 +396,12 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
   }
   // Telling Claude. A tap is stored with this page at once, but nothing wakes a session by itself.
   // The page can: it leaves a comment addressed to Claude, which reaches any session watching the
-  // page. The send is made inside the tap itself (the runtime refuses one made on a timer), and no
-  // more than once in twenty seconds: later taps wait for the next tap after that, or for the
-  // "Tell Claude" button. Ids and letters only, never the words of a note (the session reads those
-  // from the store). With no session watching, it says so: the daily run, or the next session,
-  // records the answers.
-  var comments = null, can = "", toTell = {}, lastTold = 0, off = false, THREAD = LS + "-thread", APART = 20000;
+  // page. It does so when the owner says they have decided (the owner, 2026-10-03: "There should be
+  // a button to indicate I have made the decisions"), not at every tap: one message for a sitting,
+  // with what changed and what is still open. Ids and letters only, never the words of a note (the
+  // session reads those from the store). With no session watching, it says so: the daily run, or
+  // the next session, records the answers.
+  var comments = null, can = "", toTell = {}, off = false, THREAD = LS + "-thread";
   var tellBtn = document.getElementById("tell"), heard = function (t) { document.getElementById("heard-text").textContent = t; };
   var KEPT = "Your taps are kept with this page. A session records them when it next reads the page, and so does the daily run.";
   var waiting = function () { return Object.keys(toTell).length; };
@@ -409,24 +409,29 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     if (!comments || off) { tellBtn.hidden = true; if (!off) heard(KEPT); return; }
     comments.canSendToClaude().then(function (s) {
       can = s;
-      heard(s === "available" ? (waiting() ? "Not told yet: " + waiting() + " change" + (waiting() === 1 ? "" : "s") + " since Claude was last told." : "A Claude session is listening: it is told when you tap, and replies in this page's comments.")
+      heard(s === "available" ? (waiting() ? waiting() + " change" + (waiting() === 1 ? "" : "s") + " not yet told. When you have decided, press the button." : "A Claude session is listening. Tap your answers, then press the button when you have decided.")
         : s === "no_session" ? "No Claude session is listening just now. " + KEPT : KEPT);
-      tellBtn.hidden = !(s === "available" && waiting());
+      tellBtn.hidden = s !== "available";
     }, function () { tellBtn.hidden = true; heard(KEPT); });
   }
   function tellNow() {
-    var ids = Object.keys(toTell); if (!comments || off || !ids.length) return;
-    var text = "Answers changed on the command centre: " + ids.map(function (id) { return id + ": " + toTell[id]; }).join("; ") + ". Please read this page's store and record them in the plan.";
+    var ids = Object.keys(toTell); if (!comments || off) return;
+    var open = [].filter.call(document.querySelectorAll(".call"), function (c) { return c.dataset.answered !== "true"; }).map(function (c) { return c.id; });
+    var text = "The owner has decided. " + (ids.length ? "Changed since Claude was last told: " + ids.map(function (id) { return id + ": " + toTell[id]; }).join("; ") + ". " : "Nothing changed since Claude was last told. ")
+      + (open.length ? "Still unanswered: " + open.join(", ") + ". " : "Every call on the page has an answer. ")
+      + "Please read this page's store, record the answers in the plan, and carry on with the answered work.";
     // An anchor is asked for, then handed on: the runtime takes plain data, not a promise of it.
     var fresh = function () { return comments.anchorFor(document.getElementById("h-queue")).then(function (a) { return comments.sendToClaude({ anchor: a, text: text }); }); };
     var tid = null; try { tid = localStorage.getItem(THREAD); } catch (e) {}
     var sent = tid ? comments.sendToClaude({ threadId: tid, text: text }).catch(function (e) { if (e && e.code === "not_found") return fresh(); throw e; }) : fresh();
-    lastTold = Date.now(); toTell = {}; tellBtn.hidden = true;
+    toTell = {}; tellBtn.disabled = true;
     sent.then(function (r) {
       try { if (r && r.threadId) localStorage.setItem(THREAD, r.threadId); } catch (e) {}
+      tellBtn.disabled = false;
       heard("Claude was told at " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + ". Its reply appears in this page's comments.");
     }, function (e) {
       var c = e && e.code;
+      tellBtn.disabled = false;
       ids.forEach(function (id) { if (!(id in toTell)) toTell[id] = "changed"; });
       if (c === "forbidden" || c === "not_granted" || c === "capability_disabled" || c === "capability_removed") {
         // Permanent for this view: the button goes, and the page says why.
@@ -434,20 +439,19 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
         heard("Telling Claude from this page is switched off here. " + KEPT);
         return;
       }
-      lastTold = 0; tellBtn.hidden = false;
-      heard(c === "consent_required" ? "Not told yet: allow this page to comment as you, then press Tell Claude."
-        : c === "claude_unavailable" ? "Claude could not be told just now (no session was listening, or the tap was too long ago). Press Tell Claude, or leave it: " + KEPT
-        : c === "rate_limited" ? "Told too often just now. Press Tell Claude in a moment."
+      tellBtn.hidden = false;
+      heard(c === "consent_required" ? "Not told yet: allow this page to comment as you, then press the button again."
+        : c === "claude_unavailable" ? "Claude could not be told just now (no session was listening). Press the button again later, or leave it: " + KEPT
+        : c === "rate_limited" ? "Told too often just now. Press the button again in a moment."
         : "Claude could not be told. " + KEPT);
     });
   }
-  // Called inside a tap or a typed change. Sends at once if Claude was not told in the last twenty
-  // seconds; otherwise the change waits, and the button says so.
+  // Called inside a tap or a typed change: the change waits for the button, and the line beside it
+  // counts what is waiting.
   function queueTell(id, value) {
     toTell[id] = value;
     if (!comments || off) return;
-    // Whether a session is listening was asked when the page opened and after each tap; with none, nothing is sent.
-    if (can === "available" && Date.now() - lastTold > APART) tellNow(); else listening();
+    listening();
   }
   tellBtn.addEventListener("click", function () { tellNow(); });
   if (window.claude && window.claude.use) window.claude.use("comments").then(function (ns) { comments = ns; listening(); }, function () { heard(KEPT); }); else heard(KEPT);

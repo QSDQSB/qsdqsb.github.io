@@ -1,3 +1,7 @@
-<script src="{{ '/assets/js/lunr/lunr.min.js' | relative_url }}" defer></script>
-<script src="{{ '/assets/js/lunr/lunr-store.js' | relative_url }}" defer></script>
-<script src="{{ '/assets/js/lunr/lunr-en.js' | relative_url }}" defer></script>
+{%- comment -%}
+  Search's own scripts: lunr, the whole-site store, and the results' renderer, in the order they
+  run. Not loaded with the page: assets/js/_main.js fetches them when the panel is first opened
+  (or the reader's pointer first comes to its button), since most readers never open it.
+  data-wait: what the results say until they have arrived.
+{%- endcomment -%}
+<script type="application/json" id="search-scripts" data-wait="{{ site.data.ui-text[site.locale].search_indexing | default: 'Preparing search…' | escape }}">[{{ '/assets/js/lunr/lunr.min.js' | relative_url | jsonify }}, {{ '/assets/js/lunr/lunr-store.js' | relative_url | jsonify }}, {{ '/assets/js/lunr/lunr-en.js' | relative_url | jsonify }}]</script>

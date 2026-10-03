@@ -15,22 +15,23 @@
    ========================================================================== */
 
 // The inks, the hairline and the sun's gold: the book's, and a colour figure's in a post's column (_colour.scss),
-// where the book's pieces stand outside a book.
+// where the book's pieces stand outside a book. The inks are the site's (_tokens.scss); these names
+// are their aliases until every use has moved to the plain ones.
 @mixin photobook-inks {
-  --photobook-ink: #{$lighter-gray};
-  --photobook-ink-2: #{$light-gray};
-  --photobook-ink-3: #8b9296;
-  --photobook-line: #{$darker-gray};
+  --photobook-ink: var(--ink);
+  --photobook-ink-2: var(--ink-2);
+  --photobook-ink-3: var(--ink-3);
+  --photobook-line: var(--line);
   --photobook-gold: rgba(229, 207, 169, 0.85);
 }
 
 .photobook {
   @include photobook-inks;
   --photobook-night: #7f9cc0;
-  --photobook-glass: rgba(10, 10, 12, 0.44);
-  --photobook-glass-edge: rgba(255, 255, 255, 0.1);
-  --photobook-button: rgba(255, 255, 255, 0.07);
-  --photobook-button-hover: rgba(255, 255, 255, 0.16);
+  --photobook-glass: var(--glass);
+  --photobook-glass-edge: var(--glass-edge);
+  --photobook-button: var(--control);
+  --photobook-button-hover: var(--control-hover);
   --photobook-gutter: clamp(1rem, 3vw, 2.4rem);
   --photobook-gap: clamp(6px, 0.7vw, 12px);
   background: $background-color;
@@ -1105,6 +1106,17 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 
 .photobook-lightbox:is(.is-bare, .is-zoomed) .photobook-lightbox__mount { opacity: 0; }
 
+// A frame's placeholder, held on the mount while its print is on a slow way in (lightbox.js).
+.photobook-lightbox__held {
+  position: absolute;
+  inset: 0;
+  background: center / cover no-repeat;
+  opacity: 0;
+  transition: opacity var(--xf, 0.55s) $cubic-bezier-standard;
+
+  &.is-on { opacity: 1; }
+}
+
 // A painted frame (away from the book: a colour, in Reverie): the print's own box, filled by the page.
 .photobook-lightbox__painted {
   position: absolute;
@@ -1558,12 +1570,12 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 .photobook-specs__sun .photobook-sun__glyph { width: 1.375em; height: 1.1em; color: var(--photobook-ink-3); }
 
 .photobook-weather__glyph {
-  width: calc(var(--ink, 1.25) * 1.1em); // the box is cut to the mark's ink (specs.js)
+  width: calc(var(--glyph-w, 1.25) * 1.1em); // the box is cut to the mark's ink (specs.js)
   height: 1.1em;
 
   // In the specs the mark illustrates the word under the temperature, at the label's size; the
   // temperature stays a numeral like the figures above it. (The sun keeps its diagram by the angle.)
-  .photobook-specs__weather span & { width: calc(var(--ink, 1.25) * 1.7em); height: 1.7em; margin-right: 0.45em; vertical-align: -0.55em; }
+  .photobook-specs__weather span & { width: calc(var(--glyph-w, 1.25) * 1.7em); height: 1.7em; margin-right: 0.45em; vertical-align: -0.55em; }
   .photobook-specs__weather span & .w-ink { stroke-width: 1.3; }
   flex: none;
   overflow: visible;

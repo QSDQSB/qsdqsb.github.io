@@ -29,6 +29,9 @@ const SRC = path.join(ROOT, 'images', 'cover');
 const OUT = path.join(SRC, 'sized');
 const DATA = path.join(ROOT, '_data', 'cover_sizes.json');
 const WIDTHS = [1280, 1920, 2880]; // 1280: a card on a phone, drawn at 2x
+// A hero cut by hand that lives outside images/cover/ and is wanted smaller: the landing page's
+// (_layouts/home.html), painted under a blur, so 1920 px serves every screen. By its path under images/.
+const ALSO = ['QSD_Night_5v2.jpg'];
 const force = process.argv.includes('--force');
 
 const fresh = (out, src) => !force && fs.existsSync(out) && fs.statSync(out).mtimeMs >= fs.statSync(src).mtimeMs;
@@ -40,8 +43,11 @@ async function main() {
   const covers = fs.readdirSync(SRC, { recursive: true }).filter((f) => /\.(jpe?g|png)$/i.test(f) && !f.startsWith(`sized${path.sep}`));
   const map = {};
   let made = 0;
-  for (const f of covers) {
-    const src = path.join(SRC, f), rel = f.split(path.sep).join('/'), stem = rel.replace(/\.[^.]+$/, '');
+  const sources = [
+    ...covers.map((f) => { const rel = f.split(path.sep).join('/'); return { src: path.join(SRC, f), key: `cover/${rel}`, stem: rel.replace(/\.[^.]+$/, '') }; }),
+    ...ALSO.filter((f) => fs.existsSync(path.join(ROOT, 'images', f))).map((f) => ({ src: path.join(ROOT, 'images', f), key: f, stem: f.replace(/\.[^.]+$/, '') })),
+  ];
+  for (const { src, key, stem } of sources) {
     const { width } = await sharp(src).metadata();
     const smaller = WIDTHS.filter((w) => w < width);
     for (const w of smaller) {
@@ -51,7 +57,7 @@ async function main() {
       await sharp(src).resize({ width: w }).webp({ quality: 80 }).toFile(out);
       made++;
     }
-    map[`cover/${rel}`] = [...smaller.map((w) => ({ w, src: `/images/cover/sized/${stem}-${w}.webp` })), { w: width, src: `/images/cover/${rel}` }];
+    map[key] = [...smaller.map((w) => ({ w, src: `/images/cover/sized/${stem}-${w}.webp` })), { w: width, src: `/images/${key}` }];
   }
   // Renditions of covers no longer in images/cover/.
   const live = new Set(Object.values(map).flat().map((s) => path.basename(s.src)));

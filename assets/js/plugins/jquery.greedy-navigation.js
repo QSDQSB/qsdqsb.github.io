@@ -94,12 +94,14 @@
     var menuOpen = isOverflowMenuOpen();
     nav.classList.toggle("greedy-nav--menu-open", menuOpen);
     toggle.classList.toggle("close", menuOpen);
+    toggle.setAttribute("aria-expanded", menuOpen ? "true" : "false");
   }
 
   function closeOverflowMenu() {
     var wasOpen = isOverflowMenuOpen() || nav.classList.contains("greedy-nav--menu-open") || toggle.classList.contains("close");
     hiddenLinks.classList.add("hidden");
     toggle.classList.remove("close");
+    toggle.setAttribute("aria-expanded", "false");
     nav.classList.remove("greedy-nav--menu-open");
     if (wasOpen) {
       emitOverflowState("menu-close");

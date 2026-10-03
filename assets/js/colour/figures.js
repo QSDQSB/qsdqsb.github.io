@@ -133,11 +133,11 @@ const draw = {
   async frame(el) {
     const held = el.querySelector('script[type="application/json"]');
     if (!held) throw new Error('no frame');
-    const p = JSON.parse(held.textContent), n = Number(held.dataset.n) || 1, { voyage, book, title } = el.dataset;
+    const p = JSON.parse(held.textContent), n = Number(held.dataset.n) || 1, ph = held.dataset.ph, { voyage, book, title } = el.dataset;
     // The print as a palette card sets it (whole, over its placeholder), at the column's width.
     const sizes = p.sizes.filter((s) => s <= 2560), last = sizes[sizes.length - 1] || 960;
     el.innerHTML = `<article class="colour-plate frame-plate">
-      <a class="palette-card__print" href="${book}#${encodeURIComponent(p.slug)}" aria-label="${esc(p.name || p.frame)}, in its book"><span class="palette-card__ph" style="--r:${p.ratio || 1.5}${p.ph ? `;background-image:url(${p.ph})` : ''}"><img src="${p.url}/${last}.webp" srcset="${sizes.map((s) => `${p.url}/${s}.webp ${s}w`).join(', ')}" sizes="(min-width: 900px) 900px, 100vw" alt="" loading="lazy" decoding="async"></span></a>
+      <a class="palette-card__print" href="${book}#${encodeURIComponent(p.slug)}" aria-label="${esc(p.name || p.frame)}, in its book"><span class="palette-card__ph" style="--r:${p.ratio || 1.5}${ph ? `;background-image:url(${ph})` : ''}"><img src="${p.url}/${last}.webp" srcset="${sizes.map((s) => `${p.url}/${s}.webp ${s}w`).join(', ')}" sizes="(min-width: 900px) 900px, 100vw" alt="" loading="lazy" decoding="async"></span></a>
       <div class="photobook-specs__inner">${specsHTML(p, n, { base: PALETTE, gallery: voyage, title: `QSD's Palette for ${title}` })}</div>
     </article>`;
   },

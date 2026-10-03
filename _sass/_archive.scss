@@ -193,10 +193,6 @@
       opacity: 1;
       transform: translateY(0px);
     }
-    .tags .tag {
-      background: var(--color);
-      color: white;
-    }
     .date {
       opacity: 1;
     }
@@ -285,22 +281,6 @@
       width: 100%;
     }
   }
-  .tags {
-    transition: inherit;
-    display: grid;
-    grid-template-rows: min-content;
-
-    .tag {
-      font-size: $type-code-size;
-      font-family: $tag-font-family;
-      background: rgba(20, 2, 2, 0.5);
-      border-radius: 0.2rem;
-      padding: 0 0.5rem;
-      margin-right: 0.5rem;
-      line-height: 1;
-  }
-  }
-
   .date {
     transition: inherit;
     font-family: $tag-font-family;

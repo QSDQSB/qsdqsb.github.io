@@ -7,11 +7,7 @@
    is added here, not kept in its page.
    ========================================================================== */
 
-// The site's two curves, for scripts too (the palette page reads them), so one vocabulary of motion.
-:root {
-  --ease-standard: #{$cubic-bezier-standard};
-  --ease-smooth: #{$cubic-bezier-smooth};
-}
+// The site's inks, glass and two curves are custom properties on :root: _tokens.scss.
 
 /* ── words ───────────────────────────────────────────────────────────── */
 
@@ -87,15 +83,15 @@ qsd-cat::part(say) {
 
 /* ── controls ────────────────────────────────────────────────────────── */
 
-// The way back: a glass pill, a chevron and the voyage's name. The lightbox's, and the palette
-// page's (_colour.scss), so going back looks the same wherever one is.
+// The way back: glass, a chevron and the voyage's name, in a control's corners of 10 px (0009, pick 2;
+// Q17). The lightbox's, and the palette page's (_colour.scss), so going back looks the same wherever one is.
 @mixin pill {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.36rem 0.8rem 0.36rem 0.6rem;
   border: 1px solid var(--photobook-glass-edge);
-  border-radius: 999px;
+  border-radius: $border-radius;
   background: var(--photobook-glass);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   backdrop-filter: blur(18px) saturate(140%);
@@ -114,9 +110,9 @@ qsd-cat::part(say) {
   outline-offset: 2px;
 }
 
-// A quiet control: a mark in the label's ink, lit under the pointer; no ring, no fill.
 // A viewer's round tool, top right of a full-screen photograph (slideshow, specs, picture only, the
-// way to its book): a glass disc with a line mark; lit when on. The lightbox's, and Drift's.
+// way to its book): a square of glass, a control's corners of 10 px (0009, pick 2; Q17), with a line
+// mark; lit when on. The lightbox's, and Drift's.
 @mixin round-tool {
   width: 40px;
   height: 40px;
@@ -124,7 +120,7 @@ qsd-cat::part(say) {
   place-items: center;
   padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 50%;
+  border-radius: $border-radius;
   background: var(--photobook-button);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
@@ -155,6 +151,7 @@ qsd-cat::part(say) {
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1800' height='600' viewBox='0 0 1800 600'%3E%3Cfilter id='r' filterUnits='userSpaceOnUse' x='-40' y='-40' width='1880' height='680'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' seed='7' result='n'/%3E%3CfeDiffuseLighting in='n' surfaceScale='2.6' diffuseConstant='1.1' lighting-color='%23fff'%3E%3CfeDistantLight azimuth='225' elevation='38'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect x='-40' y='-40' width='1880' height='680' filter='url(%23r)'/%3E%3C/svg%3E") center / cover no-repeat;
 }
 
+// A quiet control: a mark in the label's ink, lit under the pointer; no ring, no fill.
 @mixin icon-button-quiet($size: 2rem) {
   display: grid;
   place-items: center;
@@ -176,7 +173,92 @@ qsd-cat::part(say) {
   &:focus-visible { color: var(--photobook-ink); background: rgba(255, 255, 255, 0.06); text-decoration: none; }
 }
 
+// A tag (decisions/0009, "A tag"): ink, one look for every tag, no fill and no colour of its own,
+// even under the pointer, where it only brightens (pair 4; pick 10). Its corners are a control's
+// and its timing the fast step (the lead's: the pick drew it square, at 0.18 s).
+@mixin tag-lit { color: var(--ink); border-color: var(--ink-2); text-decoration: none; }
+
+@mixin tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0.32em 0.7em;
+  border: 1px solid var(--ink-3);
+  border-radius: $border-radius;
+  background: none;
+  color: var(--ink-2);
+  font: 500 0.82rem/1.2 $barlow-font-family;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: color $duration-fast $cubic-bezier-standard, border-color $duration-fast $cubic-bezier-standard;
+
+  &:hover { @include tag-lit; }
+  &:focus-visible { @include tag-lit; @include brass-focus; }
+}
+
+// A text button (decisions/0002, 0009 pick 2): a rounded rectangle of 10 px, never a pill. Solid
+// carries a fill of glass-white; quiet has none until the pointer brings one. What it does under the
+// pointer, pressed and unavailable is the lead's.
+@mixin text-button-lit { background: var(--control-hover); color: var(--ink); text-decoration: none; }
+@mixin text-button-pressed { background: rgba(255, 255, 255, 0.22); }
+@mixin text-button-unavailable { opacity: 0.45; cursor: default; }
+
+@mixin text-button($quiet: false) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  min-height: 2.5rem;
+  padding: 0.55em 1.1em;
+  border: 1px solid if($quiet, transparent, var(--glass-edge));
+  border-radius: $border-radius;
+  background: if($quiet, transparent, var(--control));
+  color: if($quiet, var(--ink-2), var(--ink));
+  font: 500 0.9rem/1.2 $barlow-font-family;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color $duration-base $cubic-bezier-standard, color $duration-base $cubic-bezier-standard, border-color $duration-base $cubic-bezier-standard;
+
+  &:hover { @include text-button-lit; }
+  &:focus-visible { @include brass-focus; }
+  &:active { @include text-button-pressed; }
+  &:disabled,
+  &[aria-disabled="true"] { @include text-button-unavailable; background: if($quiet, transparent, var(--control)); }
+}
+
 /* ── surfaces ────────────────────────────────────────────────────────── */
+
+// A card (decisions/0009, "A card"): corners of 10 px, or 18 px where the card is itself the scene;
+// at rest a short shadow and no border; under the pointer and under keyboard focus it lifts as one
+// object in 0.3 s on the standard curve (the photograph in it never moves). The lift and its shadow
+// are the lead's values inside the owner's range. Still for a reader who asked: no transition and
+// no transform, the shadow alone answers. Pass the photograph's own rules in the content.
+@mixin card-lifted {
+  transform: translateY(-4px) scale(1.018);
+  box-shadow: $shadow-lifted;
+}
+
+@mixin card($large: false) {
+  display: block;
+  overflow: hidden;
+  border-radius: if($large, $radius-large, $border-radius);
+  box-shadow: $shadow-rest;
+  transition: transform $duration-base $cubic-bezier-standard, box-shadow $duration-base $cubic-bezier-standard;
+
+  &:hover,
+  &:focus-visible { @include card-lifted; }
+  &:focus-visible { @include brass-focus; }
+
+  @include responsive-reduced-motion {
+    transition: none;
+    &:hover,
+    &:focus-visible { transform: none; }
+  }
+  html.motion-off & { transition: none; }
+  html.motion-off &:hover,
+  html.motion-off &:focus-visible { transform: none; }
+}
 
 // The glass both controls sit in, darkened behind so their marks keep contrast over a white sky.
 @mixin glass-bar {
@@ -185,6 +267,35 @@ qsd-cat::part(say) {
   backdrop-filter: blur(18px) saturate(140%) brightness(0.62);
   border: 1px solid var(--photobook-glass-edge);
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.16), 0 5px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* ── marks ───────────────────────────────────────────────────────────── */
+
+// The ornament (decisions/0009, picks 8 and 9): a lozenge 14 px across, outlined at one pixel with a
+// smaller one filled inside, on a one-pixel rule at about half strength, 12 px clear of it, in the
+// site's brass. It stands only between passages of prose. Drawn on an <hr>, so the markup an author
+// writes (---) does not change.
+@mixin ornament {
+  position: relative;
+  height: 14px;
+  margin: 2.4em auto;
+  border: 0;
+  background:
+    linear-gradient(rgba($intriguing-word-color, 0.5), rgba($intriguing-word-color, 0.5)) left center / calc(50% - 19px) 1px no-repeat,
+    linear-gradient(rgba($intriguing-word-color, 0.5), rgba($intriguing-word-color, 0.5)) right center / calc(50% - 19px) 1px no-repeat;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  // 9.9 px a side is 14 px corner to corner.
+  &::before { width: 9.9px; height: 9.9px; border: 1px solid $intriguing-word-color; box-sizing: border-box; }
+  &::after { width: 3.5px; height: 3.5px; background: $intriguing-word-color; }
 }
 
 // A layer that crossfades (assets/js/photobook/wash.js): it settles in from a slightly larger scale

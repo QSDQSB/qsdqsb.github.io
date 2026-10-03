@@ -72,6 +72,15 @@ const JOURNEYS = [
     const doors = await page.locator('.masthead a[href^="/"], .home__doors a[href^="/"]').evaluateAll((as) => [...new Set(as.map((a) => a.getAttribute('href')))]);
     must(doors.length >= 4, `only ${doors.length} ways on from Home`);
     for (const href of doors) must(await ok(href), `${href} does not answer`);
+    // The hero pays for one door plate; the others are painted when their panel shows.
+    const waiting = () => page.locator('.door-shot[data-plate]').count();
+    must(await waiting() >= 3, 'every door plate was painted with the page, below a hero that shows none of them');
+    await page.evaluate(() => document.getElementById('home-enter').scrollIntoView({ behavior: 'instant' }));
+    await page.waitForFunction(() => !document.querySelector('.door-shot[data-plate]'), null, { timeout: 4000 }).catch(() => {});
+    must(await waiting() === 0, 'the door plates were not painted when their panel came into view');
+    // Three panels, each a screen: nothing below the last for the scroll to snap back from.
+    const tail = await page.evaluate(() => document.documentElement.scrollHeight - document.querySelectorAll('.home__panel').length * innerHeight);
+    must(Math.abs(tail) <= 2, `Home runs ${tail} px past its last panel`);
   } },
 
   { id: 'hero-cat', name: "Home's cat keeps its size, moves, answers the pointer, and holds still when motion is off", async run({ page, go }) {
@@ -180,6 +189,9 @@ const JOURNEYS = [
     await prints.nth(1).click();
     await page.waitForFunction(() => document.querySelector('.photobook-lightbox')?.open && location.hash.length > 1, null, { timeout: 8000 }).catch(() => {});
     must(await open(), 'clicking a print did not open the lightbox');
+    // Each frame's placeholder is in the page once, on its print: the room still takes its colour from it.
+    must(await page.evaluate(() => !/"ph":/.test(document.getElementById('photobook-data').textContent)), "the lightbox's data carries every placeholder a second time");
+    must(await page.evaluate(() => (document.querySelector('.photobook-lightbox__wash div')?.style.backgroundImage || '').startsWith('url(')), "the lightbox's room did not take the print's placeholder");
     const first = new URL(page.url()).hash;
     must(first.length > 1, 'the open frame has no address');
     await page.keyboard.press('ArrowRight');
@@ -196,6 +208,105 @@ const JOURNEYS = [
     must(await page.evaluate(() => document.activeElement?.classList.contains('photobook-frame__print')), 'focus did not return to a print');
   } },
 
+  { id: 'specs-folded', name: 'Folded away, the specs take no Tab', async run({ page, go }) {
+    await go('/voyage/london/');
+    await page.locator('.photobook-frame__print').first().click();
+    await page.waitForFunction(() => document.querySelector('.photobook-lightbox')?.open, null, { timeout: 8000 }).catch(() => {});
+    must(await page.evaluate(() => document.querySelector('.photobook-lightbox').classList.contains('has-specs')), 'the lightbox opened without its specs: nothing to fold');
+    must(await page.locator('.photobook-specs a[href], .photobook-specs button').count() >= 1, 'the specs hold nothing a Tab could reach: the journey cannot tell');
+    await page.keyboard.press('i');
+    await page.waitForFunction(() => !document.querySelector('.photobook-lightbox').classList.contains('has-specs'), null, { timeout: 3000 }).catch(() => {});
+    await page.waitForTimeout(700);
+    for (let i = 0; i < 14; i++) {
+      await page.keyboard.press('Tab');
+      must(!(await page.evaluate(() => !!document.activeElement?.closest('.photobook-specs'))), 'Tab reached inside the folded specs, where nothing can be seen');
+    }
+  } },
+
+  { id: 'lightbox-slow', name: 'On a slow line each frame stands on its own placeholder, and only a frame that holds fetches its full print', async run({ page, go }) {
+    // The photo host, slowed once `slow` is set: one light print (the first asked for after `gate` is
+    // armed) is held until released, the rest arrive 2.5 s late; `asked` keeps what was asked for.
+    let slow = false, gated = null, release = () => {}, asked = [];
+    await page.route('https://img.qsdqsb.com/**', async (route) => {
+      const url = route.request().url();
+      asked.push(url);
+      if (!slow) return route.continue().catch(() => {});
+      if (gated === 'armed' && /\/960\.webp$/.test(url)) {
+        gated = url;
+        const held = new Promise((r) => { release = r; });
+        const response = await route.fetch().catch(() => null);
+        await held;
+        return response ? route.fulfill({ response }).catch(() => {}) : route.abort().catch(() => {});
+      }
+      await new Promise((r) => setTimeout(r, 2500));
+      return route.continue().catch(() => {});
+    });
+    await go('/voyage/london/');
+    await page.locator('.photobook-frame__print').first().click();
+    await page.waitForFunction(() => document.querySelector('.photobook-lightbox')?.open, null, { timeout: 8000 }).catch(() => {});
+    must(await page.evaluate(() => document.querySelector('.photobook-lightbox')?.open === true), 'clicking a print did not open the lightbox');
+    await page.waitForTimeout(1500);
+    // Six quick steps: the frames passed fetch their light print and no more.
+    asked = [];
+    for (let i = 0; i < 6; i++) { await page.keyboard.press('ArrowRight'); await page.waitForTimeout(70); }
+    await page.waitForTimeout(1500);
+    const full = asked.filter((u) => /\.webp$/.test(u) && !/\/960\.webp$/.test(u));
+    must(full.length <= 4, `six quick steps asked for ${full.length} full prints: the frames passed are being downloaded`);
+    // What stands in the print's place, and whose placeholder it is (each frame's is on its print in the book).
+    const state = () => page.evaluate(() => {
+      const lb = document.querySelector('.photobook-lightbox'), at = Number((lb.querySelector('.photobook-lightbox__live').textContent.match(/, (\d+) of/) || [])[1]) - 1;
+      const own = document.querySelector(`#photobook-book .photobook-frame[data-i="${at}"] .photobook-frame__print`)?.style.backgroundImage || '';
+      const held = [...lb.querySelectorAll('.photobook-lightbox__held.is-on')].map((h) => h.style.backgroundImage);
+      return { at, prints: lb.querySelectorAll('.photobook-lightbox__mat > img.is-on').length, held: held.length, own: held.length === 1 && !!own && held[0] === own };
+    });
+    slow = true;
+    await page.keyboard.press('ArrowRight');             // the frame beside: fetched ahead already, so not slow
+    await page.waitForTimeout(70);
+    gated = 'armed';
+    await page.keyboard.press('ArrowRight');             // frame A, not yet fetched: its light print is held back
+    await page.waitForTimeout(600);
+    const a = await state();
+    must(a.prints === 0, "on a slow line the last frame's print stayed under the new frame's words");
+    must(a.own, "the frame's own placeholder did not stand in its print's place while it loaded");
+    await page.keyboard.press('ArrowRight');             // frame B, and A's print lands just after
+    await page.waitForTimeout(60); release();
+    await page.waitForTimeout(540);
+    const b = await state();
+    must(b.at === a.at + 1, 'the second step did not move on a frame');
+    must(b.prints === 0 && b.own, "a passed frame's print, landing late, left its placeholder under the next frame's words");
+    // Picture only has no mount to stand a placeholder on: the last print stays until the next is in hand.
+    await page.waitForFunction(() => document.querySelectorAll('.photobook-lightbox__mat > img.is-on').length === 1, null, { timeout: 8000 }).catch(() => {});
+    await page.keyboard.press('f');
+    await page.waitForTimeout(300);
+    const before = (await state()).at;
+    await page.keyboard.press('ArrowRight');
+    for (const ms of [300, 300, 300]) {
+      await page.waitForTimeout(ms);
+      const c = await page.evaluate(() => ({ on: document.querySelectorAll('.photobook-lightbox__mat > img.is-on').length, waiting: document.querySelectorAll('.photobook-lightbox__mat > img:not(.is-on)').length }));
+      must((await state()).at === before + 1 && c.waiting >= 1, 'the step in picture only was not a slow one: the journey cannot tell');
+      must(c.on >= 1, 'in picture only a step on a slow line emptied the screen');
+    }
+  } },
+
+  { id: 'lightbox-morph', name: 'A print grows into the lightbox as it opens', async run({ page, go }) {
+    await go('/voyage/london/?motion=on');
+    if (!(await page.evaluate(() => 'startViewTransition' in document))) return;   // a browser with no view transitions simply opens
+    const print = page.locator('.photobook-frame__print').nth(1);
+    await print.scrollIntoViewIfNeeded();
+    await page.waitForFunction(() => { const im = document.querySelectorAll('.photobook-frame__print img')[1]; return im && im.complete && im.naturalWidth > 0; }, null, { timeout: 15000 }).catch(() => {});
+    await page.evaluate(() => {
+      window.__morph = false;
+      const until = performance.now() + 3000;
+      const look = () => { if (document.getAnimations().some((x) => (x.effect?.pseudoElement || '').includes('photobook-print'))) window.__morph = true; else if (performance.now() < until) requestAnimationFrame(look); };
+      requestAnimationFrame(look);
+    });
+    await print.click();
+    await page.waitForFunction(() => window.__morph, null, { timeout: 4000 }).catch(() => {});
+    must(await page.evaluate(() => window.__morph), 'the lightbox opened with a plain crossfade: the print on the mat was not named for the transition');
+    await page.waitForTimeout(900);
+    must(await page.evaluate(() => { const im = document.querySelector('.photobook-lightbox__mat > img.is-on'); return !!im && !im.style.viewTransitionName && !im.style.transition; }), 'the opened print kept its transition name or its stilled fade');
+  } },
+
   { id: 'deeplink', name: 'A frame\'s address opens that frame', async run({ page, go }) {
     await go('/voyage/london/');
     await page.locator('.photobook-frame__print').first().click();
@@ -210,15 +321,71 @@ const JOURNEYS = [
 
   { id: 'search', name: 'Search opens, finds a voyage, and Escape closes it', async run({ page, go }) {
     await go('/year-archive/');
+    // Search's scripts and its store are fetched when it is first opened, not with every page.
+    must(await page.evaluate(() => typeof window.lunr === 'undefined' && typeof window.store === 'undefined'), 'search came with the page: lunr or its store is loaded before the panel is opened');
     await page.locator('.search__toggle').click();
     await page.waitForSelector('.search-content.is--visible', { timeout: 5000 }).catch(() => {});
     must(await page.locator('.search-content.is--visible').count() === 1, 'the search panel did not open');
     await page.locator('#search').fill('prague');
     await page.waitForSelector('#results a[href]', { timeout: 20000 }).catch(() => {});
     must(await page.locator('#results a[href]').count() >= 1, 'searching "prague" found nothing');
+    must(/\d/.test(await page.locator('#results-live').innerText().catch(() => '')), 'the number found is not said to a screen reader');
+    // A result's words are shown as words: no entity left standing (the Voyage index once showed "&lt;!").
+    await page.locator('#search').fill('porto');
+    await page.waitForFunction(() => /porto/i.test(document.getElementById('results')?.innerText || ''), null, { timeout: 20000 }).catch(() => {});
+    const shown = await page.locator('#results').innerText();
+    must(/porto/i.test(shown), 'searching "porto" found nothing');
+    must(!/&(lt|gt|amp|quot|#\d+);/.test(shown), `a result shows an entity as text: ${(shown.match(/.{0,30}&(?:lt|gt|amp|quot|#\d+);.{0,10}/) || [''])[0]}`);
     await page.keyboard.press('Escape');
     await page.waitForSelector('.search-content.is--visible', { state: 'detached', timeout: 3000 }).catch(() => {});
     must(await page.locator('.search-content.is--visible').count() === 0, 'Escape did not close the search panel');
+  } },
+
+  { id: 'search-corners', name: 'With search open, the corner cards take no click', async run({ page, go }) {
+    await go('/voyage/');
+    const corner = await page.evaluate(() => {
+      const a = document.querySelector('a.floating_tarot_card_container[href]:not([data-random-jump])');
+      if (!a) return null;
+      const r = a.getBoundingClientRect(), x = Math.min(innerWidth - 2, Math.max(2, r.left + r.width / 2)), y = Math.min(innerHeight - 2, Math.max(2, r.top + r.height / 2));
+      return { x, y, hit: !!document.elementFromPoint(x, y)?.closest('.floating_tarot_card_container') };
+    });
+    must(corner, 'the Voyage index has no corner card: the journey cannot tell');
+    must(corner.hit, 'the corner card is not where a click would find it: the journey cannot tell');
+    await page.locator('.search__toggle').click();
+    await page.waitForSelector('.search-content.is--visible', { timeout: 5000 }).catch(() => {});
+    must(await page.locator('.search-content.is--visible').count() === 1, 'the search panel did not open');
+    await page.mouse.click(corner.x, corner.y);
+    await page.waitForTimeout(800);
+    must(new URL(page.url()).pathname === '/voyage/', 'a click through the open search panel landed on an unseen corner card');
+  } },
+
+  { id: 'phone-post', phone: true, name: 'On a phone a long title wraps inside the screen, and the subscribe field does not make an iPhone zoom', async run({ page, go }) {
+    await go('/posts/war-declaration-to-boredom/');
+    const title = await page.evaluate(() => { const t = document.querySelector('.page__hero--overlay .page__title'); if (!t) return null; const r = t.getBoundingClientRect(); return { right: r.right, clipped: t.scrollWidth - t.clientWidth, lines: Math.round(r.height / parseFloat(getComputedStyle(t).lineHeight)), over: document.documentElement.scrollWidth - innerWidth, vw: innerWidth }; });
+    must(title, 'the post has no hero title');
+    must(title.lines >= 2, 'the long title is on one line: the journey cannot tell whether it would wrap');
+    must(title.right <= title.vw && title.clipped <= 1, 'the long title runs off the screen');
+    must(title.over <= 0, `the page scrolls sideways by ${title.over} px`);
+    const field = await page.evaluate(() => { const i = document.querySelector('.subscribe-slip__input'); return i ? parseFloat(getComputedStyle(i).fontSize) : null; });
+    must(field !== null, 'the post has no subscribe slip');
+    must(field >= 16, `the subscribe field is ${field} px by touch: under 16 px Safari on an iPhone zooms the page`);
+  } },
+
+  { id: 'subscribe', name: 'Subscribing says so, and keeps the reader\'s focus when the form folds away', async run({ page, go }) {
+    // The list's own address is answered here: a journey never writes to the real list.
+    await page.route('**/api/subscribe', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }));
+    await go('/posts/shihuqiao/');
+    const slip = page.locator('[data-subscribe-slip]').first();
+    await slip.scrollIntoViewIfNeeded();
+    await slip.locator('.subscribe-slip__input').fill('reader@example.com');
+    await page.keyboard.press('Enter');
+    const note = slip.locator('.subscribe-slip__note--ok');
+    await page.waitForFunction(() => { const n = document.querySelector('.subscribe-slip__note--ok'); return n && !n.hidden && n.textContent.trim().length > 0; }, null, { timeout: 5000 }).catch(() => {});
+    must(await note.evaluate((n) => !n.hidden && n.getAttribute('role') === 'status' && n.textContent.trim().length > 0), 'subscribing was not acknowledged in a live region');
+    must(await note.evaluate((n) => document.activeElement === n), 'focus was lost when the form gave way to the note');
+    await page.waitForFunction(() => document.querySelector('[data-subscribe-slip]').classList.contains('is-folded'), null, { timeout: 12000 }).catch(() => {});
+    must(await slip.evaluate((s) => s.classList.contains('is-folded')), 'the slip did not fold after subscribing');
+    must(await page.evaluate(() => !!document.activeElement?.closest('[data-subscribe-slip]')), 'focus was lost when the slip folded');
   } },
 
   { id: 'post', name: 'A post opens from the archive, and its contents list points at real headings', async run({ page, go }) {
@@ -297,6 +464,107 @@ const JOURNEYS = [
     must(await page.evaluate((x) => document.activeElement?.id === x, id), 'focus did not go to the section');
   } },
 
+  { id: 'arrival', name: 'On a long post a jump to the foot leaves no screen without words', async run({ page, go }) {
+    // Words arrive as they come into view (_scroll-animations.scss, "The arrival"): the first four
+    // blocks in turn, 0.12 s apart, each over 0.7 s, so all of a screen is in by 1.06 s.
+    const hidden = () => page.evaluate(() => [...document.querySelectorAll('.page__content .reveal-on-scroll')].filter((el) => {
+      const r = el.getBoundingClientRect();
+      return r.height > 0 && r.bottom > 0 && r.top < innerHeight * 0.9 && parseFloat(getComputedStyle(el).opacity) < 0.99;
+    }).length);
+    // The first screen arrives too, in turn (Q19): its blocks' fade runs, rather than their being drawn shown.
+    await page.addInitScript(() => {
+      window.__arrivals = 0;
+      addEventListener('transitionrun', (e) => { if (e.propertyName === 'opacity' && e.target.classList?.contains('arrives')) window.__arrivals++; }, true);
+    });
+    await go('/posts/leetcode-july-challenge/?motion=on', { early: true });
+    await page.waitForTimeout(1500);
+    const first = await page.evaluate(() => window.__arrivals);
+    must(first >= 1, 'the first screen was drawn shown, not arrived');
+    must(await page.locator('.page__content .reveal-on-scroll.arrives').count() > 10, 'the post\'s blocks do not arrive');
+    // To the end of the post's words (below them the footer fills the screen).
+    const toEnd = () => page.evaluate(() => {
+      const last = [...document.querySelectorAll('.page__content > *')].filter((el) => el.getBoundingClientRect().height > 0).pop();
+      scrollTo({ top: last.getBoundingClientRect().bottom + scrollY - innerHeight * 0.8, behavior: 'instant' });
+    });
+    await toEnd();
+    await page.waitForTimeout(400);
+    const seen = await page.evaluate(() => [...document.querySelectorAll('.page__content .reveal-on-scroll')].some((el) => {
+      const r = el.getBoundingClientRect();
+      return r.bottom > 0 && r.top < innerHeight && parseFloat(getComputedStyle(el).opacity) > 0.2;
+    }));
+    must(seen, 'at the foot of the post nothing has begun to show after 0.4 s');
+    await page.waitForTimeout(900);
+    const left = await hidden();
+    must(left === 0, `${left} block(s) in view are still not at full strength 1.3 s after the jump`);
+    // Stillness: with motion off nothing is ever hidden.
+    await go('/posts/leetcode-july-challenge/');
+    await toEnd();
+    await page.waitForTimeout(100);
+    must(await hidden() === 0, 'with motion off a block in view was hidden');
+  } },
+
+  { id: 'no-flash', name: 'Words are never drawn shown and then made to rise, even on a slow line', async run({ page }) {
+    // On a real line the page paints before its deferred scripts arrive. The head holds the blocks
+    // from the first frame (_includes/head/custom.html), so the arrival is the first thing a reader
+    // sees of them; without the hold they were drawn, then hidden, then made to rise (the flash).
+    const first = () => page.evaluate(() => {
+      const el = [...document.querySelector('.page__content').children].find((x) => x.textContent.trim() && !x.matches('.sidebar__right, script, style'));
+      return parseFloat(getComputedStyle(el).opacity);
+    });
+    // Not `go`: it waits for the deferred scripts, and this looks at the page while it is waiting.
+    const open = (to) => page.goto(base + to, { waitUntil: 'commit' }).then(() => page.waitForSelector('.page__content', { state: 'attached' }));
+    await page.route('**/scroll-animations.js', async (route) => { await new Promise((r) => setTimeout(r, 1500)); await route.continue().catch(() => {}); });
+    await open('/about/?motion=on');
+    await page.waitForTimeout(500);
+    const before = await first();
+    must(before < 0.05, `before the script came, About's first block was drawn at ${before} (it would then be hidden and rise: a flash)`);
+    await page.waitForTimeout(2200);
+    must(await first() > 0.99, "once the script came, About's first block did not arrive");
+    // On a line slower than the hold (the script after four seconds), the words the hold gave up
+    // stay shown when the script comes: they are not hidden again to rise.
+    await page.unroute('**/scroll-animations.js');
+    await page.route('**/scroll-animations.js', async (route) => { await new Promise((r) => setTimeout(r, 5200)); await route.continue().catch(() => {}); });
+    await open('/about/?motion=on');
+    await page.waitForTimeout(4600);
+    must(await first() > 0.99, "with the script late, About's first block was not shown when the hold gave out");
+    let lowest = 1;
+    for (let i = 0; i < 20; i++) { lowest = Math.min(lowest, await first()); await page.waitForTimeout(100); }
+    must(lowest > 0.99, `with the script late, About's first block was shown, then dropped to ${lowest.toFixed(2)} when the script came (the flash, later)`);
+    // And should the script never come, the words show of themselves.
+    await page.unroute('**/scroll-animations.js');
+    await page.route('**/scroll-animations.js', (route) => route.abort());
+    await open('/about/?motion=on');
+    await page.waitForTimeout(5000);
+    must(await first() > 0.99, 'with the script blocked, About stayed blank after five seconds');
+  } },
+
+  { id: 'language-arrival', name: 'A switch of language shows the other text at once, in turn', async run({ page, go }) {
+    // The panel just shown arrives as a screen does: its first block at once, not after the blocks
+    // already on the screen have taken the turns.
+    await go('/posts/defined-by-archive/?motion=on');
+    await page.evaluate(() => scrollTo({ top: innerHeight * 1.5, behavior: 'instant' }));
+    // A reader reads before switching: past the four seconds the head's hold lasts, as most do.
+    await page.waitForTimeout(4500);
+    const other = page.locator('.bilingual-switch__button[aria-pressed="false"]').first();
+    must(await other.count() === 1, 'the post has no other language to switch to');
+    // At the click itself the panel's blocks in view are given their turns, the first with none to wait.
+    // (The turns are the arrival's to decide; when the fade then starts is the browser's frame rate,
+    // which a headless browser laying out a panel of Chinese makes slow, so it is not timed here.)
+    const turns = await other.evaluate((b) => {
+      b.click(); // where it stands: the page is not scrolled to it
+      return [...document.querySelectorAll('.bilingual-switch__panel:not([hidden]) .reveal-on-scroll')]
+        .filter((el) => { const r = el.getBoundingClientRect(); return r.height > 0 && r.bottom > 0 && r.top < innerHeight * 0.9; })
+        .map((el) => (el.classList.contains('is-visible') ? el.style.getPropertyValue('--arrive-delay') || '0s' : 'waiting'));
+    });
+    must(turns.length > 0, 'after the switch no block of the other language is in view');
+    must(turns[0] === '0s', `the other language's first block in view does not arrive at once (its turn: ${turns[0]}; all: ${turns.join(', ')})`);
+    must(!turns.includes('waiting'), `a block of the other language in view was left for the next scroll (${turns.join(', ')})`);
+    await page.waitForTimeout(1500);
+    const left = await page.evaluate(() => [...document.querySelectorAll('.bilingual-switch__panel:not([hidden]) .reveal-on-scroll')]
+      .filter((el) => { const r = el.getBoundingClientRect(); return r.height > 0 && r.bottom > 0 && r.top < innerHeight * 0.9 && parseFloat(getComputedStyle(el).opacity) < 0.99; }).length);
+    must(left === 0, `${left} block(s) of the other language are not at full strength 1.5 s after the switch`);
+  } },
+
   { id: 'palette', name: 'Palette draws its voyages and opens one', async run({ page, go }) {
     await go('/palette/');
     await page.waitForSelector('.palette-voyages__list a[href^="#"]', { timeout: 15000 }).catch(() => {});
@@ -318,6 +586,47 @@ const JOURNEYS = [
     must((await page.locator('.reverie__code').innerText()).toUpperCase().includes('4A6FA5'), 'the colour asked for is not the colour shown');
     must(await page.locator('.palette-card__print').count() >= 1, 'no photographs for a colour that has them');
     must(await page.locator('.reverie__credit a[href$="/posts/in-the-naming-of-light/"]').count() === 1, 'Reverie has no way on to In the Naming of Light');
+    // A print opens in the lightbox, a dye vat for each frame on its rail.
+    const open = () => page.evaluate(() => document.querySelector('.photobook-lightbox')?.open === true);
+    await page.locator('.palette-card__print').first().click();
+    await page.waitForFunction(() => document.querySelector('.photobook-lightbox')?.open, null, { timeout: 8000 }).catch(() => {});
+    must(await open(), 'a print did not open in the lightbox');
+    await page.waitForFunction(() => { const r = document.querySelector('.photobook-lightbox__rail'); return r.children.length > 1 && r.querySelectorAll('canvas').length === r.children.length; }, null, { timeout: 8000 }).catch(() => {});
+    must(await page.evaluate(() => { const r = document.querySelector('.photobook-lightbox__rail'); return r.querySelectorAll('canvas').length === r.children.length; }), "the rail's marks were not all drawn");
+    // The colour is the lightbox's first frame: its address (#colour) opens it, as a photograph's does.
+    await page.goto('about:blank');
+    await go('/reverie/?c=4a6fa5#colour');
+    await page.waitForFunction(() => document.querySelector('.photobook-lightbox')?.open, null, { timeout: 15000 }).catch(() => {});
+    must(await open(), '#colour did not open the lightbox on the colour');
+    must(await page.locator('.photobook-lightbox__painted').count() >= 1, '#colour opened on something other than the colour');
+  } },
+
+  { id: 'no-webgl', nogl: true, name: 'Where there is no WebGL the colour pages still open, with no vat and no error', async run({ page, go }) {
+    await go('/palette/');
+    await page.waitForSelector('.palette-voyages__list a[href^="#"]', { timeout: 15000 }).catch(() => {});
+    must(await page.locator('.palette-voyages__list a[href^="#"]').count() >= 10, 'the palette did not draw its voyages without WebGL');
+    await go('/reverie/?c=4a6fa5');
+    await page.waitForSelector('.palette-card__print', { timeout: 15000 }).catch(() => {});
+    must(await page.locator('.palette-card__print').count() >= 1, 'Reverie showed no photographs without WebGL');
+    await page.waitForTimeout(600);   // every vat the page makes after the first has had its turn to throw
+  } },
+
+  { id: 'atlas', name: 'A voyage in parts starts its map when the reader nears it', async run({ page, go }) {
+    // The tiles asked for, by zoom level: laid once, they are all of the view the map settles on.
+    const zooms = new Set();
+    page.on('request', (r) => { const z = (r.url().match(/basemaps\.cartocdn\.com\/[^/]+\/(\d+)\/\d+\/\d+/) || [])[1]; if (z) zooms.add(z); });
+    await go('/voyage/japan/');
+    const at = await page.evaluate(() => { const m = document.querySelector('.map-container'); return m ? { far: m.getBoundingClientRect().top > innerHeight + 700, started: !!m.querySelector('.leaflet-pane'), leaflet: typeof L !== 'undefined' } : null; });
+    must(at, 'the voyage has no map');
+    must(at.leaflet, 'Leaflet did not arrive (it comes from unpkg): the journey cannot tell');
+    must(at.far, 'the map is no longer far below the fold on this voyage: the journey cannot tell whether it waits');
+    must(!at.started && zooms.size === 0, 'the map started with the page, far below the fold');
+    await page.locator('.map-container').scrollIntoViewIfNeeded();
+    await page.waitForSelector('.map-container--ready', { timeout: 15000 }).catch(() => {});
+    must(await page.locator('.map-container--ready').count() === 1, 'the map did not start when it came into view');
+    await page.waitForTimeout(1200);
+    must(zooms.size >= 1, 'no tile was asked for (or the tile host has changed): the journey cannot tell');
+    must(zooms.size === 1, `the map asked for tiles at ${zooms.size} zoom levels (${[...zooms].join(', ')}): it laid them before its view was known`);
   } },
 
   { id: 'reverie-unheld', name: 'A colour no photograph holds opens on the one that comes closest', async run({ page, go }) {
@@ -382,6 +691,11 @@ for (const journey of chosen) {
   const context = await browser.newContext(journey.phone
     ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2, colorScheme: 'dark', locale: 'en-GB' }
     : { viewport: { width: 1440, height: 900 }, colorScheme: 'dark', locale: 'en-GB' });
+  // `nogl`: a device with no WebGL (3D off, an old phone): every canvas refuses one.
+  if (journey.nogl) await context.addInitScript(() => {
+    const get = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (type, ...rest) { return /webgl/i.test(type) ? null : get.call(this, type, ...rest); };
+  });
   const page = await context.newPage();
   const thrown = [], broken = [];
   page.on('pageerror', (e) => thrown.push(String(e.message).split('\n')[0]));

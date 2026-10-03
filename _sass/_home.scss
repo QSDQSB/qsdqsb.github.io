@@ -435,6 +435,10 @@ html.home-snap { scroll-snap-type: y mandatory; }
   padding: 0;
 }
 
+/* Three panels, each one screen, and no footer: the body's tail (_base.scss) would be a strip the
+   magnet pulls the reader back from. */
+body.layout--home { padding-bottom: 0; }
+
 .home__panel {
   min-height: 100svh;
   scroll-snap-align: start;
@@ -794,12 +798,18 @@ html.home-reveal-ready .home__index.is-in .door { opacity: 1; transform: none; }
 /* Motion off (automated renderers): the observer may still arm; nothing glides. */
 html.motion-off.home-reveal-ready .reveal,
 html.motion-off.home-reveal-ready .home__doors .door { transition: none; }
-.home__doors li:nth-child(1) .door { transition-delay: 0.05s; }
-.home__doors li:nth-child(2) .door { transition-delay: 0.13s; }
-.home__doors li:nth-child(3) .door { transition-delay: 0.21s; }
-.home__doors li:nth-child(4) .door { transition-delay: 0.29s; }
-/* the :hover dim shouldn't fight the reveal transform */
-html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: none; }
+/* The stagger is the reveal's alone: once it has settled (is-settled, _layouts/home.html) the
+   delays are gone, so a row under the pointer answers at once. One delay a door. */
+html.home-reveal-ready .home__index:not(.is-settled) .home__doors li:nth-child(1) .door { transition-delay: 0.05s; }
+html.home-reveal-ready .home__index:not(.is-settled) .home__doors li:nth-child(2) .door { transition-delay: 0.13s; }
+html.home-reveal-ready .home__index:not(.is-settled) .home__doors li:nth-child(3) .door { transition-delay: 0.21s; }
+html.home-reveal-ready .home__index:not(.is-settled) .home__doors li:nth-child(4) .door { transition-delay: 0.29s; }
+html.home-reveal-ready .home__index:not(.is-settled) .home__doors li:nth-child(5) .door { transition-delay: 0.37s; }
+/* The hover's dim and lift, said again beside the reveal's `opacity: 1`, which outranks the plain
+   rules above; and the dim shouldn't fight the reveal transform. */
+html.home-reveal-ready .home__index.is-in .home__doors:hover .door { opacity: 0.4; transform: none; }
+html.home-reveal-ready .home__index.is-in .home__doors .door:hover,
+html.home-reveal-ready .home__index.is-in .home__doors .door:focus-visible { opacity: 1; }
 
 @keyframes home-bg-zoom { from { transform: scale(1.02); } to { transform: scale(1.13); } }
 /* On load the background settles: the QSD photo is glimpsed, then darkens and
@@ -858,7 +868,8 @@ html.home-reveal-ready .home__index.is-in .home__doors:hover .door { transform: 
   .home__scroll-hint--up { top: 1rem; height: 2.25rem; }
   .home__index-grid { grid-template-columns: 1fr; }
   .home__index-stage { display: none; }
-  .home__doors:hover .door { opacity: 1; }
+  .home__doors:hover .door,
+  html.home-reveal-ready .home__index.is-in .home__doors:hover .door { opacity: 1; }
 }
 
 /* Auto-snapping is itself motion — let reduced-motion users scroll plainly. */

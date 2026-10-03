@@ -229,6 +229,8 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__body {
 
   &--ok { color: $intriguing-word-color; }
   &--err { color: rgba($danger-color, 0.95); }
+  // Focus is handed here when the form goes (subscribe.js): words, not a control, so no ring.
+  &--ok:focus { outline: none; }
 }
 // The thank-you's cat (assets/js/subscribe.js): it raises its cup over the note; the room above
 // is for what it says.
@@ -341,6 +343,19 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__summary {
   .subscribe-slip__card { padding: 1.1rem 1.15rem 1rem; }
   .subscribe-slip__input { font-size: 0.85rem; }
   .subscribe-slip__send { padding: 0.4rem 0.7rem; letter-spacing: 0.14em; }
+}
+
+// Safari on an iPhone zooms the page when a field under 16 px takes focus, and stays zoomed after:
+// by touch the field is 16 px (after the phone rule above, so it holds there too).
+// The placeholder keeps the size it had (the zoom follows the field's own size, not its
+// placeholder's): at 16 px it was cut short on the narrowest phone.
+@include responsive-coarse-pointer {
+  .subscribe-slip__input { font-size: 16px; }
+  .subscribe-slip__input::placeholder { font-size: $type-size-8; }
+
+  @include responsive-down(mobile) {
+    .subscribe-slip__input::placeholder { font-size: 0.85rem; }
+  }
 }
 
 @include responsive-reduced-motion {

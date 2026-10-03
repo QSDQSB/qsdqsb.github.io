@@ -15,9 +15,15 @@ import { develop } from './develop.js';
 tips();
 
 const dataEl = document.getElementById('photobook-data');
+let frames = [];
 if (dataEl) {
-  let frames = [];
   try { frames = JSON.parse(dataEl.textContent); } catch { frames = []; }
+  // Each frame's placeholder is in the page once, on its print (_includes/photobook/frame.html): the
+  // lightbox's wash takes it from there. Read before the book re-lays its rows.
+  for (const b of document.querySelectorAll('#photobook-book .photobook-frame[data-i] > .photobook-frame__print')) {
+    const f = frames[Number(b.parentElement.dataset.i)];
+    if (f && b.style.backgroundImage) f.ph = b.style.backgroundImage;
+  }
   const g = glow(frames);
   const lb = lightbox(frames);
   book({
@@ -72,8 +78,6 @@ if (vatSlot) {
     });
     // Then every frame's own, in the barcode, one a frame so the page never stalls: the vat its card
     // on the palette page shows (the same seed), from the frame's signature in #photobook-data.
-    let frames = [];
-    try { frames = JSON.parse(document.getElementById('photobook-data')?.textContent || '[]'); } catch { /* none */ }
     const slots = [...document.querySelectorAll('.photobook-barcode button[data-i]')];
     const next = () => {
       const b = slots.shift(); if (!b) return;

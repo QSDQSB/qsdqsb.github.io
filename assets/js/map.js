@@ -304,7 +304,7 @@
       return;
     }
 
-    if (container._leaflet_id) {
+    if (container._leaflet_id || container._mapPending) {
       console.warn('MapRenderer.init: container already has a Leaflet instance — skipping re-initialisation');
       return;
     }
@@ -318,6 +318,24 @@
       return;
     }
 
+    // The map starts (its data, then its tiles) as the reader nears it: under a
+    // voyage's part cards it sits far below the fold, and a reader who never
+    // scrolls that far pays for none of it.
+    if (typeof IntersectionObserver === 'undefined') {
+      start(container, geojsonPath, viewport);
+      return;
+    }
+    container._mapPending = true;
+    const near = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      near.disconnect();
+      container._mapPending = false;
+      start(container, geojsonPath, viewport);
+    }, { rootMargin: '600px 0px' });
+    near.observe(container);
+  }
+
+  function start(container, geojsonPath, viewport) {
     const viewportPreset = getViewportPreset(viewport);
     const presetForInit = viewportPreset || VIEWPORT_PRESETS.world;
     const mapInstance = L.map(container, {
@@ -346,11 +364,22 @@
       preferCanvas: false
     });
 
-    L.tileLayer(TILE_LAYER.url, {
+    // Leaflet has no setting for a pan (the arrow keys, panTo): for a reader who
+    // asked for stillness each lands at once, as the zooms above do.
+    if (still()) {
+      const panBy = mapInstance.panBy;
+      mapInstance.panBy = function (offset, panOptions) {
+        return panBy.call(this, offset, Object.assign({}, panOptions, { animate: false }));
+      };
+    }
+
+    // The tiles are laid once the view is known (loadAndRenderGeoJSON): added
+    // here, they were fetched for the whole world and then again for the voyage.
+    const tiles = L.tileLayer(TILE_LAYER.url, {
       attribution: TILE_LAYER.attribution,
       maxZoom: TILE_LAYER.maxZoom,
       className: 'map-tiles'
-    }).addTo(mapInstance);
+    });
 
     // FontAwesome control glyphs, matching the site's icon language.
     L.control.zoom({
@@ -364,10 +393,10 @@
     createFullscreenControl(container).addTo(mapInstance);
     createActivationVeil(container);
 
-    loadAndRenderGeoJSON(mapInstance, geojsonPath, container, viewportPreset);
+    loadAndRenderGeoJSON(mapInstance, geojsonPath, container, viewportPreset, tiles);
   }
 
-  function loadAndRenderGeoJSON(map, geojsonPath, container, viewportPreset) {
+  function loadAndRenderGeoJSON(map, geojsonPath, container, viewportPreset, tiles) {
     const normalizedPath = geojsonPath.startsWith('/') ? geojsonPath : `/${geojsonPath}`;
 
     fetch(normalizedPath, { method: 'GET', credentials: 'same-origin' })
@@ -408,16 +437,19 @@
         if (effectivePreset) {
           if (effectivePreset.minZoom !== undefined) map.setMinZoom(effectivePreset.minZoom);
           if (effectivePreset.maxZoom !== undefined) map.setMaxZoom(effectivePreset.maxZoom);
+          // The first view is set at once (the map is still behind its veil), so
+          // the tiles that follow are asked for at one view only.
           if (effectivePreset.center && effectivePreset.zoom !== undefined) {
-            map.setView(effectivePreset.center, effectivePreset.zoom);
+            map.setView(effectivePreset.center, effectivePreset.zoom, { animate: false });
           } else if (effectivePreset.center) {
-            map.panTo(effectivePreset.center);
+            map.panTo(effectivePreset.center, { animate: false });
           } else {
-            fitMapBounds(map, geojson);
+            fitMapBounds(map, geojson, { animate: false });
           }
         } else {
-          fitMapBounds(map, geojson);
+          fitMapBounds(map, geojson, { animate: false });
         }
+        if (tiles) tiles.addTo(map);
 
         scheduleMapEntrance(container, atlasDataset);
         armActivationVeil(map, container);
@@ -670,7 +702,7 @@
 
   function renderAtlasLegendItem(tagEntry) {
     return `
-      <button type="button" class="legend-item" data-tag="${escapeHtml(tagEntry.id)}">
+      <button type="button" class="legend-item" data-tag="${escapeHtml(tagEntry.id)}" aria-pressed="false">
         <span class="legend-color" style="background-color: ${escapeHtml(tagEntry.color)};"></span>
         <span class="legend-label">${escapeHtml(tagEntry.label)}</span>
         <span class="legend-count">${tagEntry.count}</span>
@@ -834,11 +866,12 @@
       state.drawerRoot.classList.toggle('has-filter', !!state.activeTag);
       state.drawerRoot.querySelectorAll('.legend-item[data-tag]').forEach((item) => {
         item.classList.toggle('is-active', item.dataset.tag === state.activeTag);
+        item.setAttribute('aria-pressed', item.dataset.tag === state.activeTag ? 'true' : 'false');
       });
     }
   }
 
-  function fitMapBounds(map, geojson) {
+  function fitMapBounds(map, geojson, options) {
     if (!geojson.features || geojson.features.length === 0) return;
 
     const bounds = L.latLngBounds();
@@ -848,7 +881,7 @@
     });
 
     if (bounds.isValid()) {
-      map.fitBounds(bounds, { padding: getMapBoundsPadding(geojson) });
+      map.fitBounds(bounds, Object.assign({ padding: getMapBoundsPadding(geojson) }, options));
     }
   }
 

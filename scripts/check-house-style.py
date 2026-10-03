@@ -297,7 +297,11 @@ def git(*args: str) -> str:
 def added_lines() -> dict[str, list[tuple[int, str]]]:
     """Map path -> [(line_no, text)] for lines added vs HEAD, plus untracked files."""
     out: dict[str, list[tuple[int, str]]] = {}
-    diff = git("diff", "HEAD", "--unified=0", "--no-color")
+    # Pictures and generated files hold no prose or code to read, and diffing a re-captured baseline
+    # took six seconds of a stop hook's turn (2026-10-03).
+    skip = ["*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.mp4", "*.webm", "*.woff2", "*.geojson", "*.lock",
+            "scripts/.geocode-cache.json"]
+    diff = git("diff", "HEAD", "--unified=0", "--no-color", "--", ".", *[f":(exclude){x}" for x in skip])
     path = None
     new_no = 0
     for line in diff.splitlines():
