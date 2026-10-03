@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-03 · The 404 page has QSD's orange cat over its way back, raising its cup once to the lost reader with an "Aloha!"; and a reader who subscribes gets the same small cheer and a "Thank you!" over the note, its words in the italic on the glass. Neither keeps moving after · tier 2
 - 2026-10-03 · Home's hero has a third mark, drawn at random beside the monogram and the bubbles: QSD's orange cat with its coffee, mandolin and pineapple crown, idling on a 25-second loop; under the pointer it raises its cup and winks, a click says cheers, and every fifth the pineapple hops off · tier 2
 - 2026-10-02 · From one palette to the next, the way on to the essay fades and rises with the rest of the page · tier 1
 - 2026-10-02 · On a phone the frame's settings in the essay are labelled at the lightbox's own size (11 px), not smaller · tier 1

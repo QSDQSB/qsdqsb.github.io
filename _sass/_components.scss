@@ -64,6 +64,19 @@
   a:focus-visible { color: var(--photobook-ink, #{$lighter-gray}); border-color: var(--photobook-ink-3, #8b9296); text-decoration: none; }
 }
 
+// What the orange cat says (<qsd-cat say="…">, assets/js/qsd-cat.js): a line in the lede's italic
+// on the glass, from above its head. The 404's and the subscribe slip's. The `glass` and the `soft`
+// corner of 0009, the corner nearest its head drawn in.
+qsd-cat::part(say) {
+  padding: 0.28em 0.8em 0.34em;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px 10px 10px 3px;
+  background: rgba(21, 21, 21, 0.42);
+  @include backdrop-blur(blur(14px) saturate(1.2));
+  color: rgba($lighter-gray, 0.92);
+  font: italic 400 1rem/1.2 $didot-family;
+}
+
 /* ── controls ────────────────────────────────────────────────────────── */
 
 // The way back: a glass pill, a chevron and the voyage's name. The lightbox's, and the palette
