@@ -195,7 +195,8 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
       controls" is the owner's (Cards), but which of the twenty is a control is the lead's sorting:
       the list goes to the owner, each with a capture, before a timing moves. The wide cover's use
       is stage 4's.
-- [ ] The built pill and round tool beside the 10 px control (0009, "Not settled").
+- [x] The built pill and round tool beside the 10 px control (0009, "Not settled"). Settled 2026-10-03: brought to
+      the 10 px rectangle (Q17, B), shown before and after (https://claude.ai/artifact/VnsZ39qDGSbUkvebTymwCn) and approved.
 
 **Tier 1: brought into line, under the threshold, shown before and after**
 - [ ] C02 · `brass-focus` as the one focus ring, surface by surface.
@@ -209,7 +210,8 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
 - [ ] C12 · Small dialects swept once the scales exist: hover direction, dates, ellipses, rules, one `scroll-padding-top`.
 
 **Decided by the owner on 2026-10-01, to build**
-- [ ] Headings white by default; the hue-per-level h2 to h5 in `_sass/_base.scss` retired. Shown before and after.
+- [x] Headings white by default; the hue-per-level h2 to h5 in `_sass/_base.scss` retired. Shown before and after.
+      Built 2026-10-03 in the ivory ink (Q18, A). Links inside headings stay F078's.
 - [x] Q9 · Built 2026-10-03 (`_sass/_page.scss`, "A link in a page's text"): prose under `.page__content`
       and under its `.barlow` wrapper (the CV); notices are paragraphs, so their mint went with it. Still
       blue and filed: a link in a heading (F078, with the headings below), About's typewriter (F079), the

@@ -7,6 +7,17 @@
    ========================================================================== */
 
 @media print {
+  /* A page's words on paper, whether or not they have arrived on screen (_scroll-animations.scss):
+     the hold and the hidden state outranked by one more selector, not shouted. */
+  html.js.scroll-reveal-ready .reveal-on-scroll,
+  html.js.scroll-reveal-ready .reveal-on-scroll.arrives:not(.is-visible),
+  html.js.reveal-pending .page__content > :not(.sidebar__right) {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: none;
+  }
+
   .masthead,
   .toc,
   .page__share,

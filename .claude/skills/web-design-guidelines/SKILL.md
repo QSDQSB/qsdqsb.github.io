@@ -184,8 +184,9 @@ JS through `window.QSD.motionOff()`. Nothing tests this mechanically.
   `aspect-ratio` box. SVGs sized by CSS are fine.
 - Below the fold `loading="lazy"`; the first-screen image
   `fetchpriority="high"`, never lazy.
-- Third-party CSS in `<head>` blocks first paint on every page (CMU Serif
-  from cdnfonts): self-host it, or at least preconnect. The typeface stays.
+- No third-party CSS in `<head>`: it blocks first paint on every page. Fonts are
+  self-hosted in `assets/fonts/` (CMU Serif since 2026-10-03, S09); a new face
+  joins them, or at least preconnects.
 - `<link rel="preconnect">` for `img.qsdqsb.com` where a page leads with a
   photograph.
 

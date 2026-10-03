@@ -33,7 +33,7 @@ re-shape the Photobook's built pieces (see "Not settled").
 | `picture` | 8 px | A picture inside an article | Pick 7 (B, of square, 8 and 16 px). New step |
 | `soft` | 10 px | A control. A card. A panel of glass (0002) | Pick 2 (B, "A rounded rectangle, soft: 10 px", over one of 4 px and over "A pill, and a round tool"). Pick 1 (B, of 4, 10 and 18 px) |
 | `large` | 18 px | A card, where the scenario wants it | Pick 1, the note: "B or C depend on the scenario". C is 18 px. New step |
-| `pill`, `round` | 999 px, 50% | The built pill and round tool; dots and circles | Inherited. Nothing new is drawn as a pill: the lead's reading of pick 2 |
+| `pill`, `round` | 999 px, 50% | Dots and circles (a tag's dot, a vat, an avatar) | Not a control's shape: the Photobook's pill and round tool took `soft` on 2026-10-03 (Q17, B). Nothing new is drawn as a pill: the lead's reading of pick 2 |
 
 0002's `card` step (16 px) goes: a card takes `soft`, or `large`.
 
@@ -177,10 +177,10 @@ Depth (the six layers), the label, the inks and the guard are untouched.
 Places a pick meets something built or said that it did not draw. None is decided here. Each line
 says what is done meanwhile; nothing the owner has not seen is taken as theirs.
 
-- **The built pill and round tool.** Pick 2 chose a rounded rectangle over "A pill, and a round
-  tool". The Photobook's way back is a pill and its viewer's tools are round. They stay as built: a
-  change to the lightbox is always the owner's (0001), and the owner's own rule is that what is
-  established is inherited. They are drawn beside the 10 px control on stage 2's specimen page.
+- **The built pill and round tool.** Settled 2026-10-03: the owner brought them to the 10 px
+  rectangle too (Q17, B), shown before and after first and approved as built ("OK for the change").
+  As first written: pick 2 chose a rounded rectangle over "A pill, and a round tool"; the Photobook's
+  way back was a pill and its viewer's tools round, kept as built until the owner said otherwise.
 - **The Photobook's bar and panel of glass** (18 px, 24 px). The pick drew a name on a cover, not a
   panel of dense text over a print. Bringing them to 14 px is over the major-delta threshold. Shown
   on the specimen page first.

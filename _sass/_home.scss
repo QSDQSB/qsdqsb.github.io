@@ -212,6 +212,7 @@ body.layout--home {
   flex: 0 0 auto;
   pointer-events: none;     // never swallows the scroll-snap wheel or clicks
   opacity: 0.9;             // its own clean field now, so it reads brighter
+  --qsd-cat-size: 420px;    // <qsd-cat> fills its box; this holds it near the monogram's weight, and its paint cost with it
 }
 
 @include responsive-up(desktop) {

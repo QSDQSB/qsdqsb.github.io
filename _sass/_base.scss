@@ -56,33 +56,35 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
 }
 
+// Every heading is in the text's own ink (the owner, 2026-10-01 and Q18): the order is told by size
+// and weight, not by a hue per level. Set, not inherited, where a hue was set before: a card's title
+// is a heading inside a link, and would otherwise take the link's colour.
+h2, h3, h4, h5, h6 {
+  color: $text-color;
+}
+
 h1 {
   font-size: $type-size-2;
 }
 
 h2 {
   font-size: $type-size-3;
-  color: hsl(29, 65%, 70%);
 }
 
 h3 {
   font-size: $type-size-4;
-  color: hsl(335, 47%, 75%);
 }
 
 h4 {
   font-size: $type-size-5;
-  color: hsl(209, 74%, 73%);
 }
 
 h5 {
   font-size: $type-size-6;
-  color: hsl(249, 60%, 72%);
 }
 
 h6 {
   font-size: $type-size-7;
-  color: $text-color;
 }
 
 small, .small {

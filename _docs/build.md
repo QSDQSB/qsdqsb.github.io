@@ -30,6 +30,11 @@ npm run build:js
 # Incremental (mtime); --only <substring> filters; --force regenerates.
 npm run generate:depth
 
+# Fonts the site carries, cut to what it sets — AUTHORING-TIME, then COMMIT the
+# outputs (font sources stay out of git; each script's head says where from).
+npm run fonts:essay                      # Noto Serif SC for the essays' Chinese
+npm run fonts:cmu -- --zip cm-unicode.zip  # CMU Serif from CTAN, set to the metrics the site was laid out on
+
 # Tests
 npm test
 ```

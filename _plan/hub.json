@@ -5,12 +5,14 @@
     "link-colour": "https://claude.ai/artifact/M5UYHyu6S8Zc29AyBLR6De",
     "aesthetic-pairs": "https://claude.ai/artifact/MKXF1rRxmTxmydfvzYv9AN",
     "post-layout": "https://claude.ai/artifact/Cov1emhETSfm9XZeULkVWs",
-    "heading-white": "https://claude.ai/artifact/SDQo4JQg98sa85ep5tobvj"
+    "heading-white": "https://claude.ai/artifact/SDQo4JQg98sa85ep5tobvj",
+    "viewer-tools": "https://claude.ai/artifact/VnsZ39qDGSbUkvebTymwCn",
+    "cat-speaks": "https://claude.ai/artifact/9PTtPjj9dzea3tUQSnWMhP"
   },
   "daily_may_push": true,
   "daily_agents": false,
   "published": {
     "date": "2026-10-03",
-    "hash": "02f04db2325486eb"
+    "hash": "c4e603d0c6feffa3"
   }
 }
