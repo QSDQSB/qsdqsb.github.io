@@ -19,6 +19,9 @@
  *
  * Overrides: --title "…" --excerpt "…" --url https://… --subject "…"
  *
+ * --kicker "…"       → the small line above the title, saying what has come. By
+ *                      default "Fresh ink from QSD" for a post, "New prints from
+ *                      QSD" for a voyage or a part of one.
  * --quote "…"        → lines from the piece itself, shown where the excerpt would
  *                      be (and as the inbox's preview line); give it again for a
  *                      second paragraph. [words](/palette/) is a link, as in the
@@ -112,6 +115,7 @@ const optExcerpt = takeOption("--excerpt");
 const optUrl = takeOption("--url");
 const optSubject = takeOption("--subject");
 const optCard = takeOption("--card");
+const optKicker = takeOption("--kicker");
 const optQuote = [];
 for (let q; (q = takeOption("--quote")) !== null; ) optQuote.push(q.replace(/\]\(\//g, `](${SITE_URL}/`));
 const postPath = args.find((a) => !a.startsWith("--")) || null;
@@ -121,7 +125,7 @@ if (optWelcome) {
   // send exactly one with --send-test. Bulk-mailing every subscriber a fresh
   // "welcome" would be nonsense, so --send is refused here.
   if (optSend) fail("--welcome is the confirmation email — preview it, or send one with --send-test <addr>. It is never bulk-sent.");
-  if (optCard || optQuote.length) fail("--card and --quote go with a letter, not the welcome.");
+  if (optCard || optQuote.length || optKicker) fail("--card, --quote and --kicker go with a letter, not the welcome.");
 } else if (!postPath && !(optTitle && optUrl)) {
   fail("usage: node scripts/send-letter.mjs <post.md> [--send-test addr | --send --yes] [--title/--excerpt/--url/--subject overrides]\n   or: node scripts/send-letter.mjs --welcome [--send-test addr]");
 }
@@ -177,7 +181,9 @@ if (optWelcome) {
     ? new Date(fm.date).toLocaleDateString("en-GB", { month: "long", year: "numeric" })
     : "";
 
-  const letter = { title, excerpt, url, dateLine, quote: optQuote };
+  // What kind of thing has come: ink for words, prints for photographs.
+  const kicker = optKicker ?? (/(^|\/)_(sub)?voyage\//.test(postPath || "") ? "New prints from QSD" : postPath ? "Fresh ink from QSD" : "");
+  const letter = { title, excerpt, url, dateLine, quote: optQuote, kicker };
   if (optCard) {
     const card = await reverieCard(optCard, { site: SITE_URL });
     const cid = `reverie-${card.hex.slice(1).toLowerCase()}`;
