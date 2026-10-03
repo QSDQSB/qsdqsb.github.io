@@ -9,7 +9,7 @@ Last reviewed: 2026-10-02.
 |---|---|---|---|---|
 | 0 | [The hub](stages/00-hub.md) | Nothing yet: the plan, the lead and the gate | **done** 2026-10-01 | 0 |
 | 1 | [Foundations: unseen fixes](stages/01-foundations-unseen.md) | A faster, steadier site that looks the same | building | 0 |
-| 2 | [Foundations: plumbing](stages/02-foundations-plumbing.md) | One vocabulary for everything after; brass links, white headings, words that arrive in turn | planned | 0, 1, some 2 (answered) |
+| 2 | [Foundations: plumbing](stages/02-foundations-plumbing.md) | One vocabulary for everything after; brass links, white headings, words that arrive in turn | building | 0, 1, some 2 (answered) |
 | 3 | [Wayfinding](stages/03-wayfinding.md) | A site that is easy to get around and obvious to use | planned | 2 |
 | 4 | [Voyage and the cards](stages/04-voyage-and-cards.md) | The doorway to the photographs, refurbished | designing (branch `gallery/voyage-doors`) | 2 |
 | 5 | [Bestiary](stages/05-bestiary.md) | A page that exists; first, a holding page worth arriving at | idea (the holding page is decided, and comes as a choice) | 2 |

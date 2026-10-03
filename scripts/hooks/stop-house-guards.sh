@@ -40,6 +40,7 @@ run_guard() {
 run_guard "House style" python3 scripts/check-house-style.py --new-only
 run_guard "JS bundle sync" python3 scripts/check-js-sync.py
 run_guard "!important ratchet" python3 scripts/check-important-ratchet.py
+run_guard "vocabulary ratchet" python3 scripts/check-vocabulary-ratchet.py
 
 [ "$failed" -eq 0 ] && exit 0
 

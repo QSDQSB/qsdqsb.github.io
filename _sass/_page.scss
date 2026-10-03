@@ -205,10 +205,6 @@ body.has-overlay-hero {
       clear: both;
     }
   }
-  // Overshoot easing must never cover geometry: with `all` it made every late
-  // layout settle enlarge past target then shrink back (worst on Safari zoom).
-  transition: transform $global-transition-time cubic-bezier(0.175, 0.885, 0.32, 1.275),
-              opacity $global-transition-time cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* ==========================================================================
@@ -282,9 +278,40 @@ body.collection--posts .page__inner-wrap .page__content {
 @include responsive-up(180rem) { html:has(body.collection--posts) { font-size: 24px; } } // from 2880px
 
 /* ==========================================================================
+   A LINK IN A PAGE'S TEXT (Q9, the owner's pick of 2026-10-01, option B)
+   Brass, on a hairline underline at half strength; ivory under the pointer and
+   the keyboard; the same once visited. In the prose only (a paragraph, a list,
+   a quotation): a figure's, a card's, a contents list's or an onward link's own
+   dress is kept (About's way on to the CV is a paragraph, so it is named), a
+   link that wraps a picture takes no underline, and the treatise keeps its own
+   gold. The underline stays at rest: it is what marks the link
+   for a reader who cannot tell brass from ivory.
+   ========================================================================== */
+
+body:not(.jianfei-treatise) .page__content > :is(p, ul, ol, blockquote):not(.about__onward),
+body:not(.jianfei-treatise) .page__content > .barlow > :is(p, ul, ol, blockquote) {
+  a,
+  a:visited {
+    color: $intriguing-word-color;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    text-decoration-color: rgba($intriguing-word-color, 0.5);
+  }
+
+  a:hover,
+  a:focus-visible {
+    color: $lighter-gray;
+    text-decoration-color: currentColor;
+  }
+
+  a:has(> img) { text-decoration: none; }
+}
+
+/* ==========================================================================
    ESSAY: a post set to the owner's standing calls for a reading page, ahead
    of their being built for every post (stage 2, stage 6): one accent, brass
-   (a link in the text is brass on a hairline, Q9 option B); titles white;
+   (a link in the text is brass on a hairline, Q9 option B, now every page's); titles white;
    air where a chapter begins; one rhythm for every picture between passages;
    Chinese in Songti beside Playfair's Latin.
    Opt in per post with `body_class: essay` in front matter.
@@ -301,22 +328,6 @@ body.essay .page__content {
 
   // The gloss's Chinese line with the prose's faces (a blockquote sets its own); its English is the lede.
   blockquote.gloss { font-family: inherit; }
-
-  // Links in the prose only: a figure's own links keep their pieces' dress.
-  > :is(p, ul, ol, blockquote) a,
-  > :is(p, ul, ol, blockquote) a:visited {
-    color: $intriguing-word-color;
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.22em;
-    text-decoration-color: rgba($intriguing-word-color, 0.5);
-  }
-
-  > :is(p, ul, ol, blockquote) a:hover,
-  > :is(p, ul, ol, blockquote) a:focus-visible {
-    color: $lighter-gray;
-    text-decoration-color: currentColor;
-  }
 
   h2 {
     margin-top: 5.2rem; // a movement, not a subhead: well clear of a figure's own margin

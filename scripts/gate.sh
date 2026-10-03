@@ -33,6 +33,9 @@ passed=0
 failed=0
 skipped=""
 report=""
+# A check that passed but had to look twice (the pixel diff's "on a second shot") says so even on a
+# pass: a flake that keeps coming back is a fault the retry would otherwise hide.
+retried=""
 
 check() {
   local label="$1"; shift
@@ -40,6 +43,9 @@ check() {
   if out=$("$@" 2>&1); then
     printf '✓  %s\n' "$label"
     passed=$((passed + 1))
+    local again
+    again=$(printf '%s' "$out" | grep 'on a second shot' || true)
+    if [ -n "$again" ]; then retried+="$again"$'\n'; fi
   else
     printf '✗  %s\n' "$label"
     report+="── ${label} ──"$'\n'"$(printf '%s' "$out" | tail -n 25)"$'\n\n'
@@ -55,6 +61,7 @@ skip() {
 check "Unit tests"               npm test --silent
 check "JS bundle in sync"        python3 scripts/check-js-sync.py
 check "!important ratchet"       python3 scripts/check-important-ratchet.py
+check "Vocabulary ratchet"       python3 scripts/check-vocabulary-ratchet.py
 check "Breakpoint policy"        bash scripts/check-responsive-policy.sh
 check "Single-use variables"     python3 scripts/check-single-use-variables.py --new-only
 check "House style"              python3 scripts/check-house-style.py --new-only
@@ -107,6 +114,10 @@ if [ "$mode" = "full" ]; then
 fi
 
 echo
+if [ -n "$retried" ]; then
+  echo "Passed on a second shot (a flake to watch):"
+  printf '%s\n' "$retried"
+fi
 if [ "$failed" -eq 0 ]; then
   if [ "$mode" = "fast" ]; then
     echo "GATE: PASS (fast) — ${passed} checks${skipped:+, ${skipped} skipped}. A change to _sass/, _layouts/, _includes/ or assets/js/ also needs --full."

@@ -66,6 +66,7 @@
     "serve:fast": "npm run photos:fetch && npm run covers && npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll serve",
     "check:house-style": "python3 scripts/check-house-style.py",
     "check:important": "python3 scripts/check-important-ratchet.py",
+    "check:vocabulary": "python3 scripts/check-vocabulary-ratchet.py",
     "check:js-sync": "python3 scripts/check-js-sync.py",
     "check:frontmatter": "node scripts/check-frontmatter.js",
     "check:gallery": "node scripts/check-gallery-integrity.js",

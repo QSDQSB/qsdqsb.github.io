@@ -33,6 +33,42 @@ Audit S09, marked Fix. CMU Serif's stylesheet comes from fonts.cdnfonts.com and 
 - **B:** No files: keep the service, but load its stylesheet so it no longer holds back the page
 - **C:** Leave it as it is
 
+### Q15 · May sessions be stopped from writing to R2 by themselves?
+
+Asked: 2026-10-03
+
+Found while shaping I003 (F073). The project's permission file allows every npm script without a prompt (Bash(npm run *)), so npm run photos:push, which uploads photographs to R2, runs in any session with no question asked, an unattended daily run included. A write to R2 is one of your hard rules. Nothing has used it that way; the gap is that nothing would stop it. The fix is one line in .claude/settings.json, your permission file, so it is yours to say: deny that one script (and the other R2 writers, if any), so a session asks you every time.
+
+- **A (recommended):** Deny npm run photos:push (and any other R2 writer) in the permission file; a session asks you each time
+- **B:** Leave it as it is: the hard rule in the plan is enough
+
+### Q16 · Do the four new pieces read right as drawn on the specimen page?
+
+Asked: 2026-10-03
+
+Stage 2 wrote the pieces your round-2 picks set the amounts for: the card (10 px, 18 px where it is the scene; a short shadow; it lifts 4 px and grows to 1.018 in 0.3 s), the tag (ink only, it brightens under the pointer), the text button (a 10 px rounded rectangle, solid and quiet) and the ornament (a lozenge on a brass rule). No page uses them yet: before any does, you see each in every state on one page, the specimen (pictures sent with this batch, at desktop and phone width; built only for the pixel baseline, no reader can reach it). Each label says whose a value is: yours, the lead's inside your range, or decided under delegation. The lead's values are the lift, the tag's corners and timing, and the button's fill and pressed state.
+
+- **A (recommended):** Yes, as drawn: the pieces may be adopted where their stages say (Home's cards in stage 4, the ornament and a post's tags in stage 6)
+- **B:** Not yet: say what to change in a note
+
+### Q17 · Do the Photobook's pill and round tools stay as built, beside the new 10 px button?
+
+Asked: 2026-10-03
+
+Your pick 2 chose a rounded rectangle of 10 px for a control over a pill and a round tool. The Photobook's way back is a pill and its viewer's tools are round; 0009 left them as built (what is established is inherited) until you saw them side by side. They are side by side on the specimen page, last section.
+
+- **A (recommended):** Keep them as built: the 10 px rectangle is for new controls; the pill and the round tools are the viewer's signature
+- **B:** Bring them to the 10 px rectangle too (a change to the lightbox, shown before and after first)
+
+### Q18 · Which white is a heading: the text's own ivory, or pure white?
+
+Asked: 2026-10-03
+
+You retired the colour per heading level; what is left is which white. Both shot on the Terms page, desktop and phone: https://claude.ai/artifact/SDQo4JQg98sa85ep5tobvj. The two are close (#e4e5e6 against #fff): ivory keeps one ink for the page and matches the essay's chapters and every book's title; white is a step brighter for a skimming eye, and adds a fourth ink.
+
+- **A (recommended):** the ivory ink, as the text and every display title already are
+- **B:** pure white, a step brighter than the text
+
 ---
 
 ## Answered

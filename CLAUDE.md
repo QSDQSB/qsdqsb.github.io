@@ -205,6 +205,7 @@ Mechanical checks, all scoped to **changes vs `HEAD`** — never the existing ba
 | `check-house-style.py` | `check:house-style` | Generic-AI register in prose and code |
 | `check-js-sync.py` | `check:js-sync` | `main.min.js` shipping stale |
 | `check-important-ratchet.py` | `check:important` | Any `!important` growth — the stylesheet uses none |
+| `check-vocabulary-ratchet.py` | `check:vocabulary` | A new literal radius, curve, blur, hand-made focus ring or z-index, or a curve that overshoots: counts against HEAD that may only fall (0002's guard) |
 | `check-responsive-policy.sh` | `check:responsive-policy` | Raw breakpoints outside `_responsive-policy.scss` |
 | `check-seo-descriptions.py` | `check:seo` | Pages with no real meta description |
 | `check-mobile-overflow.mjs` | `check:mobile-overflow` | A page wider than an iPhone in Safari's engine (WebKit at 390 and 320 px) — Chromium, and so the pixel diff, forgives what Safari does not. Needs a served site and `npx playwright install webkit` |

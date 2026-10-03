@@ -1,0 +1,93 @@
+---
+# The specimen page's own stylesheet (_specimen/index.html). Built only by the seeded visual build.
+---
+
+// The page lays the pieces out; every piece is the shared one, included, never restyled. A state a
+// pointer or a key would bring is drawn with a class, through the piece's own state mixin.
+@import "variables";
+@import "mixins";
+@import "responsive-policy";
+@import "components";
+
+.specimen {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 6rem clamp(1rem, 3vw, 2.4rem) 4rem;
+  color: var(--ink-2);
+  font-family: $barlow-font-family;
+}
+
+.specimen__eyebrow,
+.spec-eyebrow { @include eyebrow; }
+.specimen__title,
+.spec-title { @include display-title; }
+.specimen__lede,
+.spec-lede { @include lede; }
+.spec-onward { @include onward-links; }
+
+.specimen__part { margin-top: 3.5rem; }
+.specimen__h { margin: 0 0 1.2rem; color: var(--ink); font: 600 1.1rem/1.3 $barlow-font-family; }
+.specimen__piece { margin-top: 2.4rem; }
+.specimen__piece h3 { margin: 0; color: var(--ink); font: 600 1rem/1.3 $barlow-font-family; }
+.specimen__whose { max-width: 62ch; margin: 0.4rem 0 1.2rem; font-size: 0.86rem; line-height: 1.55; }
+.specimen__whose b { color: var(--ink); font-weight: 600; }
+
+.specimen__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 2rem 1.6rem;
+  margin-bottom: 1.4rem;
+}
+.specimen__row--tight { display: flex; flex-wrap: wrap; gap: 1.4rem 1.8rem; align-items: flex-start; }
+
+.specimen__state {
+  display: grid;
+  gap: 0.6rem;
+  justify-items: start;
+  margin: 0;
+
+  figcaption,
+  small { margin: 0; color: var(--ink-3); font: 400 0.74rem/1.3 $barlow-font-family; letter-spacing: 0.04em; }
+}
+
+.specimen__prose {
+  max-width: 40rem;
+  p:not(.specimen__whose) { margin: 1rem 0; color: var(--ink); font: 400 1.05rem/1.7 $global-font-family; }
+}
+
+.specimen__words { margin-top: 1.6rem; display: grid; gap: 0.6rem; }
+
+// The pieces.
+.spec-card {
+  @include card;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+
+  img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
+  &.is-lit { @include card-lifted; }
+  &.is-focus { @include brass-focus; }
+}
+.spec-card--large { @include card($large: true); }
+
+.spec-tag {
+  @include tag;
+  &.is-lit { @include tag-lit; }
+  &.is-focus { @include brass-focus; }
+}
+
+.spec-button {
+  @include text-button;
+  &.is-lit { @include text-button-lit; }
+  &.is-focus { @include brass-focus; }
+  &.is-pressed { @include text-button-pressed; }
+}
+.spec-button--quiet {
+  @include text-button($quiet: true);
+  &.is-lit { @include text-button-lit; }
+  &.is-focus { @include brass-focus; }
+}
+
+.spec-ornament { @include ornament; }
+.spec-pill { @include pill; }
+.spec-round { @include round-tool; }
+.spec-quiet { @include icon-button-quiet; color: var(--ink-2); svg { width: 12px; height: 12px; stroke: currentColor; stroke-width: 1.4; fill: none; } }

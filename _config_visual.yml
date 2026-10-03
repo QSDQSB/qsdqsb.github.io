@@ -3,3 +3,10 @@
 # Pins what would otherwise be drawn at random and is too small to paint over
 # reliably, so the shots compare it instead of masking it.
 visual_baseline: true
+# The specimen page (_specimen/: every shared piece in every state) is built here and nowhere else.
+# `include` replaces the live list, so the live list is repeated before it.
+include:
+  - .htaccess
+  - _pages
+  - files
+  - _specimen

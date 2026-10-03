@@ -111,7 +111,7 @@ attention.
 | Ground | Near-black. Black is the canvas, never a colour among others. | `$background-color` #151515 |
 | Light | **The photograph is the light source.** A room takes its colour from the picture in view: the glow, the wash, the dye. Built, and the lead's reading of it. | `glow.js`, `wash`, `vat.js` |
 | The interface | **No block of colour of its own** (the owner: 4: 5, 10: 1, 17: 1). Ink, glass and brass. **A tag takes no colour, even under the pointer: it only brightens** (r2: 10). | Not yet so: `_data/tag_colours.yml` tints the tag pages, the pills under a post and at a book's end, and a search result's tags; the type badges; About's notice. The atlas colours its markers from the same file: a dot on a map, which no pair drew |
-| Ink | Three inks and a line: ivory for what is read, a quieter grey for what supports it, a third for what waits. | `--photobook-ink`, `-ink-2`, `-ink-3`, `-line` (moving to `--ink…`, [0002](decisions/0002-one-control-vocabulary.md)) |
+| Ink | Three inks and a line: ivory for what is read, a quieter grey for what supports it, a third for what waits. | `--ink`, `--ink-2`, `--ink-3`, `--line` on `:root` (`_sass/_tokens.scss`, 2026-10-03); the `--photobook-` names are their aliases until each use moves ([0002](decisions/0002-one-control-vocabulary.md)) |
 | Brass | The one metal and **the one accent** (the owner, 5: 1: always brass, never taken from the photograph): marks, the focus ring, what is on, a title's accent, the ornament. Aged, never bright. | `$intriguing-word-color` #c3b498, `$h2-color` |
 | Gold | The sun's alone, in the specs. | `--photobook-gold` |
 | Film hues | A film carries its own hue, as a tick or a dot, nowhere larger. | the dial, the colophon |
@@ -155,7 +155,7 @@ The corners are the owner's ([0009](decisions/0009-how-much.md)).
 | A control | **A rounded rectangle of 10 px** (r2: 2, chosen over "A pill, and a round tool"). The lead's reading: the built pill and round tool are inherited as they are, and nothing new is drawn as a pill |
 | A panel of glass | 10 px (0002; not asked) |
 | A line | One pixel, in the line ink. It organises |
-| An ornament | **A lozenge on a brass rule** (15: 5; r2: 8), **only between passages of prose** (r2: 9): not under a title, not between groups in the interface. Not built. The emblem rule is a signature and stays |
+| An ornament | **A lozenge on a brass rule** (15: 5; r2: 8), **only between passages of prose** (r2: 9): not under a title, not between groups in the interface. A piece since 2026-10-03, used by no post yet. The emblem rule is a signature and stays |
 | How words are held | On the ground under a rule, or in a card: either (3: 3). No rule |
 | Space | **Few things, with room** (16: 1). The gutter is `clamp(1rem, 3vw, 2.4rem)`; prints sit `clamp(6px, 0.7vw, 12px)` apart |
 
@@ -253,12 +253,12 @@ The grammar's parts. Most are mixins in `_sass/_components.scss`; three are clas
 |---|---|---|
 | Words | Eyebrow, display title, lede, onward links | Built |
 | Controls | Pill, round tool, quiet icon button, segmented toggle, tooltip | Built |
-| Controls | A text button, solid and quiet, a rounded rectangle of 10 px (r2: 2). One tag: ink, one look for every tag, brightening under the pointer (4: 5; r2: 10) | The owner's amounts; not built |
+| Controls | A text button, solid and quiet, a rounded rectangle of 10 px (r2: 2). One tag: ink, one look for every tag, brightening under the pointer (4: 5; r2: 10) | The owner's amounts; written as pieces on 2026-10-03 (`text-button`, `tag`), drawn on the specimen page; no page uses them yet |
 | Surfaces | Bar glass, wash, surface relief | Built |
-| Surfaces | Glass at 14 px, and thin at 6 px (r2: 11). One card: 10 px, a short shadow, a lift of 0.3 s (r2: 1, 3, 4, 5) | The owner's amounts; not built |
+| Surfaces | Glass at 14 px, and thin at 6 px (r2: 11). One card: 10 px, a short shadow, a lift of 0.3 s (r2: 1, 3, 4, 5) | The owner's amounts. The card written as a piece on 2026-10-03 (`card`), on the specimen page, no page uses it yet; the glass not built |
 | Marks | Brass focus; the palette strip | Built |
 | Marks | One mark for "current" | Decided (0002), not built |
-| Marks | The ornament: a lozenge on a brass rule, between passages of prose (r2: 8, 9) | The owner's; not built |
+| Marks | The ornament: a lozenge on a brass rule, between passages of prose (r2: 8, 9) | The owner's; written as a piece on 2026-10-03 (`ornament`), on the specimen page; no post uses it yet |
 | Motion | The arrival: 0.7 s, 28 px, in turn (r2: 6) | The owner's amounts; built at other amounts (`reveal-on-scroll`) |
 
 ## 8. Patterns
@@ -323,8 +323,8 @@ for a screen reader.
 
 | | |
 |---|---|
-| **The owner's, and built** | Doorways withhold; a card is a magazine cover; photographs are prints, square, with nothing over them; Playfair bold titles, Barlow labels, Didot figures; gold for the sun alone; the misty vat; one viewer; the monogram's loop; the masthead that hides and returns |
+| **The owner's, and built** | Doorways withhold; a card is a magazine cover; photographs are prints, square, with nothing over them; Playfair bold titles, Barlow labels, Didot figures; gold for the sun alone; the misty vat; one viewer; the monogram's loop; the masthead that hides and returns; brass links with a hairline underline (Q9, built 2026-10-03) |
 | **Built, and the lead's reading of it** | "The photograph is the light source"; the grammar and its signatures; the patterns' names; the pieces marked Built. The tarot cards are built and under review |
-| **The owner's, with its amount, not yet built** ([0009](decisions/0009-how-much.md)) | A card's corners, shadow and lift; a still wide cover; a control's corners; an article picture's corners; how words arrive; the lozenge between passages of prose; tags in ink that only brighten; glass at 14 px; the book's voice in its empty rooms and ways on. And from before the pairs: white headings; brass links with a hairline underline (Q9) |
-| **Decided under delegation, not yet built** ([0002](decisions/0002-one-control-vocabulary.md), [0003](decisions/0003-stylesheet-organisation.md)) | What 0009 did not move: the hair radius, the fast, base, slow and scene durations, six layers; inks on `:root`; the text button and one mark for "current"; one focus ring; two curves; the ratchet |
+| **The owner's, with its amount, not yet built** ([0009](decisions/0009-how-much.md)) | A card's corners, shadow and lift; a still wide cover; a control's corners; an article picture's corners; how words arrive; the lozenge between passages of prose; tags in ink that only brighten; glass at 14 px; the book's voice in its empty rooms and ways on. And from before the pairs: white headings |
+| **Decided under delegation, not yet built** ([0002](decisions/0002-one-control-vocabulary.md), [0003](decisions/0003-stylesheet-organisation.md)) | What 0009 did not move: the hair radius, the fast, base, slow and scene durations, six layers; the text button and one mark for "current"; one focus ring; two curves; the ratchet |
 | **Open** (the owner's, in conversation or to come) | Grammar and signatures; what a pick met and did not draw (0009, "Not settled"); body face and measure for reading; the footer; the tarot cards' next life |
