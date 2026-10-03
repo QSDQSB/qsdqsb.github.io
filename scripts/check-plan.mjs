@@ -233,8 +233,11 @@ const fingerprint = planHash(PLAN);
 if (hub.url && hub.published?.hash !== fingerprint) warnings.push(`The command centre is behind the plan (last published ${hub.published?.date || 'before the plan last changed'}): rebuild and republish it with /hub page.`);
 // The daily run keeps one branch and never touches master: what it recorded waits there until a
 // session merges it, having seen that it holds only the plan (/hub).
-const waiting = git('rev-list', '--count', 'HEAD..hub/daily').trim();
-if (Number(waiting) > 0) warnings.push(`The daily run's branch (hub/daily) holds ${waiting} commit(s) not here: the owner's answers and ideas it recorded. Merge it before recording anything (/hub says how).`);
+// Its own commits only: the branch is built on GitHub's master, which a working branch may simply be behind.
+// By patch, not by name: a commit already taken here by cherry-pick is not waiting; and only the
+// run's own, not GitHub's master nor a local master merged into the branch on an earlier day.
+const waiting = git('rev-list', '--count', '--no-merges', '--right-only', '--cherry-pick', 'HEAD...hub/daily', ...['origin/master', 'master'].filter((r) => git('rev-parse', '--verify', '--quiet', r.includes('/') ? `refs/remotes/${r}` : `refs/heads/${r}`).trim()).map((r) => `^${r}`)).trim();
+if (Number(waiting) > 0) warnings.push(`The daily run's branch (hub/daily) holds ${waiting} commit(s) of its own not here: the owner's answers and ideas it recorded. Take them before recording anything (/hub says how).`);
 const state = { reviewed, stages, now, queue, decisions, features, ideas, inbox, changelog: changelog.slice(0, 20), hub, fingerprint, errors, warnings, notes };
 
 // Written, then left to drain: exiting straight after a write cuts a pipe off at 64 KiB, and the

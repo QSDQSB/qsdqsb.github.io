@@ -497,7 +497,7 @@ test('the daily script records in a place of its own, commits on hub/daily, push
     assert.strictEqual(daily('finish', 'too soon').status, 2, 'there is no worktree before begin');
     const begin = daily('begin');
     assert.strictEqual(begin.status, 0, begin.stdout + begin.stderr);
-    assert.match(begin.stdout, /Worktree: .*hub-daily \(branch hub\/daily, master merged in\)/);
+    assert.match(begin.stdout, /Worktree: .*hub-daily \(branch hub\/daily, origin\/master merged in\)/);
     // The gate runs these very tests: it must not inherit the mark of a script already handed over.
     assert.match(begin.stdout, /GATE: PASS \(stand-in\), handed over: no/);
     assert.strictEqual(daily('plan', 'finding', 'a place', 'a thing seen', '--by', 'daily').status, 0);
@@ -505,7 +505,7 @@ test('the daily script records in a place of its own, commits on hub/daily, push
     const finish = daily('finish');
     assert.strictEqual(finish.status, 0, finish.stdout + finish.stderr);
     assert.match(finish.stdout, /Push: hub\/daily pushed\./);
-    assert.match(finish.stdout, /── Report\n[\s\S]*Kept today: F001 filed\.\n[\s\S]*hub\/daily holds 1 commit\(s\) that master does not\. Push: hub\/daily pushed\./, 'the report is the script\'s, whole');
+    assert.match(finish.stdout, /── Report\n[\s\S]*Kept today: F001 filed\.\n[\s\S]*hub\/daily holds 1 commit\(s\) that origin\/master does not\. Push: hub\/daily pushed\./, 'the report is the script\'s, whole');
     assert.strictEqual(git(dir, 'log', '--format=%s', '-1', 'hub/daily').trim(), '📐 Daily upkeep: F001 filed', 'the script says what it kept, in its own words');
     assert.strictEqual(git(dir, 'diff', '--name-only', 'master', 'hub/daily').trim(), '_plan/findings/inbox.md');
     assert.strictEqual(git(remote, 'rev-parse', 'hub/daily'), git(dir, 'rev-parse', 'hub/daily'), 'the one branch reached the remote');
@@ -529,7 +529,7 @@ test('the daily script records in a place of its own, commits on hub/daily, push
   });
 });
 
-test('the daily script keeps what it recorded while the owner works, and leaves the branch local when master holds unpushed work', () => {
+test('the daily script keeps what it recorded while the owner works, and builds on GitHub\'s master, not the local one', () => {
   withDailyRepo(({ dir, remote, git, put, daily }) => {
     assert.strictEqual(daily('begin').status, 0);
     assert.strictEqual(daily('plan', 'finding', 'a place', 'a thing seen').status, 0);
@@ -544,15 +544,174 @@ test('the daily script keeps what it recorded while the owner works, and leaves 
     assert.strictEqual(git(dir, 'rev-parse', '--abbrev-ref', 'HEAD').trim(), 'post/a-post');
     assert.strictEqual(git(remote, 'rev-parse', 'hub/daily'), git(dir, 'rev-parse', 'hub/daily'));
 
-    // The owner commits on master and does not push: the branch is cut from it, so it stays local.
+    // The owner commits a site change on the local master and does not push: the run is built on
+    // GitHub's master, so its branch carries none of it, and is pushed.
     git(dir, 'checkout', '-q', 'master');
     git(dir, 'add', '-A'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'the owner, unpushed');
     assert.strictEqual(daily('begin').status, 0);
     assert.strictEqual(daily('plan', 'finding', 'a place', 'another thing seen').status, 0);
-    const local = daily('finish');
-    assert.strictEqual(local.status, 0, local.stdout + local.stderr);
-    assert.match(local.stdout, /Push: left local\. master holds 1 commit/);
-    assert.notStrictEqual(git(remote, 'rev-parse', 'hub/daily'), git(dir, 'rev-parse', 'hub/daily'), 'the second day did not reach the remote');
+    const second = daily('finish');
+    assert.strictEqual(second.status, 0, second.stdout + second.stderr);
+    assert.match(second.stdout, /Push: hub\/daily pushed\./);
+    assert.strictEqual(git(remote, 'rev-parse', 'hub/daily'), git(dir, 'rev-parse', 'hub/daily'));
+    assert.throws(() => git(dir, 'merge-base', '--is-ancestor', 'master', 'hub/daily'), 'the unpushed commit is not on the branch');
+  });
+});
+
+test('a call asked on GitHub\'s master since the local one was last pulled is answered by the run', () => {
+  withDailyRepo(({ dir, remote, git, put, daily }) => {
+    // Another checkout asks Q1 and its pull request is merged: GitHub's master has it, the local master does not.
+    const other = path.join(path.dirname(dir), 'other');
+    git(path.dirname(dir), 'clone', '-q', remote, other);
+    fs.mkdirSync(path.join(other, '_plan'), { recursive: true });
+    fs.writeFileSync(path.join(other, '_plan/QUEUE.md'), '# Queue\n\n### Q1 · Which way?\n\nAsked: 2031-01-01\n\nA paragraph.\n\n- **A (recommended):** the first way\n- **B:** the other\n\n---\n\n## Answered\n\n');
+    git(other, 'add', '-A'); git(other, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'ask Q1'); git(other, 'push', '-q', 'origin', 'HEAD:master');
+    assert.throws(() => git(dir, 'cat-file', '-e', 'master:_plan/QUEUE.md'), 'the local master has not seen it');
+    const begin = daily('begin');
+    assert.strictEqual(begin.status, 0, begin.stdout + begin.stderr);
+    assert.match(begin.stdout, /branch hub\/daily, origin\/master merged in/);
+    const store = fs.mkdtempSync(path.join(os.tmpdir(), 'store-'));
+    fs.mkdirSync(path.join(store, 'answers')); fs.writeFileSync(path.join(store, 'answers/Q1.json'), JSON.stringify({ option: 'B', note: '' }));
+    const sync = daily('plan', 'sync', store);
+    fs.rmSync(store, { recursive: true, force: true });
+    assert.match(sync.stdout, /^Recorded: Q1 answered B\.$/m, sync.stdout + sync.stderr);
+    const finish = daily('finish');
+    assert.strictEqual(finish.status, 0, finish.stdout + finish.stderr);
+    assert.match(finish.stdout, /Kept today: Q1 answered\./);
+  });
+});
+
+test('a daily branch that carried an older master starts again from GitHub\'s, keeping its own commits', () => {
+  withDailyRepo(({ dir, remote, git, put, daily }) => {
+    assert.strictEqual(daily('begin').status, 0);
+    assert.strictEqual(daily('plan', 'finding', 'a place', 'kept across the restart').status, 0);
+    assert.strictEqual(daily('finish').status, 0);
+    // An earlier tool merged the local master into the branch, with a site commit GitHub never saw.
+    put('_includes/head.html', '<head data-unpushed>\n');
+    git(dir, 'add', '-A'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'a site change, unpushed');
+    git(dir, 'checkout', '-q', 'hub/daily'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'merge', '-q', '--no-edit', 'master'); git(dir, 'checkout', '-q', 'master');
+    const begin = daily('begin');
+    assert.strictEqual(begin.status, 0, begin.stdout + begin.stderr);
+    assert.match(begin.stdout, /hub\/daily could not go on as it was .*starts again from origin\/master with its own 1 commit/);
+    assert.strictEqual(daily('plan', 'finding', 'a place', 'the next day').status, 0);
+    const finish = daily('finish');
+    assert.strictEqual(finish.status, 0, finish.stdout + finish.stderr);
+    assert.throws(() => git(dir, 'merge-base', '--is-ancestor', 'master', 'hub/daily'), 'the site change is no longer on the branch');
+    const inbox = git(dir, 'show', 'hub/daily:_plan/findings/inbox.md');
+    assert.match(inbox, /F001 · a place · kept across the restart/);
+    assert.match(inbox, /F002 · a place · the next day/);
+    assert.match(finish.stdout, /Push: hub\/daily pushed \(started again from origin\/master\)\./);
+    assert.strictEqual(git(remote, 'rev-parse', 'hub/daily'), git(dir, 'rev-parse', 'hub/daily'), 'and it is pushed again');
+  });
+});
+
+test('a session takes the run\'s own commits by cherry-pick, and from then on gives out ids freely', () => {
+  withDailyRepo(({ dir, remote, git, daily }) => {
+    const plan = (...a) => spawnSync('node', ['scripts/plan.mjs', ...a], { cwd: dir, encoding: 'utf8', env: { ...process.env, PLAN_DIR: '' } });
+    const own = () => git(dir, 'log', '--format=%h', '--reverse', '--no-merges', '--right-only', '--cherry-pick', 'HEAD...hub/daily', '^origin/master').split('\n').filter(Boolean);
+    assert.strictEqual(daily('begin').status, 0);
+    assert.strictEqual(daily('plan', 'finding', 'a place', 'filed by the run').status, 0);
+    assert.strictEqual(daily('finish').status, 0);
+    git(dir, 'checkout', '-q', '-b', 'work', 'origin/master');
+    const refused = plan('finding', 'x', 'y');
+    assert.strictEqual(refused.status, 1, 'while the run holds a numbered finding this checkout lacks');
+    assert.match(refused.stderr, /Take them first \(\/hub says how\)/);
+    for (const c of own()) git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'cherry-pick', c);
+    assert.deepStrictEqual(own(), [], 'a commit taken is not offered again');
+    assert.strictEqual(plan('finding', 'x', 'y').status, 0, plan('finding', 'x', 'y').stderr);
+    git(dir, 'checkout', '--', '_plan');                                        // that one stays unwritten: the pick alone goes to GitHub
+    // Its pull request is merged; the next run starts again from GitHub, and a branch cut from there is free too.
+    git(dir, 'push', '-q', 'origin', 'work:master'); git(dir, 'fetch', '-q', 'origin');
+    const reset = daily('begin');
+    assert.strictEqual(reset.status, 0, reset.stdout + reset.stderr);
+    assert.ok(!/could not go on as it was/.test(reset.stdout), 'the merge was clean: this is the reset, not the restart');
+    assert.match(daily('finish').stdout, /Push: hub\/daily pushed \(started again from origin\/master\)\./);
+    assert.strictEqual(git(dir, 'rev-parse', 'hub/daily'), git(dir, 'rev-parse', 'origin/master'), 'nothing already merged is counted as the run\'s own');
+    // And the day after, with something new, the push is a plain one again.
+    assert.strictEqual(daily('begin').status, 0);
+    assert.strictEqual(daily('plan', 'finding', 'a place', 'the day after').status, 0);
+    assert.match(daily('finish').stdout, /Push: hub\/daily pushed\./);
+    assert.strictEqual(git(remote, 'rev-parse', 'hub/daily'), git(dir, 'rev-parse', 'hub/daily'));
+    git(dir, 'checkout', '-q', 'master');
+    git(dir, 'fetch', '-q', 'origin'); git(dir, 'checkout', '-q', '-b', 'next', 'origin/master');
+    git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'cherry-pick', 'hub/daily');   // the day after's finding, taken
+    assert.strictEqual(plan('finding', 'x', 'z').status, 0);
+  });
+});
+
+test('a daily branch whose old master will not merge with GitHub\'s starts again; one whose own commits are more than the plan stops', () => {
+  withDailyRepo(({ dir, remote, git, put, daily }) => {
+    const other = path.join(path.dirname(dir), 'other');
+    git(path.dirname(dir), 'clone', '-q', remote, other);
+    // The local master: a site change and a plan edit GitHub never saw; the branch carries them.
+    put('_includes/head.html', '<head data-unpushed>\n');
+    put('_plan/findings/inbox.md', '# Inbox\n\nEdited here.\n\n## Waiting\n\n## Taken\n');
+    git(dir, 'add', '-A'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'unpushed');
+    git(dir, 'branch', '-f', 'hub/daily', 'master');
+    // A session on a branch from GitHub's master is not held back by the local master's commits.
+    git(dir, 'checkout', '-q', '-b', 'work', 'origin/master');
+    assert.strictEqual(spawnSync('node', ['scripts/plan.mjs', 'finding', 'x', 'y'], { cwd: dir, encoding: 'utf8' }).status, 0);
+    git(dir, 'checkout', '-q', '--', '.'); git(dir, 'checkout', '-q', 'master');
+    // A pull request changed the same line on GitHub.
+    fs.writeFileSync(path.join(other, '_plan/findings/inbox.md'), '# Inbox\n\nEdited on GitHub.\n\n## Waiting\n\n## Taken\n');
+    git(other, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-am', 'a pull request'); git(other, 'push', '-q', 'origin', 'HEAD:master');
+    const begin = daily('begin');
+    assert.strictEqual(begin.status, 0, begin.stdout + begin.stderr);
+    assert.match(begin.stdout, /starts again from origin\/master with its own 0 commit/);
+    assert.ok(!/set up to track/.test(begin.stdout));
+    assert.throws(() => git(dir, 'config', '--get', 'branch.hub/daily.merge'), 'the branch tracks nothing');
+    assert.strictEqual(daily('abort').status, 0);
+
+    // The run's own commit holds a site file: it cannot start again cleanly, so nothing changes.
+    git(dir, 'checkout', '-q', 'hub/daily'); put('_includes/foot.html', '<footer>\n');
+    git(dir, 'add', '-A'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'not the plan'); git(dir, 'checkout', '-q', 'master');
+    const was = git(dir, 'rev-parse', 'hub/daily');
+    const stop = daily('begin');
+    assert.strictEqual(stop.status, 1);
+    assert.match(stop.stderr, /STOP: hub\/daily's own commits hold more than the plan\./);
+    assert.strictEqual(git(dir, 'rev-parse', 'hub/daily'), was, 'the branch is as it was');
+    assert.ok(!fs.existsSync(path.join(dir, '.claude/worktrees/hub-daily')));
+  });
+});
+
+test('a commit of the run\'s whose lines reached GitHub another way is passed over when the branch starts again', () => {
+  withDailyRepo(({ dir, remote, git, put, daily }) => {
+    assert.strictEqual(daily('begin').status, 0);
+    assert.strictEqual(daily('plan', 'finding', 'a place', 'once').status, 0);
+    assert.strictEqual(daily('finish').status, 0);
+    const line = git(dir, 'show', 'hub/daily:_plan/findings/inbox.md');
+    // GitHub gets the same lines inside a bigger commit (another patch), and the branch has carried an unpushed site change.
+    const other = path.join(path.dirname(dir), 'other');
+    git(path.dirname(dir), 'clone', '-q', remote, other);
+    fs.writeFileSync(path.join(other, '_plan/findings/inbox.md'), line); fs.writeFileSync(path.join(other, '_plan/more.md'), 'more\n');
+    git(other, 'add', '-A'); git(other, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'the same lines, and more'); git(other, 'push', '-q', 'origin', 'HEAD:master');
+    put('_includes/head.html', '<head data-unpushed>\n');
+    git(dir, 'add', '-A'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'unpushed');
+    git(dir, 'checkout', '-q', 'hub/daily'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'merge', '-q', '--no-edit', 'master'); git(dir, 'checkout', '-q', 'master');
+    const begin = daily('begin');
+    assert.strictEqual(begin.status, 0, begin.stdout + begin.stderr);
+    assert.match(begin.stdout, /starts again from origin\/master with its own 1 commit/);
+    assert.strictEqual(daily('finish').status, 0);
+    assert.strictEqual(git(dir, 'rev-parse', 'hub/daily'), git(dir, 'rev-parse', 'origin/master'), 'nothing of its own was left to keep');
+  });
+});
+
+test('a day\'s push never overwrites what someone else pushed to the daily branch', () => {
+  withDailyRepo(({ dir, remote, git, daily }) => {
+    assert.strictEqual(daily('begin').status, 0);
+    assert.strictEqual(daily('plan', 'finding', 'a place', 'day one').status, 0);
+    assert.strictEqual(daily('finish').status, 0);
+    // A suggestion committed on GitHub to hub/daily, after the run's push.
+    const other = path.join(path.dirname(dir), 'other');
+    git(path.dirname(dir), 'clone', '-q', '-b', 'hub/daily', remote, other);
+    fs.writeFileSync(path.join(other, '_plan/note.md'), 'from GitHub\n');
+    git(other, 'add', '-A'); git(other, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'a suggestion'); git(other, 'push', '-q', 'origin', 'hub/daily');
+    const theirs = git(remote, 'rev-parse', 'hub/daily');
+    assert.strictEqual(daily('begin').status, 0);
+    assert.strictEqual(daily('plan', 'finding', 'a place', 'day two').status, 0);
+    const finish = daily('finish');
+    assert.match(finish.stdout, /Push: left local\. GitHub's hub\/daily holds commits this run does not have; they are not overwritten\./);
+    assert.strictEqual(git(remote, 'rev-parse', 'hub/daily'), theirs, 'what was pushed there is kept');
   });
 });
 
@@ -565,10 +724,25 @@ test('the copy of the daily script that runs is master\'s, whatever the owner\'s
     put('scripts/hub-daily.sh', `${head}echo "the working copy ran"; touch "$REPO/should-not-exist"\n`);
     const begin = daily('begin');
     assert.strictEqual(begin.status, 0, begin.stdout + begin.stderr);
-    assert.match(begin.stdout, /Worktree: .*hub-daily \(branch hub\/daily, master merged in\)/);
+    assert.match(begin.stdout, /Worktree: .*hub-daily \(branch hub\/daily, origin\/master merged in\)/);
     assert.ok(!/the working copy ran/.test(begin.stdout) && !fs.existsSync(path.join(dir, 'should-not-exist')));
     assert.match(begin.stdout, /plan sync .*hub-store\n.*plan debt\n.*finish/, 'begin names the steps that follow, as commands');
     assert.strictEqual(daily('abort').status, 0);
+
+    // GitHub's master holds a copy from before the hand-over: the local master's is the one that runs.
+    const other = path.join(path.dirname(dir), 'other');
+    git(path.dirname(dir), 'clone', '-q', path.join(path.dirname(dir), 'origin.git'), other);
+    fs.writeFileSync(path.join(other, 'scripts/hub-daily.sh'), 'echo "GitHub\'s old copy ran"; exit 0\n');
+    git(other, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-am', 'an old script'); git(other, 'push', '-q', 'origin', 'HEAD:master');
+    git(dir, 'fetch', '-q', 'origin');
+    const again = daily('abort');
+    assert.ok(!/old copy ran/.test(again.stdout), again.stdout);
+    assert.match(again.stdout, /Tidied\. Nothing was kept\./);
+    // Once GitHub's copy has the hand-over, it is GitHub's that runs, not the local master's.
+    fs.writeFileSync(path.join(other, 'scripts/hub-daily.sh'), '# HUB_DAILY_FROM_MASTER\necho "GitHub\'s new copy ran"; exit 0\n');
+    git(other, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-am', 'a newer script'); git(other, 'push', '-q', 'origin', 'HEAD:master');
+    git(dir, 'fetch', '-q', 'origin');
+    assert.match(daily('abort').stdout, /GitHub's new copy ran/);
   });
 });
 
@@ -626,7 +800,8 @@ test('the store\'s dump is recorded once: an open call, a shaped idea\'s decisio
     assert.match(out, /^Already in the plan: 4\.$/m, 'the idea already parked, the idea and the call the plan settled later, the call kept as it was');
     assert.match(out, /^A question answered, its idea not yet decided: I777-1\./m);
     for (const said of [`${changed}: the plan says C, the page now says A`, `${noted}: the page holds a note the plan does not`, 'I902: the plan holds another decision', 'I903: it is staged with no line of the owner\'s, and the page says drop']) assert.ok(out.split('\n').find((l) => l.startsWith('For a session to weigh')).includes(said), said);
-    for (const said of ['I904: still raw', 'I905: something that is not a plain name is not pursue, park or drop', 'I778: no such idea', 'Q999: no such call in the queue', '--by: not a call or an idea', 'broken: its file is not JSON', 'something that is not a plain name: not a call or an idea']) assert.ok(out.split('\n').find((l) => l.startsWith('Skipped')).includes(said), said);
+    for (const said of ['I904: still raw', 'I905: something that is not a plain name is not pursue, park or drop', 'I778: no such idea', '--by: not a call or an idea', 'broken: its file is not JSON', 'something that is not a plain name: not a call or an idea']) assert.ok(out.split('\n').find((l) => l.startsWith('Skipped')).includes(said), said);
+    assert.match(out, /^An answer to a call this plan does not hold yet \(asked on a branch not merged\?\): Q999\. It stays in the store/m);
     assert.ok(!/IGNORE|rm -rf|touch/.test(out), 'nothing stored is printed back to whoever reads the output');
     assert.ok(!fs.existsSync('should-not-exist'));
 
@@ -724,6 +899,12 @@ test('a store of many ideas is filed ten a run; a dump of another shape is said,
     const second = plan('sync', store);
     assert.strictEqual((second.stdout.match(/filed, raw/g) || []).length, 2);
     assert.match(second.stdout, /^Already in the plan: 10\.$/m);
+    // A dump left from an earlier day is not read again.
+    const old = new Date(Date.now() - 3 * 3600 * 1000);
+    fs.utimesSync(path.join(store, 'ideas', 'n01.json'), old, old);            // one file left from an earlier dump is enough
+    const stale = plan('sync', store);
+    assert.strictEqual(stale.status, 1);
+    assert.match(stale.stderr, /the oldest file in .* is 3 hour\(s\) old/);
   }));
 });
 

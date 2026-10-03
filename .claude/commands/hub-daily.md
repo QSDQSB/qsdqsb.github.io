@@ -18,11 +18,15 @@ so that `finish` always runs; do not look for another way to do the step.
 Run from the repository (`/Users/apple/Documents/GitHub/qsdqsb.github.io` on this Mac). The script
 works in a worktree of its own (`.claude/worktrees/hub-daily`, on the one branch `hub/daily`,
 carried forward from day to day) and never writes in the owner's checkout. Whatever branch that
-checkout is on, the copy of the script that runs is `master`'s.
+checkout is on, the copy of the script that runs is GitHub's `master`'s (`begin` fetches
+first; the local `master`'s while GitHub's predates the hand-over). The run is built on GitHub's `master`
+too: every merged pull request reaches it, and the local `master` moves only when someone pulls it.
 
 1. **Begin.** `bash scripts/hub-daily.sh begin`
-   It makes the worktree, merges `master` into `hub/daily`, runs the plan check and the fast gate,
-   and prints the steps that follow with their paths filled in. If it says STOP, report what it
+   It fetches, makes the worktree, merges GitHub's `master` into `hub/daily` (starting the branch
+   again from it, with the run's own commits, if an older local `master` was merged in on an earlier
+   day), runs the plan check and the fast gate,
+   and prints the steps that follow (the store's folder is yours to fill in: step 2). If it says STOP, report what it
    said and end there.
 2. **The owner's answers.** Dump the command centre's store, twice, with the `ArtifactData` tool:
    `action: "list"`, the `url` in `.claude/worktrees/hub-daily/_plan/hub.json` (`begin` prints it),
@@ -35,7 +39,8 @@ checkout is on, the copy of the script that runs is `master`'s.
    It records an answer to a call still open, a decision on an idea not yet decided (with the
    answers to its questions), and a new idea, each once; it checks every id and letter against the
    plan first, and leaves alone what the plan already holds. A change of mind (the page says B, the
-   plan says A) it writes nowhere and names for a session.
+   plan says A) it writes nowhere and names for a session. An answer to a call the plan does not hold yet
+   (asked on a branch not merged) it leaves in the store and names; a run after the merge records it.
    If the store cannot be read, or `sync` says the dump holds nothing, say so in the report and go on.
 3. **Debt the gate cannot see.** `bash scripts/hub-daily.sh plan debt`
    It lists stylesheets and scripts that nothing loads and the inbox does not already name, usually
@@ -45,8 +50,8 @@ checkout is on, the copy of the script that runs is `master`'s.
    not for a search of your own.
 4. **Finish.** `bash scripts/hub-daily.sh finish "daily upkeep"`
    It checks that the branch holds nothing but the plan, commits on `hub/daily` in its own words,
-   pushes that branch only if the owner's switch is on and `master` holds nothing GitHub has not
-   seen, removes the worktree, and prints the report. If the owner worked in their checkout
+   pushes that branch only if the owner's switch is on (built on GitHub's `master`, it carries
+   nothing else GitHub has not seen), removes the worktree, and prints the report. If the owner worked in their checkout
    meanwhile, it says so and keeps what was recorded all the same.
 5. **Report.** Repeat the lines under `── Report` as they are, with anything a step said that the
    owner should know (a STOP, a store that could not be read, what `sync` named for a session, what
