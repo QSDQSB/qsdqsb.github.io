@@ -74,6 +74,59 @@ const JOURNEYS = [
     for (const href of doors) must(await ok(href), `${href} does not answer`);
   } },
 
+  { id: 'hero-cat', name: "Home's cat keeps its size, moves, answers the pointer, and holds still when motion is off", async run({ page, go }) {
+    const cat = () => page.evaluate(() => { const c = document.querySelector('qsd-cat'); const svg = c?.shadowRoot?.querySelector('svg.qc');
+      return c && svg && { still: svg.classList.contains('qc-still'), stepping: !!c.raf, t: c.clock || 0, hovered: c.hovered, clicks: c.clicks }; });
+    await go('/?mark=cat&motion=on');
+    await page.waitForFunction(() => document.querySelector('qsd-cat')?.raf, null, { timeout: 5000 }).catch(() => {});
+    const box = await page.locator('qsd-cat svg.qc').boundingBox();
+    must(box && box.width <= 421 && box.height <= 421, `the cat is ${Math.round(box?.width)}px wide: --qsd-cat-size no longer holds it`);
+    const a = await cat(); await page.waitForTimeout(600); const b = await cat();
+    must(b?.stepping && b.t > a.t, 'the cat\'s idle loop is not being stepped');
+    await page.mouse.move(box.x + box.width * 0.5, box.y + box.height * 0.45);
+    await page.mouse.down(); await page.mouse.up();
+    const c = await cat();
+    must(c.hovered && c.clicks === 1, 'the cat did not answer a pointer over it and a click');
+    // a phone turned sideways hides the band (display:none) and back shows it: the loop must stay stepped
+    await page.evaluate(() => { document.querySelector('qsd-cat').style.display = 'none'; });
+    await page.waitForTimeout(300);
+    await page.evaluate(() => { document.querySelector('qsd-cat').style.display = ''; });
+    await page.waitForTimeout(500);
+    const e = await cat(); await page.waitForTimeout(400); const f = await cat();
+    const native = await page.evaluate(() => document.querySelector('qsd-cat').shadowRoot.getAnimations().filter((a) => a instanceof CSSAnimation && a.playState === 'running').length);
+    must(native === 0 && f.t > e.t, `after being hidden and shown the cat runs ${native} animations at full rate${f.t > e.t ? '' : ', and its loop has stopped'}`);
+    await page.goto('about:blank');
+    await go('/?mark=cat&motion=off');
+    await page.waitForFunction(() => document.querySelector('qsd-cat')?.svg, null, { timeout: 5000 }).catch(() => {});
+    const d = await cat();
+    must(d?.still && !d.stepping, 'with motion off the cat still moves');
+  } },
+
+  { id: 'cat-cheer', name: 'The small cat raises its cup and speaks on the 404 and after subscribing, then nothing runs', async run({ page, go }) {
+    // the cheer's own animations, not the 1.1 s fade-in (a transition)
+    const moving = (sel) => page.evaluate((s) => document.querySelector(s)?.shadowRoot?.getAnimations().filter((a) => !(a instanceof CSSTransition)).length ?? -1, sel);
+    const cheered = (sel) => page.waitForFunction((s) => document.querySelector(s)?.shadowRoot?.getAnimations().some((a) => !(a instanceof CSSTransition)), sel, { timeout: 5000 }).then(() => true, () => false);
+    await go('/no-such-page-here/?motion=on', { expect: 404 });
+    await page.locator('qsd-cat').scrollIntoViewIfNeeded();
+    must(await cheered('qsd-cat'), 'the 404\'s cat did not cheer');
+    const said = (sel) => page.evaluate((s) => document.querySelector(s)?.shadowRoot?.querySelector('.say.is-said')?.textContent || '', sel);
+    must(await said('qsd-cat') === 'Aloha!', 'the 404\'s cat did not say "Aloha!"');
+    await page.waitForTimeout(2400);
+    must(await moving('qsd-cat') === 0, 'the 404\'s cat is still moving after its cheer');
+    // a stand-in for the subscribe API: the journey never sends an address anywhere
+    await page.route('**/api/subscribe', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }));
+    await go('/posts/shihuqiao/?motion=on');
+    await page.evaluate(() => { try { localStorage.removeItem('qsd-subscribe-done'); localStorage.removeItem('qsd-subscribe-dismissed'); } catch (e) {} });
+    await page.locator('[data-subscribe-slip]').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1200);
+    await page.fill('.subscribe-slip__input', 'journey@example.test');
+    await page.click('.subscribe-slip__send');
+    must(await cheered('.subscribe-slip.is-done .subscribe-slip__cat'), 'no cat raised its cup after subscribing');
+    const tall = await page.evaluate(() => document.querySelector('.subscribe-slip__cat').getBoundingClientRect().height);
+    must(tall > 0, 'the thank-you\'s cat takes no room: it cannot be seen');
+    must(await said('.subscribe-slip__cat') === 'Thank you!', 'the thank-you\'s cat did not say "Thank you!"');
+  } },
+
   { id: 'masthead-touch', phone: true, name: 'On a phone the bar stays away while reading and answers a tap at the top', async run({ page, go }) {
     const has = (cls) => page.evaluate((c) => document.querySelector('.masthead').classList.contains(c), cls);
     await go('/posts/shihuqiao/?motion=on', { early: true });
