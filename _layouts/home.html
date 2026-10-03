@@ -39,13 +39,14 @@ than the screen scrolls it inside its .home__panel-body. {% endcomment %}
     </div>
     <div class="home__hero-veil" aria-hidden="true"></div>
     {% comment %} The hero mark: one of the self-contained QSD animations, drawn at
-    random on each visit — the <qsd-mark> monogram or the <qsd-bubbles> glass cell.
-    Right half on desktop, a band at the bottom on small screens. The slot below is
-    replaced by the chosen element before first paint, and only its script loads.
+    random on each visit — the <qsd-mark> monogram, the <qsd-bubbles> glass cell or
+    the <qsd-cat> orange-cat sigil. Right half on desktop, a band at the bottom on
+    small screens. The slot below is replaced by the chosen element before first
+    paint, and only its script loads.
     Under QSD.motionOff() (reduced motion, crawlers, visual baselines) the monogram
     is always chosen, so renders stay stable. ?mark=qsd-bubbles pins one to test. {% endcomment %}
     <span class="home__hero-anim" id="heroMark" aria-hidden="true"
-      data-marks='[["qsd-mark","{{ '/assets/js/qsd-mark.js' | relative_url }}"],["qsd-bubbles","{{ '/assets/js/qsd-bubbles.js' | relative_url }}"]]'></span>
+      data-marks='[["qsd-mark","{{ '/assets/js/qsd-mark.js' | relative_url }}"],["qsd-bubbles","{{ '/assets/js/qsd-bubbles.js' | relative_url }}"],["qsd-cat","{{ '/assets/js/qsd-cat.js' | relative_url }}"]]'></span>
     <script>
       (function () {
         var slot = document.getElementById("heroMark");
