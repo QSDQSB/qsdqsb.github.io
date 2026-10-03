@@ -24,7 +24,7 @@ test('text letter mirrors the essentials', async () => {
   const text = renderLetterText(LETTER, UNSUB);
   assert.ok(text.includes(LETTER.title));
   assert.ok(text.includes(`Unsubscribe: ${UNSUB}`));
-  assert.ok(text.includes(`Read it: ${LETTER.url}`));
+  assert.ok(text.includes(`Onward: ${LETTER.url}`));
 });
 
 test('two recipients never share an unsubscribe link', async () => {
@@ -60,7 +60,18 @@ test('a letter carries its picture inline, linked, between its words and its way
   const html = renderLetterHtml({ ...LETTER, figure }, UNSUB);
   assert.ok(html.includes('src="cid:reverie-ce7d99" width="560" height="820" alt="Reverie in #CE7D99, Daphne Pink"'), 'the picture, by its Content-ID, with its size and name');
   assert.ok(html.includes('href="https://qsdqsb.com/reverie/?c=ce7d99&amp;from=rigi%2Fdscf5760"'), 'it leads to its Reverie');
-  assert.ok(html.indexOf('cid:reverie-ce7d99') > html.indexOf(LETTER.excerpt) && html.indexOf('cid:reverie-ce7d99') < html.indexOf('Read it'), 'after the words, before the way in');
+  assert.ok(html.indexOf('cid:reverie-ce7d99') > html.indexOf(LETTER.excerpt) && html.indexOf('cid:reverie-ce7d99') < html.indexOf('Onward'), 'after the words, before the way in');
   assert.ok(renderLetterText({ ...LETTER, figure }, UNSUB).includes(`${figure.alt}: ${figure.href}`), 'the text letter names it and its address');
   assert.ok(!renderLetterHtml(LETTER, UNSUB).includes('cid:reverie'), 'no picture unless one is given');
+});
+
+test('a line from the piece takes the excerpt\'s place, and the inbox\'s preview', async () => {
+  const { renderLetterHtml, renderLetterText } = await import('../scripts/letter-template.mjs');
+  const quote = '所以这个颜色的名字背后，是一个逃离太阳的人。';
+  const html = renderLetterHtml({ ...LETTER, quote }, UNSUB);
+  assert.ok(html.includes(quote) && !html.includes(LETTER.excerpt), 'the line, not the excerpt');
+  assert.ok(html.indexOf(quote) < html.indexOf('</div>'), 'the inbox preview is the line');
+  assert.ok(html.includes("'Songti SC'"), 'Chinese in a Song face');
+  const text = renderLetterText({ ...LETTER, quote }, UNSUB);
+  assert.ok(text.includes(quote) && !text.includes(LETTER.excerpt));
 });
