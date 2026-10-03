@@ -13,25 +13,6 @@ options as `- **A (recommended):** …`. A number is never reused: the command c
 
 ---
 
-### Q14 · May the site carry CMU Serif itself, instead of fetching it from a third-party font service on every page?
-
-Asked: 2026-10-02
-
-Audit S09, marked Fix. CMU Serif's stylesheet comes from fonts.cdnfonts.com and holds back the first paint of every page; if that service is slow or blocked, the page waits. It is used by the treatise and a few base rules. Carrying it ourselves means downloading the face's files (CMU Serif is free under the SIL Open Font Licence) and committing them under assets/fonts/, as Barlow and Playfair already are: font bytes in git, which is why it is asked.
-
-- **A (recommended):** Yes: download the faces the site uses, from the font's own release (CTAN, cm-unicode), subset to Latin, and commit them
-- **B:** No files: keep the service, but load its stylesheet so it no longer holds back the page
-- **C:** Leave it as it is
-
-### Q15 · May sessions be stopped from writing to R2 by themselves?
-
-Asked: 2026-10-03
-
-Found while shaping I003 (F073). The project's permission file allows every npm script without a prompt (Bash(npm run *)), so npm run photos:push, which uploads photographs to R2, runs in any session with no question asked, an unattended daily run included. A write to R2 is one of your hard rules. Nothing has used it that way; the gap is that nothing would stop it. The fix is one line in .claude/settings.json, your permission file, so it is yours to say: deny that one script (and the other R2 writers, if any), so a session asks you every time.
-
-- **A (recommended):** Deny npm run photos:push (and any other R2 writer) in the permission file; a session asks you each time
-- **B:** Leave it as it is: the hard rule in the plan is enough
-
 ### Q16 · Do the four new pieces read right as drawn on the specimen page?
 
 Asked: 2026-10-03
@@ -73,6 +54,8 @@ Built to your picks (28 px, 0.7 s, in turn 0.12 s apart). It reaches whole block
 
 ## Answered
 
+- 2026-10-03 · Q15 · May sessions be stopped from writing to R2 by themselves? → A: deny npm run photos:push and any other R2 writer in the permission file; a session asks each time
+- 2026-10-03 · Q14 · May the site carry CMU Serif itself, instead of fetching it from a third-party font service on every page? → A: the site carries CMU Serif itself, from cm-unicode on CTAN, subset to Latin
 - 2026-10-03 · Q13 · Does Cloudflare count the site's visits, and may the privacy page say so in this sentence? → A: Cloudflare counts them; use the draft as written
 - 2026-10-02 · A frame's specs in the essay, a line of Chapter II, and the essay's link on the colour pages (in chat) → of 「代码精确算出太阳在地平线下六度以下。我们给图片标上 Night。」: "Should we give the photo specs (ISO, weather, sun angle) of that particular photo DSCF5789? essentially the specs panel", "(and also the picture itself)", "lets do it in this branch so we dont need a new PR". Chapter II now reads "出自Christopher Wren之手。底下的卷轴上刻着 Pereunt et imputantur：时辰一个个过去，都记在我们账上。" (the owner's sentence). And: "Should we also add \"In the Naming of Light\" link to all voyage pages, before \"COLOUR NAMES AFTER ROBERT RIDGWAY, 1912 →\"", then "actually both palette and reverie page 's link collections": on Reverie it stands before the Ridgway line; QSD's Palette had no such line, so it is the one way on at the foot of the overview and of each voyage's palette. Then, of Chapter II: "\"比如克莱因蓝。\" 是不是可以删掉": struck, so the unnamed chip beneath (Wengen's #326B8B) is no longer read as Klein blue.
 - 2026-10-02 · The Reverie card's hint, and three lines of the essay (in chat) → of the hint: "this explanation is redundant. Let's change to: \"Note the dot next to HEX RGB code? Hover on it!\"" (so the dot stirs the dye in the card too). Chapter III's English: "I count no hours but the serene", the Chinese kept ("Let's change the English but keep the chinese"). Chapter II: "在第二章中为两个颜色加上翻译" (「肉桂赭色」, 「引杜林蓝」). Chapter IV: the hyssop sentence dropped, the owner's suggestion ("是不是可以删掉，减少意象").
