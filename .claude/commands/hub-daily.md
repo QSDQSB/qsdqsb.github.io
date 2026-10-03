@@ -53,6 +53,10 @@ too: every merged pull request reaches it, and the local `master` moves only whe
    pushes that branch only if the owner's switch is on (built on GitHub's `master`, it carries
    nothing else GitHub has not seen), removes the worktree, and prints the report. If the owner worked in their checkout
    meanwhile, it says so and keeps what was recorded all the same.
+   If its push says "left local" because GitHub's `hub/daily` holds commits the run does not have
+   (someone pushed there, or that branch was merged on GitHub by squash), say so in the report:
+   the owner, or a session with the owner's word, deletes GitHub's `hub/daily`, and the next run
+   pushes its own again.
 5. **Report.** Repeat the lines under `── Report` as they are, with anything a step said that the
    owner should know (a STOP, a store that could not be read, what `sync` named for a session, what
    it skipped). Under ten lines.
