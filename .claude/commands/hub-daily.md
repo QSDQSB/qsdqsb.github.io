@@ -22,7 +22,7 @@ checkout is on, the copy of the script that runs is `master`'s.
 
 1. **Begin.** `bash scripts/hub-daily.sh begin`
    It makes the worktree, merges `master` into `hub/daily`, runs the plan check and the fast gate,
-   and prints the steps that follow with their paths filled in. If it says STOP, report what it
+   and prints the steps that follow (the store's folder is yours to fill in: step 2). If it says STOP, report what it
    said and end there.
 2. **The owner's answers.** Dump the command centre's store, twice, with the `ArtifactData` tool:
    `action: "list"`, the `url` in `.claude/worktrees/hub-daily/_plan/hub.json` (`begin` prints it),
