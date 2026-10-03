@@ -155,7 +155,7 @@ function houseEmailText({ bodyLines, footerNote, unsubscribeUrl }) {
    ========================================================================== */
 
 const LETTER_FOOTER_NOTE =
-  "You asked to hear when something new was published. This is that, and nothing more.";
+  "Sent because you subscribed at qsdqsb.com. A letter comes only when something new does.";
 
 // A picture the letter carries between its words and its way in: a colour's Reverie card
 // (letter-card.mjs), say. It travels inline like the crest, under its own Content-ID, and leads
@@ -179,6 +179,8 @@ const figureRow = (f) => `<tr>
  * @param {string|string[]} [letter.quote]  Lines from the piece itself, a paragraph each, set in
  *                                   the excerpt's place (upright: a Chinese line has no italic of
  *                                   its own); [words](https://…) is a link, as in the post
+ * @param {string|string[]} [letter.gloss]  The quote in English, beneath it, quieter and in italic,
+ *                                   as the piece glosses its Latin
  * @param {object} [letter.figure]   A picture to carry: { cid, width, height, alt, href }, its
  *                                   bytes attached by the sender under `cid`
  * @param {string} unsubscribeUrl    THIS recipient's personal unsubscribe link
@@ -189,9 +191,16 @@ const HAN = /\p{Script=Han}/u;
 // A quoted paragraph: its words escaped, its links kept, its language said (a Chinese line read in
 // an English voice is noise). Set to the left, as the piece sets its prose (the owner, 2026-10-03),
 // on the card's own edge.
+const linked = (p, colour) => escapeHtml(p).replace(LINK, (_, words, href) => `<a href="${href}" style="color:${colour};text-decoration:underline;">${words}</a>`);
 const quoteRow = (p, last) => `<tr>
             <td align="left"${HAN.test(p) ? ' lang="zh-Hans"' : ""} style="padding:0 20px ${last ? 32 : 14}px;font-family:${SERIF_QUOTE};font-size:17px;line-height:1.9;letter-spacing:0.5px;text-align:left;color:${BRASS};">
-              ${escapeHtml(p).replace(LINK, (_, words, href) => `<a href="${href}" style="color:${BRASS};text-decoration:underline;">${words}</a>`)}
+              ${linked(p, BRASS)}
+            </td>
+          </tr>`;
+// Its English, beneath: the house serif in italic, a size down, in the quiet grey.
+const glossRow = (p, last) => `<tr>
+            <td align="left" lang="en" style="padding:0 20px ${last ? 32 : 10}px;font-family:${SERIF};font-style:italic;font-size:15px;line-height:1.7;text-align:left;color:${MUTE};">
+              ${linked(p, MUTE)}
             </td>
           </tr>`;
 const plain = (p) => p.replace(LINK, "$1 ($2)");
@@ -201,7 +210,7 @@ export function renderLetterHtml(letter, unsubscribeUrl) {
   const excerpt = escapeHtml(letter.excerpt || "");
   const url = escapeHtml(letter.url);
   const dateLine = escapeHtml(letter.dateLine || "");
-  const quote = paragraphs(letter.quote);
+  const quote = paragraphs(letter.quote), gloss = quote.length ? paragraphs(letter.gloss) : [];
 
   const kicker = escapeHtml(letter.kicker || "");
 
@@ -220,7 +229,7 @@ export function renderLetterHtml(letter, unsubscribeUrl) {
               ${dateLine}
             </td>
           </tr>` : ""}
-          ${quote.length ? quote.map((p, i) => quoteRow(p, i === quote.length - 1)).join("\n          ") : excerpt ? `<tr>
+          ${quote.length ? [...quote.map((p, i) => quoteRow(p, i === quote.length - 1 && !gloss.length)), ...gloss.map((p, i) => glossRow(p, i === gloss.length - 1))].join("\n          ") : excerpt ? `<tr>
             <td align="center" style="padding:0 30px 30px;font-family:${SERIF};font-style:italic;font-size:17px;line-height:1.6;color:${BRASS};">
               ${excerpt}
             </td>
@@ -255,7 +264,7 @@ export function renderLetterText(letter, unsubscribeUrl) {
     letter.title,
     letter.dateLine ? letter.dateLine : null,
     "",
-    ...(paragraphs(letter.quote).length ? paragraphs(letter.quote).flatMap((p) => [plain(p), ""]) : letter.excerpt ? [letter.excerpt, ""] : []),
+    ...(paragraphs(letter.quote).length ? [...paragraphs(letter.quote), ...paragraphs(letter.gloss)].flatMap((p) => [plain(p), ""]) : letter.excerpt ? [letter.excerpt, ""] : []),
     letter.figure ? `${letter.figure.alt}: ${letter.figure.href}` : null,
     letter.figure ? "" : null,
     `Onward: ${letter.url}`,

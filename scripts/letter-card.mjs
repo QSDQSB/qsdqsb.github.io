@@ -56,8 +56,8 @@ export async function reverieCard(hex, { site = 'https://qsdqsb.com' } = {}) {
       if (body === served && !served.includes(`data-colour="${six}"`)) { await route.abort(); return; }
       await route.fulfill({ response: res, body });
     });
-    await page.goto(`${base}${POST}?motion=off`, { waitUntil: 'domcontentloaded' }).catch(() => {
-      throw new Error(`could not open ${base}${POST} with its Reverie card in #${six.toUpperCase()}`);
+    await page.goto(`${base}${POST}?motion=off`, { waitUntil: 'domcontentloaded' }).catch((e) => {
+      throw new Error(`could not open ${base}${POST} with its Reverie card in #${six.toUpperCase()}`, { cause: e });
     });
     // The card alone, a letter's column wide, on the letter's ground; nothing over it.
     await page.addStyleTag({ content: `
