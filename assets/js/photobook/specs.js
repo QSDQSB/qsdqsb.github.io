@@ -33,7 +33,7 @@ const WEATHER = {
 const INK = { clear: [3, 17], night: [7.7, 15.9], partly: [2.1, 18.8], 'partly-night': [3.9, 18.8], aloft: [1.5, 19.2], overcast: [2.2, 19.2], fog: [2.5, 17.5], rain: [2.2, 19.2], snow: [2.2, 19.2], thunder: [2.2, 19.2] };
 export const weatherGlyph = (w) => {
   const [x0, x1] = INK[w.kind] || [0, 20];
-  return `<svg class="photobook-weather__glyph" viewBox="${x0} 0 ${x1 - x0} 16" style="--ink:${((x1 - x0) / 16).toFixed(3)}" aria-hidden="true">${WEATHER[w.kind] || ''}</svg>`;
+  return `<svg class="photobook-weather__glyph" viewBox="${x0} 0 ${x1 - x0} 16" style="--glyph-w:${((x1 - x0) / 16).toFixed(3)}" aria-hidden="true">${WEATHER[w.kind] || ''}</svg>`;
 };
 
 /**

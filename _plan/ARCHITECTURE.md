@@ -30,7 +30,7 @@ layouts, components). When a decision changes the architecture, this page change
 
 | Layer | Lives in | May use | Must not |
 |---|---|---|---|
-| Scales and tokens | `_sass/_variables.scss`, custom properties on `:root` | Nothing | Hold a value used once |
+| Scales and tokens | `_sass/_variables.scss`; custom properties on `:root` in `_sass/_tokens.scss` (inks, glass, the two curves) | Nothing | Hold a value used once |
 | Breakpoints | `_sass/_responsive-policy.scss` | Scales | Be written anywhere else |
 | Shared pieces | `_sass/_components.scss`, `_docs/components.md` | Scales, breakpoints | Know about a page |
 | Chrome | masthead, navigation, search, subscribe, footer | Shared pieces | Restyle a piece |

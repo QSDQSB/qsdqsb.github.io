@@ -1,0 +1,101 @@
+---
+title: "Specimen"
+layout: default
+permalink: /specimen/
+body_class: photobook colour-page specimen-page
+sitemap: false
+search: false
+seo_description: "The shared pieces of QSD's House of Wonders, each in every state, for the pixel baseline."
+masthead_back_url: /
+masthead_back_label: Home
+---
+{%- comment -%}
+  The specimen page (stage 2): every shared piece, drawn with the site's own stylesheet, each in
+  every state, each labelled for whose it is: built, the owner's amount (decisions/0009), the lead's
+  value, or decided under delegation (0002). It is where the owner sees the pieces whole, and, as a
+  page of the pixel baseline, where a change to a shared piece shows on one page.
+
+  It is not for readers. `_specimen/` is built only by the seeded visual build (`npm run
+  visual:build`, which includes it through `_config_visual.yml`); the live build never reads it.
+  A state a pointer or a key would bring is drawn at rest with a class (.is-lit, .is-focus,
+  .is-pressed), through the piece's own state mixin, so the page shows what the piece does.
+  Styles: _specimen/specimen.scss. Pieces: _sass/_components.scss; catalogue: _docs/components.md.
+{%- endcomment -%}
+{%- assign photo = '/images/cover/qsd-emblem-palace-night-with-candle-vase-3v1.jpg' | relative_url -%}
+<link rel="stylesheet" href="{{ '/_specimen/specimen.css' | relative_url }}">
+<main class="specimen">
+  <header class="specimen__head">
+    <p class="specimen__eyebrow">QSD's House of Wonders · not for readers</p>
+    <h1 class="specimen__title">Specimen</h1>
+    <p class="specimen__lede">The shared pieces, each in every state. Built in the visual build only.</p>
+  </header>
+
+  <section class="specimen__part" aria-labelledby="sp-new">
+    <h2 id="sp-new" class="specimen__h">New pieces, on the owner's amounts</h2>
+
+    <article class="specimen__piece">
+      <h3>Card</h3>
+      <p class="specimen__whose">Corners 10 px and 18 px (pick 1), a short shadow at rest (pick 3), a lift in 0.3 s (picks 4, 5), nothing springs (pick 12): <b>the owner's amounts</b>. The lift of 4 px and 1.018 and its shadow: <b>the lead's values</b>, inside the owner's range.</p>
+      <div class="specimen__row">
+        <figure class="specimen__state"><a class="spec-card" href="#sp-new"><img src="{{ photo }}" alt=""></a><figcaption>At rest</figcaption></figure>
+        <figure class="specimen__state"><a class="spec-card is-lit" href="#sp-new"><img src="{{ photo }}" alt=""></a><figcaption>Under the pointer</figcaption></figure>
+        <figure class="specimen__state"><a class="spec-card is-lit is-focus" href="#sp-new"><img src="{{ photo }}" alt=""></a><figcaption>Keyboard focus</figcaption></figure>
+        <figure class="specimen__state"><a class="spec-card spec-card--large" href="#sp-new"><img src="{{ photo }}" alt=""></a><figcaption>Large, 18 px, at rest</figcaption></figure>
+      </div>
+    </article>
+
+    <article class="specimen__piece">
+      <h3>Tag</h3>
+      <p class="specimen__whose">Ink only, no colour, under the pointer it only brightens (pair 4, pick 10): <b>the owner's</b>. Corners of 10 px and the fast step: <b>the lead's</b> (the pick drew it square).</p>
+      <div class="specimen__row specimen__row--tight">
+        <span class="specimen__state"><a class="spec-tag" href="#sp-new">Metropolis</a><small>At rest</small></span>
+        <span class="specimen__state"><a class="spec-tag is-lit" href="#sp-new">Metropolis</a><small>Under the pointer</small></span>
+        <span class="specimen__state"><a class="spec-tag is-lit is-focus" href="#sp-new">Metropolis</a><small>Keyboard focus</small></span>
+      </div>
+    </article>
+
+    <article class="specimen__piece">
+      <h3>Text button</h3>
+      <p class="specimen__whose">A rounded rectangle of 10 px, never a pill (pick 2): <b>the owner's</b>. Solid and quiet: <b>decided under delegation</b> (0002). Its fill, and how it answers pressed and unavailable: <b>the lead's</b>.</p>
+      <div class="specimen__row specimen__row--tight">
+        <span class="specimen__state"><button type="button" class="spec-button">Subscribe</button><small>Solid, at rest</small></span>
+        <span class="specimen__state"><button type="button" class="spec-button is-lit">Subscribe</button><small>Under the pointer</small></span>
+        <span class="specimen__state"><button type="button" class="spec-button is-focus">Subscribe</button><small>Keyboard focus</small></span>
+        <span class="specimen__state"><button type="button" class="spec-button is-pressed">Subscribe</button><small>Pressed</small></span>
+        <span class="specimen__state"><button type="button" class="spec-button" disabled>Subscribe</button><small>Unavailable</small></span>
+      </div>
+      <div class="specimen__row specimen__row--tight">
+        <span class="specimen__state"><button type="button" class="spec-button spec-button--quiet">Show all</button><small>Quiet, at rest</small></span>
+        <span class="specimen__state"><button type="button" class="spec-button spec-button--quiet is-lit">Show all</button><small>Under the pointer</small></span>
+        <span class="specimen__state"><button type="button" class="spec-button spec-button--quiet is-focus">Show all</button><small>Keyboard focus</small></span>
+        <span class="specimen__state"><button type="button" class="spec-button spec-button--quiet" disabled>Show all</button><small>Unavailable</small></span>
+      </div>
+    </article>
+
+    <article class="specimen__piece specimen__prose">
+      <h3>Ornament</h3>
+      <p class="specimen__whose">A lozenge on a brass rule (pick 8), only between passages of prose (pick 9): <b>the owner's</b>. The site's brass rather than the pairs page's warmer one: <b>the lead's</b>.</p>
+      <p>Pereunt et imputantur: the hours pass, and are reckoned to our account. The dial says it to anyone who stops beneath it, and most do not.</p>
+      <hr class="spec-ornament">
+      <p>Elsewhere the light had already gone, and only the names of the colours were left to say where it had been.</p>
+    </article>
+  </section>
+
+  <section class="specimen__part" aria-labelledby="sp-built">
+    <h2 id="sp-built" class="specimen__h">Pieces already built</h2>
+    <p class="specimen__whose">As they stand in <code>_sass/_components.scss</code>: <b>built</b>. The pill and the round tool are inherited (0009, "Not settled"): shown here beside the 10 px button the owner chose for new controls.</p>
+    <div class="specimen__row specimen__row--tight">
+      <span class="specimen__state"><span class="spec-pill"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>London</span><small>Pill (the way back)</small></span>
+      <span class="specimen__state"><button type="button" class="spec-round" aria-label="Slideshow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button><small>Round tool</small></span>
+      <span class="specimen__state"><button type="button" class="spec-round" aria-pressed="true" aria-label="Specs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5h14M5 12h14M5 17.5h9"/></svg></button><small>Round tool, on</small></span>
+      <span class="specimen__state"><button type="button" class="spec-quiet" aria-label="Close"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9"/></svg></button><small>Quiet icon button</small></span>
+      <span class="specimen__state"><button type="button" class="spec-button">Subscribe</button><small>The new button, for comparison</small></span>
+    </div>
+    <div class="specimen__words">
+      <p class="spec-eyebrow">Eyebrow</p>
+      <p class="spec-title">Display title</p>
+      <p class="spec-lede">A lede in the storytelling face, under a title.</p>
+      <p class="spec-onward"><a href="#sp-built">An onward link <span aria-hidden="true">→</span></a><a href="#sp-built">And another <span aria-hidden="true">→</span></a></p>
+    </div>
+  </section>
+</main>
