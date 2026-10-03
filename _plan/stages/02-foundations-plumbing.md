@@ -139,7 +139,11 @@ ground), and put to "What the eye turns away" before it is shown.
 **The arrival: tier 2, answered (picks 6 and 12), for what it reaches today.** One mechanism, and
 it exists. The owner was shown three lines arriving: an eyebrow, a title, a lede. The mechanism is
 wider than that drawing, and this says how.
-- [ ] `reveal-on-scroll` takes the owner's amounts. Today (`_sass/_scroll-animations.scss:8-13`,
+- [x] `reveal-on-scroll` takes the owner's amounts. Built 2026-10-03: a second class, `arrives`, carries them,
+      so Palette's frames (which add only `reveal-on-scroll`) keep the older ones; the observer fires at any
+      part showing (threshold 0), so a block taller than the screen is never left hidden; journey `arrival`
+      (checked with teeth: at 0.5 s turns it fails). Captures for the owner in `design/arrival/` (not in git).
+      As first written: Today (`_sass/_scroll-animations.scss:8-13`,
       `assets/js/scroll-animations.js`): every direct child of `.page__content` rises 12 px, fading
       over 0.5 s and moving over 0.65 s, the moment it comes into view, together. It becomes: from
       28 px, fade and rise both 0.7 s, the rise on `$cubic-bezier-smooth` (which is the curve
@@ -233,7 +237,7 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
 `post`, `anchor`, `home`, `search`, `masthead-touch` and `masthead-keys` must pass unchanged. To add:
 
 - `arrival` · on a long post, a jump to the foot leaves no screen without words: what is in view
-  reaches full strength within a second and nothing in view stays hidden. With motion off, nothing
+  reaches full strength by about 1.1 s (three turns of 0.12 s, then 0.7 s) and nothing in view stays hidden. With motion off, nothing
   is ever hidden.
 
 The `tag`, the `card` and the ornament get theirs where a page first uses them.
