@@ -75,3 +75,14 @@ test('a line from the piece takes the excerpt\'s place, and the inbox\'s preview
   const text = renderLetterText({ ...LETTER, quote }, UNSUB);
   assert.ok(text.includes(quote) && !text.includes(LETTER.excerpt));
 });
+
+test('a quote of two paragraphs keeps its links, escapes its words and says it is Chinese', async () => {
+  const { renderLetterHtml, renderLetterText } = await import('../scripts/letter-template.mjs');
+  const quote = ['记一下两个功能：[Palette](https://qsdqsb.com/palette/) 和 [Reverie](https://qsdqsb.com/reverie/)。', 'Light <b>& snow</b>.'];
+  const html = renderLetterHtml({ ...LETTER, quote }, UNSUB);
+  assert.ok(html.includes('<a href="https://qsdqsb.com/palette/" style="color:#c3b498;text-decoration:underline;">Palette</a>'), 'a link in the line');
+  assert.ok(html.includes('Light &lt;b&gt;&amp; snow&lt;/b&gt;.'), 'words escaped');
+  assert.equal((html.match(/lang="zh-Hans"/g) || []).length, 1, 'only the Chinese paragraph is marked Chinese');
+  const text = renderLetterText({ ...LETTER, quote }, UNSUB);
+  assert.ok(text.includes('Palette (https://qsdqsb.com/palette/) 和 Reverie (https://qsdqsb.com/reverie/)'), 'the text letter spells the links out');
+});
