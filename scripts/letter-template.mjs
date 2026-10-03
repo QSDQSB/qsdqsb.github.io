@@ -174,18 +174,32 @@ const figureRow = (f) => `<tr>
  * @param {string} letter.excerpt    One-paragraph description (plain text)
  * @param {string} letter.url        Absolute URL of the piece
  * @param {string} letter.dateLine   e.g. "August 2026"
- * @param {string} [letter.quote]    A line or two from the piece itself, set in its place of the
- *                                   excerpt (upright: a Chinese line has no italic of its own)
+ * @param {string|string[]} [letter.quote]  Lines from the piece itself, a paragraph each, set in
+ *                                   the excerpt's place (upright: a Chinese line has no italic of
+ *                                   its own); [words](https://…) is a link, as in the post
  * @param {object} [letter.figure]   A picture to carry: { cid, width, height, alt, href }, its
  *                                   bytes attached by the sender under `cid`
  * @param {string} unsubscribeUrl    THIS recipient's personal unsubscribe link
  */
+const paragraphs = (q) => (Array.isArray(q) ? q : q ? [q] : []).filter(Boolean);
+const LINK = /\[([^\]]+)\]\(([^)\s]+)\)/g;
+const HAN = /\p{Script=Han}/u;
+// A quoted paragraph: its words escaped, its links kept, its language said (a Chinese line read in
+// an English voice is noise). Centred Chinese breaks at its punctuation, as a phrase, rather than
+// leaving one character alone on the last line (keep-all; a client without it breaks anywhere).
+const quoteRow = (p, last) => `<tr>
+            <td align="center"${HAN.test(p) ? ' lang="zh-Hans"' : ""} style="padding:0 34px ${last ? 32 : 14}px;font-family:${SERIF_QUOTE};font-size:17px;line-height:1.9;letter-spacing:0.5px;color:${BRASS};${HAN.test(p) ? "word-break:keep-all;" : ""}">
+              ${escapeHtml(p).replace(LINK, (_, words, href) => `<a href="${href}" style="color:${BRASS};text-decoration:underline;">${words}</a>`)}
+            </td>
+          </tr>`;
+const plain = (p) => p.replace(LINK, "$1 ($2)");
+
 export function renderLetterHtml(letter, unsubscribeUrl) {
   const title = escapeHtml(letter.title);
   const excerpt = escapeHtml(letter.excerpt || "");
   const url = escapeHtml(letter.url);
   const dateLine = escapeHtml(letter.dateLine || "");
-  const quote = escapeHtml(letter.quote || "");
+  const quote = paragraphs(letter.quote);
 
   const contentRows = `          <tr>
             <td align="center" style="padding:34px 8px 6px;font-family:${SERIF};font-size:30px;line-height:1.25;color:${INK};">
@@ -197,11 +211,7 @@ export function renderLetterHtml(letter, unsubscribeUrl) {
               ${dateLine}
             </td>
           </tr>` : ""}
-          ${quote ? `<tr>
-            <td align="center" style="padding:0 34px 32px;font-family:${SERIF_QUOTE};font-size:17px;line-height:1.9;letter-spacing:0.5px;color:${BRASS};">
-              ${quote}
-            </td>
-          </tr>` : excerpt ? `<tr>
+          ${quote.length ? quote.map((p, i) => quoteRow(p, i === quote.length - 1)).join("\n          ") : excerpt ? `<tr>
             <td align="center" style="padding:0 30px 30px;font-family:${SERIF};font-style:italic;font-size:17px;line-height:1.6;color:${BRASS};">
               ${excerpt}
             </td>
@@ -223,7 +233,7 @@ export function renderLetterHtml(letter, unsubscribeUrl) {
 
   return houseEmailDocument({
     documentTitle: letter.title,
-    preheader: letter.quote || letter.excerpt || "",
+    preheader: paragraphs(letter.quote).map(plain).join(" ") || letter.excerpt || "",
     contentRows,
     footerNote: LETTER_FOOTER_NOTE,
     unsubscribeUrl,
@@ -235,8 +245,7 @@ export function renderLetterText(letter, unsubscribeUrl) {
     letter.title,
     letter.dateLine ? letter.dateLine : null,
     "",
-    letter.quote || letter.excerpt || null,
-    letter.quote || letter.excerpt ? "" : null,
+    ...(paragraphs(letter.quote).length ? paragraphs(letter.quote).flatMap((p) => [plain(p), ""]) : letter.excerpt ? [letter.excerpt, ""] : []),
     letter.figure ? `${letter.figure.alt}: ${letter.figure.href}` : null,
     letter.figure ? "" : null,
     `Onward: ${letter.url}`,
