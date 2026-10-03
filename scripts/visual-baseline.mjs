@@ -153,7 +153,10 @@ const PAGES = [
   // The colour pages, drawn by their scripts: the shot waits for the stage, and draws every card
   // (they skip rendering off screen, as the book's rows do); their vats pour on the scroll-through.
   { id: 'palette', url: '/palette/', setup: drawColourStage, vats: true },
-  { id: 'palette-voyage', url: '/palette/#london', setup: drawColourStage, vats: true },
+  // Its list of voyages keeps the voyage on the page in view by scrolling itself, and where a
+  // full-page shot leaves that scroll (the window stretched to the page's height for a moment) is the
+  // capture's, not the page's: painted over here; the overview's shot above draws the list.
+  { id: 'palette-voyage', url: '/palette/#london', setup: drawColourStage, vats: true, mask: ['.palette-voyages__list'] },
   { id: 'reverie', url: '/reverie/?c=4a6fa5', setup: drawColourStage, vats: true },
   { id: 'voyage-by-tags', url: '/voyage-by-tags/' },
   { id: 'about', url: '/about/' },
@@ -343,10 +346,19 @@ function motionOff(baseUrl, url) {
 /**
  * The colour pages pour their dye vats one at a time as each comes near (assets/js/colour/cards.js,
  * dripper), a few a second on a voyage's palette page: how many are drawn when the shot is taken
- * depended on the machine's load (2026-10-03). So a page with vats is held until the number of drawn
- * canvases has not changed for two seconds (at most thirty).
+ * depended on the machine's load (2026-10-03). So a page with vats is read down once, and held until
+ * the number of drawn canvases has not changed for two seconds (at most thirty).
  */
 async function vatsAtRest(page) {
+  // A vat is poured only as its card nears the screen, and a full-page shot does not scroll: the page
+  // is read down once, a screen at a time, and taken back to the top, so every card has come near.
+  await page.evaluate(async () => {
+    for (let y = 0; y < document.documentElement.scrollHeight; y += innerHeight) {
+      scrollTo({ top: y, behavior: 'instant' });
+      await new Promise((r) => setTimeout(r, 120));
+    }
+    scrollTo({ top: 0, behavior: 'instant' });
+  });
   let last = -1, still = 0;
   for (let waited = 0; waited < 30000 && still < 2000; waited += 500) {
     const n = await page.evaluate(() => document.querySelectorAll('canvas').length);
@@ -401,7 +413,7 @@ async function shoot(browser, baseUrl, pageDef, viewportName, outDir, attempt = 
       return shoot(browser, baseUrl, pageDef, viewportName, outDir, attempt + 1);
     }
     const file = path.join(outDir, `${pageDef.id}--${viewportName}.png`);
-    const options = { animations: 'disabled', mask: [...SAMPLED, ...MOVING].map((s) => page.locator(s)), maskColor: '#2a2a2a' };
+    const options = { animations: 'disabled', mask: [...SAMPLED, ...MOVING, ...(pageDef.mask || [])].map((s) => page.locator(s)), maskColor: '#2a2a2a' };
     if (pageDef.screenOnly) await page.screenshot({ ...options, path: file });
     else await fullPageShot(page, file, options);
     return { file, errors };

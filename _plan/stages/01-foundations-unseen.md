@@ -91,7 +91,7 @@ A faster, steadier site that looks exactly the same. Every item is a finding fro
 
 **Content**
 - [x] P04 · The privacy page no longer describes tracking the site does not do.
-- [ ] P04, second half · One sentence on what it does do (Cloudflare Web Analytics, no cookies). The owner
+- [x] P04, second half · Done 2026-10-03 (Q13, A: the draft as written, at the head of Log Files). One sentence on what it does do (Cloudflare Web Analytics, no cookies). The owner
       (Q8, 2026-10-01): this sentence is the one that is needed. The lead drafts it in the house voice;
       the owner keeps, changes or strikes it before it goes on the page.
       Drafted 2026-10-02 and asked as Q13, with one fact to confirm: no page of the live site carries Cloudflare's
