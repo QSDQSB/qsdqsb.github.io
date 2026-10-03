@@ -62,8 +62,11 @@ if (!process.env.PLAN_DIR) {
 function idsAreSafeHere() {
   if (process.env.PLAN_DIR) return;
   const git = (...a) => { try { return execFileSync('git', a, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim(); } catch { return ''; } };
-  const ahead = Number(git('rev-list', '--count', 'HEAD..hub/daily'));
-  if (ahead > 0) missing(`The daily run's branch (hub/daily) holds ${ahead} commit(s) this checkout does not, with findings, calls or ideas already numbered. Merge it (git merge hub/daily; /hub says how), then run this again.`);
+  // The run's own commits only: the branch also carries GitHub's master, which is not the run's to number.
+  // By patch, not by name: a commit taken here by cherry-pick (/hub) is here, whatever its id. And
+  // only the run's own: not GitHub's master, nor a local master merged into the branch on an earlier day.
+  const ahead = Number(git('rev-list', '--count', '--no-merges', '--right-only', '--cherry-pick', 'HEAD...hub/daily', ...['origin/master', 'master'].filter((r) => git('rev-parse', '--verify', '--quiet', r.includes('/') ? `refs/remotes/${r}` : `refs/heads/${r}`)).map((r) => `^${r}`)));
+  if (ahead > 0) missing(`The daily run's branch (hub/daily) holds ${ahead} commit(s) of its own this checkout does not, with findings, calls or ideas already numbered. Take them first (/hub says how), then run this again.`);
 }
 
 const [command, ...rest] = process.argv.slice(2);
@@ -231,6 +234,12 @@ switch (command) {
     const dir = path.resolve(words[0] || '');
     if (!words[0] || !fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) usage('sync needs the folder the store was dumped to (it holds answers/ and ideas/).');
     if (!fs.existsSync(path.join(dir, 'answers')) && !fs.existsSync(path.join(dir, 'ideas'))) missing(`sync: ${dir} holds neither answers/ nor ideas/. Either the store is empty or the dump did not happen: nothing was read, nothing written.`);
+    // A dump is read the day it is made. One left from an earlier run (a scratch folder used again)
+    // would bring back a tap the owner has since changed: refuse it.
+    const files = ['answers', 'ideas'].flatMap((d) => (fs.existsSync(path.join(dir, d)) ? fs.readdirSync(path.join(dir, d)).map((f) => path.join(dir, d, f)) : []));
+    // The oldest file decides: a dump into a folder used before refreshes some files and leaves others.
+    const oldest = Math.min(...files.map((f) => fs.statSync(f).mtimeMs));
+    if (files.length && Date.now() - oldest > 60 * 60 * 1000) missing(`sync: the oldest file in ${dir} is ${Math.round((Date.now() - oldest) / 3600000)} hour(s) old. Dump the store again into an empty folder: nothing was read, nothing written.`);
     const docs = (name) => {
       const at = path.join(dir, name);
       if (!fs.existsSync(at)) return [];
@@ -238,7 +247,7 @@ switch (command) {
         try { const data = JSON.parse(fs.readFileSync(path.join(at, f), 'utf8')); return { id: f.slice(0, -5), data: data && typeof data === 'object' && !Array.isArray(data) ? data : {} }; } catch { return { id: f.slice(0, -5), data: null }; }
       });
     };
-    const done = [], session = [], skipped = [], early = [];
+    const done = [], session = [], skipped = [], early = [], later = [];
     let same = 0;
     // A name or a letter is shown only when it is plainly one; anything else stored is never echoed.
     const shown = (v) => (typeof v === 'string' && /^[A-Za-z0-9_-]{1,24}$/.test(v) ? v : 'something that is not a plain name');
@@ -266,7 +275,8 @@ switch (command) {
           continue;
         }
         const line = answered.split('\n').find((l) => new RegExp(`^- \\d{4}-\\d{2}-\\d{2} · ${id} · `).test(l));
-        if (!line) { skipped.push(`${id}: no such call in the queue`); continue; }
+        // Asked on a branch that has not reached this plan yet: the store keeps the answer, and a run after the merge records it.
+        if (!line) { later.push(id); continue; }
         const was = line.match(/→ ([A-Z]): /)?.[1], day = line.slice(2, 12);
         // What the plan holds was written after what the page holds: an answer given since, in chat. The plan stands.
         if (tapped(data) && tapped(data) < day) { same++; continue; }
@@ -315,6 +325,7 @@ switch (command) {
     console.log(done.length ? `Recorded: ${done.join('; ')}.` : 'Recorded: nothing new.');
     console.log(`Already in the plan: ${same}.`);
     if (early.length) console.log(`A question answered, its idea not yet decided: ${early.join(', ')}. Nothing to record until it is.`);
+    if (later.length) console.log(`An answer to a call this plan does not hold yet (asked on a branch not merged?): ${later.join(', ')}. It stays in the store and is recorded once the call is here.`);
     if (held) console.log(`Held for the next run: ${held} more idea(s); ten are filed in one run.`);
     if (session.length) console.log(`For a session to weigh, nothing written: ${session.join('; ')}.`);
     if (skipped.length) console.log(`Skipped, nothing written: ${skipped.join('; ')}.`);

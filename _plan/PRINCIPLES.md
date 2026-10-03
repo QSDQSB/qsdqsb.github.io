@@ -330,12 +330,15 @@ settled"):
 These are never anyone's call but the owner's, each time.
 
 - Writes to R2, and removals from it. Removals: list first, then the owner types `QSD`.
-- Opening or merging a pull request; pushing.
+- Merging a pull request; pushing `master`.
+  - 2026-10-03 · Opening the pull request for a finished batch is Claude's, with pushing that batch's
+    own branch (the owner, in chat: "you should create pr instead of asking me to"). Merging stays
+    the owner's, and so does every push of `master`.
   - 2026-10-01 · One standing exception, the owner's (Q10, option A, tapped on the command centre):
     the daily run may push a branch that touches only the plan (`_plan/`). Never `master`, never a
-    pull request. Every other push is still asked for, each time.
+    pull request.
   - The owner's note beside that answer: "Hub can decide PRs but we need carefully crafted rules for
-    conditions for an auto PR approval merge to master". It grants nothing yet: opening and merging
-    stay the owner's, each time, until those rules are theirs
+    conditions for an auto PR approval merge to master". It grants nothing yet: merging stays the
+    owner's, each time, until those rules are theirs
     ([I002](ideas/I002-rules-for-the-hub-to-approve-and-merge-a-pull-re.md)).
 - Committing image bytes, `photos/`, `_data/photo_manifests/`, keys or `.env`: never.

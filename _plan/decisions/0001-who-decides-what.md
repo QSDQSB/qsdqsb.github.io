@@ -36,7 +36,9 @@ Three tiers. A change's tier is set by its **most visible part**.
 - Any visual difference between desktop and phone (`CLAUDE.md`, Responsive Policy).
 - A replacement at or over the major-delta threshold.
 - Anything in `PRINCIPLES.md`, or that contradicts a standing call there.
-- Writes to R2, removals from R2, merging or opening a pull request, pushing, deleting content.
+- Writes to R2, removals from R2, merging a pull request, pushing `master`, deleting content.
+  (Opening the pull request for a finished batch, and pushing its branch, are Claude's since
+  2026-10-03: `PRINCIPLES.md`, Hard rules.)
 - A material choice Claude is under about 90% sure of (`CLAUDE.md`, Decision Confidence).
 
 ## The gate
