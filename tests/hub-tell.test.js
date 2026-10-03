@@ -1,6 +1,6 @@
 'use strict';
 
-// The command centre tells Claude when the owner taps (the `comments` capability). The page's
+// The command centre tells Claude when the owner says they have decided (the `comments` capability). The page's
 // script is run in a real browser against a stand-in for the viewer's runtime that behaves as the
 // contract says: `anchorFor` resolves later, and `sendToClaude` takes plain data only. Skipped
 // where no browser is installed (CI runs the fast gate without one).
@@ -23,7 +23,7 @@ const stub = (can, fail) => `
         sendToClaude: (t) => { if (t.anchor && typeof t.anchor.then === 'function') return Promise.reject({ code: 'invalid' }); window.__sent.push(t); return ${fail ? `Promise.reject({ code: ${JSON.stringify(fail)} })` : `Promise.resolve({ threadId: 'T1', commentId: 'C' })`}; } }
     : null) };`;
 
-test('a tap on the command centre tells a listening session, once, by id and letter only', async (t) => {
+test('the owner\'s "I\'ve decided" tells a listening session once, by id and letter only, with what is still open', async (t) => {
   let chromium;
   try { ({ chromium } = require('playwright-core')); } catch { return t.skip('playwright-core is not installed'); }
   let browser;
@@ -54,29 +54,39 @@ test('a tap on the command centre tells a listening session, once, by id and let
       return { page, call, state, tap, errors, close: () => context.close() };
     };
 
-    // A session is listening: the first tap is told at once; the next waits; the button sends it, into the same thread.
+    // A session is listening: the button is offered from the start; a tap is kept and counted, not sent.
     let v = await open('available', null);
-    await v.tap('A');
     let s = await v.state();
-    assert.strictEqual(s.sent.length, 1, 'the anchor is waited for, then one comment is sent');
-    assert.ok(s.sent[0].anchor && !s.sent[0].threadId);
-    assert.strictEqual(s.sent[0].text, `Answers changed on the command centre: ${v.call}: A. Please read this page's store and record them in the plan.`);
-    assert.match(s.heard, /^Claude was told at /);
-    await v.tap('B');
-    s = await v.state();
-    assert.strictEqual(s.sent.length, 1, 'not told twice within twenty seconds');
     assert.ok(s.button && s.onScreen, 'the button is offered, where a phone can reach it');
-    // A note is told by its id; its words stay in the store.
+    await v.tap('A');
+    s = await v.state();
+    assert.strictEqual(s.sent.length, 0, 'a tap alone tells nobody');
+    assert.match(s.heard, /^1 change not yet told/);
+    // Pressed: one comment, with what changed and what is still open; the anchor is waited for.
+    await v.page.click('#tell'); await v.page.waitForTimeout(250);
+    s = await v.state();
+    assert.strictEqual(s.sent.length, 1);
+    assert.ok(s.sent[0].anchor && !s.sent[0].threadId);
+    assert.ok(s.sent[0].text.startsWith(`The owner has decided. Changed since Claude was last told: ${v.call}: A. `), s.sent[0].text);
+    assert.match(s.sent[0].text, /(Still unanswered: .+\.|Every call on the page has an answer\.) Please read this page's store/);
+    assert.match(s.heard, /^Claude was told at /);
+    // A note is told by its id; its words stay in the store; the same thread is written to again.
+    await v.tap('B');
     await v.page.fill(`#note-${v.call}`, 'a private reason'); await v.page.press(`#note-${v.call}`, 'Tab'); await v.page.waitForTimeout(250);
     await v.page.click('#tell'); await v.page.waitForTimeout(250);
     s = await v.state();
     assert.strictEqual(s.sent.length, 2);
     assert.strictEqual(s.sent[1].threadId, 'T1', 'the same thread is written to again');
+    assert.ok(s.sent[1].text.includes(`${v.call}: note`), s.sent[1].text);
     assert.ok(!s.sent.some((m) => m.text.includes('private')), 'the words of a note are never sent');
+    // Pressed with nothing new: it still says the owner has decided.
+    await v.page.click('#tell'); await v.page.waitForTimeout(250);
+    s = await v.state();
+    assert.ok(s.sent[2].text.startsWith('The owner has decided. Nothing changed since Claude was last told. '), s.sent[2].text);
     assert.deepStrictEqual(v.errors, []);
     await v.close();
 
-    // Nobody is listening: nothing is sent, and the page says the answers are kept.
+    // Nobody is listening: nothing is sent, no button, and the page says the answers are kept.
     v = await open('no_session', null);
     await v.tap('A');
     s = await v.state();
@@ -88,6 +98,7 @@ test('a tap on the command centre tells a listening session, once, by id and let
     // Refused for good in this view: the button goes, and the page says it is off.
     v = await open('available', 'forbidden');
     await v.tap('A');
+    await v.page.click('#tell'); await v.page.waitForTimeout(250);
     s = await v.state();
     assert.match(s.heard, /switched off here/);
     assert.ok(!s.button);
@@ -96,6 +107,7 @@ test('a tap on the command centre tells a listening session, once, by id and let
     // Leave not yet given: the button stays, with what to do.
     v = await open('available', 'consent_required');
     await v.tap('A');
+    await v.page.click('#tell'); await v.page.waitForTimeout(250);
     s = await v.state();
     assert.match(s.heard, /allow this page to comment as you/);
     assert.ok(s.button && s.onScreen);
