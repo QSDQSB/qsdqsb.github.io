@@ -90,7 +90,7 @@
     // The whole card folds on a click (its × included), bar the parts a reader
     // is there to use.
     this.card.addEventListener("click", function (event) {
-      if (event.target.closest(".subscribe-slip__form, .subscribe-slip__privacy")) return;
+      if (event.target.closest(".subscribe-slip__form, .subscribe-slip__privacy, .subscribe-slip__cat")) return;
       self.dismiss();
     });
 
@@ -119,6 +119,7 @@
 
     this.input.addEventListener("input", function () {
       if (self.peeking) self.engage(false);
+      fetchCat();
     });
 
     this.form.addEventListener("submit", function (event) {
@@ -265,6 +266,15 @@
   Slip.prototype.succeed = function () {
     var self = this;
     this.root.classList.add("is-done");
+    // The thank-you: the orange cat raises its cup over the note and says so (assets/js/qsd-cat.js,
+    // its small cheer). Its script was fetched while the address was typed, so it is ready by now.
+    var cat = document.createElement("qsd-cat");
+    cat.className = "subscribe-slip__cat";
+    cat.setAttribute("cheer", "");
+    cat.setAttribute("say", "Thank you!");
+    cat.setAttribute("aria-hidden", "true");
+    this.okNote.parentNode.insertBefore(cat, this.okNote);
+    fetchCat();
     this.okNote.hidden = false;
     storageSet(DONE_KEY, String(Date.now()));
     // The card has done its job — retire it to the quiet rule after a beat.
@@ -276,6 +286,17 @@
     this.errNote.textContent = message;
     this.errNote.hidden = false;
   };
+
+  // The cat's script, once per page, and only for a reader who starts to subscribe.
+  var catAsked = false;
+  function fetchCat() {
+    if (catAsked || (window.customElements && customElements.get("qsd-cat"))) return;
+    catAsked = true;
+    var s = document.createElement("script");
+    s.src = "/assets/js/qsd-cat.js";
+    s.async = true;
+    document.head.appendChild(s);
+  }
 
   /* ---------- boot ---------- */
 

@@ -11,7 +11,12 @@
     window.QSD.motionOff() holds the rest pose with no interactions. Only the drawn cat takes
     the pointer, never the empty box around it. A host marked aria-hidden (the hero's) keeps
     the cat out of the tab order; a standalone one is a focusable image.
-    The same drawing stands alone as images/QSDSigils/qsd-cat-animated.svg.        */
+    The same drawing stands alone as images/QSDSigils/qsd-cat-animated.svg.
+    <qsd-cat cheer> is the small one, for the 404 and the subscribe slip: no idle loop at all, one
+    simple cheer (cup raised, a wink) when it first comes into view and again on a click, then
+    nothing runs. Same file as the hero's, so a reader who met the cat there has it cached.
+    `say="…"` is a line spoken from above its head: it arrives with the cup, and the page styles
+    it through ::part(say) (_components.scss, a line on the glass; choice cat-speaks, B).        */
 (() => {
   const SVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="70 44 884 876" width="884" height="876" class="qc" role="img" aria-label="QSD orange cat sigil">
 <!-- The drawing's notes (structure, pivots, the loop's timing) are in images/QSDSigils/qsd-cat-animated.svg. -->
@@ -192,12 +197,17 @@
       const root = this.shadowRoot || this.attachShadow({ mode: 'open' });
       const still = window.QSD && window.QSD.motionOff ? window.QSD.motionOff() : matchMedia('(prefers-reduced-motion: reduce)').matches;
       const quiet = this.getAttribute('aria-hidden') === 'true';
-      root.innerHTML = '<style>:host{display:inline-block;line-height:0}' +
+      const once = this.hasAttribute('cheer'), say = this.getAttribute('say');
+      root.innerHTML = '<style>:host{display:inline-block;position:relative;line-height:0}' +
+        '.say{position:absolute;left:68%;bottom:80%;white-space:nowrap;line-height:1.2;pointer-events:none;' +
+        'opacity:0;transform:translateY(.3em);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.22,1,.36,1)}' +
+        '.say.is-said{opacity:1;transform:none}' +
         '.qc{display:block;width:100%;height:100%;max-width:var(--qsd-cat-size,none);max-height:var(--qsd-cat-size,none);margin:auto;outline:none;overflow:visible;pointer-events:none;-webkit-tap-highlight-color:transparent;' +
         'opacity:0;transition:opacity 1.1s cubic-bezier(.16,1,.3,1)}.qc.is-in{opacity:1}' +
         '.qc>g{pointer-events:visiblePainted;cursor:pointer;touch-action:pan-y pinch-zoom}' +
-        '.qc-still,.qc-still *{animation:none!important;transition:none!important}</style>' +
+        '.qc-still,.qc-still *{animation:none!important;transition:none!important}.qc-quiet *{animation:none!important}</style>' +
         txt.replace(/<\?xml[^>]*>/, '');
+      if (say) { this.said = document.createElement('span'); this.said.className = 'say'; this.said.setAttribute('part', 'say'); this.said.textContent = say; root.append(this.said); }
       const svg = root.querySelector('svg');
       svg.classList.add('qc-js');
       if (quiet) svg.setAttribute('aria-hidden', 'true');
@@ -205,9 +215,19 @@
         svg.setAttribute('tabindex', '0');
         svg.setAttribute('aria-label', this.getAttribute('label') || 'QSD, an orange cat with a coffee mug — click to say cheers');
       }
-      this.svg = svg; this.clicks = 0; this.hovered = false;
-      if (still) { svg.classList.add('qc-still', 'is-in'); return; }
-      requestAnimationFrame(() => requestAnimationFrame(() => svg.classList.add('is-in')));
+      this.svg = svg; this.clicks = 0; this.hovered = false; this.still = still;
+      if (still) svg.classList.add('qc-still'); else if (once) svg.classList.add('qc-quiet');
+      if (still) { svg.classList.add('is-in'); this.said?.classList.add('is-said'); return; }
+      requestAnimationFrame(() => requestAnimationFrame(() => { svg.classList.add('is-in'); if (!once) this.said?.classList.add('is-said'); }));
+      if (once) {
+        // one cheer when it is first seen (or at once, with no observer), one more per click; nothing between
+        if ('IntersectionObserver' in window) {
+          this.io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { this.io.disconnect(); this.cheer(); } }, { threshold: 0.6 });
+          this.io.observe(svg);
+        } else this.cheer();
+        svg.addEventListener('click', () => this.cheer());
+        return;
+      }
       // Runs only while on screen. A host that is display:none never intersects, so its loop never starts.
       if ('IntersectionObserver' in window) { this.io = new IntersectionObserver(([e]) => this.run(e.isIntersecting)); this.io.observe(svg); }
       else this.run(true);
@@ -266,10 +286,10 @@
     }
     once(c, frames, opt) { return this.$(c).map(el => el.animate(frames, { easing: 'ease-in-out', ...opt })); }
     // cel blink: squash toward the lower lid, swap to a drawn ^ stroke, hold, pop back open with a little overshoot
-    wink(side, delay = 0, hold = 560) {
+    wink(side, delay = 0, hold = 560, settle = true) {
       const d = hold + 340, k = (t, sx, sy, o) => ({ offset: t / d, transform: `scale(${sx},${sy})`, opacity: o });
       this.once('eye' + side + 'H', [k(0, 1, 1, 1), k(45, 1.02, .4, 1), k(46, 1.02, .4, 0), k(46 + hold, 1.02, .45, 0), k(47 + hold, 1.02, .45, 1),
-        k(hold + 120, 1, .85, 1), k(hold + 220, 1, 1.03, 1), k(d, 1, 1, 1)], { duration: d, delay, easing: 'linear' });
+        k(hold + 120, 1, .85, 1), ...(settle ? [k(hold + 220, 1, 1.03, 1)] : []), k(d, 1, 1, 1)], { duration: d, delay, easing: 'linear' });
       this.once('lid' + side + 'H', [0, 45, 46, 46 + hold, 47 + hold, d].map((t, i) => ({ offset: t / d, opacity: i === 2 || i === 3 ? 1 : 0 })), { duration: d, delay, easing: 'linear' });
     }
     glint(c = 'glintH', s = 1.4) {
@@ -282,6 +302,15 @@
       this.go('armH', [{ transform: `rotate(${on ? 4.5 : 0}deg)` }], { duration: 700 });
       this.go('headH', [{ transform: `rotate(${on ? -1 : 0}deg)` }], { duration: 800 });
       if (on) { this.wink('R', 180); this.glint('glintH', 1); }
+    }
+    // The small cheer: the cup raised and held, a wink at the top, back to rest. Three short
+    // animations that end by themselves; the line, if any, arrives with the cup.
+    cheer() {
+      if (this.still) return;
+      this.$('armH').forEach(el => this.hold(el, [{ transform: this.now(el) }, { transform: 'rotate(6deg)', offset: .35 },
+        { transform: 'rotate(6deg)', offset: .7 }, { transform: 'rotate(0deg)' }], { duration: 1500 }));
+      this.wink('R', 380, 420, false);   // no overshoot: the small cheer does not spring
+      this.said?.classList.add('is-said');
     }
     cheers() {
       const base = this.hovered ? 4.5 : 0;

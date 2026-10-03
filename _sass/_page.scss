@@ -1158,6 +1158,14 @@ tradingview-widget-container {
   text-align: center;
 }
 
+// The orange cat (assets/js/qsd-cat.js, its small cheer): one raised cup and an "Aloha!" for a
+// reader who is lost; the room above is for what it says.
+.notfound-way__cat {
+  width: clamp(9rem, 16vw, 11.5rem);
+  aspect-ratio: 884 / 876;   // the drawing's own box, held before the script draws it
+  margin-top: 2.4rem;
+}
+
 .notfound-way__line {
   @include lede;
   margin: 0;

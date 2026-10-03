@@ -230,6 +230,15 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__body {
   &--ok { color: $intriguing-word-color; }
   &--err { color: rgba($danger-color, 0.95); }
 }
+// The thank-you's cat (assets/js/subscribe.js): it raises its cup over the note; the room above
+// is for what it says.
+.subscribe-slip__cat {
+  display: block;
+  width: 5.5rem;
+  aspect-ratio: 884 / 876;   // the drawing's own box, held before the script draws it
+  margin: 2.2rem 0 0;
+}
+
 .subscribe-slip.is-done .subscribe-slip__form,
 .subscribe-slip.is-done .subscribe-slip__privacy {
   display: none;
