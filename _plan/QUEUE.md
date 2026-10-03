@@ -13,29 +13,12 @@ options as `- **A (recommended):** …`. A number is never reused: the command c
 
 ---
 
-### Q18 · Which white is a heading: the text's own ivory, or pure white?
-
-Asked: 2026-10-03
-
-You retired the colour per heading level; what is left is which white. Both shot on the Terms page, desktop and phone: https://claude.ai/artifact/SDQo4JQg98sa85ep5tobvj. The two are close (#e4e5e6 against #fff): ivory keeps one ink for the page and matches the essay's chapters and every book's title; white is a step brighter for a skimming eye, and adds a fourth ink.
-
-- **A (recommended):** the ivory ink, as the text and every display title already are
-- **B:** pure white, a step brighter than the text
-
-### Q19 · The arrival as built: is it right on prose, and should the first screen arrive too?
-
-Asked: 2026-10-03
-
-Built to your picks (28 px, 0.7 s, in turn 0.12 s apart). It reaches whole blocks of a post, About, the CV and Terms, which is more than the three lines you were shown; recorded at desktop and phone in design/arrival/ (sent to you in chat). On a first load Chrome fades the first screen in while Safari shows it at once (F082): the two should agree.
-
-- **A (recommended):** keep it, and the first screen arrives in turn in every browser, as your drawing did
-- **B:** keep it, and the first screen simply stands; only what is scrolled to arrives
-- **C:** too much on prose: the same turns, a smaller rise (12 px) for paragraphs
-
 ---
 
 ## Answered
 
+- 2026-10-03 · Q19 · The arrival as built: is it right on prose, and should the first screen arrive too? → A: keep the arrival as built, and the first screen arrives in turn in every browser, as the owner's drawing did
+- 2026-10-03 · Q18 · Which white is a heading: the text's own ivory, or pure white? → A: the ivory ink, as the text and every display title already are
 - 2026-10-03 · Q17 · Do the Photobook's pill and round tools stay as built, beside the new 10 px button? → B: bring the Photobook's pill and round tools to the 10 px rectangle too, shown before and after first
 - 2026-10-03 · Q16 · Do the four new pieces read right as drawn on the specimen page? → A: yes, as drawn; the pieces may be adopted where their stages say
 - 2026-10-03 · Q15 · May sessions be stopped from writing to R2 by themselves? → A: deny npm run photos:push and any other R2 writer in the permission file; a session asks each time
