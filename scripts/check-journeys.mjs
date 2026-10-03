@@ -83,6 +83,59 @@ const JOURNEYS = [
     must(Math.abs(tail) <= 2, `Home runs ${tail} px past its last panel`);
   } },
 
+  { id: 'hero-cat', name: "Home's cat keeps its size, moves, answers the pointer, and holds still when motion is off", async run({ page, go }) {
+    const cat = () => page.evaluate(() => { const c = document.querySelector('qsd-cat'); const svg = c?.shadowRoot?.querySelector('svg.qc');
+      return c && svg && { still: svg.classList.contains('qc-still'), stepping: !!c.raf, t: c.clock || 0, hovered: c.hovered, clicks: c.clicks }; });
+    await go('/?mark=cat&motion=on');
+    await page.waitForFunction(() => document.querySelector('qsd-cat')?.raf, null, { timeout: 5000 }).catch(() => {});
+    const box = await page.locator('qsd-cat svg.qc').boundingBox();
+    must(box && box.width <= 421 && box.height <= 421, `the cat is ${Math.round(box?.width)}px wide: --qsd-cat-size no longer holds it`);
+    const a = await cat(); await page.waitForTimeout(600); const b = await cat();
+    must(b?.stepping && b.t > a.t, 'the cat\'s idle loop is not being stepped');
+    await page.mouse.move(box.x + box.width * 0.5, box.y + box.height * 0.45);
+    await page.mouse.down(); await page.mouse.up();
+    const c = await cat();
+    must(c.hovered && c.clicks === 1, 'the cat did not answer a pointer over it and a click');
+    // a phone turned sideways hides the band (display:none) and back shows it: the loop must stay stepped
+    await page.evaluate(() => { document.querySelector('qsd-cat').style.display = 'none'; });
+    await page.waitForTimeout(300);
+    await page.evaluate(() => { document.querySelector('qsd-cat').style.display = ''; });
+    await page.waitForTimeout(500);
+    const e = await cat(); await page.waitForTimeout(400); const f = await cat();
+    const native = await page.evaluate(() => document.querySelector('qsd-cat').shadowRoot.getAnimations().filter((a) => a instanceof CSSAnimation && a.playState === 'running').length);
+    must(native === 0 && f.t > e.t, `after being hidden and shown the cat runs ${native} animations at full rate${f.t > e.t ? '' : ', and its loop has stopped'}`);
+    await page.goto('about:blank');
+    await go('/?mark=cat&motion=off');
+    await page.waitForFunction(() => document.querySelector('qsd-cat')?.svg, null, { timeout: 5000 }).catch(() => {});
+    const d = await cat();
+    must(d?.still && !d.stepping, 'with motion off the cat still moves');
+  } },
+
+  { id: 'cat-cheer', name: 'The small cat raises its cup and speaks on the 404 and after subscribing, then nothing runs', async run({ page, go }) {
+    // the cheer's own animations, not the 1.1 s fade-in (a transition)
+    const moving = (sel) => page.evaluate((s) => document.querySelector(s)?.shadowRoot?.getAnimations().filter((a) => !(a instanceof CSSTransition)).length ?? -1, sel);
+    const cheered = (sel) => page.waitForFunction((s) => document.querySelector(s)?.shadowRoot?.getAnimations().some((a) => !(a instanceof CSSTransition)), sel, { timeout: 5000 }).then(() => true, () => false);
+    await go('/no-such-page-here/?motion=on', { expect: 404 });
+    await page.locator('qsd-cat').scrollIntoViewIfNeeded();
+    must(await cheered('qsd-cat'), 'the 404\'s cat did not cheer');
+    const said = (sel) => page.evaluate((s) => document.querySelector(s)?.shadowRoot?.querySelector('.say.is-said')?.textContent || '', sel);
+    must(await said('qsd-cat') === 'Aloha!', 'the 404\'s cat did not say "Aloha!"');
+    await page.waitForTimeout(2400);
+    must(await moving('qsd-cat') === 0, 'the 404\'s cat is still moving after its cheer');
+    // a stand-in for the subscribe API: the journey never sends an address anywhere
+    await page.route('**/api/subscribe', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }));
+    await go('/posts/shihuqiao/?motion=on');
+    await page.evaluate(() => { try { localStorage.removeItem('qsd-subscribe-done'); localStorage.removeItem('qsd-subscribe-dismissed'); } catch (e) {} });
+    await page.locator('[data-subscribe-slip]').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1200);
+    await page.fill('.subscribe-slip__input', 'journey@example.test');
+    await page.click('.subscribe-slip__send');
+    must(await cheered('.subscribe-slip.is-done .subscribe-slip__cat'), 'no cat raised its cup after subscribing');
+    const tall = await page.evaluate(() => document.querySelector('.subscribe-slip__cat').getBoundingClientRect().height);
+    must(tall > 0, 'the thank-you\'s cat takes no room: it cannot be seen');
+    must(await said('.subscribe-slip__cat') === 'Thank you!', 'the thank-you\'s cat did not say "Thank you!"');
+  } },
+
   { id: 'masthead-touch', phone: true, name: 'On a phone the bar stays away while reading and answers a tap at the top', async run({ page, go }) {
     const has = (cls) => page.evaluate((c) => document.querySelector('.masthead').classList.contains(c), cls);
     await go('/posts/shihuqiao/?motion=on', { early: true });
@@ -418,7 +471,15 @@ const JOURNEYS = [
       const r = el.getBoundingClientRect();
       return r.height > 0 && r.bottom > 0 && r.top < innerHeight * 0.9 && parseFloat(getComputedStyle(el).opacity) < 0.99;
     }).length);
-    await go('/posts/leetcode-july-challenge/?motion=on');
+    // The first screen arrives too, in turn (Q19): its blocks' fade runs, rather than their being drawn shown.
+    await page.addInitScript(() => {
+      window.__arrivals = 0;
+      addEventListener('transitionrun', (e) => { if (e.propertyName === 'opacity' && e.target.classList?.contains('arrives')) window.__arrivals++; }, true);
+    });
+    await go('/posts/leetcode-july-challenge/?motion=on', { early: true });
+    await page.waitForTimeout(1500);
+    const first = await page.evaluate(() => window.__arrivals);
+    must(first >= 1, 'the first screen was drawn shown, not arrived');
     must(await page.locator('.page__content .reveal-on-scroll.arrives').count() > 10, 'the post\'s blocks do not arrive');
     // To the end of the post's words (below them the footer fills the screen).
     const toEnd = () => page.evaluate(() => {
@@ -442,29 +503,66 @@ const JOURNEYS = [
     must(await hidden() === 0, 'with motion off a block in view was hidden');
   } },
 
+  { id: 'no-flash', name: 'Words are never drawn shown and then made to rise, even on a slow line', async run({ page }) {
+    // On a real line the page paints before its deferred scripts arrive. The head holds the blocks
+    // from the first frame (_includes/head/custom.html), so the arrival is the first thing a reader
+    // sees of them; without the hold they were drawn, then hidden, then made to rise (the flash).
+    const first = () => page.evaluate(() => {
+      const el = [...document.querySelector('.page__content').children].find((x) => x.textContent.trim() && !x.matches('.sidebar__right, script, style'));
+      return parseFloat(getComputedStyle(el).opacity);
+    });
+    // Not `go`: it waits for the deferred scripts, and this looks at the page while it is waiting.
+    const open = (to) => page.goto(base + to, { waitUntil: 'commit' }).then(() => page.waitForSelector('.page__content', { state: 'attached' }));
+    await page.route('**/scroll-animations.js', async (route) => { await new Promise((r) => setTimeout(r, 1500)); await route.continue().catch(() => {}); });
+    await open('/about/?motion=on');
+    await page.waitForTimeout(500);
+    const before = await first();
+    must(before < 0.05, `before the script came, About's first block was drawn at ${before} (it would then be hidden and rise: a flash)`);
+    await page.waitForTimeout(2200);
+    must(await first() > 0.99, "once the script came, About's first block did not arrive");
+    // On a line slower than the hold (the script after four seconds), the words the hold gave up
+    // stay shown when the script comes: they are not hidden again to rise.
+    await page.unroute('**/scroll-animations.js');
+    await page.route('**/scroll-animations.js', async (route) => { await new Promise((r) => setTimeout(r, 5200)); await route.continue().catch(() => {}); });
+    await open('/about/?motion=on');
+    await page.waitForTimeout(4600);
+    must(await first() > 0.99, "with the script late, About's first block was not shown when the hold gave out");
+    let lowest = 1;
+    for (let i = 0; i < 20; i++) { lowest = Math.min(lowest, await first()); await page.waitForTimeout(100); }
+    must(lowest > 0.99, `with the script late, About's first block was shown, then dropped to ${lowest.toFixed(2)} when the script came (the flash, later)`);
+    // And should the script never come, the words show of themselves.
+    await page.unroute('**/scroll-animations.js');
+    await page.route('**/scroll-animations.js', (route) => route.abort());
+    await open('/about/?motion=on');
+    await page.waitForTimeout(5000);
+    must(await first() > 0.99, 'with the script blocked, About stayed blank after five seconds');
+  } },
+
   { id: 'language-arrival', name: 'A switch of language shows the other text at once, in turn', async run({ page, go }) {
     // The panel just shown arrives as a screen does: its first block at once, not after the blocks
     // already on the screen have taken the turns.
     await go('/posts/defined-by-archive/?motion=on');
     await page.evaluate(() => scrollTo({ top: innerHeight * 1.5, behavior: 'instant' }));
-    await page.waitForTimeout(1500);
+    // A reader reads before switching: past the four seconds the head's hold lasts, as most do.
+    await page.waitForTimeout(4500);
     const other = page.locator('.bilingual-switch__button[aria-pressed="false"]').first();
     must(await other.count() === 1, 'the post has no other language to switch to');
-    await other.evaluate((b) => b.click()); // a click where it stands: the page is not scrolled to it
-    const strength = (min) => page.evaluate((m) => {
-      const inView = [...document.querySelectorAll('.bilingual-switch__panel:not([hidden]) .reveal-on-scroll')].filter((el) => {
-        const r = el.getBoundingClientRect();
-        return r.height > 0 && r.bottom > 0 && r.top < innerHeight * 0.9;
-      });
-      return { n: inView.length, shown: inView.filter((el) => parseFloat(getComputedStyle(el).opacity) > m).length };
-    }, min);
-    await page.waitForTimeout(400);
-    const early = await strength(0.2);
-    must(early.n > 0, 'after the switch no block of the other language is in view');
-    must(early.shown > 0, 'nothing of the other language shows 0.4 s after the switch');
-    await page.waitForTimeout(900);
-    const late = await strength(0.99);
-    must(late.shown === late.n, `${late.n - late.shown} block(s) of the other language are not at full strength 1.3 s after the switch`);
+    // At the click itself the panel's blocks in view are given their turns, the first with none to wait.
+    // (The turns are the arrival's to decide; when the fade then starts is the browser's frame rate,
+    // which a headless browser laying out a panel of Chinese makes slow, so it is not timed here.)
+    const turns = await other.evaluate((b) => {
+      b.click(); // where it stands: the page is not scrolled to it
+      return [...document.querySelectorAll('.bilingual-switch__panel:not([hidden]) .reveal-on-scroll')]
+        .filter((el) => { const r = el.getBoundingClientRect(); return r.height > 0 && r.bottom > 0 && r.top < innerHeight * 0.9; })
+        .map((el) => (el.classList.contains('is-visible') ? el.style.getPropertyValue('--arrive-delay') || '0s' : 'waiting'));
+    });
+    must(turns.length > 0, 'after the switch no block of the other language is in view');
+    must(turns[0] === '0s', `the other language's first block in view does not arrive at once (its turn: ${turns[0]}; all: ${turns.join(', ')})`);
+    must(!turns.includes('waiting'), `a block of the other language in view was left for the next scroll (${turns.join(', ')})`);
+    await page.waitForTimeout(1500);
+    const left = await page.evaluate(() => [...document.querySelectorAll('.bilingual-switch__panel:not([hidden]) .reveal-on-scroll')]
+      .filter((el) => { const r = el.getBoundingClientRect(); return r.height > 0 && r.bottom > 0 && r.top < innerHeight * 0.9 && parseFloat(getComputedStyle(el).opacity) < 0.99; }).length);
+    must(left === 0, `${left} block(s) of the other language are not at full strength 1.5 s after the switch`);
   } },
 
   { id: 'palette', name: 'Palette draws its voyages and opens one', async run({ page, go }) {

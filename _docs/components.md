@@ -25,9 +25,9 @@ That is what made it look like a different site (2026-09-27).
 
 | Piece | Mixin / class | For | Used by |
 |---|---|---|---|
-| Pill | `pill` | A glass pill with a chevron or mark and a label: the way back, a menu | `.photobook-lightbox__back`, `.palette-page__menu` |
+| Pill | `pill` | Glass with a chevron or mark and a label, in a control's corners of 10 px (0009, pick 2; Q17; the name is kept from when it was a pill): the way back, a menu | `.photobook-lightbox__back`, `.palette-page__menu` |
 | Brass focus | `brass-focus` | The keyboard's mark on a swatch of any colour, pale or deep: a brass hairline set off its edge, `:focus-visible` only | `.reverie__near a`, `.ridgway-swatch` |
-| Round tool | `round-tool` | A full-screen viewer's tools, top right: slideshow, specs, picture only, the way to the book | `.photobook-lightbox__tool`, `.colour-drift__tool` |
+| Round tool | `round-tool` | A full-screen viewer's tools, top right: slideshow, specs, picture only, the way to the book. A 40 px square of glass in a control's corners of 10 px (0009, pick 2; Q17; the name is kept from when it was a disc) | `.photobook-lightbox__tool`, `.colour-drift__tool` |
 | Quiet icon button | `icon-button-quiet($size)` | A bare mark in the label's ink, lit on hover: no ring, no fill | `.palette-voyages__fold`, `.palette-rail__step` |
 | Segmented toggle | class `.photobook-sheet__order` | Two or three exclusive choices in spaced capitals (Sequence / Colour) | the book's sheet, the palette page |
 | Tooltip | `data-tip` (+ `data-tip-side`), `assets/js/photobook/tip.js` | Naming an icon control after a pause; pointer only | masthead ‹, lightbox, colophon, rail |

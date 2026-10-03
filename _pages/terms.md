@@ -4,7 +4,7 @@ title: "Terms and Privacy Policy"
 seo_description: "Terms of use and privacy policy for QSD's House of Wonders — how the site handles email subscriptions, data and content."
 toc: true
 toc_sticky: true
-modified: 2026-08-11
+modified: 2026-10-03
 ---
 
 {% include base_path %}
@@ -36,6 +36,8 @@ If you subscribe for updates, this is the entire arrangement:
 **The emails themselves.** No tracking pixels, no read receipts.
 
 ### Log Files
+
+**Counting visits.** Cloudflare, which serves this site, counts its visits as they pass: how many, to which pages, from which countries. It sets no cookie and keeps nothing in your browser, and I see numbers, never people.
 
 Like many other websites, this site uses log files to help learn about when, from where, and how often traffic flows to this site. The information in these log files include:
 

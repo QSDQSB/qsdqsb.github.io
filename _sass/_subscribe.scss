@@ -232,6 +232,16 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__body {
   // Focus is handed here when the form goes (subscribe.js): words, not a control, so no ring.
   &--ok:focus { outline: none; }
 }
+// The thank-you's cat (assets/js/subscribe.js): it raises its cup over the note; the room above
+// is for what it says.
+.subscribe-slip__cat {
+  display: block;
+  width: 5.5rem;
+  aspect-ratio: 884 / 876;   // the drawing's own box, held before the script draws it
+  margin: 2.6rem 0 0;        // room for what it says
+  font-size: 0.8rem;         // its bubble, kept to the small cat's weight
+}
+
 .subscribe-slip.is-done .subscribe-slip__form,
 .subscribe-slip.is-done .subscribe-slip__privacy {
   display: none;

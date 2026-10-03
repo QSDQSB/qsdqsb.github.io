@@ -60,6 +60,18 @@
       "Read(assets/maps/*.geojson)",
       "Read(./package-lock.json)",
       "Read(./Gemfile.lock)"
+    ],
+    "ask": [
+      "Bash(npm run photos:push*)",
+      "Bash(node scripts/photos/push.mjs*)",
+      "Bash(npm run photos:prune*)",
+      "Bash(node scripts/photos/prune.mjs*)",
+      "Bash(npm run photos:trash*)",
+      "Bash(node scripts/photos/trash.mjs*)",
+      "Bash(npm run photos:process*)",
+      "Bash(node scripts/photos/process.mjs*)",
+      "Bash(rclone *)",
+      "Bash(*wrangler r2 *)"
     ]
   },
   "hooks": {
