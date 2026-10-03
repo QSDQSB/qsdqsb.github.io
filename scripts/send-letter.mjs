@@ -35,8 +35,9 @@
  *
  * Requirements:
  *   RESEND_API_KEY   in the environment (never in the repo).
- *   `npx wrangler login` done once — the script reads subscribers via
- *   `wrangler d1 execute qsdqsb-subscribers --remote` (no extra tokens).
+ *   `npx wrangler@4 login` done once — the script reads subscribers via
+ *   `npx --yes wrangler@4 d1 execute qsdqsb-subscribers --remote` (no extra
+ *   tokens; --yes, since npx cannot ask to fetch wrangler with no terminal).
  *
  * Env knobs: LETTERS_FROM ("QSD <scripta@qsdqsb.com>" — scripta manent), SITE_URL
  * (https://qsdqsb.com), RESEND_SEND_DELAY_MS (700).
@@ -206,7 +207,7 @@ function fetchActiveSubscribers() {
   try {
     out = execFileSync(
       "npx",
-      ["wrangler", "d1", "execute", D1_NAME, "--remote", "--json",
+      ["--yes", "wrangler@4", "d1", "execute", D1_NAME, "--remote", "--json",
        "--command", "SELECT email, token FROM subscribers WHERE status = 'active' ORDER BY subscribed_at;"],
       { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
     );
