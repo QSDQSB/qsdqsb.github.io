@@ -187,10 +187,10 @@ const paragraphs = (q) => (Array.isArray(q) ? q : q ? [q] : []).filter(Boolean);
 const LINK = /\[([^\]]+)\]\(([^)\s]+)\)/g;
 const HAN = /\p{Script=Han}/u;
 // A quoted paragraph: its words escaped, its links kept, its language said (a Chinese line read in
-// an English voice is noise). Centred Chinese breaks at its punctuation, as a phrase, rather than
-// leaving one character alone on the last line (keep-all; a client without it breaks anywhere).
+// an English voice is noise). Set to the left, as the piece sets its prose (the owner, 2026-10-03),
+// on the card's own edge.
 const quoteRow = (p, last) => `<tr>
-            <td align="center"${HAN.test(p) ? ' lang="zh-Hans"' : ""} style="padding:0 34px ${last ? 32 : 14}px;font-family:${SERIF_QUOTE};font-size:17px;line-height:1.9;letter-spacing:0.5px;color:${BRASS};${HAN.test(p) ? "word-break:keep-all;" : ""}">
+            <td align="left"${HAN.test(p) ? ' lang="zh-Hans"' : ""} style="padding:0 20px ${last ? 32 : 14}px;font-family:${SERIF_QUOTE};font-size:17px;line-height:1.9;letter-spacing:0.5px;text-align:left;color:${BRASS};">
               ${escapeHtml(p).replace(LINK, (_, words, href) => `<a href="${href}" style="color:${BRASS};text-decoration:underline;">${words}</a>`)}
             </td>
           </tr>`;
