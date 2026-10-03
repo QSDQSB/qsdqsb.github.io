@@ -56,7 +56,7 @@ stops being the only reviewer.
       the tap, at most once in twenty seconds, ids and letters only; a session watching the page wakes,
       records and replies in the thread (`/hub`). With no session watching, the daily run records.
       Proved against a stand-in for the runtime; in the real viewer: the owner's first tap.
-- [ ] The daily run made fully automatic (the owner, 2026-10-02: "IT SHOULD BE FULLY AUTOMATIC"). Its
+- [x] The daily run made fully automatic (the owner, 2026-10-02: "IT SHOULD BE FULLY AUTOMATIC"). Its
       first scheduled run, 07:34 that day, sat for two hours on a shell command of its own making in
       the debt hunt, waiting for an approval; and its finish would have thrown the day away because
       another session was at work in the owner's checkout. Built the same day, with tests: recording
@@ -68,7 +68,12 @@ stops being the only reviewer.
       `hub/daily` without asking once `only-plan master --of hub/daily` passes. The box is ticked
       when a scheduled run has ended with nobody approving anything. A first try the same morning
       stopped at the store's dump: saved into the repository's folder it waited for an approval, so
-      the dump goes to the run's own scratch folder. Two things it still leans on:
+      the dump goes to the run's own scratch folder. The second try, started at 11:14 the way the
+      schedule starts one, ended by itself in a minute and a half with nobody approving anything:
+      the gate passed, 15 answers read and none new, no debt, no commit. Not yet seen in a real
+      run: an answer that is new; the first run the schedule itself starts (07:34); and the hand-over,
+      the new finish and the once-only hooks, because that run used the checkout's old copy of the
+      script (it printed no Report) and will until the branch the checkout is on takes `master` in. Two things it still leans on:
       a checkout whose own copy of the script predates the hand-over (a branch cut before it) runs
       the old finish until it takes `master` in, and the old stop hooks, which judge the checkout's
       uncommitted work (another session's included) and sent a turn back every time. On `master`
