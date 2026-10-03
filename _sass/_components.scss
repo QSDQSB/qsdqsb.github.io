@@ -62,15 +62,15 @@
 
 /* ── controls ────────────────────────────────────────────────────────── */
 
-// The way back: a glass pill, a chevron and the voyage's name. The lightbox's, and the palette
-// page's (_colour.scss), so going back looks the same wherever one is.
+// The way back: glass, a chevron and the voyage's name, in a control's corners of 10 px (0009, pick 2;
+// Q17). The lightbox's, and the palette page's (_colour.scss), so going back looks the same wherever one is.
 @mixin pill {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.36rem 0.8rem 0.36rem 0.6rem;
   border: 1px solid var(--photobook-glass-edge);
-  border-radius: 999px;
+  border-radius: $border-radius;
   background: var(--photobook-glass);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   backdrop-filter: blur(18px) saturate(140%);
@@ -91,7 +91,8 @@
 
 // A quiet control: a mark in the label's ink, lit under the pointer; no ring, no fill.
 // A viewer's round tool, top right of a full-screen photograph (slideshow, specs, picture only, the
-// way to its book): a glass disc with a line mark; lit when on. The lightbox's, and Drift's.
+// way to its book): a square of glass, a control's corners of 10 px (0009, pick 2; Q17), with a line
+// mark; lit when on. The lightbox's, and Drift's.
 @mixin round-tool {
   width: 40px;
   height: 40px;
@@ -99,7 +100,7 @@
   place-items: center;
   padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 50%;
+  border-radius: $border-radius;
   background: var(--photobook-button);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
