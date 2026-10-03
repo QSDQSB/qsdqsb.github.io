@@ -13,24 +13,6 @@ options as `- **A (recommended):** …`. A number is never reused: the command c
 
 ---
 
-### Q16 · Do the four new pieces read right as drawn on the specimen page?
-
-Asked: 2026-10-03
-
-Stage 2 wrote the pieces your round-2 picks set the amounts for: the card (10 px, 18 px where it is the scene; a short shadow; it lifts 4 px and grows to 1.018 in 0.3 s), the tag (ink only, it brightens under the pointer), the text button (a 10 px rounded rectangle, solid and quiet) and the ornament (a lozenge on a brass rule). No page uses them yet: before any does, you see each in every state on one page, the specimen (pictures sent with this batch, at desktop and phone width; built only for the pixel baseline, no reader can reach it). Each label says whose a value is: yours, the lead's inside your range, or decided under delegation. The lead's values are the lift, the tag's corners and timing, and the button's fill and pressed state.
-
-- **A (recommended):** Yes, as drawn: the pieces may be adopted where their stages say (Home's cards in stage 4, the ornament and a post's tags in stage 6)
-- **B:** Not yet: say what to change in a note
-
-### Q17 · Do the Photobook's pill and round tools stay as built, beside the new 10 px button?
-
-Asked: 2026-10-03
-
-Your pick 2 chose a rounded rectangle of 10 px for a control over a pill and a round tool. The Photobook's way back is a pill and its viewer's tools are round; 0009 left them as built (what is established is inherited) until you saw them side by side. They are side by side on the specimen page, last section.
-
-- **A (recommended):** Keep them as built: the 10 px rectangle is for new controls; the pill and the round tools are the viewer's signature
-- **B:** Bring them to the 10 px rectangle too (a change to the lightbox, shown before and after first)
-
 ### Q18 · Which white is a heading: the text's own ivory, or pure white?
 
 Asked: 2026-10-03
@@ -54,6 +36,8 @@ Built to your picks (28 px, 0.7 s, in turn 0.12 s apart). It reaches whole block
 
 ## Answered
 
+- 2026-10-03 · Q17 · Do the Photobook's pill and round tools stay as built, beside the new 10 px button? → B: bring the Photobook's pill and round tools to the 10 px rectangle too, shown before and after first
+- 2026-10-03 · Q16 · Do the four new pieces read right as drawn on the specimen page? → A: yes, as drawn; the pieces may be adopted where their stages say
 - 2026-10-03 · Q15 · May sessions be stopped from writing to R2 by themselves? → A: deny npm run photos:push and any other R2 writer in the permission file; a session asks each time
 - 2026-10-03 · Q14 · May the site carry CMU Serif itself, instead of fetching it from a third-party font service on every page? → A: the site carries CMU Serif itself, from cm-unicode on CTAN, subset to Latin
 - 2026-10-03 · Q13 · Does Cloudflare count the site's visits, and may the privacy page say so in this sentence? → A: Cloudflare counts them; use the draft as written
