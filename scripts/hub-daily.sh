@@ -47,7 +47,7 @@ BASE=master; "$GIT" -C "$REPO" rev-parse --verify --quiet refs/remotes/origin/ma
 if [ -z "${HUB_DAILY_FROM_MASTER:-}" ]; then
   mkdir -p "$REPO/.claude/worktrees"
   # A day starts from what GitHub holds now, so begin and finish run the same copy.
-  [ "${1:-}" = begin ] && "$GIT" -C "$REPO" fetch -q origin 2>/dev/null
+  [ "${1:-}" = begin ] && "$GIT" -C "$REPO" fetch -q --prune origin 2>/dev/null
   run="$REPO/.claude/worktrees/hub-daily.run.$$.sh"
   for src in "$BASE" master; do
     # Written beside, then moved into place: a copy still being read by an earlier call is not rewritten under it.
@@ -89,7 +89,7 @@ case "${1:-}" in
     mkdir -p "$REPO/.claude/worktrees"
     tidy                                   # whatever a run that died left behind
     snapshot > "$BEFORE"
-    "$GIT" -C "$REPO" fetch origin 2>&1 | tail -1
+    "$GIT" -C "$REPO" fetch --prune origin 2>&1 | tail -1   # --prune: a branch deleted on GitHub is forgotten here too
     "$GIT" -C "$REPO" show-ref --verify --quiet "refs/heads/$BRANCH" || "$GIT" -C "$REPO" branch --no-track "$BRANCH" "$BASE"
     # The run's own commits: on the branch, on neither master (an older one may have been merged in),
     # and not already on GitHub's by patch (a session took them and its pull request was merged).
