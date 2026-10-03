@@ -472,11 +472,11 @@ function withDailyRepo(run) {
   const GIT = fs.existsSync('/usr/bin/git') ? '/usr/bin/git' : 'git';
   const git = (cwd, ...a) => execFileSync(GIT, a, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
   const put = (rel, body, mode) => { fs.mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true }); fs.writeFileSync(path.join(dir, rel), body, mode ? { mode } : undefined); };
-  const daily = (...args) => spawnSync('bash', ['scripts/hub-daily.sh', ...args], { cwd: dir, encoding: 'utf8', env: { ...process.env, PLAN_DIR: '', HUB_DAILY_FROM_MASTER: '' } });
+  const daily = (...args) => spawnSync('bash', ['scripts/hub-daily.sh', ...args], { cwd: dir, encoding: 'utf8', env: { ...process.env, PLAN_DIR: '', HUB_DAILY_FROM_MASTER: '', HUB_BRIEF_NO_GH: '1' } });
   try {
     fs.mkdirSync(dir);
     git(dir, 'init', '-q');
-    for (const f of ['hub-daily.sh', 'plan.mjs', 'check-plan.mjs']) fs.cpSync(path.join(ROOT, 'scripts', f), path.join(dir, 'scripts', f));
+    for (const f of ['hub-daily.sh', 'plan.mjs', 'check-plan.mjs', 'hub-brief.mjs']) fs.cpSync(path.join(ROOT, 'scripts', f), path.join(dir, 'scripts', f));
     fs.cpSync(path.join(ROOT, 'scripts/lib'), path.join(dir, 'scripts/lib'), { recursive: true });
     put('scripts/gate.sh', 'echo "GATE: PASS (stand-in), handed over: ${HUB_DAILY_FROM_MASTER:-no}"\n');
     put('scripts/prototype-setup.sh', 'exit 0\n');
@@ -728,7 +728,7 @@ test('the copy of the daily script that runs is master\'s, whatever the owner\'s
     assert.strictEqual(begin.status, 0, begin.stdout + begin.stderr);
     assert.match(begin.stdout, /Worktree: .*hub-daily \(branch hub\/daily, origin\/master merged in\)/);
     assert.ok(!/the working copy ran/.test(begin.stdout) && !fs.existsSync(path.join(dir, 'should-not-exist')));
-    assert.match(begin.stdout, /plan sync .*hub-store\n.*plan debt\n.*finish/, 'begin names the steps that follow, as commands');
+    assert.match(begin.stdout, /plan sync .*hub-store\n.*plan debt\n.*brief.*\n.*finish/, 'begin names the steps that follow, as commands');
     assert.strictEqual(daily('abort').status, 0);
 
     // GitHub's master holds a copy from before the hand-over: the local master's is the one that runs.
@@ -966,4 +966,94 @@ test('the debt scan offers a file nothing loads, once, and nothing the inbox alr
     assert.deepStrictEqual(debt(dir, '').found.map((x) => x.file).sort(), ['_sass/_orphan.scss', 'assets/js/lib.js']);
     assert.deepStrictEqual(debt(dir, '- 2031-01-01 · F001 · assets/js/lib.js · nothing loads it').found.map((x) => x.file), ['_sass/_orphan.scss']);
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('the day brief is read from git and the plan, never typed: commits by kind, calls, stages, the run log, all escaped', async () => {
+  const { collect, render, kindOf } = await import('../scripts/hub-brief.mjs');
+  assert.strictEqual(kindOf(['_plan/QUEUE.md']), 'plan');
+  assert.strictEqual(kindOf(['scripts/x.mjs', 'tests/x.test.js', '_plan/a.md']), 'tool');
+  assert.strictEqual(kindOf(['_sass/_page.scss', '_plan/CHANGELOG.md']), 'site');
+  const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'brief-')));
+  const git = (when, ...a) => execFileSync('git', a, { cwd: dir, encoding: 'utf8', env: { ...process.env, GIT_AUTHOR_DATE: when, GIT_COMMITTER_DATE: when } });
+  const put = (rel, body) => { fs.mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true }); fs.writeFileSync(path.join(dir, rel), body); };
+  const commit = (when, msg) => { git(when, 'add', '-A'); git(when, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', msg); };
+  const merge = (when, branch) => git(when, '-c', 'user.name=t', '-c', 'user.email=t@t', 'merge', '-q', '--no-ff', '--no-edit', branch);
+  try {
+    git('2031-01-01T10:00:00', 'init', '-q');
+    put('_plan/stages/01-one.md', '# Stage 1 · One </script><script>document.title="pwned"</script>\n\n**Status:** building · **Tier:** 0\n\n- [ ] a\n- [ ] b\n');
+    put('_plan/findings/inbox.md', '# Inbox\n\n## Waiting\n\n- 2031-01-01 · F001 · x · y\n\n## Taken\n');
+    put('_plan/QUEUE.md', '# Queue\n\n### Q1 · Which way?\n\nAsked: 2031-01-01\n\nA paragraph.\n\n- **A (recommended):** one\n- **B:** two\n\n---\n\n## Answered\n\n');
+    put('_plan/CHANGELOG.md', '# Changelog\n\n## 2031\n\n');
+    put('_plan/FEATURES.md', '| Feature | Where |\n|---|---|\n| One | here |\n');
+    put('_sass/a.scss', 'a{}\n');
+    commit('2031-01-01T10:00:00', 'start');
+    git('2031-01-01T10:00:00', 'branch', '-M', 'master');
+    // A branch's commit made on the 1st, merged on the 2nd: it reached master on the 2nd.
+    git('2031-01-01T15:00:00', 'checkout', '-q', '-b', 'side'); put('scripts/side.mjs', '1\n'); commit('2031-01-01T15:00:00', '🔧 made on the first');
+    git('2031-01-01T15:00:00', 'checkout', '-q', 'master');
+    put('_sass/a.scss', 'a{color:red}\n'); put('_plan/CHANGELOG.md', '# Changelog\n\n## 2031\n\n- 2031-01-02 · Links in <brass> · tier 2\n');
+    commit('2031-01-02T09:30:00', '🎨 Links <script>alert(1)</script> in brass');
+    put('_plan/QUEUE.md', '# Queue\n\n---\n\n## Answered\n\n- 2031-01-02 · Q1 · Which way? → B: two\n- 2031-01-02 · The cat (in chat) → yes\n');
+    put('_plan/stages/01-one.md', '# Stage 1 · One </script><script>document.title="pwned"</script>\n\n**Status:** building · **Tier:** 0\n\n- [x] a\n- [ ] b\n');
+    put('_plan/findings/inbox.md', '# Inbox\n\n## Waiting\n\n- 2031-01-02 · F002 · x · z\n- 2031-01-01 · F001 · x · y\n\n## Taken\n');
+    commit('2031-01-02T11:00:00', '📐 Record Q1: two');
+    merge('2031-01-02T12:30:00', 'side');
+    put('scripts/x.mjs', '1\n'); commit('2031-01-03T08:00:00', '🔧 the next day');
+    const log = path.join(dir, 'runs.log');
+    fs.writeFileSync(log, `${new Date('2031-01-02T07:34:00').toISOString()}\t${new Date('2031-01-02T07:35:30').toISOString()}\tQ9 answered\tpushed.\nnot a line\n${new Date('2031-01-02T20:00:00').toISOString()}\t${new Date('2031-01-02T20:01:00').toISOString()}\tREFUSED: the branch held more than the plan\t\n${new Date('2031-01-03T07:34:00').toISOString()}\t${new Date('2031-01-03T07:35:00').toISOString()}\tnothing new\t\n`);
+    const d = collect({ day: '2031-01-02', ref: 'HEAD', runsLog: log, cwd: dir, gh: false });
+    assert.deepStrictEqual(d.commits.map((c) => [c.time, c.kind, c.queue, c.arrived]), [['09:30', 'site', false, false], ['11:00', 'plan', true, false], ['12:30', 'tool', false, true]], 'what reached master that day, the branch commit at the hour it arrived');
+    assert.deepStrictEqual(collect({ day: '2031-01-01', ref: 'HEAD', cwd: dir, gh: false }).commits.map((c) => c.subject), ['start'], 'a branch commit is not on master the day it was made');
+    assert.deepStrictEqual(d.answered.map((a) => a.id), ['Q1', null]);
+    assert.deepStrictEqual(d.openCalls, []);
+    assert.strictEqual(d.filed, 1);
+    assert.deepStrictEqual([d.inbox.before.waiting, d.inbox.after.waiting], [1, 2]);
+    assert.deepStrictEqual(d.stages.after.map((s) => [s.n, s.done, s.open]), [[1, 1, 1]]);
+    assert.deepStrictEqual(d.runs.map((r) => [r.from, r.seconds, r.ok]), [['07:34', 90, true], ['20:00', 60, false]], 'one line a run, that day only; a refusal did not end alone');
+    assert.strictEqual(d.prs, null, 'GitHub left out is said, not guessed');
+    const html = render(d);
+    assert.match(html, /Links in &lt;brass&gt;/);
+    assert.ok(!/<\/script><script>document\.title/.test(html), 'a stage title cannot close the page\'s script');
+    assert.match(html, /\\u003c\/script>\\u003cscript>/);
+    assert.match(html, /<h1>1 of 2 upkeep runs did not finish, 3 commits reached master, 2 calls settled<\/h1>/);
+    assert.match(html, /Pull requests merged<\/span><span class="v num">not read/);
+    assert.match(html, /stage 1: 1 of 2/);
+    assert.strictEqual(collect({ day: '2030-12-31', ref: 'HEAD', cwd: dir, gh: false }), null, 'a day before the history is refused');
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('the daily run logs each run for the brief, and builds the brief from that log', () => {
+  withDailyRepo(({ dir, daily }) => {
+    assert.strictEqual(daily('begin').status, 0);
+    assert.strictEqual(daily('plan', 'finding', 'a place', 'a thing seen').status, 0);
+    assert.strictEqual(daily('finish').status, 0);
+    const log = fs.readFileSync(path.join(dir, '.claude/worktrees/hub-runs.log'), 'utf8').trim().split('\n');
+    assert.strictEqual(log.length, 1);
+    const [start, end, kept, push] = log[0].split('\t');
+    assert.ok(new Date(start) <= new Date(end));
+    assert.strictEqual(kept, 'F001 filed');
+    assert.match(push, /pushed/);
+    assert.strictEqual(daily('begin').status, 0);
+    const brief = daily('brief', 'today');
+    assert.strictEqual(brief.status, 0, brief.stdout + brief.stderr);
+    assert.match(brief.stdout, /Publish: .*hub-brief\.html\nAt: \(no brief address in _plan\/hub\.json: do not publish\)/);
+    assert.strictEqual(daily('finish').status, 0);
+    assert.ok(fs.existsSync(path.join(dir, '.claude/worktrees/hub-brief.html')), 'the brief outlives the finish, which comes before its publish');
+    // A run that dies is logged by the next; a refusal is logged by itself.
+    assert.strictEqual(daily('begin').status, 0);
+    assert.strictEqual(daily('begin').status, 0);
+    fs.writeFileSync(path.join(dir, '.claude/worktrees/hub-daily/_includes/stray.html'), 'x\n');
+    assert.strictEqual(daily('finish').status, 1);
+    const kinds = fs.readFileSync(path.join(dir, '.claude/worktrees/hub-runs.log'), 'utf8').trim().split('\n').map((l) => l.split('\t')[2].split(':')[0]);
+    assert.deepStrictEqual(kinds, ['F001 filed', 'nothing new', 'DIED', 'REFUSED']);
+    // An abort is logged too, and the brief reads the log it is given.
+    assert.strictEqual(daily('begin').status, 0);
+    assert.strictEqual(daily('abort').status, 0);
+    const last = fs.readFileSync(path.join(dir, '.claude/worktrees/hub-runs.log'), 'utf8').trim().split('\n').pop().split('\t')[2];
+    assert.match(last, /^STOP: aborted/);
+    assert.strictEqual(daily('begin').status, 0);
+    assert.strictEqual(daily('brief', 'today').status, 0);
+    assert.match(fs.readFileSync(path.join(dir, '.claude/worktrees/hub-brief.html'), 'utf8'), /did not finish/, 'the brief shows the runs that did not end alone, from the log');
+    assert.strictEqual(daily('abort').status, 0);
+  });
 });
