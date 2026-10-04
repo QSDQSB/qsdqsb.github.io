@@ -84,7 +84,14 @@ much. Nothing here waits on an amount any longer. The language is version 1: the
       lines before and after, one block moved (2026-10-03).
 - [x] A03 · Inks and glass on `:root` under neutral names; old names kept as aliases. `_sass/_tokens.scss`
       (2026-10-03), with the two curves; the weather glyphs' own `--ink` became `--glyph-w` so the name is free.
-- [ ] A02 · The scales in `_variables.scss`, as 0002 amended by 0009, each introduced with its first
+- [x] A02 · Done 2026-10-04: every step written, each `// @keep` as the first ones were, and put on
+      the uses that already held its exact value (the print's square, the colophon's hairline bars, the
+      pills of the nav buttons and the type badge, the round marks and the quiet icon button, the
+      print's develop and the mat's move, the arrival, the one-second transitions, the wash's light,
+      the subscribe slip's glass, the badge's and copy button's thin glass); `none` and `scene` have
+      one use so far, `picture` none. The two controls on `pill` and `round` wait for C03's sorting.
+      Catalogued in `_docs/components.md`, "Scales". No pixel moves. As first written:
+      The scales in `_variables.scss`, as 0002 amended by 0009, each introduced with its first
       two uses: corners `none`, `hair` 3, `picture` 8, `soft` 10, `large` 18, `pill`, `round`;
       durations `fast`, `base`, `slow`, `arrive` 0.7 s, `cover`, `scene`; shadows `rest` and
       `lifted`; glass `glass` 14 px and `thin` 6 px.
