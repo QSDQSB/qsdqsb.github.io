@@ -144,6 +144,10 @@ _Daphne_ 是瑞香属的学名，希腊语里的意思是「月桂」。在《�
 
 {% include colour-figure.html kind="chips" colours="ad6e89" %}
 
+_QSD reveries in only this photograph… for now._
+{: lang="en"}
+
+
 </section>
 <section data-bilingual-lang="EN" lang="en" markdown="1">
 
@@ -269,8 +273,8 @@ The archive now holds over six hundred photographs, yet the algorithm found no o
 
 {% include colour-figure.html kind="chips" colours="ad6e89" %}
 
-</section>
-</div>
-
 _QSD reveries in only this photograph… for now._
 {: lang="en"}
+
+</section>
+</div>
