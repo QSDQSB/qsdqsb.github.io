@@ -138,7 +138,7 @@ _Daphne_ 是瑞香属的学名，希腊语里的意思是「月桂」。在《�
 
 所以这个颜色的名字背后，是一个逃离太阳的人。而它出现的时候，太阳刚刚落下去。
 
-写到这里本来很想借题发挥，但 Ridgway 在前言里先把话说清楚了：这些色板 「not to show the color of the particular objects or substances which the names suggest」。名字并不代表它所指之物的颜色。Daphne Pink 不是瑞香花的粉色，达芙妮也不在他的考虑之内。
+写到这里本来很想借题发挥，但 Ridgway 在前言里先把话说清楚了：这些色板 「not to show the color of the particular objects or substances which the names suggest」。名字并不代表它所指之物的颜色。Daphne Pink 不是瑞香花的粉色，他在命名时估计也没考虑过达芙妮的故事。
 
 这个档案里现在有六百多张照片，但是算法没有找到相似的粉色。比较近的有 [{% include colour-code.html c="ad6e89" %} Daphne Red](/reverie/?c=ad6e89)，还有一张Lake Bled的晚霞。后面的山比较低，雪已经全化了。
 
@@ -263,7 +263,7 @@ _Daphne_ is the botanical name for a genus of flowering shrubs. In Greek it mean
 
 So behind this colour's name is someone running from the sun. And when it appeared, the sun had only just gone down.
 
-It would be tempting to make something of this, but Ridgway has left a word of caution. As he says in the preface, his plates are "not to show the color of the particular objects or substances which the names suggest". Daphne Pink is not the pink of the daphne flower, and Daphne herself never crossed his mind.
+It would be tempting to make something of this, but Ridgway has left a word of caution. As he says in the preface, his plates are "not to show the color of the particular objects or substances which the names suggest". Daphne Pink is not the pink of the daphne flower, and when he named it, he probably gave no thought to Daphne's story.
 
 The archive now holds over six hundred photographs, yet the algorithm found no other pink like it. The nearest is [{% include colour-code.html c="ad6e89" %} Daphne Red](/reverie/?c=ad6e89), in an afterglow over Lake Bled. The mountains behind are lower, and the snow has all melted.
 
@@ -272,5 +272,5 @@ The archive now holds over six hundred photographs, yet the algorithm found no o
 </section>
 </div>
 
-_QSD reveries in only this photograph… for now_
+_QSD reveries in only this photograph… for now._
 {: lang="en"}
