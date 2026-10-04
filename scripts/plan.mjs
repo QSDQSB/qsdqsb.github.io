@@ -19,6 +19,8 @@
  *   node scripts/plan.mjs debt                           # files nothing loads, not yet in the inbox
  *   node scripts/plan.mjs published                      # the command centre was just republished
  *   node scripts/plan.mjs only-plan [base] [--of branch] # exit 1 if anything outside _plan/ differs from base
+ *   node scripts/plan.mjs request "<the owner's words>"  # something the owner asked for: first in line (0010)
+ *   node scripts/plan.mjs next [--json]                  # what to take next: requests, then the roadmap, unclaimed
  *   node scripts/plan.mjs status                         # the session brief
  *
  * Ids are never reused: F numbers count up across Waiting and Taken, Q numbers across open and
@@ -396,6 +398,70 @@ switch (command) {
     }
     if (bad.length) missing(`Not only the plan (${branch} against ${base}, in ${ROOT}):\n${[...new Set(bad)].map((l) => `  ${l}`).join('\n')}`);
     console.log(`Only the plan: ${branch} against ${base}, in ${ROOT}.`);
+    break;
+  }
+
+  case 'request': {
+    // Something the owner asked for, kept in their words; a work run or a session takes it before
+    // the roadmap (decisions/0010). Newest first, as the inbox is.
+    const said = (words[0] || '').replace(/\r\n?|[\u2028\u2029\u0085]/g, '\n').replace(/[\u0000-\u0008\u000B-\u001F\u007F]/g, '').trim();
+    if (!said) usage('request needs what the owner asked for, in their words.');
+    idsAreSafeHere();
+    const rel = 'requests.md';
+    const body = fs.existsSync(file(rel)) ? read(rel) : `# Requests\n\nWhat the owner asked for, in their words, newest first. A work run or a session takes the first open\none before the roadmap ([decisions/0010](decisions/0010-the-merge-is-the-yes.md)), claims it, and moves it\nto Done with its pull request.\n\n## Open\n\n## Done\n`;
+    const o = body.indexOf('## Open'), d = body.indexOf('## Done');
+    if (o < 0 || d < 0) usage('requests.md has lost its "## Open" or "## Done" heading.');
+    if ((body.slice(o, d).match(/^- .+$/gm) || []).some((l) => oneLine(l.replace(/^- \S+ · R\d+ · /, '')) === oneLine(said))) { console.log('Already asked for: nothing was written.'); break; }
+    const id = `R${String(Math.max(0, ...[...body.matchAll(/^- \d{4}-\d{2}-\d{2} · R(\d+) · /gm)].map((m) => Number(m[1]))) + 1).padStart(3, '0')}`;
+    const line = `- ${today()} · ${id} · ${oneLine(said)}`;
+    write(rel, body.replace(/## Open\n+/, (m) => `${m}${line}\n`));
+    console.log(line);
+    break;
+  }
+
+  case 'next': {
+    // What to take next (decisions/0010): the owner's open requests, newest first; then the stages
+    // being built, in the roadmap's order, each open task that does not say it waits on the owner or
+    // on another stage. Anything claimed (a branch work/<key> on GitHub) or held (hold/<key>) is left
+    // out. A list, not a verdict: whoever takes one reads it first and holds it if it needs the owner.
+    const slug = (s) => s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48);
+    const refs = (() => { try { return execFileSync('git', ['for-each-ref', '--format=%(refname:short)', 'refs/remotes/origin/work', 'refs/remotes/origin/hold'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }); } catch { return ''; } })();
+    const taken = new Set(refs.split('\n').filter(Boolean).map((r) => r.replace(/^origin\/(work|hold)\//, '')));
+    const out = [];
+    if (fs.existsSync(file('requests.md'))) {
+      const body = read('requests.md'), o = body.indexOf('## Open'), d = body.indexOf('## Done');
+      for (const l of body.slice(o, d < 0 ? undefined : d).split('\n')) {
+        const m = l.match(/^- (\d{4}-\d{2}-\d{2}) · (R\d+) · (.+)$/);
+        if (m) out.push({ kind: 'request', stage: null, key: slug(m[2]), label: m[2], text: m[3] });
+      }
+    }
+    const roadmap = read('ROADMAP.md');
+    const stages = [...roadmap.matchAll(/^\| (\d+) \| \[[^\]]+\]\(stages\/([^)]+)\) \|[^|]*\| ([^|]+) \|/gm)].filter((m) => /building/i.test(m[3]));
+    // Words that put a task out of a run's reach: it waits on the owner, on a device, or on another stage.
+    const blocked = /moves to stage|real iphone|owner'?s to merge|once the owner has seen|goes to the owner|owner chooses|better done with stage/i;
+    for (const [, n, f] of stages) {
+      let section = '';
+      for (const l of (read(`stages/${f}`) + '\n- ').split('\n').reduce((acc, line) => {
+        // A task is its "- [ ]" line and the indented lines under it.
+        if (/^- \[[ x]\] /.test(line) || /^\S/.test(line)) acc.push(line); else if (acc.length) acc[acc.length - 1] += ` ${line.trim()}`;
+        return acc;
+      }, [])) {
+        // A section opens with a heading or a paragraph that starts in bold ("**Shown to the owner first.** …").
+        if (/^\*\*[^*]+\*\*/.test(l) || /^##+ /.test(l)) { section = l; continue; }
+        const m = l.match(/^- \[ \] (.+)$/);
+        if (!m || /shown to the owner first/i.test(section) || blocked.test(m[1])) continue;
+        // The task's own label (its id, "A02"); a date is not one, so the words after it are used.
+        const parts = m[1].split(' · '), lead = /^\d{4}-\d{2}-\d{2}$/.test(parts[0]) && parts.length > 1 ? parts.slice(1).join(' · ') : m[1];
+        const first = lead.split(' · ')[0];
+        const label = (first.length <= 40 ? first : lead.split(/\s+/).slice(0, 6).join(' ')).replace(/[`*]/g, '');
+        out.push({ kind: 'task', stage: Number(n), key: slug(`s${n}-${label}`), label, text: oneLine(m[1]).slice(0, 220) });
+      }
+    }
+    const free = out.filter((c) => !taken.has(c.key));
+    if (flags.json !== undefined || rest.includes('--json')) { process.stdout.write(`${JSON.stringify({ taken: [...taken], next: free }, null, 2)}\n`); break; }
+    if (!free.length) { console.log('Nothing to take: no open request, and every open task of the stages being built is claimed, held or waits on the owner.'); break; }
+    for (const c of free.slice(0, 8)) console.log(`${c.key}\t${c.kind === 'request' ? `the owner asked (${c.label})` : `stage ${c.stage}`} · ${c.text.slice(0, 150)}`);
+    if (taken.size) console.log(`(claimed or held: ${[...taken].join(', ')})`);
     break;
   }
 

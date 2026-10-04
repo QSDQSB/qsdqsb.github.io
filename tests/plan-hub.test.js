@@ -1075,3 +1075,203 @@ test('the daily script cuts off a call that hangs, and a run that dies says at w
     assert.ok(!fs.existsSync(path.join(dir, '.claude/worktrees/hub-daily.progress')), 'the tidying clears it');
   });
 });
+
+test('a request goes first in line, once, in the owner\'s words', () => {
+  withPlanCopy((plan, read) => {
+    const first = plan('request', 'Make the map\'s panel easier to close on a phone');
+    assert.strictEqual(first.status, 0, first.stderr);
+    assert.match(first.stdout, /^- 2031-01-02 · R001 · Make the map's panel easier to close on a phone$/m);
+    assert.match(plan('request', 'Make the map\'s panel easier to close on a phone').stdout, /Already asked for/);
+    assert.match(plan('request', 'Another thing').stdout, /R002/);
+    const next = plan('next').stdout.split('\n');
+    assert.match(next[0], /^r002\tthe owner asked \(R002\) · Another thing/, 'the newest request first');
+    assert.match(next[1], /^r001\t/);
+    assert.ok(next.slice(2).some((l) => /^s\d+-/.test(l)), 'then the roadmap');
+    const json = JSON.parse(plan('next', '--json').stdout);
+    assert.ok(json.next.every((c) => !/moves to stage|real iphone/i.test(c.text)), 'nothing that says it waits on another stage or a device');
+  });
+});
+
+/** A throwaway repository with a bare remote, a plan with one stage being built, the work run's
+ *  script, and a stand-in for `gh` on the PATH (FAKE_GH_PRS: the open work pull requests it reports). */
+function withWorkRepo(run, { gate = 'PASS' } = {}) {
+  const base = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'hub-work-')));
+  const dir = path.join(base, 'repo'), remote = path.join(base, 'origin.git'), bin = path.join(base, 'bin');
+  const GIT = fs.existsSync('/usr/bin/git') ? '/usr/bin/git' : 'git';
+  const git = (cwd, ...a) => execFileSync(GIT, a, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+  const put = (rel, body) => { fs.mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true }); fs.writeFileSync(path.join(dir, rel), body); };
+  let open = '[]';
+  const work = (...args) => spawnSync('bash', ['scripts/hub-work.sh', ...args], { cwd: dir, encoding: 'utf8', env: { ...process.env, PATH: `${bin}:${process.env.PATH}`, FAKE_GH_PRS: open, HUB_WORK_HANDED: '' } });
+  try {
+    fs.mkdirSync(dir); fs.mkdirSync(bin);
+    fs.writeFileSync(path.join(bin, 'gh'), '#!/usr/bin/env bash\ncase "$1 $2" in\n  "pr list") printf "%s" "$FAKE_GH_PRS" ;;\n  "pr create") echo "https://github.com/QSDQSB/qsdqsb.github.io/pull/999" ;;\n  *) exit 1 ;;\nesac\n', { mode: 0o755 });
+    git(dir, 'init', '-q');
+    for (const f of ['hub-work.sh', 'plan.mjs', 'check-plan.mjs']) fs.cpSync(path.join(ROOT, 'scripts', f), path.join(dir, 'scripts', f));
+    fs.cpSync(path.join(ROOT, 'scripts/lib'), path.join(dir, 'scripts/lib'), { recursive: true });
+    put('scripts/prototype-setup.sh', 'exit 0\n'); put('scripts/gate.sh', `echo "GATE: ${gate} (stand-in)"\n`);
+    put('_plan/ROADMAP.md', '| # | Stage | What | Status | Tier |\n|---|---|---|---|---|\n| 1 | [One](stages/01-one.md) | x | building | 0 |\n| 2 | [Two](stages/02-two.md) | x | planned | 0 |\n');
+    put('_plan/stages/01-one.md', '# Stage 1 · One\n\n**Status:** building\n\n- [x] A01 · done\n- [ ] A02 · The scales, written once.\n- [ ] A03 · Moves to stage 9 with S02.\n- [ ] A04 · Pinch on the specs; it wants a real iPhone to try.\n- [ ] A05 · Overlaps three pull requests, which are the owner\'s to merge or close first.\n- [ ] 2026-09-29 · The first dated task\n- [ ] 2026-09-29 · The second dated task\n\n**Shown to the owner first.** Each one.\n- [ ] C05 · a panel\n');
+    put('_plan/stages/02-two.md', '# Stage 2 · Two\n\n**Status:** planned\n\n- [ ] B01 · later\n');
+    put('_plan/requests.md', '# Requests\n\n## Open\n\n- 2031-01-01 · R001 · Fix the map panel\n\n## Done\n');
+    put('_plan/findings/inbox.md', '# Inbox\n\n## Waiting\n\n## Taken\n');
+    put('_sass/a.scss', 'a{}\n'); put('.gitignore', '.claude/worktrees/\nnode_modules\n');
+    git(dir, 'add', '-A'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'start');
+    git(dir, 'branch', '-M', 'master');
+    git(base, 'clone', '-q', '--bare', dir, remote);
+    git(dir, 'remote', 'add', 'origin', remote); git(dir, 'fetch', '-q', 'origin');
+    return run({ dir, remote, git, put, work, setOpen: (v) => { open = v; } });
+  } finally { fs.rmSync(base, { recursive: true, force: true }); }
+}
+
+test('the work run takes the request first, claims it, commits inside its folder only, and opens one pull request', () => {
+  withWorkRepo(({ dir, remote, git, work }) => {
+    const begin = work('begin');
+    assert.strictEqual(begin.status, 0, begin.stdout + begin.stderr);
+    assert.match(begin.stdout, /What to take next[\s\S]*\nr001\tthe owner asked \(R001\) · Fix the map panel\ns1-a02\tstage 1 · A02 · The scales/);
+    assert.ok(!/s1-a03|s1-a04|s1-a05|s1-c05|s2-b01/.test(begin.stdout), 'not what waits on another stage, a device or the owner, not what is shown to the owner first, not a stage not being built');
+    assert.match(begin.stdout, /^s1-the-first-dated-task\t[\s\S]*^s1-the-second-dated-task\t/m, 'a task labelled by a date is keyed by its words');
+    assert.strictEqual(work('claim', 'r001').status, 0);
+    assert.ok(git(remote, 'branch', '--list', 'work/r001').includes('work/r001'), 'the claim is on GitHub');
+    assert.match(work('claim', 's1-a02').stderr, /Already on work\/r001: one task a run/);
+    const wt = path.join(dir, '.claude/worktrees/hub-work');
+    fs.writeFileSync(path.join(wt, '_sass/a.scss'), 'a{color:red}\n');
+    fs.mkdirSync(path.join(wt, 'photos')); fs.writeFileSync(path.join(wt, 'photos/x.jpg'), 'x');
+    const refused = work('commit', '🎨 Red');
+    assert.strictEqual(refused.status, 1);
+    assert.match(refused.stderr, /never go in a work run's commit: photos\/x\.jpg/);
+    fs.rmSync(path.join(wt, 'photos'), { recursive: true });
+    assert.strictEqual(work('commit', '🎨 Red').status, 0);
+    assert.match(work('pr', '🎨 Red').stderr, /Write the pull request's body/);
+    fs.writeFileSync(path.join(wt, 'PR-BODY.md'), 'What the owner sees.\n');
+    assert.match(work('pr', '🎨 Red').stderr, /the full gate has not passed on the folder as it is now/);
+    assert.match(work('gate').stdout, /The full gate is running/);
+    { let w; for (let i = 0; i < 5; i++) { w = work('wait'); if (w.status !== 4) break; } assert.strictEqual(w.status, 0, w.stdout + w.stderr); }
+    const pr = work('pr', '🎨 Red');
+    assert.strictEqual(pr.status, 0, pr.stdout + pr.stderr);
+    assert.match(pr.stdout, /Opened: https:\/\/github\.com\/QSDQSB\/qsdqsb\.github\.io\/pull\/999/);
+    assert.strictEqual(git(remote, 'show', '--format=%s', '-s', 'work/r001').trim(), '🎨 Red', 'the commit reached the claim branch');
+    assert.strictEqual(git(remote, 'diff', '--name-only', 'master', 'work/r001').trim(), '_sass/a.scss', 'and nothing else: not the body');
+    assert.ok(!fs.existsSync(wt), 'the folder is gone');
+    assert.match(fs.readFileSync(path.join(dir, '.claude/worktrees/hub-runs.log'), 'utf8'), /\tWORK: r001 → https:\/\/github\.com\/.*\/pull\/999\tpushed\n$/);
+    assert.strictEqual(git(dir, 'status', '--porcelain'), '', 'the owner\'s checkout untouched');
+  });
+});
+
+test('the work run starts nothing while its pull request waits, and holds a task that needs the owner', () => {
+  withWorkRepo(({ dir, remote, git, work, setOpen }) => {
+    setOpen('[{"number":7,"state":"OPEN","title":"🎨 Red","headRefName":"work/r001","createdAt":"2020-01-01T00:00:00Z"}]');
+    const waiting = work('begin');
+    assert.strictEqual(waiting.status, 3);
+    assert.match(waiting.stdout, /Waiting for the owner: #7 🎨 Red \(\d+ days\) — paused: three days unmerged\nNothing is started today\./);
+    assert.ok(!fs.existsSync(path.join(dir, '.claude/worktrees/hub-work')));
+    setOpen('[]');
+    assert.strictEqual(work('begin').status, 0);
+    const hold = work('hold', 's1-a02', 'Which of the two scales do you want first?');
+    assert.strictEqual(hold.status, 0, hold.stdout + hold.stderr);
+    assert.strictEqual(git(remote, 'log', '-1', '--format=%s%n%b', 'hold/s1-a02').trim(), 'Held: s1-a02\nWhich of the two scales do you want first?');
+    assert.strictEqual(git(remote, 'rev-parse', 'hold/s1-a02^'), git(remote, 'rev-parse', 'master'), 'the hold takes nothing from master');
+    git(dir, 'fetch', '-q', 'origin');
+    const again = work('begin');
+    assert.ok(!/^s1-a02\t/m.test(again.stdout), 'a held task is not offered again');
+    assert.match(again.stdout, /^r001\t/m);
+    const abort = work('abort');
+    assert.strictEqual(abort.status, 0);
+    assert.match(fs.readFileSync(path.join(dir, '.claude/worktrees/hub-runs.log'), 'utf8'), /WORK: held s1-a02: Which of the two scales[\s\S]*WORK: STOP: aborted/);
+  });
+});
+
+test('the work run never builds, gates or commits its own tooling, runs only named steps, and lets go of what it does not keep', () => {
+  withWorkRepo(({ dir, remote, git, work, setOpen }) => {
+    assert.strictEqual(work('begin').status, 0);
+    for (const bad of [['run', 'photos:process'], ['run', 'serve'], ['run', 'test', '--', 'x'], ['run', 'visual:capture'], ['run', 'visual:capture', '--only', 'nosuchpage'], ['run', 'visual:capture', '--only', 'home[;touch${IFS}PWNED;]*'], ['run', 'visual:capture', '--only', 'home;touch PWNED']]) {
+      assert.strictEqual(work(...bad).status, 2, `refused: ${bad.join(' ')}`);
+    }
+    assert.strictEqual(work('claim', 's1-a02').status, 0);
+    const wt = path.join(dir, '.claude/worktrees/hub-work');
+    fs.writeFileSync(path.join(wt, 'scripts/gate.sh'), 'echo "GATE: PASS (rewritten by the run)"\n');
+    for (const step of [['gate'], ['run', 'test'], ['commit', '🔧 x']]) {
+      const r = work(...step);
+      assert.strictEqual(r.status, 1, `${step[0]} refused`);
+      assert.match(r.stderr, /changes the site's tooling, which a work run never does: scripts\/gate\.sh/);
+    }
+    execFileSync('git', ['checkout', '--', 'scripts/gate.sh'], { cwd: wt });
+    assert.ok(!fs.existsSync(path.join(wt, 'PWNED')), 'no page id ever runs as a command');
+    // A file at the root that steers a tool (an npm setting), and a module git ignores beside the scripts.
+    fs.writeFileSync(path.join(wt, '.npmrc'), 'node-options=--require ./assets/x.js\n');
+    assert.match(work('run', 'test').stderr, /changes the site's tooling[^\n]*\.npmrc/);
+    fs.rmSync(path.join(wt, '.npmrc'));
+    fs.mkdirSync(path.join(wt, 'scripts/node_modules/js-yaml'), { recursive: true }); fs.writeFileSync(path.join(wt, 'scripts/node_modules/js-yaml/index.js'), 'x\n');
+    assert.match(work('gate').stderr, /files git ignores that no build leaves: scripts\/node_modules\//);
+    fs.rmSync(path.join(wt, 'scripts/node_modules'), { recursive: true });
+    // What a build leaves stays: the clean-up of bytecode takes nothing else.
+    fs.mkdirSync(path.join(wt, '_site'), { recursive: true }); fs.writeFileSync(path.join(wt, '_site/index.html'), 'x\n');
+    fs.mkdirSync(path.join(wt, 'scripts/__pycache__'), { recursive: true }); fs.writeFileSync(path.join(wt, 'scripts/__pycache__/c.pyc'), 'x\n');
+    assert.strictEqual(work('run', 'test').status === 1 && /tooling|ignores/.test(work('run', 'test').stderr), false, 'a build and bytecode do not stop a step');
+    assert.ok(fs.existsSync(path.join(wt, '_site/index.html')), 'the build is kept');
+    assert.ok(!fs.existsSync(path.join(wt, 'scripts/__pycache__')), 'the bytecode is gone');
+    const abort = work('abort');
+    assert.match(abort.stdout, /Let go: work\/s1-a02/);
+    assert.throws(() => git(remote, 'rev-parse', '--verify', '--quiet', 'refs/heads/work/s1-a02'), 'the empty claim is gone from GitHub');
+    // A held key cannot be claimed.
+    assert.strictEqual(work('begin').status, 0);
+    assert.strictEqual(work('hold', 's1-a02', 'Which first?').status, 0);
+    assert.strictEqual(work('begin').status, 0);
+    assert.match(work('claim', 's1-a02').stderr, /already claimed or held/);
+    // A pull request the owner closed unmerged comes back as a question.
+    assert.strictEqual(work('claim', 'r001').status, 0);
+    fs.writeFileSync(path.join(wt, '_sass/a.scss'), 'a{color:red}\n');
+    assert.strictEqual(work('commit', '🎨 Red').status, 0);
+    fs.writeFileSync(path.join(wt, 'PR-BODY.md'), 'x\n');
+    assert.match(work('gate').stdout, /The full gate is running/);
+    { let w; for (let i = 0; i < 5; i++) { w = work('wait'); if (w.status !== 4) break; } assert.strictEqual(w.status, 0, w.stdout + w.stderr); }
+    assert.strictEqual(work('pr', '🎨 Red').status, 0);
+    setOpen('[{"number":8,"state":"CLOSED","title":"🎨 Red","headRefName":"work/r001","createdAt":"2031-01-01T00:00:00Z"}]');
+    const next = work('begin');
+    assert.strictEqual(next.status, 0, next.stdout + next.stderr);
+    assert.match(next.stdout, /Closed unmerged, now a question for the owner: hold\/r001/);
+    assert.match(git(remote, 'log', '-1', '--format=%B', 'hold/r001'), /You closed #8 without merging it\. What should change/);
+    assert.throws(() => git(remote, 'rev-parse', '--verify', '--quiet', 'refs/heads/work/r001'));
+    assert.ok(!/^r001\t/m.test(next.stdout), 'and it is not offered until the owner answers');
+    assert.strictEqual(work('abort').status, 0);
+  });
+});
+
+test('the work run\'s gate runs in the background and is waited for', () => {
+  withWorkRepo(({ work }) => {
+    assert.strictEqual(work('begin').status, 0);
+    assert.match(work('gate').stdout, /The full gate is running/);
+    let w; for (let i = 0; i < 5; i++) { w = work('wait'); if (w.status !== 4) break; }
+    assert.strictEqual(w.status, 0, w.stdout + w.stderr);
+    assert.match(w.stdout, /GATE: PASS \(stand-in\)\nLog: /);
+    assert.strictEqual(work('abort').status, 0);
+  });
+});
+
+test('the brief puts the work run\'s pull request and its held questions before the owner', async () => {
+  const { render } = await import('../scripts/hub-brief.mjs');
+  const d = { day: '2031-01-02', ref: 'HEAD', start: 'a', end: 'b', commits: [], prs: [], checks: [], runs: [{ work: true, from: '08:00', to: '08:30', seconds: 1800, kept: 'WORK: STOP: aborted, nothing kept', push: '', ok: false }], answered: [], openCalls: [], changes: [], filed: 0, ideas: [],
+    workPrs: [{ number: 12, title: '🎨 A <b>bold</b> change', days: 4 }], holds: [{ key: 's2-c09', why: 'Which <i>layer</i> first?' }],
+    stages: { before: [], after: [] }, inbox: { before: { waiting: 0, taken: 0 }, after: { waiting: 0, taken: 0 } }, features: { before: 0, after: 0 } };
+  const html = render(d);
+  assert.match(html, /Waiting on you<\/span><span class="v num">2<\/span><span class="s">1 pull request to merge, 1 held task/);
+  assert.match(html, /Merge or close #12: 🎨 A &lt;b&gt;bold&lt;\/b&gt; change \(waiting 4 days; the work run is paused until it is settled\)/);
+  assert.match(html, /Held by the work run, s2-c09: Which &lt;i&gt;layer&lt;\/i&gt; first\?/);
+  assert.match(html, /"label":"work run · 30 min","kind":"warn"/);
+});
+
+test('a failed gate stays failed, and a pass holds only for the folder it saw', () => {
+  withWorkRepo(({ dir, work }) => {
+    assert.strictEqual(work('begin').status, 0);
+    assert.strictEqual(work('claim', 'r001').status, 0);
+    const wt = path.join(dir, '.claude/worktrees/hub-work');
+    fs.writeFileSync(path.join(wt, '_sass/a.scss'), 'a{color:red}\n');
+    work('gate');
+    let w; for (let i = 0; i < 5; i++) { w = work('wait'); if (w.status !== 4) break; }
+    assert.strictEqual(w.status, 1, 'the gate failed');
+    assert.strictEqual(work('wait').status, 1, 'and asking again does not make it pass');
+    assert.strictEqual(work('commit', '🎨 Red').status, 0);
+    fs.writeFileSync(path.join(wt, 'PR-BODY.md'), 'x\n');
+    assert.match(work('pr', '🎨 Red').stderr, /the full gate has not passed/);
+    assert.strictEqual(work('abort').status, 0);
+  }, { gate: 'FAIL' });
+});

@@ -141,6 +141,7 @@ built, however small the change sounds: "two or three lines" is a claim like any
 | A turn ends | House style, bundle sync, the `!important` ratchet |
 | Before anything is called done | The gate and the reviewer |
 | Anything is pushed | CI runs the fast gate and, on a pull request, the changelog rule over the branch |
+| Work | `/hub-work`, each morning after the upkeep: the next request or roadmap task, claimed, done in its own folder, gated and reviewed, and opened as one pull request with pictures; the owner's merge is the yes ([0010](decisions/0010-the-merge-is-the-yes.md)). One open at a time; a task that needs the owner is held with its question |
 | Daily | `/hub-daily`: the gate on `master`, answers and new ideas recorded, a file nothing loads filed. It keeps the books and fixes nothing: raw ideas and the inbox wait for the next session until `daily_agents` is switched on. Its work stays on one branch, `hub/daily`, until the next session merges it (plan only, so without asking; pushing `master` is the owner's) |
 
 ## Who does what
