@@ -10,6 +10,8 @@ ships that the owner would have stopped). The owner amends them here. One standi
 **Supersedes:** nothing. It adds to `CLAUDE.md` (Decision Confidence, Responsive Policy, the SCSS
 major-delta rule), and loosens none of them.
 
+**Amended by:** [0010](0010-the-merge-is-the-yes.md), 2026-10-04: tier 2 is built and arrives as a pull request with pictures; the merge is the yes.
+
 ## Context
 
 Every call has gone to the owner, including ones with a single sensible answer. That costs the
@@ -52,8 +54,10 @@ Nothing is presented to the owner as done until:
    cannot edit files, so the author never marks their own work.
 3. The stage file and the findings are updated.
 
-A `BLOCK` goes back to the author, not to the owner. The reviewer blocks a tier 2 change that is
-not approved in the queue even when the work is good: it is not the reviewer's call either.
+A `BLOCK` goes back to the author, not to the owner. Since 2026-10-04 ([0010](0010-the-merge-is-the-yes.md))
+a tier 2 change no longer waits for a queue entry before it is built: it is built, arrives as a pull
+request with its pictures at both widths, and the owner's merge is the yes. The reviewer blocks it
+when the pictures are missing or wrong, or when it goes against a call the owner has already made.
 
 ## The queue
 
