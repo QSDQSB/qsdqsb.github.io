@@ -248,7 +248,7 @@ switch (command) {
       });
     };
     const done = [], session = [], skipped = [], early = [], later = [];
-    let same = 0;
+    let same = 0, withIdea = 0;
     // A name or a letter is shown only when it is plainly one; anything else stored is never echoed.
     const shown = (v) => (typeof v === 'string' && /^[A-Za-z0-9_-]{1,24}$/.test(v) ? v : 'something that is not a plain name');
     // The command's own handlers, by argument list and never through a shell. One that refuses is one line skipped, not a run lost.
@@ -288,7 +288,7 @@ switch (command) {
       }
 
       const decided = id.match(/^(I\d{3,})$/), asked = id.match(/^(I\d{3,})-(\d+)$/);
-      if (asked) { if (!stored.has(asked[1])) early.push(id); continue; }   // a question's answer is recorded with its idea's decision
+      if (asked) { if (stored.has(asked[1])) withIdea++; else early.push(id); continue; }   // a question's answer is recorded with its idea's decision
       if (!decided) { skipped.push(`${shown(id)}: not a call or an idea`); continue; }
       const name = fs.readdirSync(file('ideas')).find((f) => f.startsWith(`${id}-`) && f.endsWith('.md'));
       if (!name) { skipped.push(`${id}: no such idea`); continue; }
@@ -323,7 +323,7 @@ switch (command) {
 
     console.log(`Read: ${answers.length} answer(s), ${ideas.length} idea(s) from the store's dump.`);
     console.log(done.length ? `Recorded: ${done.join('; ')}.` : 'Recorded: nothing new.');
-    console.log(`Already in the plan: ${same}.`);
+    console.log(`Already in the plan: ${same}.${withIdea ? ` And ${withIdea} answer(s) to an idea's questions, kept with that idea's decision.` : ''}`);
     if (early.length) console.log(`A question answered, its idea not yet decided: ${early.join(', ')}. Nothing to record until it is.`);
     if (later.length) console.log(`An answer to a call this plan does not hold yet (asked on a branch not merged?): ${later.join(', ')}. It stays in the store and is recorded once the call is here.`);
     if (held) console.log(`Held for the next run: ${held} more idea(s); ten are filed in one run.`);
