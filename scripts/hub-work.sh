@@ -132,7 +132,7 @@ case "${1:-}" in
       if [ -n "$closed" ]; then
         tip="$("$GIT" -C "$REPO" rev-parse "$BASE")"
         msg="Held: $key"; why="You closed #$closed without merging it. What should change before it is done again?"
-        c="$("$GIT" -C "$REPO" commit-tree "$tip^{tree}" -p "$tip" -m "$msg" -m "$why" 2>/dev/null)" \
+        c="$("$GIT" -C "$REPO" -c user.name=Claude -c user.email=noreply@anthropic.com commit-tree "$tip^{tree}" -p "$tip" -m "$msg" -m "$why" 2>/dev/null)" \
           && limit 60 "$GIT" -C "$REPO" "${NET[@]}" push -q origin "$c:refs/heads/hold/$key" ":refs/heads/$b" 2>/dev/null \
           && { echo "Closed unmerged, now a question for the owner: hold/$key"; logrun "held $key: $why" ""; }
       elif [ "$("$GIT" -C "$REPO" rev-list --count "$BASE..$ref")" -le 1 ] && "$GIT" -C "$REPO" log -1 --format=%B "$ref" | grep -q '^by the work run' \
@@ -249,7 +249,7 @@ case "${1:-}" in
     # The question rides on an empty commit on GitHub's master, on a branch of its own: no pull request,
     # and nothing taken from master. The brief shows it; a session the owner answers deletes the branch.
     tip="$("$GIT" -C "$REPO" rev-parse "$BASE")"
-    c="$("$GIT" -C "$REPO" commit-tree "$tip^{tree}" -p "$tip" -m "Held: $2" -m "$why")" || exit 1
+    c="$("$GIT" -C "$REPO" -c user.name=Claude -c user.email=noreply@anthropic.com commit-tree "$tip^{tree}" -p "$tip" -m "Held: $2" -m "$why")" || exit 1
     limit 60 "$GIT" -C "$REPO" "${NET[@]}" push -q origin "$c:refs/heads/hold/$2" 2>/dev/null || { echo "REFUSED: the hold could not be pushed." >&2; exit 1; }
     "$GIT" -C "$REPO" ls-remote --exit-code --heads origin "work/$2" >/dev/null 2>&1 && limit 60 "$GIT" -C "$REPO" "${NET[@]}" push -q origin --delete "work/$2" 2>/dev/null
     logrun "held $2: $why" ""
