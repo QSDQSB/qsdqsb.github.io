@@ -83,10 +83,12 @@ A faster, steadier site that looks exactly the same. Every item is a finding fro
 - [x] X22 · The masthead does not fade in from nothing on every page change.
 
 **Approved, phone only**
-- [ ] P10 · The phone lightbox in landscape; the cover's facts do not wrap mid-value. Tried on 2026-10-02 and
-      taken back out: kept whole, five facts need 374 px, so the fifth ran off a 320 px phone. The row must
-      wrap as whole facts (its hairlines with it), and the landscape lightbox wants its own short-screen
-      rule: both are small design jobs, shown at both widths before they ship.
+- [ ] P10, the facts · On a phone the cover's facts do not wrap mid-value: the row wraps as whole facts, its
+      hairlines with it. Tried on 2026-10-02 and taken back out: kept whole, five facts need 374 px, so the
+      fifth ran off a 320 px phone. Ships alone (the owner, 2026-10-04, answering the work run's hold), shown
+      at both widths.
+- [ ] P10, landscape · The phone lightbox in landscape wants its own short-screen rule. Held for a session
+      that can shoot a short phone screen: the pixel harness has no landscape page, so a run cannot show it.
 - [x] X03 · Long post titles wrap on a phone. Two posts change; no other title moves.
 - [x] X11 · The subscribe field is 16 px on touch.
 
