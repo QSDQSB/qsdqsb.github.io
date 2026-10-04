@@ -91,11 +91,27 @@ $right-sidebar-width: 15rem !default;
 $border-radius: 10px;
 // The scales the owner's amounts set (decisions/0009, amending 0002). A step is a step whether one
 // rule or ten use it, so each is kept. Corners: a control, a card and a panel are $border-radius
-// (10 px); a card that is itself the scene is large.
+// (10 px); a card that is itself the scene is large. A print is square; a picture inside an article
+// is 8 px; a pill and a circle are dots and discs, not a control's shape. The controls still built so
+// (the nav buttons, the quiet icon button) wait for the corner sorting (0009, "Not settled").
+$radius-none: 0; // @keep — a scale step (0009, pair 1)
+$radius-hair: 3px; // @keep — a scale step (0002)
+$radius-picture: 8px; // @keep — a scale step (0009, pick 7)
 $radius-large: 18px; // @keep — a scale step (0009, pick 1)
-// Durations: a control answering; a control's hover and a card's lift.
+$radius-pill: 999px; // @keep — a scale step (0002)
+$radius-round: 50%; // @keep — a scale step (0002)
+// Durations: a control answering; a control's hover and a card's lift; a print developing, a panel
+// moving; words arriving; the wide cover's one second; a room's light, an opening (and longer).
 $duration-fast: 0.15s; // @keep — a scale step (0002)
 $duration-base: 0.3s; // @keep — a scale step (0009, pick 5)
+$duration-slow: 0.6s; // @keep — a scale step (0002)
+$duration-arrive: 0.7s; // @keep — a scale step (0009, pick 6)
+$duration-cover: 1s; // @keep — a scale step (0002, narrowed by 0009)
+$duration-scene: 1.1s; // @keep — a scale step (0002)
+// Glass: the default anything new is made of (pick 11, B), and the thin one for a small mark over a
+// picture or over code (pick 11, A). The tint and the edge stay at the callsite.
+$glass-blur: blur(14px) saturate(1.2); // @keep — a scale step (0009, pick 11)
+$glass-blur-thin: blur(6px); // @keep — a scale step (0009, pick 11)
 // A card at rest stands just off the page (pick 3); lifted, its shadow is the lead's value between
 // the two the owner was shown.
 $shadow-rest: 0 6px 18px rgba(0, 0, 0, 0.45); // @keep — a scale step (0009, pick 3)
@@ -121,13 +137,13 @@ $global-transition:
   scale 0.3s ease-in-out;
 $cubic-bezier-param: cubic-bezier(.33,.11,.02,.99);
 $cubic-bezier-default:
-  color 1s $cubic-bezier-param,
-  background-color 1s $cubic-bezier-param,
-  border-color 1s $cubic-bezier-param,
-  box-shadow 1s $cubic-bezier-param,
-  opacity 1s $cubic-bezier-param,
-  transform 1s $cubic-bezier-param,
-  scale 1s $cubic-bezier-param;
+  color $duration-cover $cubic-bezier-param,
+  background-color $duration-cover $cubic-bezier-param,
+  border-color $duration-cover $cubic-bezier-param,
+  box-shadow $duration-cover $cubic-bezier-param,
+  opacity $duration-cover $cubic-bezier-param,
+  transform $duration-cover $cubic-bezier-param,
+  scale $duration-cover $cubic-bezier-param;
 $cubic-bezier-default-05s:
   color 0.5s $cubic-bezier-param,
   background-color 0.5s $cubic-bezier-param,

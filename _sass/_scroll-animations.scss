@@ -24,8 +24,8 @@
   // above and keep its amounts (stage 11, F049).
   .reveal-on-scroll.arrives {
     transition:
-      opacity 0.7s $cubic-bezier-standard,
-      transform 0.7s $cubic-bezier-smooth;
+      opacity $duration-arrive $cubic-bezier-standard,
+      transform $duration-arrive $cubic-bezier-smooth;
     transition-delay: var(--arrive-delay, 0s);
   }
 
