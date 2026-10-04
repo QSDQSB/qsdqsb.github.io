@@ -799,7 +799,7 @@ test('the store\'s dump is recorded once: an open call, a shaped idea\'s decisio
     const out = first.stdout;
     assert.match(out, /^Read: 19 answer\(s\), 0 idea\(s\) from the store's dump\.$/m);
     assert.match(out, new RegExp(`^Recorded: I900 pursue; ${open} answered B\\.$`, 'm'));
-    assert.match(out, /^Already in the plan: 4\.$/m, 'the idea already parked, the idea and the call the plan settled later, the call kept as it was');
+    assert.match(out, /^Already in the plan: 4\. And 1 answer\(s\) to an idea's questions, kept with that idea's decision\.$/m, 'the idea already parked, the idea and the call the plan settled later, the call kept as it was; every document is accounted for');
     assert.match(out, /^A question answered, its idea not yet decided: I777-1\./m);
     for (const said of [`${changed}: the plan says C, the page now says A`, `${noted}: the page holds a note the plan does not`, 'I902: the plan holds another decision', 'I903: it is staged with no line of the owner\'s, and the page says drop']) assert.ok(out.split('\n').find((l) => l.startsWith('For a session to weigh')).includes(said), said);
     for (const said of ['I904: still raw', 'I905: something that is not a plain name is not pursue, park or drop', 'I778: no such idea', '--by: not a call or an idea', 'broken: its file is not JSON', 'something that is not a plain name: not a call or an idea']) assert.ok(out.split('\n').find((l) => l.startsWith('Skipped')).includes(said), said);
@@ -817,7 +817,7 @@ test('the store\'s dump is recorded once: an open call, a shaped idea\'s decisio
     const after = read('QUEUE.md');
     const again = plan('sync', store);
     assert.match(again.stdout, /^Recorded: nothing new\.$/m);
-    assert.match(again.stdout, /^Already in the plan: 6\.$/m);
+    assert.match(again.stdout, /^Already in the plan: 6\. And 1 answer\(s\) to an idea's questions/m);
     assert.ok(again.stdout.includes(`${changed}: the plan says C, the page now says A`), 'a call under Answered is still found after a note that held the heading');
     assert.strictEqual(read('QUEUE.md'), after);
     // A number in a note is not a call's number.
@@ -1055,5 +1055,23 @@ test('the daily run logs each run for the brief, and builds the brief from that 
     assert.strictEqual(daily('brief', 'today').status, 0);
     assert.match(fs.readFileSync(path.join(dir, '.claude/worktrees/hub-brief.html'), 'utf8'), /did not finish/, 'the brief shows the runs that did not end alone, from the log');
     assert.strictEqual(daily('abort').status, 0);
+  });
+});
+
+test('the daily script cuts off a call that hangs, and a run that dies says at which step', () => {
+  const limit = execFileSync('bash', ['-c', `${fs.readFileSync(path.join(ROOT, 'scripts/hub-daily.sh'), 'utf8').match(/^limit\(\) \{[\s\S]*?^\}$/m)[0]}\nstart=$SECONDS; limit 1 sleep 20; rc=$?; echo "$rc $((SECONDS - start))"; limit 5 true; echo "$?"; limit 5 false; echo "$?"`], { encoding: 'utf8' }).trim().split('\n');
+  const [rc, took] = limit[0].split(' ').map(Number);
+  assert.strictEqual(rc, 124, 'a call over its limit is cut off');
+  assert.ok(took <= 3, `and promptly (${took} s)`);
+  assert.deepStrictEqual(limit.slice(1), ['0', '1'], 'a call within its limit keeps its own exit');
+  withDailyRepo(({ dir, daily }) => {
+    assert.strictEqual(daily('begin').status, 0);
+    assert.match(fs.readFileSync(path.join(dir, '.claude/worktrees/hub-daily.progress'), 'utf8'), /fetch\n.*worktree\n.*setup\n.*gate\n$/);
+    // The run dies here; the next begin logs where.
+    assert.strictEqual(daily('begin').status, 0);
+    const last = fs.readFileSync(path.join(dir, '.claude/worktrees/hub-runs.log'), 'utf8').trim().split('\n').pop().split('\t')[2];
+    assert.match(last, /^DIED: the run before this one never finished \(last step: \S+ gate\)$/);
+    assert.strictEqual(daily('abort').status, 0);
+    assert.ok(!fs.existsSync(path.join(dir, '.claude/worktrees/hub-daily.progress')), 'the tidying clears it');
   });
 });
