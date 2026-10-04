@@ -141,7 +141,7 @@
 
 @mixin dark-glass-fill {
   background: rgba(12, 12, 16, 0.82);
-  @include backdrop-blur(blur(14px) saturate(1.2));
+  @include backdrop-blur($glass-blur);
 }
 
 /*
@@ -157,7 +157,7 @@
 
 @mixin nav-action-shell($transform-transition: 0.28s $cubic-bezier-smooth) {
   border: 1px solid $nav-action-border-color;
-  border-radius: 999px;
+  border-radius: $radius-pill;
   outline: none;
   -webkit-appearance: none;
   appearance: none;
@@ -236,7 +236,7 @@
   min-height: 1.32rem;
   min-width: 2rem;
   border: 1px solid rgba($primary-color, 0.18);
-  border-radius: 999px;
+  border-radius: $radius-pill;
   background-color: rgba($primary-color, 0.07);
   color: mix(#fff, $primary-color, 22%);
   font-size: $type-size-8;

@@ -159,7 +159,7 @@ qsd-cat::part(say) {
   min-height: $size;
   padding: 0;
   border: 0;
-  border-radius: 50%;
+  border-radius: $radius-round;
   background: none;
   color: var(--photobook-ink-3);
   text-decoration: none;
@@ -303,7 +303,7 @@ qsd-cat::part(say) {
 @mixin wash-layer {
   opacity: 0;
   scale: 1.06;
-  transition: opacity 1.1s $cubic-bezier-standard, scale 1.6s $cubic-bezier-smooth;
+  transition: opacity $duration-scene $cubic-bezier-standard, scale 1.6s $cubic-bezier-smooth;
   will-change: opacity;
 
   &.is-on { opacity: 1; scale: 1; }
