@@ -178,6 +178,7 @@ case "${1:-}" in
     no_tooling
     [ -f "$STATE.pid" ] && kill -0 "$(cat "$STATE.pid")" 2>/dev/null && { echo "The $(cat "$STATE.job" 2>/dev/null || echo job) is still running: 'wait' for it first." >&2; exit 4; }
     log="$STATE.run.log"
+    [ "$s" = visual:build ] && rm -rf "$WT/.jekyll-cache"   # as at the gate
     # The script's name and its arguments go in as parameters, never inside the command's text.
     start_job "$log" run bash -lc 'npm run --silent "$0" -- "$@"' "$s" "$@" 2>/dev/null; pid="$(cat "$STATE.pid")"
     job_wait 540 540; rc=$?
@@ -191,6 +192,7 @@ case "${1:-}" in
     in_wt; no_tooling
     [ -f "$STATE.pid" ] && kill -0 "$(cat "$STATE.pid")" 2>/dev/null && { echo "The gate is already running: 'wait'." >&2; exit 4; }
     rm -f "$STATE.passfp"; fingerprint > "$STATE.gatefp"
+    rm -rf "$WT/.jekyll-cache"   # Jekyll reads its cache back as Ruby objects: it is never one the folder could have written
     start_job "$STATE.gate" gate bash -lc 'bash scripts/gate.sh --full' 2>/dev/null
     echo "The full gate is running (about ten minutes). Next: bash scripts/hub-work.sh wait"
     ;;
