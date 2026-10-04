@@ -19,6 +19,9 @@ toc_sticky: true
 lang: zh # the body is Chinese (_layouts/single.html sets it on the text)
 ---
 
+<div data-bilingual>
+<section data-bilingual-lang="中" lang="zh" markdown="1">
+
 想写一篇日志，记一下 qsdqsb.com 新加的两个功能：[Palette](/palette/) 和 [Reverie](/reverie/)。
 
 ## I. Umbra sumus
@@ -36,7 +39,7 @@ lang: zh # the body is Chinese (_layouts/single.html sets it on the text)
 
 Implementation大概花了一天（Thanks to Claude）。然后开始给这个functionality命名。最后选了「[Palette](/palette/)」。
 
-另一个candidate是gnomon：「日晷上投影子的那根针」。针什么都不用做，站在太阳底下就行，影子会告诉它现在几点。封面那张石凳上也站着一根 gnomon：凳面上落了一片叶子，影子投在木头上。在希腊语里，gnomon也有「知道的人」的意思（γνώμων，「识者、判读者」）。QSD在那天只顾看云海和晚霞，没注意自己的影子被拉了多长。
+另一个candidate是gnomon：「日晷上投影子的那根针」。针什么都不用做，站在太阳底下就行，影子会告诉它现在几点。封面那张石凳上也站着一根 gnomon：凳面上落了一片叶子，影子投在石头上。在希腊语里，gnomon也有「知道的人」的意思（γνώμων，「识者、判读者」）。QSD在那天只顾看云海和晚霞，没注意自己的影子被拉了多长。
 
 在他敲那段「用经纬度和时刻算太阳角度」的 prompt 时，他又发现了一个典故。罗马的第一座公共日晷是公元前 263 年从西西里的卡塔尼亚搬回来的战利品。它按卡塔尼亚的纬度造，在罗马一直不准。罗马人就这么用了九十九年，才有人在旁边立了一座准的。
 
@@ -140,6 +143,134 @@ _Daphne_ 是瑞香属的学名，希腊语里的意思是「月桂」。在《�
 这个档案里现在有六百多张照片，但是算法没有找到相似的粉色。比较近的有 [{% include colour-code.html c="ad6e89" %} Daphne Red](/reverie/?c=ad6e89)，还有一张Lake Bled的晚霞。后面的山比较低，雪已经全化了。
 
 {% include colour-figure.html kind="chips" colours="ad6e89" %}
+
+</section>
+<section data-bilingual-lang="EN" lang="en" markdown="1">
+
+Wanted to write a log about two new features on qsdqsb.com: [Palette](/palette/) and [Reverie](/reverie/).
+
+## I. Umbra sumus
+{: lang="la"}
+> *We are shadows.*
+{: .gloss}
+
+The ancient Greeks had two names for time. One was _chronos_, the time that walks the clock face notch by notch; the other was _kairos_, the one right moment.
+
+The camera's settings know only the first. Every photograph's metadata records the aperture, the focal length, the ISO and the time it was taken. But when we send the picture to someone, we don't care if it was 4:42pm. What we want to share is the light at that hour: which side it came from, how low it was, what colour it turned the snow.
+
+_Photo-graphy_: to write with light. QSD realised that from the GPS and the time of capture, we could work out the sun's angle for every photograph — had it set yet, or was it the blue hour, the afterglow? The weather, too, could be brought back.
+
+So he revamped the whole gallery's logic. On the site, what sits beside a photograph is not 16:42 but _Golden hour_, or _Afternoon light · 19°_: the sun was at 19 degrees above the horizon. QSD remembers he had no scarf on Rigi Kulm; his shell jacket kept out the wind but not the cold, and his face was raw with it.
+
+Implementation took about a day (thanks to Claude). Then came the naming of it. In the end, the choice was [Palette](/palette/).
+
+The other candidate was _gnomon_: the pin on a sundial that casts the shadow. The pin has nothing to do but stand in the sun, and the shadow will tell it the hour. There is a gnomon on the stone bench in the cover photograph, too. A leaf sits on the bench, and its shadow lies across the stone. In Greek, _gnomon_ also means *the one who knows* (γνώμων, *a knower, an interpreter*). That day QSD had eyes only for the sea of clouds and the afterglow, and never noticed how far his own shadow had stretched.
+
+While he was typing the prompt _Calculate the sun's angle with latitude, longitude and time data_, he came across another story. Rome's first public sundial was war booty, carried home from Catania in Sicily in 263 BC. It had been built for Catania's latitude, so it was never faithful in Rome. The Romans lived with the wrong time for ninety-nine years before an accurate dial was built beside it.
+
+The same light falls again next year, from exactly the same angle. Unless the clouds are unforgiving.
+
+
+## II. Pereunt et imputantur
+{: lang="la"}
+> *They perish, and are reckoned to our account.*
+{: .gloss}
+
+The sun's angle tells where the light came from; colour tells what it did once it fell. So, in the end, we decided to call it Palette.
+
+<figure>
+  <img src="/images/posts/all-souls-sun-dial.jpg" alt="The sundial above the library at All Souls College, Oxford; on the scroll beneath it, PEREUNT ET IMPUTANTUR" width="3250" height="1828" loading="lazy" decoding="async">
+</figure>
+
+Above the entrance to the library at All Souls College, there is a sundial made by Christopher Wren. On the scroll beneath it, a line is carved: _Pereunt et imputantur_. The hours go by, and every one of them is charged to our account.
+
+It took that sundial four years to teach QSD that sundials tend to carry a line of Latin. Each chapter of this page borrows its title from one.
+
+What Palette does is, more or less, keep the books. Each photograph is first read as 24 points of colour, then pooled into five colours, each with its share; a whole voyage is reckoned the same way. [Rigi](/palette/#rigi) goes into the ledger as 38% deep blue, 25% grey-violet, 18% mist blue, 11% russet and 8% apricot. When a small patch of the frame is unusually vivid, unlike anything else in it, we mark it out on its own and call it the _accent_. It is often the colour the eye finds first: a shrine in a forest, a small curl of pink cloud in a blue sky above the snow.
+
+{% include colour-figure.html kind="palette" voyage="rigi" %}
+
+The next question was what to call each stroke. [{% include colour-code.html c="c4695d" %}](/reverie/?c=c4695d) is not a name, and _reddish-brown_ is barely illustrative.
+
+What QSD found was a book from 1912: [_Color Standards and Color Nomenclature_](https://www.gutenberg.org/files/63087/63087-h/63087-h.htm), by the American ornithologist Robert Ridgway. Over more than twenty years, he gave names to 1,115 colours. As Ridgway says in the preface, without a standard, the naming of colour remains in its present condition of *absolute chaos*. QSD does not care for chaos.
+
+{% include colour-code.html c="c4695d" %} has a name now: Cinnamon-Rufous. And [{% include colour-code.html c="2f3d59" %}](/reverie/?c=2f3d59) is Indulin Blue.
+
+{% include colour-figure.html kind="chips" colours="c4695d 2f3d59" %}
+
+Colours that fall too far from any of his go without a name. They are waiting for someone to claim them.
+
+{% include colour-figure.html kind="chips" colours="326b8b" %}
+
+
+## III. Horas non numero nisi serenas
+{: lang="la"}
+> *I count no hours but the serene.*
+{: .gloss}
+
+William Hazlitt has an essay, ["On a Sun-Dial"](http://essays.quotidiana.org/hazlitt/sun-dial/), that opens with this very line. It is, he tells us, the motto of a sundial near Venice, and he exclaims: "What a bland and care-dispelling feeling!"
+
+Beautifully put. One thing was left out: the sundial has no choice. On a cloudy day there is no shadow, and it could not count the hours if it tried. Latin mottoes have a way of passing off a defect as a virtue.
+
+If Lucerne had a sundial like that, it would have no memory of QSD. Over three visits, more than a week in all, he barely saw the sun.
+
+The Swiss mountains are dotted with webcams, each pointed at the same peak around the clock. They mostly film fog, and hardly anyone looks. For a few days that December, we were among those few. Several times a day we checked how high the cloud sat and whether the ridge had broken through, as if reading someone else's sundial. QSD also spent a week catching up on geography with ChatGPT. He learned about the low pressure that settles over Switzerland in winter, and the name of every mountain around Lucerne.
+
+On the day we set out, the Alpenglow app put the chance of an afterglow at 25%. Not a number that settles the nerves.
+
+But everything that could be prepared had been. The rest was not ours to decide; we could only place the bet.
+
+So we boarded the cogwheel train up the mountain.
+
+
+## IV. Sine sole sileo
+{: lang="la"}
+> *Without the sun, I fall silent.*
+{: .gloss}
+
+{% include colour-figure.html kind="frames" voyage="rigi" frames="dscf5721 dscf5730 dscf5735 dscf5741 dscf5750 dscf5760 dscf5778 dscf5789" %}
+
+There are eight photographs in [the Rigi album](/voyage/rigi/). The first six are all labelled _Golden hour_, which QSD's code defines as within 15 minutes of sunrise or sunset. In the last two, the sun has already sunk below the horizon: one is _Blue hour_, and the other has been written down as _Night_.
+
+The angle of the sun writes out the hour. Eight photographs, running from a low, slanting sun to one already set. The album itself is a sundial.
+
+Palette's colours follow the sun too. In the first three frames the accent is only a touch of warmth, between 3.6% and 3.9%. In the fourth, the sun slides down along the sea of clouds and the accent rises to 17.4%. By the fifth and sixth, cirrus that no forecast had promised is lit pink and violet, filling 62.8% and 52.5% of the frame. Only a small cluster of colour unlike all the rest is marked as the accent; once pink has spread across the whole sky, no colour is left that stands apart from the others. Those two photographs have no accent.
+
+In Ridgway's book, that evening's afterglow is Old Rose, Deep Hyssop Violet and Eupatorium Purple. _Eupatorium_ is a wild herb, named for Mithridates VI Eupator, King of Pontus, who is said to have taken a little poison every day so that no poison could kill him. The name of an Alpine sunset goes the long way round and comes to rest on a king afraid of being poisoned. Ridgway probably never thought of any of this. He wrote his book for zoologists, botanists, pathologists and mineralogists.
+
+{% include colour-figure.html kind="chips" colours="d27071 7f667f af7c9c" %}
+
+A sundial cannot tell the time at night, and the Romans ran into that problem too. Five years after the faulty dial from Catania was superseded, Scipio Nasica set up Rome's first water clock. It told the hours by day and by night, and at last the Romans could know the time under a cloudy sky.
+
+The code that works out the sun's angle is our water clock, in some sense. No shadow was left to read in the final photograph, yet the code knows exactly where the sun was: more than 6 degrees below the horizon. We label it _Night_.
+
+{% include colour-figure.html kind="frame" voyage="rigi" frame="dscf5789" %}
+
+## V. Ultima latet ut observentur omnes
+{: lang="la"}
+> *The last hour is hidden, so that we watch them all.*
+{: .gloss}
+
+The page that finds names for colours is called [Reverie](/reverie/). Open a colour and it gives you the nearest name in Ridgway, then every photograph that holds that colour.
+
+{% include colour-figure.html kind="reverie" colour="ce7d99" %}
+
+_Reverie_ comes from the Old French _resver_, which first meant to wander, or to rave; only later did it soften into _rêver_, to dream. That wandering is what QSD was after. Palette keeps its records by place. Reverie was meant to let us wander through memory, a single colour all the clue there is. Dusk in Prague can sit beside the afterglow on Rigi, years and countries apart. Further down the page is a row called _Nearby_: colours a step away from this one. Open any of them and you walk into another reverie.
+
+Start from a patch of pink in the Rigi afterglow and you may wander to [{% include colour-code.html c="ce7d99" %}](/reverie/?c=ce7d99), which Ridgway calls Daphne Pink.
+
+_Daphne_ is the botanical name for a genus of flowering shrubs. In Greek it means laurel. In Ovid's _Metamorphoses_, Daphne, a river god's daughter, is pursued by Apollo, god of the sun. Just as he is about to catch her, she prays to her father, and is turned into a laurel tree.
+
+So behind this colour's name is someone running from the sun. And when it appeared, the sun had only just gone down.
+
+It would be tempting to make something of this, but Ridgway has left a word of caution. As he says in the preface, his plates are "not to show the color of the particular objects or substances which the names suggest". Daphne Pink is not the pink of the daphne flower, and Daphne herself never crossed his mind.
+
+The archive now holds over six hundred photographs, yet the algorithm found no other pink like it. The nearest is [{% include colour-code.html c="ad6e89" %} Daphne Red](/reverie/?c=ad6e89), in an afterglow over Lake Bled. The mountains behind are lower, and the snow has all melted.
+
+{% include colour-figure.html kind="chips" colours="ad6e89" %}
+
+</section>
+</div>
 
 _QSD reveries in only this photograph… for now_
 {: lang="en"}
