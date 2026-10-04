@@ -438,7 +438,7 @@ switch (command) {
     const roadmap = read('ROADMAP.md');
     const stages = [...roadmap.matchAll(/^\| (\d+) \| \[[^\]]+\]\(stages\/([^)]+)\) \|[^|]*\| ([^|]+) \|/gm)].filter((m) => /building/i.test(m[3]));
     // Words that put a task out of a run's reach: it waits on the owner, on a device, or on another stage.
-    const blocked = /moves to stage|real iphone|owner'?s to merge|once the owner has seen|goes to the owner|owner chooses|better done with stage/i;
+    const blocked = /moves to stage|real iphone|owner'?s to merge|once the owner has seen|goes to the owner|owner chooses|better done with stage|held for a session/i;
     for (const [, n, f] of stages) {
       let section = '';
       for (const l of (read(`stages/${f}`) + '\n- ').split('\n').reduce((acc, line) => {

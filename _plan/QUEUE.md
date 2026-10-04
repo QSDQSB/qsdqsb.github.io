@@ -17,6 +17,7 @@ options as `- **A (recommended):** …`. A number is never reused: the command c
 
 ## Answered
 
+- 2026-10-04 · P10, held by the work run (in chat) → yes: the facts' wrap ships alone; the landscape lightbox waits for a session that can shoot a short phone screen.
 - 2026-10-03 · Who opens a pull request (in chat) → Claude, for its own finished batch, with the push of that batch's branch: "you should create pr instead of asking me to". Merging and pushing `master` stay the owner's.
 - 2026-10-03 · Q19 · The arrival as built: is it right on prose, and should the first screen arrive too? → A: keep the arrival as built, and the first screen arrives in turn in every browser, as the owner's drawing did
 - 2026-10-03 · Q18 · Which white is a heading: the text's own ivory, or pure white? → A: the ivory ink, as the text and every display title already are

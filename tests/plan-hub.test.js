@@ -1110,7 +1110,7 @@ function withWorkRepo(run, { gate = 'PASS' } = {}) {
     fs.cpSync(path.join(ROOT, 'scripts/lib'), path.join(dir, 'scripts/lib'), { recursive: true });
     put('scripts/prototype-setup.sh', 'exit 0\n'); put('scripts/gate.sh', `echo "GATE: ${gate} (stand-in)"\n`);
     put('_plan/ROADMAP.md', '| # | Stage | What | Status | Tier |\n|---|---|---|---|---|\n| 1 | [One](stages/01-one.md) | x | building | 0 |\n| 2 | [Two](stages/02-two.md) | x | planned | 0 |\n');
-    put('_plan/stages/01-one.md', '# Stage 1 · One\n\n**Status:** building\n\n- [x] A01 · done\n- [ ] A02 · The scales, written once.\n- [ ] A03 · Moves to stage 9 with S02.\n- [ ] A04 · Pinch on the specs; it wants a real iPhone to try.\n- [ ] A05 · Overlaps three pull requests, which are the owner\'s to merge or close first.\n- [ ] 2026-09-29 · The first dated task\n- [ ] 2026-09-29 · The second dated task\n\n**Shown to the owner first.** Each one.\n- [ ] C05 · a panel\n');
+    put('_plan/stages/01-one.md', '# Stage 1 · One\n\n**Status:** building\n\n- [x] A01 · done\n- [ ] A02 · The scales, written once.\n- [ ] A03 · Moves to stage 9 with S02.\n- [ ] A04 · Pinch on the specs; it wants a real iPhone to try.\n- [ ] A05 · Overlaps three pull requests, which are the owner\'s to merge or close first.\n- [ ] A06 · Held for a session that can shoot a short phone screen.\n- [ ] 2026-09-29 · The first dated task\n- [ ] 2026-09-29 · The second dated task\n\n**Shown to the owner first.** Each one.\n- [ ] C05 · a panel\n');
     put('_plan/stages/02-two.md', '# Stage 2 · Two\n\n**Status:** planned\n\n- [ ] B01 · later\n');
     put('_plan/requests.md', '# Requests\n\n## Open\n\n- 2031-01-01 · R001 · Fix the map panel\n\n## Done\n');
     put('_plan/findings/inbox.md', '# Inbox\n\n## Waiting\n\n## Taken\n');
@@ -1128,7 +1128,7 @@ test('the work run takes the request first, claims it, commits inside its folder
     const begin = work('begin');
     assert.strictEqual(begin.status, 0, begin.stdout + begin.stderr);
     assert.match(begin.stdout, /What to take next[\s\S]*\nr001\tthe owner asked \(R001\) · Fix the map panel\ns1-a02\tstage 1 · A02 · The scales/);
-    assert.ok(!/s1-a03|s1-a04|s1-a05|s1-c05|s2-b01/.test(begin.stdout), 'not what waits on another stage, a device or the owner, not what is shown to the owner first, not a stage not being built');
+    assert.ok(!/s1-a03|s1-a04|s1-a05|s1-a06|s1-c05|s2-b01/.test(begin.stdout), 'not what waits on another stage, a device or the owner, not what is shown to the owner first, not a stage not being built');
     assert.match(begin.stdout, /^s1-the-first-dated-task\t[\s\S]*^s1-the-second-dated-task\t/m, 'a task labelled by a date is keyed by its words');
     assert.strictEqual(work('claim', 'r001').status, 0);
     assert.ok(git(remote, 'branch', '--list', 'work/r001').includes('work/r001'), 'the claim is on GitHub');
