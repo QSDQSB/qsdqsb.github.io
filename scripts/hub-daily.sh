@@ -42,14 +42,31 @@ REPO="$(cd "$("$GIT" rev-parse --path-format=absolute --git-common-dir 2>/dev/nu
 [ -n "${REPO:-}" ] && [ -d "$REPO/_plan" ] || { echo "Run this from the repository." >&2; exit 2; }
 WT="$REPO/.claude/worktrees/hub-daily"
 BEFORE="$REPO/.claude/worktrees/hub-daily.before"
+PROGRESS="$REPO/.claude/worktrees/hub-daily.progress"   # the step the run is on, so one that dies says where
 RUNS="$REPO/.claude/worktrees/hub-runs.log"          # one line a run, for the day brief: start, end, what was kept, the push
 BRANCH=hub/daily
 BASE=master; "$GIT" -C "$REPO" rev-parse --verify --quiet refs/remotes/origin/master >/dev/null && BASE=origin/master
 
+# Nothing the run asks of the network may hang it (4 October: a fetch at 08:00, just after the Mac
+# woke, never answered, and the run was stopped forty minutes later having done nothing). A call to
+# GitHub never prompts, gives up on a stalled transfer, and is cut off after its limit.
+export GIT_TERMINAL_PROMPT=0
+NET=(-c http.lowSpeedLimit=1000 -c http.lowSpeedTime=20)
+limit() {   # limit <seconds> <command…>: the command's own exit, or 124 when cut off
+  # Watched, not raced with a sleeper: a sleeping watcher would hold the caller for its whole limit.
+  local tenths=$(( $1 * 10 )) waited=0; shift
+  "$@" & local pid=$!
+  while kill -0 "$pid" 2>/dev/null; do
+    if [ "$waited" -ge "$tenths" ]; then kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null; return 124; fi
+    sleep 0.2; waited=$(( waited + 2 ))
+  done
+  wait "$pid"
+}
+
 if [ -z "${HUB_DAILY_FROM_MASTER:-}" ]; then
   mkdir -p "$REPO/.claude/worktrees"
   # A day starts from what GitHub holds now, so begin and finish run the same copy.
-  [ "${1:-}" = begin ] && "$GIT" -C "$REPO" fetch -q --prune origin 2>/dev/null
+  [ "${1:-}" = begin ] && limit 30 "$GIT" -C "$REPO" "${NET[@]}" fetch -q --prune origin 2>/dev/null
   run="$REPO/.claude/worktrees/hub-daily.run.$$.sh"
   for src in "$BASE" master; do
     # Written beside, then moved into place: a copy still being read by an earlier call is not rewritten under it.
@@ -67,7 +84,7 @@ snapshot() { "$GIT" -C "$REPO" rev-parse master; "$GIT" -C "$REPO" status --porc
 tidy() {
   "$GIT" -C "$REPO" worktree remove --force "$WT" 2>/dev/null
   "$GIT" -C "$REPO" worktree prune 2>/dev/null
-  rm -f "$BEFORE" "$REPO/.claude/worktrees/hub-daily.txt" "$REPO/.claude/worktrees/hub-daily.gate" "$REPO/.claude/worktrees/hub-daily.started"
+  rm -f "$BEFORE" "$REPO/.claude/worktrees/hub-daily.txt" "$REPO/.claude/worktrees/hub-daily.gate" "$REPO/.claude/worktrees/hub-daily.started" "$PROGRESS"
   return 0
 }
 # What the worktree holds that is not committed yet, as a line: the commit's own words.
@@ -83,6 +100,7 @@ summarise() {
   [ -n "$f" ] && out="$out; $f filed"
   printf '%s' "${out#; }"
 }
+phase() { printf '%s %s\n' "$(date -u +%H:%M:%SZ)" "$1" >> "$PROGRESS"; }
 logrun() { printf '%s\t%s\t%s\t%s\n' "$(cat "$REPO/.claude/worktrees/hub-daily.started" 2>/dev/null || date -u +%Y-%m-%dT%H:%M:%SZ)" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$1" "$2" >> "$RUNS"; }
 in_wt() { [ -d "$WT/_plan" ] || { echo "No worktree: run 'bash scripts/hub-daily.sh begin' first." >&2; exit 2; }; }
 
@@ -91,18 +109,22 @@ case "${1:-}" in
     "$GIT" -C "$REPO" show "$BASE:scripts/hub-daily.sh" >/dev/null 2>&1 || { echo "STOP: the hub's daily tools are not on $BASE yet." >&2; exit 2; }
     mkdir -p "$REPO/.claude/worktrees"
     # A run that died left its start behind: say so in the log before the tidying forgets it.
-    [ -f "$REPO/.claude/worktrees/hub-daily.started" ] && logrun "DIED: the run before this one never finished" ""
+    [ -f "$REPO/.claude/worktrees/hub-daily.started" ] && logrun "DIED: the run before this one never finished (last step: $(tail -1 "$PROGRESS" 2>/dev/null || echo unknown))" ""
     tidy                                   # whatever a run that died left behind
     snapshot > "$BEFORE"
     date -u +%Y-%m-%dT%H:%M:%SZ > "$REPO/.claude/worktrees/hub-daily.started"
-    "$GIT" -C "$REPO" fetch --prune origin 2>&1 | tail -1   # --prune: a branch deleted on GitHub is forgotten here too
+    phase "fetch"
+    # --prune: a branch deleted on GitHub is forgotten here too.
+    limit 60 "$GIT" -C "$REPO" "${NET[@]}" fetch -q --prune origin 2>/dev/null || echo "Note: GitHub did not answer within a minute; the run works from what was fetched before."
+    phase "worktree"
     "$GIT" -C "$REPO" show-ref --verify --quiet "refs/heads/$BRANCH" || "$GIT" -C "$REPO" branch --no-track "$BRANCH" "$BASE"
     # The run's own commits: on the branch, on neither master (an older one may have been merged in),
     # and not already on GitHub's by patch (a session took them and its pull request was merged).
     was="$("$GIT" -C "$REPO" rev-parse "$BRANCH")"
     own="$("$GIT" -C "$REPO" rev-list --reverse --no-merges --right-only --cherry-pick "$BASE...$BRANCH" ^master)"
     "$GIT" -C "$REPO" worktree add "$WT" "$BRANCH" >/dev/null 2>&1 || { echo "STOP: could not make the worktree at $WT." >&2; logrun "STOP: no worktree" ""; tidy; exit 2; }
-    bash "$REPO/scripts/prototype-setup.sh" "$WT" >/dev/null 2>&1 || echo "Note: the worktree has no fetched data (prototype-setup.sh); the gate will skip what needs it."
+    phase "setup"
+    limit 120 bash "$REPO/scripts/prototype-setup.sh" "$WT" >/dev/null 2>&1 || echo "Note: the worktree has no fetched data (prototype-setup.sh); the gate will skip what needs it."
     id=(-c user.name="${GIT_AUTHOR_NAME:-Claude}" -c user.email="${GIT_AUTHOR_EMAIL:-noreply@anthropic.com}")
     restore() { "$GIT" -C "$WT" cherry-pick --abort 2>/dev/null; "$GIT" -C "$WT" checkout -q --no-track -B "$BRANCH" "$was"; echo "STOP: $1 That is the owner's to settle." >&2; logrun "STOP: $1" ""; tidy; exit 1; }
     # A branch that will not take GitHub's master, or that then holds more than the plan (a local
@@ -132,7 +154,8 @@ case "${1:-}" in
     echo "── The plan, against $BASE"
     (cd "$WT" && node scripts/check-plan.mjs --since "$BASE" 2>&1 | tail -6)
     echo "── The gate"
-    (cd "$WT" && bash scripts/gate.sh > "$REPO/.claude/worktrees/hub-daily.gate" 2>&1; grep -E "^(✗|✖)" "$REPO/.claude/worktrees/hub-daily.gate" | head -12; tail -1 "$REPO/.claude/worktrees/hub-daily.gate")
+    phase "gate"
+    (cd "$WT" && { limit 900 bash scripts/gate.sh > "$REPO/.claude/worktrees/hub-daily.gate" 2>&1 || [ $? != 124 ] || echo "GATE: cut off after fifteen minutes" >> "$REPO/.claude/worktrees/hub-daily.gate"; }; grep -E "^(✗|✖)" "$REPO/.claude/worktrees/hub-daily.gate" | head -12; tail -1 "$REPO/.claude/worktrees/hub-daily.gate")
     echo "── Next, each as written and nothing else"
     url="$(cd "$WT" && node -e 'try{process.stdout.write(String(JSON.parse(require("fs").readFileSync("_plan/hub.json","utf8")).url||""))}catch(e){}')"
     echo "1. ArtifactData, action list, url ${url:-(none in _plan/hub.json: skip to 3)}, out_dir <your scratchpad directory>/hub-store: once for collection answers, once for collection ideas"
@@ -179,7 +202,8 @@ case "${1:-}" in
     # The one push. Never master.
     may="$(cd "$WT" && node -e 'try{process.stdout.write(String(JSON.parse(require("fs").readFileSync("_plan/hub.json","utf8")).daily_may_push===true))}catch(e){process.stdout.write("false")}')"
     here="$("$GIT" -C "$REPO" rev-parse "$BRANCH")"; there="$("$GIT" -C "$REPO" rev-parse --verify --quiet "refs/remotes/origin/$BRANCH" || true)"
-    push_it() { "$GIT" -C "$WT" -c http.postBuffer=524288000 push "$@" origin "$BRANCH:refs/heads/$BRANCH" >/dev/null 2>&1; }
+    phase "push"
+    push_it() { limit 120 "$GIT" -C "$WT" "${NET[@]}" -c http.postBuffer=524288000 push "$@" origin "$BRANCH:refs/heads/$BRANCH" >/dev/null 2>&1; }
     # What GitHub's copy of the branch holds that this one does not, by patch: someone else's work.
     theirs() { "$GIT" -C "$REPO" rev-list --no-merges --right-only --cherry-pick "$here...$there"; }
     if [ "$here" = "$there" ] || { [ -z "$there" ] && [ "$ahead" = "0" ]; }; then push="nothing new to push."

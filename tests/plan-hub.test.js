@@ -1057,3 +1057,21 @@ test('the daily run logs each run for the brief, and builds the brief from that 
     assert.strictEqual(daily('abort').status, 0);
   });
 });
+
+test('the daily script cuts off a call that hangs, and a run that dies says at which step', () => {
+  const limit = execFileSync('bash', ['-c', `${fs.readFileSync(path.join(ROOT, 'scripts/hub-daily.sh'), 'utf8').match(/^limit\(\) \{[\s\S]*?^\}$/m)[0]}\nstart=$SECONDS; limit 1 sleep 20; rc=$?; echo "$rc $((SECONDS - start))"; limit 5 true; echo "$?"; limit 5 false; echo "$?"`], { encoding: 'utf8' }).trim().split('\n');
+  const [rc, took] = limit[0].split(' ').map(Number);
+  assert.strictEqual(rc, 124, 'a call over its limit is cut off');
+  assert.ok(took <= 3, `and promptly (${took} s)`);
+  assert.deepStrictEqual(limit.slice(1), ['0', '1'], 'a call within its limit keeps its own exit');
+  withDailyRepo(({ dir, daily }) => {
+    assert.strictEqual(daily('begin').status, 0);
+    assert.match(fs.readFileSync(path.join(dir, '.claude/worktrees/hub-daily.progress'), 'utf8'), /fetch\n.*worktree\n.*setup\n.*gate\n$/);
+    // The run dies here; the next begin logs where.
+    assert.strictEqual(daily('begin').status, 0);
+    const last = fs.readFileSync(path.join(dir, '.claude/worktrees/hub-runs.log'), 'utf8').trim().split('\n').pop().split('\t')[2];
+    assert.match(last, /^DIED: the run before this one never finished \(last step: \S+ gate\)$/);
+    assert.strictEqual(daily('abort').status, 0);
+    assert.ok(!fs.existsSync(path.join(dir, '.claude/worktrees/hub-daily.progress')), 'the tidying clears it');
+  });
+});
