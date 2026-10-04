@@ -63,6 +63,18 @@ On `:root`, in `_sass/_tokens.scss`: `--ink`, `--ink-2`, `--ink-3` and `--line`;
 Photobook's (`--photobook-ink` and the rest) are aliases of them, kept until each use has moved.
 The sun's gold (`--photobook-gold`) stays the book's own.
 
+## Scales
+
+In `_sass/_variables.scss`, as [0002](../_plan/decisions/0002-one-control-vocabulary.md) amended by
+[0009](../_plan/decisions/0009-how-much.md). A new value takes a step; a literal is a step not yet named.
+
+| Scale | Steps |
+|---|---|
+| Corners | `$radius-none` 0 (a print) · `$radius-hair` 3px · `$radius-picture` 8px (a picture inside an article) · `$border-radius` 10px (a control, a card, a panel) · `$radius-large` 18px (a card that is the scene) · `$radius-pill` 999px · `$radius-round` 50% (dots and discs, not a control; the nav buttons and the quiet icon button still built so wait for the corner sorting, 0009 "Not settled") |
+| Durations | `$duration-fast` 0.15s · `$duration-base` 0.3s (a hover, a card's lift) · `$duration-slow` 0.6s (a print developing, a panel moving) · `$duration-arrive` 0.7s (words arriving) · `$duration-cover` 1s (the wide cover's words; `$cubic-bezier-default` carries it) · `$duration-scene` 1.1s and over (a room's light, an opening) |
+| Shadows | `$shadow-rest` (a card at rest) · `$shadow-lifted` (a card under the pointer) |
+| Glass | `$glass-blur` 14px at 120% (the default) · `$glass-blur-thin` 6px (a small mark over a picture or code). The Photobook's bar and panel (18px, 24px) are inherited as built |
+
 ## Motion
 
 - **Two curves.** `$cubic-bezier-standard` and `$cubic-bezier-smooth` in Sass. Scripts read them as
