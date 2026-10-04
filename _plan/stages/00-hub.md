@@ -92,6 +92,15 @@ stops being the only reviewer.
       log of its own runs for it (`.claude/worktrees/hub-runs.log`). The first, for 3 October, was
       made by hand the same evening. With tests. Its first publish from the run asks the owner once.
       Ticked when a run has built and published one.
+- [ ] The work run (the owner, 2026-10-04: "a daily job that looks through the ongoing tasks and then
+      decide one that we haven't started and to start it in every day session … It should minimize
+      my burden"; [0010](../decisions/0010-the-merge-is-the-yes.md)). Each morning after the upkeep,
+      one unattended session takes the next request or roadmap task (`plan.mjs next`), claims it (a
+      branch `work/<key>` on GitHub), does it in `.claude/worktrees/hub-work/` only, passes the full
+      gate and the reviewer, and opens one pull request with its pictures (`scripts/hub-work.sh`,
+      `/hub-work`). One open at a time; a task that needs the owner is held (`hold/<key>`) with its
+      question, and the day brief shows both. Requests: `plan.mjs request`, in `_plan/requests.md`.
+      With tests. Ticked when a scheduled work run has opened a pull request by itself.
 - [ ] The daily run's agents (`"daily_agents"` in `hub.json`, off). An agent handed work starts in the
       owner's checkout, not the run's worktree; the reviewer blocked the run on it (2026-10-01). Until
       a hand-off has been shown to stay inside the worktree, the run records and files only, and raw
