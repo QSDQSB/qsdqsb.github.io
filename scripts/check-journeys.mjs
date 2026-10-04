@@ -419,6 +419,16 @@ const JOURNEYS = [
       must(await frame.locator('.photobook-specs__highlights b').count() >= 4, "the frame's specs are not set under its print");
       must(/\/voyage\/.+#\w+/.test(await frame.locator('.palette-card__print').getAttribute('href') || ''), "the frame's print does not lead to its book");
     }
+    // A link in the text wears its brass on a hairline (Q9), inside a language's panel too.
+    const dress = await page.locator('.page__content [data-bilingual-lang]:not([hidden]) > p a').first().evaluate((a) => [getComputedStyle(a).color, getComputedStyle(a).textDecorationLine]);
+    must(dress[0] === 'rgb(195, 180, 152)' && dress[1] === 'underline', `a link in the post's text is ${dress.join(', ')}, not brass on a hairline`);
+    // The other language's figures are drawn once it is chosen.
+    await page.locator('.bilingual-switch__button[data-bilingual-option="EN"]').click();
+    const other = page.locator('.colour-figure:visible');
+    for (let i = 0; i < await other.count(); i++) { await other.nth(i).scrollIntoViewIfNeeded(); await page.waitForTimeout(150); }
+    await page.waitForFunction(() => ![...document.querySelectorAll('.colour-figure:not(.is-drawn)')].some((f) => f.checkVisibility()), null, { timeout: 15000 }).catch(() => {});
+    must(await page.locator('.colour-figure:not(.is-drawn):visible').count() === 0, "a figure of the post's other language was not drawn when it was chosen");
+    await page.locator('.bilingual-switch__button[data-bilingual-option="中"]').click();
     // In the Reverie card a voyage's name leads to its palette, not to the card's own Reverie.
     await page.locator('.reverie-card:visible .palette-card__place a').first().click();
     await page.waitForURL(/\/palette\//, { timeout: 8000 }).catch(() => {});

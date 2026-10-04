@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-04 · In a post in two languages the essay's dress holds inside each language's panel: a link in the text is brass on its hairline again, not blue, a picture between passages keeps its 2.4rem, and In the Naming of Light's last line stands clear of the chip above it, in both languages (Q9) · tier 1
 - 2026-10-04 · In the Naming of Light reads in English too: one 中/EN switch at the head of the post turns every chapter, the Latin titles staying as they are and each gloss in the chosen language; the English, translated with the owner paragraph by paragraph, quotes Ridgway and Hazlitt in their own words; the colour figures stand in both · tier 2
 - 2026-10-03 · CMU Serif comes from the site itself, not a third-party font service: no stylesheet from elsewhere holds back the first paint of every page, and the four faces the site uses are cut to the letters it sets, with the same line metrics and widths, so every line stands, and breaks, where it did; a vowel with a mark (the treatise's ventricōsus) now carries it in place, where the service's copy set the macron loose (re-captured: the treatise, the notices post on a phone, the 404 at desktop, for antialiasing and that letter) (Q14, S09) · tier 2
 - 2026-10-03 · The privacy page says what does count visits: Cloudflare, at its edge, with no cookie and nothing kept in the browser (Q13, P04) · tier 2

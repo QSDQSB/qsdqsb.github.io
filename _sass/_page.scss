@@ -289,7 +289,8 @@ body.collection--posts .page__inner-wrap .page__content {
    ========================================================================== */
 
 body:not(.jianfei-treatise) .page__content > :is(p, ul, ol, blockquote):not(.about__onward),
-body:not(.jianfei-treatise) .page__content > .barlow > :is(p, ul, ol, blockquote) {
+body:not(.jianfei-treatise) .page__content > .barlow > :is(p, ul, ol, blockquote),
+body:not(.jianfei-treatise) .page__content > [data-bilingual] > [data-bilingual-lang] > :is(p, ul, ol, blockquote) {
   a,
   a:visited {
     color: $intriguing-word-color;
@@ -343,8 +344,11 @@ body.essay .page__content {
     border-bottom: 0;
   }
 
-  > figure { margin: 2.4rem 0; }
-  > figure img { margin-bottom: 0; }
+  // A post in two languages holds its passages one level down, in each language's panel.
+  > figure,
+  > [data-bilingual] > [data-bilingual-lang] > figure { margin: 2.4rem 0; }
+  > figure img,
+  > [data-bilingual] > [data-bilingual-lang] > figure img { margin-bottom: 0; }
 }
 
 .page__title {
