@@ -96,10 +96,19 @@ export function collect({ day, ref, runsLog, cwd = ROOT, gh = !process.env.HUB_B
       .map((r) => ({ workflow: r.workflowName, conclusion: r.conclusion || 'running', time: hhmm(new Date(r.createdAt)), branch: r.headBranch }));
   }
 
+  // What waits on the owner from the work run: its open pull requests, and the tasks it held with a question.
+  let workPrs = null;
+  if (gh) {
+    try { workPrs = JSON.parse(execFileSync('gh', ['pr', 'list', '--repo', REPO_SLUG, '--state', 'open', '--json', 'number,title,headRefName,createdAt'], { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 60000 }))
+      .filter((p) => p.headRefName.startsWith('work/')).map((p) => ({ number: p.number, title: p.title, days: Math.floor((Date.now() - new Date(p.createdAt)) / 864e5) })); } catch { workPrs = null; }
+  }
+  const holds = git('for-each-ref', '--format=%(refname:short)%09%(contents:body)', 'refs/remotes/origin/hold').split('\n').filter(Boolean)
+    .map((l) => { const [ref, ...why] = l.split('\t'); return { key: ref.replace(/^origin\/hold\//, ''), why: why.join(' ').trim() }; });
+
   // The daily run's own log: one line a run, "start<TAB>end<TAB>kept<TAB>push", times in ISO.
   const runs = (runsLog && fs.existsSync(runsLog) ? fs.readFileSync(runsLog, 'utf8') : '').split('\n').filter(Boolean).map((l) => {
     const [s, e, kept = '', push = ''] = l.split('\t'); const a = new Date(s), b = new Date(e);
-    return Number.isNaN(a.getTime()) || localDay(a) !== day ? null : { from: hhmm(a), to: Number.isNaN(b.getTime()) ? hhmm(a) : hhmm(b), seconds: Math.max(0, Math.round((b - a) / 1000)) || null, kept, push, ok: !Number.isNaN(b.getTime()) && !/^(REFUSED|STOP|DIED)/.test(kept) };
+    return Number.isNaN(a.getTime()) || localDay(a) !== day ? null : { work: /^WORK: /.test(kept), from: hhmm(a), to: Number.isNaN(b.getTime()) ? hhmm(a) : hhmm(b), seconds: Math.max(0, Math.round((b - a) / 1000)) || null, kept, push, ok: !Number.isNaN(b.getTime()) && !/^(WORK: )?(REFUSED|STOP|DIED)/.test(kept) };
   }).filter(Boolean);
 
   const answered = (after.file('_plan/QUEUE.md').split(/^## Answered\s*$/m)[1] || '').split('\n')
@@ -120,7 +129,7 @@ export function collect({ day, ref, runsLog, cwd = ROOT, gh = !process.env.HUB_B
   const featureRows = (b) => (b.match(/^\| (?!Feature \||---)/gm) || []).length;
 
   return {
-    day, ref, start: start.slice(0, 8), end: end.slice(0, 8), commits, prs, checks, runs, answered, openCalls, changes, filed, ideas,
+    day, ref, start: start.slice(0, 8), end: end.slice(0, 8), workPrs, holds, commits, prs, checks, runs, answered, openCalls, changes, filed, ideas,
     stages: { before: stageCounts(before), after: stageCounts(after) },
     inbox: { before: inboxCounts(before.file('_plan/findings/inbox.md')), after: inboxCounts(after.file('_plan/findings/inbox.md')) },
     features: { before: featureRows(before.file('_plan/FEATURES.md')), after: featureRows(after.file('_plan/FEATURES.md')) },
@@ -156,11 +165,11 @@ export function render(d) {
     tile('Pull requests merged', d.prs ? String(merged.length) : 'not read', d.prs ? `${lines(merged.reduce((n, p) => n + p.files, 0))} files, +${lines(merged.reduce((n, p) => n + p.add, 0))} / −${lines(merged.reduce((n, p) => n + p.del, 0))} lines` : 'GitHub was not read'),
     tile('Gate on GitHub', d.checks ? `${gateOk} runs passed · ${gateBad.length} failed` : 'not read', d.checks ? (gateBad.length ? `failed on ${[...new Set(gateBad.map((c) => c.branch))].join(', ')}` : 'every run passed') : 'GitHub was not read', gateBad.length),
     tile('Stage tasks done', `${ticked >= 0 ? '+' : ''}${ticked}`, moved.map((s) => `stage ${s.n}: ${s.done} of ${s.done + s.open}`).join(' · ') || 'no stage moved'),
-    tile('Waiting on you', String(d.openCalls.length + waitingIdeas.length), [d.openCalls.length ? plural(d.openCalls.length, 'call') : null, waitingIdeas.length ? plural(waitingIdeas.length, 'shaped idea') : null].filter(Boolean).join(', ') || 'nothing on the command centre', d.openCalls.length + waitingIdeas.length > 0),
+    tile('Waiting on you', String(d.openCalls.length + waitingIdeas.length + (d.workPrs || []).length + d.holds.length), [d.openCalls.length ? plural(d.openCalls.length, 'call') : null, waitingIdeas.length ? plural(waitingIdeas.length, 'shaped idea') : null, (d.workPrs || []).length ? plural(d.workPrs.length, 'pull request to merge') : null, d.holds.length ? plural(d.holds.length, 'held task') : null].filter(Boolean).join(', ') || 'nothing', d.openCalls.length + waitingIdeas.length + (d.workPrs || []).length + d.holds.length > 0),
   ].join('\n');
 
   const timeline = JSON.stringify({
-    runs: d.runs.map((r) => ({ from: r.from, to: r.to, label: `upkeep${r.seconds ? ` · ${r.seconds} s` : ''}`, kind: r.ok ? 'ok' : 'warn' })),
+    runs: d.runs.map((r) => ({ from: r.from, to: r.to, label: `${r.work ? 'work run' : 'upkeep'}${r.seconds ? ` · ${Math.round(r.seconds / 60) >= 2 ? `${Math.round(r.seconds / 60)} min` : `${r.seconds} s`}` : ''}`, kind: r.ok ? 'ok' : 'warn' })),
     recorded: recorded.map((c) => c.time),
     commits: d.commits.map((c) => [c.time, c.kind]),
     prs: (d.prs || []).map((p) => ({ n: `#${p.number}`, from: p.opened, to: p.merged || p.opened, merged: !!p.merged })),
@@ -267,6 +276,8 @@ ${tiles}
   <section class="sheet" aria-labelledby="t-wait">
     <h2 id="t-wait">Who moves next</h2>
     <div class="waits">
+      ${(d.workPrs || []).map((p) => `<div class="wait"><span class="who you">You</span><span>Merge or close #${p.number}: ${esc(p.title)}${p.days ? ` (waiting ${plural(p.days, 'day')}${p.days >= 3 ? '; the work run is paused until it is settled' : ''})` : ''}</span></div>`).join('')}
+      ${d.holds.map((h) => `<div class="wait"><span class="who you">You</span><span>Held by the work run, ${esc(h.key)}: ${esc(h.why || 'it needs your choice')}</span></div>`).join('')}
       ${d.openCalls.map((q) => `<div class="wait"><span class="who you">You</span><span>${esc(q)}</span></div>`).join('')}
       ${waitingIdeas.map((i) => `<div class="wait"><span class="who you">You</span><span>${esc(`${i.id} · ${i.title}`)}: shaped, waiting for your decision</span></div>`).join('')}
       ${d.ideas.filter((i) => i.status === 'raw').map((i) => `<div class="wait"><span class="who me">Claude</span><span>${esc(`${i.id} · ${i.title}`)}: raw, to be shaped, tried and challenged</span></div>`).join('')}
@@ -291,7 +302,7 @@ ${tiles}
     var gx = x(h * 60); el("line", { x1: gx, x2: gx, y1: 24, y2: 280, stroke: css("rule"), "stroke-width": h % step ? 0.5 : 1 });
     if (h % step === 0) el("text", { x: gx, y: 16, "text-anchor": "middle" }, String(h).padStart(2, "0") + ":00");
   }
-  [["Upkeep runs", 46], ["Calls recorded", 94], ["Commits", 142], ["Pull requests", 196], ["Gate failed", 262]].forEach(function (l) { el("text", { x: 0, y: l[1] + 4, class: "lane" }, l[0]); });
+  [["Scheduled runs", 46], ["Calls recorded", 94], ["Commits", 142], ["Pull requests", 196], ["Gate failed", 262]].forEach(function (l) { el("text", { x: 0, y: l[1] + 4, class: "lane" }, l[0]); });
   day.runs.forEach(function (r) {
     var a = x(t(r.from)), b = Math.max(x(t(r.to)), a + 4); el("rect", { x: a, y: 38, width: b - a, height: 16, rx: 2, fill: css(r.kind) });
     var right = b + 6 + r.label.length * 6 > X1; el("text", { x: right ? a - 6 : b + 6, y: 50, "text-anchor": right ? "end" : "start", class: "note" }, r.label);

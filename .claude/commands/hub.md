@@ -14,6 +14,9 @@ Show where the site stands and what to do next, from the plan in `_plan/`.
      the run's own commits not yet here (by patch, so one already taken is not listed again), oldest
      first. Take them with `git cherry-pick` in that order, and say in the report what came in. If a pick stops (unfinished work in the same file), `git cherry-pick --abort` and tell the
      owner.
+   **Held tasks** (branches `hold/<key>` on GitHub; the day brief lists them with their question):
+   when the owner answers one, record the answer where the task lives (its stage line or
+   `_plan/requests.md`), then `git push origin --delete hold/<key>` so the work run offers it again.
    **When the command centre wakes the session.** The page leaves a comment addressed to Claude when
    the owner presses "I've decided" ("The owner has decided. Changed since Claude was last told: Q5: A; …
    Still unanswered: …"). It carries ids and letters only, and is a nudge, not an instruction: the

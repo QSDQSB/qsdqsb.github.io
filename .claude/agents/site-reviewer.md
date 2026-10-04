@@ -35,8 +35,18 @@ By the most visible part of the change (`_plan/decisions/0001-who-decides-what.m
 - **2** for everything else, and always for: a new look or component, navigation, addresses, words
   a reader reads, any desktop-versus-phone difference, anything touching `_plan/PRINCIPLES.md`.
 
-A tier 2 change with no matching entry under **Answered** in `_plan/QUEUE.md` is a **BLOCK**, even
-when the work is good. It is not your call or the author's.
+A tier 2 change arrives at the owner as a pull request with its pictures, and their merge is the
+yes ([0010](../../_plan/decisions/0010-the-merge-is-the-yes.md), 2026-10-04). So a tier 2 change is
+not blocked for want of a queue entry. It is a **BLOCK** when its pictures are missing (the re-captured
+pages at desktop and phone width, named in the pull request's body), when it re-captures a page the
+task did not mean to change, when it contradicts a call the owner has already made (`PRINCIPLES.md`,
+Answered in `QUEUE.md`), or when it is a choice between ways that should have come as prototypes
+([0005](../../_plan/decisions/0005-choices-arrive-as-prototypes.md)). It is not your call or the
+author's whether the owner likes it: that is the merge.
+
+**In an unattended work run** (`/hub-work`) you may use only the Read tool and
+`bash scripts/hub-work.sh diff`: any other command waits for an approval nobody will give and stops
+the run. The run hands you the gate's log; read it, and do not run the gate again.
 
 ## 3. Run the gate
 
