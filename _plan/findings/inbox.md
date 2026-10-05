@@ -10,6 +10,7 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-10-05 · F088 · scripts/check-journeys.mjs, the Photobook cover at 320 px · no journey sees P10 come back: the cover's overflow: hidden clips a fact that runs off, so check:mobile-overflow is blind to it and the pixel diff shoots 390 only. A journey at 320: every .photobook-facts > div inside .photobook-cover, no dd taller than one line. Also: tests/visual/baseline/photobook--desktop.png was re-shot pixel-identical but 3.6 MB larger; restore the older copy in a run that can use git (reviewer)
 - 2026-10-04 · F087 · _sass/_variables.scss, $cubic-bezier-default · now reads as `$duration-cover`, but 0009 narrows `cover` to the wide cover's words; check whether its twenty callers are all the cover before C04 moves any of them (reviewer)
 - 2026-10-04 · F086 · scripts/hub-daily.sh, limit() · on a cut-off it kills only the fast gate's direct child; run it in its own process group as hub-work.sh's start_job does (the daily gate takes about three minutes against a 15-minute limit) (reviewer)
 - 2026-10-03 · F085 · tests/plan-hub.test.js, the daily run · untested, by the reviewer's mutations: the lease on a restarted push (plain --force passes every test; a push landing on GitHub between fetch and push would tell them apart), check-plan's count behind its hub/daily warning (the throwaway repository has no full plan), and the fetch before the hand-over (reviewer)

@@ -11,6 +11,8 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-05 · Nothing a reader sees: the work run's pull-request text (PR-BODY.md) is never served, should one be left in a build (check-served-files) · tier 0
+- 2026-10-05 · On a phone the Photobook cover's facts never break mid-value ("X-S10", "Jun 2025" stay whole): the row wraps as whole facts, each keeping its hairline, none left dangling at a row's end; desktop and tablet as they were (re-captured: photobook on a phone; desktop re-shot identical) (P10) · tier 2, answered
 - 2026-10-04 · Nothing a reader sees: the corners, durations and glass of the owner's amounts are named once in `_variables.scss` and put on the rules that already held their exact values, so a new piece takes a step rather than a number (A02) · tier 0
 - 2026-10-04 · In a post in two languages the essay's dress holds inside each language's panel: a link in the text is brass on its hairline again, not blue, a picture between passages keeps its 2.4rem, and In the Naming of Light's last line stands clear of the chip above it, in both languages (Q9) · tier 1
 - 2026-10-04 · In the Naming of Light reads in English too: one 中/EN switch at the head of the post turns every chapter, the Latin titles staying as they are and each gloss in the chosen language; the English, translated with the owner paragraph by paragraph, quotes Ridgway and Hazlitt in their own words; the colour figures stand in both · tier 2

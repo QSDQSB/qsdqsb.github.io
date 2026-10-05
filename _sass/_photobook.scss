@@ -1828,8 +1828,21 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   // The sheet on a phone: two columns, a contact sheet rather than a smaller book.
   .photobook-sheet { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem 0.6rem; }
   .photobook-cover__title { grid-template-columns: 1fr; }
-  .photobook-facts div { padding-inline: 0.7rem; }
-  .photobook-facts dd { font-size: 1.1rem; }
+
+  // The facts wrap as whole facts, never mid-value. Each carries its hairline on its right, and the
+  // last of a row, always at the right edge, has its padding and hairline cut away: the list reaches
+  // that far past the corner and is clipped back to it, 5 px out, so the title's shadow keeps its edge.
+  .photobook-facts {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    row-gap: 0.9rem;
+    padding-right: 5px;
+    margin-right: calc(-0.7rem - 6px);
+    clip-path: inset(-1rem calc(0.7rem + 1px) -1rem -1rem);
+
+    div:nth-child(n) { padding-inline: 0.7rem; border-left: 0; border-right: 1px solid rgba(255, 255, 255, 0.16); }
+    dd { font-size: 1.1rem; white-space: nowrap; }
+  }
 
   // Pairs and threes become a strip the reader swipes; spreads stay full width.
   .photobook-row--pair,

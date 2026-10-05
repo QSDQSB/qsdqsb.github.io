@@ -148,6 +148,7 @@ exclude:
   - CONTRIBUTING.md
   - package-lock.json
   - skills-lock.json
+  - PR-BODY.md       # the work run's pull-request text (.claude/commands/hub-work.md), never committed
   - docs             # local notes
   - design           # local design files (gitignored)
   - photos           # the local mirror of the originals (gitignored): they are served from R2
