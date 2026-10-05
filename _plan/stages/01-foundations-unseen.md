@@ -83,7 +83,9 @@ A faster, steadier site that looks exactly the same. Every item is a finding fro
 - [x] X22 · The masthead does not fade in from nothing on every page change.
 
 **Approved, phone only**
-- [ ] P10, the facts · On a phone the cover's facts do not wrap mid-value: the row wraps as whole facts, its
+- [x] P10, the facts · Done 2026-10-05: below tablet the facts wrap as whole facts (no value breaks), each
+      with its hairline on its right, the last of every row clipped away at the corner; only the Photobook's
+      phone shot changes. As first written: On a phone the cover's facts do not wrap mid-value: the row wraps as whole facts, its
       hairlines with it. Tried on 2026-10-02 and taken back out: kept whole, five facts need 374 px, so the
       fifth ran off a 320 px phone. Ships alone (the owner, 2026-10-04, answering the work run's hold), shown
       at both widths.
