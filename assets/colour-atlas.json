@@ -3,7 +3,7 @@ layout: null
 sitemap: false
 ---
 {%- comment -%}
-  Every coloured photograph on the site, for The Colour of Light and Drift (assets/js/colour/):
+  Every coloured photograph on the site, for Reverie, Drift and a post's colour figures (assets/js/colour/):
   _data/photo_manifests/colour-atlas.json (written by `npm run photos:fetch` when palettes are
   known, scripts/photos/lib/atlas.mjs), with each gallery's page and voyage title added here, where
   the pages are known. With no atlas, an empty one: the pages say the colours are still to come.
