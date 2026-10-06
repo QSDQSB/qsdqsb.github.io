@@ -8,4 +8,4 @@ to Done with its pull request.
 
 ## Done
 
-- 2026-10-06 · R001 · F041: on a device without WebGL the colour vats should quietly show a still fallback instead of failing (add this to the command centre) → done 2026-10-06: the vats paint a still 2D version of themselves (fix/f041)
+- 2026-10-06 · R001 · F041: on a device without WebGL the colour vats should quietly show a still fallback instead of failing (add this to the command centre) → done 2026-10-06: the vats paint a still 2D version of themselves (#107)
