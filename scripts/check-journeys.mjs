@@ -633,6 +633,9 @@ const JOURNEYS = [
     must(await page.locator('.palette-card__print').count() >= 1, 'Reverie showed no photographs without WebGL');
     const chip = page.locator('.reverie__chip').first();
     if (await chip.count()) await chip.hover().catch(() => {});   // a stir asked of a still vat does nothing, and throws nothing
+    await go('/');
+    const tile = page.locator('.wn-dye').first();
+    if (await tile.count()) { await tile.scrollIntoViewIfNeeded().catch(() => {}); await tile.hover().catch(() => {}); }   // Home's Reverie tile stirs its vat on hover
     await page.waitForTimeout(600);   // every vat the page makes after the first has had its turn to throw
   } },
 
