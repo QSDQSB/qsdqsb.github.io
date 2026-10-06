@@ -170,8 +170,8 @@ function set(r, P, gain) {
 }
 
 // Without WebGL (switched off, a GPU lost for good, a browser that never had it) a vat is still a
-// vat: its colours poured where the plan pours them, each a soft pool as wide as its share, on the
-// largest one's ground, in the same round or rectangle. Painted once in 2D; it never moves.
+// vat: its colours poured where the plan pours them, pools where it is stirred and bands where it lies
+// in layers, on the largest one's ground, in the same round or rectangle. Painted once in 2D; it never moves.
 function still2d(out, P, W, H) {
   const ctx = out.getContext('2d');
   if (!ctx) return;
