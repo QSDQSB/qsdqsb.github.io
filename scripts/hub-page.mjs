@@ -46,6 +46,10 @@ const roadmapRows = read('ROADMAP.md').split('\n').map((l) => l.match(/^\|\s*(\d
 const stageOf = (n) => state.stages.find((s) => s.n === n);
 const pct = (s) => (s.done + s.open ? Math.round((100 * s.done) / (s.done + s.open)) : 0);
 const inboxLines = (read('findings/inbox.md').split(/^## Taken/m)[0].match(/^- .+$/gm) || []).map((l) => l.slice(2));
+// The owner's requests (decisions/0010): what they asked for, open and done, in their words.
+const requestsBody = fs.existsSync(path.join(PLAN, 'requests.md')) ? read('requests.md') : '';
+const requestsOf = (part) => { const at = requestsBody.indexOf(`## ${part}`); if (at < 0) return []; const rest = requestsBody.slice(at + part.length + 3); const next = rest.indexOf('\n## '); return (next < 0 ? rest : rest.slice(0, next)).split('\n').filter((l) => /^- \d{4}-\d{2}-\d{2} · R\d+ · /.test(l)).map((l) => l.slice(2)); };
+const requestsOpen = requestsOf('Open'), requestsDone = requestsOf('Done');
 const built = new Date().toISOString().slice(0, 10);
 const now = state.now;
 const choices = Object.entries(state.hub.choices || {});
@@ -213,6 +217,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
 .st.done { color: var(--yes); } .st.building, .st.designing, .st.review { color: var(--brass); } .st.planned { color: var(--ink-2); }
 .list { margin: 14px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--rule); }
 .list li { padding: 10px 0; border-bottom: 1px solid var(--rule); color: var(--ink-2); font-size: 0.94rem; }
+.list li.done { opacity: 0.6; } .list li.done::after { content: " · done"; color: var(--yes); }
 .list time { font: 400 0.78rem/1 var(--mono); color: var(--ink-3); margin-right: 10px; white-space: nowrap; }
 .doc { border-bottom: 1px solid var(--rule); }
 .doc:first-of-type { border-top: 1px solid var(--rule); margin-top: 16px; }
@@ -255,6 +260,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     <button type="button" class="chip ${state.errors.length ? 'bad' : 'ok'}" data-to="h-now">${state.errors.length ? `Plan broken in ${state.errors.length}` : 'Plan sound'}</button>
     <button type="button" class="chip ${state.queue.length ? 'warn' : ''}" data-to="h-queue">${state.queue.length} waiting on you</button>
     <button type="button" class="chip ${state.ideas.some((i) => i.status === 'shaped') ? 'warn' : ''}" data-to="h-ideas">${state.ideas.length} ideas · ${state.ideas.filter((i) => i.status === 'shaped').length} shaped for you</button>
+    <button type="button" class="chip ${requestsOpen.length ? 'warn' : ''}" data-to="h-req">${requestsOpen.length} of your requests open</button>
     <button type="button" class="chip ${state.inbox > 25 ? 'warn' : ''}" data-to="h-find">${state.inbox} in the inbox</button>
     <button type="button" class="chip" data-to="doc-features">${state.features.length} features · ${state.features.filter((f) => f.journeys.length).length} walked by a journey</button>
     <button type="button" class="chip" data-to="h-dec">${state.decisions.length} decisions</button>
@@ -311,6 +317,13 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     <p class="label">Changelog</p>
     <h2 id="h-log">What changed for a reader</h2>
     <ul class="list">${state.changelog.map((c) => `<li><time>${c.date}</time>${inline(c.text)}</li>`).join('') || '<li>Nothing yet.</li>'}</ul>
+  </section>
+
+  <section aria-labelledby="h-req">
+    <p class="label">Your requests</p>
+    <h2 id="h-req">${requestsOpen.length ? `${requestsOpen.length} asked for, not yet done` : 'Everything you asked for is done or in a pull request'}</h2>
+    <p class="sub">What you ask any session for is kept here in your words and taken before the roadmap: done on the spot when small, otherwise by the next morning's work run, and handed to you as a pull request.</p>
+    <ul class="list">${requestsOpen.map((l) => { const m = l.match(/^(\d{4}-\d{2}-\d{2})\s*·\s*(.+)$/); return `<li>${m ? `<time>${m[1]}</time>${inline(m[2])}` : inline(l)}</li>`; }).join('')}${requestsDone.slice(0, 6).map((l) => { const m = l.match(/^(\d{4}-\d{2}-\d{2})\s*·\s*(.+)$/); return `<li class="done"><time>${m ? m[1] : ''}</time>${inline(m ? m[2] : l)}</li>`; }).join('') || (requestsOpen.length ? '' : '<li>Nothing asked yet.</li>')}</ul>
   </section>
 
   <section aria-labelledby="h-find">

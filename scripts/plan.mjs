@@ -425,7 +425,8 @@ switch (command) {
     // on another stage. Anything claimed (a branch work/<key> on GitHub) or held (hold/<key>) is left
     // out. A list, not a verdict: whoever takes one reads it first and holds it if it needs the owner.
     const slug = (s) => s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48);
-    const refs = (() => { try { return execFileSync('git', ['for-each-ref', '--format=%(refname:short)', 'refs/remotes/origin/work', 'refs/remotes/origin/hold'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }); } catch { return ''; } })();
+    // A copy of the plan (PLAN_DIR: the tests) is not the repository's state: its claims are not read.
+    const refs = process.env.PLAN_DIR ? '' : (() => { try { return execFileSync('git', ['for-each-ref', '--format=%(refname:short)', 'refs/remotes/origin/work', 'refs/remotes/origin/hold'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }); } catch { return ''; } })();
     const taken = new Set(refs.split('\n').filter(Boolean).map((r) => r.replace(/^origin\/(work|hold)\//, '')));
     const out = [];
     if (fs.existsSync(file('requests.md'))) {
