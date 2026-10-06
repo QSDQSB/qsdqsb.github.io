@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-06 · On a device or browser without WebGL, the colour vats on Palette, Reverie, Drift and Ridgway show a still version of themselves, their colours poured where the drawn vat pours them, instead of an empty circle (F041) · tier 2
 - 2026-10-05 · Nothing a reader sees: the work run's pull-request text (PR-BODY.md) is never served, should one be left in a build (check-served-files) · tier 0
 - 2026-10-05 · On a phone the Photobook cover's facts never break mid-value ("X-S10", "Jun 2025" stay whole): the row wraps as whole facts, each keeping its hairline, none left dangling at a row's end; desktop and tablet as they were (re-captured: photobook on a phone; desktop re-shot identical) (P10) · tier 2, answered
 - 2026-10-04 · Nothing a reader sees: the corners, durations and glass of the owner's amounts are named once in `_variables.scss` and put on the rules that already held their exact values, so a new piece takes a step rather than a number (A02) · tier 0

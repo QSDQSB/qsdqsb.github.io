@@ -169,6 +169,54 @@ function set(r, P, gain) {
   for (let k = 0; k < 5; k++) gl.uniform1f(u(`gain[${k}]`), gain[k] || 0);
 }
 
+// Without WebGL (switched off, a GPU lost for good, a browser that never had it) a vat is still a
+// vat: its colours poured where the plan pours them, each a soft pool as wide as its share, on the
+// largest one's ground, in the same round or rectangle. Painted once in 2D; it never moves.
+function still2d(out, P, W, H) {
+  const ctx = out.getContext('2d');
+  if (!ctx) return;
+  const rgb = (hex, a) => { const h = String(hex).replace('#', ''), f = h.length === 3 ? h.split('').map((c) => c + c).join('') : h.slice(0, 6), n = parseInt(f, 16) || 0; return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`; };
+  const side = Math.min(W, H), [vw, vh] = P.aspect ? [W, H] : [side, side], ox = (W - vw) / 2, oy = (H - vh) / 2;
+  ctx.clearRect(0, 0, W, H);
+  ctx.save();
+  ctx.beginPath();
+  if (P.aspect) ctx.rect(ox, oy, vw, vh); else ctx.arc(W / 2, H / 2, side / 2, 0, 2 * Math.PI);
+  ctx.clip();
+  const order = P.cs.map((c, i) => i).sort((a, b) => P.share[b] - P.share[a]);
+  ctx.fillStyle = rgb(P.cs[order[0]].hex, 1); ctx.fillRect(ox, oy, vw, vh);
+  // The plan's places run from -1 to 1 across the vat, as the shader reads them: x right, y down
+  // (a layered vat's lightest colour, at the lowest level, lies on top).
+  const at = (i) => [W / 2 + P.pos[i][0] * vw / 2, H / 2 + P.pos[i][1] * vh / 2];
+  // A calm vat lies in layers: each colour a soft band at its level, as deep as its share.
+  if (P.calm > 0) {
+    for (const i of order.slice(1)) {
+      if (P.cs[i].accent) continue;
+      const [, cy] = at(i), half = Math.max(vh * 0.08, vh * P.share[i] * 0.9);
+      const g = ctx.createLinearGradient(0, cy - half * 1.6, 0, cy + half * 1.6);
+      g.addColorStop(0, rgb(P.cs[i].hex, 0)); g.addColorStop(0.3, rgb(P.cs[i].hex, 0.9 * P.calm)); g.addColorStop(0.7, rgb(P.cs[i].hex, 0.9 * P.calm)); g.addColorStop(1, rgb(P.cs[i].hex, 0));
+      ctx.fillStyle = g; ctx.fillRect(ox, cy - half * 1.6, vw, half * 3.2);
+    }
+  }
+  // A stirred vat (and a calm one's accent): each colour a soft pool where it was poured, as wide as its share.
+  const half = Math.max(vw, vh) / 2;
+  for (const i of order.slice(1)) {
+    const weight = P.cs[i].accent ? 1 : 1 - P.calm;
+    if (weight <= 0) continue;
+    const [cx, cy] = at(i), r = half * (P.cs[i].accent ? 0.22 : 0.18 + 0.85 * Math.sqrt(P.share[i]));
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    g.addColorStop(0, rgb(P.cs[i].hex, 0.9 * weight)); g.addColorStop(0.55, rgb(P.cs[i].hex, 0.5 * weight)); g.addColorStop(1, rgb(P.cs[i].hex, 0));
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.fill();
+  }
+  // Shaded as a vessel only at its edge, as the shader's is: not lit as a sphere would be.
+  if (!P.aspect) {
+    const rim = ctx.createRadialGradient(W / 2, H / 2, side / 2 * 0.93, W / 2, H / 2, side / 2);
+    rim.addColorStop(0, 'rgba(0,0,0,0)'); rim.addColorStop(1, 'rgba(0,0,0,0.14)');
+    ctx.fillStyle = rim; ctx.fillRect(ox, oy, vw, vh);
+  }
+  ctx.restore();
+  out.dataset.still = '2d';
+}
+
 // Weighing a vat: how much of it each colour covers, adjusted until each is its share (settle,
 // below). Once per palette and seed in a visit: kept here for the next vat of the same.
 const gains = new Map();
@@ -191,13 +239,21 @@ export function vat(palette, { size = 176, width = size, height = size, shape = 
   const aspect = shape === 'rect' ? width / height : 0;
   let P = plan(palette, seed, calmFor, aspect), live = null, shown = null;
   // A stirring vat draws only in its own context: the shared one is not made for it.
-  if (!moving && !sharedRenderer()) return out;
+  if (!moving && !sharedRenderer()) {
+    // Without WebGL a still vat keeps the whole of a vat's contract: it is ready, stirring does
+    // nothing, and a repaint takes the next palette and its label (Palette, Reverie, Home all call them).
+    const paint = () => { still2d(out, P, W, H); return Promise.resolve(out); };
+    out.stir = () => {};
+    out.ready = paint();
+    out.repaint = (next, { seed: s2 = seed, label: l2 = '' } = {}) => { P = plan(next, s2, calmFor, aspect); if (l2) out.setAttribute('aria-label', l2); return (out.ready = paint()); };
+    return out;
+  }
 
   const draw = ({ gain, areas }) => {
     // A live vat keeps its own context for its life, and is repainted in it (repaint, below).
     if (shown && live) { shown.gain = gain; set(live, P, gain); shown.frame(0); if (areas) out.dataset.areas = areas.map((x) => x.toFixed(3)).join(' '); out.dataset.calm = P.calm.toFixed(2); return; }
     const r = moving ? (live = renderer(out)) : sharedRenderer();
-    if (!r) return;
+    if (!r) { still2d(out, P, W, H); return; }
     const { gl, canvas, u } = r;
     if (canvas.width < W || canvas.height < H) { canvas.width = Math.max(W, canvas.width); canvas.height = Math.max(H, canvas.height); }
     set(r, P, gain);

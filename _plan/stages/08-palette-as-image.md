@@ -89,7 +89,7 @@ purpose, which whoever receives it can keep.
 
 ## Before a control is built
 
-- [ ] F041 · The vat throws on a device without WebGL (`assets/js/colour/vat.js:122`). The control
+- [x] F041 · Done: the throw on 2026-10-02 (#98); a still vat painted in 2D where there is no WebGL, on 2026-10-06 (R001). As first written: The vat throws on a device without WebGL (`assets/js/colour/vat.js:122`). The control
       must not show where the vat cannot be drawn. Tier 0 for the fault itself, which is also a task in
       [stage 1](01-foundations-unseen.md).
 - [ ] All 52 voyage palettes on one sheet, for the owner's eye: an image that has left cannot be
