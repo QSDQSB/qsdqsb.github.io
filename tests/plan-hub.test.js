@@ -347,7 +347,7 @@ test('the command centre draws an idea: its questions as taps of their own, its 
     // The row at the top: every chip goes somewhere that exists.
     const page = fs.readFileSync(out, 'utf8');
     const targets = [...page.split('<nav class="jump"')[1].split('</nav>')[0].matchAll(/data-to="([^"]+)"/g)].map((m) => m[1]);
-    assert.strictEqual(targets.length, 6);
+    assert.strictEqual(targets.length, 7);
     for (const id of targets) assert.ok(page.includes(` id="${id}"`), `the jump to ${id} lands nowhere`);
     assert.ok(page.includes('id="tell"') && page.includes('sendToClaude'), 'the page can tell a watching session that the owner answered');
     assert.ok(!/<ul class="notes">[^<]*<li>[^<]*The command centre is behind/.test(page), 'the page does not say of itself that it is behind');
@@ -1078,6 +1078,7 @@ test('the daily script cuts off a call that hangs, and a run that dies says at w
 
 test('a request goes first in line, once, in the owner\'s words', () => {
   withPlanCopy((plan, read) => {
+    fs.rmSync(path.join(PLAN_COPY.dir, 'requests.md'), { force: true });   // from an empty list, whatever the live plan holds
     const first = plan('request', 'Make the map\'s panel easier to close on a phone');
     assert.strictEqual(first.status, 0, first.stderr);
     assert.match(first.stdout, /^- 2031-01-02 · R001 · Make the map's panel easier to close on a phone$/m);
@@ -1274,4 +1275,20 @@ test('a failed gate stays failed, and a pass holds only for the folder it saw', 
     assert.match(work('pr', '🎨 Red').stderr, /the full gate has not passed/);
     assert.strictEqual(work('abort').status, 0);
   }, { gate: 'FAIL' });
+});
+
+test('the command centre shows the owner\'s requests: open ones first, in their words, escaped; done ones after', () => {
+  withPlanCopy((plan, read, write) => {
+    write('requests.md', '# Requests\n\n## Open\n\n- 2031-01-02 · R002 · Make the <b>map</b> calmer\n\n## Done\n\n- 2031-01-01 · R001 · Fix the vat → done 2031-01-01\n');
+    const out = path.join(os.tmpdir(), `hub-req-${process.pid}.html`);
+    const built = spawnSync('node', [path.join(ROOT, 'scripts/hub-page.mjs'), '--out', out], { encoding: 'utf8', env: { ...process.env, PLAN_DIR: PLAN_COPY.dir } });
+    assert.strictEqual(built.status, 0, built.stderr);
+    const html = fs.readFileSync(out, 'utf8'); fs.rmSync(out, { force: true });
+    assert.match(html, /data-to="h-req">1 of your requests open</);
+    assert.match(html, /<h2 id="h-req">1 asked for, not yet done<\/h2>/);
+    const section = html.slice(html.indexOf('id="h-req"'), html.indexOf('</section>', html.indexOf('id="h-req"')));
+    assert.ok(section.indexOf('R002') >= 0 && section.indexOf('R002') < section.indexOf('R001'), 'open before done');
+    assert.ok(!html.includes('<b>map</b>'), 'the words are escaped');
+    assert.match(html, /<li class="done"><time>2031-01-01<\/time>R001 · Fix the vat/);
+  });
 });
