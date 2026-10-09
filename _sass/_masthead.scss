@@ -257,7 +257,9 @@ html.is-resizing {
 }
 
 // A voyage page's way back (the parent voyage, or all voyages), before the logo. Collapsed, the
-// masthead keeps it beside the logo, so it is one tap away anywhere on the page.
+// masthead keeps it beside the logo; three seconds on, the collapsed bar fades with it, and comes back
+// at any scroll, the pointer at the top edge, a tap there or focus inside it; under reduced motion it
+// never fades (masthead-intent.js).
 .greedy-nav.greedy-nav--has-back { --nav-collapsed-width: #{($nav-shell-padding-x * 2) + $nav-brand-logo-shell-size * 2}; }
 
 .masthead__back {
