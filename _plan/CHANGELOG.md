@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-09 · The masthead's menu and search buttons, the lightbox's and Drift's round tools and the hover tip are frosted at the site's one glass, 14 px at 120%, where they were 12 px (C05) · tier 1
 - 2026-10-06 · Nothing a reader sees: the shared pieces' catalogue gives the page change, the arrival and the curves as built, and four comments that said otherwise now say what the code does (the masthead's way back, the colour atlas, two in the palette page) (A09) · tier 0
 - 2026-10-06 · On a device or browser without WebGL, the colour vats on Palette, Reverie, Drift and Ridgway show a still version of themselves, their colours poured where the drawn vat pours them, instead of an empty circle (F041) · tier 2
 - 2026-10-05 · Nothing a reader sees: the work run's pull-request text (PR-BODY.md) is never served, should one be left in a build (check-served-files) · tier 0
