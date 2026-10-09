@@ -166,7 +166,7 @@
   cursor: pointer;
   overflow: hidden;
   isolation: isolate;
-  @include backdrop-blur(blur($nav-action-blur));
+  @include backdrop-blur($glass-blur);
   transition:
     background-color 0.28s $cubic-bezier-smooth,
     border-color 0.28s $cubic-bezier-smooth,
