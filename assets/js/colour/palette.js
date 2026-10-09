@@ -194,7 +194,7 @@ async function main() {
   // A change of voyage is one gesture, one tempo: the palette's blocks take the new dye in a wave
   // from the left, and the vat beside them changes its dye whole in the same time and on the same
   // curve (the site's standard ease). The room's light turns alongside.
-  // The site's own curves (_components.scss), not this page's: one vocabulary of motion.
+  // The site's own curves (_tokens.scss), not this page's: one vocabulary of motion.
   const css = getComputedStyle(document.documentElement);
   const EASE = css.getPropertyValue('--ease-standard').trim() || 'ease', SMOOTH = css.getPropertyValue('--ease-smooth').trim() || 'ease-out';
   const CHANGE = 1100; // the dye's own time, longer than a page's: the one signature moment
@@ -433,7 +433,8 @@ async function main() {
     if (!(revisit && kept().restore())) scrollTo({ top: 0, behavior: 'instant' });
     if (back_) requestAnimationFrame(() => kept().restore());
     for (const el of parts()) el.getAnimations().forEach((a) => a.cancel());
-    // …and the new one settles in as a page arrives (0.4 s, the smooth curve).
+    // …and the new one settles in over 0.4 s, as a page's content does, on the smooth curve (a page's
+    // own change takes the standard one: _view-transitions.scss).
     if (gliding) for (const el of parts()) el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 400, easing: SMOOTH });
     if (gliding && v) morph(before);
   }

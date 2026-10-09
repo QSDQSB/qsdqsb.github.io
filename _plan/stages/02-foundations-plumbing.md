@@ -119,7 +119,13 @@ much. Nothing here waits on an amount any longer. The language is version 1: the
       overshoots (`cubic-bezier(0.175, 0.885, 0.32, 1.275)`): read 2026-10-01, nothing in `_sass/`,
       the layouts, the includes or the scripts ever sets a transform or an opacity on that element,
       so it never runs and no reader sees it. Confirm in the build, then delete.
-- [ ] A09 · Docs and comments corrected to match the code. One more, found 2026-10-01: the comment in
+- [x] A09 · Done 2026-10-06: `_docs/components.md` names the cover's third curve and the older ones C04
+      sweeps, gives the page change as coded (0.3 s and 0.4 s, both on the standard curve; the palette
+      page's comes in on the smooth one) and the arrival as built (`arrives`, 28 px over 0.7 s, in turns);
+      the masthead's comment says the collapsed bar fades after three seconds; the atlas names Reverie,
+      Drift and a post's figures; two comments in `palette.js` name `_tokens.scss` and the curve truly. Of
+      the audit's other two, the opening scene's comment and `_main.js`'s search comment were already
+      true. No reader sees any of it. As first written: Docs and comments corrected to match the code. One more, found 2026-10-01: the comment in
       `assets/colour-atlas.json` still names The Colour of Light, a page retired on 2026-09-29.
 - [ ] Split `_photobook.scss` and `_colour.scss` by part, after confirming the guards walk subfolders.
 

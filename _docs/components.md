@@ -78,10 +78,17 @@ In `_sass/_variables.scss`, as [0002](../_plan/decisions/0002-one-control-vocabu
 ## Motion
 
 - **Two curves.** `$cubic-bezier-standard` and `$cubic-bezier-smooth` in Sass. Scripts read them as
-  `--ease-standard` and `--ease-smooth` from `:root`. Don't write a `cubic-bezier(…)` in a script.
-- **Page changes.** Out over 0.3 s on the standard curve, in over 0.4 s on the smooth curve
-  (`_view-transitions.scss`). The palette page's voyage-to-voyage change follows the same timings.
-- **Content arriving.** The `reveal-on-scroll` / `is-visible` classes (`_scroll-animations.scss`):
-  a 12 px fade-up.
+  `--ease-standard` and `--ease-smooth` from `:root` (`_tokens.scss`). Don't write a `cubic-bezier(…)`
+  in a script. The wide cover keeps a third of its own, `$cubic-bezier-param`, carried by
+  `$cubic-bezier-default` (0002). Older rules still hold others (`$nav-shell-ease`, bare `ease`,
+  literals); C04 brings them onto these.
+- **Page changes.** The page fades out and in over 0.3 s, its content over 0.4 s, both on the
+  standard curve; the masthead over 0.2 s (`_view-transitions.scss`). The palette page's
+  voyage-to-voyage change goes out over 0.3 s on the standard curve and comes in over 0.4 s on the
+  smooth one (`assets/js/colour/palette.js`).
+- **Content arriving.** The `reveal-on-scroll` / `is-visible` classes (`_scroll-animations.scss`,
+  `assets/js/scroll-animations.js`). With `arrives`, a page's blocks of text take the owner's
+  amounts (0009, pick 6): up from 28 px over 0.7 s, the rise on the smooth curve, those that come
+  into view together 0.12 s apart. Without it, as on Palette's frames, a 12 px fade-up.
 - **Endings.** `presented-by-qsd.html` closes a page: the books, the archive, the colour pages.
 - **Stillness.** Every motion stops under `prefers-reduced-motion` and `html.motion-off`.
