@@ -125,7 +125,14 @@ test('the scope hook refuses the direct ways into Photos, and nothing that only 
     'grep -rn osascript scripts',
     'cat scripts/photos/lib/apple-photos.mjs',
     'node scripts/plan.mjs finding "photos:ingest leaves a file behind"',
+    'grep -rn "Photos.sqlite" scripts/hooks',
+    'git commit -m "One line\nosascript is named in the second line of a message"',
   ]) assert.equal(run('Bash', { command }), 0, command);
+  assert.equal(run('Grep', { pattern: 'Photos.sqlite', path: 'scripts' }), 0, 'searching for the word opens nothing');
+  // Run inside another command, it is still run (the reviewer's notes, 2026-10-10).
+  for (const command of ['ls\nosascript -e x', 'echo $(osascript -e x)', 'echo `osascript -e x`', 'bash -c "osascript -e x"', 'sh -c "npm run photos:enrich"']) {
+    assert.equal(run('Bash', { command }), 2, command);
+  }
 });
 
 // The yes and the hands that act on it, without Photos or R2: a plan in a folder of its own.

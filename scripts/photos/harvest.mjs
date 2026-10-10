@@ -243,7 +243,7 @@ async function bring() {
   }
   // What the bucket holds before: frame numbers repeat, so only a file new after ingest counts as arrived.
   // A listing that fails is null, never empty: an empty one would make every file look new.
-  const listing = (g) => { const r = spawnSync('rclone', ['lsf', '--files-only', `${bucket}/${g}`], { encoding: 'utf8' }); return r.status === 0 ? new Set((r.stdout || '').split('\n').filter(Boolean)) : (known.has(g) ? null : new Set()); };
+  const listing = (g) => { const r = spawnSync('rclone', ['lsf', '--files-only', `${bucket}/${g}`], { encoding: 'utf8' }); return r.status === 0 ? new Set((r.stdout || '').split('\n').filter(Boolean)) : r.status === 3 ? new Set() : null; }; // 3: rclone's directory not found
   const before = new Map(galleries.map((g) => [g, listing(g)]));
   const unread = galleries.filter((g) => !before.get(g));
   if (unread.length) { console.error(`The bucket could not be listed for ${unread.join(', ')}; nothing brought in`); return 1; }
