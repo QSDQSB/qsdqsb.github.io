@@ -7,7 +7,8 @@ manifests and `.photos-local/`).
 
 **Photos is open to you only through this album** (the owner, 2026-10-10). Every step below is
 `npm run photos:harvest`; a hook refuses `osascript`, enrich, ingest, the library's files and computer
-use on Photos. Never work around it.
+use on Photos. It is a guard against a slip, not a lock (macOS grants Photos whole): never work around
+it, and never write a script that reaches Photos another way.
 
 1. **Look.** `npm run photos:harvest`. It lists the album, exports each new photo as edited (the owner's
    crop) with its camera record restored from the same item's original, names its place, and proposes
@@ -46,16 +47,20 @@ use on Photos. Never work around it.
    `qsdqsb: <gallery>`, and its voyage's `updated:` moves to now. About a minute a photo, more while
    Overpass is slow. Run it in the background and wait for it.
 
-6. **Hand it over.** Once the processing workflow has run (`gh run list --workflow photos-process.yml -L 3`,
+6. **Hand it over.** The photographs reach readers with the next build once processed: the tap was
+   the yes for that. Once the processing workflow has run (`gh run list --workflow photos-process.yml -L 3`,
    then `npm run photos:status -- --gallery <g>`: "no problems"), commit on a branch: the voyages'
    `updated:`, `_data/photo_locations/` (check `git diff --stat` shows no deletions), and a new
    voyage's page (the `voyage-scaffolder` agent; it needs a cover, `npm run covers:focus`). One pull
-   request, with the photos' thumbnails as its pictures. The owner's merge is the yes for what a
-   reader sees of it.
+   request, with the photos' thumbnails as its pictures. Its merge is the yes for what it carries:
+   the Recent Updates order, the place names, and a new voyage's page.
 
 7. **The album.** When every photo in it is on the site, the script says so, and so does the command
    centre: the owner empties it in Photos (⌘A, then Delete → Remove from Album; never ⌘⌫, which deletes
    from the library). Until then, tagged photos are skipped, so nothing comes in twice.
+
+If the owner re-crops a photo in Photos after a look, `npm run photos:harvest -- look --re-export`
+exports the waiting ones again.
 
 If something fails, the plan in `.photos-local/harvest/plan.json` holds where each photo stands; a
 re-run of `look` keeps every destination already decided.

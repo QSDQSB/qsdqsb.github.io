@@ -67,7 +67,11 @@ Photos' scripting cannot take a photo out of an album, so nothing is: once all o
 site, the owner empties it (⌘A, Delete → Remove from Album; never ⌘⌫, which deletes from the library).
 The photographs stay in the library. The album name can be changed with `PHOTOS_ALBUM`.
 
-### Add photographs to an existing voyage
+### Add photographs to an existing voyage, by hand
+
+The owner's own way, in their terminal: `ingest` runs `enrich`, which searches the whole Photos
+library, so a session never runs either (the scope hook refuses them). A session brings photographs
+in through the album, above.
 
 ```bash
 # 1. The owner drops the camera files into the inbox, one folder per gallery:

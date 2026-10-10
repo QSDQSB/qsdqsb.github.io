@@ -28,7 +28,8 @@
  * Files: .photos-local/harvest/ (gitignored): plan.json, go.json, last.json,
  * export/ (edited, enriched), thumbs/, inbox/ (what ingest takes).
  *
- * Usage: npm run photos:harvest [-- look] [--album <name>]
+ * Usage: npm run photos:harvest [-- look] [--album <name>] [--re-export]
+ *          --re-export  export every waiting photo again (after a new crop in Photos)
  *        npm run photos:harvest -- set <frame|id> <gallery|hold> [--why "<reason>"] [--by claude|owner]
  *        npm run photos:harvest -- go '<json>' | --file <path>     {"hash": "…", "destinations": {"DSCF7548": "japan/kyoto"}}
  *        npm run photos:harvest -- bring
@@ -51,7 +52,8 @@ import { transplant } from './enrich.mjs';
 import { HOLD, attribute, keywordFor, planHash, siteIndex, validGallery, voyageGalleries } from './lib/harvest.mjs';
 
 export const ALBUM = process.env.PHOTOS_ALBUM || 'Voyage-of-QSDQSB';
-export const DIR = path.join(PATHS.localStore, 'harvest');
+// HARVEST_DIR moves the plan's folder elsewhere (the tests do); the command centre reads the same variable.
+export const DIR = process.env.HARVEST_DIR ? path.resolve(process.env.HARVEST_DIR) : path.join(PATHS.localStore, 'harvest');
 const at = (...p) => path.join(DIR, ...p);
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const readJSON = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return null; } };
@@ -114,7 +116,7 @@ async function look(args) {
     const was = prior.get(it.id);
     const base = { id: it.id, file: it.filename, frame, photosDate: it.date, w: it.w, h: it.h };
     if (tagged) { out.push({ ...base, taken: was?.taken || null, status: 'on-site', gallery: tagged.slice(8), confidence: 'sure', why: 'tagged in Photos' }); continue; }
-    let file = exported('export', it.id);
+    let file = args['re-export'] && was?.status !== 'on-site' ? null : exported('export', it.id);
     if (!file) {
       if (args['no-export']) { out.push({ ...base, status: 'waiting', gallery: null, confidence: 'open', why: 'not exported yet' }); continue; }
       log(`exporting ${it.filename}…`);
@@ -199,17 +201,16 @@ function go(args) {
 }
 
 /** Set a voyage page's `updated:` to now: the parent's for a part, since the board reads _voyage/ only. */
-function touchVoyage(gallery) {
+export function touchVoyage(gallery, { root = ROOT, stamp = nowStamp() } = {}) {
   const parent = gallery.split('/')[0];
-  const page = [path.join(ROOT, '_voyage', `${parent}.md`)].find((f) => fs.existsSync(f));
+  const page = [path.join(root, '_voyage', `${parent}.md`)].find((f) => fs.existsSync(f));
   if (!page) return null;
   const text = fs.readFileSync(page, 'utf8');
-  const stamp = nowStamp();
   const next = /^updated:.*$/m.test(text.split(/\n---/)[0])
     ? text.replace(/^updated:[^#\n]*(#.*)?$/m, (_, c) => `updated: ${stamp}${c ? `  ${c}` : ''}`)
     : text.replace(/^(date:.*)$/m, `$1\nupdated: ${stamp}  # its photographs last changed: how Recent Updates ranks it`);
   fs.writeFileSync(page, next);
-  return path.relative(ROOT, page);
+  return path.relative(root, page);
 }
 
 async function bring() {
@@ -219,6 +220,13 @@ async function bring() {
   const { bucket, why } = originalsBucket();
   if (!bucket) { console.error(`${why}: the voyages cannot be pulled whole, so nothing is brought in.`); return 2; }
   const bringing = plan.items.filter((i) => i.status === 'waiting' && i.gallery && i.gallery !== HOLD);
+  // Two photos of one name for one voyage would overwrite each other in the inbox, and both read as arrived.
+  const named = new Map();
+  for (const i of bringing) {
+    const k = `${i.gallery}/${i.file.toLowerCase()}`;
+    if (named.has(k)) { console.error(`${named.get(k)} and ${i.frame} share the file name ${i.file} in ${i.gallery}: hold one (set <id> hold) and bring it after`); return 1; }
+    named.set(k, i.frame);
+  }
   fs.rmSync(at('inbox'), { recursive: true, force: true });
   for (const i of bringing) {
     const file = exported('export', i.id);
@@ -233,14 +241,22 @@ async function bring() {
     console.log(`── pull ${g} whole, so its places are kept`);
     if (spawnSync(process.execPath, [path.join(HERE, 'pull.mjs'), '--gallery', g], { stdio: 'inherit' }).status !== 0) { console.error(`pull of ${g} failed; nothing brought in`); return 1; }
   }
+  // What the bucket holds before: frame numbers repeat, so only a file new after ingest counts as arrived.
+  // A listing that fails is null, never empty: an empty one would make every file look new.
+  const listing = (g) => { const r = spawnSync('rclone', ['lsf', '--files-only', `${bucket}/${g}`], { encoding: 'utf8' }); return r.status === 0 ? new Set((r.stdout || '').split('\n').filter(Boolean)) : (known.has(g) ? null : new Set()); };
+  const before = new Map(galleries.map((g) => [g, listing(g)]));
+  const unread = galleries.filter((g) => !before.get(g));
+  if (unread.length) { console.error(`The bucket could not be listed for ${unread.join(', ')}; nothing brought in`); return 1; }
   const fresh = galleries.filter((g) => !known.has(g)).flatMap((g) => ['--new-gallery', g]);
   const ingest = spawnSync(process.execPath, [path.join(HERE, 'ingest.mjs'), '--from', at('inbox'), '--skip-enrich', '--go', at('go.json'), ...fresh], { stdio: 'inherit' });
 
   // What reached the bucket is on its way to the site, whatever ingest said about the rest.
   const done = [];
   for (const g of galleries) {
-    const r = spawnSync('rclone', ['lsf', '--files-only', `${bucket}/${g}`], { encoding: 'utf8' });
-    const there = new Set((r.stdout || '').split('\n').map((f) => (frameFromName(f) || '').toUpperCase()).filter(Boolean));
+    const after = listing(g);
+    if (!after) { console.error(`${g}: the bucket could not be listed after the push; run look again to see what arrived`); continue; }
+    const added = [...after].filter((f) => !before.get(g).has(f));
+    const there = new Set(added.map((f) => (frameFromName(f) || '').toUpperCase()).filter(Boolean));
     const arrived = bringing.filter((i) => i.gallery === g && there.has(i.frame));
     if (!arrived.length) continue;
     try { tagInAlbum(plan.album, arrived.map((i) => i.id), keywordFor(g)); } catch (e) { console.error(`tagging in Photos failed (${e.message.split('\n')[0]}); the next look finds them on the site anyway`); }

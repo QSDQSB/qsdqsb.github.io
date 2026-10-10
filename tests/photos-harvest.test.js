@@ -100,7 +100,7 @@ test('harvest reaches Photos only through the album', () => {
   assert.match(src, /'--skip-enrich'/);
 });
 
-test('the scope hook refuses every other way into Photos', () => {
+test('the scope hook refuses the direct ways into Photos, and nothing that only names a file', () => {
   const hook = path.join(ROOT, 'scripts/hooks/pre-tool-photos-scope.sh');
   const run = (tool_name, tool_input) => spawnSync('bash', [hook], { input: JSON.stringify({ tool_name, tool_input }), encoding: 'utf8' }).status;
   assert.equal(run('Bash', { command: 'npm run photos:harvest -- look' }), 0);
@@ -114,6 +114,77 @@ test('the scope hook refuses every other way into Photos', () => {
   assert.equal(run('Read', { file_path: '/Users/x/Pictures/Photos Library.photoslibrary/database/Photos.sqlite' }), 2);
   assert.equal(run('mcp__computer-use__request_access', { apps: ['Photos'] }), 2);
   assert.equal(run('mcp__computer-use__request_access', { apps: ['Photoshop'] }), 0);
+  assert.equal(run('Bash', { command: 'npm run photos:harvest && npm run photos:ingest' }), 2);
+  assert.equal(run('Bash', { command: '/usr/bin/osascript -e x' }), 2);
+  assert.equal(run('Bash', { command: 'FOO=1 node scripts/photos/enrich.mjs' }), 2);
+  // Naming a file is not running it (the reviewer's cases, 2026-10-10): a false refusal has no backstop.
+  for (const command of [
+    'git add scripts/photos/ingest.mjs scripts/photos/lib/apple-photos.mjs',
+    'git commit -m "Skip enrich.mjs when the record is there"',
+    'git log -- scripts/photos/enrich.mjs',
+    'grep -rn osascript scripts',
+    'cat scripts/photos/lib/apple-photos.mjs',
+    'node scripts/plan.mjs finding "photos:ingest leaves a file behind"',
+  ]) assert.equal(run('Bash', { command }), 0, command);
+});
+
+// The yes and the hands that act on it, without Photos or R2: a plan in a folder of its own.
+const harvestCli = (dir, ...args) => spawnSync('node', [path.join(ROOT, 'scripts/photos/harvest.mjs'), ...args], { encoding: 'utf8', env: { ...process.env, HARVEST_DIR: dir } });
+function withPlan(run) {
+  const os = require('node:os');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'harvest-'));
+  const items = [
+    { id: 'A/L0/001', file: 'DSCF2632.JPG', frame: 'DSCF2632', status: 'waiting', gallery: 'florence', confidence: 'sure' },
+    { id: 'B/L0/001', file: 'DSCF9000.JPG', frame: 'DSCF9000', status: 'waiting', gallery: null, confidence: 'open' },
+    { id: 'C/L0/001', file: 'DSCF7443.JPG', frame: 'DSCF7443', status: 'on-site', gallery: 'japan/kyoto', confidence: 'sure' },
+  ];
+  return import('../scripts/photos/lib/harvest.mjs').then(({ planHash }) => {
+    fs.writeFileSync(path.join(dir, 'plan.json'), JSON.stringify({ album: 'Voyage-of-QSDQSB', voyages: ['florence', 'japan/kyoto'], items, hash: planHash(items) }));
+    try { return run(dir, planHash(items)); } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+  });
+}
+
+test('a yes holds only for the plan it was given on, and only for photos still waiting', () => withPlan((dir, hash) => {
+  const go = (doc) => harvestCli(dir, 'go', JSON.stringify(doc));
+  assert.equal(go({ hash: 'stale', destinations: {} }).status, 1, 'a stale hash is refused');
+  assert.equal(go({ hash, destinations: { 'C/L0/001': 'florence' } }).status, 1, 'a photo already on the site is not the yes\'s to move');
+  assert.equal(go({ hash, destinations: { 'B/L0/001': '../etc' } }).status, 1, 'a destination is a gallery name');
+  assert.equal(go({ hash, destinations: {} }).status, 1, 'an open photo with no destination is refused');
+  assert.ok(!fs.existsSync(path.join(dir, 'go.json')));
+  const ok = go({ hash, destinations: { 'B/L0/001': 'hold' }, at: '2026-10-10T17:00:00Z' });
+  assert.equal(ok.status, 0, ok.stderr);
+  const yes = JSON.parse(fs.readFileSync(path.join(dir, 'go.json'), 'utf8'));
+  assert.deepEqual(yes.galleries, ['florence'], 'a held photo is not in the yes');
+  assert.deepEqual(yes.photos, ['DSCF2632']);
+  const plan = JSON.parse(fs.readFileSync(path.join(dir, 'plan.json'), 'utf8'));
+  assert.equal(yes.hash, plan.hash, 'the yes names the plan as it now stands');
+  // Setting anything afterwards takes the yes away.
+  assert.equal(harvestCli(dir, 'set', 'DSCF2632', 'hold').status, 0);
+  assert.ok(!fs.existsSync(path.join(dir, 'go.json')));
+}));
+
+test('bring does nothing without a yes for the plan as it stands', () => withPlan((dir) => {
+  const r = harvestCli(dir, 'bring');
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /No go for this plan/);
+  assert.ok(!fs.existsSync(path.join(dir, 'inbox')), 'nothing was staged');
+}));
+
+test('a voyage\'s updated: moves to now, kept in its own shape or added under its date', async () => {
+  const os = require('node:os');
+  const { touchVoyage } = await import('../scripts/photos/harvest.mjs');
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'touch-'));
+  try {
+    fs.mkdirSync(path.join(root, '_voyage'));
+    const page = (n) => path.join(root, '_voyage', `${n}.md`);
+    fs.writeFileSync(page('florence'), '---\ntitle: Florence\ndate: 2025-05-31\nupdated: 2026-09-30 21:45  # its photographs last changed: how Recent Updates ranks it\n---\nupdated: in the body stays\n');
+    fs.writeFileSync(page('japan'), '---\ntitle: Japan\ndate: 2025-03-21\nsubgalleries: true\n---\nText.\n');
+    assert.equal(touchVoyage('florence', { root, stamp: '2026-10-10 17:00' }), '_voyage/florence.md');
+    assert.equal(fs.readFileSync(page('florence'), 'utf8'), '---\ntitle: Florence\ndate: 2025-05-31\nupdated: 2026-10-10 17:00  # its photographs last changed: how Recent Updates ranks it\n---\nupdated: in the body stays\n');
+    assert.equal(touchVoyage('japan/kyoto', { root, stamp: '2026-10-10 17:00' }), '_voyage/japan.md', 'a part moves its parent');
+    assert.match(fs.readFileSync(page('japan'), 'utf8'), /^date: 2025-03-21\nupdated: 2026-10-10 17:00  # its photographs last changed/m);
+    assert.equal(touchVoyage('lisbon', { root }), null, 'a voyage with no page yet is left for its pull request');
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
 });
 
 test('the command centre shows the album: each photo, where it goes, and one yes for the set', () => {
