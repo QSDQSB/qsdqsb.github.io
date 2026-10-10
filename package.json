@@ -60,6 +60,7 @@
     "photos:trash": "node scripts/photos/trash.mjs",
     "photos:locate": "node scripts/photos/locate.mjs",
     "photos:enrich": "node scripts/photos/enrich.mjs",
+    "photos:harvest": "node scripts/photos/harvest.mjs",
     "build": "npm run photos:fetch && npm run covers && npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll build",
     "serve": "npm run photos:fetch && npm run covers && npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll serve",
     "build:fast": "npm run photos:fetch && npm run covers && npm run geocode && RUBYOPT=\"-E utf-8:utf-8\" bundle exec jekyll build",

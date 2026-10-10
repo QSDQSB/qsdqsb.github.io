@@ -7,6 +7,8 @@
  *   findByFilename(names)       → Map<NAME, [{ id, filename, date }]>
  *   exportPhotos(ids, dir)      → each photo as edited in Photos (crop and all), full size, with its EXIF
  *   guardMemory()               → restart Photos when it holds more than the ceiling
+ *   albumItems, exportFromAlbum, tagInAlbum
+ *                               → the same, inside one album and nowhere else (photos:harvest)
  *
  * Dates come back as the camera's local wall-clock ISO string, the same
  * shape the manifests use for `taken`.
@@ -126,6 +128,70 @@ export function sameMoment(photosDate, taken) {
   if (/(Z|[+-]\d\d:?\d\d)$/.test(taken)) return Math.abs(here - new Date(taken).getTime()) < 1000;
   const gap = Math.abs(here - new Date(taken.slice(0, 19)).getTime());
   return gap <= 14 * 3600e3 && gap % 900e3 < 1000;
+}
+
+// ── One album only ───────────────────────────────────────────────────────────
+// photos:harvest reaches Photos through these and nothing else. Every script
+// below starts from the album by name, so an id that is not in it finds
+// nothing: the rest of the library is never listed, searched or exported.
+
+const inAlbum = (album, ids) => `set A to album ${q(album)}
+  set L to {}
+  repeat with i in {${ids.map(q).join(', ')}}
+    set end of L to (first media item of A whose id is (i as text))
+  end repeat`;
+
+/**
+ * What the album holds: id, file name, date (this Mac's clock), position,
+ * keywords and size, one record per item.
+ * @returns {{id, filename, date, lat, lng, keywords: string[], w, h}[]}
+ */
+export function albumItems(album) {
+  const text = osa(`tell application "Photos"
+  if not (exists album ${q(album)}) then error "no album named ${album.replace(/"/g, '')}"
+  set out to ""
+  repeat with m in (media items of album ${q(album)})
+    set loc to location of m
+    set la to "" & item 1 of loc
+    set lo to "" & item 2 of loc
+    set kw to keywords of m
+    set ks to ""
+    if kw is not missing value then
+      repeat with k in kw
+        set ks to ks & k & "|"
+      end repeat
+    end if
+    set out to out & (id of m) & tab & (filename of m) & tab & (((date of m) as «class isot») as string) & tab & la & tab & lo & tab & ks & tab & (width of m) & tab & (height of m) & linefeed
+  end repeat
+  return out
+end tell`);
+  const num = (s) => (s === '' || s === 'missing value' ? null : Number(s));
+  return text.split('\n').filter(Boolean).map((l) => {
+    const [id, filename, date, lat, lng, ks, w, h] = l.split('\t');
+    return { id, filename, date, lat: num(lat), lng: num(lng), keywords: ks.split('|').filter(Boolean), w: Number(w), h: Number(h) };
+  });
+}
+
+/** Export album items by id, as edited (or the camera file, `originals: true`). Ids outside the album fail. */
+export function exportFromAlbum(album, ids, dir, { originals = false } = {}) {
+  if (!ids.length) return;
+  osa(`tell application "Photos"
+  ${inAlbum(album, ids)}
+  export L to (POSIX file ${q(dir)})${originals ? ' with using originals' : ''}
+end tell`, 1800);
+}
+
+/** Add a keyword to album items, keeping the ones they carry. */
+export function tagInAlbum(album, ids, keyword) {
+  if (!ids.length) return;
+  osa(`tell application "Photos"
+  ${inAlbum(album, ids)}
+  repeat with m in L
+    set kw to keywords of m
+    if kw is missing value then set kw to {}
+    if kw does not contain ${q(keyword)} then set keywords of m to kw & {${q(keyword)}}
+  end repeat
+end tell`);
 }
 
 /**
