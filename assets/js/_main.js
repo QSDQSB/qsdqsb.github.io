@@ -649,3 +649,19 @@ document.querySelectorAll('[data-random-jump]').forEach(function(link) {
     }
   });
 });
+
+/* ==========================================================================
+   A photograph of the archive is not saved by a gesture (stage 7)
+   ========================================================================== */
+// Everywhere a print is shown (a book, the lightbox, Palette, Reverie, Drift, any page to come), it is
+// served from img.qsdqsb.com: a right-click or a drag on such a picture does nothing, and on Android a
+// long press is the same menu. The keyboard's menu opens on the focused control, never on the picture,
+// so it is left alone, as is the menu on a word, a link or the page. The iPhone's sheet is the CSS's.
+(function() {
+	var refuse = function(event) {
+		var t = event.target;
+		if (t instanceof HTMLImageElement && /^https:\/\/img\.qsdqsb\.com\//.test(t.currentSrc || t.src)) event.preventDefault();
+	};
+	document.addEventListener("contextmenu", refuse);
+	document.addEventListener("dragstart", refuse);
+})();

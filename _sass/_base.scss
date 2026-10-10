@@ -28,6 +28,13 @@ body {
   }
 }
 
+/* A photograph of the archive is not saved by a gesture (stage 7): no long-press sheet on an iPhone,
+   no drag in WebKit. The pointer's menu and the drag elsewhere are refused in _main.js, by the same host. */
+img[src^="https://img.qsdqsb.com/"] {
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+}
+
 a {
   color: $link-color;
   text-decoration: none;

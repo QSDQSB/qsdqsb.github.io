@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-10 · A right-click or a drag on a photograph does nothing, and on an iPhone a long press brings no sheet: a print is not saved by the gesture, in a book, the lightbox, Palette, Reverie and Drift; the menu on a word, a link or the page, and the keyboard's, is the browser's still (stage 7, Q6) · tier 2
 - 2026-10-09 · The masthead's menu and search buttons, the lightbox's and Drift's round tools and the hover tip are frosted at the site's one glass, 14 px at 120%, where they were 12 px (C05) · tier 1
 - 2026-10-06 · Nothing a reader sees: the shared pieces' catalogue gives the page change, the arrival and the curves as built, and four comments that said otherwise now say what the code does (the masthead's way back, the colour atlas, two in the palette page) (A09) · tier 0
 - 2026-10-06 · On a device or browser without WebGL, the colour vats on Palette, Reverie, Drift and Ridgway show a still version of themselves, their colours poured where the drawn vat pours them, instead of an empty circle (F041) · tier 2

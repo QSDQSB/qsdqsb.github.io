@@ -686,6 +686,61 @@ const JOURNEYS = [
     must(new URL(page.url()).pathname.includes('/drift/'), 'Escape closed search and also left Drift');
   } },
 
+  { id: 'prints-kept', name: 'A right-click or a drag on a print does nothing, and every other menu is the browser\'s', async run({ page, go }) {
+    // What each menu and drag met: refused (defaultPrevented) or left to the browser. A long press on a
+    // phone cannot be made by a program: the iPhone's sheet is the CSS's, checked by hand.
+    const watch = () => page.evaluate(() => { window.__met = []; for (const type of ['contextmenu', 'dragstart']) window.addEventListener(type, (e) => window.__met.push({ type, tag: e.target.tagName, refused: e.defaultPrevented })); });
+    const met = () => page.evaluate(() => window.__met.splice(0));
+    const rightClick = async (locator) => { const b = await locator.boundingBox(); must(b, 'nothing to right-click'); await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2, { button: 'right' }); };
+    const drag = (selector) => page.evaluate((s) => document.querySelector(s).dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true })), selector);
+    const one = (list, what) => { must(list.length === 1, `${what}: ${list.length} events, not one`); return list[0]; };
+
+    await go('/voyage/london/');
+    await watch();
+    const print = page.locator('.photobook-frame__print img').nth(1);
+    await print.scrollIntoViewIfNeeded();
+    await rightClick(print);
+    must(one(await met(), 'a right-click on a print').refused, "a right-click on a print opened the browser's menu");
+    await drag('.photobook-frame__print img');
+    must(one(await met(), 'a drag of a print').refused, 'a print could be dragged out of the book');
+    await rightClick(page.locator('.photobook-cover h1, .photobook-cover__title').first());
+    must(!one(await met(), 'a right-click on the title').refused, "the menu on the book's title was taken");
+    // The keyboard's menu (the menu key, Shift+F10) is a contextmenu aimed at the focused element: here the
+    // print's button, never its picture, so it is the browser's. Headless Chromium sends nothing for the key,
+    // so the event a browser sends is sent by hand.
+    await page.locator('.photobook-frame__print').nth(1).focus();
+    await page.evaluate(() => document.activeElement.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true })));
+    const key = await met();
+    must(key.length === 1 && key[0].tag === 'BUTTON', `the keyboard's menu met ${JSON.stringify(key)}, not the focused print's button`);
+    must(!key[0].refused, "the keyboard's menu on a focused print was taken");
+    await page.locator('.photobook-frame__print').nth(1).click();
+    await page.waitForFunction(() => document.querySelector('.photobook-lightbox')?.open, null, { timeout: 8000 }).catch(() => {});
+    await met();
+    await page.waitForSelector('.photobook-lightbox img[src*="img.qsdqsb.com"]', { timeout: 8000 }).catch(() => {});
+    await rightClick(page.locator('.photobook-lightbox img[src*="img.qsdqsb.com"]').last());
+    must(one(await met(), 'a right-click in the lightbox').refused, "a right-click on the lightbox's print opened the browser's menu");
+
+    await go('/palette/');
+    await watch();
+    await page.locator('.palette-voyages__list a[href^="#"]').first().click().catch(() => {});
+    await page.waitForSelector('.palette-card__print img', { timeout: 8000 }).catch(() => {});
+    const card = page.locator('.palette-card__print img').first();
+    must(await card.count() === 1, 'Palette drew no print');
+    await card.scrollIntoViewIfNeeded();
+    await rightClick(card);
+    must(one(await met(), "a right-click on Palette's print").refused, "a right-click on a print on Palette opened the browser's menu");
+    await rightClick(page.locator('.colour-next a').first());
+    must(!one(await met(), 'a right-click on a text link').refused, 'the menu on a text link was taken');
+
+    await go('/drift/');
+    await watch();
+    await page.waitForSelector('.colour-drift__print', { timeout: 15000 }).catch(() => {});
+    await rightClick(page.locator('.colour-drift__print').last());
+    // Drift's ways forward and back are buttons over the print: the menu meets a button, which has no image in it.
+    const d = one(await met(), "a right-click on Drift's print");
+    must(d.refused || d.tag !== 'IMG', "a right-click on Drift's print opened the browser's menu on the picture");
+  } },
+
   { id: 'lost', name: 'A wrong address gets the 404 page with ways back', async run({ page, go }) {
     const status = await go('/no-such-page-here/', { expect: 404 });
     must(status === 404, `a missing page answered ${status}`);

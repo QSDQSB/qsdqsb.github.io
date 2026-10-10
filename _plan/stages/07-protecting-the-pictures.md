@@ -1,7 +1,6 @@
 # Stage 7 · Protecting the pictures
 
-**Status:** planned. The goal is the owner's (Q6, answered 2026-10-01). Nothing is designed: this is
-the frame, and the trial that comes before the owner is asked anything more. **Tier:** 2.
+**Status:** in review: tried and built 2026-10-10, as one pull request; the owner's merge is the yes. The goal is the owner's (Q6, answered 2026-10-01). **Tier:** 2.
 
 ## Goal
 
@@ -165,3 +164,21 @@ The owner's pick is recorded here. `npm run gate:full` passes with no baseline r
 reader sees at rest has changed. The new journey passes in Chromium, and the iPhone check passes in
 Safari's engine. The reviewer returns PASS, having walked the seven lines above. What was proved only
 by hand (the long press on an iPhone and on Android) is named, with who did it and when.
+
+## Log
+
+- 2026-10-10 · Tried and built. The trial left one honest way, so it arrives as one pull request, not a
+  choice. Keyed on the host, not the page: a picture served from `img.qsdqsb.com` refuses the
+  pointer's menu and a drag (`assets/js/_main.js`, one delegated listener each) and, on an iPhone, the
+  long-press sheet (`_sass/_base.scss`, `-webkit-touch-callout: none`). No layer, so "nothing laid
+  over them" is untouched. Proved in Chromium (journey `prints-kept`, which fails with the guard
+  off) and in Safari's engine (a real right-click on a print, refused). The keyboard's menu opens on
+  the focused print's button, not the picture, and is left alone; so is the menu on a title and on a
+  text link. What the walk of the built pages found: every archive photograph on a book, Palette,
+  Reverie and Drift is covered; a post's own pictures (`/images/…`, Shihuqiao's three) and the logos are
+  not; Home's and the Voyage index's cards are backgrounds, which have no "Save image" already. Not
+  proved by a program: a long press on a real iPhone and on Android (Android's is the same menu
+  event, so it should be refused); the owner tries it on their phone before merging. A linked print
+  on Palette and Reverie loses "Open link in new tab" from its menu on the picture; the keyboard's
+  menu on the link still has it. What still gets through: a screenshot, the browser's tools, the
+  address in the source. Weight: about 0.3 KB of script, three lines of CSS.
