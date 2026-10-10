@@ -101,6 +101,44 @@ function ideaCard(i) {
     </article>`;
 }
 
+// From the album (photos:harvest): the photographs the owner gathered in Apple Photos, each with
+// where Claude would put it. Read from this machine's last look; the thumbnails are drawn into the
+// page (no metadata, so no position), since the page is private. "Bring them in" is the owner's yes
+// for exactly that set: it stores the destinations under the plan's hash, and a session records it
+// with `photos:harvest -- go`, which refuses a hash the plan no longer has.
+// A plan from elsewhere (PLAN_DIR, the tests) has no album on this machine: HARVEST_DIR names one.
+const HARVEST = process.env.HARVEST_DIR ? path.resolve(process.env.HARVEST_DIR) : process.env.PLAN_DIR ? null : path.join(ROOT, '.photos-local', 'harvest');
+const readLocal = (f) => { try { return HARVEST && JSON.parse(fs.readFileSync(path.join(HARVEST, f), 'utf8')); } catch { return null; } };
+const harvest = readLocal('plan.json'), harvestLast = readLocal('last.json');
+const harvestWaiting = (harvest?.items || []).filter((i) => i.status === 'waiting');
+const thumbOf = async (id) => {
+  const f = path.join(HARVEST, 'thumbs', `${id.replace(/[^A-Za-z0-9-]/g, '_')}.jpg`);
+  if (!fs.existsSync(f)) return '';
+  const { default: sharp } = await import('sharp');
+  return `data:image/jpeg;base64,${(await sharp(f).resize(360, 360, { fit: 'inside' }).jpeg({ quality: 62 }).toBuffer()).toString('base64')}`;
+};
+const thumbs = Object.fromEntries(await Promise.all(harvestWaiting.map(async (i) => [i.id, await thumbOf(i.id)])));
+const CONFIDENCE = { sure: ['ok', 'Sure'], likely: ['warn', 'Likely'], decided: ['ok', 'Judged'], open: ['bad', 'Open'] };
+function albumCard(i) {
+  const where = [i.place?.landmark, i.place?.city, i.place?.country].filter(Boolean).join(', ');
+  const [tone, word] = CONFIDENCE[i.confidence] || ['', i.confidence];
+  const options = [...new Set([...(harvest.voyages || []), ...(i.gallery && i.gallery !== 'hold' ? [i.gallery] : [])])].sort();
+  return `<article class="shot">
+      ${thumbs[i.id] ? `<img src="${thumbs[i.id]}" alt="${esc(i.frame)}${where ? `, ${esc(where)}` : ''}" loading="lazy">` : '<div class="nothumb"></div>'}
+      <div>
+        <h3><span class="id">${esc(i.frame)}</span>${esc(String(i.taken || '').slice(0, 10))}</h3>
+        ${where ? `<p class="muted">${esc(where)}</p>` : ''}
+        <label class="label" for="to-${esc(i.id)}" style="display:block;margin-top:12px">Goes to <span class="chip ${tone}">${esc(word)}</span></label>
+        <select class="to" id="to-${esc(i.id)}" data-id="${esc(i.id)}" data-proposed="${esc(i.gallery || '')}">
+          ${i.gallery ? '' : '<option value="" selected>Choose a voyage…</option>'}
+          ${options.map((g) => `<option value="${esc(g)}"${g === i.gallery ? ' selected' : ''}>${esc(g)}${harvest.voyages.includes(g) ? '' : ' (new)'}</option>`).join('')}
+          <option value="hold"${i.gallery === 'hold' ? ' selected' : ''}>Hold: leave it in the album</option>
+        </select>
+        <p class="muted" style="margin-top:8px">${esc(i.why || '')}</p>
+      </div>
+    </article>`;
+}
+
 // The page is built before the publish is recorded, so "the command centre is behind" would be baked
 // into every copy of it (F053). That warning is for sessions, not for the page.
 const pageWarnings = state.warnings.filter((w) => !/^The command centre is behind/.test(w));
@@ -233,6 +271,13 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
 .md table { min-width: 460px; }
 .md blockquote { margin: 14px 0; padding-left: 14px; border-left: 2px solid var(--brass); color: var(--ink); font: italic 500 1.05rem/1.45 var(--display); }
 .tick { display: inline-block; width: 0.8em; height: 0.8em; margin-right: 0.5em; border: 1px solid var(--ink-3); vertical-align: -0.05em; }
+.album { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 18px; margin-top: 18px; }
+.shot { display: grid; gap: 12px; align-content: start; padding-bottom: 16px; border-bottom: 1px solid var(--rule); }
+.shot img, .shot .nothumb { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 3px; background: var(--ground-3); display: block; }
+.shot .id { font: 500 0.78rem/1 var(--mono); color: var(--ink-3); margin-right: 8px; }
+.shot .chip { margin-left: 6px; letter-spacing: 0.1em; }
+.to { width: 100%; margin-top: 8px; font: 400 0.95rem/1.3 var(--ui); color: var(--ink); background: var(--ground-2); border: 1px solid var(--rule); border-radius: 4px; padding: 9px 10px; }
+.bring { margin-top: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 .tick[data-done="true"] { background: var(--yes); border-color: var(--yes); }
 </style>
 <div class="sheet">
@@ -260,6 +305,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     <button type="button" class="chip ${state.errors.length ? 'bad' : 'ok'}" data-to="h-now">${state.errors.length ? `Plan broken in ${state.errors.length}` : 'Plan sound'}</button>
     <button type="button" class="chip ${state.queue.length ? 'warn' : ''}" data-to="h-queue">${state.queue.length} waiting on you</button>
     <button type="button" class="chip ${state.ideas.some((i) => i.status === 'shaped') ? 'warn' : ''}" data-to="h-ideas">${state.ideas.length} ideas · ${state.ideas.filter((i) => i.status === 'shaped').length} shaped for you</button>
+    ${harvest ? `<button type="button" class="chip ${harvestWaiting.length ? 'warn' : ''}" data-to="h-album">${harvestWaiting.length} in the album</button>` : ''}
     <button type="button" class="chip ${requestsOpen.length ? 'warn' : ''}" data-to="h-req">${requestsOpen.length} of your requests open</button>
     <button type="button" class="chip ${state.inbox > 25 ? 'warn' : ''}" data-to="h-find">${state.inbox} in the inbox</button>
     <button type="button" class="chip" data-to="doc-features">${state.features.length} features · ${state.features.filter((f) => f.journeys.length).length} walked by a journey</button>
@@ -288,6 +334,17 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     </article>`).join('\n')}
     ${choices.length ? `<p class="label" style="margin-top:28px">Choices with prototypes</p><ul class="list">${choices.map(([id, url]) => `<li><a href="${esc(url)}">${esc(id)}</a></li>`).join('')}</ul>` : ''}
   </section>
+
+  ${harvest ? `<section aria-labelledby="h-album">
+    <p class="label">From the album · ${esc(harvest.album)}</p>
+    <h2 id="h-album">${harvestWaiting.length ? `${harvestWaiting.length} photograph${harvestWaiting.length === 1 ? '' : 's'} waiting to come in` : harvest.items.length ? 'Everything in the album is on the site' : 'The album is empty'}</h2>
+    <p class="sub">${harvestWaiting.length
+      ? 'Each sits where Claude would put it: beside the published photo taken nearest in time, or with the voyage of its city, and judged by eye where neither settles it. Change any of them; Hold leaves a photo in the album. <b>Bring them in</b> is your yes to publish exactly these: they are pulled into their voyages, pushed, and tagged in Photos with where they went.'
+      : harvest.items.length ? 'Empty it in Photos when you like: open the album, ⌘A, then Delete (⌫) and Remove from Album. Not ⌘⌫, which deletes from the library.' : 'Put photographs you want on the site into it; the next look brings them here.'}</p>
+    <p class="muted" style="margin-top:6px">Looked at ${esc(String(harvest.looked).slice(0, 16).replace('T', ' '))} UTC${harvestLast ? ` · last brought in ${esc(String(harvestLast.at).slice(0, 10))}: ${esc(harvestLast.done.map((d) => `${d.photos.length} to ${d.gallery}`).join(', ') || 'nothing')}` : ''}</p>
+    ${harvestWaiting.length ? `<div class="album">${harvestWaiting.map(albumCard).join('\n')}</div>
+    <div class="bring"><button type="button" class="send" id="bring" data-hash="${esc(harvest.hash)}">Bring them in</button><p class="status" id="bring-status" role="status"></p></div>` : ''}
+  </section>` : ''}
 
   <section aria-labelledby="h-ideas">
     <p class="label">Ideas</p>
@@ -480,6 +537,26 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
       .then(function () { box.value = ""; tell("Kept. The next session files it and brings it back shaped."); queueTell("a new idea", "added"); }, function () { tell("Could not store it here. Say it to Claude in chat instead."); })
       .then(function () { send.disabled = false; });
   });
+  // Bring them in: the owner's yes for the album, as shown. Stored under the plan's hash, so a yes
+  // given on one set is never read as a yes for another; then Claude is told, if a session listens.
+  var bring = document.getElementById("bring"), bringSay = function (t) { var el = document.getElementById("bring-status"); if (el) el.textContent = t; };
+  if (bring) bring.addEventListener("click", function () {
+    var picks = {}, open = [];
+    document.querySelectorAll("select.to").forEach(function (s) { if (!s.value) open.push(s.id.slice(3)); else picks[s.dataset.id] = s.value; });
+    if (open.length) { bringSay("Choose a voyage (or Hold) for every photograph first."); return; }
+    if (!db) { bringSay("This view cannot store it. Reload the command centre and tap again: nothing is pushed until a tap is stored."); return; }
+    var hash = bring.dataset.hash, doc = { hash: hash, destinations: picks, at: new Date().toISOString() };
+    bring.disabled = true; bringSay("Saving…");
+    db.doc("harvest/" + hash).set(doc).then(function () {
+      var n = Object.keys(picks).filter(function (k) { return picks[k] !== "hold"; }).length;
+      var text = "The owner said bring in the album: plan " + hash + ", " + n + " photograph" + (n === 1 ? "" : "s") + ". Please read this page's harvest store and run /harvest to bring them in.";
+      if (comments && !off && can === "available") {
+        return comments.anchorFor(document.getElementById("h-album")).then(function (a) { return comments.sendToClaude({ anchor: a, text: text }); })
+          .then(function () { bringSay("Yes recorded, and Claude was told. They come in once the session has pushed them."); }, function () { bringSay("Yes recorded. No session heard it just now: the next session brings them in."); });
+      }
+      bringSay("Yes recorded. The next session brings them in (or say /harvest in one).");
+    }, function () { bring.disabled = false; bringSay("Could not save it. Reload the command centre and tap again: nothing is pushed until a tap is stored."); });
+  });
   if (window.claude && window.claude.use) window.claude.use("db").then(function (ns) {
     if (!ns) return; db = ns;
     db.collection("ideas").onSnapshot(function (snap) {
@@ -494,6 +571,11 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
       draw();
       if (!document.getElementById("status").textContent) say("Your answers are saved with this page.");
     }, function () { db = null; say("Saved in this browser only."); });
+    if (bring) try { db.doc("harvest/" + bring.dataset.hash).onSnapshot(function (d) {
+      var v = d && d.exists ? d.data() : null; if (!v) return;
+      Object.keys(v.destinations || {}).forEach(function (id) { var s = document.getElementById("to-" + id); if (s) s.value = v.destinations[id]; });
+      bring.disabled = true; bringSay("You said bring them in on " + String(v.at || "").slice(0, 16).replace("T", " ") + ". They come in with the next session.");
+    }, function () {}); } catch (e) { /* a store without documents: the button still works */ }
   }, function () {});
 })();
 </script>
