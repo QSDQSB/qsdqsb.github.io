@@ -76,6 +76,14 @@ photos:
     suggested: Regent Street, London
     gps: missing
     source: visual guess
+  dscf3744:
+    suggested: Whitehall Garden, London
+    landmark: Whitehall Garden
+    street: Horse Guards Avenue
+    city: City of Westminster
+    country: United Kingdom
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf6358:
     suggested: Middlesex Street, London
     street: Middlesex Street

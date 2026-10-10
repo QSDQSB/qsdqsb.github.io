@@ -18,6 +18,14 @@ photos:
     country: Italy
     gps: present
     source: OpenStreetMap reverse geocode
+  dscf2632:
+    suggested: Santa Maria del Fiore, Florence
+    landmark: Santa Maria del Fiore
+    street: Piazza Del Duomo
+    city: Florence
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf2732:
     suggested: Michelangelo Square, Florence
     landmark: Michelangelo Square
@@ -38,6 +46,14 @@ photos:
     suggested: Basilica di San Lorenzo, Florence
     landmark: Basilica di San Lorenzo
     street: Piazza San Lorenzo
+    city: Florence
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf2760:
+    suggested: Basilica di San Lorenzo, Florence
+    landmark: Basilica di San Lorenzo
+    street: Piazza di San Lorenzo
     city: Florence
     country: Italy
     gps: present

@@ -42,3 +42,11 @@ photos:
     country: Singapore
     gps: present
     source: OpenStreetMap reverse geocode
+  dscf7380:
+    suggested: Orchard Boulevard, Singapore
+    landmark: Orchard Boulevard
+    street: Orchard Boulevard
+    city: Singapore
+    country: Singapore
+    gps: present
+    source: OpenStreetMap reverse geocode
