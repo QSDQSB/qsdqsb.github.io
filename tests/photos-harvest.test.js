@@ -146,6 +146,8 @@ test('the command centre shows the album: each photo, where it goes, and one yes
     assert.match(section, /<option value="hold">Hold: leave it in the album<\/option>/);
     assert.ok(section.includes('&lt;Lisbon&gt;') && !section.includes('<Lisbon>'), 'the why is text, never markup');
     assert.match(section, /id="bring" data-hash="abc123"/, 'the yes is for this plan and no other');
+    // A quote escaped for the template once broke every tap on the page (2026-10-10): the script must parse.
+    for (const js of page.split('<script>').slice(1).map((x) => x.split('</script>')[0])) assert.doesNotThrow(() => new Function(js), 'the page\'s script parses');
     assert.ok(!section.includes('DSCF7443'), 'a photo already on the site is not asked about');
     const targets = [...page.split('<nav class="jump"')[1].split('</nav>')[0].matchAll(/data-to="([^"]+)"/g)].map((m) => m[1]);
     assert.ok(targets.includes('h-album'));
