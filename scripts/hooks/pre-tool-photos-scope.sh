@@ -13,7 +13,9 @@
 #   node …/enrich.mjs, …/ingest.mjs, apple-photos  enrich searches every item in the library by
 #   npm run photos:enrich, photos:ingest           name; ingest runs it (harvest runs ingest
 #                                                  itself, without enrich: its child, unseen here)
-#   a path into *.photoslibrary or Photos.sqlite   the library's own files, anywhere
+#   a path into *.photoslibrary or Photos.sqlite   the library's own files, anywhere (a path, not
+#                                                  the word: grep for the name is not refused)
+#   the same inside $(…), backquotes or bash -c
 #   computer use that names Photos                 a screenshot would show the whole library
 #
 # The owner's own terminal is untouched. Exit 2 refuses the call and says why; 0 lets it through.
@@ -36,8 +38,11 @@ tool, i = p.get("tool_name", ""), p.get("tool_input") or {}
 text = i["command"] if isinstance(i.get("command"), str) else json.dumps(i)
 low = text.lower()
 
-if ".photoslibrary/" in low or low.rstrip("\" ").endswith(".photoslibrary") or "photos.sqlite" in low:
-    if tool in ("Bash", "Read", "Grep", "Glob"):
+import re
+LIBRARY = re.compile(r"\.photoslibrary(/|\b)|/photos\.sqlite\b|database/photos\.sqlite")
+if LIBRARY.search(low.replace("\\ ", " ")) and tool in ("Bash", "Read", "Grep", "Glob"):
+    # A path into the library, not the word: grep for "Photos.sqlite" names nothing on disk.
+    if tool != "Grep" or LIBRARY.search(json.dumps(i.get("path", "")).lower()):
         refuse("the Photos library'"'"'s own files are outside the album.")
 
 if tool.startswith("mcp__computer-use__"):
@@ -48,39 +53,51 @@ if tool.startswith("mcp__computer-use__"):
 if tool != "Bash":
     sys.exit(0)
 
-try:
-    lex = shlex.shlex(text, posix=True, punctuation_chars=";&|")
-    lex.whitespace_split = True
-    tokens = list(lex)
-except ValueError:
-    tokens = text.split()
-
-segments, cur = [], []
-for t in tokens + [";"]:
-    if t and set(t) <= set(";&|"):
-        if cur: segments.append(cur)
-        cur = []
-    else:
-        cur.append(t)
-
 SCRIPTING = {"osascript", "shortcuts", "automator", "osxphotos"}
-for seg in segments:
-    words = [w for w in seg if "=" not in w.split("/")[0] or w.startswith("-")]  # drop VAR=value prefixes
-    while words and words[0] in ("sudo", "env", "time", "exec", "command", "nohup"):
-        words = words[1:]
-    if not words:
-        continue
-    cmd = os.path.basename(words[0]).lower()
-    args = [w.lower() for w in words[1:]]
-    if cmd in SCRIPTING:
-        refuse("scripting apps directly (" + cmd + ") could reach the whole Photos library.")
-    if cmd in ("node", "bun", "deno", "npx"):
-        if any(a.endswith(("enrich.mjs", "ingest.mjs")) for a in args):
-            refuse("enrich (and ingest, which runs it) searches the whole library by name.")
-        if any("apple-photos" in a for a in args):
-            refuse("the Photos helpers are used only by harvest.")
-    if cmd in ("npm", "pnpm", "yarn"):
-        if any(a in ("photos:enrich", "photos:ingest") for a in args):
-            refuse("enrich (and ingest, which runs it) searches the whole library by name.")
+SHELLS = {"bash", "sh", "zsh", "dash"}
+
+def judge(text, depth=0):
+    # A command run inside another: $(…) or backquotes.
+    for inner in re.findall(r"\$\(([^()]*)\)|`([^`]*)`", text):
+        judge(inner[0] or inner[1], depth + 1)
+    try:
+        lex = shlex.shlex(text, posix=True, punctuation_chars=";&|\n")
+        lex.whitespace = " \t\r"
+        lex.whitespace_split = True
+        tokens = list(lex)
+    except ValueError:
+        tokens = text.split()
+    segments, cur = [], []
+    for t in tokens + [";"]:
+        if t and set(t) <= set(";&|\n"):
+            if cur: segments.append(cur)
+            cur = []
+        else:
+            cur.append(t)
+    for seg in segments:
+        words = list(seg)
+        while words and re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", words[0]):  # VAR=value before a command
+            words = words[1:]
+        while words and words[0] in ("sudo", "env", "time", "exec", "command", "nohup"):
+            words = words[1:]
+        if not words:
+            continue
+        cmd = os.path.basename(words[0]).lower()
+        args = [w.lower() for w in words[1:]]
+        if cmd in SCRIPTING:
+            refuse("scripting apps directly (" + cmd + ") could reach the whole Photos library.")
+        if cmd in SHELLS and "-c" in args and depth < 3:
+            at = [w.lower() for w in words].index("-c")
+            if at + 1 < len(words): judge(words[at + 1], depth + 1)
+        if cmd in ("node", "bun", "deno", "npx"):
+            if any(a.endswith(("enrich.mjs", "ingest.mjs")) for a in args):
+                refuse("enrich (and ingest, which runs it) searches the whole library by name.")
+            if any("apple-photos" in a for a in args):
+                refuse("the Photos helpers are used only by harvest.")
+        if cmd in ("npm", "pnpm", "yarn"):
+            if any(a in ("photos:enrich", "photos:ingest") for a in args):
+                refuse("enrich (and ingest, which runs it) searches the whole library by name.")
+
+judge(text)
 sys.exit(0)
 '
