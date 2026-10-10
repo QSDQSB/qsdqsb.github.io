@@ -74,10 +74,42 @@ photos:
     country: Japan
     gps: present
     source: OpenStreetMap reverse geocode
+  dscf7548:
+    suggested: Enryaku Temple, Ōtsu
+    landmark: Enryaku Temple
+    street: Grand Lecture Hall
+    city: Ōtsu
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7550:
+    suggested: Enryaku Temple, Ōtsu
+    landmark: Enryaku Temple
+    street: Grand Lecture Hall
+    city: Ōtsu
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7607:
+    suggested: Shimogamo Kyoto Station Line, Kyoto
+    landmark: Shimogamo Kyoto Station Line
+    street: 下鴨東通
+    city: Kyoto
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
   dscf7651:
     suggested: Hōsen Temple, Kyoto
     landmark: Hōsen Temple
     street: 大原勝林院町
+    country: Japan
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf7664:
+    suggested: Hōsen Temple, Kyoto
+    landmark: Hōsen Temple
+    street: 未明橋
+    city: Kyoto
     country: Japan
     gps: present
     source: OpenStreetMap reverse geocode
