@@ -70,6 +70,7 @@
     "check:vocabulary": "python3 scripts/check-vocabulary-ratchet.py",
     "check:js-sync": "python3 scripts/check-js-sync.py",
     "check:frontmatter": "node scripts/check-frontmatter.js",
+    "check:image-privacy": "node scripts/check-image-privacy.mjs",
     "check:gallery": "node scripts/check-gallery-integrity.js",
     "check:journeys": "node scripts/check-journeys.mjs",
     "check:plan": "node scripts/check-plan.mjs",
