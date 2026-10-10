@@ -209,6 +209,7 @@ Mechanical checks, all scoped to **changes vs `HEAD`** — never the existing ba
 | `check-vocabulary-ratchet.py` | `check:vocabulary` | A new literal radius, curve, blur, hand-made focus ring or z-index, or a curve that overshoots: counts against HEAD that may only fall (0002's guard) |
 | `check-responsive-policy.sh` | `check:responsive-policy` | Raw breakpoints outside `_responsive-policy.scss` |
 | `check-seo-descriptions.py` | `check:seo` | Pages with no real meta description |
+| `check-image-privacy.mjs` | `check:image-privacy` | A committed picture whose EXIF says where it was taken (every tracked picture, not only changes: the backlog is nil): `images/` is served as committed, and a GPS position can name a home (fifteen did until 2026-10-10) |
 | `check-mobile-overflow.mjs` | `check:mobile-overflow` | A page wider than an iPhone in Safari's engine (WebKit at 390 and 320 px) — Chromium, and so the pixel diff, forgives what Safari does not. Needs a served site and `npx playwright install webkit` |
 | `check-new-components.sh` | — | A new component family styled in a page's partial instead of reusing `_components.scss` (a nudge, never a failure) |
 | `check-journeys.mjs` | `check:journeys` | A reader's route that no longer works: a print that does not open, a search that finds nothing, a Back that leaves the page. Walks the built site in Chromium |

@@ -69,6 +69,7 @@ check "Breakpoint policy"        bash scripts/check-responsive-policy.sh
 check "Single-use variables"     python3 scripts/check-single-use-variables.py --new-only
 check "House style"              python3 scripts/check-house-style.py --new-only
 check "Frontmatter contracts"    node scripts/check-frontmatter.js
+check "No picture says where"    node scripts/check-image-privacy.mjs
 # The manifests come from R2 (npm run photos:fetch). Where they cannot be fetched (CI has no key)
 # the check is skipped, said so, and the rest of the gate still stands.
 if [ -f _data/photo_manifests/_index.json ]; then
