@@ -14,7 +14,7 @@ Last reviewed: 2026-10-02.
 | 4 | [Voyage and the cards](stages/04-voyage-and-cards.md) | The doorway to the photographs, refurbished | designing (branch `gallery/voyage-doors`) | 2 |
 | 5 | [Bestiary](stages/05-bestiary.md) | A page that exists; first, a holding page worth arriving at | idea (the holding page is decided, and comes as a choice) | 2 |
 | 6 | [Posts and About](stages/06-posts-and-about.md) | Writing and the person, in the house's own language | idea | 2 |
-| 7 | [Protecting the pictures](stages/07-protecting-the-pictures.md) | Nothing visible, if done well: a print is not saved by a right-click, a drag or a long press | planned (a trial first) | 2 |
+| 7 | [Protecting the pictures](stages/07-protecting-the-pictures.md) | Nothing visible, if done well: a print is not saved by a right-click, a drag or a long press | in review (tried and built 2026-10-10; one pull request) | 2 |
 | 8 | [A palette as an image](stages/08-palette-as-image.md) | A palette that can be shared | planned (a study first) | 2 |
 | 9 | [Weight and scale](stages/09-weight-and-scale.md) | A site that stays fast as the archive grows | planned | 0 |
 | 10 | [Tags, from scratch](stages/10-tags.md) | Tag pages worth using | idea | 2 |
