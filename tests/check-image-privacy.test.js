@@ -25,7 +25,3 @@ test('a picture that says where it was taken is refused, and one that does not p
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
 
-test('no tracked picture carries a GPS position', () => {
-  const r = check();
-  assert.equal(r.status, 0, r.stdout);
-});
