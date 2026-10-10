@@ -43,3 +43,7 @@ tests/visual/diff/
 
 # The plan is tracked; anything not for a public repo goes here.
 /_plan/private/
+
+# Wrangler keeps a Worker's local secrets here; never committed.
+.dev.vars
+.dev.vars.*
