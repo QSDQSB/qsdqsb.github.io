@@ -75,6 +75,17 @@
     ]
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Read|Grep|Glob|mcp__computer-use__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/hooks/pre-tool-photos-scope.sh"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write|MultiEdit",
