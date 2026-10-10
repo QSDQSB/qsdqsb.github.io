@@ -177,7 +177,7 @@ test('bring does nothing without a yes for the plan as it stands', () => withPla
   assert.ok(!fs.existsSync(path.join(dir, 'inbox')), 'nothing was staged');
 }));
 
-test('a voyage\'s updated: moves to now, kept in its own shape or added under its date', async () => {
+test('a voyage\'s updated: moves to now, a bare date and time, or is added under its date', async () => {
   const os = require('node:os');
   const { touchVoyage } = await import('../scripts/photos/harvest.mjs');
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'touch-'));
@@ -187,9 +187,9 @@ test('a voyage\'s updated: moves to now, kept in its own shape or added under it
     fs.writeFileSync(page('florence'), '---\ntitle: Florence\ndate: 2025-05-31\nupdated: 2026-09-30 21:45  # its photographs last changed: how Recent Updates ranks it\n---\nupdated: in the body stays\n');
     fs.writeFileSync(page('japan'), '---\ntitle: Japan\ndate: 2025-03-21\nsubgalleries: true\n---\nText.\n');
     assert.equal(touchVoyage('florence', { root, stamp: '2026-10-10 17:00' }), '_voyage/florence.md');
-    assert.equal(fs.readFileSync(page('florence'), 'utf8'), '---\ntitle: Florence\ndate: 2025-05-31\nupdated: 2026-10-10 17:00  # its photographs last changed: how Recent Updates ranks it\n---\nupdated: in the body stays\n');
+    assert.equal(fs.readFileSync(page('florence'), 'utf8'), '---\ntitle: Florence\ndate: 2025-05-31\nupdated: 2026-10-10 17:00\n---\nupdated: in the body stays\n');
     assert.equal(touchVoyage('japan/kyoto', { root, stamp: '2026-10-10 17:00' }), '_voyage/japan.md', 'a part moves its parent');
-    assert.match(fs.readFileSync(page('japan'), 'utf8'), /^date: 2025-03-21\nupdated: 2026-10-10 17:00  # its photographs last changed/m);
+    assert.match(fs.readFileSync(page('japan'), 'utf8'), /^date: 2025-03-21\nupdated: 2026-10-10 17:00\nsubgalleries: true$/m);
     assert.equal(touchVoyage('lisbon', { root }), null, 'a voyage with no page yet is left for its pull request');
   } finally { fs.rmSync(root, { recursive: true, force: true }); }
 });
