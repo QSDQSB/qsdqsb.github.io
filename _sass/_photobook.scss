@@ -59,9 +59,7 @@
   // The inks' values stand in where a page has not set them (the masthead's glosses, on any page).
   border: 1px solid var(--photobook-glass-edge, rgba(255, 255, 255, 0.12));
   border-radius: 6px;
-  background: rgba(12, 12, 16, 0.82);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  @include dark-glass-fill;
   color: var(--photobook-ink, #{$lighter-gray});
   font: 500 0.6rem/1 $barlow-font-family;
   letter-spacing: 0.14em;

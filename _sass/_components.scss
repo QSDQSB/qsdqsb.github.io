@@ -122,8 +122,7 @@ qsd-cat::part(say) {
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: $border-radius;
   background: var(--photobook-button);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  @include backdrop-blur($glass-blur);
   color: $primary-color;
   cursor: pointer;
   transition: background 0.3s $cubic-bezier-smooth, color 0.3s $cubic-bezier-smooth;

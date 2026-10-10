@@ -218,7 +218,7 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
 - [ ] C04, under the threshold · A timing within a fifth of its step moves onto it (0.28 s to
       `base`); bare `ease` and the ad hoc curves go to the two curves where the duration does not
       change. Anything further is in "Shown to the owner first".
-- [ ] C05, under the threshold · `control` (12 px) folds into `glass` (14 px): 2 px, 17 per cent.
+- [x] C05, under the threshold · Done 2026-10-09: the four 12 px blurs (the masthead's menu and search buttons, the round tool of the lightbox and Drift, the hover tip) are on `$glass-blur`, and `$nav-action-blur` is gone; the saturation goes from 100 to 120 per cent with the step (0009, Glass), at the relative threshold. The pixel diff is clean, so no baseline moved; the hover tip takes the shared `dark-glass-fill`. As first written: `control` (12 px) folds into `glass` (14 px): 2 px, 17 per cent.
 - [ ] C06 · Hand-written labels onto `eyebrow`.
 - [ ] C12 · Small dialects swept once the scales exist: hover direction, dates, ellipses, rules, one `scroll-padding-top`.
 
