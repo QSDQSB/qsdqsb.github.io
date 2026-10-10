@@ -73,7 +73,7 @@ In `_sass/_variables.scss`, as [0002](../_plan/decisions/0002-one-control-vocabu
 | Corners | `$radius-none` 0 (a print) · `$radius-hair` 3px · `$radius-picture` 8px (a picture inside an article) · `$border-radius` 10px (a control, a card, a panel) · `$radius-large` 18px (a card that is the scene) · `$radius-pill` 999px · `$radius-round` 50% (dots and discs, not a control; the nav buttons and the quiet icon button still built so wait for the corner sorting, 0009 "Not settled") |
 | Durations | `$duration-fast` 0.15s · `$duration-base` 0.3s (a hover, a card's lift) · `$duration-slow` 0.6s (a print developing, a panel moving) · `$duration-arrive` 0.7s (words arriving) · `$duration-cover` 1s (the wide cover's words; `$cubic-bezier-default` carries it) · `$duration-scene` 1.1s and over (a room's light, an opening) |
 | Shadows | `$shadow-rest` (a card at rest) · `$shadow-lifted` (a card under the pointer) |
-| Glass | `$glass-blur` 14px at 120% (the default) · `$glass-blur-thin` 6px (a small mark over a picture or code). The Photobook's bar and panel (18px, 24px) are inherited as built |
+| Glass | `$glass-blur` 14px at 120% (the default) · `$glass-blur-thin` 6px (a small mark over a picture or code). 0002's `control` depth (12px) is folded into the default: the masthead's two buttons, the round tool and the hover tip are on `$glass-blur`. The Photobook's bar and panel (18px, 24px) are inherited as built |
 
 ## Motion
 
