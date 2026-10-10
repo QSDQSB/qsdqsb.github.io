@@ -206,9 +206,10 @@ export function touchVoyage(gallery, { root = ROOT, stamp = nowStamp() } = {}) {
   const page = [path.join(root, '_voyage', `${parent}.md`)].find((f) => fs.existsSync(f));
   if (!page) return null;
   const text = fs.readFileSync(page, 'utf8');
-  const next = /^updated:.*$/m.test(text.split(/\n---/)[0])
-    ? text.replace(/^updated:[^#\n]*(#.*)?$/m, (_, c) => `updated: ${stamp}${c ? `  ${c}` : ''}`)
-    : text.replace(/^(date:.*)$/m, `$1\nupdated: ${stamp}  # its photographs last changed: how Recent Updates ranks it`);
+  const head = text.split(/\n---/)[0];
+  const next = /^updated:.*$/m.test(head)
+    ? text.replace(/^updated:.*$/m, `updated: ${stamp}`)
+    : text.replace(/^(date:.*)$/m, `$1\nupdated: ${stamp}`);
   fs.writeFileSync(page, next);
   return path.relative(root, page);
 }
