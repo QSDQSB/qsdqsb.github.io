@@ -24,7 +24,12 @@ isn't enough or something misbehaves.
 ## Ground rules (agents: read these first)
 
 - **Never push, prune or restore in R2 without the owner's explicit go in this session.** Those commands
-  ask for a typed `QSD`; the owner types it. Dry runs and `photos:status` are always fine.
+  ask for a typed `QSD`; the owner types it. Dry runs and `photos:status` are always fine. The one
+  other go is **Bring them in** on the command centre, for exactly the album set it was tapped on
+  (`photos:harvest`, below).
+- **Apple Photos is open to a session only through the album Voyage-of-QSDQSB** (the owner, 2026-10-10):
+  `npm run photos:harvest`, nothing else. A hook refuses `osascript`, enrich, ingest, the library's files
+  and computer use on Photos. Enrich and ingest stay the owner's own commands.
 - In Apple Photos, export **as edited** (File → Export), because the site publishes the owner's crop.
   That export strips the Fujifilm record (film simulation, settings, shutter count). `photos:enrich`
   (part of `ingest`) copies it back from the library's unedited original. Don't export *Unmodified
@@ -39,7 +44,34 @@ isn't enough or something misbehaves.
 
 ## Recipes
 
-### Add photographs to an existing voyage
+### Bring in the album (the usual way now)
+
+The owner drops the photographs they want on the site into the Apple Photos album **Voyage-of-QSDQSB**.
+Then, in a session, `/harvest` (`.claude/commands/harvest.md`), or the command centre's **Bring them in**:
+
+```bash
+npm run photos:harvest                                   # look: export as edited, restore camera records, place, propose
+npm run photos:harvest -- set DSCF3744 london --why "…"  # judgement, or hold; a new gallery by its name
+#   the command centre shows each photo and its voyage; the owner's tap is the yes
+npm run photos:harvest -- go '<the stored document>'     # record that yes (refused if the plan changed since)
+npm run photos:harvest -- bring                          # pull the voyages whole → ingest (no enrich) → push → tag in Photos
+```
+
+Where each photo goes: beside the published photo taken nearest in time when that is within 12 hours
+in the same country (`sure`), else the voyage of its city (`likely`), else judged by eye (`open`: a
+city in parts, a new trip). Galleries are places, not trips: a later visit joins its city.
+
+After `bring`: each photo carries the Photos keyword `qsdqsb: <gallery>` and is skipped from then on;
+its voyage's `updated:` is now. Commit those pages and `_data/photo_locations/` in a pull request.
+Photos' scripting cannot take a photo out of an album, so nothing is: once all of the album is on the
+site, the owner empties it (⌘A, Delete → Remove from Album; never ⌘⌫, which deletes from the library).
+The photographs stay in the library. The album name can be changed with `PHOTOS_ALBUM`.
+
+### Add photographs to an existing voyage, by hand
+
+The owner's own way, in their terminal: `ingest` runs `enrich`, which searches the whole Photos
+library, so a session never runs either (the scope hook refuses them). A session brings photographs
+in through the album, above.
 
 ```bash
 # 1. The owner drops the camera files into the inbox, one folder per gallery:
@@ -145,7 +177,7 @@ writes the manifest). To see colours locally before that, `node scripts/photos/p
 
 | What | Where |
 |---|---|
-| Scripts | `scripts/photos/` (`ingest`, `import`, `enrich`, `locate`, `recollect`, `push`, `plan`, `prune`, `trash`, `status`, `captions`, `process`, `fetch-manifests`) |
+| Scripts | `scripts/photos/` (`harvest`, `ingest`, `import`, `enrich`, `locate`, `recollect`, `push`, `plan`, `prune`, `trash`, `status`, `captions`, `process`, `fetch-manifests`) |
 | Authored words | `_data/photos/<g>.yml`; places `_data/photo_locations/<g>.yml` |
 | Page templates | `_includes/photobook/*.html`, `_sass/_photobook.scss`, `assets/js/photobook/` (see `_docs/layouts.md`) |
 | Book logic at build | `scripts/photos/lib/book.mjs` (rows, cover, colophon, sun and weather phrases, film letters, colours) |

@@ -6,14 +6,18 @@
  *   2. photos:enrich            put back camera records a plain Photos export stripped
  *   3. photos:locate            name where each new frame was taken
  *   4. photos:recollect         the check before pushing, per gallery touched
- *   5. one confirmation         type QSD
+ *   5. one confirmation         type QSD (or a go from the command centre, --go)
  *   6. photos:recollect --push  upload; processing (tiers, sun, weather, D1) starts on its own
  *
  * Only the galleries whose files changed in step 1 go through 2–6. Nothing is pushed without the
  * confirmation, and a gallery whose check fails is left out of the push and named.
  *
- * Usage: npm run photos:ingest [-- --from <dir>] [--dry-run]
- *   --dry-run  import as a dry run and stop: shows what would come in
+ * Usage: npm run photos:ingest [-- --from <dir>] [--dry-run] [--new-gallery <name>]…
+ *   --dry-run      import as a dry run and stop: shows what would come in
+ *   --skip-enrich  the files already carry their camera records (photos:harvest restores them
+ *                  from its album; enrich would search the whole library)
+ *   --go <file>    the owner's yes, recorded by photos:harvest from the command centre, in place
+ *                  of typing QSD: it covers exactly the galleries it names, and nothing else
  */
 
 import fs from 'node:fs';
@@ -24,7 +28,7 @@ import { PATHS, parseArgs } from './lib/config.mjs';
 import { galleriesUnder } from './lib/inventory.mjs';
 
 const CONFIRM = 'QSD';
-const args = parseArgs(process.argv.slice(2));
+const args = parseArgs(process.argv.slice(2), { multi: ['new-gallery'] });
 const node = (script, extra) => spawnSync(process.execPath, [path.join(PATHS.photosDir, '..', 'scripts', 'photos', script), ...extra], { stdio: 'inherit' }).status;
 const quiet = (script, extra) => spawnSync(process.execPath, [path.join(PATHS.photosDir, '..', 'scripts', 'photos', script), ...extra], { encoding: 'utf8' });
 
@@ -40,7 +44,7 @@ function snapshot() {
 }
 
 async function main() {
-  const from = args.from ? ['--from', String(args.from)] : [];
+  const from = [...(args.from ? ['--from', String(args.from)] : []), ...(args['new-gallery'] || []).flatMap((g) => ['--new-gallery', String(g)])];
   if (args['dry-run']) return node('import.mjs', [...from, '--dry-run']);
 
   const before = snapshot();
@@ -55,7 +59,8 @@ async function main() {
   console.log(`\nChanged: ${touched.join(', ')}`);
 
   console.log('\n── 2. enrich');
-  for (const g of touched) node('enrich.mjs', ['--gallery', g]);
+  if (args['skip-enrich']) console.log('  skipped: the camera records came with the files');
+  else for (const g of touched) node('enrich.mjs', ['--gallery', g]);
   console.log('\n── 3. locate');
   for (const g of touched) node('locate.mjs', ['--gallery', g]);
 
@@ -69,10 +74,17 @@ async function main() {
   if (held.length) console.log(`\nHeld back (fix, then run photos:recollect -- --gallery <g> --push): ${held.join(', ')}`);
   if (!ready.length) return 1;
 
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-  const answer = await rl.question(`\nPush ${ready.length} galler${ready.length === 1 ? 'y' : 'ies'} (${ready.join(', ')})? Type ${CONFIRM} to confirm: `);
-  rl.close();
-  if (answer.trim() !== CONFIRM) { console.log('Not confirmed; nothing pushed.'); return 1; }
+  if (args.go) {
+    let yes = null; try { yes = JSON.parse(fs.readFileSync(String(args.go), 'utf8')); } catch { /* none */ }
+    const outside = ready.filter((g) => !(yes?.galleries || []).includes(g));
+    if (!yes || outside.length) { console.log(`The go does not cover ${outside.join(', ') || 'these galleries'}; nothing pushed.`); return 1; }
+    console.log(`\nThe owner said yes on the command centre (${yes.at}) for ${yes.galleries.join(', ')}.`);
+  } else {
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    const answer = await rl.question(`\nPush ${ready.length} galler${ready.length === 1 ? 'y' : 'ies'} (${ready.join(', ')})? Type ${CONFIRM} to confirm: `);
+    rl.close();
+    if (answer.trim() !== CONFIRM) { console.log('Not confirmed; nothing pushed.'); return 1; }
+  }
 
   console.log('\n── 6. push');
   let failed = 0;
