@@ -544,7 +544,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
     var picks = {}, open = [];
     document.querySelectorAll("select.to").forEach(function (s) { if (!s.value) open.push(s.id.slice(3)); else picks[s.dataset.id] = s.value; });
     if (open.length) { bringSay("Choose a voyage (or Hold) for every photograph first."); return; }
-    if (!db) { bringSay("This view cannot store it. Say “bring in the album” to Claude in chat instead."); return; }
+    if (!db) { bringSay("This view cannot store it. Reload the command centre and tap again: nothing is pushed until a tap is stored."); return; }
     var hash = bring.dataset.hash, doc = { hash: hash, destinations: picks, at: new Date().toISOString() };
     bring.disabled = true; bringSay("Saving…");
     db.doc("harvest/" + hash).set(doc).then(function () {
@@ -555,7 +555,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
           .then(function () { bringSay("Yes recorded, and Claude was told. They come in once the session has pushed them."); }, function () { bringSay("Yes recorded. No session heard it just now: the next session brings them in."); });
       }
       bringSay("Yes recorded. The next session brings them in (or say /harvest in one).");
-    }, function () { bring.disabled = false; bringSay("Could not save here. Say “bring in the album” to Claude in chat instead."); });
+    }, function () { bring.disabled = false; bringSay("Could not save it. Reload the command centre and tap again: nothing is pushed until a tap is stored."); });
   });
   if (window.claude && window.claude.use) window.claude.use("db").then(function (ns) {
     if (!ns) return; db = ns;
