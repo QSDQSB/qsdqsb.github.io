@@ -12,6 +12,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 ## 2026
 
 - 2026-10-16 · In the search panel, a suggestion or a result's title reached by the keyboard carries the site's brass ring, set off its edge, where a suggestion showed only its fill and a title only a change of colour; the pointer sees nothing new (C02, the search panel) · tier 1
+- 2026-10-17 · A new voyage, Lungern: twenty photographs of the lake in autumn, one of them from June 2024 that had been under Wengen (it leaves Wengen, which now has nineteen); its cover is the cow, the rail and the high-voltage plate above the turquoise water, cut low so a wide cover holds all three; its line is "Where gilded poplars dapple turquoise water" (R006) · tier 2
 - 2026-10-10 · Eight photographs join their voyages from the album: Santa Maria del Fiore and San Lorenzo in Florence, the Whitehall arcade in London, Orchard Spring Lane in Singapore, and four from Mount Hiei and Kyoto; Florence, Japan, London and Singapore rise in Recent Updates · tier 2
 - 2026-10-09 · The masthead's menu and search buttons, the lightbox's and Drift's round tools and the hover tip are frosted at the site's one glass, 14 px at 120%, where they were 12 px (C05) · tier 1
 - 2026-10-06 · Nothing a reader sees: the shared pieces' catalogue gives the page change, the arrival and the curves as built, and four comments that said otherwise now say what the code does (the masthead's way back, the colour atlas, two in the palette page) (A09) · tier 0

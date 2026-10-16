@@ -1,0 +1,149 @@
+# Suggested locations for gallery lungern, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf8624:
+    suggested: Kaiserstuhl, Lungern
+    landmark: Kaiserstuhl
+    street: Beim Bahnhof
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8637:
+    suggested: Rütiweg, Lungern
+    street: Rütiweg
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8649:
+    suggested: Bergstrasse, Lungern
+    street: Bergstrasse
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8660:
+    suggested: Bergstrasse, Lungern
+    street: Bergstrasse
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8665:
+    suggested: Bergstrasse, Lungern
+    street: Bergstrasse
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8672:
+    suggested: Bergstrasse, Lungern
+    street: Bergstrasse
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8674:
+    suggested: Bergstrasse, Lungern
+    street: Bergstrasse
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8688:
+    suggested: Brünigstrasse, Lungern
+    street: Brünigstrasse
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8692:
+    suggested: Brünigstrasse, Lungern
+    street: Brünigstrasse
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8706:
+    suggested: Alter Kirchturm, Lungern
+    landmark: Alter Kirchturm
+    street: Brünigstrasse
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8709:
+    suggested: Alter Kirchturm, Lungern
+    landmark: Alter Kirchturm
+    street: Brünigstrasse
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8714:
+    suggested: Alter Kirchturm, Lungern
+    landmark: Alter Kirchturm
+    street: Brünigstrasse
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8718:
+    suggested: Alter Kirchturm, Lungern
+    landmark: Alter Kirchturm
+    street: Brünigstrasse
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8725:
+    suggested: Mülibachersträssli, Lungern
+    street: Mülibachersträssli
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8726:
+    suggested: Mülibachersträssli, Lungern
+    street: Mülibachersträssli
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8728:
+    suggested: Mülibachersträssli, Lungern
+    street: Mülibachersträssli
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8729:
+    suggested: Mülibachersträssli, Lungern
+    street: Mülibachersträssli
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8742:
+    suggested: Brünigstrasse, Lungern
+    street: Brünigstrasse
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf8745:
+    suggested: Brünigstrasse, Lungern
+    street: Brünigstrasse
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf9794:
+    suggested: Chäppelisträssli, Lungern
+    street: Chäppelisträssli
+    city: Lungern
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
