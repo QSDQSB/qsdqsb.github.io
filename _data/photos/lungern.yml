@@ -6,4 +6,6 @@
 cover:
   photo: dscf8729
   focus: [0.43, 0.6]
+# Open on the autumn walk; DSCF9794 (June 2024) would otherwise lead by capture time.
+order: [dscf8624]
 photos: {}
