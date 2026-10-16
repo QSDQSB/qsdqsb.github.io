@@ -219,6 +219,8 @@ body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-e
     a:focus-visible {
       color: $search-panel-input-border-color-focus;
     }
+
+    a:focus-visible { @include brass-focus; }
   }
 
   .search-result__header {
@@ -352,8 +354,9 @@ body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-e
     border-color: rgba($primary-color, 0.2);
     background-color: $search-panel-input-surface;
     transform: translateY(-1px);
-    outline: none;
   }
+
+  &:focus-visible { @include brass-focus; }
 }
 
 .search-suggestion__label,

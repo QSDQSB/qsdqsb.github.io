@@ -213,6 +213,12 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
 
 **Tier 1: brought into line, under the threshold, shown before and after**
 - [ ] C02 · `brass-focus` as the one focus ring, surface by surface.
+      - [x] 2026-10-16 · The search panel: a suggestion and a result's title take `brass-focus` under
+            `:focus-visible` (a suggestion had `outline: none` and its fill alone; a title only its
+            colour). Not yet: the search field, whose blue border on focus goes with `$link-color`'s
+            retirement; the masthead's links and two buttons sit inside the bar's `clip-path`, which
+            would cut a ring set off their edge, so they need the ring drawn inside or the clip
+            answered first.
 - [ ] C03, under the threshold · A radius the sorted list moves by less than 0.25rem and less than
       20 per cent, once the owner has seen the list.
 - [ ] C04, under the threshold · A timing within a fifth of its step moves onto it (0.28 s to
