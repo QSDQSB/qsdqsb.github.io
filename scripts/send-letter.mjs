@@ -62,7 +62,7 @@ import {
   LOGO_CID,
   WELCOME_SUBJECT,
 } from "./letter-template.mjs";
-import { reverieCard, voyageCard } from "./letter-card.mjs";
+import { reverieCard, voyageCard, plainLine } from "./letter-card.mjs";
 
 // Repo-level secrets: load KEY=VALUE lines from a gitignored .env at the repo
 // root (next to package.json), without overriding anything already exported.
@@ -181,7 +181,7 @@ if (optWelcome) {
 
   const title = optTitle || fm.title || fail("post has no title: — pass --title");
   // The display line, as the site shows the piece; seo_description is for search engines alone.
-  const excerpt = optExcerpt ?? (fm.excerpt || fm.description || fm.seo_description || "");
+  const excerpt = optExcerpt ?? plainLine(fm.excerpt || fm.description || fm.seo_description || "");
   // A voyage's address is its collection's: /voyage/<name>/, a part's /voyage/<parent>/<name>/ (_config.yml).
   const voyage = (postPath || "").match(/(?:^|\/)_(?:sub)?voyage\/(.+)\.md$/);
   let url = optUrl;
