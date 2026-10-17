@@ -1,0 +1,11 @@
+# Authored layer for gallery/lungern — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+# Set a little low and left of centre so a 3:1 cut holds the cow, the rail and the yellow
+# high-voltage plate on the wire, with the lake between them; a near-square phone cut keeps both.
+cover:
+  photo: dscf8729
+  focus: [0.43, 0.6]
+# Open on the autumn walk; DSCF9794 (June 2024) would otherwise lead by capture time.
+order: [dscf8624]
+photos: {}
