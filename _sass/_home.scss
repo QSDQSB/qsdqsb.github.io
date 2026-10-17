@@ -694,7 +694,8 @@ body.layout--home { padding-bottom: 0; }
    narrative"). The shared .type-badge pill still serves the search panel. */
 .wn-card .type-badge { align-self: flex-start; margin-bottom: 0.55rem; padding: 0; min-width: 0; min-height: 0; gap: 0.4rem; border: 0; background: none; color: rgba($primary-color, 0.6); }
 .wn-card .type-badge__label { font-weight: 400; }
-.wn-card h3 { font-family: $didot-family; font-weight: 600; font-size: 1.15rem; line-height: 1.03; letter-spacing: -0.01em; margin: 0; color: $primary-color; }
+// A card's title in the voyage cards' own face, Playfair bold (the owner, 2026-10-17); Didot is for the Reverie's hex alone.
+.wn-card h3 { font-family: $global-font-family; font-weight: 700; font-size: 1.15rem; line-height: 1.03; letter-spacing: -0.01em; margin: 0; color: $primary-color; }
 .wn-ex { display: none; font-family: $sans-serif; color: rgba($primary-color, 0.72); margin: 0.5rem 0 0; max-width: 34ch; }
 
 /* 1 — feature: large, left, two rows; its shape the rows' (about 3:2). */
@@ -775,6 +776,7 @@ body.layout--home { padding-bottom: 0; }
   color: rgba($primary-color, 0.86);
 }
 .wn-card .wn-hex {
+  font-family: $didot-family; // a figure: Playfair's digits read badly (PRINCIPLES, 2026-09-28)
   font-weight: 400;
   font-size: clamp(1.9rem, 3.2vw, 2.9rem);
   line-height: 1;
