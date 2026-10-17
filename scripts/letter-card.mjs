@@ -102,8 +102,8 @@ export async function reverieCard(hex, { site = 'https://qsdqsb.com' } = {}) {
 /* ---------- A voyage's card ----------
  * The owner's pick of 2026-10-17 (A, "the magazine cover"), worked through four rounds against the
  * house's own eye (design-taste-frontend, preserve mode). One object: the voyage's cover, cut round
- * its focus by the site's own cover maths (scripts/photos/lib/cover.mjs), with its title and line set
- * where the subject is not, over the card's scrim and a hairline shadow (PRINCIPLES, Cards); and, as
+ * its focus by the site's own cover maths (scripts/photos/lib/cover.mjs), with its title and line at
+ * the foot on the left, over the card's scrim and a hairline shadow (PRINCIPLES, Cards); and, as
  * the card's foot, the voyage's colours as QSD's Palette has them: the vat it pours (the mood) and
  * the bar (the composition). The line is the voyage card's own face, Playfair, upright (the owner,
  * 2026-10-17); Didot stays for figures. No eyebrow: the letter's kicker says what has come. A voyage
@@ -111,10 +111,9 @@ export async function reverieCard(hex, { site = 'https://qsdqsb.com' } = {}) {
  */
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const COVER_HEIGHT = 340; // with the foot, about 1.6:1 in the letter's column
-// The words go to the top only when the subject sits clearly low; most covers centre theirs, and a
-// cover line belongs at the foot, as the site sets it.
-const LOW_SUBJECT = 0.55;
+// 4:3, the site's own "tall" cover shape: tall enough that a subject in the lower half still sits
+// above the words, which stay at the foot on the left, as every voyage card sets its line.
+const COVER_HEIGHT = 420;
 
 /** The voyage page's own words and pictures, read from the repository as the build reads them. */
 export function voyageCardData(voyagePath, { root = ROOT } = {}) {
@@ -137,8 +136,8 @@ export function voyageCardData(voyagePath, { root = ROOT } = {}) {
   if (!photo) throw new Error(`${coverGallery} has no processed ${frame}`);
   const palettes = join(root, '_data/photo_manifests/palettes.json');
   const voyage = gallery && existsSync(palettes) ? JSON.parse(readFileSync(palettes, 'utf8')).voyages.find((v) => v.g === gallery) : null;
-  // A crop authored for a shape near the card's (16:9) wins over the focus, as on the site.
-  const crop = Object.entries(yml.cover.crops || {}).find(([k]) => shapeOf(k) === 'screen');
+  // A crop authored for the card's shape (4:3) wins over the focus, as on the site.
+  const crop = Object.entries(yml.cover.crops || {}).find(([k]) => shapeOf(k) === 'tall');
   return {
     title: String(fm.title || ''),
     // The line as a reader sees it: no markdown emphasis marks (`___enchanted___`).
@@ -157,7 +156,6 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 /** The card as a page of the site (its stylesheet gives the faces), the letter's column wide. */
 export function voyageCardHtml(d, vat) {
   const pos = positionFor(d.focus, d.ratio, CARD_WIDTH / COVER_HEIGHT);
-  const top = d.focus[1] > LOW_SUBJECT;
   const bar = d.palette.map((c) => `<i style="flex:${Number(c.pc)};background:${esc(c.hex)}"></i>`).join('');
   return `<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="/assets/css/main.css">
 <style>
@@ -165,8 +163,8 @@ export function voyageCardHtml(d, vat) {
   .lv { width: ${CARD_WIDTH}px; padding-bottom: 6px; color: #e4e5e5; }
   .lv-card { border-radius: 18px; overflow: hidden; background: #1a1a1a; }
   .lv-cover { position: relative; height: ${COVER_HEIGHT}px; background: #222 url("${esc(d.cover)}") ${pos}/cover no-repeat; }
-  .lv-scrim { position: absolute; inset: 0; background: linear-gradient(${top ? 'to bottom' : 'to top'}, rgba(10,10,10,0.78) 0%, rgba(10,10,10,0.36) 30%, rgba(10,10,10,0) 55%); }
-  .lv-words { position: absolute; left: 28px; right: 28px; ${top ? 'top' : 'bottom'}: 26px; text-shadow: 0 1px 1px rgba(0,0,0,0.35); }
+  .lv-scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,10,0.8) 0%, rgba(10,10,10,0.42) 24%, rgba(10,10,10,0) 46%); }
+  .lv-words { position: absolute; left: 28px; right: 28px; bottom: 24px; text-shadow: 0 1px 1px rgba(0,0,0,0.35); }
   .lv-title { font: 700 44px/1 "Playfair Display", Georgia, serif; letter-spacing: 0.015em; margin: 0; }
   .lv-lede { font: 400 18px/1.35 "Playfair Display", Georgia, serif; margin: 10px 0 0; color: rgba(228,229,229,0.9); }
   .lv-foot { display: flex; align-items: center; gap: 18px; padding: 14px 28px; }
