@@ -157,11 +157,13 @@ function houseEmailText({ bodyLines, footerNote, unsubscribeUrl }) {
 const LETTER_FOOTER_NOTE =
   "Sent because you subscribed at qsdqsb.com. A letter comes only when something new does.";
 
-// A picture the letter carries between its words and its way in: a colour's Reverie card
-// (letter-card.mjs), say. It travels inline like the crest, under its own Content-ID, and leads
-// where it leads on the site. Shown at the letter's column width; a phone's mail scales it down.
+// A picture the letter carries: a colour's Reverie card between its words and its way in, or a
+// voyage's card (carriesTitle) in place of its title and line (letter-card.mjs). It travels inline
+// like the crest, under its own Content-ID, and leads where it leads on the site. Shown at the
+// letter's column width; a phone's mail scales it down. Where a client holds pictures back, its alt
+// text stands in, set in the letter's own serif.
 const figureImg = (f) => `<a href="${escapeHtml(f.href)}" style="text-decoration:none;border:0;">
-                <img src="cid:${escapeHtml(f.cid)}" width="${f.width}" height="${f.height}" alt="${escapeHtml(f.alt)}" style="display:block;margin:0 auto;width:100%;max-width:${f.width}px;height:auto;border:0;outline:none;text-decoration:none;">
+                <img src="cid:${escapeHtml(f.cid)}" width="${f.width}" height="${f.height}" alt="${escapeHtml(f.alt)}" style="display:block;margin:0 auto;width:100%;max-width:${f.width}px;height:auto;border:0;outline:none;text-decoration:none;font-family:${SERIF};font-size:20px;line-height:1.4;color:${INK};">
               </a>`;
 const figureRow = (f) => `<tr>
             <td align="center" style="padding:0 20px 36px;">
