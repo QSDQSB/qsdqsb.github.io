@@ -160,11 +160,12 @@ const LETTER_FOOTER_NOTE =
 // A picture the letter carries between its words and its way in: a colour's Reverie card
 // (letter-card.mjs), say. It travels inline like the crest, under its own Content-ID, and leads
 // where it leads on the site. Shown at the letter's column width; a phone's mail scales it down.
+const figureImg = (f) => `<a href="${escapeHtml(f.href)}" style="text-decoration:none;border:0;">
+                <img src="cid:${escapeHtml(f.cid)}" width="${f.width}" height="${f.height}" alt="${escapeHtml(f.alt)}" style="display:block;margin:0 auto;width:100%;max-width:${f.width}px;height:auto;border:0;outline:none;text-decoration:none;">
+              </a>`;
 const figureRow = (f) => `<tr>
             <td align="center" style="padding:0 20px 36px;">
-              <a href="${escapeHtml(f.href)}" style="text-decoration:none;border:0;">
-                <img src="cid:${escapeHtml(f.cid)}" width="${f.width}" height="${f.height}" alt="${escapeHtml(f.alt)}" style="display:block;margin:0 auto;width:100%;max-width:${f.width}px;height:auto;border:0;outline:none;text-decoration:none;">
-              </a>
+              ${figureImg(f)}
             </td>
           </tr>`;
 
@@ -182,7 +183,10 @@ const figureRow = (f) => `<tr>
  * @param {string|string[]} [letter.gloss]  The quote in English, beneath it, quieter and in italic,
  *                                   as the piece glosses its Latin
  * @param {object} [letter.figure]   A picture to carry: { cid, width, height, alt, href }, its
- *                                   bytes attached by the sender under `cid`
+ *                                   bytes attached by the sender under `cid`. With carriesTitle
+ *                                   (a voyage's card: its title and line are on it) it leads the
+ *                                   letter under the kicker, and the title and excerpt are not
+ *                                   set again in text; its alt text says them
  * @param {string} unsubscribeUrl    THIS recipient's personal unsubscribe link
  */
 const paragraphs = (q) => (Array.isArray(q) ? q : q ? [q] : []).filter(Boolean);
@@ -213,28 +217,34 @@ export function renderLetterHtml(letter, unsubscribeUrl) {
   const quote = paragraphs(letter.quote), gloss = quote.length ? paragraphs(letter.gloss) : [];
 
   const kicker = escapeHtml(letter.kicker || "");
+  // A card that carries the piece's own title and line (a voyage's) leads the letter in their place.
+  const lead = !!(letter.figure && letter.figure.carriesTitle);
 
   const contentRows = `          ${kicker ? `<tr>
             <td align="center" style="padding:34px 8px 0;font-family:${SANS};font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${MUTE};">
               ${kicker}
             </td>
           </tr>` : ""}
-          <tr>
+          ${lead ? `<tr>
+            <td align="center" style="padding:${kicker ? 16 : 34}px 20px 14px;">
+              ${figureImg(letter.figure)}
+            </td>
+          </tr>` : `<tr>
             <td align="center" style="padding:${kicker ? 12 : 34}px 8px 6px;font-family:${SERIF};font-size:30px;line-height:1.25;color:${INK};">
               ${title}
             </td>
-          </tr>
+          </tr>`}
           ${dateLine ? `<tr>
             <td align="center" style="padding:0 8px 22px;font-family:${SANS};font-size:12px;letter-spacing:1px;color:${MUTE};">
               ${dateLine}
             </td>
           </tr>` : ""}
-          ${quote.length ? [...quote.map((p, i) => quoteRow(p, i === quote.length - 1 && !gloss.length)), ...gloss.map((p, i) => glossRow(p, i === gloss.length - 1))].join("\n          ") : excerpt ? `<tr>
+          ${quote.length ? [...quote.map((p, i) => quoteRow(p, i === quote.length - 1 && !gloss.length)), ...gloss.map((p, i) => glossRow(p, i === gloss.length - 1))].join("\n          ") : excerpt && !lead ? `<tr>
             <td align="center" style="padding:0 30px 30px;font-family:${SERIF};font-style:italic;font-size:17px;line-height:1.6;color:${BRASS};">
               ${excerpt}
             </td>
           </tr>` : ""}
-          ${letter.figure ? figureRow(letter.figure) : ""}
+          ${letter.figure && !lead ? figureRow(letter.figure) : ""}
           <tr>
             <td align="center" style="padding:4px 8px 40px;">
               <table role="presentation" cellpadding="0" cellspacing="0" border="0">
@@ -265,8 +275,8 @@ export function renderLetterText(letter, unsubscribeUrl) {
     letter.dateLine ? letter.dateLine : null,
     "",
     ...(paragraphs(letter.quote).length ? [...paragraphs(letter.quote), ...paragraphs(letter.gloss)].flatMap((p) => [plain(p), ""]) : letter.excerpt ? [letter.excerpt, ""] : []),
-    letter.figure ? `${letter.figure.alt}: ${letter.figure.href}` : null,
-    letter.figure ? "" : null,
+    letter.figure && !letter.figure.carriesTitle ? `${letter.figure.alt}: ${letter.figure.href}` : null,
+    letter.figure && !letter.figure.carriesTitle ? "" : null,
     `Onward: ${letter.url}`,
   ].filter((l) => l !== null);
   return houseEmailText({ bodyLines, footerNote: LETTER_FOOTER_NOTE, unsubscribeUrl });

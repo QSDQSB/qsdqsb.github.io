@@ -107,3 +107,40 @@ test('a quote may carry its English beneath it, quieter, and never without the q
   assert.ok(!renderLetterHtml({ ...LETTER, gloss }, UNSUB).includes('A diary entry'), 'no English for a quote that is not there');
   assert.ok(renderLetterText({ ...LETTER, quote, gloss }, UNSUB).includes('A diary entry: Palette (https://qsdqsb.com/palette/).'));
 });
+
+test("a voyage's card leads its letter, carrying the title and line the text then leaves out", async () => {
+  const { renderLetterHtml } = await import('../scripts/letter-template.mjs');
+  const figure = { cid: 'voyage-lungern', width: 560, height: 466, href: 'https://qsdqsb.com/voyage/lungern/', alt: 'Lungern: Where gilded poplars dapple turquoise water', carriesTitle: true };
+  const html = renderLetterHtml({ ...LETTER, title: 'Lungern', excerpt: 'Where gilded poplars dapple turquoise water', kicker: 'New prints from QSD', figure }, UNSUB);
+  const body = html.slice(html.indexOf('<body'));
+  assert.ok(body.indexOf('New prints from QSD') < body.indexOf('cid:voyage-lungern'), 'under the kicker');
+  assert.ok(body.indexOf('cid:voyage-lungern') < body.indexOf('Onward'), 'before the way in');
+  assert.ok(!body.includes('font-size:30px'), 'no title in text');
+  assert.ok(!body.includes('font-style:italic;font-size:17px'), 'no line in text: the picture and its alt text say it');
+  const reverie = renderLetterHtml({ ...LETTER, figure: { ...figure, carriesTitle: false } }, UNSUB);
+  assert.ok(reverie.includes('font-size:30px'), 'a card that carries no title leaves the title in text');
+});
+
+test("a voyage's card is drawn from its page's own words, cover and palette", async () => {
+  const { mkdtempSync, mkdirSync, writeFileSync } = require('node:fs');
+  const { join } = require('node:path');
+  const { tmpdir } = require('node:os');
+  const { voyageCardData, voyageCardHtml } = await import('../scripts/letter-card.mjs');
+  const root = mkdtempSync(join(tmpdir(), 'voyage-card-'));
+  for (const d of ['_voyage', '_data/photos', '_data/photo_manifests']) mkdirSync(join(root, d), { recursive: true });
+  writeFileSync(join(root, '_voyage/lake.md'), '---\ntitle: "Lake <One>"\nexcerpt: "Where water & light"\ngallery_name: "lake"\n---\n');
+  writeFileSync(join(root, '_data/photos/lake.yml'), 'cover:\n  photo: dscf1\n  focus: [0.4, 0.6]\nphotos: {}\n');
+  writeFileSync(join(root, '_data/photo_manifests/lake.json'), JSON.stringify({ photos: [{ slug: 'dscf1', url: 'https://img.qsdqsb.com/t/abc' }] }));
+  writeFileSync(join(root, '_data/photo_manifests/palettes.json'), JSON.stringify({ voyages: [{ g: 'lake', palette: [{ hex: '#3a7d7b', pc: 58, accent: false }, { hex: '#d6b252', pc: 2, accent: true }] }] }));
+  const d = voyageCardData('_voyage/lake.md', { root });
+  assert.equal(d.path, '/voyage/lake/');
+  assert.equal(d.cover, 'https://img.qsdqsb.com/t/abc/1280.webp');
+  assert.deepEqual(d.focus, [0.4, 0.6]);
+  assert.equal(d.palette.length, 2);
+  const html = voyageCardHtml(d, null);
+  assert.ok(html.includes('Lake &lt;One&gt;') && html.includes('Where water &amp; light'), 'words escaped');
+  assert.ok(html.includes('40.0% 60.0%'), 'cut round its focus');
+  assert.ok(html.includes('flex:58;background:#3a7d7b'), 'the bar in its shares');
+  assert.ok(!html.includes('class="lv-vat"'), 'no vat when none was poured');
+  assert.throws(() => voyageCardData('_posts/x.md', { root }), /not a voyage/);
+});

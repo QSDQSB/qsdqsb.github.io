@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-17 · A letter for a new voyage carries the voyage's own card beneath its kicker: the cover cut round its focus with the title and line on its scrim, and beneath it the voyage's palette, the bar and the vat as QSD's Palette pours them; the title and line are not said again in text (R008) · tier 2
 - 2026-10-16 · In the search panel, a suggestion or a result's title reached by the keyboard carries the site's brass ring, set off its edge, where a suggestion showed only its fill and a title only a change of colour; the pointer sees nothing new (C02, the search panel) · tier 1
 - 2026-10-17 · A new voyage, Lungern: twenty photographs of the lake in autumn, one of them from June 2024 that had been under Wengen (it leaves Wengen, which now has twenty); its cover is the cow, the rail and the high-voltage plate above the turquoise water, cut low so a wide cover holds all three; its line is "Where gilded poplars dapple turquoise water" (re-captured: home, search, voyage, voyage-by-tags and palette, for the new card; nothing else moved) (R006) · tier 2
 - 2026-10-10 · Eight photographs join their voyages from the album: Santa Maria del Fiore and San Lorenzo in Florence, the Whitehall arcade in London, Orchard Spring Lane in Singapore, and four from Mount Hiei and Kyoto; Florence, Japan, London and Singapore rise in Recent Updates · tier 2
