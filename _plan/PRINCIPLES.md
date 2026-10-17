@@ -51,6 +51,11 @@ writing (least well), and the person (Home strongly, About weakly).
   AI-generated showpiece.
 - Playfair Display bold for titles, on every page, a voyage's included (2026-09-25; kept on
   2026-10-01, The eye, round 2, pick 14). Barlow for UI, places and labels. Didot for figures and for hex codes; Playfair's digits read badly (2026-09-28).
+- A voyage's line (its excerpt) is Playfair regular, upright, wherever it stands: on its cards, on
+  its Photobook cover, on a letter's card (2026-10-17: "the excerpt of the voyage page should be the
+  $serif class, regular not italic. E.g. to align with the voyage cards"). For a voyage this
+  replaces pair 7's "Italic, serif, didone font for poetic and storytelling text (like Voyage)"; the
+  shared Didot italic lede stays on other heroes, and What's-new stays as built.
 - Gold belongs to the sun alone in the specs. Weather marks are monotone ink. Films carry their own
   hue as small ticks and dots.
 - Quiet by default: detail on hover or in hand. One control per job.
