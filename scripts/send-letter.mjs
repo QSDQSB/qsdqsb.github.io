@@ -33,6 +33,12 @@
  *                      SITE_URL) and attached inline like the crest. The preview
  *                      writes the pictures beside the HTML, so it shows them.
  *
+ * A voyage (_voyage/<name>.md, _subvoyage/<parent>/<name>.md) carries its own
+ * card by itself: its cover with its title and line, and its palette (the
+ * owner's pick, 2026-10-17). The card says the title and line, so the letter
+ * does not say them again in text. --no-card leaves it out; --card <hex> puts
+ * a Reverie card in its place. A voyage's address is /voyage/<name>/.
+ *
  * Requirements:
  *   RESEND_API_KEY   in the environment (never in the repo).
  *   `npx wrangler@4 login` done once — the script reads subscribers via
@@ -56,7 +62,7 @@ import {
   LOGO_CID,
   WELCOME_SUBJECT,
 } from "./letter-template.mjs";
-import { reverieCard } from "./letter-card.mjs";
+import { reverieCard, voyageCard } from "./letter-card.mjs";
 
 // Repo-level secrets: load KEY=VALUE lines from a gitignored .env at the repo
 // root (next to package.json), without overriding anything already exported.
@@ -117,6 +123,7 @@ const optExcerpt = takeOption("--excerpt");
 const optUrl = takeOption("--url");
 const optSubject = takeOption("--subject");
 const optCard = takeOption("--card");
+const optNoCard = takeFlag("--no-card");
 const optKicker = takeOption("--kicker");
 // A site path in a [link](/…) is made absolute: a letter is read away from the site.
 const takeAll = (name) => { const all = []; for (let q; (q = takeOption(name)) !== null; ) all.push(q.replace(/\]\(\//g, `](${SITE_URL}/`)); return all; };
@@ -129,7 +136,7 @@ if (optWelcome) {
   // send exactly one with --send-test. Bulk-mailing every subscriber a fresh
   // "welcome" would be nonsense, so --send is refused here.
   if (optSend) fail("--welcome is the confirmation email — preview it, or send one with --send-test <addr>. It is never bulk-sent.");
-  if (optCard || optQuote.length || optGloss.length || optKicker) fail("--card, --quote, --gloss and --kicker go with a letter, not the welcome.");
+  if (optCard || optNoCard || optQuote.length || optGloss.length || optKicker) fail("--card, --no-card, --quote, --gloss and --kicker go with a letter, not the welcome.");
 } else if (!postPath && !(optTitle && optUrl)) {
   fail("usage: node scripts/send-letter.mjs <post.md> [--send-test addr | --send --yes] [--title/--excerpt/--url/--subject overrides]\n   or: node scripts/send-letter.mjs --welcome [--send-test addr]");
 }
@@ -175,10 +182,13 @@ if (optWelcome) {
   const title = optTitle || fm.title || fail("post has no title: — pass --title");
   // The display line, as the site shows the piece; seo_description is for search engines alone.
   const excerpt = optExcerpt ?? (fm.excerpt || fm.description || fm.seo_description || "");
+  // A voyage's address is its collection's: /voyage/<name>/, a part's /voyage/<parent>/<name>/ (_config.yml).
+  const voyage = (postPath || "").match(/(?:^|\/)_(?:sub)?voyage\/(.+)\.md$/);
   let url = optUrl;
   if (!url) {
     if (fm.permalink) url = SITE_URL + fm.permalink;
-    else fail("post has no permalink: — pass --url (voyage/subvoyage routes are config-derived)");
+    else if (voyage) url = `${SITE_URL}/voyage/${voyage[1]}/`;
+    else fail("post has no permalink: — pass --url");
   }
   subject = optSubject || title;
   const dateLine = fm.date
@@ -186,12 +196,18 @@ if (optWelcome) {
     : "";
 
   // What kind of thing has come: ink for words, prints for photographs.
-  const kicker = optKicker ?? (/(^|\/)_(sub)?voyage\//.test(postPath || "") ? "New prints from QSD" : postPath ? "Fresh ink from QSD" : "");
+  const kicker = optKicker ?? (voyage ? "New prints from QSD" : postPath ? "Fresh ink from QSD" : "");
   const letter = { title, excerpt, url, dateLine, quote: optQuote, gloss: optGloss, kicker };
   if (optCard) {
     const card = await reverieCard(optCard, { site: SITE_URL });
     const cid = `reverie-${card.hex.slice(1).toLowerCase()}`;
     letter.figure = { cid, width: card.width, height: card.height, href: card.href, alt: `Reverie in ${card.hex}${card.name ? `, ${card.name}` : ""}` };
+    inline.push({ filename: `${cid}.jpg`, content: card.jpeg, content_id: cid });
+  } else if (voyage && !optNoCard) {
+    // The voyage's card carries its title and line, so the letter does not repeat them in text.
+    const card = await voyageCard(postPath, { site: SITE_URL });
+    const cid = `voyage-${voyage[1].replace(/\//g, "-")}`;
+    letter.figure = { cid, width: card.width, height: card.height, href: card.href, alt: card.excerpt ? `${card.title}: ${card.excerpt}` : card.title, carriesTitle: true };
     inline.push({ filename: `${cid}.jpg`, content: card.jpeg, content_id: cid });
   }
   renderHtml = (unsub) => renderLetterHtml(letter, unsub);
