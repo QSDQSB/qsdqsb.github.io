@@ -62,3 +62,8 @@ request at a time, the three-day pause, holds) is the lead's working of it, show
   is built". A choice between ways still arrives as prototypes ([0005](0005-choices-arrive-as-prototypes.md)).
 - The command centre asks less; the pull request list and the day brief carry more.
 - A run's cost is a session a day. The brief says what each run did and what it waits on.
+- 2026-10-17 · The owner, merging PR #115: "it's a waste of resources and time to both specify each
+  photo added, and to list the images in the Merge request. The merge request is supposed to be
+  high-level description, not a heavy-weight line-by-line change narrator." The pictures above are
+  the re-captured pages of a change to the design; a pull request that brings in photographs or
+  other content says in a few lines what came in and carries no gallery of it.
