@@ -52,8 +52,10 @@ it, and never write a script that reaches Photos another way.
    then `npm run photos:status -- --gallery <g>`: "no problems"), commit on a branch: the voyages'
    `updated:`, `_data/photo_locations/` (check `git diff --stat` shows no deletions), and a new
    voyage's page (the `voyage-scaffolder` agent; it needs a cover, `npm run covers:focus`). One pull
-   request, with the photos' thumbnails as its pictures. Its merge is the yes for what it carries:
-   the Recent Updates order, the place names, and a new voyage's page.
+   request, its body a few lines: how many photographs joined which voyages, and any call left for
+   the owner. No list of frames and no thumbnails: the owner chose them in the album and sees them on
+   the site (the owner, 2026-10-17). Its merge is the yes for what it carries: the Recent Updates
+   order, the place names, and a new voyage's page.
 
 7. **The album.** When every photo in it is on the site, the script says so, and so does the command
    centre: the owner empties it in Photos (⌘A, then Delete → Remove from Album; never ⌘⌫, which deletes
