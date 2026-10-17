@@ -1003,6 +1003,9 @@ html.is-reordering::view-transition-group(*) {
   padding: 0 var(--photobook-gutter) calc(3rem + env(safe-area-inset-bottom, 0px));
 }
 
+// The ways on come last, after the sign-off (the owner, 2026-10-17), with the end's own air above them.
+.photobook-end__more { margin-top: clamp(3rem, 6vw, 5rem); }
+
 .photobook-end__title {
   font: 600 1.1rem $didot-family;
   color: $lighter-gray;

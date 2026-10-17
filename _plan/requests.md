@@ -6,10 +6,10 @@ to Done with its pull request.
 
 ## Open
 
-- 2026-10-17 · R011 · why is landing page still have didot font though for the cards? It should use $serif (playfair display), only the reverie should be overrided with a didot family.
-- 2026-10-17 · R010 · Another fix to deploy in this MR. Right now in the voyage page, "Elsewhere" appears before tags, subscribe, dates. IT SHOULD NOT. It should go after "shot by QSD" (so the final component)
 ## Done
 
+- 2026-10-17 · R011 · why is landing page still have didot font though for the cards? It should use $serif (playfair display), only the reverie should be overrided with a didot family. → done 2026-10-17: What's-new titles in Playfair bold, the Reverie's hex kept in Didot (#117)
+- 2026-10-17 · R010 · Another fix to deploy in this MR. Right now in the voyage page, "Elsewhere" appears before tags, subscribe, dates. IT SHOULD NOT. It should go after "shot by QSD" (so the final component) → done 2026-10-17: the ways on (a part's Other <parent>, then Elsewhere) after Shot by QSD (#117)
 - 2026-10-17 · R009 · Yes: set the voyage page's excerpt (the Photobook cover's line) in Playfair regular, upright, like the voyage cards. Leave What's-new as it is. Then: "In the same merge request" → done 2026-10-17: the Photobook cover's line in Playfair 400, upright; the shared lede and What's-new untouched (#117)
 - 2026-10-17 · R008 · let's prepare for an email description. In the previous email, we included a snapshot of the feature in the email body. Can we have a similar template for a voyage page as well? Such that the user can see the title, excerpt and the cover, maybe the palette of the voyage? Let's firstly draft the design for this template. → done 2026-10-17: two drafts shown, the owner chose A (the magazine cover); a voyage's letter now carries that card (letter-card.mjs, send-letter), with the unmerged Reverie-card letter work brought in; the Lungern letter, with its card, went to the 8 active subscribers the same day after a test to the owner (#117)
 - 2026-10-17 · R007 · it's a waste of resources and time to both specify each photo added, and to list the images in the Merge request. The merge request is supposed to be high-level description, not a heavy-weight line-by-line change narrator. → done 2026-10-17: harvest's hand-over and the work run's pull request now ask for a few high-level lines, with no list of frames and no thumbnails; a dated line in PRINCIPLES and 0010 (#116)
