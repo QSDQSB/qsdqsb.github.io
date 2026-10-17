@@ -151,15 +151,14 @@ test("a voyage's card is drawn from its page's own words, cover and palette", as
   const html = voyageCardHtml(d, null);
   assert.ok(html.includes('Lake &lt;One&gt;') && html.includes('Where water &amp; enchanted light'), 'words escaped');
   const { positionFor } = await import('../scripts/photos/lib/cover.mjs');
-  assert.ok(html.includes(positionFor([0.4, 0.7], 1.5, 560 / 340)), "cut by the site's own cover maths");
-  assert.ok(/\.lv-words \{[^}]*\btop: 26px/.test(html), 'a low subject sends the words to the top');
+  assert.ok(html.includes(positionFor([0.4, 0.7], 1.5, 560 / 420)), "cut by the site's own cover maths");
+  assert.ok(/\.lv-words \{[^}]*\bbottom: 24px/.test(html), 'the line at the foot, as the cards set it');
   assert.ok(html.includes('flex:58;background:#3a7d7b'), 'the bar in its shares');
   assert.ok(!html.includes('class="lv-vat"'), 'no vat when none was poured');
   const parts = voyageCardData('_voyage/isles.md', { root });
   assert.equal(parts.cover, 'https://img.qsdqsb.com/t/def/1280.webp', "a voyage in parts takes its part's frame");
   assert.equal(parts.palette.length, 0);
   assert.ok(!voyageCardHtml(parts, null).includes('class="lv-foot"'), 'and its card is the cover alone');
-  assert.ok(/\.lv-words \{[^}]*\bbottom: 26px/.test(voyageCardHtml(parts, null)), 'a high subject keeps the words at the foot');
   const part = voyageCardData(join(root, '_subvoyage/isles/north.md'), { root });
   assert.equal(part.path, '/voyage/isles/north/', 'a part, by an absolute path too');
   assert.equal(part.palette.length, 1);
