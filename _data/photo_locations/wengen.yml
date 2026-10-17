@@ -144,10 +144,3 @@ photos:
     country: Switzerland
     gps: present
     source: OpenStreetMap reverse geocode
-  dscf9794:
-    suggested: Chäppelisträssli, Lungern, Switzerland
-    street: Chäppelisträssli
-    city: Lungern
-    country: Switzerland
-    gps: present
-    source: OpenStreetMap reverse geocode
