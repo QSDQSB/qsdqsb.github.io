@@ -146,7 +146,7 @@ export function voyageCardData(voyagePath, { root = ROOT } = {}) {
     excerpt: plainLine(fm.excerpt),
     path: `/voyage/${slug}/`,
     gallery,
-    cover: `${photo.url}/1280.webp`,
+    cover: `${photo.url}/1920.webp`, // 1120 × 840 device px at 4:3 asks about 1490 px of a wide cover
     ratio: photo.ratio || (photo.w && photo.h ? photo.w / photo.h : 1.5),
     focus: crop ? crop[1] : yml.cover.focus || [0.5, 0.5],
     palette: voyage ? voyage.palette.map(({ hex, pc }) => ({ hex, pc })) : [],

@@ -145,7 +145,7 @@ test("a voyage's card is drawn from its page's own words, cover and palette", as
   ] });
   const d = voyageCardData('_voyage/lake.md', { root });
   assert.equal(d.path, '/voyage/lake/');
-  assert.equal(d.cover, 'https://img.qsdqsb.com/t/abc/1280.webp');
+  assert.equal(d.cover, 'https://img.qsdqsb.com/t/abc/1920.webp');
   assert.equal(d.excerpt, 'Where water & enchanted light', 'no markdown marks on the card');
   assert.equal(d.palette.length, 2);
   const html = voyageCardHtml(d, null);
@@ -156,7 +156,7 @@ test("a voyage's card is drawn from its page's own words, cover and palette", as
   assert.ok(html.includes('flex:58;background:#3a7d7b'), 'the bar in its shares');
   assert.ok(!html.includes('class="lv-vat"'), 'no vat when none was poured');
   const parts = voyageCardData('_voyage/isles.md', { root });
-  assert.equal(parts.cover, 'https://img.qsdqsb.com/t/def/1280.webp', "a voyage in parts takes its part's frame");
+  assert.equal(parts.cover, 'https://img.qsdqsb.com/t/def/1920.webp', "a voyage in parts takes its part's frame");
   assert.equal(parts.palette.length, 0);
   assert.ok(!voyageCardHtml(parts, null).includes('class="lv-foot"'), 'and its card is the cover alone');
   const part = voyageCardData(join(root, '_subvoyage/isles/north.md'), { root });
