@@ -127,20 +127,41 @@ test("a voyage's card is drawn from its page's own words, cover and palette", as
   const { tmpdir } = require('node:os');
   const { voyageCardData, voyageCardHtml } = await import('../scripts/letter-card.mjs');
   const root = mkdtempSync(join(tmpdir(), 'voyage-card-'));
-  for (const d of ['_voyage', '_data/photos', '_data/photo_manifests']) mkdirSync(join(root, d), { recursive: true });
-  writeFileSync(join(root, '_voyage/lake.md'), '---\ntitle: "Lake <One>"\nexcerpt: "Where water & light"\ngallery_name: "lake"\n---\n');
-  writeFileSync(join(root, '_data/photos/lake.yml'), 'cover:\n  photo: dscf1\n  focus: [0.4, 0.6]\nphotos: {}\n');
-  writeFileSync(join(root, '_data/photo_manifests/lake.json'), JSON.stringify({ photos: [{ slug: 'dscf1', url: 'https://img.qsdqsb.com/t/abc' }] }));
-  writeFileSync(join(root, '_data/photo_manifests/palettes.json'), JSON.stringify({ voyages: [{ g: 'lake', palette: [{ hex: '#3a7d7b', pc: 58, accent: false }, { hex: '#d6b252', pc: 2, accent: true }] }] }));
+  for (const d of ['_voyage', '_subvoyage/isles', '_data/photos/isles', '_data/photo_manifests']) mkdirSync(join(root, d), { recursive: true });
+  const put = (f, s) => writeFileSync(join(root, f), typeof s === 'string' ? s : JSON.stringify(s));
+  put('_voyage/lake.md', '---\ntitle: "Lake <One>"\nexcerpt: "Where water & ___enchanted___ light"\ngallery_name: "lake"\n---\n');
+  put('_data/photos/lake.yml', 'cover:\n  photo: dscf1\n  focus: [0.4, 0.7]\nphotos: {}\n');
+  put('_data/photo_manifests/lake.json', { photos: [{ slug: 'dscf1', url: 'https://img.qsdqsb.com/t/abc', ratio: 1.5 }] });
+  // A voyage in parts: its cover is a part's frame, and it has no palette of its own.
+  put('_voyage/isles.md', '---\ntitle: Isles\nsubgalleries: true\n---\n');
+  put('_data/photos/isles.yml', 'cover:\n  photo: north/dscf2\n  focus: [0.5, 0.3]\n');
+  put('_data/photo_manifests/isles_north.json', { photos: [{ slug: 'dscf2', url: 'https://img.qsdqsb.com/t/def', ratio: 1.5 }] });
+  // A part: its own address under its parent, its own palette.
+  put('_subvoyage/isles/north.md', '---\ntitle: North\ngallery_name: "isles/north"\n---\n');
+  put('_data/photos/isles/north.yml', 'cover:\n  photo: dscf2\n  focus: [0.5, 0.5]\n');
+  put('_data/photo_manifests/palettes.json', { voyages: [
+    { g: 'lake', palette: [{ hex: '#3a7d7b', pc: 58, accent: false }, { hex: '#d6b252', pc: 2, accent: true }] },
+    { g: 'isles/north', palette: [{ hex: '#223344', pc: 100, accent: false }] },
+  ] });
   const d = voyageCardData('_voyage/lake.md', { root });
   assert.equal(d.path, '/voyage/lake/');
   assert.equal(d.cover, 'https://img.qsdqsb.com/t/abc/1280.webp');
-  assert.deepEqual(d.focus, [0.4, 0.6]);
+  assert.equal(d.excerpt, 'Where water & enchanted light', 'no markdown marks on the card');
   assert.equal(d.palette.length, 2);
   const html = voyageCardHtml(d, null);
-  assert.ok(html.includes('Lake &lt;One&gt;') && html.includes('Where water &amp; light'), 'words escaped');
-  assert.ok(html.includes('40.0% 60.0%'), 'cut round its focus');
+  assert.ok(html.includes('Lake &lt;One&gt;') && html.includes('Where water &amp; enchanted light'), 'words escaped');
+  const { positionFor } = await import('../scripts/photos/lib/cover.mjs');
+  assert.ok(html.includes(positionFor([0.4, 0.7], 1.5, 560 / 340)), "cut by the site's own cover maths");
+  assert.ok(/\.lv-words \{[^}]*\btop: 26px/.test(html), 'a low subject sends the words to the top');
   assert.ok(html.includes('flex:58;background:#3a7d7b'), 'the bar in its shares');
   assert.ok(!html.includes('class="lv-vat"'), 'no vat when none was poured');
+  const parts = voyageCardData('_voyage/isles.md', { root });
+  assert.equal(parts.cover, 'https://img.qsdqsb.com/t/def/1280.webp', "a voyage in parts takes its part's frame");
+  assert.equal(parts.palette.length, 0);
+  assert.ok(!voyageCardHtml(parts, null).includes('class="lv-foot"'), 'and its card is the cover alone');
+  assert.ok(/\.lv-words \{[^}]*\bbottom: 26px/.test(voyageCardHtml(parts, null)), 'a high subject keeps the words at the foot');
+  const part = voyageCardData(join(root, '_subvoyage/isles/north.md'), { root });
+  assert.equal(part.path, '/voyage/isles/north/', 'a part, by an absolute path too');
+  assert.equal(part.palette.length, 1);
   assert.throws(() => voyageCardData('_posts/x.md', { root }), /not a voyage/);
 });

@@ -205,7 +205,7 @@ if (optWelcome) {
     inline.push({ filename: `${cid}.jpg`, content: card.jpeg, content_id: cid });
   } else if (voyage && !optNoCard) {
     // The voyage's card carries its title and line, so the letter does not repeat them in text.
-    const card = await voyageCard(postPath, { site: SITE_URL });
+    const card = await voyageCard(postPath, { site: SITE_URL }).catch((e) => fail(`${e.message.replace(/: pass --no-card$/, "")} (or pass --no-card)`));
     const cid = `voyage-${voyage[1].replace(/\//g, "-")}`;
     letter.figure = { cid, width: card.width, height: card.height, href: card.href, alt: card.excerpt ? `${card.title}: ${card.excerpt}` : card.title, carriesTitle: true };
     inline.push({ filename: `${cid}.jpg`, content: card.jpeg, content_id: cid });

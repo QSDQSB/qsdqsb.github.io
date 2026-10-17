@@ -26,11 +26,12 @@
 
 import { writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, dirname } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { chromium } from 'playwright-core';
 import { GROUND } from './letter-template.mjs';
+import { positionFor, shapeOf } from './photos/lib/cover.mjs';
 
 const require = createRequire(import.meta.url);
 const POST = '/posts/in-the-naming-of-light/';
@@ -99,30 +100,35 @@ export async function reverieCard(hex, { site = 'https://qsdqsb.com' } = {}) {
 }
 
 /* ---------- A voyage's card ----------
- * The owner's pick of 2026-10-17 (A, "the magazine cover"): the voyage's cover, cut round its focus,
- * its title and line over the cover's scrim as a card's cover line is set (PRINCIPLES, Cards: an
- * engineered scrim and a hairline shadow), and beneath it the voyage's colours as QSD's Palette has
- * them: the bar, and the vat poured by the palette page's own code. No eyebrow: the letter's kicker
- * already says what has come. A voyage in parts has no palette of its own, so its card is the cover
- * alone. Everything a reader would find on the site; nothing typed for the letter.
+ * The owner's pick of 2026-10-17 (A, "the magazine cover"), worked through four rounds against the
+ * house's own eye (design-taste-frontend, preserve mode). One object: the voyage's cover, cut round
+ * its focus by the site's own cover maths (scripts/photos/lib/cover.mjs), with its title and line set
+ * where the subject is not, over the card's scrim and a hairline shadow (PRINCIPLES, Cards); and, as
+ * the card's foot, the voyage's colours as QSD's Palette has them: the vat it pours (the mood) and
+ * the bar (the composition). The line is the voyage card's own face, Playfair, upright (the owner,
+ * 2026-10-17); Didot stays for figures. No eyebrow: the letter's kicker says what has come. A voyage
+ * in parts has no palette of its own, so its card is the cover alone.
  */
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const COVER_HEIGHT = 350; // a 1.6:1 cut of the letter's column
+const COVER_HEIGHT = 340; // with the foot, about 1.6:1 in the letter's column
+// The words go to the top only when the subject sits clearly low; most covers centre theirs, and a
+// cover line belongs at the foot, as the site sets it.
+const LOW_SUBJECT = 0.55;
 
 /** The voyage page's own words and pictures, read from the repository as the build reads them. */
 export function voyageCardData(voyagePath, { root = ROOT } = {}) {
   const yaml = require('js-yaml');
   const sub = voyagePath.match(/(?:^|\/)_subvoyage\/(.+)\.md$/), own = voyagePath.match(/(?:^|\/)_voyage\/([^/]+)\.md$/);
   if (!sub && !own) throw new Error(`not a voyage: ${voyagePath}`);
-  const src = readFileSync(join(root, voyagePath), 'utf8');
+  const src = readFileSync(resolve(root, voyagePath), 'utf8');
   const fm = yaml.load(src.split(/^---\s*$/m)[1]) || {};
   const slug = sub ? sub[1] : own[1];
   const gallery = fm.gallery_name || null;
   // The cover: in the gallery's own YAML, or, for a voyage in parts, its parent's (photo: part/slug).
   const authored = (g) => { const f = join(root, '_data/photos', `${g}.yml`); return existsSync(f) ? yaml.load(readFileSync(f, 'utf8')) || {} : {}; };
   const yml = authored(gallery || slug);
-  if (!yml.cover?.photo) throw new Error(`${voyagePath}: no cover in _data/photos/${gallery || slug}.yml (npm run covers:focus)`);
+  if (!yml.cover?.photo) throw new Error(`${voyagePath} has no cover in _data/photos/${gallery || slug}.yml, so it has no card: pass --no-card`);
   const [part, frame] = yml.cover.photo.includes('/') ? yml.cover.photo.split('/') : [null, yml.cover.photo];
   const coverGallery = part ? `${gallery || slug}/${part}` : gallery || slug;
   const manifest = join(root, '_data/photo_manifests', `${coverGallery.replace(/\//g, '_')}.json`);
@@ -131,13 +137,17 @@ export function voyageCardData(voyagePath, { root = ROOT } = {}) {
   if (!photo) throw new Error(`${coverGallery} has no processed ${frame}`);
   const palettes = join(root, '_data/photo_manifests/palettes.json');
   const voyage = gallery && existsSync(palettes) ? JSON.parse(readFileSync(palettes, 'utf8')).voyages.find((v) => v.g === gallery) : null;
+  // A crop authored for a shape near the card's (16:9) wins over the focus, as on the site.
+  const crop = Object.entries(yml.cover.crops || {}).find(([k]) => shapeOf(k) === 'screen');
   return {
     title: String(fm.title || ''),
-    excerpt: String(fm.excerpt || ''),
+    // The line as a reader sees it: no markdown emphasis marks (`___enchanted___`).
+    excerpt: String(fm.excerpt || '').replace(/(\*{1,3}|_{1,3})(\S(?:.*?\S)?)\1/g, '$2'),
     path: `/voyage/${slug}/`,
     gallery,
     cover: `${photo.url}/1280.webp`,
-    focus: yml.cover.focus || [0.5, 0.5],
+    ratio: photo.ratio || (photo.w && photo.h ? photo.w / photo.h : 1.5),
+    focus: crop ? crop[1] : yml.cover.focus || [0.5, 0.5],
     palette: voyage ? voyage.palette.map(({ hex, pc }) => ({ hex, pc })) : [],
   };
 }
@@ -146,24 +156,26 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 
 /** The card as a page of the site (its stylesheet gives the faces), the letter's column wide. */
 export function voyageCardHtml(d, vat) {
-  const pos = `${(d.focus[0] * 100).toFixed(1)}% ${(d.focus[1] * 100).toFixed(1)}%`;
+  const pos = positionFor(d.focus, d.ratio, CARD_WIDTH / COVER_HEIGHT);
+  const top = d.focus[1] > LOW_SUBJECT;
   const bar = d.palette.map((c) => `<i style="flex:${Number(c.pc)};background:${esc(c.hex)}"></i>`).join('');
   return `<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="/assets/css/main.css">
 <style>
   html, body { margin: 0; background: ${GROUND}; }
   .lv { width: ${CARD_WIDTH}px; padding-bottom: 6px; color: #e4e5e5; }
-  .lv-cover { position: relative; height: ${COVER_HEIGHT}px; border-radius: 18px; overflow: hidden; background: #222 url("${esc(d.cover)}") ${pos}/cover no-repeat; }
-  .lv-scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,10,0.82) 0%, rgba(10,10,10,0.45) 34%, rgba(10,10,10,0) 62%); }
-  .lv-words { position: absolute; left: 28px; right: 28px; bottom: 26px; text-shadow: 0 1px 1px rgba(0,0,0,0.35); }
+  .lv-card { border-radius: 18px; overflow: hidden; background: #1a1a1a; }
+  .lv-cover { position: relative; height: ${COVER_HEIGHT}px; background: #222 url("${esc(d.cover)}") ${pos}/cover no-repeat; }
+  .lv-scrim { position: absolute; inset: 0; background: linear-gradient(${top ? 'to bottom' : 'to top'}, rgba(10,10,10,0.78) 0%, rgba(10,10,10,0.36) 30%, rgba(10,10,10,0) 55%); }
+  .lv-words { position: absolute; left: 28px; right: 28px; ${top ? 'top' : 'bottom'}: 26px; text-shadow: 0 1px 1px rgba(0,0,0,0.35); }
   .lv-title { font: 700 44px/1 "Playfair Display", Georgia, serif; letter-spacing: 0.015em; margin: 0; }
-  .lv-lede { font: italic 400 19px/1.3 Didot, "Playfair Display", Georgia, serif; margin: 10px 0 0; }
-  .lv-colours { display: flex; align-items: center; gap: 22px; margin: 22px 6px 0; }
-  .lv-bar { flex: 1; display: flex; height: 10px; border-radius: 3px; overflow: hidden; }
+  .lv-lede { font: 400 18px/1.35 "Playfair Display", Georgia, serif; margin: 10px 0 0; color: rgba(228,229,229,0.9); }
+  .lv-foot { display: flex; align-items: center; gap: 18px; padding: 14px 28px; }
+  .lv-vat { width: 48px; height: 48px; flex: none; border-radius: 50%; display: block; }
+  .lv-bar { flex: 1; display: flex; height: 8px; border-radius: 3px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08); }
   .lv-bar i { display: block; height: 100%; }
-  .lv-vat { width: 88px; height: 88px; flex: none; border-radius: 50%; display: block; }
 </style>
-<div class="lv"><div class="lv-cover"><div class="lv-scrim"></div><div class="lv-words"><h1 class="lv-title">${esc(d.title)}</h1>${d.excerpt ? `<p class="lv-lede">${esc(d.excerpt)}</p>` : ''}</div></div>
-${bar ? `<div class="lv-colours"><div class="lv-bar">${bar}</div>${vat ? `<img class="lv-vat" alt="" src="${vat}">` : ''}</div>` : ''}</div>`;
+<div class="lv"><div class="lv-card"><div class="lv-cover"><div class="lv-scrim"></div><div class="lv-words"><h1 class="lv-title">${esc(d.title)}</h1>${d.excerpt ? `<p class="lv-lede">${esc(d.excerpt)}</p>` : ''}</div></div>
+${bar ? `<div class="lv-foot">${vat ? `<img class="lv-vat" alt="" src="${vat}">` : ''}<div class="lv-bar">${bar}</div></div>` : ''}</div></div>`;
 }
 
 /**
