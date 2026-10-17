@@ -19,10 +19,31 @@
  *
  * Overrides: --title "…" --excerpt "…" --url https://… --subject "…"
  *
+ * --gloss "…"        → the quote in English, beneath it (repeatable, like --quote).
+ * --kicker "…"       → the small line above the title, saying what has come. By
+ *                      default "Fresh ink from QSD" for a post, "New prints from
+ *                      QSD" for a voyage or a part of one.
+ * --quote "…"        → lines from the piece itself, shown where the excerpt would
+ *                      be (and as the inbox's preview line); give it again for a
+ *                      second paragraph. [words](/palette/) is a link, as in the
+ *                      post; a site path is made absolute.
+ *
+ * --card <hex>       → the letter carries that colour's Reverie card, drawn on the
+ *                      site as readers see it (scripts/letter-card.mjs, from
+ *                      SITE_URL) and attached inline like the crest. The preview
+ *                      writes the pictures beside the HTML, so it shows them.
+ *
+ * A voyage (_voyage/<name>.md, _subvoyage/<parent>/<name>.md) carries its own
+ * card by itself: its cover with its title and line, and its palette (the
+ * owner's pick, 2026-10-17). The card says the title and line, so the letter
+ * does not say them again in text. --no-card leaves it out; --card <hex> puts
+ * a Reverie card in its place. A voyage's address is /voyage/<name>/.
+ *
  * Requirements:
  *   RESEND_API_KEY   in the environment (never in the repo).
- *   `npx wrangler login` done once — the script reads subscribers via
- *   `wrangler d1 execute qsdqsb-subscribers --remote` (no extra tokens).
+ *   `npx wrangler@4 login` done once — the script reads subscribers via
+ *   `npx --yes wrangler@4 d1 execute qsdqsb-subscribers --remote` (no extra
+ *   tokens; --yes, since npx cannot ask to fetch wrangler with no terminal).
  *
  * Env knobs: LETTERS_FROM ("QSD <scripta@qsdqsb.com>" — scripta manent), SITE_URL
  * (https://qsdqsb.com), RESEND_SEND_DELAY_MS (700).
@@ -41,6 +62,7 @@ import {
   LOGO_CID,
   WELCOME_SUBJECT,
 } from "./letter-template.mjs";
+import { reverieCard, voyageCard, plainLine } from "./letter-card.mjs";
 
 // Repo-level secrets: load KEY=VALUE lines from a gitignored .env at the repo
 // root (next to package.json), without overriding anything already exported.
@@ -65,9 +87,10 @@ const D1_NAME = "qsdqsb-subscribers";
 const SEND_DELAY_MS = Number(process.env.RESEND_SEND_DELAY_MS || 700);
 
 // The brass hexagon crest travels inline (Content-ID), not as a remote URL —
-// see letter-template.mjs. Read it once, base64, and attach it to every send.
+// see letter-template.mjs. Read it once, and attach it to every send.
 const LOGO_PATH = join(repoRoot, "images", "email", "qsd-hexagon.png");
-const LOGO_B64 = existsSync(LOGO_PATH) ? readFileSync(LOGO_PATH).toString("base64") : null;
+// Every picture the letter carries inline: the crest, and a card when one is asked for.
+const inline = existsSync(LOGO_PATH) ? [{ filename: "qsd-hexagon.png", content: readFileSync(LOGO_PATH), content_id: LOGO_CID }] : [];
 
 /* ---------- CLI ---------- */
 
@@ -99,6 +122,13 @@ const optTitle = takeOption("--title");
 const optExcerpt = takeOption("--excerpt");
 const optUrl = takeOption("--url");
 const optSubject = takeOption("--subject");
+const optCard = takeOption("--card");
+const optNoCard = takeFlag("--no-card");
+const optKicker = takeOption("--kicker");
+// A site path in a [link](/…) is made absolute: a letter is read away from the site.
+const takeAll = (name) => { const all = []; for (let q; (q = takeOption(name)) !== null; ) all.push(q.replace(/\]\(\//g, `](${SITE_URL}/`)); return all; };
+const optQuote = takeAll("--quote");
+const optGloss = takeAll("--gloss");
 const postPath = args.find((a) => !a.startsWith("--")) || null;
 
 if (optWelcome) {
@@ -106,6 +136,7 @@ if (optWelcome) {
   // send exactly one with --send-test. Bulk-mailing every subscriber a fresh
   // "welcome" would be nonsense, so --send is refused here.
   if (optSend) fail("--welcome is the confirmation email — preview it, or send one with --send-test <addr>. It is never bulk-sent.");
+  if (optCard || optNoCard || optQuote.length || optGloss.length || optKicker) fail("--card, --no-card, --quote, --gloss and --kicker go with a letter, not the welcome.");
 } else if (!postPath && !(optTitle && optUrl)) {
   fail("usage: node scripts/send-letter.mjs <post.md> [--send-test addr | --send --yes] [--title/--excerpt/--url/--subject overrides]\n   or: node scripts/send-letter.mjs --welcome [--send-test addr]");
 }
@@ -149,21 +180,40 @@ if (optWelcome) {
   if (postPath) fm = parseFrontmatter(postPath);
 
   const title = optTitle || fm.title || fail("post has no title: — pass --title");
-  const excerpt = optExcerpt ?? (fm.seo_description || fm.excerpt || fm.description || "");
+  // The display line, as the site shows the piece; seo_description is for search engines alone.
+  const excerpt = optExcerpt ?? plainLine(fm.excerpt || fm.description || fm.seo_description || "");
+  // A voyage's address is its collection's: /voyage/<name>/, a part's /voyage/<parent>/<name>/ (_config.yml).
+  const voyage = (postPath || "").match(/(?:^|\/)_(?:sub)?voyage\/(.+)\.md$/);
   let url = optUrl;
   if (!url) {
     if (fm.permalink) url = SITE_URL + fm.permalink;
-    else fail("post has no permalink: — pass --url (voyage/subvoyage routes are config-derived)");
+    else if (voyage) url = `${SITE_URL}/voyage/${voyage[1]}/`;
+    else fail("post has no permalink: — pass --url");
   }
   subject = optSubject || title;
   const dateLine = fm.date
     ? new Date(fm.date).toLocaleDateString("en-GB", { month: "long", year: "numeric" })
     : "";
 
-  const letter = { title, excerpt, url, dateLine };
+  // What kind of thing has come: ink for words, prints for photographs.
+  const kicker = optKicker ?? (voyage ? "New prints from QSD" : postPath ? "Fresh ink from QSD" : "");
+  const letter = { title, excerpt, url, dateLine, quote: optQuote, gloss: optGloss, kicker };
+  if (optCard) {
+    const card = await reverieCard(optCard, { site: SITE_URL });
+    const cid = `reverie-${card.hex.slice(1).toLowerCase()}`;
+    letter.figure = { cid, width: card.width, height: card.height, href: card.href, alt: `Reverie in ${card.hex}${card.name ? `, ${card.name}` : ""}` };
+    inline.push({ filename: `${cid}.jpg`, content: card.jpeg, content_id: cid });
+  } else if (voyage && !optNoCard) {
+    // The voyage's card carries its title and line, so the letter does not repeat them in text.
+    const card = await voyageCard(postPath, { site: SITE_URL }).catch((e) => fail(`${e.message.replace(/: pass --no-card$/, "")} (or pass --no-card)`));
+    const cid = `voyage-${voyage[1].replace(/\//g, "-")}`;
+    letter.figure = { cid, width: card.width, height: card.height, href: card.href, alt: card.excerpt ? `${card.title}: ${card.excerpt}` : card.title, carriesTitle: true };
+    inline.push({ filename: `${cid}.jpg`, content: card.jpeg, content_id: cid });
+  }
   renderHtml = (unsub) => renderLetterHtml(letter, unsub);
   renderText = (unsub) => renderLetterText(letter, unsub);
   headerLines = [`Letter: “${title}”`, `Link:   ${url}`];
+  if (letter.figure) headerLines.push(`Card:   ${letter.figure.alt}, ${letter.figure.width}×${letter.figure.height} (cid:${letter.figure.cid}, ${(inline.at(-1).content.length / 1024).toFixed(0)} KB) → ${letter.figure.href}`);
 }
 
 /* ---------- subscribers via wrangler d1 ---------- */
@@ -173,7 +223,7 @@ function fetchActiveSubscribers() {
   try {
     out = execFileSync(
       "npx",
-      ["wrangler", "d1", "execute", D1_NAME, "--remote", "--json",
+      ["--yes", "wrangler@4", "d1", "execute", D1_NAME, "--remote", "--json",
        "--command", "SELECT email, token FROM subscribers WHERE status = 'active' ORDER BY subscribed_at;"],
       { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
     );
@@ -202,8 +252,8 @@ async function resendSend(to, token) {
       subject: subject,
       html: renderHtml(unsub),
       text: renderText(unsub),
-      attachments: LOGO_B64
-        ? [{ filename: "qsd-hexagon.png", content: LOGO_B64, content_id: LOGO_CID }]
+      attachments: inline.length
+        ? inline.map((a) => ({ filename: a.filename, content: a.content.toString("base64"), content_id: a.content_id }))
         : undefined,
       headers: {
         // One-click unsubscribe (RFC 8058): mailbox providers surface their
@@ -227,7 +277,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 for (const line of headerLines) console.log(line);
 console.log(`From:   ${FROM}`);
-console.log(`Crest:  ${LOGO_B64 ? "inline (cid:" + LOGO_CID + ")" : "MISSING — images/email/qsd-hexagon.png not found"}`);
+console.log(`Crest:  ${inline.some((a) => a.content_id === LOGO_CID) ? "inline (cid:" + LOGO_CID + ")" : "MISSING — images/email/qsd-hexagon.png not found"}`);
 console.log(`Key:    RESEND_API_KEY ${process.env.RESEND_API_KEY ? "set" : "MISSING"}\n`);
 
 if (optSendTest) {
@@ -267,7 +317,14 @@ if (optSendTest) {
   const htmlPath = join(dir, `${stem}.preview.html`);
   const textPath = join(dir, `${stem}.preview.txt`);
   const previewUnsub = unsubscribeUrlFor("«personal-token-per-recipient»");
-  writeFileSync(htmlPath, renderHtml(previewUnsub));
+  // A mail client finds the inline pictures by Content-ID; a browser opening the preview cannot,
+  // so they are written beside it and named as files.
+  let html = renderHtml(previewUnsub);
+  for (const a of inline) {
+    writeFileSync(join(dir, a.filename), a.content);
+    html = html.split(`cid:${a.content_id}`).join(a.filename);
+  }
+  writeFileSync(htmlPath, html);
   writeFileSync(textPath, renderText(previewUnsub));
   console.log("Preview only — nothing sent.");
   console.log(`  HTML: ${htmlPath}`);

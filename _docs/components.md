@@ -16,7 +16,7 @@ That is what made it look like a different site (2026-09-27).
 |---|---|---|---|
 | Eyebrow | `eyebrow` | The spaced-capital label above a title or section (never under 11px) | `.photobook-kicker`, `.colour-kicker` |
 | Display title | `display-title` | A page's title, as every hero page and book cover sets it | `.photobook-cover__title h1`, `.colour-head h1` |
-| Lede | `lede` | The Didot italic line under a title (font only; the page sets width and colour) | `.photobook-cover__lede`, `.colour-lede` |
+| Lede | `lede` | The Didot italic line under a title (font only; the page sets width and colour). Not a voyage's line, which is Playfair upright (PRINCIPLES, 2026-10-17) | `.colour-lede` |
 | Onward links | `onward-links` | Spaced-capital links over hairlines, in a wrapping row | `.photobook-colophon__onward`, `.colour-next` |
 | Gloss | class `blockquote.gloss` (`_page.scss`) | A heading's translation, set beneath it in two lines as an inscription is: the first small and widely spaced, the Latin-script one the `lede` in brass. Written `> 中文 *English*` then `{: .gloss}` | a post whose chapters are named in another language |
 | Colour code | `_includes/colour-code.html` (`.colour-code`) | A hex named in a line of prose, a dot of the exact colour before it | posts |

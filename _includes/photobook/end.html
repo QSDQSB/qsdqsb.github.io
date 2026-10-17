@@ -1,10 +1,17 @@
 {%- comment -%}
-  After the colophon, the page ends as the rest of the site does: the voyage's other parts, a few
-  voyages at random, the tags, the subscribe slip, the dates, and the sign-off.
+  After the colophon, the page closes as the rest of the site does: the tags, the subscribe slip, the
+  dates and the sign-off; then the ways on, last (the owner, 2026-10-17): the voyage's other parts,
+  and a few voyages at random, Elsewhere.
   The cards' covers are parked in --bg-later and set by assets/js/card-covers.js as they come
   near, so a book's first screen does not fetch the covers of other voyages.
 {%- endcomment -%}
 <div class="photobook-end">
+  {%- if site.tag_voyage.type and page.tags[0] %}
+  <div class="center-wrapper">{% include tag-list.html %}</div>
+  {%- endif %}
+  {%- if page.subscribe != false %}{% include subscribe.html %}{% endif %}
+  <footer class="page__meta">{% include page__dates.html %}</footer>
+  {% include presented-by-qsd.html line="Shot by QSD." %}
   {%- if page.gallery_name contains "/" %}
     {%- assign parent_name = page.gallery_name | split: "/" | first -%}
     {%- assign siblings = site.subvoyage | where_exp: "post", "post.url != page.url" | where_exp: "post", "post.gallery_name contains parent_name" -%}
@@ -36,10 +43,4 @@
       {%- endif -%}
     {%- endfor -%}
   </section>
-  {%- if site.tag_voyage.type and page.tags[0] %}
-  <div class="center-wrapper">{% include tag-list.html %}</div>
-  {%- endif %}
-  {%- if page.subscribe != false %}{% include subscribe.html %}{% endif %}
-  <footer class="page__meta">{% include page__dates.html %}</footer>
-  {% include presented-by-qsd.html line="Shot by QSD." %}
 </div>

@@ -26,11 +26,14 @@
 // and every mail client accepts them.
 const SERIF = "Didot, 'Playfair Display', Georgia, 'Times New Roman', serif";
 const SANS = "Barlow, 'Helvetica Neue', Helvetica, Arial, sans-serif";
+// A line quoted from a piece, in whichever script it was written: Latin in the house serif, Chinese
+// in a Song face where the reader's system has one (as the essays set it), never a sans among serifs.
+const SERIF_QUOTE = "Didot, 'Playfair Display', 'Songti SC', STSong, 'Noto Serif SC', 'Source Han Serif SC', SimSun, Georgia, serif";
 
 const INK = "#e4e5e5"; // ivory text
 const BRASS = "#c3b498"; // aged brass
 const MUTE = "#8a8d8f"; // quiet gray
-const GROUND = "#151515"; // near-black
+export const GROUND = "#151515"; // near-black (the card picture is flattened on it: letter-card.mjs)
 const RULE_TOP = "#4d453a"; // lit brass hairline under the masthead
 const RULE_FOOT = "#33302b"; // dimmer hairline above the footer
 
@@ -152,7 +155,21 @@ function houseEmailText({ bodyLines, footerNote, unsubscribeUrl }) {
    ========================================================================== */
 
 const LETTER_FOOTER_NOTE =
-  "You asked to hear when something new was published. This is that, and nothing more.";
+  "Sent because you subscribed at qsdqsb.com. A letter comes only when something new does.";
+
+// A picture the letter carries: a colour's Reverie card between its words and its way in, or a
+// voyage's card (carriesTitle) in place of its title and line (letter-card.mjs). It travels inline
+// like the crest, under its own Content-ID, and leads where it leads on the site. Shown at the
+// letter's column width; a phone's mail scales it down. Where a client holds pictures back, its alt
+// text stands in, set in the letter's own serif.
+const figureImg = (f) => `<a href="${escapeHtml(f.href)}" style="text-decoration:none;border:0;">
+                <img src="cid:${escapeHtml(f.cid)}" width="${f.width}" height="${f.height}" alt="${escapeHtml(f.alt)}" style="display:block;margin:0 auto;width:100%;max-width:${f.width}px;height:auto;border:0;outline:none;text-decoration:none;font-family:${SERIF};font-size:20px;line-height:1.4;color:${INK};">
+              </a>`;
+const figureRow = (f) => `<tr>
+            <td align="center" style="padding:0 20px 36px;">
+              ${figureImg(f)}
+            </td>
+          </tr>`;
 
 /**
  * @param {object} letter
@@ -160,36 +177,83 @@ const LETTER_FOOTER_NOTE =
  * @param {string} letter.excerpt    One-paragraph description (plain text)
  * @param {string} letter.url        Absolute URL of the piece
  * @param {string} letter.dateLine   e.g. "August 2026"
+ * @param {string} [letter.kicker]   What kind of thing has come, small above the title: "Fresh ink
+ *                                   from QSD" for a post, "New prints from QSD" for a voyage
+ * @param {string|string[]} [letter.quote]  Lines from the piece itself, a paragraph each, set in
+ *                                   the excerpt's place (upright: a Chinese line has no italic of
+ *                                   its own); [words](https://…) is a link, as in the post
+ * @param {string|string[]} [letter.gloss]  The quote in English, beneath it, quieter and in italic,
+ *                                   as the piece glosses its Latin
+ * @param {object} [letter.figure]   A picture to carry: { cid, width, height, alt, href }, its
+ *                                   bytes attached by the sender under `cid`. With carriesTitle
+ *                                   (a voyage's card: its title and line are on it) it leads the
+ *                                   letter under the kicker, and the title and excerpt are not
+ *                                   set again in text; its alt text says them
  * @param {string} unsubscribeUrl    THIS recipient's personal unsubscribe link
  */
+const paragraphs = (q) => (Array.isArray(q) ? q : q ? [q] : []).filter(Boolean);
+const LINK = /\[([^\]]+)\]\(([^)\s]+)\)/g;
+const HAN = /\p{Script=Han}/u;
+// A quoted paragraph: its words escaped, its links kept, its language said (a Chinese line read in
+// an English voice is noise). Set to the left, as the piece sets its prose (the owner, 2026-10-03),
+// on the card's own edge.
+const linked = (p, colour) => escapeHtml(p).replace(LINK, (_, words, href) => `<a href="${href}" style="color:${colour};text-decoration:underline;">${words}</a>`);
+const quoteRow = (p, last) => `<tr>
+            <td align="left"${HAN.test(p) ? ' lang="zh-Hans"' : ""} style="padding:0 20px ${last ? 32 : 14}px;font-family:${SERIF_QUOTE};font-size:17px;line-height:1.9;letter-spacing:0.5px;text-align:left;color:${BRASS};">
+              ${linked(p, BRASS)}
+            </td>
+          </tr>`;
+// Its English, beneath: the house serif in italic, a size down, in the quiet grey.
+const glossRow = (p, last) => `<tr>
+            <td align="left" lang="en" style="padding:0 20px ${last ? 32 : 10}px;font-family:${SERIF};font-style:italic;font-size:15px;line-height:1.7;text-align:left;color:${MUTE};">
+              ${linked(p, MUTE)}
+            </td>
+          </tr>`;
+const plain = (p) => p.replace(LINK, "$1 ($2)");
+
 export function renderLetterHtml(letter, unsubscribeUrl) {
   const title = escapeHtml(letter.title);
   const excerpt = escapeHtml(letter.excerpt || "");
   const url = escapeHtml(letter.url);
   const dateLine = escapeHtml(letter.dateLine || "");
+  const quote = paragraphs(letter.quote), gloss = quote.length ? paragraphs(letter.gloss) : [];
 
-  const contentRows = `          <tr>
-            <td align="center" style="padding:34px 8px 6px;font-family:${SERIF};font-size:30px;line-height:1.25;color:${INK};">
+  const kicker = escapeHtml(letter.kicker || "");
+  // A card that carries the piece's own title and line (a voyage's) leads the letter in their place.
+  const lead = !!(letter.figure && letter.figure.carriesTitle);
+
+  const contentRows = `          ${kicker ? `<tr>
+            <td align="center" style="padding:34px 8px 0;font-family:${SANS};font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${MUTE};">
+              ${kicker}
+            </td>
+          </tr>` : ""}
+          ${lead ? `<tr>
+            <td align="center" style="padding:${kicker ? 16 : 34}px 20px 14px;">
+              ${figureImg(letter.figure)}
+            </td>
+          </tr>` : `<tr>
+            <td align="center" style="padding:${kicker ? 12 : 34}px 8px 6px;font-family:${SERIF};font-size:30px;line-height:1.25;color:${INK};">
               ${title}
             </td>
-          </tr>
+          </tr>`}
           ${dateLine ? `<tr>
             <td align="center" style="padding:0 8px 22px;font-family:${SANS};font-size:12px;letter-spacing:1px;color:${MUTE};">
               ${dateLine}
             </td>
           </tr>` : ""}
-          ${excerpt ? `<tr>
+          ${quote.length ? [...quote.map((p, i) => quoteRow(p, i === quote.length - 1 && !gloss.length)), ...gloss.map((p, i) => glossRow(p, i === gloss.length - 1))].join("\n          ") : excerpt && !lead ? `<tr>
             <td align="center" style="padding:0 30px 30px;font-family:${SERIF};font-style:italic;font-size:17px;line-height:1.6;color:${BRASS};">
               ${excerpt}
             </td>
           </tr>` : ""}
+          ${letter.figure && !lead ? figureRow(letter.figure) : ""}
           <tr>
             <td align="center" style="padding:4px 8px 40px;">
               <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="border:1px solid ${BRASS};border-radius:4px;">
                     <a href="${url}" style="display:inline-block;padding:11px 30px;font-family:${SANS};font-size:12px;letter-spacing:3px;text-transform:uppercase;color:${BRASS};text-decoration:none;">
-                      Read it
+                      Onward
                     </a>
                   </td>
                 </tr>
@@ -199,7 +263,7 @@ export function renderLetterHtml(letter, unsubscribeUrl) {
 
   return houseEmailDocument({
     documentTitle: letter.title,
-    preheader: letter.excerpt || "",
+    preheader: paragraphs(letter.quote).map(plain).join(" ") || letter.excerpt || "",
     contentRows,
     footerNote: LETTER_FOOTER_NOTE,
     unsubscribeUrl,
@@ -208,12 +272,14 @@ export function renderLetterHtml(letter, unsubscribeUrl) {
 
 export function renderLetterText(letter, unsubscribeUrl) {
   const bodyLines = [
+    letter.kicker ? letter.kicker.toUpperCase() : null,
     letter.title,
     letter.dateLine ? letter.dateLine : null,
     "",
-    letter.excerpt ? letter.excerpt : null,
-    letter.excerpt ? "" : null,
-    `Read it: ${letter.url}`,
+    ...(paragraphs(letter.quote).length ? [...paragraphs(letter.quote), ...paragraphs(letter.gloss)].flatMap((p) => [plain(p), ""]) : letter.excerpt ? [letter.excerpt, ""] : []),
+    letter.figure && !letter.figure.carriesTitle ? `${letter.figure.alt}: ${letter.figure.href}` : null,
+    letter.figure && !letter.figure.carriesTitle ? "" : null,
+    `Onward: ${letter.url}`,
   ].filter((l) => l !== null);
   return houseEmailText({ bodyLines, footerNote: LETTER_FOOTER_NOTE, unsubscribeUrl });
 }

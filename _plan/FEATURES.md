@@ -37,7 +37,7 @@ check counts them. Add the row when a feature ships; add its journey to
 | Tags | `/tags/`, `/voyage-by-tags/` | `_pages/tag-archive.html` `_pages/tag-voyage.html` `_data/tag_colours.yml` | | Audit X14. |
 | Tarot cards and the random jump | Lower corners of several pages | `_includes/tarots.html` `_includes/random_voyage.html` | `search-corners` | Hidden until the pointer finds them. Audit X10. |
 | Word card | The end of a post, Home | `_includes/word-card.html` | | |
-| Subscribe | The slip at the end of a page | `_includes/subscribe.html` `assets/js/subscribe.js` `_sass/_subscribe.scss` `functions/api` | `subscribe` `phone-post` | D1 and Resend behind it. The journey answers the list's address itself: it never writes to the real list. Audit X11, X18. |
+| Subscribe | The slip at the end of a page; the letters | `_includes/subscribe.html` `assets/js/subscribe.js` `_sass/_subscribe.scss` `functions/api` `scripts/send-letter.mjs` `scripts/letter-template.mjs` `scripts/letter-card.mjs` | `subscribe` `phone-post` | D1 and Resend behind it. The journey answers the list's address itself: it never writes to the real list. Letters are sent by hand (send-letter); a letter may carry a Reverie card as a picture and lines from the piece; a voyage's letter carries the voyage's card (cover, title, line, palette) by itself. Audit X11, X18. |
 | About and CV | `/about/`, `/cv/` | `_pages/about.md` `_pages/cv.md` `_layouts/about.html` `_sass/_about.scss` | | Stage 6. The CV's way in is the end of About. |
 | Bestiary | `/bestiary/` | `_pages/bestiary.md` | | Not built. Until it is, a designed holding page, kept in the navigation (the owner, Q5, 2026-10-01): to be chosen from prototypes. Stage 5. |
 | 404 | A wrong address | `_pages/404.md` | `lost` | |
