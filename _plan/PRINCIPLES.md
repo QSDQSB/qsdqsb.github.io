@@ -55,7 +55,7 @@ writing (least well), and the person (Home strongly, About weakly).
   its Photobook cover, on a letter's card (2026-10-17: "the excerpt of the voyage page should be the
   $serif class, regular not italic. E.g. to align with the voyage cards"). For a voyage this
   replaces pair 7's "Italic, serif, didone font for poetic and storytelling text (like Voyage)"; the
-  shared Didot italic lede stays on other heroes, and What's-new stays as built.
+  shared Didot italic lede stays on other heroes, and What's-new keeps its line as built. Its card titles are Playfair bold too, and only the Reverie's hex is Didot (2026-10-17).
 - Gold belongs to the sun alone in the specs. Weather marks are monotone ink. Films carry their own
   hue as small ticks and dots.
 - Quiet by default: detail on hover or in hand. One control per job.
