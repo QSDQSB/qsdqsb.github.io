@@ -111,6 +111,9 @@ export async function reverieCard(hex, { site = 'https://qsdqsb.com' } = {}) {
  */
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+
+/** A line as a reader sees it: no markdown emphasis marks (`___enchanted___`). */
+export const plainLine = (s) => String(s || '').replace(/(\*{1,3}|_{1,3})(\S(?:.*?\S)?)\1/g, '$2');
 // 4:3, the site's own "tall" cover shape: tall enough that a subject in the lower half still sits
 // above the words, which stay at the foot on the left, as every voyage card sets its line.
 const COVER_HEIGHT = 420;
@@ -140,8 +143,7 @@ export function voyageCardData(voyagePath, { root = ROOT } = {}) {
   const crop = Object.entries(yml.cover.crops || {}).find(([k]) => shapeOf(k) === 'tall');
   return {
     title: String(fm.title || ''),
-    // The line as a reader sees it: no markdown emphasis marks (`___enchanted___`).
-    excerpt: String(fm.excerpt || '').replace(/(\*{1,3}|_{1,3})(\S(?:.*?\S)?)\1/g, '$2'),
+    excerpt: plainLine(fm.excerpt),
     path: `/voyage/${slug}/`,
     gallery,
     cover: `${photo.url}/1280.webp`,
@@ -166,7 +168,7 @@ export function voyageCardHtml(d, vat) {
   .lv-scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,10,0.8) 0%, rgba(10,10,10,0.42) 24%, rgba(10,10,10,0) 46%); }
   .lv-words { position: absolute; left: 28px; right: 28px; bottom: 24px; text-shadow: 0 1px 1px rgba(0,0,0,0.35); }
   .lv-title { font: 700 44px/1 "Playfair Display", Georgia, serif; letter-spacing: 0.015em; margin: 0; }
-  .lv-lede { font: 400 18px/1.35 "Playfair Display", Georgia, serif; margin: 10px 0 0; color: rgba(228,229,229,0.9); }
+  .lv-lede { font: 400 20px/1.3 "Playfair Display", Georgia, serif; margin: 10px 0 0; color: rgba(228,229,229,0.9); }
   .lv-foot { display: flex; align-items: center; gap: 18px; padding: 14px 28px; }
   .lv-vat { width: 48px; height: 48px; flex: none; border-radius: 50%; display: block; }
   .lv-bar { flex: 1; display: flex; height: 8px; border-radius: 3px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08); }
