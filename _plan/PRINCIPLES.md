@@ -324,6 +324,10 @@ settled"):
 - 2026-10-01 · What an idea owes before it is decided on: "An idea needs verdict, an idea needs
   brainstorm to get explicit, an idea needs an evaluation of its influence to the existing structure,
   pros and cons".
+- 2026-10-17 · A pull request's body is a high-level description, "not a heavy-weight line-by-line
+  change narrator": a few lines, no list of each photo added, no gallery of its images (the owner,
+  merging PR #115). Pictures at both widths still come with a change to the design
+  ([decisions/0010](decisions/0010-the-merge-is-the-yes.md)).
 
 ## Hard rules
 
