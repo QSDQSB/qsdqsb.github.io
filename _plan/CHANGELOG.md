@@ -11,6 +11,9 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-17 · A voyage's page closes as the rest of the site does, its tags, the subscribe slip, the dates and Shot by QSD first, and its ways on last: the voyage's other parts, then Elsewhere (R010) · tier 2
+- 2026-10-17 · Home's What's-new cards set their titles in the voyage cards' Playfair bold, no longer Didot; the Reverie card keeps its hex in Didot, a figure (R011) · tier 2
+- 2026-10-17 · A voyage's line under its title, on the Photobook's cover, is set upright in the voyage cards' own Playfair, no longer in Didot italic; the other pages' heroes keep theirs (R009) · tier 2
 - 2026-10-17 · A letter for a new voyage carries the voyage's own card beneath its kicker: the cover cut round its focus as the site cuts it, the title and line in Playfair at its foot on the left, as the voyage cards set them, and as the card's foot the voyage's vat and bar as QSD's Palette has them; the title and line are not said again in text (R008) · tier 2
 - 2026-10-16 · In the search panel, a suggestion or a result's title reached by the keyboard carries the site's brass ring, set off its edge, where a suggestion showed only its fill and a title only a change of colour; the pointer sees nothing new (C02, the search panel) · tier 1
 - 2026-10-17 · A new voyage, Lungern: twenty photographs of the lake in autumn, one of them from June 2024 that had been under Wengen (it leaves Wengen, which now has twenty); its cover is the cow, the rail and the high-voltage plate above the turquoise water, cut low so a wide cover holds all three; its line is "Where gilded poplars dapple turquoise water" (re-captured: home, search, voyage, voyage-by-tags and palette, for the new card; nothing else moved) (R006) · tier 2
