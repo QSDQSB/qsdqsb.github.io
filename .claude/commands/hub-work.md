@@ -55,9 +55,10 @@ also the house's: read `CLAUDE.md`, the stage's file, `_plan/DESIGN-LANGUAGE.md`
    abort and report.
 7. **Commit and open.** `bash scripts/hub-work.sh commit "<emoji> <what changed, in the house's
    commit style>"`. Write the pull request's body with the Write tool to
-   `.claude/worktrees/hub-work/PR-BODY.md`: what the owner will see, in two or three lines; what
-   was done; which task or request it closes; the pages re-captured; what the reviewer said; what
-   to look at in the pictures. End it with the line
+   `.claude/worktrees/hub-work/PR-BODY.md`, a few lines and high-level, never a file-by-file or
+   item-by-item account (the owner, 2026-10-17): what the owner will see; which task or request it
+   closes; the pages re-captured; what the reviewer said; what to look at in the pictures. End it
+   with the line
    `🤖 Generated with [Claude Code](https://claude.com/claude-code)`.
    Then `bash scripts/hub-work.sh pr "<emoji> <title>"`.
 8. **Report** in under eight lines: the task, the pull request's address (or the hold and its
