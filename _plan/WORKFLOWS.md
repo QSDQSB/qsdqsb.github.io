@@ -5,8 +5,10 @@ the steps; this page says which path a piece of work is on.
 
 Every path ends the same way: `npm run gate:full`, the `site-reviewer` agent, a line in
 [`CHANGELOG.md`](CHANGELOG.md) if a reader gets something different, the stage file ticked. Nothing
-is pushed without the owner, with one standing exception of the owner's own (Q10, 2026-10-01): the
-daily run's branch, when it touches only `_plan/`. Nothing is merged without the owner at all.
+is pushed to `master` without the owner. Nothing is merged without the owner but one class, the
+owner's own exception (2026-10-18, [0011](decisions/0011-unseen-work-merges-itself.md)): a work pull
+request no reader would see, labelled `unseen`, merges itself after 24 hours unless the owner
+comments, reviews or takes the label off.
 
 ```
                        ┌──────────────── the owner ────────────────┐
@@ -141,14 +143,14 @@ built, however small the change sounds: "two or three lines" is a claim like any
 | A turn ends | House style, bundle sync, the `!important` ratchet |
 | Before anything is called done | The gate and the reviewer |
 | Anything is pushed | CI runs the fast gate and, on a pull request, the changelog rule over the branch |
-| Work | `/hub-work`, each morning after the upkeep: the next request or roadmap task, claimed, done in its own folder, gated and reviewed, and opened as one pull request with pictures; the owner's merge is the yes ([0010](decisions/0010-the-merge-is-the-yes.md)). One open at a time; a task that needs the owner is held with its question |
-| Daily | `/hub-daily`: the gate on `master`, answers and new ideas recorded, a file nothing loads filed. It keeps the books and fixes nothing: raw ideas and the inbox wait for the next session until `daily_agents` is switched on. Its work stays on one branch, `hub/daily`, until the next session merges it (plan only, so without asking; pushing `master` is the owner's) |
+| Each morning | One session, `/hub-work`. First the upkeep (`hub-daily.sh`): the gate on `master`, the owner's answers and new ideas recorded, a file nothing loads filed. Then the next request or roadmap task: claimed, done in its own folder, gated and reviewed, and opened as a pull request with pictures; the owner's merge is the yes ([0010](decisions/0010-the-merge-is-the-yes.md)). Up to three open, on separate files; a task that needs the owner is held with its question. A work pull request no reader would see merges itself after 24 hours unless the owner vetoes it ([0011](decisions/0011-unseen-work-merges-itself.md)); a notification and the run's report name each. The day brief is published last |
+| Sunday | The same session scouts instead of taking a task: the pixel-harness pages at desktop and phone, read against "What the eye turns away" and `PRINCIPLES.md`. Small faults become findings; a major one becomes an idea of the lead's, shaped and challenged, while fewer than two wait. A pull request of the plan alone. Nothing is built unasked |
 
 ## Who does what
 
 | | Decides | Builds | Checks |
 |---|---|---|---|
-| **The owner** | What the site is; anything a reader sees anew; pushes and merges | | The command centre, when they choose |
+| **The owner** | What the site is; anything a reader sees anew; pushes, and every merge but the unseen class ([0011](decisions/0011-unseen-work-merges-itself.md)) | | The command centre, when they choose |
 | **The design lead** | The order of work; which path; the tier | The plan | That the plan is true |
 | **The session** | Tier 0 and 1 | The site | Its own work, before handing it over |
 | **The reviewer** | Whether a change passes | Nothing: it cannot edit | Every change |

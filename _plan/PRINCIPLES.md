@@ -341,6 +341,12 @@ These are never anyone's call but the owner's, each time.
 - Writes to R2, and removals from it. Removals: list first, then the owner types `QSD`.
   - 2026-10-10 · The owner, in chat: for the photographs gathered in the Apple Photos album Voyage-of-QSDQSB, "A tap on the command centre" is the go. **Bring them in** stores the destinations under the plan's hash, and `photos:harvest -- go` accepts it for exactly that set and no other; `ingest --go` pushes only the galleries it names. A yes in chat is not this go. Every other write to R2 still asks for the typed `QSD`.
 - Merging a pull request; pushing `master`.
+  - 2026-10-18 · The owner amended this rule for one class, in chat ("Unseen fixes merge
+    themselves"): a work pull request with a clean pixel diff, `gate:full` and the reviewer's PASS,
+    and no tooling, merges itself after 24 hours unless the owner comments; up to three open at once,
+    on separate files. The conditions and the veto are
+    [0011](decisions/0011-unseen-work-merges-itself.md). Every other merge stays the owner's, and so
+    does every push of `master`.
   - 2026-10-03 · Opening the pull request for a finished batch is Claude's, with pushing that batch's
     own branch (the owner, in chat: "you should create pr instead of asking me to"). Merging stays
     the owner's, and so does every push of `master`.
@@ -350,5 +356,6 @@ These are never anyone's call but the owner's, each time.
   - The owner's note beside that answer: "Hub can decide PRs but we need carefully crafted rules for
     conditions for an auto PR approval merge to master". It grants nothing yet: merging stays the
     owner's, each time, until those rules are theirs
-    ([I002](ideas/I002-rules-for-the-hub-to-approve-and-merge-a-pull-re.md)).
+    ([I002](ideas/I002-rules-for-the-hub-to-approve-and-merge-a-pull-re.md)). For one class they
+    are, since 2026-10-18: the first line under this rule.
 - Committing image bytes, `photos/`, `_data/photo_manifests/`, keys or `.env`: never.

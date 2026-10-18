@@ -1101,11 +1101,13 @@ function withWorkRepo(run, { gate = 'PASS' } = {}) {
   const GIT = fs.existsSync('/usr/bin/git') ? '/usr/bin/git' : 'git';
   const git = (cwd, ...a) => execFileSync(GIT, a, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
   const put = (rel, body) => { fs.mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true }); fs.writeFileSync(path.join(dir, rel), body); };
-  let open = '[]';
-  const work = (...args) => spawnSync('bash', ['scripts/hub-work.sh', ...args], { cwd: dir, encoding: 'utf8', env: { ...process.env, PATH: `${bin}:${process.env.PATH}`, FAKE_GH_PRS: open, HUB_WORK_HANDED: '' } });
+  let open = '[]', extra = {};
+  const ghLog = path.join(base, 'gh.log');
+  const work = (...args) => spawnSync('bash', ['scripts/hub-work.sh', ...args], { cwd: dir, encoding: 'utf8', env: { ...process.env, PATH: `${bin}:${process.env.PATH}`, FAKE_GH_PRS: open, FAKE_GH_LOG: ghLog, HUB_WORK_HANDED: '', HUB_WORK_SCOUT_DAY: '9', ...extra } });
   try {
     fs.mkdirSync(dir); fs.mkdirSync(bin);
-    fs.writeFileSync(path.join(bin, 'gh'), '#!/usr/bin/env bash\ncase "$1 $2" in\n  "pr list") printf "%s" "$FAKE_GH_PRS" ;;\n  "pr create") echo "https://github.com/QSDQSB/qsdqsb.github.io/pull/999" ;;\n  *) exit 1 ;;\nesac\n', { mode: 0o755 });
+    // The stand-in for gh: every call is logged (a body file's text with it), and only what the run uses answers.
+    fs.writeFileSync(path.join(bin, 'gh'), '#!/usr/bin/env bash\nprintf "%s\\n" "$*" >> "$FAKE_GH_LOG"\nfor ((i=1;i<=$#;i++)); do [ "${!i}" = --body-file ] && { j=$((i+1)); cat "${!j}" >> "$FAKE_GH_LOG"; }; done\ncase "$1 $2" in\n  "pr list") printf "%s" "$FAKE_GH_PRS" ;;\n  "pr create") echo "https://github.com/QSDQSB/qsdqsb.github.io/pull/999" ;;\n  "pr merge"|"label create") exit 0 ;;\n  *) exit 1 ;;\nesac\n', { mode: 0o755 });
     git(dir, 'init', '-q');
     for (const f of ['hub-work.sh', 'plan.mjs', 'check-plan.mjs']) fs.cpSync(path.join(ROOT, 'scripts', f), path.join(dir, 'scripts', f));
     fs.cpSync(path.join(ROOT, 'scripts/lib'), path.join(dir, 'scripts/lib'), { recursive: true });
@@ -1115,12 +1117,15 @@ function withWorkRepo(run, { gate = 'PASS' } = {}) {
     put('_plan/stages/02-two.md', '# Stage 2 · Two\n\n**Status:** planned\n\n- [ ] B01 · later\n');
     put('_plan/requests.md', '# Requests\n\n## Open\n\n- 2031-01-01 · R001 · Fix the map panel\n\n## Done\n');
     put('_plan/findings/inbox.md', '# Inbox\n\n## Waiting\n\n## Taken\n');
+    put('_plan/hub.json', '{ "work_may_merge": true }\n');
+    put('_plan/ideas/I001-x.md', '# I001 · x\n\n**Status:** raw · **Raised:** 2031-01-01 by the owner · **Stage:** none yet\n\n## In the owner\'s words\n\n> Make it calmer\n');
+    put('_posts/2031-01-01-a.md', '---\ntitle: A\n---\nA post.\n');
     put('_sass/a.scss', 'a{}\n'); put('.gitignore', '.claude/worktrees/\nnode_modules\n');
     git(dir, 'add', '-A'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'start');
     git(dir, 'branch', '-M', 'master');
     git(base, 'clone', '-q', '--bare', dir, remote);
     git(dir, 'remote', 'add', 'origin', remote); git(dir, 'fetch', '-q', 'origin');
-    return run({ dir, remote, git, put, work, setOpen: (v) => { open = v; } });
+    return run({ dir, remote, git, put, work, setOpen: (v) => { open = v; }, setEnv: (v) => { extra = v; }, gh: () => (fs.existsSync(ghLog) ? fs.readFileSync(ghLog, 'utf8') : '') });
   } finally { fs.rmSync(base, { recursive: true, force: true }); }
 }
 
@@ -1275,6 +1280,192 @@ test('a failed gate stays failed, and a pass holds only for the folder it saw', 
     assert.match(work('pr', '🎨 Red').stderr, /the full gate has not passed/);
     assert.strictEqual(work('abort').status, 0);
   }, { gate: 'FAIL' });
+});
+
+/** The gate's stand-in, started and waited for until it is done. */
+const gateAndWait = (work) => { work('gate'); let w; for (let i = 0; i < 5; i++) { w = work('wait'); if (w.status !== 4) break; } return w; };
+/** An open work pull request as `gh pr list` gives it. */
+const openPr = (o) => ({ number: 5, state: 'OPEN', title: '🎨 X', headRefName: 'work/x', headRefOid: 'a'.repeat(40), createdAt: new Date().toISOString(), labels: [], body: '', comments: [], reviews: [], mergeable: 'MERGEABLE', statusCheckRollup: [{ conclusion: 'SUCCESS' }], ...o });
+
+test('several work pull requests may wait at once, three at most, and a new task keeps off their files', () => {
+  withWorkRepo(({ dir, git, work, setOpen }) => {
+    git(dir, 'switch', '-q', '-c', 'work/x'); fs.writeFileSync(path.join(dir, '_sass/a.scss'), 'a{color:blue}\n');
+    git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-am', 'x'); git(dir, 'push', '-q', 'origin', 'work/x'); git(dir, 'switch', '-q', 'master');
+    setOpen(JSON.stringify([openPr({})]));
+    const begin = work('begin');
+    assert.strictEqual(begin.status, 0, begin.stdout + begin.stderr);
+    assert.match(begin.stdout, /Waiting for the owner: #5 🎨 X \(0 days\)\n/);
+    assert.match(begin.stdout, /Kept off: [^\n]*\n#5  _sass\/a\.scss\n/);
+    assert.strictEqual(work('claim', 'r001').status, 0);
+    fs.writeFileSync(path.join(dir, '.claude/worktrees/hub-work/_sass/a.scss'), 'a{color:red}\n');
+    const gate = work('gate');
+    assert.strictEqual(gate.status, 1);
+    assert.match(gate.stderr, /an open work pull request already changes _sass\/a\.scss \(#5 \)/);
+    assert.strictEqual(work('abort').status, 0);
+    setOpen(JSON.stringify([openPr({}), openPr({ number: 6, headRefName: 'work/y' }), openPr({ number: 7, headRefName: 'work/z' })]));
+    const full = work('begin');
+    assert.strictEqual(full.status, 3);
+    assert.match(full.stdout, /Three wait for the owner\. Nothing is started today\./);
+  });
+});
+
+test('an unseen fix is labelled so when it is opened, and merges itself a day later only if nothing stands in its way', () => {
+  withWorkRepo(({ dir, remote, git, work, setOpen, gh }) => {
+    const wt = path.join(dir, '.claude/worktrees/hub-work');
+    assert.strictEqual(work('begin').status, 0);
+    assert.strictEqual(work('claim', 'r001').status, 0);
+    fs.writeFileSync(path.join(wt, '_sass/a.scss'), 'a{color:red}\n');
+    assert.strictEqual(work('commit', '🎨 Red').status, 0);
+    fs.writeFileSync(path.join(wt, 'PR-BODY.md'), 'What changed.\n');
+    assert.strictEqual(gateAndWait(work).status, 0);
+    assert.strictEqual(work('pr', '🎨 Red', '--reviewer', 'maybe').status, 2, 'the reviewer\'s word is one of three');
+    const pr = work('pr', '🎨 Red', '--reviewer', 'PASS');
+    assert.strictEqual(pr.status, 0, pr.stdout + pr.stderr);
+    assert.match(pr.stdout, /\(unseen: merges itself on the first morning a full day from now, unless the owner says\)/);
+    assert.match(gh(), /no pixel moved, nothing a reader is given; the full gate and the reviewer passed/);
+    const sha = git(remote, 'rev-parse', 'work/r001').trim();
+    assert.match(gh(), /pr create [^\n]*--label unseen/);
+    assert.ok(gh().includes(`<!-- gated: ${sha} -->`), 'the body names the commit that was gated');
+    // What a reader is given, or a reviewer's notes, is the owner's to merge.
+    const write = (file) => () => { fs.mkdirSync(path.dirname(path.join(wt, file)), { recursive: true }); fs.writeFileSync(path.join(wt, file), 'x\n'); };
+    const cases = [
+      [write('_posts/x.md'), 'PASS', /Not unseen \(the owner merges it\): _posts\/x\.md/],
+      [write('_portfolio/x.md'), 'PASS', /Not unseen[^\n]*_portfolio\/x\.md/, 'a served folder the list does not name is seen'],
+      [write('robots.txt'), 'PASS', /Not unseen[^\n]*robots\.txt/],
+      [() => { fs.mkdirSync(path.join(wt, '_docs')); execFileSync('git', ['mv', '_posts/2031-01-01-a.md', '_docs/a.md'], { cwd: wt }); }, 'PASS', /Not unseen[^\n]*_posts\/2031-01-01-a\.md/, 'a post moved into the docs is a post gone'],
+      [() => fs.writeFileSync(path.join(wt, '_plan/ideas/I001-x.md'), fs.readFileSync(path.join(wt, '_plan/ideas/I001-x.md'), 'utf8').replace('> Make it calmer', '> Make it louder')), 'PASS', /Not unseen[^\n]*the owner's words/],
+      [() => fs.appendFileSync(path.join(wt, '_plan/ideas/I001-x.md'), '\n**The owner:** pursue · 2031-01-02\n'), 'PASS', /Not unseen[^\n]*the owner's words/, 'a decision the owner never made'],
+      [write('_sass/b.scss'), 'NOTES', /the reviewer's last word was NOTES/],
+      [write('_plan/PRINCIPLES.md'), 'PASS', /Not unseen \(the owner merges it\): _plan\/PRINCIPLES\.md/],
+      [write('_plan/hub.json'), 'PASS', /Not unseen[^\n]*_plan\/hub\.json/],
+    ];
+    for (const [prep, verdict, why] of cases) {
+      assert.strictEqual(work('begin').status, 0);
+      assert.strictEqual(work('claim', 's1-a02').status, 0);
+      prep();
+      assert.strictEqual(work('commit', '🎨 Y').status, 0);
+      fs.writeFileSync(path.join(wt, 'PR-BODY.md'), 'Y.\n');
+      assert.strictEqual(gateAndWait(work).status, 0);
+      const p = work('pr', '🎨 Y', '--reviewer', verdict);
+      assert.strictEqual(p.status, 0, p.stdout + p.stderr);
+      assert.match(p.stdout, why);
+      assert.ok(!/--label unseen/.test(gh().trim().split('\n').filter((l) => l.startsWith('pr create')).pop()), 'not labelled');
+      git(remote, 'branch', '-D', 'work/s1-a02'); git(dir, 'fetch', '-q', '--prune', 'origin');
+    }
+    // The next mornings.
+    const day = new Date(Date.now() - 2 * 864e5).toISOString();
+    const ready = { number: 9, headRefName: 'work/r001', title: '🎨 Red', createdAt: day, headRefOid: sha, labels: [{ name: 'unseen' }], body: `x\n<!-- gated: ${sha} -->`, comments: [{ author: { login: 'claude' } }] };
+    for (const [why, o] of [['a word from the owner', { comments: [{ author: { login: 'QSDQSB' } }] }], ['a review of the owner\'s', { reviews: [{ author: { login: 'QSDQSB' }, state: 'COMMENTED' }] }], ['the label taken off', { labels: [] }], ['a commit since the gate', { headRefOid: 'b'.repeat(40) }], ['under a day old', { createdAt: new Date().toISOString() }], ['a red check', { statusCheckRollup: [{ conclusion: 'SUCCESS' }, { conclusion: 'FAILURE' }] }], ['a check still running', { statusCheckRollup: [{ status: 'IN_PROGRESS', conclusion: '' }] }], ['no checks at all', { statusCheckRollup: [] }], ['a conflict', { mergeable: 'CONFLICTING' }]]) {
+      setOpen(JSON.stringify([openPr({ ...ready, ...o })]));
+      const b = work('begin');
+      assert.strictEqual(b.status, 0, b.stdout + b.stderr);
+      assert.ok(!/Merged by the rule/.test(b.stdout) && !/pr merge/.test(gh()), `not merged with ${why}`);
+      assert.match(b.stdout, /Waiting for the owner: #9 /);
+      assert.strictEqual(work('abort').status, 0);
+    }
+    setOpen(JSON.stringify([openPr(ready)]));
+    // The owner's one switch, read from GitHub's master.
+    const flip = (v) => { fs.writeFileSync(path.join(dir, '_plan/hub.json'), `{ "work_may_merge": ${v} }\n`); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-am', `switch ${v}`); git(dir, 'push', '-q', 'origin', 'master'); };
+    fs.renameSync(remote, `${remote}.away`);
+    const away = work('begin');
+    fs.renameSync(`${remote}.away`, remote);
+    assert.match(away.stdout, /nothing merges by the rule today/);
+    assert.ok(!/pr merge/.test(gh()), 'not merged when GitHub did not answer: the switch may have moved');
+    assert.strictEqual(work('abort').status, 0);
+    flip(false);
+    const off = work('begin');
+    assert.match(off.stdout, /nothing merges by the rule \(work_may_merge is off/);
+    assert.ok(!/pr merge/.test(gh()), 'not merged with the switch off');
+    assert.strictEqual(work('abort').status, 0);
+    flip(true);
+    const b = work('begin');
+    assert.strictEqual(b.status, 0, b.stdout + b.stderr);
+    assert.match(b.stdout, /Merged by the rule \(unseen, a day old, no word from you\): #9 🎨 Red\n/);
+    assert.ok(gh().includes(`pr merge 9 --repo QSDQSB/qsdqsb.github.io --merge --match-head-commit ${sha}`));
+    assert.ok(!/Waiting for the owner: #9/.test(b.stdout), 'what merged no longer waits');
+    assert.match(fs.readFileSync(path.join(dir, '.claude/worktrees/hub-runs.log'), 'utf8'), /WORK: merged #9 by the rule/);
+    assert.strictEqual(work('abort').status, 0);
+  });
+});
+
+test('a line of the plan changed after a full gate needs only the fast gate; a change to the site needs the full one again', () => {
+  withWorkRepo(({ dir, work }) => {
+    const wt = path.join(dir, '.claude/worktrees/hub-work');
+    assert.strictEqual(work('begin').status, 0);
+    assert.strictEqual(work('claim', 'r001').status, 0);
+    fs.writeFileSync(path.join(wt, '_sass/a.scss'), 'a{color:red}\n');
+    assert.strictEqual(gateAndWait(work).status, 0);
+    fs.appendFileSync(path.join(wt, '_plan/findings/inbox.md'), '- a line filed after the gate\n');
+    assert.strictEqual(work('commit', '🎨 Red').status, 0);
+    fs.writeFileSync(path.join(wt, 'PR-BODY.md'), 'x\n');
+    const pr = work('pr', '🎨 Red');
+    assert.strictEqual(pr.status, 0, pr.stdout + pr.stderr);
+    assert.match(pr.stdout, /Only the plan changed since a full gate[^\n]*\nGATE: PASS \(stand-in\)\nOpened: /);
+    assert.strictEqual(work('begin').status, 0);
+    assert.strictEqual(work('claim', 's1-a02').status, 0);
+    fs.writeFileSync(path.join(wt, '_sass/a.scss'), 'a{color:green}\n');
+    assert.strictEqual(gateAndWait(work).status, 0);
+    fs.writeFileSync(path.join(wt, '_sass/a.scss'), 'a{color:teal}\n');
+    assert.strictEqual(work('commit', '🎨 Teal').status, 0);
+    fs.writeFileSync(path.join(wt, 'PR-BODY.md'), 'x\n');
+    assert.match(work('pr', '🎨 Teal').stderr, /the full gate has not passed on the folder as it is now/);
+    assert.strictEqual(work('abort').status, 0);
+  });
+});
+
+test('words for the owner come from NOTE.md, a second begin keeps a claimed folder, the lead raises two ideas at most, and Sunday is the scout\'s', () => {
+  withWorkRepo(({ dir, remote, git, work, setEnv }) => {
+    const wt = path.join(dir, '.claude/worktrees/hub-work');
+    assert.strictEqual(work('begin').status, 0);
+    assert.strictEqual(work('claim', 'r001').status, 0);
+    const again = work('begin');
+    assert.strictEqual(again.status, 1);
+    assert.match(again.stderr, /REFUSED: the folder holds work\/r001, claimed at /);
+    assert.ok(fs.existsSync(wt), 'and the folder is kept');
+    assert.match(work('hold', 's1-a02').stderr, /Write the words to .*NOTE\.md first/);
+    fs.writeFileSync(path.join(wt, 'NOTE.md'), 'Local numbers, or steps of ($z-base + 2)?\nOr `both`?\n');
+    assert.strictEqual(work('hold', 's1-a02').status, 0);
+    assert.strictEqual(git(remote, 'log', '-1', '--format=%b', 'hold/s1-a02').trim(), 'Local numbers, or steps of ($z-base + 2)? Or `both`?');
+    git(dir, 'fetch', '-q', 'origin');
+    assert.strictEqual(work('begin').status, 0);
+    assert.strictEqual(work('claim', 'r001').status, 1, 'r001 is still claimed');
+    git(remote, 'branch', '-D', 'work/r001'); git(dir, 'fetch', '-q', '--prune', 'origin');
+    assert.strictEqual(work('claim', 'r001').status, 0);
+    fs.writeFileSync(path.join(wt, 'NOTE.md'), 'The cover\'s line wraps on a phone.\n');
+    const f = work('finding', '/about/');
+    assert.strictEqual(f.status, 0, f.stdout + f.stderr);
+    assert.match(fs.readFileSync(path.join(wt, '_plan/findings/inbox.md'), 'utf8'), /· \/about\/ · The cover's line wraps on a phone\. \(the scout\)/);
+    assert.ok(!fs.existsSync(path.join(wt, 'NOTE.md')), 'the note is spent');
+    for (const n of ['I002', 'I003']) fs.writeFileSync(path.join(wt, `_plan/ideas/${n}-x.md`), `# ${n} · x\n\n**Status:** shaped · **Raised:** 2031-01-01 by the lead · **Stage:** none yet\n`);
+    fs.writeFileSync(path.join(wt, 'NOTE.md'), 'A contact sheet for each voyage.\n');
+    assert.match(work('idea').stderr, /two ideas of the lead's already wait on the owner/);
+    fs.rmSync(path.join(wt, '_plan/ideas/I003-x.md'));
+    const idea = work('idea');
+    assert.strictEqual(idea.status, 0, idea.stdout + idea.stderr);
+    const raised = fs.readdirSync(path.join(wt, '_plan/ideas')).find((x) => x.startsWith('I003-'));
+    assert.match(fs.readFileSync(path.join(wt, '_plan/ideas', raised), 'utf8'), /\*\*Status:\*\* raw · \*\*Raised:\*\* \d{4}-\d{2}-\d{2} by the lead[\s\S]*## As proposed\n\n> A contact sheet for each voyage\./);
+    assert.strictEqual(work('abort').status, 0);
+    setEnv({ HUB_WORK_SCOUT_DAY: execFileSync('date', ['+%u'], { encoding: 'utf8' }).trim() });
+    const sunday = work('begin');
+    assert.strictEqual(sunday.status, 0, sunday.stdout + sunday.stderr);
+    assert.match(sunday.stdout, /Today is the scout's \(scout-\d{4}-w\d{2}, decisions\/0011\): no task is taken\. Next: bash scripts\/hub-work\.sh scout/);
+    assert.ok(!/What to take next/.test(sunday.stdout));
+    assert.strictEqual(work('abort').status, 0);
+  });
+});
+
+test('the work run\'s limits count time awake, and it says when the Mac slept under a gate', () => {
+  withWorkRepo(({ dir, work, setEnv }) => {
+    const now = Math.floor(Date.now() / 1000);
+    setEnv({ HUB_WORK_WAKE: `${now - 1100} ${now - 100}` });
+    assert.strictEqual(work('begin').status, 0);
+    assert.match(work('gate').stdout, /The full gate is running/);
+    fs.writeFileSync(path.join(dir, '.claude/worktrees/hub-work.seen'), String(now - 2000));
+    let w; for (let i = 0; i < 5; i++) { w = work('wait'); if (w.status !== 4) break; }
+    assert.strictEqual(w.status, 0, w.stdout + w.stderr);
+    assert.match(w.stdout, /Note: the Mac slept about 17 min while it ran\. A failure may be the sleep's/);
+    assert.strictEqual(work('abort').status, 0);
+  });
 });
 
 test('the command centre shows the owner\'s requests: open ones first, in their words, escaped; done ones after', () => {

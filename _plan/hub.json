@@ -12,6 +12,7 @@
   },
   "daily_may_push": true,
   "daily_agents": false,
+  "work_may_merge": true,
   "published": {
     "date": "2026-10-17",
     "hash": "9551b60faa50c602"

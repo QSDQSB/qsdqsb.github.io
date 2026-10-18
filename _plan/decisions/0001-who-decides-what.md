@@ -11,6 +11,7 @@ ships that the owner would have stopped). The owner amends them here. One standi
 major-delta rule), and loosens none of them.
 
 **Amended by:** [0010](0010-the-merge-is-the-yes.md), 2026-10-04: tier 2 is built and arrives as a pull request with pictures; the merge is the yes.
+[0011](0011-unseen-work-merges-itself.md), 2026-10-18: a work pull request no reader would see merges itself after 24 hours unless the owner vetoes it; every other merge stays tier 2.
 
 ## Context
 

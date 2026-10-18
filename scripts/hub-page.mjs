@@ -296,7 +296,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
           <li><strong>Notice something wrong:</strong> say it to any Claude session in the repo (<code>/finding</code>), or leave it as a note on a call.</li>
           <li><strong>Start work:</strong> in a session, <code>/hub</code> says where things stand and <code>/stage</code> builds the next thing that needs nobody.</li>
         </ul>
-        <p>A tap is stored with this page at once. It is written into the plan by the next session, or by the daily run. The daily run may push a branch that touches only the plan; nothing reaches <code>master</code>, and no pull request is opened or merged, without you.</p>
+        <p>A tap is stored with this page at once. It is written into the plan by the next session, or by the morning run. The morning run opens pull requests; you merge them, except one labelled <code>unseen</code> (no pixel moved, nothing a reader is given), which merges itself a day after it opened unless you comment, review or take the label off. <code>work_may_merge</code> in the plan's <code>hub.json</code> switches that off.</p>
       </div>
     </details>
   </header>
@@ -469,11 +469,11 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--i
   // page. It does so when the owner says they have decided (the owner, 2026-10-03: "There should be
   // a button to indicate I have made the decisions"), not at every tap: one message for a sitting,
   // with what changed and what is still open. Ids and letters only, never the words of a note (the
-  // session reads those from the store). With no session watching, it says so: the daily run, or
+  // session reads those from the store). With no session watching, it says so: the morning run, or
   // the next session, records the answers.
   var comments = null, can = "", toTell = {}, off = false, THREAD = LS + "-thread";
   var tellBtn = document.getElementById("tell"), heard = function (t) { document.getElementById("heard-text").textContent = t; };
-  var KEPT = "Your taps are kept with this page. A session records them when it next reads the page, and so does the daily run.";
+  var KEPT = "Your taps are kept with this page. A session records them when it next reads the page, and so does the morning run.";
   var waiting = function () { return Object.keys(toTell).length; };
   function listening() {
     if (!comments || off) { tellBtn.hidden = true; if (!off) heard(KEPT); return; }
