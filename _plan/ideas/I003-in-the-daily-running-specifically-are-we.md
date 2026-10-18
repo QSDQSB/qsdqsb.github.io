@@ -1,12 +1,36 @@
 # I003 · A run that clears the list, started by Claude
 
-**Status:** raw · **Raised:** 2026-10-02 by the owner · **Stage:** none yet
+**Status:** staged · **Raised:** 2026-10-02 by the owner · **Stage:** [0](../stages/00-hub.md)
 
 ## In the owner's words
 
 > In the daily running specifically. Are we kind of clearing the pending queues for the to-do list stored in this plan? Or are we trying to locate something new? What's the target output of each daily job? If it's finding the new stuff, how do we clear the pending queue clearly? Are we using a new session to do that? Shouldn't Claude have the ability to submit a new session that generates that?
 
 ## Verdict
+
+**Pursue, turned.** Shape 2, as [0010](../decisions/0010-the-merge-is-the-yes.md) built it: one
+unattended session a morning takes the next task, gates it, has it reviewed and opens a pull
+request, and since [0011](../decisions/0011-unseen-work-merges-itself.md) what no reader sees merges
+itself. Not shape 3: sessions starting sessions would multiply a run the audit shows is still
+fragile. What decides it is the audit of 29 runs: when a run went clean it delivered, and what lost
+the mornings was the Mac's sleep, gates run twice and approvals, not the idea. What would change my
+mind: two weeks after the fixes, a morning in three still lost.
+
+**Waits on:** the reliability tasks in [stage 0](../stages/00-hub.md) (0011).
+
+**The owner:** pursue · 2026-10-18 · One, made reliable: fix the sleep, re-gate and approval traps first; revisit after two weeks of clean runs. In chat, 2026-10-18 (R012), with: one morning session (upkeep first, then the task) and a weekly scout (R013); decisions/0011.
+
+## Since it was raised (2026-10-18)
+
+Shape 2 was built on 2026-10-04 as the work run (0010), turned: it opens a pull request with its
+pictures, where the draft left a branch for the owner to push, and it takes tier 1 and 2 tasks too,
+since the merge is the yes. The owner's four questions are answered by what runs: it clears the
+list, one task a morning; its output is a pull request; it is a new session, started by a schedule.
+"Shouldn't Claude have the ability to submit a new session" was put to the owner on 2026-10-18 as
+how many tasks a morning should take, and answered "One, made reliable": the sleep, re-gate and
+approval traps fixed first, revisited after two weeks of clean runs. The daily upkeep folds into the
+same morning session, and on Sundays the session scouts for what is subpar instead of taking a task
+(0011). This file was never challenged by the reviewer: the owner decided in chat, on the audit.
 
 ## Made explicit
 
@@ -162,16 +186,16 @@ were run by the lead on 2026-10-03; the session runs them again. Nothing else ha
 
 | What must be true | How it was tried | Result |
 |---|---|---|
-| A session started by a schedule can edit site files, build and run `gate:full` with nobody approving, and still cannot push `master` or write to R2 | Not tried. To try: a throwaway scheduled task, run once (`run_scheduled_task`), in a scratch worktree: edit a comment in one partial, run the gate, then try `npm run photos:push -- --dry-run` and `git push origin HEAD:master --dry-run`. Read its events (`list_events`): a last line "(called …)" for minutes is a wait; a denied command must be refused, not run | open |
-| The reviewer, handed a worktree by a run, reviews that tree and not the owner's checkout, and none of its commands waits | Read: the reviewer opens with `git status` and `git diff HEAD` where it stands; the allow list holds `git diff *`, not `git -C <path> diff`. To try: plant a known fault in a scratch worktree only, hand the reviewer its path from a scheduled run, and see whether it names the fault and whether any command waits | open |
-| A whole run stays inside its worktree (build, `gate:full`, journeys, the iPhone check) beside a gate in the owner's checkout, and leaves that checkout as it was | Read: `prototype-setup.sh` links the packages and copies the fetched data; `gate.sh` serves the iPhone check on 4173, fixed. To try: two `gate:full` at once, one in a scratch worktree, with `git status` and `master`'s hash taken before and after | open; by reading, the two meet on port 4173 |
-| A run can tell what is already done on a branch not yet on `master` | Lead's trial: stage 1's file on `master` against `stage/1-second-batch`: 30 open tasks against 6; 13 commits not on `master` | failed as things stand: a run cut from `master` today would take up 24 finished tasks. Open for the rule in "What it changes" (a building stage names its branch) |
-| There is work that needs nobody, and a program can find it | Lead's trial: every open task line in stages 1 to 11 read for a tier: 107 open, 3 name one. Stage 1's six open tasks each wait on the owner, a design job or a real iPhone | failed as the files stand: no program can list them (F076), and stage 1 holds none. By reading, stages 2 and 9 hold candidates (A01, A05, A09, the ratchet, `check-budgets.mjs`). Run again once the lines carry tiers |
-| "Unseen" can be told by a program: the pixel diff stays clean on an unseen change and moves on a seen one, and is quiet enough to trust with nobody there | Not run. To try: A01 in a scratch worktree, `visual:build` and `visual:diff` twice; then the same with one radius moved by a pixel | open. Its known holes: F030, F063, F002 |
-| Claude can start a session by itself on this Mac, from inside a run, with nobody approving | Read: the daily run is a scheduled task's session; the scheduled-tasks tool can make and run a task. Not tried from inside an unattended session | open: from a scheduled run, make a one-off task that only reports, and see it fire |
-| A branch handed over becomes work delivered | Lead's trial (git): nine `tech-debt/` branches on GitHub, none merged, the newest 2026-08-28; this batch's 13 commits unpushed; local `master` 8 ahead of GitHub as last fetched | open: a month of the run's branches, counted. A tap to push (question 2) is how it would be helped |
-| For shape 3: a cloud session can meet the done bar | Read by the lead: `.github/workflows/gate.yml`, "Not here: the seeded build, the pixel diff, the reader journeys and the iPhone check … They need the photo manifests, which are private, and Ruby" | failed, by reading. The session reads it again |
-| A run's cost is bearable | Not measured. `gate:full` takes about ten minutes a run on this Mac (sessions' own timing, 2026-10-02) | open: the first runs timed, and their tokens counted |
+| A session started by a schedule can edit site files, build and run `gate:full` with nobody approving, and still cannot push `master` or write to R2 | Used for real: the work run, every morning from 2026-10-04 (`scripts/hub-work.sh`, which never touches `master` or R2). Read again in the audit of all 29 scheduled-run transcripts, 2026-10-18 | proved for building: 4 of 8 work pull requests went from claim to pull request with nobody touching anything (#105, #106, #114, #118). Approvals still stopped two runs (118 minutes on a `$` in a hold's question; 61 hours on the brief's publish). The refusals were not tried: the script never asks for a push to `master` or R2 |
+| The reviewer, handed a worktree by a run, reviews that tree and not the owner's checkout, and none of its commands waits | The work run hands the reviewer a diff of its folder (`hub-work.sh diff`), from #103 on | proved: #103 passed with notes, and every work pull request since carried the reviewer's verdict |
+| A whole run stays inside its worktree (build, `gate:full`, journeys, the iPhone check) beside a gate in the owner's checkout, and leaves that checkout as it was | The audit, 2026-10-18 | failed once: `begin` run twice by mistake destroyed a folder. Fixed in stage 0 (`begin` refuses a folder that holds a claim). No clash with a gate in the owner's checkout was found in the transcripts |
+| A run can tell what is already done on a branch not yet on `master` | Built: runs build on GitHub's `master` (stage 0, 2026-10-03) and claim each task as a branch `work/<key>` there, which `plan.mjs next` skips | proved in use: fifteen days of runs; the audit names no task taken twice |
+| There is work that needs nobody, and a program can find it | `plan.mjs next`: the owner's requests first, then the roadmap's next unclaimed task | proved: it gave every run that reached `next` a task or a hold; 8 pull requests and 4 holds in 15 days |
+| "Unseen" can be told by a program: the pixel diff stays clean on an unseen change and moves on a seen one, and is quiet enough to trust with nobody there | The diff ran in every full gate of every run | open: the audit names no false alarm, but that it moves on every seen change was not tried. `master`'s own baselines went stale after photographs and aborted the run of 10-11; F030, F063 and F002 stand. Tried in use by the first pull requests 0011 lets merge, each named in the run's report |
+| Claude can start a session by itself on this Mac, from inside a run, with nobody approving | Not tried | open, and no longer asked: the owner chose one session a morning, made reliable (2026-10-18) |
+| A branch handed over becomes work delivered | GitHub's pull requests, counted in the audit | proved, as a pull request: the owner merged 11 work and request pull requests; #109 was closed unmerged. What waited was the merge: three mornings idle (10-09, 10-11, 10-12) while one was open, which 0011 answers |
+| For shape 3: a cloud session can meet the done bar | Read by the lead: `.github/workflows/gate.yml`, "Not here: the seeded build, the pixel diff, the reader journeys and the iPhone check … They need the photo manifests, which are private, and Ruby" | failed, by reading. Unchanged; shape 3 was not taken |
+| A run's cost is bearable | Timed in the audit, 2026-10-18 | open: measured, not judged. A full gate takes about 16 minutes here, not 10; about 7 extra full gates (about 110 minutes) followed edits made after the gate; the Mac's sleep cost about six hours over 5 runs. Judged after two weeks of clean runs |
 
 ## Does it fit
 
@@ -212,6 +236,28 @@ it conflicts with the hard rule on pushing (a cloud session must push to deliver
 
 ## Challenged
 
+By: the session's audit of all 29 scheduled-run transcripts (2026-10-04 to 10-18), read against
+this file on 2026-10-18. No site-reviewer challenge was run: the owner decided in chat first. Each
+objection is a way the run as built went wrong.
+
+- **Changed:** the Mac sleeps mid-run with keep-awake on (a closed lid still sleeps): 5 runs, about
+  six hours, made worse by cut-offs on the wall clock. Cut-offs are to count awake time, and a gate
+  slept through is run once more before a fault is hunted (stage 0).
+- **Changed:** a reviewer's note or an inbox line added after the gate cost about seven more full
+  gates. An edit only inside `_plan/` after a passing full gate is to need only the fast gate.
+- **Changed:** approvals still stop an unattended run: a `$` in a hold's question passed as a shell
+  argument (118 minutes); the brief's publish (61 hours, two days of runs). The question is to be a
+  file (`NOTE.md`), and the brief published last, after the pull request.
+- **Changed:** one pull request at a time idles the run: three mornings did nothing. Up to three
+  open, on separate files ([0011](../decisions/0011-unseen-work-merges-itself.md)).
+- **Changed:** `begin` run twice destroyed a folder. It is to refuse a folder that holds a claim.
+- **Changed:** the daily upkeep ran 17 times for one commit, never pushed. It folds into the morning
+  session as its first step, and the separate task is switched off.
+- **Stands:** `master`'s own baselines went stale after photographs and aborted a run (10-11).
+  Nothing in this round prevents it.
+- **Stands:** a full gate costs about sixteen minutes a run. One task a morning is the owner's
+  answer to it, until two weeks of clean runs say otherwise.
+
 ## Questions for the owner
 
 ### 1 · What should a run with nobody present hand you each morning?
@@ -237,7 +283,10 @@ Why: finished work waits at the push today, and a tap keeps the push yours each 
 
 Why: the plan names it, nine of its branches sit unmerged, and nothing here can see where it is set.
 
+2026-10-18: questions 1 and 2 are answered by what was built ([0010](../decisions/0010-the-merge-is-the-yes.md),
+[0011](../decisions/0011-unseen-work-merges-itself.md)). Question 3 is still open (F074).
+
 ## Next
 
-The trial (the first three rows of "Can it be delivered", in order, in a scratch worktree), then the
-challenge. Whatever is decided, F076 (a tier on every task line) is the lead's, and F073 is stage 0's.
+Straight to [stage 0](../stages/00-hub.md): the reliability tasks from 0011. Two weeks after they
+land, the count of clean runs, and the owner asked whether a morning takes more than one task.

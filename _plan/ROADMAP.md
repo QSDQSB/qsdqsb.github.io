@@ -3,7 +3,7 @@
 The stages in order. One line each; the detail is in the stage's file. Read
 [`QUEUE.md`](QUEUE.md) next: it lists what is waiting on the owner.
 
-Last reviewed: 2026-10-02.
+Last reviewed: 2026-10-18.
 
 | # | Stage | What a reader gets | Status | Mostly tier |
 |---|---|---|---|---|
@@ -87,3 +87,9 @@ Last reviewed: 2026-10-02.
   the book may speak in its empty rooms and ways on, a tag takes no colour. "What the eye turns
   away" is the owner's test. Stages 2, 3, 4, 6 and 10 carry the tasks; Q11 asks whether the
   [design language](DESIGN-LANGUAGE.md) now reads true.
+- 2026-10-18 · The owner, in chat, on an audit of the first 29 scheduled runs: unseen work pull
+  requests merge themselves after a day unless the owner vetoes them, up to three open at once
+  ([I002](ideas/I002-rules-for-the-hub-to-approve-and-merge-a-pull-re.md), pursued); one task a
+  morning, made reliable first ([I003](ideas/I003-in-the-daily-running-specifically-are-we.md),
+  pursued); the upkeep and the work in one morning session; a scout each Sunday for what is subpar
+  (R013). The rules are [0011](decisions/0011-unseen-work-merges-itself.md); the tasks, stage 0's.
