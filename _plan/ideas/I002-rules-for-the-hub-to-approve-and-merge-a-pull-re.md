@@ -1,6 +1,6 @@
 # I002 · Rules for the hub to approve and merge a pull request
 
-**Status:** parked · **Raised:** 2026-10-01 by the owner · **Stage:** [0](../stages/00-hub.md), for the part that goes ahead
+**Status:** staged · **Raised:** 2026-10-01 by the owner · **Stage:** [0](../stages/00-hub.md), for the part that goes ahead
 
 ## In the owner's words
 
@@ -15,10 +15,45 @@ is weaker than the owner's tap. What is useful goes ahead in stage 0 with no pul
 carried forward, and a check that says each day what it would have merged. Bring it back when a month
 of that shows upkeep worth the machinery, and the settings are tightened.
 
-**Waits on:** the first push of `master` (GitHub has not seen the hub); a month of daily runs, each
-sorted; the two settings in question 1.
+**Waits on:** the stage 0 tasks that build [0011](../decisions/0011-unseen-work-merges-itself.md):
+the `unseen` label at `pr`, the merge at `begin`, three open at once.
 
-**The owner:** park · 2026-10-01 · Question 1: A, tighten the two settings on GitHub now (a workflow's token reads by default; Actions may not approve pull requests). Question 2: B, the daily run's branch and Claude's unseen fixes to the site. Question 3: A, remove ecc-tools and close its pull request 87 unmerged. Tapped on the command centre, no note.
+**The owner:** pursue · 2026-10-18 · Unseen fixes merge themselves: up to 3 work PRs open at once on separate files, and a PR with a clean pixel diff, gate:full and the reviewer's PASS, no tooling, merges itself after 24 h unless the owner comments. In chat, 2026-10-18 (R012); the rules are decisions/0011.
+
+## Since the park (2026-10-18)
+
+The lead's verdict above is of 2026-10-01 and stands as written. The owner parked it that day
+(question 1: A, the two settings tightened, and Actions' approval switched back on by the owner on
+2026-10-02; question 2: **B**, the daily run's branch *and Claude's
+unseen fixes to the site*; question 3: A, ecc-tools removed), and pursued it on 2026-10-18, in chat,
+with the rules in [0011](../decisions/0011-unseen-work-merges-itself.md). What changed between:
+
+- [0010](../decisions/0010-the-merge-is-the-yes.md) (2026-10-04) made opening a pull request
+  Claude's: the work run opens one each morning. The owner has merged 11 work and request pull
+  requests since, by hand, and three mornings sat idle while one waited. The Against line "there is
+  nothing for it to merge" still mostly holds: as built, the class would have merged none of #103 to
+  #118 (each carries a changelog line, baselines, tooling or `PRINCIPLES.md`; the reviewer's count,
+  2026-10-18). The gain this month is three open at once and the reliability fixes; what merges
+  itself at first is the plan alone, such as the scout's week.
+- The class is not the draft's. Question 2's B is what was built: unseen work pull requests, judged
+  by path and by the gate, not a short list of plan lines. The "last row of the trial" (the full gate
+  and the reviewer do not run in CI) is met by running both in the run, on this Mac, with the copy
+  of `hub-work.sh` that runs always GitHub's `master`'s and the run forbidden its own tooling.
+
+The draft's ten rules, against what is built:
+
+| Rule | Now |
+|---|---|
+| 1 · Only a short list merges | Not adopted as written. The list is a class: no baseline, no content, no changelog line, no tooling, and (the lead's working) not the owner's own files in `_plan/` |
+| 2 · Who sent it proves nothing | In part: the merge checks the head is the commit that was gated, not who opened it |
+| 3 · Evidence from a run the branch cannot touch | In part: the judge is `master`'s copy of the script, which a work branch may not change; the gate runs in the same run as the change, not apart |
+| 4 · No agent merges; a setting | Not adopted: the run merges with `gh pr merge` under the owner's token. Auto-merge stays off |
+| 5 · A doubt is a no | Adopted: label, age, head, no comment or review by the owner, mergeable, every check green |
+| 6 · A repository variable as the switch | Not adopted: the veto is per pull request (the label off, a comment, a review) |
+| 7 · Undoing is the owner's, rehearsed | Not adopted: a revert is a pull request like any other; nothing was rehearsed |
+| 8 · The owner hears from GitHub | Failed: GitHub sends no email for a merge made with the owner's token. The run's report and a notification to the owner's phone name each merge; the day brief does not yet (stage 0) |
+| 9 · The local `master` follows | Settled: runs and sessions build on GitHub's `master` (stage 0, 2026-10-03), so nothing reads the local one |
+| 10 · Changed by the owner's hand, in a record | Adopted: 0011, and its conditions change only in a record, never by a pull request that merged itself |
 
 ## Made explicit
 
@@ -304,3 +339,6 @@ Why: number 87 adds commands and skills under `.claude/`, which every session he
 ## Next
 
 Nothing for the idea itself. In [stage 0](../stages/00-hub.md), whatever is tapped: one branch carried forward, and the check that sorts each day's branch, said in the daily run's ten lines. This file is read again after a month of runs (the first is 2026-10-02), with the count.
+
+2026-10-18: overtaken. The owner decided on the audit of 29 runs rather than a month's count; the
+work is [stage 0](../stages/00-hub.md)'s tasks from [0011](../decisions/0011-unseen-work-merges-itself.md).

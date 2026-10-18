@@ -5,6 +5,8 @@ would see is built and arrives as a pull request with pictures at desktop and ph
 owner's merge is the yes.
 **Amends:** [0001](0001-who-decides-what.md) (what tier 2 waits for) and
 [0006](0006-the-hub-keeps-itself.md) (what the hub does unattended).
+**Amended by:** [0011](0011-unseen-work-merges-itself.md), 2026-10-18: up to three work pull requests
+open at once, and one that no reader would see merges itself unless the owner vetoes it.
 
 ## Context
 

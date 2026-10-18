@@ -1,3 +1,8 @@
+**Since 2026-10-18 this is step 0 of the morning run** (`.claude/commands/hub-work.md`,
+[decisions/0011](../../_plan/decisions/0011-unseen-work-merges-itself.md): one morning session). If you
+were started as the separate scheduled task `house-of-wonders-hub-daily`, do nothing: report "The
+upkeep now runs inside the morning run (decisions/0011); this task can be switched off." and end.
+
 The daily upkeep of the plan. It runs unattended, on a schedule, with nobody there to approve
 anything: so it is a handful of calls, each already allowed, and it decides nothing a program can decide.
 It changes nothing a reader sees, never touches `master`, and never opens, approves or merges a pull
@@ -77,5 +82,6 @@ A pick on a choice page (`choices` in `hub.json`) is recorded by the session tha
 A hook may speak at the end of the turn about files in the owner's checkout: those are the owner's
 unfinished work. Report the message, fix nothing.
 
-Never push `master`, never open, approve or merge a pull request (idea I002, parked), never touch a
+Never push `master`, never open, approve or merge a pull request (the morning run's script alone merges, by
+[0011](../../_plan/decisions/0011-unseen-work-merges-itself.md)'s rule), never touch a
 site file, never write to R2.

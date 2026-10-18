@@ -104,30 +104,35 @@ stops being the only reviewer.
       2026-10-04, held P10 with its question, stopped once on a failed build and started again clean,
       then took A02 and opened #103 (full gate passed, the reviewer passed it with notes), with nobody
       approving anything.
-- [ ] The daily run's agents (`"daily_agents"` in `hub.json`, off). An agent handed work starts in the
+- [x] The daily run's agents (`"daily_agents"` in `hub.json`, off). An agent handed work starts in the
       owner's checkout, not the run's worktree; the reviewer blocked the run on it (2026-10-01). Until
       a hand-off has been shown to stay inside the worktree, the run records and files only, and raw
       ideas wait for the next session. Switch it on after a week of clean runs and one proven hand-off.
+      Overtaken 2026-10-18: the work run has handed the reviewer its own folder's diff since #103, and
+      the daily run folds into the one morning session ([0011](../decisions/0011-unseen-work-merges-itself.md)),
+      whose agents work in that folder. The switch goes with the separate run.
 - [x] CI's first run (`.github/workflows/gate.yml`): 2026-10-01, on the owner's first push of the hub
       (f4bd34f). The fast gate passed on GitHub (run 36925029918, 55 s), and Cloudflare Pages built and
       deployed the same commit: the sixteen fixes of stage 1's first batch are live.
 - [ ] A cloud session starting from the hook: unproven until one does.
 
-**From I002, which the lead advises parking (2026-10-01).** The owner's note on merging was shaped,
-tried and challenged. Nothing merges, opens or approves by itself. These go ahead whatever the owner
-taps; each is tier 0 unless it says otherwise.
+**From I002, which the lead advised parking (2026-10-01).** The owner's note on merging was shaped,
+tried and challenged. These went ahead whatever the owner tapped; each is tier 0 unless it says
+otherwise. On 2026-10-18 the owner pursued it: one class merges itself, below.
 
-- [ ] The class check, grown from `only-plan`: a short list of what could merge unread (a line added
+- [x] The class check, grown from `only-plan`: a short list of what could merge unread (a line added
       under "Waiting" in the inbox; a section the lead writes in a `raw` idea), by path and by line,
       failing closed, with tests. It merges nothing. The daily run says in its ten lines which each
-      day's branch was. A script, so the session's.
-- [ ] After a month of runs: the count of days that held nothing but the list. I002 is read again
-      with it.
+      day's branch was. A script, so the session's. Overtaken 2026-10-18: the class is the unseen work
+      pull request, judged at `hub-work.sh pr` ([0011](../decisions/0011-unseen-work-merges-itself.md), below).
+- [x] After a month of runs: the count of days that held nothing but the list. I002 is read again
+      with it. Overtaken 2026-10-18: the owner decided on the audit of all 29 scheduled runs instead.
 - [ ] `.claude/settings.json`: the six deny patterns miss a bare `git push` made while on `master`,
       `git push origin HEAD`, a push to `x:master`, and any call that begins `/usr/bin/git`, which is
       the form the daily command tells the run to use. Read, not tried: trying one is a push. Close
-      the gaps, and deny `gh pr merge` and an approving `gh pr review`. It only tightens, but it is
-      the owner's permission file: the owner's word first.
+      the gaps, and deny `gh pr merge` and an approving `gh pr review` to everything but
+      `hub-work.sh` (since 2026-10-18 the run merges the unseen class through it, 0011). It only
+      tightens, but it is the owner's permission file: the owner's word first.
 - [x] The owner's, on GitHub (I002, question 1). 2026-10-01: on the owner's word a session set a
       workflow's token to read by default and stopped Actions approving pull requests. 2026-10-02: the
       owner asked "what if we let PR to auto approve?", heard the case against, and switched approval
@@ -143,3 +148,54 @@ taps; each is tier 0 unless it says otherwise.
       GitHub lists it as no fork. Noted on 0006's status line; the decision does not rest on it.
 - [x] The command centre's own note on the daily run, out of date since Q10, is rewritten
       (`scripts/hub-page.mjs`).
+
+**From [0011](../decisions/0011-unseen-work-merges-itself.md) (the owner, in chat, 2026-10-18; R012, R013;
+[I002](../ideas/I002-rules-for-the-hub-to-approve-and-merge-a-pull-re.md),
+[I003](../ideas/I003-in-the-daily-running-specifically-are-we.md)).** Each is tier 0 and tooling, so a
+session's, never the work run's. Ticked when built with tests; the last three when seen in a real run.
+
+- [x] Three open at once (R012, tier 0): `begin` starts nothing at three open work pull requests,
+      pauses on one three days unmerged, and lists the files open ones touch; `gate`, `commit` and
+      `pr` refuse an overlap outside `_plan/`. 2026-10-18, with tests.
+- [x] The `unseen` label (R012, tier 0): `pr` puts it on only when every path, renames counted as
+      the old path gone, is on the list of what may be unseen (the plan, the docs, the site's code), with
+      no changelog line, no baseline, the gate passed on that tree and `--reviewer PASS` (plain PASS).
+      2026-10-18, with tests (a served folder not named, a post moved into the docs, a robots file).
+- [x] The owner's own files kept out of the class (R012, tier 0; the lead's working of 0011):
+      `_plan/PRINCIPLES.md`, `_plan/DESIGN-LANGUAGE.md`, `_plan/decisions/`, `_plan/QUEUE.md` and
+      `_plan/hub.json`, and an owner's line in an idea taken away or rewritten, mean no label.
+      2026-10-18, with tests.
+- [x] The merge (R012, tier 0): `begin` merges each `unseen` work pull request 24 hours old, its head
+      the gated commit, no comment or review by QSDQSB, label on, mergeable, checks green and none
+      running (`gh pr merge --merge --match-head-commit`), only while `work_may_merge` is on in GitHub's
+      `master`'s `hub.json` and the fetch answered; the run's report names each, and it tells the owner by a notification the
+      day one opens or merges (the lead's objection). 2026-10-18, with tests; the first real merge is
+      still to be seen.
+- [x] Cut-offs count awake time (R012, tier 0): a jump in the clock is a sleep and extends the limit;
+      `wait` says when the Mac slept through a gate, and the run gates once more before hunting a
+      fault. 2026-10-18, with a test.
+- [x] A long `run` (R012, tier 0): `visual:diff` runs on into `wait` instead of being killed at nine
+      minutes; `visual:capture --only` takes `--viewport` for a one-width change. 2026-10-18.
+- [x] No second full gate for the plan (R012, tier 0): an edit only inside `_plan/` after a passing
+      full gate, or a change that is the plan alone, needs only the fast gate at `pr`. 2026-10-18,
+      with a test.
+- [x] Words for the owner are a file (R012, tier 0): `NOTE.md`, written with the Write tool, for a
+      hold, a finding or an idea; never a shell argument, so a `$` in it asks nobody for an approval.
+      2026-10-18, with a test.
+- [x] `begin` refuses to destroy a folder that holds a claim made in the last six hours (R012, tier
+      0). 2026-10-18, with a test.
+- [ ] The day brief marks an `unseen` pull request as merging itself (and when), and names what
+      merged by the rule (R012, tier 0; the reviewer's note, 2026-10-18). Today it counts every open
+      work pull request as one to merge, and is written before `begin` merges.
+- [ ] One morning session (R012, tier 0): the upkeep (`hub-daily.sh`) first, then the task; the day
+      brief published last, after the pull request. Written 2026-10-18 (`hub-work.md` step 0; the task
+      renamed "morning run"); ticked when a morning has done it by itself and the separate daily task is
+      switched off. The morning task needs ArtifactData, Artifact and PushNotification allowed first, or
+      its first use of each waits for an approval.
+- [ ] Sunday is scout day (R013, tier 0): `begin` says so; `scout`, `finding` and `idea` are built
+      (2026-10-18, with tests). The run reads the shots against "What the eye turns away" and
+      `PRINCIPLES.md`, files small faults as findings, raises lead ideas only while fewer than two
+      wait, has them shaped and challenged, and opens a plan-only pull request. Ticked when a Sunday
+      run has done it by itself.
+- [ ] Two weeks of clean runs after these land (I003, tier 0): counted, and the owner asked whether a
+      morning takes more than one task.
