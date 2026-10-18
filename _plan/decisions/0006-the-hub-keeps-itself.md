@@ -4,6 +4,9 @@
 public, in this repo. One fact under "Where it lives" has since been found untrue (F045, 2026-10-01):
 GitHub does not list this repository as a fork, so the note that it "cannot be made private in place"
 does not hold. The decision does not rest on it.
+**Amended by:** [0010](0010-the-merge-is-the-yes.md), 2026-10-04 (the work run), and
+[0011](0011-unseen-work-merges-itself.md), 2026-10-18: one morning session keeps the books and then
+works; it neither sorts the inbox nor republishes the command centre (F075).
 
 ## Context
 
