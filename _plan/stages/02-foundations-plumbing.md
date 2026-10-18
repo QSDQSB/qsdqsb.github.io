@@ -219,6 +219,10 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
             retirement; the masthead's links and two buttons sit inside the bar's `clip-path`, which
             would cut a ring set off their edge, so they need the ring drawn inside or the clip
             answered first.
+      - [x] 2026-10-18 · The subscribe slip: the Subscribe button (`outline: none` and its fill alone)
+            and the Privacy link (its colour alone) take `brass-focus`; the × and the folded rule leave
+            their own one-pixel rings for it. Not yet: the email field's frame, which brightens its
+            border when the field has focus, goes with the search field.
 - [ ] C03, under the threshold · A radius the sorted list moves by less than 0.25rem and less than
       20 per cent, once the owner has seen the list.
 - [ ] C04, under the threshold · A timing within a fifth of its step moves onto it (0.28 s to

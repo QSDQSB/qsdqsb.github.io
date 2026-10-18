@@ -96,10 +96,7 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__body {
   &:focus-visible {
     color: $intriguing-word-color;
   }
-  &:focus-visible {
-    outline: 1px solid rgba($intriguing-word-color, 0.6);
-    outline-offset: 2px;
-  }
+  &:focus-visible { @include brass-focus; }
   &[hidden] { display: none; }
 }
 
@@ -210,11 +207,11 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__body {
 
   &:hover,
   &:focus-visible {
-    outline: none;
     color: $h2-color;
     border-color: rgba($h2-color, 0.65);
     background: rgba($h2-color, 0.14);
   }
+  &:focus-visible { @include brass-focus; }
   &[disabled] {
     opacity: 0.55;
     cursor: default;
@@ -274,10 +271,7 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__summary {
   opacity: 1;
   pointer-events: auto;
 }
-.subscribe-slip__summary:focus-visible {
-  outline: 1px solid rgba($intriguing-word-color, 0.6);
-  outline-offset: 4px;
-}
+.subscribe-slip__summary:focus-visible { @include brass-focus; }
 
 .subscribe-slip__summary-line {
   flex: 1;
@@ -336,6 +330,7 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__summary {
       color: rgba($intriguing-word-color, 0.85);
       border-bottom-color: rgba($intriguing-word-color, 0.5);
     }
+    &:focus-visible { @include brass-focus; }
   }
 }
 
