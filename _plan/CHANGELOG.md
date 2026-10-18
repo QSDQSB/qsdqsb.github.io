@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-18 · In the subscribe slip, the keyboard's mark is the site's brass ring throughout: the Subscribe button and the Privacy link, which showed only a change of colour, now carry it, and the × and the folded rule take its weight and offset in place of their own thinner rings; the pointer sees nothing new (C02, the subscribe slip) · tier 1
 - 2026-10-17 · A voyage's page closes as the rest of the site does, its tags, the subscribe slip, the dates and Shot by QSD first, and its ways on last: the voyage's other parts, then Elsewhere (R010) · tier 2
 - 2026-10-17 · Home's What's-new cards set their titles in the voyage cards' Playfair bold, no longer Didot; the Reverie card keeps its hex in Didot, a figure (R011) · tier 2
 - 2026-10-17 · A voyage's line under its title, on the Photobook's cover, is set upright in the voyage cards' own Playfair, no longer in Didot italic; the other pages' heroes keep theirs (R009) · tier 2
