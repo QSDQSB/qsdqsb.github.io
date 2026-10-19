@@ -144,15 +144,20 @@ function searchCollectHighlightTerms(query) {
   });
 }
 
-// The passage a result was found by, as written (searchHighlightText escapes it): the sentence in its text around the first word asked for, cut
-// to about `limit` characters, each cut marked. A result found only by its title, its line or its
-// tags has no such passage, and shows none: the opening of a page says nothing of why it was found.
+// The passage a result was found by, as written (searchHighlightText escapes it): the sentence in
+// its text around the first word asked for, cut to about `limit` characters, each cut marked. A
+// result found only by its title, its line or its tags has no such passage, and shows none: the
+// opening of a page says nothing of why it was found.
 function searchContextSnippet(text, terms, limit) {
   var value = String(text || "").replace(/\s+/g, " ").trim();
   if (!value || !terms.length) return "";
   var at = -1;
   var length = 0;
-  terms.forEach(function(term) {
+  // Chosen by a word that carries meaning: "of" in "naming of light" chose any sentence with "of".
+  var meant = terms.filter(function(term) {
+    return searchHasHanText(term) || !!lunr.stopWordFilter(new lunr.Token(term.toLowerCase()));
+  });
+  (meant.length ? meant : terms).forEach(function(term) {
     var pattern = searchHasHanText(term)
       ? new RegExp(searchEscapeRegExp(term))
       : new RegExp("(^|[^\\p{L}\\p{N}])" + searchEscapeRegExp(term), "iu");
@@ -171,6 +176,8 @@ function searchContextSnippet(text, terms, limit) {
   if (ended) start = ended[0].length;
   var after = value.slice(at + length).search(/[.!?。！？]/);
   if (after >= 0) stop = at + length + after + 1;
+  // A sentence ending inside a quotation keeps its close.
+  while (stop < value.length && /["'”’」』）)]/.test(value.charAt(stop))) stop++;
 
   // A long sentence begins near the word, so that two lines on a phone still hold it; then it is
   // cut, at a space where there is one, about `limit` characters on.
@@ -195,7 +202,7 @@ function searchContextSnippet(text, terms, limit) {
 
   var passage = value.slice(start, stop).trim();
   var open = start > 0 && !/[.!?。！？]\s*$/.test(value.slice(0, start)) ? "…" : "";
-  var close = stop < value.length && !/[.!?。！？]$/.test(passage) ? "…" : "";
+  var close = stop < value.length && !/[.!?。！？]["'”’」』）)]*$/.test(passage) ? "…" : "";
   return open + passage + close;
 }
 
