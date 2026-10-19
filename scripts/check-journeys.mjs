@@ -336,6 +336,19 @@ const JOURNEYS = [
     const shown = await page.locator('#results').innerText();
     must(/porto/i.test(shown), 'searching "porto" found nothing');
     must(!/&(lt|gt|amp|quot|#\d+);/.test(shown), `a result shows an entity as text: ${(shown.match(/.{0,30}&(?:lt|gt|amp|quot|#\d+);.{0,10}/) || [''])[0]}`);
+    // Every word is marked in one pass: a later word never lands inside an earlier mark (R014: "naming
+    // of light" once showed `In the light">Naming of Light`).
+    await page.locator('#search').fill('naming of light');
+    const titles = () => page.evaluate(() => [...document.querySelectorAll('#results .archive__item-title')].map((t) => t.textContent.trim()));
+    await page.waitForFunction(() => /naming/i.test(document.getElementById('results')?.innerText || ''), null, { timeout: 20000 }).catch(() => {});
+    const named = await titles();
+    must(named.includes('In the Naming of Light'), `searching "naming of light" did not show its post's title whole: ${JSON.stringify(named.slice(0, 3))}`);
+    must(!named.some((t) => /">|class=|<mark/.test(t)), `a result's title shows markup as text: ${named.find((t) => /">|class=|<mark/.test(t))}`);
+    // A result says the passage it was found by, with the word marked in it.
+    await page.locator('#search').fill('venice');
+    const passage = () => page.evaluate(() => [...document.querySelectorAll('#results .search-result__snapshot mark')].some((m) => /venice/i.test(m.textContent)));
+    await page.waitForFunction(() => [...document.querySelectorAll('#results .search-result__snapshot mark')].some((m) => /venice/i.test(m.textContent)), null, { timeout: 20000 }).catch(() => {});
+    must(await passage(), 'searching "venice" showed no passage with the word marked in it');
     await page.keyboard.press('Escape');
     await page.waitForSelector('.search-content.is--visible', { state: 'detached', timeout: 3000 }).catch(() => {});
     must(await page.locator('.search-content.is--visible').count() === 0, 'Escape did not close the search panel');

@@ -144,18 +144,72 @@ function searchCollectHighlightTerms(query) {
   });
 }
 
-function searchHighlightText(escapedText, terms) {
-  var output = String(escapedText || "");
-  if (!output || !Array.isArray(terms) || !terms.length) return output;
-
+// The passage a result was found by, as written (searchHighlightText escapes it): the sentence in its text around the first word asked for, cut
+// to about `limit` characters, each cut marked. A result found only by its title, its line or its
+// tags has no such passage, and shows none: the opening of a page says nothing of why it was found.
+function searchContextSnippet(text, terms, limit) {
+  var value = String(text || "").replace(/\s+/g, " ").trim();
+  if (!value || !terms.length) return "";
+  var at = -1;
+  var length = 0;
   terms.forEach(function(term) {
-    var escapedTerm = searchEscapeHtml(term);
-    if (!escapedTerm) return;
-    var pattern = new RegExp("(" + searchEscapeRegExp(escapedTerm) + ")", "gi");
-    output = output.replace(pattern, '<mark class="search-highlight">$1</mark>');
+    var pattern = searchHasHanText(term)
+      ? new RegExp(searchEscapeRegExp(term))
+      : new RegExp("(^|[^\\p{L}\\p{N}])" + searchEscapeRegExp(term), "iu");
+    var match = value.match(pattern);
+    if (!match) return;
+    var index = match.index + (searchHasHanText(term) ? 0 : match[1].length);
+    if (at < 0 || index < at) { at = index; length = term.length; }
   });
+  if (at < 0) return "";
 
-  return output;
+  // The sentence it sits in.
+  var start = 0;
+  var stop = value.length;
+  var before = value.slice(0, at);
+  var ended = before.match(/.*[.!?。！？]\s*/);
+  if (ended) start = ended[0].length;
+  var after = value.slice(at + length).search(/[.!?。！？]/);
+  if (after >= 0) stop = at + length + after + 1;
+
+  // A long sentence begins near the word, so that two lines on a phone still hold it; then it is
+  // cut, at a space where there is one, about `limit` characters on.
+  // Widths count a Han character as two Latin letters, as it sets.
+  var width = function(a, b) {
+    var text = value.slice(a, b);
+    return text.length + (text.match(SEARCH_HAN_RUN_PATTERN) || []).join("").length;
+  };
+  if (width(start, stop) > 90 && width(start, at) > 40) {
+    var from = at;
+    while (from > start && width(from, at) < 40) from--;
+    var space = value.lastIndexOf(" ", from);
+    if (space > from - 20) from = space + 1;
+    start = Math.max(start, from);
+  }
+  if (stop - start > limit) {
+    var to = start + limit;
+    var end = value.lastIndexOf(" ", to);
+    if (end > at + length) to = end;
+    stop = to;
+  }
+
+  var passage = value.slice(start, stop).trim();
+  var open = start > 0 && !/[.!?。！？]\s*$/.test(value.slice(0, start)) ? "…" : "";
+  var close = stop < value.length && !/[.!?。！？]$/.test(passage) ? "…" : "";
+  return open + passage + close;
+}
+
+// Every word asked for marked in one pass over the text as written, then escaped. Marking one word at
+// a time over markup already marked put a later word inside an earlier mark ("light" in
+// class="search-highlight"), a Han bigram inside another's, a word inside an entity.
+function searchHighlightText(text, terms) {
+  var raw = String(text || "");
+  if (!raw) return "";
+  var words = (Array.isArray(terms) ? terms : []).filter(Boolean).map(searchEscapeRegExp);
+  if (!words.length) return searchEscapeHtml(raw);
+  return raw.split(new RegExp("(" + words.join("|") + ")", "gi")).map(function(piece, index) {
+    return index % 2 ? '<mark class="search-highlight">' + searchEscapeHtml(piece) + '</mark>' : searchEscapeHtml(piece);
+  }).join("");
 }
 
 // What the results say of themselves (a status, or how many were found), said
@@ -172,9 +226,9 @@ function searchRenderStatus(resultdiv, statusText) {
 }
 
 function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
-  var foundText = totalCount + ' {{ site.data.ui-text[site.locale].results_found | default: "Result(s) found" }}';
+  var foundText = totalCount + (totalCount === 1 ? ' result' : ' results');
   if (totalCount > renderedCount) {
-    foundText += ' · Showing top ' + renderedCount;
+    foundText += ' · the first ' + renderedCount + ' shown';
   }
   resultdiv.insertAdjacentHTML('afterbegin', '<p class="results__found">' + searchEscapeHtml(foundText) + '</p>');
   searchAnnounce(foundText);
@@ -257,7 +311,6 @@ function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
       var entry = store[ref];
       if (!entry) continue;
 
-      var safeTitle = searchEscapeHtml(entry.title || "");
       var safeUrl = searchEscapeHtml(entry.url || "#");
       var safeTeaser = searchEscapeHtml(entry.teaser || "");
       var visibleExcerpt = searchGetDisplayExcerpt(entry);
@@ -269,7 +322,7 @@ function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
           '</p>'
         : '';
       var tagsMarkup = searchRenderTags(entry);
-      var highlightedTitle = searchHighlightText(safeTitle, highlightTerms);
+      var highlightedTitle = searchHighlightText(entry.title || "", highlightTerms);
       var resultType = entry.result_type || searchGetResultTypeMeta(entry.collection);
       var resultTypeLabel = searchEscapeHtml(resultType.label || "Other");
       var resultTypeClass = String(resultType.className || "other").replace(/[^a-z0-9_-]/gi, "").toLowerCase();
@@ -278,10 +331,12 @@ function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
         '<i class="' + resultTypeIconClass + '" aria-hidden="true"></i>' +
         '<span class="search-result__type-label">' + resultTypeLabel + '</span>' +
       '</span>';
-      var snapshotSource = entry.content_snapshot || "";
-      var snapshotText = searchTrimSnapshot(snapshotSource, 132);
+      // Shown only where it says more than the result's own line.
+      var snapshotText = searchContextSnippet(entry.content_excerpt, highlightTerms, 170);
+      var snapshotPlain = snapshotText.replace(/…/g, "").trim().toLowerCase();
+      if (snapshotPlain && excerptContent.toLowerCase().indexOf(snapshotPlain) >= 0) snapshotText = "";
       var snapshotMarkup = snapshotText
-        ? '<p class="search-result__snapshot" itemprop="abstract">' + snapshotText + '</p>'
+        ? '<p class="search-result__snapshot" itemprop="abstract">' + searchHighlightText(snapshotText, highlightTerms) + '</p>'
         : '';
       var teaserMarkup = entry.teaser
         ? '<div class="archive__item-teaser"><img src="' + safeTeaser + '" alt=""></div>'

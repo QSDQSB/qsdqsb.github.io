@@ -10,6 +10,7 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-10-19 · F091 · the search panel, a one-character Chinese query · searching 光 (or any single Han character) says No results found: the query's CJK terms do not match single characters in cjk_terms (the reviewer, found reviewing R014; before R014) (session)
 - 2026-10-10 · F090 · tests/plan-hub.test.js:845, scripts/hooks/stop-house-guards.sh · the stop-hook test allows 15 s, but on a loaded Mac the hook took 19.7-20 s (house style 1 s, bundle sync 0 s, !important ratchet 5 s, vocabulary ratchet 11 s); it fails locally and passes in CI. The hook's '~0.6 s' comment is out of date (reviewer)
 - 2026-10-10 · F089 · scripts/photos/status.mjs, _data/photo_manifests/_index.json · photos:status -- --gallery <g> (and a single-gallery fetch) rewrites _index.json to name only that gallery, so check:gallery then reports every other voyage as having no manifest until a full photos:fetch; seen twice on 2026-10-10 (session)
 - 2026-10-05 · F088 · scripts/check-journeys.mjs, the Photobook cover at 320 px · no journey sees P10 come back: the cover's overflow: hidden clips a fact that runs off, so check:mobile-overflow is blind to it and the pixel diff shoots 390 only. A journey at 320: every .photobook-facts > div inside .photobook-cover, no dd taller than one line. Also: tests/visual/baseline/photobook--desktop.png was re-shot pixel-identical but 3.6 MB larger; restore the older copy in a run that can use git (reviewer)

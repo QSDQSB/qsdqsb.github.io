@@ -128,6 +128,20 @@ async function drawColourStage(page) {
   await page.addStyleTag({ content: '.palette-card { content-visibility: visible; }' });
 }
 
+async function searchFor(page, query) {
+  await page.click('.search__toggle');
+  await page.waitForSelector('.search-content.is--visible', { timeout: 5000 });
+  await page.fill('.search-content input.search-input', query);
+  // lunr loads its index asynchronously; wait for the result list to stop changing.
+  await page.waitForFunction(() => {
+    const el = document.getElementById('results');
+    const html = el ? el.innerHTML : '';
+    const same = html && html === window.__visualLastResults;
+    window.__visualLastResults = html;
+    return same;
+  }, null, { timeout: 15000, polling: 500 });
+}
+
 const PAGES = [
   { id: 'home', url: '/', motion: true },
   { id: 'post-toc', url: '/posts/shihuqiao/', motion: true },
@@ -165,23 +179,10 @@ const PAGES = [
   // Every shared piece in every state (_specimen/, built by visual:build only): a change to a piece
   // shows here even before a page adopts it.
   { id: 'specimen', url: '/specimen/' },
-  {
-    id: 'search',
-    url: '/',
-    setup: async (page) => {
-      await page.click('.search__toggle');
-      await page.waitForSelector('.search-content.is--visible', { timeout: 5000 });
-      await page.fill('.search-content input.search-input', 'prague');
-      // lunr loads its index asynchronously; wait for the result list to stop changing.
-      await page.waitForFunction(() => {
-        const el = document.getElementById('results');
-        const html = el ? el.innerHTML : '';
-        const same = html && html === window.__visualLastResults;
-        window.__visualLastResults = html;
-        return same;
-      }, null, { timeout: 15000, polling: 500 });
-    },
-  },
+  // The search panel, as a reader leaves it after a query: one whose results are found by their
+  // names, and one found by a passage in a post (R014).
+  { id: 'search', url: '/', setup: (page) => searchFor(page, 'prague') },
+  { id: 'search-passage', url: '/', setup: (page) => searchFor(page, 'venice') },
 ];
 
 const DESKTOP = { viewport: { width: 1440, height: 900 } };

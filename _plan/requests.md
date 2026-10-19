@@ -6,6 +6,7 @@ to Done with its pull request.
 
 ## Open
 
+- 2026-10-19 · R014 · Also the display of the first-few-lines of the search page's result is underwhelming, please identify the issue and fix
 ## Done
 
 - 2026-10-18 · R013 · Also while I should be able to propose new ideas for the website, you should be able to identify the subpar part of the website and propose functionality / upgrade / improvement ideas as well, and i shall confirm in the hub for major changes. → done 2026-10-18: Sunday is the scout's: the morning run shoots the built site, files small faults as findings and raises at most two ideas of the lead's, shaped and challenged, for the owner's Pursue, Park or Drop on the command centre (decisions/0011, #119)
