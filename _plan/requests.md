@@ -6,9 +6,9 @@ to Done with its pull request.
 
 ## Open
 
-- 2026-10-19 · R014 · Also the display of the first-few-lines of the search page's result is underwhelming, please identify the issue and fix
 ## Done
 
+- 2026-10-19 · R014 · Also the display of the first-few-lines of the search page's result is underwhelming, please identify the issue and fix → done 2026-10-19: each result shows the passage it was found by, the word marked; marking fixed (it broke titles); "10 results"; suggestions say Voyage or Post; the Voyage index found by its name (#120)
 - 2026-10-18 · R013 · Also while I should be able to propose new ideas for the website, you should be able to identify the subpar part of the website and propose functionality / upgrade / improvement ideas as well, and i shall confirm in the hub for major changes. → done 2026-10-18: Sunday is the scout's: the morning run shoots the built site, files small faults as findings and raises at most two ideas of the lead's, shaped and challenged, for the owner's Pursue, Park or Drop on the command centre (decisions/0011, #119)
 - 2026-10-18 · R012 · We want to handle I002 and I003 ideas from Hub for a smoother and mor efficient, productive automation → done 2026-10-18: on an audit of all 29 runs, four calls of the owner's: up to three work pull requests open, unseen work merges itself a day later unless the owner says, one task a morning made reliable, the upkeep folded into the morning run; I002 and I003 pursued (decisions/0011, #119)
 - 2026-10-17 · R011 · why is landing page still have didot font though for the cards? It should use $serif (playfair display), only the reverie should be overrided with a didot family. → done 2026-10-17: What's-new titles in Playfair bold, the Reverie's hex kept in Didot (#117)
