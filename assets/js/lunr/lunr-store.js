@@ -23,7 +23,10 @@ var store = [
       {%- endcapture -%}
       {%- capture display_excerpt -%}{{ doc.description | default: doc.excerpt | markdownify | strip_html }}{%- endcapture -%}
       {%- capture content_excerpt -%}
-        {%- if site.search_full_content == true -%}
+        {%- if doc.layout == "archive" -%}
+          {%- comment -%} An index (/voyage/) is found by its title and line, as the pages' archives below
+          are: its text is the list of what it holds, which matched every voyage's name. {%- endcomment -%}
+        {%- elsif site.search_full_content == true -%}
           {{ searchable_content | markdownify | strip_html }}
         {%- else -%}
           {{ searchable_content | markdownify | strip_html | truncatewords: 50 }}
@@ -176,23 +179,6 @@ function searchExtractCjkTerms(text) {
   return terms;
 }
 
-function searchGetContentSnapshot(text) {
-  var normalized = String(text || "").replace(/\s+/g, " ").trim();
-  if (!normalized) return "";
-
-  var sentenceMatch = normalized.match(/^(.+?[.!?。！？])/);
-  if (sentenceMatch) {
-    return sentenceMatch[1].trim();
-  }
-
-  var clauseMatch = normalized.match(/^(.+?[,:;，；：])/);
-  var fallback = clauseMatch ? clauseMatch[1].trim() : normalized;
-  if (fallback.length > 140) {
-    fallback = fallback.slice(0, 140).trim() + "...";
-  }
-  return fallback;
-}
-
 function searchGetResultTypeMeta(collection) {
   var normalizedCollection = String(collection || "").toLowerCase();
 
@@ -248,7 +234,6 @@ for (var searchStoreIndex = 0; searchStoreIndex < store.length; searchStoreIndex
   ].filter(Boolean);
 
   searchEntry.cjk_terms = searchExtractCjkTerms(cjkSourceParts.join(" ")).join(" ");
-  searchEntry.content_snapshot = searchGetContentSnapshot(searchEntry.content_excerpt);
   searchEntry.result_type = searchGetResultTypeMeta(searchEntry.collection);
 }
 
@@ -278,18 +263,12 @@ function searchGetDisplayExcerpt(entry) {
   return entry.excerpt || entry.content_excerpt || "";
 }
 
+// As written: it is escaped where it is marked (searchHighlightText, lunr-en.js).
 function searchTrimExcerpt(text, limit) {
   var words = String(text || "").trim().split(/\s+/).filter(Boolean);
   if (!words.length) return "";
-  if (words.length <= limit) return searchEscapeHtml(words.join(" "));
-  return searchEscapeHtml(words.slice(0, limit).join(" ")) + "...";
-}
-
-function searchTrimSnapshot(text, limit) {
-  var value = String(text || "").trim();
-  if (!value) return "";
-  if (value.length <= limit) return searchEscapeHtml(value);
-  return searchEscapeHtml(value.slice(0, limit).trim()) + "...";
+  if (words.length <= limit) return words.join(" ");
+  return words.slice(0, limit).join(" ") + "…";
 }
 
 function searchRenderTags(entry) {
