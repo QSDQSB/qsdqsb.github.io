@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-20 · A tag picked from the search suggestions finds the pages that carry it; its emoji no longer leaves the search empty (R017) · tier 1
 - 2026-10-19 · On the map, the keyboard's mark is the site's brass ring throughout: the zoom, reset and full-screen buttons, the Tags pill, the tag palette's × and its tags, and a popup's way in, its tags and its ×, where they showed the browser's own ring or, on a tag, a pale border; a tag dimmed by the filter comes to full strength while the keyboard is on it; the veil keeps the ring drawn inside its edge, which the map's frame would otherwise cut; the pointer sees nothing new (C02, the map) · tier 1
 - 2026-10-19 · A search result shows the passage it was found by, the word marked, in place of its page's opening line; the count reads plainly (10 results), and each suggestion says what it is (Voyage, Post) instead of Title; the Voyage index is found by its name and line, no longer by every voyage it lists (R014) · tier 2
 - 2026-10-18 · In the subscribe slip, the keyboard's mark is the site's brass ring throughout: the Subscribe button and the Privacy link, which showed only a change of colour, now carry it, and the × and the folded rule take its weight and offset in place of their own thinner rings; the pointer sees nothing new (C02, the subscribe slip) · tier 1
