@@ -102,6 +102,13 @@ function searchBuildCjkQueryTerms(value) {
   return terms;
 }
 
+// A word as the index holds it: no emoji or mark at either edge. A tag picked from the suggestions
+// comes with its emoji ("🐮Ox"), which the index strips from tags (lunr-store), so as typed it found
+// nothing (R017).
+function searchBareWord(word) {
+  return String(word || "").trim().replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "");
+}
+
 function searchEscapeRegExp(value) {
   return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -112,7 +119,7 @@ function searchCollectHighlightTerms(query) {
   var latinTerms = String(query || "")
     .toLowerCase()
     .split(lunr.tokenizer.separator)
-    .map(function(token) { return token.trim(); })
+    .map(searchBareWord)
     .filter(Boolean);
 
   latinTerms.forEach(function(term) {
@@ -278,9 +285,17 @@ function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
 
     var latinTerms = normalizedQuery
       .split(lunr.tokenizer.separator)
-      .map(function(term) { return term.trim(); })
+      .map(searchBareWord)
       .filter(Boolean);
     var cjkTerms = searchBuildCjkQueryTerms(normalizedQuery);
+    // Nothing left to look for (an emoji, a mark): lunr reads an empty query as "everything".
+    if (!latinTerms.length && !cjkTerms.length) {
+      searchRenderStatus(
+        resultdiv,
+        '{{ site.data.ui-text[site.locale].search_no_results | default: "No results found." }}'
+      );
+      return;
+    }
     var result =
       idx.query(function (q) {
         latinTerms.forEach(function (term) {
