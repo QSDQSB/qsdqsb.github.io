@@ -67,6 +67,12 @@ The walks become journeys in `scripts/check-journeys.mjs` once the routes are se
 ## Scope so far
 
 - [ ] The eight walks, on a phone and a desktop.
+- [ ] I004, search (the owner pursued it, turned, 2026-10-19; [the idea](../ideas/I004-yes-we-should-enhance-the-search-functionality.md)):
+      walks 1 and 6 written as journeys first, the before; then in one pull request with pictures,
+      precision (four tiers, the last by how many words match; Chinese as now; accents folded; the
+      `/voyage/` index found by its name alone, done by R014; a hex adds a Reverie result above the pages, `#` needed for three
+      characters) and places (one entry per place per voyage, a line that opens the frame; light,
+      weather and film only where a real share of a voyage; no picture loaded). Prints parked. Tier 2.
 - [ ] The footer: a choice, with prototypes.
 - [ ] The tarot cards' next life: a study.
 - [ ] X09 · Search shows that it is open, and can be closed on a phone.
