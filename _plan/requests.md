@@ -6,6 +6,8 @@ to Done with its pull request.
 
 ## Open
 
+- 2026-10-20 · R016 · why are you regularly pushing 16MB png files for the commit? (then, in chat: mask photos in the harness; leave history alone)
+
 ## Done
 
 - 2026-10-19 · R014 · Also the display of the first-few-lines of the search page's result is underwhelming, please identify the issue and fix → done 2026-10-19: each result shows the passage it was found by, the word marked; marking fixed (it broke titles); "10 results"; suggestions say Voyage or Post; the Voyage index found by its name (#120)
