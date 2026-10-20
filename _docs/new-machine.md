@@ -9,7 +9,7 @@ them.
 
 ```bash
 brew install ruby node rclone gh exiftool
-git clone https://github.com/QSDQSB/qsdqsb.github.io.git && cd qsdqsb.github.io
+git clone --filter=blob:none https://github.com/QSDQSB/qsdqsb.github.io.git && cd qsdqsb.github.io   # every commit, but only the files you check out: the history holds ~1.2 GB of superseded screenshots
 npm ci
 bundle install
 npx playwright install chromium webkit   # the pixel diff (Chromium) and the iPhone check (WebKit)
