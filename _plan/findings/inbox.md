@@ -10,6 +10,7 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-10-20 · F092 · assets/js/lunr/lunr-en.js, searchBareWord · query words are stripped of marks at their edges and the index's are not, so 'c++' searches 'c*' and a half-typed '🐮o' searches 'o*'; no page names C++ today (the reviewer, R017) (session)
 - 2026-10-19 · F091 · the search panel, a one-character Chinese query · searching 光 (or any single Han character) says No results found: the query's CJK terms do not match single characters in cjk_terms (the reviewer, found reviewing R014; before R014) (session)
 - 2026-10-10 · F090 · tests/plan-hub.test.js:845, scripts/hooks/stop-house-guards.sh · the stop-hook test allows 15 s, but on a loaded Mac the hook took 19.7-20 s (house style 1 s, bundle sync 0 s, !important ratchet 5 s, vocabulary ratchet 11 s); it fails locally and passes in CI. The hook's '~0.6 s' comment is out of date (reviewer)
 - 2026-10-10 · F089 · scripts/photos/status.mjs, _data/photo_manifests/_index.json · photos:status -- --gallery <g> (and a single-gallery fetch) rewrites _index.json to name only that gallery, so check:gallery then reports every other voyage as having no manifest until a full photos:fetch; seen twice on 2026-10-10 (session)
