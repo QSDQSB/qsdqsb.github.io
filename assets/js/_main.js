@@ -258,6 +258,8 @@ document.addEventListener("DOMContentLoaded", function(){
           seenTitles[normalizedTitle] = true;
           titles.push({
             type: "title",
+            // What it is (Voyage, Post…), said beside it: "Title" said nothing.
+            kind: (entry.result_type && entry.result_type.label) || "Page",
             label: title,
             value: title,
             normalized: normalizedTitle
@@ -330,6 +332,7 @@ document.addEventListener("DOMContentLoaded", function(){
           label: item.label,
           value: item.value,
           color: item.color || "",
+          kind: item.kind || "",
           priority: matchIndex === 0 ? 0 : 1,
           matchIndex: matchIndex
         });
@@ -375,7 +378,7 @@ document.addEventListener("DOMContentLoaded", function(){
         '<button type="button" class="search-suggestion' + (item.type === "tag" ? ' is-tag' : '') + '"' + styleAttribute +
         ' data-search-suggestion="' + escapeSearchHtml(item.value) + '">' +
           '<span class="search-suggestion__label">' + escapeSearchHtml(item.label) + '</span>' +
-          '<span class="search-suggestion__meta">' + (item.type === "tag" ? "Tag" : "Title") + '</span>' +
+          '<span class="search-suggestion__meta">' + (item.type === "tag" ? "Tag" : escapeSearchHtml(item.kind || "Page")) + '</span>' +
         '</button>'
       );
     }).join("");
