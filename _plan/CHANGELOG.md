@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-10-20 · The line beneath a page's title in its hero, on a post, About, the 404, Voyage, Voyage by tags and Portfolio, is set in the Didot italic a book's cover uses, no longer in Playfair upright; Chinese in it stays upright, now in Song where it was the system's sans; a voyage's own line keeps its Playfair (re-captured: post-toc, post-bilingual, post-notices, post-jianfei, about, 404, voyage, voyage-by-tags, portfolio) (C07) · tier 2, answered
 - 2026-10-18 · In the subscribe slip, the keyboard's mark is the site's brass ring throughout: the Subscribe button and the Privacy link, which showed only a change of colour, now carry it, and the × and the folded rule take its weight and offset in place of their own thinner rings; the pointer sees nothing new (C02, the subscribe slip) · tier 1
 - 2026-10-17 · A voyage's page closes as the rest of the site does, its tags, the subscribe slip, the dates and Shot by QSD first, and its ways on last: the voyage's other parts, then Elsewhere (R010) · tier 2
 - 2026-10-17 · Home's What's-new cards set their titles in the voyage cards' Playfair bold, no longer Didot; the Reverie card keeps its hex in Didot, a figure (R011) · tier 2
