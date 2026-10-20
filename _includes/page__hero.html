@@ -78,7 +78,8 @@
           </span>
         </h1>
         {% if page.excerpt %}
-          <p class="page__lead"><span class="page__lead-inner">{{ page.excerpt | markdownify | remove: "<p>" | remove: "</p>" }}</span></p>
+          {% comment %} The shared Didot italic lede, except a voyage's line, which is Playfair upright wherever it stands (PRINCIPLES, 2026-10-17). {% endcomment %}
+          <p class="page__lead{% unless page.collection == 'voyage' or page.collection == 'subvoyage' %} page__lead--lede{% endunless %}"><span class="page__lead-inner">{{ page.excerpt | markdownify | remove: "<p>" | remove: "</p>" }}</span></p>
         {% endif %}
         {% if page.header.cta_url %}
           <p><a href="{{ cta_path }}" class="btn btn--light-outline btn--large">{{ page.header.cta_label | default: site.data.ui-text[site.locale].more_label | default: "Learn More" }}</a></p>
