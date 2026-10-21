@@ -10,6 +10,7 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-10-21 · F093 · scripts/visual-baseline.mjs, maskPhotographs · bg.includes(flat) never matches (Chromium reports rgb(42, 42, 42), not #2a2a2a) and is dead beside next === bg; and a page under 8,000 px is shot with no pause after the full-page resize, so a cover changed by that resize is re-masked 250 ms too late; if a short page's shot ever flakes, look here first (the reviewer, R016) (session)
 - 2026-10-19 · F091 · the search panel, a one-character Chinese query · searching 光 (or any single Han character) says No results found: the query's CJK terms do not match single characters in cjk_terms (the reviewer, found reviewing R014; before R014) (session)
 - 2026-10-10 · F090 · tests/plan-hub.test.js:845, scripts/hooks/stop-house-guards.sh · the stop-hook test allows 15 s, but on a loaded Mac the hook took 19.7-20 s (house style 1 s, bundle sync 0 s, !important ratchet 5 s, vocabulary ratchet 11 s); it fails locally and passes in CI. The hook's '~0.6 s' comment is out of date (reviewer)
 - 2026-10-10 · F089 · scripts/photos/status.mjs, _data/photo_manifests/_index.json · photos:status -- --gallery <g> (and a single-gallery fetch) rewrites _index.json to name only that gallery, so check:gallery then reports every other voyage as having no manifest until a full photos:fetch; seen twice on 2026-10-10 (session)
