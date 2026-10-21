@@ -32,8 +32,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # check-plan compares against the base of a pull request, so it needs the history.
+          # check-plan compares against the base of a pull request, so it needs the history: every
+          # commit and tree, but no file's old contents (the superseded pixel baselines are about
+          # 1.2 GB of it, R016). A file an older commit needs is fetched when it is read.
           fetch-depth: 0
+          filter: blob:none
 
       - uses: actions/setup-node@v4
         with:
