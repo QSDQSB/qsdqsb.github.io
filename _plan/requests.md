@@ -6,6 +6,7 @@ to Done with its pull request.
 
 ## Open
 
+- 2026-10-29 · R018 · Add a voyage under Dolomites, "In Passing", focused on the reflection from the car window and glass. Excerpt "Autumn passed us as we passed through it." — then, at the owner's word, "Autumn passed by from the passenger seat.", date Oct 21, 2026. Photos in the Apple Photos album "In Passing".
 ## Done
 
 - 2026-10-19 · R014 · Also the display of the first-few-lines of the search page's result is underwhelming, please identify the issue and fix → done 2026-10-19: each result shows the passage it was found by, the word marked; marking fixed (it broke titles); "10 results"; suggestions say Voyage or Post; the Voyage index found by its name (#120)
