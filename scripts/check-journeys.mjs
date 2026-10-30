@@ -349,8 +349,7 @@ const JOURNEYS = [
     const passage = () => page.evaluate(() => [...document.querySelectorAll('#results .search-result__snapshot mark')].some((m) => /venice/i.test(m.textContent)));
     await page.waitForFunction(() => [...document.querySelectorAll('#results .search-result__snapshot mark')].some((m) => /venice/i.test(m.textContent)), null, { timeout: 20000 }).catch(() => {});
     must(await passage(), 'searching "venice" showed no passage with the word marked in it');
-    // A tag picked from the suggestions finds the pages that carry it: its emoji comes with it into the
-    // box ("🐮Ox"), and once found nothing (R017).
+    // A tag picked from the suggestions finds the pages that carry it, its emoji ("🐮Ox") and all.
     await page.locator('#search').fill('ox');
     await page.waitForSelector('.search-suggestion.is-tag', { timeout: 5000 }).catch(() => {});
     const tag = page.locator('.search-suggestion.is-tag').first();

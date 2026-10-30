@@ -1,0 +1,1057 @@
+{
+ "time": "2026-10-30T02:14:00Z",
+ "docs": {
+  "_posts/2022-03-01-Day-One-of-This-Site.md": {
+   "updated": null
+  },
+  "_posts/2022-03-02-2022减肥日记.md": {
+   "updated": "2026-04-23"
+  },
+  "_posts/2022-03-04-Bad-Egg-Philosophy.md": {
+   "updated": null
+  },
+  "_posts/2022-03-05-Coffee-Counter.md": {
+   "updated": null
+  },
+  "_posts/2022-03-06-nine-reasons-to-fail.md": {
+   "updated": null
+  },
+  "_posts/2022-03-09-How-to-argue-with-idiots.md": {
+   "updated": null
+  },
+  "_posts/2023-05-15-stats-fosi.md": {
+   "updated": null
+  },
+  "_posts/2023-06-26-打工日记.md": {
+   "updated": null
+  },
+  "_posts/2023-07-01-Leetcode-July-Challenge.md": {
+   "updated": null
+  },
+  "_posts/2023-12-05-What-Cannot-Be-Said.md": {
+   "updated": null
+  },
+  "_posts/2024-09-02-Lontananza.md": {
+   "updated": null
+  },
+  "_posts/2024-12-19-War-Declaration-to-Boredom.md": {
+   "updated": null
+  },
+  "_posts/2025-02-02-Terminology.md": {
+   "updated": null
+  },
+  "_posts/2025-04-10-Defined-by-Archive.md": {
+   "updated": "2026-04-05"
+  },
+  "_posts/2025-04-22-GPT4o-Talks-Shit.md": {
+   "updated": null
+  },
+  "_posts/2025-08-07-The-House-of-QSD.md": {
+   "updated": null
+  },
+  "_posts/2026-07-09-Shihuqiao.md": {
+   "updated": "2026-07-27"
+  },
+  "_posts/2026-09-30-In-the-Naming-of-Light.md": {
+   "updated": null
+  },
+  "_voyage/above-the-cloud.md": {
+   "updated": null
+  },
+  "_voyage/barcelona.md": {
+   "updated": null
+  },
+  "_voyage/beijing.md": {
+   "updated": null
+  },
+  "_voyage/bled.md": {
+   "updated": null
+  },
+  "_voyage/budapest.md": {
+   "updated": null
+  },
+  "_voyage/capri.md": {
+   "updated": null
+  },
+  "_voyage/cornwall.md": {
+   "updated": null
+  },
+  "_voyage/dolomites.md": {
+   "updated": "2026-10-29 23:16"
+  },
+  "_voyage/dragonstone.md": {
+   "updated": null
+  },
+  "_voyage/dresden.md": {
+   "updated": "2026-09-28 21:00"
+  },
+  "_voyage/florence.md": {
+   "updated": "2026-10-10 19:35"
+  },
+  "_voyage/hongkong.md": {
+   "updated": null
+  },
+  "_voyage/intermezzo.md": {
+   "updated": "2026-09-28 22:00"
+  },
+  "_voyage/japan.md": {
+   "updated": "2026-10-10 19:35"
+  },
+  "_voyage/kandersteg.md": {
+   "updated": null
+  },
+  "_voyage/london.md": {
+   "updated": "2026-10-10 19:35"
+  },
+  "_voyage/lungern.md": {
+   "updated": "2026-10-17 01:05"
+  },
+  "_voyage/mont-st-michel.md": {
+   "updated": null
+  },
+  "_voyage/morocco.md": {
+   "updated": null
+  },
+  "_voyage/new-york.md": {
+   "updated": null
+  },
+  "_voyage/oxford.md": {
+   "updated": null
+  },
+  "_voyage/paris.md": {
+   "updated": "2026-09-28 21:00"
+  },
+  "_voyage/porto.md": {
+   "updated": null
+  },
+  "_voyage/prague.md": {
+   "updated": null
+  },
+  "_voyage/rigi.md": {
+   "updated": null
+  },
+  "_voyage/rome.md": {
+   "updated": null
+  },
+  "_voyage/singapore.md": {
+   "updated": "2026-10-10 19:35"
+  },
+  "_voyage/stoos.md": {
+   "updated": "2026-09-25"
+  },
+  "_voyage/titlis.md": {
+   "updated": "2026-09-30 21:50"
+  },
+  "_voyage/venice.md": {
+   "updated": null
+  },
+  "_voyage/wengen.md": {
+   "updated": null
+  },
+  "_subvoyage/dolomites/in-passing.md": {
+   "updated": null
+  },
+  "_subvoyage/dolomites/incantato.md": {
+   "updated": null
+  },
+  "_subvoyage/dolomites/seceda.md": {
+   "updated": null
+  },
+  "_subvoyage/dolomites/selva.md": {
+   "updated": null
+  },
+  "_subvoyage/dolomites/sesto.md": {
+   "updated": null
+  },
+  "_subvoyage/dolomites/siusi.md": {
+   "updated": null
+  },
+  "_subvoyage/japan/kyoto.md": {
+   "updated": null
+  },
+  "_subvoyage/japan/nara.md": {
+   "updated": null
+  },
+  "_subvoyage/japan/tokyo.md": {
+   "updated": null
+  },
+  "_subvoyage/prague/astronomical-clock.md": {
+   "updated": null
+  },
+  "_subvoyage/prague/charles-bridge.md": {
+   "updated": null
+  },
+  "_subvoyage/prague/church-tyn.md": {
+   "updated": null
+  },
+  "_subvoyage/prague/petrin-hill.md": {
+   "updated": null
+  },
+  "_subvoyage/prague/portraits.md": {
+   "updated": null
+  },
+  "_subvoyage/prague/prague-castle.md": {
+   "updated": null
+  },
+  "_subvoyage/prague/st-nicolas.md": {
+   "updated": null
+  },
+  "_subvoyage/prague/streetscape-mala-strana.md": {
+   "updated": null
+  },
+  "_subvoyage/prague/streetscape-stare-mesto.md": {
+   "updated": null
+  },
+  "_subvoyage/prague/twilight.md": {
+   "updated": null
+  },
+  "_subvoyage/prague/zizkov-tower.md": {
+   "updated": null
+  },
+  "_subvoyage/rome/bocche-di-verita.md": {
+   "updated": null
+  },
+  "_subvoyage/rome/castel-sant-angelo.md": {
+   "updated": null
+  },
+  "_subvoyage/rome/palatine-hill.md": {
+   "updated": null
+  },
+  "_subvoyage/rome/st-peters-basilica.md": {
+   "updated": null
+  },
+  "_subvoyage/rome/trevi-fountain.md": {
+   "updated": null
+  },
+  "_subvoyage/rome/vatican-museum-vol-1.md": {
+   "updated": null
+  },
+  "_subvoyage/rome/vatican-museum-vol-2.md": {
+   "updated": null
+  },
+  "_subvoyage/rome/vittoriano.md": {
+   "updated": null
+  },
+  "_subvoyage/venice/basilica-marco.md": {
+   "updated": null
+  },
+  "_subvoyage/venice/campanile.md": {
+   "updated": null
+  },
+  "_subvoyage/venice/flow.md": {
+   "updated": null
+  },
+  "_subvoyage/venice/gondola.md": {
+   "updated": null
+  },
+  "_portfolio/architecture.md": {
+   "updated": null
+  },
+  "_portfolio/cat.md": {
+   "updated": null
+  },
+  "_portfolio/shadow.md": {
+   "updated": null
+  },
+  "_portfolio/twilight.md": {
+   "updated": null
+  },
+  "_portfolio/voyage.html": {
+   "updated": null
+  }
+ },
+ "photos": {
+  "above-the-cloud": [
+   "dscf3559",
+   "dscf3567",
+   "dscf3659",
+   "dscf5863",
+   "dscf5865",
+   "dscf5874",
+   "dscf0949",
+   "dscf0962",
+   "dscf3631",
+   "dscf4237"
+  ],
+  "barcelona": [
+   "dscf0965",
+   "dscf1055",
+   "dscf1070",
+   "dscf1085"
+  ],
+  "beijing": [
+   "dscf3267",
+   "dscf3369",
+   "dscf3422",
+   "dscf3461",
+   "dscf3462",
+   "dscf3572"
+  ],
+  "bled": [
+   "dscf4443",
+   "dscf4479",
+   "dscf4481",
+   "dscf4495",
+   "dscf4519",
+   "dscf4533",
+   "dscf4562",
+   "dscf4610",
+   "dscf4625",
+   "dscf4664",
+   "dscf4672",
+   "dscf4684",
+   "dscf4685",
+   "dscf4691",
+   "dscf4703",
+   "dscf4707",
+   "dscf4724",
+   "dscf4753"
+  ],
+  "budapest": [
+   "dscf5838",
+   "dscf5857",
+   "dscf5870",
+   "dscf5897",
+   "dscf5915",
+   "dscf6084",
+   "dscf6363",
+   "dscf6499",
+   "dscf6552",
+   "dscf6582",
+   "dscf6608",
+   "dscf6621",
+   "dscf6634",
+   "dscf6638",
+   "dscf6666",
+   "dscf6671"
+  ],
+  "capri": [
+   "dscf3879",
+   "dscf3893",
+   "dscf3930",
+   "dscf3938",
+   "dscf3921",
+   "dscf4047",
+   "dscf4051",
+   "dscf4107",
+   "dscf4115",
+   "dscf4125",
+   "dscf4150",
+   "dscf4162"
+  ],
+  "cornwall": [
+   "dscf1559",
+   "dscf1848",
+   "dscf1940",
+   "dscf2170",
+   "dscf2192",
+   "dscf2206",
+   "dscf2233",
+   "dscf2242",
+   "dscf1321",
+   "dscf1324",
+   "dscf1422",
+   "dscf1686",
+   "dscf1724",
+   "dscf1732",
+   "dscf1859",
+   "dscf1910"
+  ],
+  "dolomites/in-passing": [
+   "dscf4749",
+   "dscf4805",
+   "dscf4836",
+   "dscf4854",
+   "dscf5139",
+   "dscf5142",
+   "dscf5150",
+   "dscf5179",
+   "dscf5194",
+   "dscf5201",
+   "dscf5225",
+   "dscf5503",
+   "dscf5534",
+   "dscf5540",
+   "dscf5544",
+   "dscf5623",
+   "dscf5652",
+   "dscf5655",
+   "dscf5659",
+   "dscf5673",
+   "dscf5703",
+   "dscf5709",
+   "dscf5717",
+   "dscf5719"
+  ],
+  "dolomites/incantato": [
+   "dscf9933",
+   "dscf9936",
+   "dscf0064",
+   "dscf0073",
+   "dscf0076",
+   "dscf9961",
+   "dscf0065",
+   "dscf0557",
+   "dscf0863"
+  ],
+  "dolomites/seceda": [
+   "dscf8139",
+   "dscf0152",
+   "dscf8177",
+   "dscf0513",
+   "dscf6291",
+   "dscf0142",
+   "dscf0148",
+   "dscf0153",
+   "dscf0159",
+   "dscf0197",
+   "dscf0357",
+   "dscf0411",
+   "dscf0414",
+   "dscf0500",
+   "dscf0504",
+   "dscf0531"
+  ],
+  "dolomites/selva": [
+   "dscf0109",
+   "dscf0110",
+   "dscf0123",
+   "dscf0128",
+   "dscf0136",
+   "dscf0491",
+   "dscf0494",
+   "dscf0589",
+   "dscf0602",
+   "dscf0612",
+   "dscf0685",
+   "dscf0716",
+   "dscf0735",
+   "dscf0742"
+  ],
+  "dolomites/sesto": [
+   "dscf9287",
+   "dscf9401",
+   "dscf9447",
+   "dscf9449",
+   "dscf9474",
+   "dscf9483",
+   "dscf9481",
+   "dscf8495",
+   "dscf9500",
+   "dscf9537",
+   "dscf9604",
+   "dscf9602",
+   "dscf9631",
+   "dscf9702",
+   "dscf9714",
+   "dscf9855",
+   "dscf9073"
+  ],
+  "dolomites/siusi": [
+   "dscf7698",
+   "dscf7749",
+   "dscf7849",
+   "dscf7851",
+   "dscf7910",
+   "dscf7954",
+   "dscf7960",
+   "dscf0608",
+   "dscf0634"
+  ],
+  "dragonstone": [
+   "dscf6820",
+   "dscf6826",
+   "dscf6835",
+   "dscf6847",
+   "dscf6878",
+   "dscf6888",
+   "dscf6915",
+   "dscf6922",
+   "dscf6933"
+  ],
+  "dresden": [
+   "dscf2816",
+   "dscf2880",
+   "dscf2997",
+   "dscf3021",
+   "dscf3080",
+   "dscf3102"
+  ],
+  "florence": [
+   "dscf2530",
+   "dscf2617",
+   "dscf2632",
+   "dscf2732",
+   "dscf2744",
+   "dscf2758",
+   "dscf2760",
+   "dscf2809"
+  ],
+  "hong-kong": [
+   "dscf4610",
+   "dscf4672",
+   "dscf4728",
+   "dscf5028",
+   "dscf5290",
+   "dscf5391",
+   "dscf6099",
+   "dscf6233",
+   "dscf6675"
+  ],
+  "intermezzo": [
+   "dscf6704",
+   "dscf3005",
+   "dscf5605",
+   "dscf5615",
+   "dscf5626",
+   "dscf5775",
+   "dscf9268",
+   "dscf5800",
+   "dscf6142",
+   "dscf6150",
+   "dscf6474"
+  ],
+  "japan/kyoto": [
+   "dscf7191",
+   "dscf7207",
+   "dscf7276",
+   "dscf7299",
+   "dscf7324",
+   "dscf7379",
+   "dscf7413",
+   "dscf7426",
+   "dscf7450",
+   "dscf7779",
+   "dscf7818",
+   "dscf7906",
+   "dscf8006",
+   "dscf8041",
+   "dscf8203",
+   "dscf8370",
+   "dscf7443",
+   "dscf7548",
+   "dscf7550",
+   "dscf7607",
+   "dscf7651",
+   "dscf7664",
+   "dscf7672",
+   "dscf7732",
+   "dscf7829",
+   "dscf7866",
+   "dscf7887",
+   "dscf7912"
+  ],
+  "japan/nara": [
+   "dscf6875",
+   "dscf6977",
+   "dscf7013",
+   "dscf7019",
+   "dscf7504",
+   "dscf7571",
+   "dscf7619",
+   "dscf7620",
+   "dscf7696",
+   "dscf7720",
+   "dscf7730",
+   "dscf7744",
+   "dscf7765"
+  ],
+  "japan/tokyo": [
+   "dscf8468",
+   "dscf8536",
+   "dscf8625",
+   "dscf8803",
+   "dscf8818",
+   "dscf8917"
+  ],
+  "kandersteg": [
+   "dscf8201",
+   "dscf8207",
+   "dscf8213",
+   "dscf8254",
+   "dscf8261",
+   "dscf8266",
+   "dscf8277",
+   "dscf8351",
+   "dscf8385",
+   "dscf8388",
+   "dscf8452",
+   "dscf8466",
+   "dscf8500",
+   "dscf8581",
+   "dscf8604",
+   "dscf8616",
+   "dscf8617",
+   "dscf8630",
+   "dscf8646",
+   "dscf8653",
+   "dscf8664"
+  ],
+  "london": [
+   "dscf0958",
+   "dscf1797",
+   "dscf6358",
+   "dscf6366",
+   "dscf6377",
+   "dscf6419",
+   "dscf6422",
+   "dscf6429",
+   "dscf6437",
+   "dscf6440",
+   "dscf6441",
+   "dscf6442",
+   "dscf6443",
+   "dscf6474",
+   "dscf6495",
+   "dscf6521",
+   "dscf6533",
+   "dscf6534",
+   "dscf6536",
+   "dscf6553",
+   "dscf6723",
+   "dscf7404",
+   "dscf7406",
+   "dscf7412",
+   "dscf7480",
+   "dscf7500",
+   "dscf7507",
+   "dscf7568",
+   "dscf2087",
+   "dscf3141",
+   "dscf1839",
+   "dscf1845",
+   "dscf2206",
+   "dscf2229",
+   "dscf2245",
+   "dscf2742",
+   "dscf3744"
+  ],
+  "lungern": [
+   "dscf8624",
+   "dscf9794",
+   "dscf8637",
+   "dscf8649",
+   "dscf8660",
+   "dscf8665",
+   "dscf8672",
+   "dscf8674",
+   "dscf8688",
+   "dscf8692",
+   "dscf8706",
+   "dscf8709",
+   "dscf8714",
+   "dscf8718",
+   "dscf8725",
+   "dscf8726",
+   "dscf8728",
+   "dscf8729",
+   "dscf8742",
+   "dscf8745"
+  ],
+  "mont-st-michel": [
+   "dscf4069",
+   "dscf4168",
+   "dscf4222",
+   "dscf4224",
+   "dscf4261"
+  ],
+  "morocco": [
+   "dscf8340",
+   "dscf8762",
+   "dscf8937",
+   "dscf8992",
+   "dscf9031",
+   "dscf9089",
+   "dscf9265",
+   "dscf9539",
+   "dscf9794",
+   "dscf0055",
+   "dscf0348",
+   "dscf0434",
+   "dscf0680",
+   "dscf0739"
+  ],
+  "new-york": [
+   "dscf7157",
+   "dscf7411",
+   "dscf7476",
+   "dscf7543",
+   "dscf7557",
+   "dscf7602",
+   "dscf7638",
+   "dscf7663",
+   "dscf7670",
+   "dscf7717",
+   "dscf7751",
+   "dscf7798",
+   "dscf7962"
+  ],
+  "oxford": [
+   "dscf2428",
+   "dscf2439",
+   "dscf4903",
+   "dscf4893",
+   "dscf5636",
+   "dscf7613",
+   "dscf7615",
+   "dscf7620",
+   "dscf1395",
+   "dscf1405",
+   "dscf1458",
+   "dscf1464",
+   "dscf1504",
+   "dscf4449",
+   "dscf4468",
+   "dscf4486",
+   "dscf6723",
+   "dscf6728",
+   "dscf6742",
+   "dscf6763",
+   "dscf1857",
+   "dscf1872",
+   "dscf1887",
+   "dscf1939",
+   "dscf2676",
+   "dscf9835"
+  ],
+  "paris": [
+   "dscf2792",
+   "dscf2921",
+   "dscf9865",
+   "dscf9892",
+   "dscf9905",
+   "dscf0022"
+  ],
+  "porto": [
+   "dscf7005",
+   "dscf7007",
+   "dscf7023",
+   "dscf7030",
+   "dscf7059",
+   "dscf7097",
+   "dscf7110",
+   "dscf7111",
+   "dscf7129",
+   "dscf7144",
+   "dscf7157",
+   "dscf7338",
+   "dscf1457",
+   "dscf1590",
+   "dscf1593",
+   "dscf1618",
+   "dscf1670",
+   "dscf1680",
+   "dscf1697",
+   "dscf1710",
+   "dscf1712",
+   "dscf1719",
+   "dscf1759"
+  ],
+  "prague/astronomical-clock": [
+   "dscf4349",
+   "dscf4522",
+   "dscf4523",
+   "dscf4525",
+   "dscf4526",
+   "dscf4531"
+  ],
+  "prague/charles-bridge": [
+   "dscf4296",
+   "dscf5410",
+   "dscf4235",
+   "dscf4236",
+   "dscf4271",
+   "dscf4272",
+   "dscf4277"
+  ],
+  "prague/church-tyn": [
+   "dscf4428",
+   "dscf4456",
+   "dscf4886",
+   "dscf4992",
+   "dscf5272",
+   "dscf5408",
+   "dscf4253",
+   "dscf3363"
+  ],
+  "prague/petrin-hill": [
+   "dscf4826",
+   "dscf4837",
+   "dscf4843",
+   "dscf4859",
+   "dscf4861",
+   "dscf4872",
+   "dscf4877",
+   "dscf4893",
+   "dscf4908"
+  ],
+  "prague/portraits": [
+   "dscf4305",
+   "dscf4425",
+   "dscf4538",
+   "dscf5074",
+   "dscf5154",
+   "dscf5557",
+   "dscf5594",
+   "dscf5683"
+  ],
+  "prague/prague-castle": [
+   "dscf4915",
+   "dscf5180",
+   "dscf5286",
+   "dscf5312",
+   "dscf5320",
+   "dscf5350",
+   "dscf3254",
+   "dscf5416",
+   "dscf5420",
+   "dscf5439",
+   "dscf5453",
+   "dscf5477",
+   "dscf5496",
+   "dscf5498",
+   "dscf5575",
+   "dscf5587",
+   "dscf3279",
+   "dscf3318",
+   "dscf3421",
+   "dscf3425"
+  ],
+  "prague/st-nicolas": [
+   "dscf4786",
+   "dscf4837",
+   "dscf5186",
+   "dscf5193",
+   "dscf5234",
+   "dscf5236",
+   "dscf5247"
+  ],
+  "prague/streetscape": [
+   "dscf4275",
+   "dscf4409",
+   "dscf4414",
+   "dscf4515",
+   "dscf4517",
+   "dscf4519",
+   "dscf4521",
+   "dscf4546",
+   "dscf4563",
+   "dscf4582",
+   "dscf4631",
+   "dscf4731",
+   "dscf4737",
+   "dscf4742",
+   "dscf5116",
+   "dscf5123",
+   "dscf5132",
+   "dscf5135"
+  ],
+  "prague/streetscape-mala-strana": [
+   "dscf4807",
+   "dscf4811",
+   "dscf5181",
+   "dscf5264",
+   "dscf4270",
+   "dscf5285",
+   "dscf5595",
+   "dscf3162",
+   "dscf3174",
+   "dscf3180"
+  ],
+  "prague/twilight": [
+   "dscf4299",
+   "dscf4322",
+   "dscf4623",
+   "dscf4997",
+   "dscf5678",
+   "dscf4287",
+   "dscf4303"
+  ],
+  "prague/zizkov-tower": [
+   "dscf5704",
+   "dscf5711",
+   "dscf5618",
+   "dscf5726",
+   "dscf5754",
+   "dscf5767",
+   "dscf5770"
+  ],
+  "rigi": [
+   "dscf5721",
+   "dscf5730",
+   "dscf5735",
+   "dscf5741",
+   "dscf5750",
+   "dscf5760",
+   "dscf5778",
+   "dscf5789"
+  ],
+  "rome/bocche-di-verita": [
+   "dscf0998",
+   "dscf1309",
+   "dscf1999",
+   "dscf2019",
+   "dscf2406"
+  ],
+  "rome/castel-sant-angelo": [
+   "dscf2006",
+   "dscf2015",
+   "dscf2050",
+   "dscf2098",
+   "dscf2101",
+   "dscf2105",
+   "dscf2108"
+  ],
+  "rome/palatine-hill": [
+   "dscf0986",
+   "dscf0987",
+   "dscf1007",
+   "dscf1016",
+   "dscf1186",
+   "dscf1191",
+   "dscf1659",
+   "dscf1669",
+   "dscf1682",
+   "dscf1689"
+  ],
+  "rome/st-peters-basilica": [
+   "dscf1288",
+   "dscf1801",
+   "dscf1804",
+   "dscf1808",
+   "dscf1869",
+   "dscf1878",
+   "dscf1892",
+   "dscf1898",
+   "dscf1899",
+   "dscf1904",
+   "dscf1920",
+   "dscf1929",
+   "dscf1934",
+   "dscf1945",
+   "dscf1959",
+   "dscf1979",
+   "dscf1984",
+   "dscf2241"
+  ],
+  "rome/trevi-fountain": [
+   "dscf2296",
+   "dscf2345",
+   "dscf2346",
+   "dscf2349"
+  ],
+  "rome/vatican-museum-vol-1": [
+   "dscf1262",
+   "dscf1272",
+   "dscf1335",
+   "dscf1337",
+   "dscf1353",
+   "dscf1360",
+   "dscf1362",
+   "dscf1374",
+   "dscf1376",
+   "dscf1389",
+   "dscf1472",
+   "dscf1486",
+   "dscf1487",
+   "dscf1489",
+   "dscf1494"
+  ],
+  "rome/vatican-museum-vol-2": [
+   "dscf1268",
+   "dscf1326",
+   "dscf1400",
+   "dscf1407",
+   "dscf1414",
+   "dscf1417",
+   "dscf1418",
+   "dscf1421",
+   "dscf1422",
+   "dscf1428",
+   "dscf1476",
+   "dscf1501",
+   "dscf1503",
+   "dscf1572"
+  ],
+  "rome/vittoriano": [
+   "dscf0933",
+   "dscf0977",
+   "dscf0983",
+   "dscf1251",
+   "dscf1610",
+   "dscf1614",
+   "dscf1619",
+   "dscf1629",
+   "dscf1639",
+   "dscf1662",
+   "dscf1675",
+   "dscf1753"
+  ],
+  "singapore": [
+   "dscf3966",
+   "dscf4035",
+   "dscf4082",
+   "dscf4108",
+   "dscf4171",
+   "dscf7380"
+  ],
+  "stoos": [
+   "dscf5150",
+   "dscf5178",
+   "dscf5234",
+   "dscf5235",
+   "dscf5241",
+   "dscf5256",
+   "dscf5262",
+   "dscf5266",
+   "dscf5414",
+   "dscf5534",
+   "dscf5563",
+   "dscf5672",
+   "dscf5673",
+   "dscf5679",
+   "dscf5683",
+   "dscf5690",
+   "dscf5715"
+  ],
+  "titlis": [
+   "dscf3877",
+   "dscf3926",
+   "dscf3940",
+   "dscf3968",
+   "dscf3991",
+   "dscf4004",
+   "dscf4009",
+   "dscf5022",
+   "dscf5024",
+   "dscf5027",
+   "dscf5039",
+   "dscf5054",
+   "dscf5056",
+   "dscf5083",
+   "dscf5101"
+  ],
+  "wengen": [
+   "dscf8721",
+   "dscf8788",
+   "dscf8839",
+   "dscf9018",
+   "dscf9043",
+   "dscf9048",
+   "dscf9091",
+   "dscf9096",
+   "dscf9099",
+   "dscf9191",
+   "dscf9205",
+   "dscf9291",
+   "dscf9350",
+   "dscf9408",
+   "dscf9494",
+   "dscf9508",
+   "dscf9513",
+   "dscf9721",
+   "dscf9736",
+   "dscf9739"
+  ]
+ }
+}

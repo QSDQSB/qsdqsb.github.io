@@ -21,6 +21,10 @@
  * A mask is only as good as its box, and on a full-page mobile shot the box
  * can land off the element it was meant to cover.
  *
+ * Content. `visual:build` holds the site's content to tests/visual/content-pin.json
+ * (scripts/visual-content.mjs): voyages, posts and photographs added after the
+ * pin never reach the shots, so a change of content alone diffs clean.
+ *
  * Why this exists: CSS refactors — `!important` triage, token inlining,
  * import reordering — are verified by eye or not at all, and "not at all"
  * is what happens. A committed baseline turns "looks the same" into a
@@ -116,8 +120,80 @@ const TILE = 8000;
 // _config_visual.yml instead, and compared.)
 const SAMPLED = ['.word_card_container', '.page__related .grid__wrapper', '.photobook-end__more'];
 // An animated GIF (post-notices carries LeetCode's monthly badge) is caught on whichever frame it
-// is showing; `animations: 'disabled'` stops CSS, not GIFs. Painted over for the same reason.
+// is showing; `animations: 'disabled'` stops CSS, not GIFs. Painted over for the same reason (the
+// photographs' flat tone below covers it too; this stays for a GIF the logo rule would spare).
 const MOVING = ['img[src$=".gif"]'];
+
+/**
+ * Photographs are drawn as a flat tone, in place. The shots test the
+ * site's layout and style; the photographs live in R2 and are not the harness's to keep. Shot as
+ * they were, a voyage page was 16 MB of PNG, and every new photograph re-shot Home, Voyage and
+ * Palette for no change of design. Found at run time, not by template: an <img> or <video> showing a
+ * raster or a data image (a <picture>'s <source> through its img's currentSrc), and every raster
+ * layer of a CSS background, on an element or its ::before and ::after (Home's hero paints its
+ * photograph in a ::before). An image's bitmap is moved out of its box; a background's raster layers
+ * become flat ones and its gradients stay (a cover's scrim, a hero's filter are design). Every box
+ * keeps its size, its clip and the words laid over it. The QSD sign-off logo is design, pinned to
+ * be compared (see the head of this file), and is left as it is.
+ */
+const PHOTO_TONE = '#2a2a2a';
+async function maskPhotographs(page) {
+  // Every image loaded first (a lazy one told to load now), so a shot never catches one half-way: a
+  // print still loading is a blank box in one shot and a flat one in the next.
+  await page.evaluate(async () => {
+    for (const img of document.images) if (img.loading === 'lazy') img.loading = 'eager';
+    const pending = [...document.images].filter((img) => !img.complete);
+    await Promise.race([
+      Promise.all(pending.map((img) => new Promise((done) => { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }))),
+      new Promise((done) => setTimeout(done, 8000)),
+    ]);
+  });
+  await page.evaluate((tone) => {
+    const raster = /(^data:image\/(png|jpe?g|webp|avif|gif))|\.(jpe?g|png|webp|avif|gif)(\?|#|$)/i;
+    const design = /\/images\/QSDLogos\//;
+    const isPhoto = (u) => raster.test(u) && !design.test(u);
+    const flat = `linear-gradient(${tone}, ${tone})`;
+    // Chromium writes a computed URL as url("…"), quotes and all.
+    const flatten = (bg) => bg.replace(/url\("([^"]+)"\)/g, (m, u) => (isPhoto(u) ? flat : m));
+    const style = document.createElement('style');
+    document.head.appendChild(style);
+    let n = 0;
+    const mark = () => {
+      for (const el of document.querySelectorAll('img, video')) {
+        const src = el.currentSrc || el.src || el.poster || '';
+        if (el.tagName === 'VIDEO' || isPhoto(src)) el.setAttribute('data-visual-photo', '');
+        else el.removeAttribute('data-visual-photo');
+      }
+      const rules = [`img[data-visual-photo], video[data-visual-photo] { object-position: -100000px -100000px !important; background: ${tone} !important; }`];
+      for (const el of document.querySelectorAll('body *')) {
+        for (const part of ['', '::before', '::after']) {
+          const bg = getComputedStyle(el, part || null).backgroundImage;
+          if (!bg || bg === 'none' || !/url\(/.test(bg) || bg.includes(flat)) continue;
+          const next = flatten(bg);
+          if (next === bg) continue;
+          if (!el.hasAttribute('data-visual-bg')) el.setAttribute('data-visual-bg', String(n++));
+          rules.push(`[data-visual-bg="${el.getAttribute('data-visual-bg')}"]${part} { background-image: ${next} !important; }`);
+        }
+      }
+      // Rules already written stay: a background masked once is not unmasked by its own rule.
+      const kept = new Set(style.textContent.split('\n').filter(Boolean));
+      for (const r of rules) kept.add(r);
+      style.textContent = [...kept].join('\n');
+    };
+    mark();
+    // Whatever changes after (a cover given its photograph as the page is resized for the full shot,
+    // an image's source swapped) is masked as it changes.
+    // Text being typed (About's typewriter) is not a change of picture, and a re-scan is a whole-page
+    // pass: it runs at most every 250 ms, and only for elements, sources, styles and classes.
+    let timer = 0;
+    const later = () => { if (!timer) timer = setTimeout(() => { timer = 0; mark(); }, 250); };
+    new MutationObserver((records) => {
+      if (records.some((r) => r.type === 'attributes' || [...r.addedNodes].some((node) => node.nodeType === 1 && node !== style))) later();
+    }).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['src', 'srcset', 'style', 'class', 'poster'] });
+    document.addEventListener('load', later, true);
+  }, PHOTO_TONE);
+  await page.waitForTimeout(400);
+}
 
 async function drawAllRows(page) {
   await page.addStyleTag({ content: '.photobook-row { content-visibility: visible; }' });
@@ -413,6 +489,7 @@ async function shoot(browser, baseUrl, pageDef, viewportName, outDir, attempt = 
       await context.close();
       return shoot(browser, baseUrl, pageDef, viewportName, outDir, attempt + 1);
     }
+    await maskPhotographs(page);
     const file = path.join(outDir, `${pageDef.id}--${viewportName}.png`);
     const options = { animations: 'disabled', mask: [...SAMPLED, ...MOVING, ...(pageDef.mask || [])].map((s) => page.locator(s)), maskColor: '#2a2a2a' };
     if (pageDef.screenOnly) await page.screenshot({ ...options, path: file });

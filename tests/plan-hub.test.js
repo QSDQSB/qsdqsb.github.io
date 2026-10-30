@@ -1214,6 +1214,9 @@ test('the work run never builds, gates or commits its own tooling, runs only nam
     fs.mkdirSync(path.join(wt, 'scripts/__pycache__'), { recursive: true }); fs.writeFileSync(path.join(wt, 'scripts/__pycache__/c.pyc'), 'x\n');
     assert.strictEqual(work('run', 'test').status === 1 && /tooling|ignores/.test(work('run', 'test').stderr), false, 'a build and bytecode do not stop a step');
     assert.ok(fs.existsSync(path.join(wt, '_site/index.html')), 'the build is kept');
+    // The visual build's pinned manifests (scripts/visual-content.mjs freeze) are a build's too.
+    fs.mkdirSync(path.join(wt, 'tests/visual/content/photo_manifests'), { recursive: true }); fs.writeFileSync(path.join(wt, 'tests/visual/content/photo_manifests/x.json'), '{}\n');
+    assert.doesNotMatch(work('run', 'test').stderr, /ignores/, 'the pinned manifests do not stop a step');
     assert.ok(!fs.existsSync(path.join(wt, 'scripts/__pycache__')), 'the bytecode is gone');
     const abort = work('abort');
     assert.match(abort.stdout, /Let go: work\/s1-a02/);
