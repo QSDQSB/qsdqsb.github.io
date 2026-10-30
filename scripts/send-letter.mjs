@@ -190,7 +190,10 @@ if (optWelcome) {
     else if (voyage) url = `${SITE_URL}/voyage/${voyage[1]}/`;
     else fail("post has no permalink: — pass --url");
   }
-  subject = optSubject || title;
+  // A part's subject names its voyage too: "In Passing · Dolomites".
+  const parentPath = voyage && voyage[1].includes("/") ? join(repoRoot, "_voyage", `${voyage[1].split("/")[0]}.md`) : null;
+  const parentTitle = parentPath && existsSync(parentPath) ? parseFrontmatter(parentPath).title : "";
+  subject = optSubject || (parentTitle ? `${title} · ${parentTitle}` : title);
   const dateLine = fm.date
     ? new Date(fm.date).toLocaleDateString("en-GB", { month: "long", year: "numeric" })
     : "";
