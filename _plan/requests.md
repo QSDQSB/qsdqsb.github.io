@@ -6,6 +6,7 @@ to Done with its pull request.
 
 ## Open
 
+- 2026-10-29 · R018 · Add a voyage under Dolomites, "In Passing", focused on the reflection from the car window and glass. Excerpt "Autumn passed us as we passed through it." — then, at the owner's word, "Autumn passed by from the passenger seat.", date Oct 21, 2026. Photos in the Apple Photos album "In Passing".
 ## Done
 
 - 2026-10-20 · R017 · When we click a tag, it shows search result in nothing instead of pages with the tag (screenshot: the search box reads 🐮Ox and says No results found.) → done 2026-10-20: a tag picked from the suggestions brought its emoji into the box, which the index strips; query words now shed marks at their edges as the index's do, and a query of an emoji alone finds nothing rather than everything (#123)
