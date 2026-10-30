@@ -6,6 +6,7 @@ to Done with its pull request.
 
 ## Open
 
+- 2026-10-30 · R020 · Prepare the email and send the test for In Passing; each subvoyage's name should have the parent voyage (Dolomites) somewhere; mention 每次来多洛米蒂都会因为照片太多不知道先发哪些，这次找到了第一个main theme：后视镜和车窗前的白云岩、落叶松、和多洛米蒂的初雪。 with an English version (then: use we, send to all subscribers)
 - 2026-10-30 · R019 · Two problems: 1. When a subvoyage updates, what's updated on What's New should be the subvoyage page, instead of the parent Dolomites page; 2. the atlas for the Dolomites voyage page is centred and zoomed wrong, right now it's in Africa and not zoomed in.
 - 2026-10-29 · R018 · Add a voyage under Dolomites, "In Passing", focused on the reflection from the car window and glass. Excerpt "Autumn passed us as we passed through it." — then, at the owner's word, "Autumn passed by from the passenger seat.", date Oct 21, 2026. Photos in the Apple Photos album "In Passing".
 ## Done

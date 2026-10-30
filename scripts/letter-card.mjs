@@ -106,7 +106,8 @@ export async function reverieCard(hex, { site = 'https://qsdqsb.com' } = {}) {
  * the foot on the left, over the card's scrim and a hairline shadow (PRINCIPLES, Cards); and, as
  * the card's foot, the voyage's colours as QSD's Palette has them: the vat it pours (the mood) and
  * the bar (the composition). The line is the voyage card's own face, Playfair, upright (the owner,
- * 2026-10-17); Didot stays for figures. No eyebrow: the letter's kicker says what has come. A voyage
+ * 2026-10-17); Didot stays for figures. No eyebrow: the letter's kicker says what has come. A part
+ * names its voyage above its title, in the eyebrow's Barlow capitals (the owner, 2026-10-30). A voyage
  * in parts has no palette of its own, so its card is the cover alone.
  */
 
@@ -127,6 +128,9 @@ export function voyageCardData(voyagePath, { root = ROOT } = {}) {
   const fm = yaml.load(src.split(/^---\s*$/m)[1]) || {};
   const slug = sub ? sub[1] : own[1];
   const gallery = fm.gallery_name || null;
+  // A part names the voyage it belongs to, above its own title.
+  const parentFile = sub && join(root, '_voyage', `${sub[1].split('/')[0]}.md`);
+  const parent = parentFile && existsSync(parentFile) ? String((yaml.load(readFileSync(parentFile, 'utf8').split(/^---\s*$/m)[1]) || {}).title || '') : '';
   // The cover: in the gallery's own YAML, or, for a voyage in parts, its parent's (photo: part/slug).
   const authored = (g) => { const f = join(root, '_data/photos', `${g}.yml`); return existsSync(f) ? yaml.load(readFileSync(f, 'utf8')) || {} : {}; };
   const yml = authored(gallery || slug);
@@ -143,6 +147,7 @@ export function voyageCardData(voyagePath, { root = ROOT } = {}) {
   const crop = Object.entries(yml.cover.crops || {}).find(([k]) => shapeOf(k) === 'tall');
   return {
     title: String(fm.title || ''),
+    parent,
     excerpt: plainLine(fm.excerpt),
     path: `/voyage/${slug}/`,
     gallery,
@@ -167,6 +172,7 @@ export function voyageCardHtml(d, vat) {
   .lv-cover { position: relative; height: ${COVER_HEIGHT}px; background: #222 url("${esc(d.cover)}") ${pos}/cover no-repeat; }
   .lv-scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,10,0.8) 0%, rgba(10,10,10,0.42) 24%, rgba(10,10,10,0) 46%); }
   .lv-words { position: absolute; left: 28px; right: 28px; bottom: 24px; text-shadow: 0 1px 1px rgba(0,0,0,0.35); }
+  .lv-of { font: 500 13px/1 Barlow, "Helvetica Neue", Arial, sans-serif; letter-spacing: 0.24em; text-transform: uppercase; margin: 0 0 12px; color: rgba(228,229,229,0.82); }
   .lv-title { font: 700 44px/1 "Playfair Display", Georgia, serif; letter-spacing: 0.015em; margin: 0; }
   .lv-lede { font: 400 20px/1.3 "Playfair Display", Georgia, serif; margin: 10px 0 0; color: rgba(228,229,229,0.9); }
   .lv-foot { display: flex; align-items: center; gap: 18px; padding: 14px 28px; }
@@ -174,7 +180,7 @@ export function voyageCardHtml(d, vat) {
   .lv-bar { flex: 1; display: flex; height: 8px; border-radius: 3px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08); }
   .lv-bar i { display: block; height: 100%; }
 </style>
-<div class="lv"><div class="lv-card"><div class="lv-cover"><div class="lv-scrim"></div><div class="lv-words"><h1 class="lv-title">${esc(d.title)}</h1>${d.excerpt ? `<p class="lv-lede">${esc(d.excerpt)}</p>` : ''}</div></div>
+<div class="lv"><div class="lv-card"><div class="lv-cover"><div class="lv-scrim"></div><div class="lv-words">${d.parent ? `<p class="lv-of">${esc(d.parent)}</p>` : ''}<h1 class="lv-title">${esc(d.title)}</h1>${d.excerpt ? `<p class="lv-lede">${esc(d.excerpt)}</p>` : ''}</div></div>
 ${bar ? `<div class="lv-foot">${vat ? `<img class="lv-vat" alt="" src="${vat}">` : ''}<div class="lv-bar">${bar}</div></div>` : ''}</div></div>`;
 }
 
