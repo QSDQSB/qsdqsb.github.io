@@ -6,6 +6,7 @@ to Done with its pull request.
 
 ## Open
 
+- 2026-10-29 · R018 · Add a voyage under Dolomites, "In Passing", focused on the reflection from the car window and glass. Excerpt "Autumn passed us as we passed through it." — then, at the owner's word, "Autumn passed by from the passenger seat.", date Oct 21, 2026. Photos in the Apple Photos album "In Passing".
 
 ## Done
 

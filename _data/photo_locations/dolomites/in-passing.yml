@@ -1,0 +1,171 @@
+# Suggested locations for gallery dolomites/in-passing, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf4749:
+    suggested: SR48, Cortina d'Ampezzo
+    street: SR48
+    city: Cortina d'Ampezzo
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4805:
+    suggested: Via Monte Piana, Auronzo Di Cadore
+    street: Via Monte Piana
+    city: Auronzo Di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4836:
+    suggested: Via Pusteria, Toblach
+    street: Via Pusteria
+    city: Toblach
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4854:
+    suggested: Via Pusteria, Toblach
+    street: Via Pusteria
+    city: Toblach
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5139:
+    suggested: Rienzstrasse, Dobbiaco
+    street: Rienzstrasse
+    city: Dobbiaco
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5142:
+    suggested: Toblacher See - Lago di Dobbiaco, Dobbiaco
+    street: Toblacher See - Lago di Dobbiaco
+    city: Dobbiaco
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5150:
+    suggested: Höhlenstein - Landro, Toblach - Dobbiaco
+    street: Höhlenstein - Landro
+    city: Toblach - Dobbiaco
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5179:
+    suggested: Cortina D'Ampezzo
+    city: Cortina D'Ampezzo
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5194:
+    suggested: Località Vervei, Cortina d'Ampezzo
+    street: Località Vervei
+    city: Cortina d'Ampezzo
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5201:
+    suggested: Località Vervei, Cortina d'Ampezzo
+    street: Località Vervei
+    city: Cortina d'Ampezzo
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5225:
+    suggested: Località Vervei, Cortina d'Ampezzo
+    street: Località Vervei
+    city: Cortina d'Ampezzo
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5503:
+    suggested: Val Marzon, Auronzo di Cadore
+    street: Val Marzon
+    city: Auronzo di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5534:
+    suggested: Via Cella, Auronzo Di Cadore
+    street: Via Cella
+    city: Auronzo Di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5540:
+    suggested: Via dell'Angelo, Auronzo di Cadore
+    street: Via dell'Angelo
+    city: Auronzo di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5544:
+    suggested: Via Dell'angelo, Auronzo Di Cadore
+    street: Via Dell'angelo
+    city: Auronzo Di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5623:
+    suggested: Via Beata Vergine della Difesa, San Vito di Cadore
+    street: Via Beata Vergine della Difesa
+    city: San Vito di Cadore
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5652:
+    suggested: Localita' Gilardon, Cortina D'Ampezzo
+    street: Localita' Gilardon
+    city: Cortina D'Ampezzo
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5655:
+    suggested: Localita' Gilardon, Cortina D'Ampezzo
+    street: Localita' Gilardon
+    city: Cortina D'Ampezzo
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5659:
+    suggested: Localita' Gilardon, Cortina D'Ampezzo
+    street: Localita' Gilardon
+    city: Cortina D'Ampezzo
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5673:
+    suggested: Localita' Gilardon, Cortina D'Ampezzo
+    street: Localita' Gilardon
+    city: Cortina D'Ampezzo
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5703:
+    suggested: Localita' Gilardon, Cortina D'Ampezzo
+    street: Localita' Gilardon
+    city: Cortina D'Ampezzo
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5709:
+    suggested: Localita' Gilardon, Cortina D'Ampezzo
+    street: Localita' Gilardon
+    city: Cortina D'Ampezzo
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5717:
+    suggested: Localita' Gilardon, Cortina D'Ampezzo
+    street: Localita' Gilardon
+    city: Cortina D'Ampezzo
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf5719:
+    suggested: Localita' Gilardon, Cortina D'Ampezzo
+    street: Localita' Gilardon
+    city: Cortina D'Ampezzo
+    country: Italy
+    gps: present
+    source: OpenStreetMap reverse geocode
