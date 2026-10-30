@@ -349,6 +349,26 @@ const JOURNEYS = [
     const passage = () => page.evaluate(() => [...document.querySelectorAll('#results .search-result__snapshot mark')].some((m) => /venice/i.test(m.textContent)));
     await page.waitForFunction(() => [...document.querySelectorAll('#results .search-result__snapshot mark')].some((m) => /venice/i.test(m.textContent)), null, { timeout: 20000 }).catch(() => {});
     must(await passage(), 'searching "venice" showed no passage with the word marked in it');
+    // A tag picked from the suggestions finds the pages that carry it, its emoji ("🐮Ox") and all.
+    await page.locator('#search').fill('ox');
+    await page.waitForSelector('.search-suggestion.is-tag', { timeout: 5000 }).catch(() => {});
+    const tag = page.locator('.search-suggestion.is-tag').first();
+    must(await tag.count() === 1, 'typing "ox" offered no tag to pick');
+    const picked = await tag.getAttribute('data-search-suggestion');
+    // The results for "ox" are already there: mark them, so the wait is for the tag's own answer.
+    const answered = () => page.waitForFunction(() => !document.getElementById('stale-results'), null, { timeout: 20000 }).catch(() => {});
+    const markStale = () => page.evaluate(() => document.getElementById('results').insertAdjacentHTML('beforeend', '<i id="stale-results"></i>'));
+    await markStale();
+    await tag.click();
+    await answered();
+    must(await page.locator('#stale-results').count() === 0, 'the search never answered the picked tag');
+    must(await page.locator('#results a[href]').count() >= 1, `picking the tag ${picked} found nothing`);
+    // A query that is only an emoji has nothing to look for, and finds nothing, not every page.
+    await markStale();
+    await page.locator('#search').fill('🐮');
+    await answered();
+    must(await page.locator('#stale-results').count() === 0, 'the search never answered an emoji alone');
+    must(await page.locator('#results a[href]').count() === 0, `searching for an emoji alone listed ${await page.locator('#results a[href]').count()} results`);
     await page.keyboard.press('Escape');
     await page.waitForSelector('.search-content.is--visible', { state: 'detached', timeout: 3000 }).catch(() => {});
     must(await page.locator('.search-content.is--visible').count() === 0, 'Escape did not close the search panel');
