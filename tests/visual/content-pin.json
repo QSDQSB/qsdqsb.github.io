@@ -1,5 +1,5 @@
 {
- "time": "2026-10-30T00:03:00Z",
+ "time": "2026-10-30T01:22:00Z",
  "docs": {
   "_posts/2022-03-01-Day-One-of-This-Site.md": {
    "updated": null
@@ -80,7 +80,7 @@
    "updated": null
   },
   "_voyage/dolomites.md": {
-   "updated": null
+   "updated": "2026-10-29 23:16"
   },
   "_voyage/dragonstone.md": {
    "updated": null
@@ -149,6 +149,9 @@
    "updated": null
   },
   "_voyage/wengen.md": {
+   "updated": null
+  },
+  "_subvoyage/dolomites/in-passing.md": {
    "updated": null
   },
   "_subvoyage/dolomites/incantato.md": {
@@ -356,6 +359,32 @@
    "dscf1732",
    "dscf1859",
    "dscf1910"
+  ],
+  "dolomites/in-passing": [
+   "dscf4749",
+   "dscf4805",
+   "dscf4836",
+   "dscf4854",
+   "dscf5139",
+   "dscf5142",
+   "dscf5150",
+   "dscf5179",
+   "dscf5194",
+   "dscf5201",
+   "dscf5225",
+   "dscf5503",
+   "dscf5534",
+   "dscf5540",
+   "dscf5544",
+   "dscf5623",
+   "dscf5652",
+   "dscf5655",
+   "dscf5659",
+   "dscf5673",
+   "dscf5703",
+   "dscf5709",
+   "dscf5717",
+   "dscf5719"
   ],
   "dolomites/incantato": [
    "dscf9933",
