@@ -5,7 +5,6 @@ seo_description: "Landscape and mountain photography from the Dolomites, Italy �
 layout: gallery
 subgalleries: true
 date: 2023-08-26
-updated: 2026-10-29 23:16
 tags:
   - 🏔️Alps
   - 🏞️QSD's Favourite
