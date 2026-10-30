@@ -102,8 +102,9 @@ function searchBuildCjkQueryTerms(value) {
   return terms;
 }
 
-// A word as the index holds it: no emoji or mark at either edge. The index strips a tag's emoji
-// (lunr-store), and a tag picked from the suggestions brings its emoji into the box ("🐮Ox").
+// A word as the index holds it: no emoji or mark at either edge. A tag picked from the suggestions
+// comes with its emoji ("🐮Ox"), which the index strips from tags (lunr-store), so as typed it found
+// nothing (R017).
 function searchBareWord(word) {
   return String(word || "").trim().replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "");
 }
