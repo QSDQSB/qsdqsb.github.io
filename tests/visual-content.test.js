@@ -44,6 +44,12 @@ test('a book that holds only pinned photographs is left as it is', async () => {
   assert.equal(narrowBook(m, ['a', 'b']), m);
 });
 
+test('a book that lost a pinned photograph is drawn as it is, the rest as pinned', async () => {
+  const { narrowBook } = await load();
+  const m = { gallery: 'g', photos: [photo('a', 1.5), photo('c', 1.5)], book: { rows: 'as fetched' } };
+  assert.equal(narrowBook(m, ['a', 'b', 'c']), m);
+});
+
 test('a pinned photograph the manifests lack is named', async () => {
   const { missingOf } = await load();
   const pin = { photos: { g: ['a', 'b'], h: ['c'] } };

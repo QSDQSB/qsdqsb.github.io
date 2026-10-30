@@ -50,8 +50,9 @@ also the house's: read `CLAUDE.md`, the stage's file, `_plan/DESIGN-LANGUAGE.md`
    you can finish: `bash scripts/hub-work.sh claim <key>`. One task a run; a request counts as one.
    **If GitHub's `master` itself fails the pixel diff** before you change anything (step 4 shows it
    on pages your task does not touch), and every failing page shows a pinned page's own words,
-   captions, photographs or cover changed on `master` since its baselines were taken (voyages and photographs added after
-   `tests/visual/content-pin.json` never reach the shots), that is today's task: `abort`, `begin`,
+   captions, photographs or cover changed on `master` since its baselines were taken (voyages and
+   photographs added after `tests/visual/content-pin.json` never reach the shots), that is today's
+   task: `abort`, `begin`,
    `claim baselines-<today, YYYY-MM-DD>`, re-capture exactly those pages, and open it (step 7) as
    "🔧 Re-capture the baselines after …". It moves pictures, so it is the owner's to merge.
 3. **Do it.** Edit only inside the folder. Build what it needs with
