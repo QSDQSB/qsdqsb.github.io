@@ -205,7 +205,7 @@ function galleryPage(gallery, root) {
   const [parent, part] = gallery.split('/');
   if (!part) return [path.join(root, '_voyage', `${parent}.md`)].find((f) => fs.existsSync(f)) || null;
   const dir = path.join(root, '_subvoyage', parent);
-  const named = new RegExp(`^gallery_name:\\s*["']?${gallery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["']?\\s*$`, 'm');
+  const named = new RegExp(`^gallery_name:\\s*["']?${gallery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["']?\\s*(#.*)?$`, 'm');
   const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith('.md')) : [];
   const hit = files.find((f) => named.test(fs.readFileSync(path.join(dir, f), 'utf8').split(/\n---/)[0]));
   return hit ? path.join(dir, hit) : null;
