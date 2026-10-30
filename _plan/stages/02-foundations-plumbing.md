@@ -95,6 +95,17 @@ much. Nothing here waits on an amount any longer. The language is version 1: the
       two uses: corners `none`, `hair` 3, `picture` 8, `soft` 10, `large` 18, `pill`, `round`;
       durations `fast`, `base`, `slow`, `arrive` 0.7 s, `cover`, `scene`; shadows `rest` and
       `lifted`; glass `glass` 14 px and `thin` 6 px.
+- [x] A10 · Done 2026-10-30: `tests/visual/content-pin.json` holds the shots' content (the documents,
+      their `updated:` lines, the photographs of their galleries, the build's clock); `visual:build`
+      narrows the manifests to it (`scripts/visual-content.mjs`) and leaves out every page it does not
+      name (`scripts/visual-content.rb`, loaded ahead of Jekyll). In Passing, a new post, a new London
+      photograph and a moved date gave a clean diff; a style change still failed it. Re-captured on the
+      pin, all 48 baselines came out identical, so none moved. As first written: The pixel harness independent of content. A new voyage or new photographs re-shoot Home's
+      Recent Updates and the search over it, the voyage lists, Palette and a voyage's Photobook, so
+      master's full gate fails after every content change until someone re-captures (R005; In Passing,
+      #125, skipped the diff for it). The owner, 2026-10-29: a new voyage with no CSS, HTML or JS
+      change should not need a pixel diff. The visual build reads a pinned set of voyages, posts,
+      `updated:` lines and photographs, so content added after the pin never reaches the shots.
 - [ ] C09 · Depth as six named layers; every literal z-index mapped to one.
 - [x] The ratchet: `scripts/check-vocabulary-ratchet.py` (2026-10-03), counts against HEAD as the
       `!important` ratchet does, in the gate, the edit hook and the stop hook. Today: radius 95, curve 90,
@@ -349,6 +360,9 @@ changelog line.
 
 ## Log
 
+- 2026-10-30 · A10: the pixel harness reads pinned content, so a change of content alone never
+  leaves master's baselines stale. Moving the pin is deliberate (`npm run visual:pin`, with a full
+  re-capture); an edit to a pinned page's own words still shows in the diff, as it should.
 - 2026-10-03 · First batch: the harness's two faults, A01, A03, A05 (in part), C10, Q9, the ratchet, the
   specimen page and the four pieces (card, tag, text button, ornament), none adopted by a page yet. The
   harness's determinism, honestly: two full diffs on an unchanged tree after the tiling came back with one

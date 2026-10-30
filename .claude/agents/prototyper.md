@@ -43,7 +43,7 @@ bash scripts/prototype-setup.sh <your worktree>    # links the packages, copies 
 
 ```bash
 bash scripts/gate.sh                       # must pass
-bash -lc 'npm run visual:build'            # the built site, for the shots (about ten seconds)
+bash -lc 'npm run visual:build'            # the built site, for the shots (about ten seconds), its content as pinned (_docs/build.md)
 node scripts/check-journeys.mjs            # must pass
 ```
 

@@ -79,10 +79,11 @@ CLAUDE.md.
 ## Visual regression
 
 ```bash
-npm run visual:build        # seeded Jekyll build of _site/ (see below)
+npm run visual:build        # seeded Jekyll build of _site/, its content held to the pin (see below)
 npm run visual:capture      # (re)write tests/visual/baseline/*.png
 npm run visual:diff         # render again, pixel-diff, exit 1 on any delta
 npm run visual:audit        # under motion-off, nothing may still animate
+npm run visual:pin          # move the pin to the content as it stands (rare: see below)
 ```
 
 `scripts/visual-baseline.mjs` shoots a fixed page set (home, a TOC post, the
@@ -105,6 +106,36 @@ top of `_config.yml`: its `visual_baseline: true` pins the sign-off logo
 (`_includes/qsd-logo.html`) to the first candidate, so the logo is compared
 rather than masked. The live build never reads that file and still draws a
 logo at random.
+
+**The shots test code, not content.** `visual:build` holds its content to
+`tests/visual/content-pin.json`: the voyages, parts, posts and portfolio pages
+that stood when it was pinned, each one's `updated:` line, every photograph of
+their galleries, and the build's clock. Before Jekyll runs,
+`scripts/visual-content.mjs freeze` narrows the merged manifests to the pinned
+photographs (a book that has gained some is laid out again; Palette, Reverie
+and Home's Reverie are worked out again from the pinned books) into
+`tests/visual/content/` (gitignored), and `scripts/visual-content.rb`, loaded
+ahead of Jekyll with `ruby -r` (the github-pages gem's safe mode loads no
+plugin of the site's own), leaves out every document the pin does not name,
+puts back the pinned dates, and reads those manifests. So a pull request that
+only adds a voyage, a part, a post or photographs, or moves a date, leaves the
+pixel diff clean and needs no re-capture.
+
+What the pin does not hold: an edit to a pinned page's own words or captions,
+and a pinned photograph removed, re-processed or re-ordered, or a cover
+changed. The diff shows each on that page alone; re-capture it. (A pinned
+photograph the local manifests lack is named by `freeze` as it builds; if
+`photos:fetch` has not run since it was added, run it.) Move the pin only on
+purpose, with `npm run visual:pin` and a full re-capture in the same change:
+re-pinning brings in every page added since.
+
+The full gate's other checks on the built site (the reader journeys, the
+motion-off audit, the iPhone overflow check) walk the same pinned build, so a
+page newer than the pin is not among them: a new voyage's card is not checked
+for overflow, and a journey written for a new page fails until the pin moves.
+The same holds for a prototype, an idea's trial or the Sunday scout built with
+`visual:build`: it shows the site as pinned. For the site as it stands, build
+with `npm run build`.
 
 `visual:audit` is the behavioural half. It loads every page under motion-off
 and lists each element whose computed style still carries a running
