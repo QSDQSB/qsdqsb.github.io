@@ -6,6 +6,7 @@ to Done with its pull request.
 
 ## Open
 
+- 2026-10-30 · R019 · Two problems: 1. When a subvoyage updates, what's updated on What's New should be the subvoyage page, instead of the parent Dolomites page; 2. the atlas for the Dolomites voyage page is centred and zoomed wrong, right now it's in Africa and not zoomed in.
 - 2026-10-29 · R018 · Add a voyage under Dolomites, "In Passing", focused on the reflection from the car window and glass. Excerpt "Autumn passed us as we passed through it." — then, at the owner's word, "Autumn passed by from the passenger seat.", date Oct 21, 2026. Photos in the Apple Photos album "In Passing".
 ## Done
 
