@@ -125,7 +125,7 @@ const SAMPLED = ['.word_card_container', '.page__related .grid__wrapper', '.phot
 const MOVING = ['img[src$=".gif"]'];
 
 /**
- * Photographs are drawn as a flat tone, in place (the owner, 2026-10-20, R016). The shots test the
+ * Photographs are drawn as a flat tone, in place. The shots test the
  * site's layout and style; the photographs live in R2 and are not the harness's to keep. Shot as
  * they were, a voyage page was 16 MB of PNG, and every new photograph re-shot Home, Voyage and
  * Palette for no change of design. Found at run time, not by template: an <img> or <video> showing a

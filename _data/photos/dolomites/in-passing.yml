@@ -1,0 +1,9 @@
+# Authored layer for gallery/dolomites/in-passing — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# The cover: the frame the voyage opens on, and where its subject sits (x, y from the top-left).
+# Set high and right of centre so a 3.5:1 card holds the gold larches in the rear-view mirror
+# and the snowed spire beneath them in the same cut.
+cover:
+  photo: dscf5179
+  focus: [0.64, 0.32]
+photos: {}
