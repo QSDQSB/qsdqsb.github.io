@@ -121,12 +121,21 @@ puts back the pinned dates, and reads those manifests. So a pull request that
 only adds a voyage, a part, a post or photographs, or moves a date, leaves the
 pixel diff clean and needs no re-capture.
 
-What the pin does not hold: an edit to a pinned page's own words or captions
-(the diff shows it; re-capture that page), and a pinned photograph removed or
-re-processed (`freeze` stops and names it). Move the pin only on purpose, with
-`npm run visual:pin` and a full re-capture in the same change. A pinned
-photograph the local manifests lack also stops the build: `npm run
-photos:fetch` first.
+What the pin does not hold: an edit to a pinned page's own words or captions,
+and a pinned photograph removed, re-processed or re-ordered, or a cover
+changed. The diff shows each on that page alone; re-capture it. (A pinned
+photograph the local manifests lack is named by `freeze` as it builds; if
+`photos:fetch` has not run since it was added, run it.) Move the pin only on
+purpose, with `npm run visual:pin` and a full re-capture in the same change:
+re-pinning brings in every page added since.
+
+The full gate's other checks on the built site (the reader journeys, the
+motion-off audit, the iPhone overflow check) walk the same pinned build, so a
+page newer than the pin is not among them: a new voyage's card is not checked
+for overflow, and a journey written for a new page fails until the pin moves.
+The same holds for a prototype, an idea's trial or the Sunday scout built with
+`visual:build`: it shows the site as pinned. For the site as it stands, build
+with `npm run build`.
 
 `visual:audit` is the behavioural half. It loads every page under motion-off
 and lists each element whose computed style still carries a running

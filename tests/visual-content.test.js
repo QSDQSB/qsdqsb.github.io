@@ -19,6 +19,12 @@ test("a document's updated: is kept as written, none where it has none", async (
   assert.equal(updatedOf('no front matter'), undefined);
 });
 
+test('a document Jekyll leaves out is not pinned', async () => {
+  const { unpublished } = await load();
+  assert.equal(unpublished('---\ntitle: X\npublished: false\n---\n'), true);
+  assert.equal(unpublished('---\ntitle: X\n---\npublished: false\n'), false);
+});
+
 test('a book that gained a photograph, narrowed to the pin, is the book the pin saw', async () => {
   const { narrowBook } = await load();
   const { bookOf } = await book();
