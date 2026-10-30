@@ -132,6 +132,10 @@
   &:active {
     transform: translateY(0);
   }
+
+  &:focus-visible {
+    @include brass-focus;
+  }
 }
 
 .map-container .leaflet-control-zoom {
@@ -273,6 +277,10 @@
       color: $lighter-gray;
       background: rgba($lighter-gray, 0.08);
     }
+
+    &:focus-visible {
+      @include brass-focus;
+    }
   }
 }
 
@@ -357,6 +365,10 @@
     &.is-active {
       background: rgba(26, 26, 26, 0.82); // Tier 3: glass pill surface active
       border-color: rgba($lighter-gray, 0.24);
+    }
+
+    &:focus-visible {
+      @include brass-focus;
     }
 
     &.has-filter::after {
@@ -446,6 +458,10 @@
       border-color: rgba($lighter-gray, 0.16);
       transform: translateY(-1px);
     }
+
+    &:focus-visible {
+      @include brass-focus;
+    }
   }
 
   .legend-palette-body {
@@ -486,10 +502,8 @@
       }
     }
 
-    // After .is-active, so focus on the active tag still reads as focus.
     &:focus-visible {
-      outline: none;
-      border-color: rgba($lighter-gray, 0.5);
+      @include brass-focus;
     }
 
     .legend-color {
@@ -521,6 +535,11 @@
 
   &.has-filter .legend-item:not(.is-active) {
     opacity: 0.38;
+
+    // A dimmed tag would dim its ring with it.
+    &:focus-visible {
+      opacity: 1;
+    }
   }
 
   .legend-group--palette {
@@ -636,6 +655,10 @@
       background: rgba($lighter-gray, 0.08);
       color: $lighter-gray;
     }
+
+    &:focus-visible {
+      @include brass-focus;
+    }
   }
 
   .popup-tag--overflow {
@@ -663,6 +686,10 @@
       color: $lighter-gray;
       border-color: $gray;
       background: rgba($lighter-gray, 0.04);
+    }
+
+    &:focus-visible {
+      @include brass-focus;
     }
   }
 }

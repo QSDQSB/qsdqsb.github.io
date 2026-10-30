@@ -223,6 +223,11 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
             and the Privacy link (its colour alone) take `brass-focus`; the × and the folded rule leave
             their own one-pixel rings for it. Not yet: the email field's frame, which brightens its
             border when the field has focus, goes with the search field.
+      - [x] 2026-10-19 · The map: the zoom, reset and full-screen buttons, the Tags pill, the tag
+            palette's × and its tags (`outline: none` and a pale border), and a popup's way in, its tags
+            and its × take `brass-focus` (`_sass/_map.scss`); a tag the filter dims comes to full
+            strength under focus, so its ring is not dimmed with it. The veil keeps its own ring, drawn 6 px
+            inside: the frame's `overflow: hidden` would cut one set off its edge.
 - [ ] C03, under the threshold · A radius the sorted list moves by less than 0.25rem and less than
       20 per cent, once the owner has seen the list.
 - [ ] C04, under the threshold · A timing within a fifth of its step moves onto it (0.28 s to
