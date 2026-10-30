@@ -37,6 +37,7 @@ __pycache__/
 # Visual regression harness — only the baseline is tracked.
 tests/visual/current/
 tests/visual/diff/
+tests/visual/content/
 
 # The 24-dot lab (scripts/photos/dots-lab.mjs): generated, local only.
 /lab/
