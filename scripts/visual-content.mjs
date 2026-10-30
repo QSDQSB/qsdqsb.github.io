@@ -9,25 +9,27 @@
  *   node scripts/visual-content.mjs freeze   # the visual build's manifests, narrowed to the pin
  *
  * The pin (committed) holds its own moment (the visual build's clock: a page with no date prints
- * the build's, and Jekyll leaves out a document dated after it), every voyage, part, post and
- * portfolio page as it stood, the raw text of each one's `updated:` line (what Recent Updates sorts
- * by), and every photograph each of their galleries held. `freeze` (run by `npm run visual:build`) reads the merged manifests photos:fetch
- * wrote and writes, to tests/visual/content/photo_manifests/ (gitignored), the same files holding
- * only the pinned photographs: a book that has gained some is laid out again from the pinned ones,
- * and the pages across voyages (Palette, Reverie, Home's Reverie, Drift's kindred frames) are worked
- * out again from the pinned books, by the pipeline's own functions. scripts/visual-content.rb, loaded
- * ahead of Jekyll by the visual build, sets the clock, leaves out every document the pin does not
- * name, puts back each pinned `updated:`, reads these manifests in place of the live ones, and drops
- * the points of pages it does not hold from the maps.
+ * the build's, and Jekyll leaves out a document dated after it), every published voyage, part,
+ * post and portfolio page as it stood, the raw text of each one's `updated:` line (what Recent
+ * Updates sorts by), and every photograph each of their galleries held.
  *
- * What it holds still: content added after the pin (a voyage, a part, a post, photographs) and the
- * dates a harvest moves, and the month the build runs in. What it does not: an edit to a pinned page's own words or captions, a
- * photograph removed, a cover changed. Those are rare, and the diff shows them; re-pin and re-capture
- * then, in a change of their own. A pinned photograph missing from the local manifests stops the
- * build (run photos:fetch, or re-pin if it went on purpose), as do no manifests at all: a shot of a
- * half-pinned book would fail for a reason nobody could see.
+ * `freeze` (run by `npm run visual:build`) reads the merged manifests photos:fetch wrote and writes,
+ * to tests/visual/content/photo_manifests/ (gitignored), the same files holding only the pinned
+ * photographs: a book that has gained some is laid out again from the pinned ones, and the pages
+ * across voyages (Palette, Reverie, Home's Reverie, Drift's kindred frames) are worked out again
+ * from the pinned books, by the pipeline's own functions. The kindred frames come out a little
+ * unlike the live ones (those are worked out over hidden photographs too); no shot draws them.
+ * scripts/visual-content.rb, loaded ahead of Jekyll by the visual build, sets the clock, leaves out
+ * every document the pin does not name, puts back each pinned `updated:`, reads these manifests in
+ * place of the live ones, and drops the points of pages it does not hold from the maps.
  *
- * Exit codes: 0 done · 1 the manifests do not hold the pin · 2 usage
+ * What it holds still: content added after the pin (a voyage, a part, a post, photographs), the
+ * dates a harvest moves, and the month the build runs in. What it does not: an edit to a pinned
+ * page's own words or captions, a pinned photograph removed, re-processed or re-ordered, a cover
+ * changed. Those are rare, and the diff shows them on that page alone: re-capture it. With no
+ * manifests at all, `freeze` stops (npm run photos:fetch).
+ *
+ * Exit codes: 0 done · 1 no manifests to narrow · 2 usage
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -53,21 +55,27 @@ function walk(dir) {
   });
 }
 
-/** The front matter's `updated:` value as written (the plugin parses it as Jekyll would), or null. */
+const frontMatter = (text) => text.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1];
+
+/** The front matter's `updated:` value as written (the Ruby half parses it as Jekyll would), or null. */
 export function updatedOf(text) {
-  const fm = text.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
-  if (!fm) return undefined; // no front matter: not a document
-  const line = fm[1].match(/^updated:[ \t]*(.*?)[ \t]*$/m);
+  const fm = frontMatter(text);
+  if (fm === undefined) return undefined; // no front matter: not a document
+  const line = fm.match(/^updated:[ \t]*(.*?)[ \t]*$/m);
   return line ? line[1] : null;
 }
+
+/** A document Jekyll leaves out (`published: false`): not pinned, so publishing it later stays out of the shots. */
+export const unpublished = (text) => /^published:[ \t]*false[ \t]*$/m.test(frontMatter(text) || '');
 
 /** Every document of the collections, by its path from the root, with its raw `updated:`. */
 export function docsOf(root = ROOT) {
   const docs = {};
   for (const c of COLLECTIONS) {
     for (const abs of walk(path.join(root, c)).sort()) {
-      const updated = updatedOf(fs.readFileSync(abs, 'utf8'));
-      if (updated === undefined) continue;
+      const text = fs.readFileSync(abs, 'utf8');
+      const updated = updatedOf(text);
+      if (updated === undefined || unpublished(text)) continue;
       docs[path.relative(root, abs).split(path.sep).join('/')] = { updated };
     }
   }
@@ -167,12 +175,18 @@ function freeze() {
   const out = path.join(ROOT, FROZEN_DIR);
   fs.rmSync(out, { recursive: true, force: true });
   fs.mkdirSync(out, { recursive: true });
+  if (!live._index) {
+    console.error('visual-content: no merged manifests here, so no pinned photograph can be drawn. Run npm run photos:fetch first.');
+    return 1;
+  }
+  // A pinned photograph gone from its book (unlisted, moved to another voyage, a stale fetch): the
+  // rest is drawn as pinned and only that book's shots move, so they alone are re-captured, as for a
+  // changed caption. Stopping here would force a re-pin, and with it every page added since.
   const books = Object.fromEntries(Object.keys(pinned.photos).map((g) => [g, live[galleryKey(g)]]));
   const missing = missingOf(pinned, books);
   if (missing.length) {
-    console.error(`visual-content: ${missing.length} pinned photograph(s) are not in the local manifests, first ${missing.slice(0, 5).map(([g, s]) => `${g}/${s}`).join(', ')}.`);
-    console.error('Run npm run photos:fetch; if they were removed on purpose, re-pin (node scripts/visual-content.mjs pin) and re-capture.');
-    return 1;
+    console.log(`visual-content: ${missing.length} pinned photograph(s) are not in the local manifests (${missing.slice(0, 5).map(([g, s]) => `${g}/${s}`).join(', ')}${missing.length > 5 ? ', …' : ''}): their books' shots will differ.`);
+    console.log('If photos:fetch has not run since they were added, run it; if they left on purpose, re-capture those pages.');
   }
   const ridgway = JSON.parse(fs.readFileSync(path.join(ROOT, '_data', 'ridgway.json'), 'utf8'));
   const files = frozenFiles(pinned, live, ridgway);

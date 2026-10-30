@@ -35,7 +35,7 @@ module VisualContent
   end
 
   def pin(site)
-    JSON.parse(File.read(site.in_source_dir(PIN)))
+    JSON.parse(File.read(site.in_source_dir(PIN), :encoding => "utf-8"))
   end
 
   def hold(site)
@@ -64,7 +64,7 @@ module VisualContent
 
   def manifests(site)
     dir = site.in_source_dir(FROZEN, "photo_manifests")
-    Dir[File.join(dir, "*.json")].sort.to_h { |f| [File.basename(f, ".json"), JSON.parse(File.read(f))] }
+    Dir[File.join(dir, "*.json")].sort.to_h { |f| [File.basename(f, ".json"), JSON.parse(File.read(f, :encoding => "utf-8"))] }
   end
 
   # A map's GeoJSON is a static file written by `npm run geocode`, a point for each voyage or part.
@@ -75,7 +75,7 @@ module VisualContent
     site.static_files.sum do |file|
       next 0 unless file.extname == ".geojson"
 
-      geo = JSON.parse(File.read(file.path))
+      geo = JSON.parse(File.read(file.path, :encoding => "utf-8"))
       kept = geo["features"].select { |f| (url = f.dig("properties", "url")).nil? || held.include?(url) }
       next 0 if kept.size == geo["features"].size
 

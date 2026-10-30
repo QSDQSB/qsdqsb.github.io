@@ -16,8 +16,9 @@ Their time goes on the decision and the conversation. Checking is yours.
    questions to them now (`AskUserQuestion`, three at most, the recommendation first) and give the
    answers to the lead. When they are away, the questions wait on the command centre.
 4. **Try it.** For each row of "Can it be delivered", the riskiest first: write the smallest script
-   that would show it false, run it against the built site (`bash -lc 'npm run visual:build'`, then
-   Playwright in Chromium and WebKit), and fill in what happened: **proved**, **failed**, or **open**
+   that would show it false, run it against the built site (`bash -lc 'npm run visual:build'`, its
+   content as pinned in `tests/visual/content-pin.json`, so a page newer than the pin needs
+   `npm run build` instead; then Playwright in Chromium and WebKit), and fill in what happened: **proved**, **failed**, or **open**
    with how it will be tried. Keep the script in the scratchpad or a worktree
    (`scripts/prototype-setup.sh`); it is never committed. A larger trial is a `prototyper` agent's.
    A fault the trial turns up in the site is a finding (`node scripts/plan.mjs finding`).
