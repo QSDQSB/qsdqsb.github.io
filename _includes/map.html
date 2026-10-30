@@ -14,10 +14,11 @@
   path — `_data/maps/` doesn't exist in this repo, so any `map_dataset` value
   other than one of those two generated ids will 404.
 
-  Viewport comes from `geojson.properties.viewport` (embedded by
-  scripts/geocode-maps.js from the parent voyage's `map:` frontmatter block)
-  or the renderer auto-fits to feature bounds — see map.js's effectivePreset
-  precedence.
+  Viewport comes from the page's own `map: { center, zoom }` when it names the
+  dataset itself (the index of voyages, whose points span the world), else from
+  `geojson.properties.viewport` (embedded by scripts/geocode-maps.js from the
+  parent voyage's `map:` frontmatter block), else the renderer auto-fits to
+  feature bounds — see map.js's effectivePreset precedence.
 {%- endcomment -%}
 
 {% assign map_dataset_id = include.dataset | default: page.map_dataset %}
@@ -31,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (!container) return;
   const geojsonPath = container.dataset.geojson;
   if (typeof window.MapRenderer !== 'undefined') {
-    window.MapRenderer.init(container, { geojsonPath: geojsonPath });
+    window.MapRenderer.init(container, { geojsonPath: geojsonPath{% if page.map_dataset and page.map.center %}, viewport: {{ page.map | jsonify }}{% endif %} });
   } else {
     console.warn('MapRenderer not yet loaded. Ensure Leaflet and map.js are included.');
   }

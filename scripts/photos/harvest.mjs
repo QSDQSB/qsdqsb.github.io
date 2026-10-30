@@ -200,10 +200,20 @@ function go(args) {
   return 0;
 }
 
-/** Set a voyage page's `updated:` to now: the parent's for a part, since the board reads _voyage/ only. */
+/** The page a gallery's photographs show on: a part's own page (its `gallery_name`), else its voyage's. */
+function galleryPage(gallery, root) {
+  const [parent, part] = gallery.split('/');
+  if (!part) return [path.join(root, '_voyage', `${parent}.md`)].find((f) => fs.existsSync(f)) || null;
+  const dir = path.join(root, '_subvoyage', parent);
+  const named = new RegExp(`^gallery_name:\\s*["']?${gallery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["']?\\s*$`, 'm');
+  const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith('.md')) : [];
+  const hit = files.find((f) => named.test(fs.readFileSync(path.join(dir, f), 'utf8').split(/\n---/)[0]));
+  return hit ? path.join(dir, hit) : null;
+}
+
+/** Set `updated:` to now on the page the gallery's photographs show on; Recent Updates ranks by it. */
 export function touchVoyage(gallery, { root = ROOT, stamp = nowStamp() } = {}) {
-  const parent = gallery.split('/')[0];
-  const page = [path.join(root, '_voyage', `${parent}.md`)].find((f) => fs.existsSync(f));
+  const page = galleryPage(gallery, root);
   if (!page) return null;
   const text = fs.readFileSync(page, 'utf8');
   const head = text.split(/\n---/)[0];
