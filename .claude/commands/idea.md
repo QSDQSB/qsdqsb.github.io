@@ -18,9 +18,9 @@ Their time goes on the decision and the conversation. Checking is yours.
 4. **Try it.** For each row of "Can it be delivered", the riskiest first: write the smallest script
    that would show it false, run it against the built site (`bash -lc 'npm run visual:build'`, its
    content as pinned in `tests/visual/content-pin.json`, so a page newer than the pin needs
-   `npm run build` instead; then Playwright in Chromium and WebKit), and fill in what happened: **proved**, **failed**, or **open**
-   with how it will be tried. Keep the script in the scratchpad or a worktree
-   (`scripts/prototype-setup.sh`); it is never committed. A larger trial is a `prototyper` agent's.
+   `npm run build` instead; then Playwright in Chromium and WebKit), and fill in what happened:
+   **proved**, **failed**, or **open** with how it will be tried. Keep the script in the scratchpad
+   or a worktree (`scripts/prototype-setup.sh`); it is never committed. A larger trial is a `prototyper` agent's.
    A fault the trial turns up in the site is a finding (`node scripts/plan.mjs finding`).
 5. **Have it challenged.** Hand the file to the `site-reviewer` agent with the job "Challenge a
    proposal". Give it the file, not your opinion of it.
