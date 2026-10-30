@@ -257,7 +257,15 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
       '#' on Voyage by tags (F080). As first written: A link inside a page's text is brass, with a hairline underline. Tier 2, answered: the
       owner picked option B of three prototypes on 2026-10-01 (`design/choices/link-colour/`; the page
       is `choices.link-colour` in `_plan/hub.json`). Built as "The link, as chosen" below.
-- [ ] C07 · The lede on older heroes takes the shared Didot italic (marked Fix).
+- [x] C07 · Done 2026-10-20: a hero's line under its title (a post, About, the 404, Voyage, Voyage by
+      tags, Portfolio) takes the shared `lede`, Didot italic, where it was Playfair upright; a voyage's
+      own line stays Playfair upright (PRINCIPLES, 2026-10-17), so the include marks every other hero's
+      line and leaves a voyage's off; Chinese is never slanted by the browser. The title's own repeat of
+      `display-title`'s numbers (the audit's other half of C07) is left as built: no pixel would move. Drift's `h1`, which
+      the audit found missing `display-title` (`_pages/drift.html`), is not touched here, and is filed
+      in the inbox.
+      As first written:
+      The lede on older heroes takes the shared Didot italic (marked Fix).
 - [x] C10 · Roboto leaves the two font stacks, so Android reads as Apple does (marked Fix). Done 2026-10-03 (`_sass/_variables.scss`).
 
 ## What needs the owner

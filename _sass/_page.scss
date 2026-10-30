@@ -660,6 +660,13 @@ body.essay .page__content {
       opacity: 0.9;
     }
 
+    // The line beneath a title, as a book's cover sets it (audit C07). Not a voyage's: the include
+    // leaves the class off its line. Chinese has no italic: it stands upright, not slanted by the browser.
+    .page__lead--lede {
+      @include lede;
+      font-synthesis-style: none;
+    }
+
     .page__title {
       max-width: none;
       margin-bottom: 0;
