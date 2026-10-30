@@ -21,6 +21,10 @@
  * A mask is only as good as its box, and on a full-page mobile shot the box
  * can land off the element it was meant to cover.
  *
+ * Content. `visual:build` holds the site's content to tests/visual/content-pin.json
+ * (scripts/visual-content.mjs): voyages, posts and photographs added after the
+ * pin never reach the shots, so a change of content alone diffs clean.
+ *
  * Why this exists: CSS refactors — `!important` triage, token inlining,
  * import reordering — are verified by eye or not at all, and "not at all"
  * is what happens. A committed baseline turns "looks the same" into a
