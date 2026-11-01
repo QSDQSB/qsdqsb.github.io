@@ -44,7 +44,7 @@ it, and never write a script that reaches Photos another way.
 5. **Bring.** `npm run photos:harvest -- bring`. It pulls each voyage whole from R2 (so `photos:locate`
    keeps its place names), then runs `photos:ingest` from its own inbox with the owner's yes in place
    of typing QSD: import, locate, check, push. Each photo that reached the bucket is tagged in Photos
-   `qsdqsb: <gallery>`, and its voyage's `updated:` moves to now. About a minute a photo, more while
+   `qsdqsb: <gallery>`, and the `updated:` of its page (a part's own, under `_subvoyage/`) moves to now. About a minute a photo, more while
    Overpass is slow. Run it in the background and wait for it.
 
 6. **Hand it over.** The photographs reach readers with the next build once processed: the tap was

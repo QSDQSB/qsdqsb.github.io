@@ -186,10 +186,18 @@ test('a voyage\'s updated: moves to now, a bare date and time, or is added under
     const page = (n) => path.join(root, '_voyage', `${n}.md`);
     fs.writeFileSync(page('florence'), '---\ntitle: Florence\ndate: 2025-05-31\nupdated: 2026-09-30 21:45  # its photographs last changed: how Recent Updates ranks it\n---\nupdated: in the body stays\n');
     fs.writeFileSync(page('japan'), '---\ntitle: Japan\ndate: 2025-03-21\nsubgalleries: true\n---\nText.\n');
+    fs.mkdirSync(path.join(root, '_subvoyage', 'prague'), { recursive: true });
+    fs.mkdirSync(path.join(root, '_subvoyage', 'japan'));
+    const part = (p, n) => path.join(root, '_subvoyage', p, `${n}.md`);
+    fs.writeFileSync(part('japan', 'kyoto'), '---\ntitle: Kyoto\ngallery_name: "japan/kyoto"\ndate: 2025-03-25\n---\n');
+    fs.writeFileSync(part('prague', 'streetscape-stare-mesto'), '---\ntitle: Old Town\ngallery_name: "prague/streetscape"\ndate: 2023-04-01\n---\n');
     assert.equal(touchVoyage('florence', { root, stamp: '2026-10-10 17:00' }), '_voyage/florence.md');
     assert.equal(fs.readFileSync(page('florence'), 'utf8'), '---\ntitle: Florence\ndate: 2025-05-31\nupdated: 2026-10-10 17:00\n---\nupdated: in the body stays\n');
-    assert.equal(touchVoyage('japan/kyoto', { root, stamp: '2026-10-10 17:00' }), '_voyage/japan.md', 'a part moves its parent');
-    assert.match(fs.readFileSync(page('japan'), 'utf8'), /^date: 2025-03-21\nupdated: 2026-10-10 17:00\nsubgalleries: true$/m);
+    assert.equal(touchVoyage('japan/kyoto', { root, stamp: '2026-10-10 17:00' }), '_subvoyage/japan/kyoto.md', 'a part moves its own page');
+    assert.match(fs.readFileSync(part('japan', 'kyoto'), 'utf8'), /^date: 2025-03-25\nupdated: 2026-10-10 17:00$/m);
+    assert.doesNotMatch(fs.readFileSync(page('japan'), 'utf8'), /updated:/, 'and leaves its parent');
+    assert.equal(touchVoyage('prague/streetscape', { root }), '_subvoyage/prague/streetscape-stare-mesto.md', 'a part is found by its gallery_name');
+    assert.equal(touchVoyage('japan/nara', { root }), null, 'a part with no page yet is left for its pull request');
     assert.equal(touchVoyage('lisbon', { root }), null, 'a voyage with no page yet is left for its pull request');
   } finally { fs.rmSync(root, { recursive: true, force: true }); }
 });
