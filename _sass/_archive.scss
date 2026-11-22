@@ -230,11 +230,12 @@
     }
 
     .sci {
+      font-family: $line-serif-family;
       transition: inherit;
       opacity: 0;
       margin: 0;
       // Touch has no hover to reveal it, so the excerpt rests at the foot of the
-      // cover: a brass hairline, then at most two italic lines, kept clear of
+      // cover: a brass hairline, then at most two upright lines, kept clear of
       // the date in the right-hand corner. Desktop keeps the hover reveal.
       @include responsive-coarse-pointer {
         opacity: 1;
@@ -256,7 +257,6 @@
           -webkit-line-clamp: 2;
           overflow: hidden;
           margin: 0;
-          font-style: italic;
           font-size: 0.8rem;
           line-height: 1.45;
           color: rgba($text-color, 0.84);

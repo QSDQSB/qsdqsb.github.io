@@ -80,7 +80,7 @@ CLAUDE.md.
 
 ```bash
 npm run visual:build        # seeded Jekyll build of _site/, its content held to the pin (see below)
-npm run visual:capture      # (re)write tests/visual/baseline/*.png
+npm run visual:capture      # (re)shoot, store the pictures in R2, rewrite tests/visual/baseline.json
 npm run visual:diff         # render again, pixel-diff, exit 1 on any delta
 npm run visual:audit        # under motion-off, nothing may still animate
 npm run visual:pin          # move the pin to the content as it stands (rare: see below)
@@ -93,10 +93,16 @@ and the search overlay) at 1440×900 and 390×844, full page,
 with `?motion=off` so animations land on their final frame; the motion-heavy
 pages are shot a second time with the OS reduced-motion preference on. Map
 tiles are blanked before the shot — they come from the network and would
-drift the diff. Baselines are committed; `current/` and `diff/` are
-gitignored. Runs against the pre-installed Chromium (`CHROMIUM_PATH`
+drift the diff. The baseline's pictures live in R2 (the private originals
+bucket, `.visual-baseline/<sha256>.png`, through the `r2:` rclone remote; the
+leading dot keeps the photo pipeline from taking it for a gallery);
+git keeps only `tests/visual/baseline.json`, each shot's hash, so a commit
+still names what it is judged against and a branch's re-capture never moves
+master's. `visual:diff` fetches what the index names into
+`tests/visual/baseline/` (gitignored, like `current/`, `diff/` and the
+`.store/` cache). Runs against the pre-installed Chromium (`CHROMIUM_PATH`
 overrides). Re-capture only after a change that is *meant* to be visible,
-and commit the new PNGs with it.
+and commit the new `baseline.json` with it.
 
 Use `visual:build`, not `build:fast`, before a diff: several layouts pick
 content with Liquid's `sample` (the QSD logo, related and random posts, the
