@@ -10,6 +10,12 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-11-22 · F106 · scripts/visual-baseline.mjs · no pixel shot covers the royal letters (seal over the frame, band of beads, corners): add post-proclamation at desktop and mobile; the post is already in the pin (session)
+- 2026-11-22 · F105 · images/QSDSigils/proclamation-seal.webp · 78 KB at 720px but shown at most 14.5rem (~261px): 540px covers 2x (session)
+- 2026-11-22 · F104 · assets/fonts/NotoSerifSC/NotoSerifSC-Regular-essays.woff2 · the essay subset grew 120.6 KB to 175.4 KB with the War Declaration; every essay with Chinese downloads it. If more royal letters follow, split it by unicode-range (session)
+- 2026-11-22 · F103 · _sass/_proclamation.scss:145, _sass/_page.scss:327 · the essay font stack is written out twice: promote it on this second use (session)
+- 2026-11-22 · F102 · _sass/_proclamation.scss:14-21 · proclamation-lozenge copies the ornament's lozenge (9.9px, 3.5px) instead of sharing a mixin from _components.scss; the corners drift if the ornament changes (session)
+- 2026-11-22 · F101 · _sass/_proclamation.scss:161 · hr { @include ornament; } styles nothing: the War Declaration has no hr, and its comment describes a layout that is not there (session)
 - 2026-11-22 · F100 · workers/photos-trigger, any folder in qsdqsb-originals · any non-dotted folder of pictures there is processed as a gallery, published to img.qsdqsb.com and fires a production deploy; the pixel baselines briefly sat at visual-baseline/ on 2026-11-22 (two runs). Keep tooling objects under dotted prefixes (reviewer)
 - 2026-10-30 · F099 · scripts/check-journeys.mjs, the atlas on /voyage/ · no journey sees the index atlas open near: on /voyage/, once .map-container--ready, the tiles' zoom should be at least 4 (R019 set it to Europe at zoom 4; the atlas journey's tile-zoom reading is the model) (reviewer) (reviewer)
 - 2026-10-30 · F098 · scripts/check-journeys.mjs, Home's Recent Updates · no journey sees the board name a part: once the newest updated: is on a sub-voyage, some .wn-card should link /voyage/<parent>/<part>/ and none its subgalleries parent (R019 fixed it; only the pixel diff of home catches a regression, and only while the data holds still) (reviewer) (reviewer)
