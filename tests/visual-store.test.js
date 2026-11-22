@@ -27,3 +27,32 @@ test('the store sits in a dotted folder, which the photo pipeline never takes fo
   assert.ok(folder.startsWith('.'), `${folder} must start with a dot`);
   assert.deepStrictEqual(galleriesFrom([{ body: { object: { key: `${folder}/${'a'.repeat(64)}.png` } } }]), []);
 });
+
+const hasRclone = !require('node:child_process').spawnSync('rclone', ['version']).error;
+
+test('store then fetch round-trips; a failed upload leaves the index untouched', { skip: !hasRclone && 'rclone not installed' }, async () => {
+  process.env.RCLONE_CONFIG_VSTEST_TYPE = 'local'; // an rclone remote that is a plain folder
+  const { storeBaselines, fetchBaselines, readIndex, sha } = await import('../scripts/lib/visual-store.mjs');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'visual-store-rt-'));
+  const shots = path.join(tmp, 'shots');
+  fs.mkdirSync(shots);
+  fs.writeFileSync(path.join(shots, 'x--desktop.png'), 'picture one');
+  const opts = { indexFile: path.join(tmp, 'index.json'), cache: path.join(tmp, 'cache'), remote: `vstest:${tmp}/remote` };
+
+  assert.strictEqual(storeBaselines(shots, ['x--desktop.png'], opts), 1);
+  assert.deepStrictEqual(fs.readdirSync(opts.cache).filter((f) => f.endsWith('.png')), [], 'uploaded pictures leave the cache');
+  const index = readIndex(opts.indexFile);
+  assert.strictEqual(index['x--desktop.png'], sha(path.join(shots, 'x--desktop.png')));
+
+  const fresh = path.join(tmp, 'fresh');
+  assert.strictEqual(fetchBaselines(fresh, { ...opts, cache: path.join(tmp, 'cache2') }), 1, 'fetched from the remote, not the cache');
+  assert.strictEqual(fs.readFileSync(path.join(fresh, 'x--desktop.png'), 'utf8'), 'picture one');
+  assert.strictEqual(fetchBaselines(path.join(tmp, 'other'), { ...opts, names: ['z--mobile.png'] }), 0, 'names limits the fetch');
+
+  fs.writeFileSync(path.join(shots, 'x--desktop.png'), 'picture two');
+  assert.throws(() => storeBaselines(shots, ['x--desktop.png'], { ...opts, remote: 'nosuchremote:nowhere' }));
+  assert.deepStrictEqual(readIndex(opts.indexFile), index, 'the index still names only what the remote holds');
+
+  fs.writeFileSync(path.join(tmp, 'bad.json'), JSON.stringify({ 'y--desktop.png': 'e'.repeat(64) }));
+  assert.throws(() => fetchBaselines(path.join(tmp, 'fresh2'), { ...opts, indexFile: path.join(tmp, 'bad.json'), cache: path.join(tmp, 'cache3') }), /not in/);
+});
