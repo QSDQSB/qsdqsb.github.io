@@ -6,6 +6,7 @@ to Done with its pull request.
 
 ## Open
 
+- 2026-11-22 · R021 · Add the post 谁来安慰心理咨询师 with an English title, Shihuqiao's transitions and type, Chinese only, and an excerpt in keeping with the others
 ## Done
 
 - 2026-10-30 · R020 · Prepare the email and send the test for In Passing; each subvoyage's name should have the parent voyage (Dolomites) somewhere; mention 每次来多洛米蒂都会因为照片太多不知道先发哪些，这次找到了第一个main theme：后视镜和车窗前的白云岩、落叶松、和多洛米蒂的初雪。 with an English version (then: use we, send to all subscribers) → done 2026-10-30: a part's letter names its voyage on the card and in the subject; the In Passing letter, with the owner's words and their English, went to the 11 active subscribers after a test (#126)
