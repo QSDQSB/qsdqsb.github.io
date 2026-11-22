@@ -1,0 +1,32 @@
+{%- comment -%}
+  Opens a letter under the arms of QSD: the declaration of war on boredom, and the papers of its
+  campaign. The frame (on a proclamation, its band of beads and a corner piece in each corner; on a
+  lesser paper, a lozenge on each corner), then the letterhead: the arms on their rule, who
+  issues it, what it is.
+    kind     what the letter is: "A Proclamation", "Despatch No. I" (short: it is set on one line in spaced capitals)
+    subject  one line beneath it (optional)
+    by       the line above the title (optional; "By QSD"; a despatch: "To His Majesty, from the Front";
+             an intelligence report: its classification, "Most Secret")
+    variant  the paper's grade, so the declaration stays the grandest of the house (optional):
+             "despatch" for articles and reports from the front, one grade plainer;
+             "intelligence" for a secret report, plainer still: no arms, a single rule
+  Close it with proclamation/close.html, passing the same variant. The post sets
+  `body_class: essay proclamation`; _sass/_proclamation.scss draws it. The words between the two
+  are the post's own markdown.
+{%- endcomment -%}
+<div class="proclamation proclamation--{{ include.variant | default: 'grand' }}" markdown="1">
+<div class="proclamation-band" aria-hidden="true"></div>
+<div class="proclamation-corner proclamation-corner--tl" aria-hidden="true"></div>
+<div class="proclamation-corner proclamation-corner--tr" aria-hidden="true"></div>
+<div class="proclamation-corner proclamation-corner--bl" aria-hidden="true"></div>
+<div class="proclamation-corner proclamation-corner--br" aria-hidden="true"></div>
+<div class="proclamation-head">
+  {%- unless include.variant == "intelligence" %}
+  <img class="proclamation-head__arms" src="{{ '/images/QSDSigils/horizontal-rule-qsd-emblem-classic.svg' | relative_url }}" alt="" width="1280" height="360" decoding="async">
+  {%- endunless %}
+  <p class="proclamation-head__by">{{ include.by | default: "By QSD" }}</p>
+  <h2 class="proclamation-head__kind" id="{{ include.kind | slugify }}">{{ include.kind }}</h2>
+  {%- if include.subject %}
+  <p class="proclamation-head__subject">{{ include.subject }}</p>
+  {%- endif %}
+</div>

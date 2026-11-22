@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-22 · The War Declaration is written at last: a royal proclamation against boredom in English, and in modern Chinese, set as a nineteenth-century state paper under QSD’s arms: the first of the letters from its front (R022) · tier 0
 - 2026-11-22 · A letter for a post now opens on its card, cover with title and line as a voyage's, without the palette; every letter dates itself DD.MM.YYYY (R021) · tier 2
 - 2026-11-22 · A post's excerpt now stands upright in Playfair (its Chinese in Song), on its cover and its card, as a voyage's line does (R021) · tier 2, answered
 - 2026-11-22 · A new essay, Who Consoles the Counsellor (谁来安慰心理咨询师): an evening's talk in a bar with a counsellor friend, set in Shihuqiao's nocturne type and chapter plates (R021) · tier 2, answered

@@ -1,0 +1,269 @@
+/* ==========================================================================
+   PROCLAMATION: a letter under the arms of QSD (the declaration of war on boredom, and the
+   despatches from its front). A state paper of the nineteenth century, in the ornament's brass and
+   nothing else: a double rule and a hairline for its frame, a letterhead in Didot capitals under
+   the arms, a dropped initial, gilt opening words. The proclamation's frame adds a band of beads
+   and a corner piece in each corner, and its seal, the arms struck in brass, is pressed over the
+   foot of the frame. A lesser paper has the ornament's lozenge on each corner.
+
+   A post opts in with `body_class: essay proclamation` and wraps the letter in
+   {% include proclamation/open.html kind="…" %} … {% include proclamation/close.html given="…" %}.
+   The style line beneath the letterhead carries `{: .proclamation-style}`; a paragraph's opening
+   words in bold (**Whereas**) are the paper's spaced capitals.
+   ========================================================================== */
+
+// The lozenge of the ornament (_components.scss): outlined, a point of brass at its heart.
+@mixin proclamation-lozenge {
+  width: 9.9px;
+  height: 9.9px;
+  box-sizing: border-box;
+  border: 1px solid $intriguing-word-color;
+  background: linear-gradient($intriguing-word-color, $intriguing-word-color) center / 3.5px 3.5px no-repeat;
+  transform: rotate(45deg);
+}
+
+body.proclamation .page__content {
+  /* ---- the frame: a double rule, a hairline inside it, a lozenge on each corner ---- */
+  .proclamation {
+    position: relative;
+    margin: 2rem 0 3rem;
+    padding: clamp(2.6rem, 7vw, 4.2rem) clamp(1.4rem, 6vw, 4.2rem);
+    border: 3px double $intriguing-word-color;
+
+    // The hairline is the first thing drawn in the frame, so the seal, drawn later, lies over it.
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border: 1px solid $intriguing-word-color;
+      pointer-events: none;
+    }
+  }
+
+  // The ornament's lozenge on each corner of the hairline, on the ground so the rules stop at it.
+  .proclamation-corner {
+    @include proclamation-lozenge;
+    position: absolute;
+    background-color: $background-color;
+    transform: translate(-50%, -50%) rotate(45deg);
+    pointer-events: none;
+
+    &--tl { top: 6.5px; left: 6.5px; }
+    &--tr { top: 6.5px; left: calc(100% - 6.5px); }
+    &--bl { top: calc(100% - 6.5px); left: 6.5px; }
+    &--br { top: calc(100% - 6.5px); left: calc(100% - 6.5px); }
+  }
+
+  // The band of beads inside a proclamation's double rule (drawn only there).
+  .proclamation-band { display: none; }
+
+  // The curled rule above the dating clause: the letter's closing mark.
+  .proclamation-flourish {
+    display: block;
+    width: 9rem;
+    height: auto;
+    margin: 0 auto 1.8rem;
+  }
+
+  /* ---- the letterhead ---- */
+  .proclamation-head {
+    margin: 0 0 2.8rem;
+    text-align: center;
+  }
+
+  .proclamation-head__arms {
+    display: block;
+    width: 100%;
+    max-width: 20rem;
+    height: auto;
+    margin: 0 auto 1.4rem;
+  }
+
+  // Who issues it, in the paper's own capitals (the Didot of its title), not the interface's Barlow.
+  .proclamation-head__by {
+    margin: 0;
+    font: 400 max(0.78rem, 12px)/1 $didot-family;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: $intriguing-word-color;
+  }
+
+  // The title of the paper over a short brass rule; the left side holds the tracking's trailing
+  // space so the capitals sit in the middle. It is the paper's heading, so the contents list names
+  // it; a jump from there lands with the line above it in view, clear of the masthead.
+  .proclamation-head__kind {
+    margin: 1rem 0 0;
+    scroll-margin-top: 7rem;
+    padding: 0 0 0.9rem 0.16em;
+    border: 0;
+    background: linear-gradient($intriguing-word-color, $intriguing-word-color) center bottom / 2.5rem 1px no-repeat;
+    font: 400 clamp(1.05rem, 4.2vw, 1.9rem)/1.15 $didot-family;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .proclamation-head__subject {
+    @include lede;
+    margin: 0.9rem 0 0;
+    color: var(--ink-2);
+    text-wrap: balance;
+  }
+
+  // The style and greeting, in the body's Playfair (Didot is kept for display), under a brass
+  // initial dropped into the text.
+  .proclamation-style {
+    &::first-letter {
+      float: left;
+      margin: 0.04em 0.12em 0 0;
+      padding: 0 0 0.12em;
+      font: 400 3.4em/0.8 $global-font-family; // the initial in Playfair, as the site's titles
+      color: $intriguing-word-color;
+    }
+  }
+
+  .proclamation > p > strong:first-child {
+    font-weight: 600;
+    font-size: 0.84em;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: $intriguing-word-color;
+  }
+
+  // A letter in Chinese (the post's 中 panel): the Song face for the Han wherever the letter sets Didot, Playfair
+  // or Barlow, since none of them has the Han and an iPhone would fall to its sans; no italic, which
+  // Han has not (the browser would only slant it); the title's tracking widened for the characters.
+  .proclamation:lang(zh) {
+    .proclamation-head__by,
+    .proclamation-head__kind,
+    .proclamation-head__subject,
+    .proclamation-style,
+    .proclamation-style::first-letter,
+    h2,
+    .proclamation-seal__given,
+    .proclamation-seal__signed {
+      font-family: "Playfair Display", "Songti SC", "STSong", "Noto Serif SC", serif; // the essay's pairing: Latin in Playfair, Han in Song
+      font-style: normal;
+    }
+
+    .proclamation-head__by { font-size: max(0.78rem, 12px); letter-spacing: 0.3em; }
+    .proclamation-head__kind { letter-spacing: 0.4em; padding-left: 0.4em; }
+    > p > strong:first-child { font-size: 1em; letter-spacing: 0.08em; }
+  }
+
+  // A record kept in a paper (an observation table): a size down, and a cell keeps its line, so a
+  // date never breaks on a phone.
+  .proclamation table { font-size: 0.9em; }
+  .proclamation th,
+  .proclamation td { white-space: nowrap; }
+
+  // Between the preamble and the articles, the house's ornament.
+  hr { @include ornament; }
+
+  /* ---- the seal ---- */
+  .proclamation-seal {
+    margin: 3.6rem 0 0;
+    text-align: center;
+  }
+
+  .proclamation-seal__given {
+    max-width: 32rem;
+    margin: 0 auto;
+    font: italic 400 1rem/1.7 $didot-family;
+    color: var(--ink-2);
+    text-wrap: balance;
+  }
+
+  .proclamation-seal__signed {
+    margin: 1.6rem auto 0;
+    font: 400 1rem/1.7 $didot-family;
+    color: var(--ink);
+  }
+
+  // QSD's seal at the foot of a lesser paper of his own, small and clear of the frame.
+  .proclamation-seal__arms {
+    display: block;
+    width: 7rem;
+    height: auto;
+    margin: 2rem auto 0;
+  }
+
+  /* ---- the proclamation: the grandest paper of the house. More room, a larger letterhead, and
+     the seal pressed over the foot of its frame, half on the paper and half off it ---- */
+  .proclamation--grand {
+    --seal: clamp(9.5rem, 41vw, 14.5rem);
+    margin-bottom: calc(var(--seal) / 2 + 3.5rem);
+    padding: clamp(3.4rem, 9vw, 5.6rem) clamp(1.6rem, 8vw, 5.6rem) 0;
+
+    // Inside the double rule, a band of beads, then the hairline. Both come before the seal in the
+    // frame, so the seal lies over them.
+    &::before { inset: 14px; }
+
+    .proclamation-band {
+      display: block;
+      position: absolute;
+      inset: 5px;
+      padding: 6px;
+      background: radial-gradient(circle, $intriguing-word-color 0 1px, transparent 1.4px) 0 0 / 6px 6px round;
+      -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000, #000) content-box exclude, linear-gradient(#000, #000);
+      pointer-events: none;
+    }
+
+    // One corner piece (images/QSDSigils/proclamation-corner.svg), drawn for the top left and
+    // mirrored into the other three.
+    .proclamation-corner {
+      width: clamp(3rem, 9vw, 6.5rem);
+      height: auto;
+      aspect-ratio: 1;
+      border: 0;
+      background: url("/images/QSDSigils/proclamation-corner.svg") 0 0 / 100% 100% no-repeat;
+      transform: none;
+    }
+
+    .proclamation-corner--tl { top: 21px; left: 21px; }
+    .proclamation-corner--tr { top: 21px; left: auto; right: 21px; transform: scaleX(-1); }
+    .proclamation-corner--bl { top: auto; bottom: 21px; left: 21px; transform: scaleY(-1); }
+    .proclamation-corner--br { top: auto; bottom: 21px; left: auto; right: 21px; transform: scale(-1); }
+
+    .proclamation-head { margin-bottom: 3.2rem; }
+    .proclamation-head__arms { max-width: 24rem; margin-bottom: 2rem; }
+    .proclamation-head__by { letter-spacing: 0.5em; }
+
+    .proclamation-head__kind {
+      margin-top: 1.3rem;
+      padding-bottom: 1.1rem;
+      font-size: clamp(1.1rem, 4.9vw, 3rem);
+      letter-spacing: 0.16em;
+    }
+
+    .proclamation-head__subject { margin-top: 1.2rem; }
+    .proclamation-style::first-letter { font-size: 4.4em; }
+
+    // The seal (images/QSDSigils/proclamation-seal.webp, a disc on the page's ground) centred on
+    // the frame's outer rule.
+    .proclamation-seal__arms {
+      position: relative;
+      width: var(--seal);
+      margin: 2.6rem auto calc(var(--seal) / -2 - 1.5px);
+    }
+  }
+
+  .proclamation--grand:lang(zh) .proclamation-head__kind { letter-spacing: 0.5em; padding-left: 0.5em; }
+
+  /* ---- an intelligence report: plainer still. No arms, no corners: a single rule ---- */
+  .proclamation--intelligence {
+    padding: clamp(2.2rem, 6vw, 3.6rem) clamp(1.4rem, 6vw, 4.2rem);
+    border: 1px solid $intriguing-word-color;
+
+    &::before { content: none; }
+
+    .proclamation-corner { display: none; }
+
+    // The classification leads, where the arms would stand.
+    .proclamation-head__by { letter-spacing: 0.4em; }
+
+    .proclamation-head__kind { font-size: clamp(0.9rem, 3.8vw, 1.6rem); letter-spacing: 0.12em; }
+  }
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 16" fill="none" stroke="#c3b498" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+  <!-- A royal letter's rule (_sass/_proclamation.scss): a lozenge between two rules that end in a curl. -->
+  <path d="M14 8H49M71 8H106"/>
+  <path d="M14 8C9 8 6.5 5 8.5 3.2C10 2 12.2 3.4 11.2 5.2"/>
+  <path d="M106 8C111 8 113.5 11 111.5 12.8C110 14 107.8 12.6 108.8 10.8"/>
+  <path d="M60 3L65 8L60 13L55 8Z"/>
+  <circle cx="60" cy="8" r="1.3" fill="#c3b498" stroke="none"/>
+  <circle cx="51.5" cy="8" r="0.9" fill="#c3b498" stroke="none"/>
+  <circle cx="68.5" cy="8" r="0.9" fill="#c3b498" stroke="none"/>
+</svg>

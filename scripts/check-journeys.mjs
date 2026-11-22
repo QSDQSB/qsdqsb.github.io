@@ -404,6 +404,23 @@ const JOURNEYS = [
     must(field >= 16, `the subscribe field is ${field} px by touch: under 16 px Safari on an iPhone zooms the page`);
   } },
 
+  { id: 'proclamation', phone: true, name: 'A royal letter keeps its letterhead inside the frame on a phone, and its arms and seal load', async run({ page, go }) {
+    await go('/posts/war-declaration-to-boredom/');
+    const letter = await page.evaluate(async () => {
+      const frame = document.querySelector('div.proclamation'), kind = document.querySelector('.proclamation-head__kind');
+      if (!frame || !kind) return null;
+      const arms = [...frame.querySelectorAll('.proclamation-head__arms, .proclamation-seal__arms')];
+      for (const img of arms) { img.loading = 'eager'; if (!img.complete) await new Promise((done) => { img.onload = img.onerror = done; }); }
+      const range = document.createRange(); range.selectNodeContents(kind);
+      const t = range.getBoundingClientRect(), f = frame.getBoundingClientRect();
+      return { inside: t.left >= f.left + 8 && t.right <= f.right - 8, lines: Math.round(t.height / parseFloat(getComputedStyle(kind).lineHeight)), loaded: arms.length === 2 && arms.every((img) => img.naturalWidth > 0) };
+    });
+    must(letter, 'the post is not set as a letter: no frame or letterhead');
+    must(letter.inside, "the letterhead's title runs over the frame's rules");
+    must(letter.lines === 1, `the letterhead's title breaks over ${letter.lines} lines`);
+    must(letter.loaded, 'the arms or the seal did not load');
+  } },
+
   { id: 'subscribe', name: 'Subscribing says so, and keeps the reader\'s focus when the form folds away', async run({ page, go }) {
     // The list's own address is answered here: a journey never writes to the real list.
     await page.route('**/api/subscribe', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }));

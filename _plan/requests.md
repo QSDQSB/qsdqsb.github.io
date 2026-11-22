@@ -6,6 +6,7 @@ to Done with its pull request.
 
 ## Open
 
+- 2026-11-22 · R022 · lets keep it shorter (5 minutes read) have a royal style decorator html element that's proper for the setup. note we shall have a few more similar letters to indicate various 前线战报
 - 2026-11-22 · R021 · Add the post 谁来安慰心理咨询师 with an English title, Shihuqiao's transitions and type, Chinese only, and an excerpt in keeping with the others
 ## Done
 
