@@ -28,6 +28,9 @@
  *                      second paragraph. [words](/palette/) is a link, as in the
  *                      post; a site path is made absolute.
  *
+ * A post carries its cover photograph (header.overlay_image, when it is a file in
+ * the repository) between its words and its way in; --no-card leaves it out.
+ *
  * --card <hex>       → the letter carries that colour's Reverie card, drawn on the
  *                      site as readers see it (scripts/letter-card.mjs, from
  *                      SITE_URL) and attached inline like the crest. The preview
@@ -62,7 +65,7 @@ import {
   LOGO_CID,
   WELCOME_SUBJECT,
 } from "./letter-template.mjs";
-import { reverieCard, voyageCard, plainLine } from "./letter-card.mjs";
+import { reverieCard, voyageCard, plainLine, CARD_WIDTH } from "./letter-card.mjs";
 
 // Repo-level secrets: load KEY=VALUE lines from a gitignored .env at the repo
 // root (next to package.json), without overriding anything already exported.
@@ -212,6 +215,19 @@ if (optWelcome) {
     const cid = `voyage-${voyage[1].replace(/\//g, "-")}`;
     letter.figure = { cid, width: card.width, height: card.height, href: card.href, alt: card.excerpt ? `${card.title}: ${card.excerpt}` : card.title, carriesTitle: true };
     inline.push({ filename: `${cid}.jpg`, content: card.jpeg, content_id: cid });
+  } else if (postPath && !optNoCard) {
+    // A post carries its cover photograph, at the letter's column, between its words and its way in.
+    // shortcut: a cover given as a web address (an R2 tier) is left out; fetch it if a post needs one.
+    const cover = (readFileSync(postPath, "utf8").match(/^\s+overlay_image:\s*["']?([^"'\s#]+)/m) || [])[1];
+    if (cover && !cover.includes("://")) {
+      const sharp = (await import("sharp")).default;
+      const file = cover.startsWith("/") ? join(repoRoot, cover) : join(repoRoot, "images", cover);
+      const jpeg = await sharp(file).resize({ width: CARD_WIDTH * 2 }).jpeg({ quality: 84, mozjpeg: true }).toBuffer();
+      const { width, height } = await sharp(jpeg).metadata();
+      const cid = `cover-${basename(postPath, ".md").toLowerCase()}`;
+      letter.figure = { cid, width: Math.round(width / 2), height: Math.round(height / 2), href: url, alt: title };
+      inline.push({ filename: `${cid}.jpg`, content: jpeg, content_id: cid });
+    }
   }
   renderHtml = (unsub) => renderLetterHtml(letter, unsub);
   renderText = (unsub) => renderLetterText(letter, unsub);
