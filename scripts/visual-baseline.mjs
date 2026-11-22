@@ -629,7 +629,7 @@ async function main() {
   }
   if (args.command === 'diff') {
     try {
-      const got = fetchBaselines(BASELINE_DIR);
+      const got = fetchBaselines(BASELINE_DIR, { names: pages.flatMap((p) => viewportsFor(p).map((v) => `${p.id}--${v}.png`)) });
       if (got) console.log(`fetched   ${got} baseline picture(s) from R2`);
     } catch (err) {
       console.error(`Could not fetch the baseline: ${err.message}`);

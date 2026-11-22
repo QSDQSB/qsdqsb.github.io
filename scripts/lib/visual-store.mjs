@@ -3,10 +3,11 @@
  *
  * `tests/visual/baseline.json` (committed) names each shot's picture by the SHA-256 of its bytes;
  * the bytes sit in the private originals bucket at `.visual-baseline/<sha>.png`, through the same
- * `r2:` rclone remote the photo scripts use. The dot matters: any other folder of pictures there is
- * a gallery to the photo pipeline (workers/photos-trigger), processed, published and deployed. So a commit still says exactly what it is judged
+ * `r2:` rclone remote the photo scripts use. So a commit still says exactly what it is judged
  * against, a branch that re-captures cannot move master's baselines, and git carries a few KB
  * where it carried 80 MB a version. `tests/visual/baseline/` is a local copy, filled on demand.
+ * The dot matters: any other folder of pictures in that bucket is a gallery to the photo pipeline
+ * (workers/photos-trigger), so it would be processed, published and deployed.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -34,48 +35,49 @@ export const stale = (index, dir) =>
     return !fs.existsSync(f) || sha(f) !== index[name];
   });
 
-function rclone(args) {
+function rclone(args, remote) {
   const r = spawnSync('rclone', args, { encoding: 'utf8' });
   if (r.error || r.status !== 0) {
-    throw new Error(`rclone ${args[0]} failed (${REMOTE}): ${(r.error?.message || r.stderr || '').trim().split('\n').pop()}`);
+    throw new Error(`rclone ${args[0]} failed (${remote}): ${(r.error?.message || r.stderr || '').trim().split('\n').pop()}`);
   }
 }
 
 /** Bring `dir` to the pictures the index names, fetching only what is missing or changed. */
-export function fetchBaselines(dir) {
-  const index = readIndex();
-  const need = stale(index, dir);
+export function fetchBaselines(dir, { names, indexFile = INDEX, cache = CACHE, remote = REMOTE } = {}) {
+  const index = readIndex(indexFile);
+  const need = stale(index, dir).filter((n) => !names || names.includes(n));
   if (!need.length) return 0;
-  fs.mkdirSync(CACHE, { recursive: true });
+  fs.mkdirSync(cache, { recursive: true });
   fs.mkdirSync(dir, { recursive: true });
-  const want = [...new Set(need.map((n) => `${index[n]}.png`))].filter((k) => !fs.existsSync(path.join(CACHE, k)));
+  const want = [...new Set(need.map((n) => `${index[n]}.png`))].filter((k) => !fs.existsSync(path.join(cache, k)));
   if (want.length) {
-    const list = path.join(CACHE, '.want');
+    const list = path.join(cache, '.want');
     fs.writeFileSync(list, want.join('\n') + '\n');
-    rclone(['copy', REMOTE, CACHE, '--files-from', list]);
+    rclone(['copy', remote, cache, '--files-from', list], remote);
   }
   for (const name of need) {
-    const from = path.join(CACHE, `${index[name]}.png`);
-    if (!fs.existsSync(from) || sha(from) !== index[name]) throw new Error(`${name}: picture ${index[name]} is not in ${REMOTE}`);
+    const from = path.join(cache, `${index[name]}.png`);
+    if (!fs.existsSync(from) || sha(from) !== index[name]) throw new Error(`${name}: picture ${index[name]} is not in ${remote}`);
     fs.copyFileSync(from, path.join(dir, name));
   }
   return need.length;
 }
 
 /** Record the named shots in `dir` in the index and put any picture R2 does not hold yet. */
-export function storeBaselines(dir, names) {
-  const index = readIndex();
-  fs.mkdirSync(CACHE, { recursive: true });
+export function storeBaselines(dir, names, { indexFile = INDEX, cache = CACHE, remote = REMOTE } = {}) {
+  const index = readIndex(indexFile);
+  fs.mkdirSync(cache, { recursive: true });
   const keys = [];
   for (const name of names) {
     const h = sha(path.join(dir, name));
     index[name] = h;
-    fs.copyFileSync(path.join(dir, name), path.join(CACHE, `${h}.png`));
+    fs.copyFileSync(path.join(dir, name), path.join(cache, `${h}.png`));
     keys.push(`${h}.png`);
   }
-  const list = path.join(CACHE, '.put');
+  const list = path.join(cache, '.put');
   fs.writeFileSync(list, keys.join('\n') + '\n');
-  rclone(['copy', CACHE, REMOTE, '--files-from', list, '--ignore-existing']); // a hash names one picture
-  writeIndex(index);
+  rclone(['copy', cache, remote, '--files-from', list, '--ignore-existing'], remote); // a hash names one picture
+  writeIndex(index, indexFile); // only after the upload: the index never names a picture R2 lacks
+  for (const k of keys) fs.rmSync(path.join(cache, k), { force: true }); // uploaded; the shots stay in dir
   return keys.length;
 }
