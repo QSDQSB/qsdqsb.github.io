@@ -162,5 +162,15 @@ test("a voyage's card is drawn from its page's own words, cover and palette", as
   const part = voyageCardData(join(root, '_subvoyage/isles/north.md'), { root });
   assert.equal(part.path, '/voyage/isles/north/', 'a part, by an absolute path too');
   assert.equal(part.palette.length, 1);
-  assert.throws(() => voyageCardData('_posts/x.md', { root }), /not a voyage/);
+  // A post: its hero's cover, placed by its own overlay_position, and no palette.
+  mkdirSync(join(root, '_posts'), { recursive: true });
+  put('_posts/x.md', '---\ntitle: X\nexcerpt: "A cage."\npermalink: /posts/x/\nheader:\n  overlay_image: cover/posts/x-3v1.jpg\n  overlay_position: "62% 50%"\n  overlay_filter: 0.35\n---\n');
+  const p = voyageCardData('_posts/x.md', { root });
+  assert.deepEqual([p.cover, p.path, p.excerpt, p.palette.length], ['/images/cover/posts/x-3v1.jpg', '/posts/x/', 'A cage.', 0]);
+  const ph = voyageCardHtml(p, null);
+  assert.ok(ph.includes('62% 50%/cover') && !ph.includes('class="lv-foot"'), "placed as the post's hero, no palette row");
+  assert.ok(ph.includes('rgba(0,0,0,0.35)'), "dimmed as the post's hero dims it");
+  put('_posts/y.md', '---\ntitle: Y\n---\n');
+  assert.throws(() => voyageCardData('_posts/y.md', { root }), /no header.overlay_image/);
+  assert.throws(() => voyageCardData('_pages/z.md', { root }), /not a voyage or a post/);
 });

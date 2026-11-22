@@ -119,13 +119,24 @@ export const plainLine = (s) => String(s || '').replace(/(\*{1,3}|_{1,3})(\S(?:.
 // above the words, which stay at the foot on the left, as every voyage card sets its line.
 const COVER_HEIGHT = 420;
 
-/** The voyage page's own words and pictures, read from the repository as the build reads them. */
+/** The voyage page's (or a post's) own words and pictures, read from the repository as the build reads them. */
 export function voyageCardData(voyagePath, { root = ROOT } = {}) {
   const yaml = require('js-yaml');
   const sub = voyagePath.match(/(?:^|\/)_subvoyage\/(.+)\.md$/), own = voyagePath.match(/(?:^|\/)_voyage\/([^/]+)\.md$/);
-  if (!sub && !own) throw new Error(`not a voyage: ${voyagePath}`);
+  const post = voyagePath.match(/(?:^|\/)_posts\/[^/]+\.md$/);
+  if (!sub && !own && !post) throw new Error(`not a voyage or a post: ${voyagePath}`);
   const src = readFileSync(resolve(root, voyagePath), 'utf8');
   const fm = yaml.load(src.split(/^---\s*$/m)[1]) || {};
+  if (post) {
+    // A post's card: its hero's cover, placed as its hero places it, and no palette.
+    const img = String(fm.header?.overlay_image || '');
+    if (!img) throw new Error(`${voyagePath} has no header.overlay_image, so it has no card: pass --no-card`);
+    return {
+      title: String(fm.title || ''), parent: '', excerpt: plainLine(fm.excerpt), path: String(fm.permalink || ''), gallery: null,
+      cover: img.includes('://') || img.startsWith('/') ? img : `/images/${img}`,
+      pos: fm.header.overlay_position || '50% 50%', dim: Number(fm.header.overlay_filter) || 0, palette: [],
+    };
+  }
   const slug = sub ? sub[1] : own[1];
   const gallery = fm.gallery_name || null;
   // A part names the voyage it belongs to, above its own title.
@@ -162,14 +173,14 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 
 /** The card as a page of the site (its stylesheet gives the faces), the letter's column wide. */
 export function voyageCardHtml(d, vat) {
-  const pos = positionFor(d.focus, d.ratio, CARD_WIDTH / COVER_HEIGHT);
+  const pos = d.pos || positionFor(d.focus, d.ratio, CARD_WIDTH / COVER_HEIGHT);
   const bar = d.palette.map((c) => `<i style="flex:${Number(c.pc)};background:${esc(c.hex)}"></i>`).join('');
   return `<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="/assets/css/main.css">
 <style>
   html, body { margin: 0; background: ${GROUND}; }
   .lv { width: ${CARD_WIDTH}px; padding-bottom: 6px; color: #e4e5e5; }
   .lv-card { border-radius: 18px; overflow: hidden; background: #1a1a1a; }
-  .lv-cover { position: relative; height: ${COVER_HEIGHT}px; background: #222 url("${esc(d.cover)}") ${pos}/cover no-repeat; }
+  .lv-cover { position: relative; height: ${COVER_HEIGHT}px; background: ${d.dim ? `linear-gradient(rgba(0,0,0,${d.dim}), rgba(0,0,0,${d.dim})), ` : ''}#222 url("${esc(d.cover)}") ${pos}/cover no-repeat; }
   .lv-scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,10,0.8) 0%, rgba(10,10,10,0.42) 24%, rgba(10,10,10,0) 46%); }
   .lv-words { position: absolute; left: 28px; right: 28px; bottom: 24px; text-shadow: 0 1px 1px rgba(0,0,0,0.35); }
   .lv-of { font: 500 13px/1 Barlow, "Helvetica Neue", Arial, sans-serif; letter-spacing: 0.24em; text-transform: uppercase; margin: 0 0 12px; color: rgba(228,229,229,0.82); }

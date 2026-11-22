@@ -28,8 +28,8 @@
  *                      second paragraph. [words](/palette/) is a link, as in the
  *                      post; a site path is made absolute.
  *
- * A post carries its cover photograph (header.overlay_image, when it is a file in
- * the repository) between its words and its way in; --no-card leaves it out.
+ * A post carries a card too: its cover with its title and line, as a voyage's,
+ * without the palette. --no-card leaves it out.
  *
  * --card <hex>       → the letter carries that colour's Reverie card, drawn on the
  *                      site as readers see it (scripts/letter-card.mjs, from
@@ -65,7 +65,7 @@ import {
   LOGO_CID,
   WELCOME_SUBJECT,
 } from "./letter-template.mjs";
-import { reverieCard, voyageCard, plainLine, CARD_WIDTH } from "./letter-card.mjs";
+import { reverieCard, voyageCard, plainLine } from "./letter-card.mjs";
 
 // Repo-level secrets: load KEY=VALUE lines from a gitignored .env at the repo
 // root (next to package.json), without overriding anything already exported.
@@ -197,9 +197,10 @@ if (optWelcome) {
   const parentPath = voyage && voyage[1].includes("/") ? join(repoRoot, "_voyage", `${voyage[1].split("/")[0]}.md`) : null;
   const parentTitle = parentPath && existsSync(parentPath) ? parseFrontmatter(parentPath).title : "";
   subject = optSubject || (parentTitle ? `${title} · ${parentTitle}` : title);
-  const dateLine = fm.date
-    ? new Date(fm.date).toLocaleDateString("en-GB", { month: "long", year: "numeric" })
-    : "";
+  // DD.MM.YYYY, read in UTC: a bare date parses as UTC midnight, so a local reading can slip a day.
+  const day = fm.date ? new Date(fm.date) : null;
+  const pad = (n) => String(n).padStart(2, "0");
+  const dateLine = day && !isNaN(day) ? `${pad(day.getUTCDate())}.${pad(day.getUTCMonth() + 1)}.${day.getUTCFullYear()}` : "";
 
   // What kind of thing has come: ink for words, prints for photographs.
   const kicker = optKicker ?? (voyage ? "New prints from QSD" : postPath ? "Fresh ink from QSD" : "");
@@ -209,25 +210,12 @@ if (optWelcome) {
     const cid = `reverie-${card.hex.slice(1).toLowerCase()}`;
     letter.figure = { cid, width: card.width, height: card.height, href: card.href, alt: `Reverie in ${card.hex}${card.name ? `, ${card.name}` : ""}` };
     inline.push({ filename: `${cid}.jpg`, content: card.jpeg, content_id: cid });
-  } else if (voyage && !optNoCard) {
-    // The voyage's card carries its title and line, so the letter does not repeat them in text.
+  } else if ((voyage || /(?:^|\/)_posts\//.test(postPath || "")) && !optNoCard) {
+    // The card carries its title and line, so the letter does not repeat them in text.
     const card = await voyageCard(postPath, { site: SITE_URL }).catch((e) => fail(`${e.message.replace(/: pass --no-card$/, "")} (or pass --no-card)`));
-    const cid = `voyage-${voyage[1].replace(/\//g, "-")}`;
+    const cid = voyage ? `voyage-${voyage[1].replace(/\//g, "-")}` : `post-${basename(postPath, ".md").toLowerCase()}`;
     letter.figure = { cid, width: card.width, height: card.height, href: card.href, alt: card.excerpt ? `${card.title}: ${card.excerpt}` : card.title, carriesTitle: true };
     inline.push({ filename: `${cid}.jpg`, content: card.jpeg, content_id: cid });
-  } else if (postPath && !optNoCard) {
-    // A post carries its cover photograph, at the letter's column, between its words and its way in.
-    // shortcut: a cover given as a web address (an R2 tier) is left out; fetch it if a post needs one.
-    const cover = (readFileSync(postPath, "utf8").match(/^\s+overlay_image:\s*["']?([^"'\s#]+)/m) || [])[1];
-    if (cover && !cover.includes("://")) {
-      const sharp = (await import("sharp")).default;
-      const file = cover.startsWith("/") ? join(repoRoot, cover) : join(repoRoot, "images", cover);
-      const jpeg = await sharp(file).resize({ width: CARD_WIDTH * 2 }).jpeg({ quality: 84, mozjpeg: true }).toBuffer();
-      const { width, height } = await sharp(jpeg).metadata();
-      const cid = `cover-${basename(postPath, ".md").toLowerCase()}`;
-      letter.figure = { cid, width: Math.round(width / 2), height: Math.round(height / 2), href: url, alt: title };
-      inline.push({ filename: `${cid}.jpg`, content: jpeg, content_id: cid });
-    }
   }
   renderHtml = (unsub) => renderLetterHtml(letter, unsub);
   renderText = (unsub) => renderLetterText(letter, unsub);
