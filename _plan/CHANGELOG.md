@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-22 · A letter for a post now opens on its card, cover with title and line as a voyage's, without the palette; every letter dates itself DD.MM.YYYY (R021) · tier 2
 - 2026-11-22 · A post's excerpt now stands upright in Playfair (its Chinese in Song), on its cover and its card, as a voyage's line does (R021) · tier 2, answered
 - 2026-11-22 · A new essay, Who Consoles the Counsellor (谁来安慰心理咨询师): an evening's talk in a bar with a counsellor friend, set in Shihuqiao's nocturne type and chapter plates (R021) · tier 2, answered
 - 2026-10-30 · Recent Updates names the part of a voyage whose photographs changed (In Passing, Kyoto), not the voyage that holds it, and harvest dates the part's own page; the index of voyages opens its atlas on Europe at a near zoom, where it opened on the whole world over Africa; In Passing's pin sits on the road below Passo Giau (R019) · tier 2
