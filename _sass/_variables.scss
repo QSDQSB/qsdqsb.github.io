@@ -12,6 +12,7 @@ $monospace                  : "Monaco", ui-monospace, Menlo, Consolas, "Lucida C
 $didot-family              : "Didot", "CMU Serif", "Playfair Display", "Songti SC", "STSong", serif;
 /* sans serif typefaces */
 $cmu-serif-family           : "CMU Serif", "Playfair Display", "Songti SC", "STSong", serif;
+$line-serif-family          : "Playfair Display", "Songti SC", "STSong", serif; // a post's or voyage's line: its Chinese in Song, not the system sans
 $sans-serif-narrow          : $sans-serif; // no Roboto: it is never loaded, and an Android reader saw the masthead in it (audit C10)
 $barlow-font-family         : "Barlow", $sans-serif-narrow;
 

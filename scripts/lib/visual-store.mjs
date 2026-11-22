@@ -3,7 +3,8 @@
  *
  * `tests/visual/baseline.json` (committed) names each shot's picture by the SHA-256 of its bytes;
  * the bytes sit in the private originals bucket at `.visual-baseline/<sha>.png`, through the same
- * `r2:` rclone remote the photo scripts use. So a commit still says exactly what it is judged
+ * `r2:` rclone remote the photo scripts use. The dot matters: any other folder of pictures there is
+ * a gallery to the photo pipeline (workers/photos-trigger), processed, published and deployed. So a commit still says exactly what it is judged
  * against, a branch that re-captures cannot move master's baselines, and git carries a few KB
  * where it carried 80 MB a version. `tests/visual/baseline/` is a local copy, filled on demand.
  */
@@ -15,7 +16,7 @@ import { spawnSync } from 'node:child_process';
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', '..');
 export const INDEX = path.join(ROOT, 'tests', 'visual', 'baseline.json');
 const CACHE = path.join(ROOT, 'tests', 'visual', '.store'); // pictures by hash, both ways
-const REMOTE = `${process.env.PHOTOS_RCLONE_REMOTE || 'r2'}:${process.env.PHOTOS_ORIGINALS_BUCKET || 'qsdqsb-originals'}/.visual-baseline`;
+export const REMOTE = `${process.env.PHOTOS_RCLONE_REMOTE || 'r2'}:${process.env.PHOTOS_ORIGINALS_BUCKET || 'qsdqsb-originals'}/.visual-baseline`;
 
 export const sha = (file) => crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 

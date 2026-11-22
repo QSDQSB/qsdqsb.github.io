@@ -19,3 +19,11 @@ test('the index names pictures by hash, and stale finds the copies that do not m
   assert.deepStrictEqual(readIndex(file), index);
   assert.deepStrictEqual(readIndex(path.join(dir, 'none.json')), {}, 'no index reads as empty');
 });
+
+test('the store sits in a dotted folder, which the photo pipeline never takes for a gallery', async () => {
+  const { REMOTE } = await import('../scripts/lib/visual-store.mjs');
+  const { galleriesFrom } = await import('../workers/photos-trigger/src/index.mjs');
+  const folder = REMOTE.split(':').pop().split('/').slice(1).join('/');
+  assert.ok(folder.startsWith('.'), `${folder} must start with a dot`);
+  assert.deepStrictEqual(galleriesFrom([{ body: { object: { key: `${folder}/${'a'.repeat(64)}.png` } } }]), []);
+});

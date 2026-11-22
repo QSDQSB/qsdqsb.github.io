@@ -94,7 +94,8 @@ with `?motion=off` so animations land on their final frame; the motion-heavy
 pages are shot a second time with the OS reduced-motion preference on. Map
 tiles are blanked before the shot — they come from the network and would
 drift the diff. The baseline's pictures live in R2 (the private originals
-bucket, `.visual-baseline/<sha256>.png`, through the `r2:` rclone remote);
+bucket, `.visual-baseline/<sha256>.png`, through the `r2:` rclone remote; the
+leading dot keeps the photo pipeline from taking it for a gallery);
 git keeps only `tests/visual/baseline.json`, each shot's hash, so a commit
 still names what it is judged against and a branch's re-capture never moves
 master's. `visual:diff` fetches what the index names into
