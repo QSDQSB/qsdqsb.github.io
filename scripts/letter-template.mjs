@@ -176,7 +176,7 @@ const figureRow = (f) => `<tr>
  * @param {string} letter.title      Post title (plain text)
  * @param {string} letter.excerpt    One-paragraph description (plain text)
  * @param {string} letter.url        Absolute URL of the piece
- * @param {string} letter.dateLine   e.g. "August 2026"
+ * @param {string} letter.dateLine   e.g. "22.11.2026"
  * @param {string} [letter.kicker]   What kind of thing has come, small above the title: "Fresh ink
  *                                   from QSD" for a post, "New prints from QSD" for a voyage
  * @param {string|string[]} [letter.quote]  Lines from the piece itself, a paragraph each, set in
