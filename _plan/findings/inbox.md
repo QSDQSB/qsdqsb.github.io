@@ -10,6 +10,7 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-11-22 · F100 · workers/photos-trigger, any folder in qsdqsb-originals · any non-dotted folder of pictures there is processed as a gallery, published to img.qsdqsb.com and fires a production deploy; the pixel baselines briefly sat at visual-baseline/ on 2026-11-22 (two runs). Keep tooling objects under dotted prefixes (reviewer)
 - 2026-10-30 · F099 · scripts/check-journeys.mjs, the atlas on /voyage/ · no journey sees the index atlas open near: on /voyage/, once .map-container--ready, the tiles' zoom should be at least 4 (R019 set it to Europe at zoom 4; the atlas journey's tile-zoom reading is the model) (reviewer) (reviewer)
 - 2026-10-30 · F098 · scripts/check-journeys.mjs, Home's Recent Updates · no journey sees the board name a part: once the newest updated: is on a sub-voyage, some .wn-card should link /voyage/<parent>/<part>/ and none its subgalleries parent (R019 fixed it; only the pixel diff of home catches a regression, and only while the data holds still) (reviewer) (reviewer)
 - 2026-10-30 · F096 · scripts/check-plan.mjs, the changelog rule · a comment-only edit to a file readers get (assets/js/lunr/lunr-en.js) is counted as a change readers get, so trimming a comment fails the gate unless the changelog says something untrue; diff lines that are only comments or blank should not count. Until then lunr-en.js:105-107 keeps its '(R017)' (session, #124) (session)

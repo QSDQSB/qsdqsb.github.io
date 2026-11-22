@@ -361,7 +361,7 @@ body.essay .page__content {
 }
 
 .page__lead {
-  font-family: $global-font-family;
+  font-family: $line-serif-family;
   font-size: $type-size-7;
   @include responsive-up(desktop) {
     font-size: $type-size-5;
