@@ -151,11 +151,12 @@ body.proclamation .page__content {
     > p > strong:first-child { font-size: 1em; letter-spacing: 0.08em; }
   }
 
-  // A record kept in a paper (an observation table): a size down, and a cell keeps its line, so a
-  // date never breaks on a phone.
-  .proclamation table { font-size: 0.9em; }
+  // A record kept in a paper (an observation table): a size down and closer cells, so four columns
+  // fit inside the frame at 320px; the date keeps its line.
+  .proclamation table { font-size: 0.85em; }
   .proclamation th,
-  .proclamation td { white-space: nowrap; }
+  .proclamation td { padding: 0.5em; }
+  .proclamation td:first-child { white-space: nowrap; }
 
   // Between the preamble and the articles, the house's ornament.
   hr { @include ornament; }
