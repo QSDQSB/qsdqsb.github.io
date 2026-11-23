@@ -6,6 +6,7 @@ to Done with its pull request.
 
 ## Open
 
+- 2026-11-23 · R022 · We don't need extra space for display before/after an english word, please amend the content
 - 2026-11-22 · R021 · Add the post 谁来安慰心理咨询师 with an English title, Shihuqiao's transitions and type, Chinese only, and an excerpt in keeping with the others
 ## Done
 
