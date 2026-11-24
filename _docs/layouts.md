@@ -195,9 +195,9 @@ screenshot workflow.
   fonttools and the font's source, see `scripts/essay-font.py`); the gate fails if a character
   is missing from the subset.
 - `bestiary.html` — the Bestiary's door (`/bestiary/`, `_pages/bestiary.md`), on the fables' light
-  parchment (its `room:` in the page's front matter: a ground tinted by its painting's alpenglow, and the painting's
-  essential colours, weighted by colourfulness): a watercolour wash in those colours over the whole page
-  from under the hero, so the painting dissolves straight into it, words and all, dried in patches
+  parchment (its `room:` in the page's front matter: a dark ground of its painting's aubergine shadows, a wash in the
+  painting's hue band a little above it, ivory inks): a watercolour wash over the whole page from under
+  the hero, so the painting dissolves straight into its own dusk, words and all, dried in patches
   and veins of bare paper (`fable-room.html mode="full"`; the door's inks are checked against its deepest wash); its photograph in the house
   hero (`page__hero.html bare=true`: the picture alone) fading into the paper, its name and one line beneath, any words in two languages behind the
   switch, then a card for every fable in `_bestiary/`, by `number`.

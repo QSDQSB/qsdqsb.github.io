@@ -122,7 +122,7 @@ void main() {
   uv = 1.0 - abs(1.0 - abs(uv));
   vec3 C = toLin(texture2D(dye, uv).rgb);
   // Laid on the paper as pigment is: the paper's light filtered by the dye, as much as there is of it.
-  vec3 T = clamp(C / max(ground, vec3(1e-4)), 0.0, 2.0);
+  vec3 T = clamp(C / max(ground, vec3(1e-4)), 0.0, 16.0); // above 1 on a dark ground: the wash glows on it
   vec3 o = ground * pow(T, vec3(D));
   gl_FragColor = vec4(toSrgb(o) + dith, 1.0);
 }`;
@@ -172,13 +172,15 @@ function drawDoor(palette, groundHex, seed) {
   const W = innerWidth, H = document.documentElement.scrollHeight;
   const dpr = Math.min(1.25, devicePixelRatio || 1, 4000 / H);
   const G = oklab(groundHex)[0];
-  // The painting's essential colours (its alpenglow, its ochre, its dusk), with more colour than a fable's
-  // room is let have (the door has no long text: the owner, 2026-11-24), a step below the ground; the
-  // door's words stand on the wash itself, so every ink is checked against its deepest (_pages/bestiary.md).
+  // On a dark ground (the door's dusk: the owner, 2026-11-24) the palette is the wash itself, colours
+  // already set a little above the ground in the painting's own hues; on a light one each colour is set a
+  // step below the ground, as a fable's room is. Either way the door's words stand on the wash, so every
+  // ink is checked against the far end of it (_pages/bestiary.md).
+  const dark = G < 0.5;
   const quiet = palette.map((p) => {
     const [L, a, b] = oklab(p.hex);
-    const c = Math.hypot(a, b), k = Math.min(0.9, c ? 0.07 / c : 0);
-    return { ...p, accent: false, hex: toHex(fromOklab([G - 0.075 - 0.04 * (1 - L), a * k, b * k])) };
+    const c = Math.hypot(a, b), k = Math.min(dark ? 1 : 0.9, c ? (dark ? 0.09 : 0.07) / c : 0);
+    return { ...p, accent: false, hex: dark ? toHex(fromOklab([L, a * k, b * k])) : toHex(fromOklab([G - 0.075 - 0.04 * (1 - L), a * k, b * k])) };
   });
   const dye = vat(quiet, { shape: 'rect', width: Math.round(W / 2), height: Math.round(Math.min(H, 2400) / 2), seed, calm: 0.45 });
   const out = document.createElement('canvas'); out.width = Math.round(W * dpr); out.height = Math.round(H * dpr);
@@ -192,7 +194,7 @@ function drawDoor(palette, groundHex, seed) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.uniform1i(u('dye'), 0); gl.uniform1f(u('dpr'), dpr); gl.uniform1f(u('seed'), seed % 997);
-  const o = { feather: 150, amp: 60, edge2: 40, warpA: 30, tide: 0.5, coverBias: 0.08 };
+  const o = { feather: 150, amp: 60, edge2: 40, warpA: 30, tide: dark ? 0.25 : 0.5, coverBias: 0.08 };
   for (const k of Object.keys(o)) gl.uniform1f(u(k), o[k]);
   gl.uniform3f(u('ground'), ...hex(groundHex).map(lin));
   const hero = document.querySelector('.page__hero--overlay');

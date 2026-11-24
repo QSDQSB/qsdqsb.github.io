@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-24 · The Bestiary's door is now dusk: its afterglow painting dissolves into a dark watercolour of its own hues, aubergine, plum and alpenglow rose, with its name and links in ivory · tier 0
 - 2026-11-24 · The Bestiary's door dissolves its painting straight into a watercolour of the painting's own alpenglow, rose, ochre and dusk mauve, on a ground tinted by it, with no band of paper under the picture · tier 0
 - 2026-11-24 · The Bestiary's door wash runs under its words too, dried in patches and veins of bare paper, its inks deepened to read on the deepest of it · tier 0
 - 2026-11-24 · The Bestiary's door opens on its own painting, the Sassolungo in its afterglow, its wash in the painting's dusk rose; The Milk Plate opens on the tabby and its plate in the mist · tier 0

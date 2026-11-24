@@ -16,7 +16,7 @@ unusual situation, told by a cool archivist; each built on a philosophical idea 
   story's English and 中文版 into `_bestiary/<title>.md`, between markers, and never its design notes.
   The front matter is this site's: the number, the creature and place (kept for search and the record,
   never shown under a title), their Chinese names, the cover plate (R2), and the `room:`.
-- **The whole Bestiary is light parchment (羊皮纸), from its door on** (the owner, 2026-11-24).
+- **The fables are light parchment (羊皮纸); the door is its painting's dusk** (the owner, 2026-11-24; the door was parchment first, then dark: see below).
 - **The door** (`/bestiary/`, `_layouts/bestiary.html`): its photograph across the window fading into
   the parchment, its name and one line beneath, then a card for every fable (the `card` piece: the
   cover plate, the number, both titles as the cover line). Two to a row from 1024 px, one on a phone.
@@ -37,7 +37,10 @@ unusual situation, told by a cool archivist; each built on a philosophical idea 
   than a fable's room, and the door's inks deepened, each checked against the deepest wash. Then (the
   owner, 2026-11-24): the wash runs up under the hero ("we wouldn't have this awkward notable border"), in
   the painting's essential colours (its alpenglow, not its umbers), on a ground tinted by the alpenglow
-  ("no need to stay paper-yellow because we don't have long text here").
+  ("no need to stay paper-yellow because we don't have long text here"). Then dark (the owner,
+  2026-11-24: "the light background is incoherent with the overlay image hero... dark purple, pink, the
+  representative colour from the hero image but follow the hue"): an aubergine ground from its shadows,
+  a wash a little above it in its own hue band, ivory inks checked against the lightest wash.
 - **The blend is a watercolour bloom** (the owner, 2026-11-24, after three prototypes, bloom, soaked
   fibre and a pool of light, of a blend with "a clear linear pattern": "prefer A and B, no strong opinion
   in between"): the wash dried short of the words, its edge wandering in both axes, a faint broken tide
