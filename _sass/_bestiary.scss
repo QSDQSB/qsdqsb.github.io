@@ -180,8 +180,17 @@ body.fable-page #main.fable-main {
 // On the door the wash runs up under the hero, so the painting dissolves straight into it: no band of bare
 // paper between the picture and the watercolour.
 .bestiary-door .fable-sheet {
+  overflow: hidden; // the meadow's reflection reaches past the window's sides (room.js), never the page's width
   -webkit-mask-image: none;
           mask-image: none;
+}
+
+// And the door's painting dissolves along an uneven line, not the house hero's ruled one: its fade starts
+// at about 66% of its height, below its figures and fire at every width, and done by 90% so its wander never reaches the box's edge, and wanders with noise (an SVG mask, stretched sideways), so the eye finds no
+// edge where the painting gives way to its own meadow carried on below (room.js, the mirror).
+.bestiary-door .page__hero-media {
+  -webkit-mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' viewBox='0 0 1600 1000' preserveAspectRatio='none'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0.66' stop-color='%23fff'/><stop offset='0.73' stop-color='%23fff' stop-opacity='.8'/><stop offset='0.80' stop-color='%23fff' stop-opacity='.4'/><stop offset='0.86' stop-color='%23fff' stop-opacity='.1'/><stop offset='0.9' stop-color='%23fff' stop-opacity='0'/></linearGradient><filter id='d' filterUnits='userSpaceOnUse' x='-100' y='-100' width='1800' height='1200'><feTurbulence type='fractalNoise' baseFrequency='.004 .02' numOctaves='3' seed='5'/><feDisplacementMap in='SourceGraphic' scale='80' xChannelSelector='G' yChannelSelector='R'/></filter></defs><rect x='-100' y='-100' width='1800' height='1200' fill='url(%23g)' filter='url(%23d)'/></svg>");
+          mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' viewBox='0 0 1600 1000' preserveAspectRatio='none'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0.66' stop-color='%23fff'/><stop offset='0.73' stop-color='%23fff' stop-opacity='.8'/><stop offset='0.80' stop-color='%23fff' stop-opacity='.4'/><stop offset='0.86' stop-color='%23fff' stop-opacity='.1'/><stop offset='0.9' stop-color='%23fff' stop-opacity='0'/></linearGradient><filter id='d' filterUnits='userSpaceOnUse' x='-100' y='-100' width='1800' height='1200'><feTurbulence type='fractalNoise' baseFrequency='.004 .02' numOctaves='3' seed='5'/><feDisplacementMap in='SourceGraphic' scale='80' xChannelSelector='G' yChannelSelector='R'/></filter></defs><rect x='-100' y='-100' width='1800' height='1200' fill='url(%23g)' filter='url(%23d)'/></svg>");
 }
 
 // One relief over the room and the sheet alike, as Reverie's wall has it, at a ninth of the wall's

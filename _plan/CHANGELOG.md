@@ -11,6 +11,8 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-24 · The Bestiary's door: its painting dissolves along a wandering line into its own meadow carried on, then into a dark dusk of aubergine and plum, with no line where the picture ends · tier 0
+- 2026-11-24 · The Bestiary door's dusk is lifted to its painting's own brightness, so the painting runs into the page without a drop · tier 0
 - 2026-11-24 · The Bestiary's door is now dusk: its afterglow painting dissolves into a dark watercolour of its own hues, aubergine, plum and alpenglow rose, with its name and links in ivory · tier 0
 - 2026-11-24 · The Bestiary's door dissolves its painting straight into a watercolour of the painting's own alpenglow, rose, ochre and dusk mauve, on a ground tinted by it, with no band of paper under the picture · tier 0
 - 2026-11-24 · The Bestiary's door wash runs under its words too, dried in patches and veins of bare paper, its inks deepened to read on the deepest of it · tier 0

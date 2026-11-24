@@ -57,7 +57,7 @@ precision highp float;
 uniform sampler2D dye; uniform vec2 view; uniform float dpr, mode;
 uniform float wander, colL, colR, edge, edge2, amp, feather, warpA, tide, foot, band;
 uniform vec3 ground;
-uniform float coverBias;
+uniform float coverBias, rampH;
 ${GLSL_NOISE}
 vec3 toLin(vec3 c) { return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c)); }
 vec3 toSrgb(vec3 c) { c = clamp(c, 0.0, 1.0); return mix(12.92 * c, 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, c)); }
@@ -87,9 +87,6 @@ void main() {
     // the middle), dried in broad patches and clearings. Its "distance" is how far inside a patch a point
     // lies, so the same thinning, dried edge and tide line follow.
     float cover = fbm(p / 640.0 + 1.3 * r + 2.1, 4) + coverBias;
-    // Whole under the hero and just below its foot, so the painting always dissolves into colour and
-    // never onto a vein of bare paper, which would read as a border under it.
-    cover += 0.45 * (1.0 - smoothstep(foot - 40.0, foot + 280.0, p.y));
     d0 = 1e4; d = cover * 420.0 + warpA * 2.0 * r.x; e1 = 0.0;
   } else {
     // How far outward from the column of words, measured at a bent position.
@@ -116,6 +113,9 @@ void main() {
   D *= 1.0 + 0.22 * fbm(p / 85.0 + 2.0 * r, 4) + 0.05 * gn(p / 2.2);
   // Never on a fable's words: the column and a little past it stay paper, whatever the noise does.
   D *= smoothstep(6.0, 26.0, d0);
+  // The door: no contrast at the hero's foot, where the painting's own meadow carries on (the mirror),
+  // the wash coming in over the first screen below it and quieting toward the page's end.
+  if (mode > 1.5) D *= smoothstep(foot, foot + rampH, p.y) * (1.0 - 0.6 * smoothstep(view.y - 900.0, view.y, p.y));
   D = max(D, 0.0);
   // The vat, its layers bent too, so they lie as currents rather than strata.
   vec2 uv = p / view + vec2(0.11, 0.16) * 2.0 * r + vec2(0.0, 0.05 * fbm(p / 900.0 + 9.0, 2));
@@ -194,7 +194,7 @@ function drawDoor(palette, groundHex, seed) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.uniform1i(u('dye'), 0); gl.uniform1f(u('dpr'), dpr); gl.uniform1f(u('seed'), seed % 997);
-  const o = { feather: 150, amp: 60, edge2: 40, warpA: 30, tide: dark ? 0.25 : 0.5, coverBias: 0.08 };
+  const o = dark ? { feather: 220, amp: 40, edge2: 40, warpA: 30, tide: 0.1, coverBias: 0.08, rampH: innerHeight } : { feather: 150, amp: 60, edge2: 40, warpA: 30, tide: 0.5, coverBias: 0.08, rampH: 0 };
   for (const k of Object.keys(o)) gl.uniform1f(u(k), o[k]);
   gl.uniform3f(u('ground'), ...hex(groundHex).map(lin));
   const hero = document.querySelector('.page__hero--overlay');
@@ -204,6 +204,40 @@ function drawDoor(palette, groundHex, seed) {
   gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   out.getContext('2d').drawImage(c, 0, 0);
   gl.getExtension('WEBGL_lose_context')?.loseContext();
+  if (hero && dark) mirror(hero);
+}
+
+// The meadow carries on: under the hero, its own painting turned over and softened, so every column goes on
+// in its own colour (the tent's dark, the fire's warmth, the stone's grey) and fades into the wash over half
+// a screen. The hero's straight dissolve then lands on the painting itself and cannot be found.
+function mirror(hero) {
+  const media = hero.querySelector('.page__hero-media');
+  const url = media && (getComputedStyle(media).backgroundImage.match(/url\("?([^")]+)"?\)/) || [])[1];
+  if (!url) return;
+  const img = new Image();
+  img.onload = () => {
+    const box = hero.getBoundingClientRect(), W = box.width, H = box.height, pad = 60;
+    const s = Math.max(W / img.naturalWidth, H / img.naturalHeight), bw = img.naturalWidth * s, bh = img.naturalHeight * s;
+    const [px, py] = getComputedStyle(media).backgroundPosition.split(' ').map((v, i) => (v.endsWith('%') ? (parseFloat(v) / 100) * ((i ? H : W) - (i ? bh : bw)) : parseFloat(v)));
+    // Only the meadow carries on: the band of the painting under its peaks (from b0 to b1 of the hero's
+    // height), turned over and drawn long, from where the hero's fade begins, so the reflection meets the
+    // painting row for row and no mountain or sky is carried down into it.
+    // Drawn tiny and wide-soft (a few dozen pixels across, more down), so the browser's own scaling smears it
+    // sideways into a haze of the meadow's colours, never upright stripes of its tent and figures.
+    const b0 = 0.44 * H, b1 = 0.7 * H, len = 1.05 * H, c = document.createElement('canvas');
+    c.width = 48; c.height = Math.max(24, Math.round(len / 12));
+    const ctx = c.getContext('2d');
+    // Source rows b1 → b0 of the drawn cover map to canvas rows 0 → len.
+    const sy = (b0 - py) / s, sh = (b1 - b0) / s, sx = -(px + pad) / s, sw = (W + 2 * pad) / s;
+    ctx.translate(0, c.height); ctx.scale(1, -1);
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, c.width, c.height);
+    const top = (H - b1) / len;
+    const mask = `linear-gradient(to bottom, transparent 0%, #000 ${Math.max(6, top * 100).toFixed(1)}%, rgba(0,0,0,.75) ${((top + (1 - top) * 0.3) * 100).toFixed(1)}%, rgba(0,0,0,.32) ${((top + (1 - top) * 0.6) * 100).toFixed(1)}%, rgba(0,0,0,.08) ${((top + (1 - top) * 0.84) * 100).toFixed(1)}%, transparent 100%)`;
+    c.className = 'fable-mirror';
+    c.style.cssText = `position:absolute;left:${-pad}px;top:${box.top + scrollY + b1}px;width:${W + 2 * pad}px;height:${len}px;opacity:.55;filter:blur(28px);-webkit-mask-image:${mask};mask-image:${mask};`;
+    sheet.append(c);
+  };
+  img.src = url;
 }
 
 function draw() {
