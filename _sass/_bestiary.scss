@@ -2,9 +2,10 @@
    THE BESTIARY — Dolomiti Errata Bestiary: its door (/bestiary/,
    _layouts/bestiary.html) and its fables (_layouts/fable.html).
 
-   The door is made of the grammar (_components.scss): the eyebrow, the
-   display title on its cards, the card itself, in the dark room. A fable is
-   its own room, the Bestiary's one signature (the owner, 2026-11-24): its
+   The whole Bestiary is light, from its door on (the owner, 2026-11-24).
+   The door is the plain parchment sheet, its photograph across the top as a
+   fable's cover is, and its cards made of the grammar (_components.scss):
+   the eyebrow, the display title, the card itself. A fable is its own room, the Bestiary's one signature (the owner, 2026-11-24): its
    cover across the window, a room dyed from the cover's foot by the site's
    vat, a sheet of the cover's own pale ground eased in from the sides, and
    the house's surface relief over both. The Latin in Playfair, the Chinese
@@ -19,24 +20,32 @@
   font-variant-numeric: lining-nums;
 }
 
-// One column: never the shell's row beside an author's rail (#main is a flex row where a rail can stand).
-#main.bestiary-main {
-  display: block;
-  padding-left: var(--photobook-gutter);
-  padding-right: var(--photobook-gutter);
-}
-
 // The door's few words read in the fables' faces.
 .bestiary .page__content [data-bilingual] { @include bestiary-reading-face; }
 
 /* The door
    ========================================================================== */
 
+// Its name under the photograph, as a fable's title stands under its cover, and its one line.
+.bestiary__head {
+  position: relative;
+  margin: clamp(1rem, 3vw, 2rem) auto clamp(3rem, 6vw, 4.5rem);
+  padding: 0 1.75rem;
+}
+
+.bestiary__lede {
+  margin: 0.6rem 0 0;
+  font: italic 400 1.05rem/1.5 "Playfair Display", serif;
+  color: var(--fable-ink-3);
+}
+
 .bestiary__preface {
+  position: relative;
   max-width: 38rem;
   margin: 0 auto clamp(2.4rem, 5vw, 4rem);
+  padding: 0 1.75rem;
 
-  p { color: var(--ink-2); }
+  p { color: var(--fable-ink-2); }
 }
 
 // A card for every fable: two to a row where there is room, one on a phone, as many rows as there are.
@@ -44,9 +53,10 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: clamp(1rem, 2.4vw, 2rem);
+  position: relative;
   max-width: 82rem;
   margin: 0 auto clamp(3rem, 6vw, 5rem);
-  padding: 0;
+  padding: 0 clamp(1rem, 3vw, 2.4rem); // the house's gutter (the Photobook's)
   list-style: none;
 
   @include responsive-up(desktop) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -147,29 +157,31 @@ body.fable-page #main.fable-main {
   padding: 0;
 }
 
-// The sheet: the page's ground, eased in from the sides, the whole page long (its frame is the body), so
+// The sheet: the page's ground, eased in from the sides where the window leaves room beside the words (on
+// a narrower one it is the whole width, and there is no dye to see: room.js), the whole page long (its frame is the body), so
 // the words, the way on and the site's last line all stand on the ground their inks were checked against.
 .fable-sheet {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  // The head comes in softly under the cover's fading foot; the foot lets the room back in at the very end.
-  -webkit-mask-image: linear-gradient(180deg, transparent 0, rgba(0, 0, 0, 0.35) 34vh, #000 56vh, #000 calc(100% - 5rem), transparent 100%);
-          mask-image: linear-gradient(180deg, transparent 0, rgba(0, 0, 0, 0.35) 34vh, #000 56vh, #000 calc(100% - 5rem), transparent 100%);
+  // The head comes in only as the cover fades (under the painting it would show as a pale haze with
+  // shoulders), whole by just past the cover's foot; the foot lets the room back in at the very end.
+  -webkit-mask-image: linear-gradient(180deg, transparent calc(min(68vh, 720px) - 5rem), #000 calc(min(68vh, 720px) + 3rem), #000 calc(100% - 5rem), transparent 100%);
+          mask-image: linear-gradient(180deg, transparent calc(min(68vh, 720px) - 5rem), #000 calc(min(68vh, 720px) + 3rem), #000 calc(100% - 5rem), transparent 100%);
 
   svg { display: block; }
 }
 
-// One relief over the room and the sheet alike, as Reverie's wall has it, at a quarter of the wall's
+// One relief over the room and the sheet alike, as Reverie's wall has it, at a ninth of the wall's
 // strength: on a pale ground the soft light's shadows read far deeper than on a dyed wall, and at the
-// wall's amount the paper turned to stucco (the owner, 2026-11-24: too strong at half, too). A fixed layer is a group of its own, so the soft light is the
+// wall's amount the paper turned to stucco (the owner, 2026-11-24: too strong at a half and a quarter). A fixed layer is a group of its own, so the soft light is the
 // layer's (it blends with the page beneath); the piece inside it is drawn plainly, else it would blend
 // with nothing and show as a grey veil.
 .fable-relief {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.1;
+  opacity: 0.05;
   mix-blend-mode: soft-light;
 
   &::after {
@@ -184,10 +196,10 @@ body.fable-page #main.fable-main {
   position: relative;
   height: min(68vh, 720px);
   background: var(--cover) var(--cover-pos) / cover no-repeat;
-  // Its foot dissolves on a smootherstep curve over its lowest third: a straight fade ends in a line the
+  // Its foot dissolves on a smootherstep curve over its lowest fifth, below where a plate's subject stands: a straight fade ends in a line the
   // eye reads as an edge across the room.
-  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1.000) 64.0%, rgba(0, 0, 0, 0.984) 68.5%, rgba(0, 0, 0, 0.896) 73.0%, rgba(0, 0, 0, 0.725) 77.5%, rgba(0, 0, 0, 0.500) 82.0%, rgba(0, 0, 0, 0.275) 86.5%, rgba(0, 0, 0, 0.104) 91.0%, rgba(0, 0, 0, 0.016) 95.5%, rgba(0, 0, 0, 0.000) 100.0%);
-          mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1.000) 64.0%, rgba(0, 0, 0, 0.984) 68.5%, rgba(0, 0, 0, 0.896) 73.0%, rgba(0, 0, 0, 0.725) 77.5%, rgba(0, 0, 0, 0.500) 82.0%, rgba(0, 0, 0, 0.275) 86.5%, rgba(0, 0, 0, 0.104) 91.0%, rgba(0, 0, 0, 0.016) 95.5%, rgba(0, 0, 0, 0.000) 100.0%);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1.000) 78.00%, rgba(0, 0, 0, 0.984) 80.75%, rgba(0, 0, 0, 0.896) 83.50%, rgba(0, 0, 0, 0.725) 86.25%, rgba(0, 0, 0, 0.500) 89.00%, rgba(0, 0, 0, 0.275) 91.75%, rgba(0, 0, 0, 0.104) 94.50%, rgba(0, 0, 0, 0.016) 97.25%, rgba(0, 0, 0, 0.000) 100.00%);
+          mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1.000) 78.00%, rgba(0, 0, 0, 0.984) 80.75%, rgba(0, 0, 0, 0.896) 83.50%, rgba(0, 0, 0, 0.725) 86.25%, rgba(0, 0, 0, 0.500) 89.00%, rgba(0, 0, 0, 0.275) 91.75%, rgba(0, 0, 0, 0.104) 94.50%, rgba(0, 0, 0, 0.016) 97.25%, rgba(0, 0, 0, 0.000) 100.00%);
 
   @include responsive-down(tablet) {
     height: 62vh;
@@ -198,7 +210,7 @@ body.fable-page #main.fable-main {
 .fable {
   position: relative;
   max-width: 36rem;
-  margin: clamp(1.5rem, 4vw, 3rem) auto 0;
+  margin: clamp(0.5rem, 2vw, 1.5rem) auto 0; // close under the plate, as a caption is
   padding: 0 1.75rem; // clear of the phone's fringe, where the sheet eases out over the first 7% of the width
 }
 
@@ -214,11 +226,13 @@ body.fable-page #main.fable-main {
   text-wrap: balance;
 }
 
+// The Chinese title, a pair to the Latin and not its footnote; the tracking's trailing space taken back so
+// it stands on the centre.
 .fable__zh {
-  margin: 0.5rem 0 0;
-  font: 400 1rem/1.5 "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif;
-  letter-spacing: 0.42em;
-  color: var(--fable-ink-3);
+  margin: 0.7rem -0.2em 0 0;
+  font: 400 1.3rem/1.5 "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif;
+  letter-spacing: 0.2em;
+  color: var(--fable-ink-2);
 }
 
 .fable__text {
@@ -227,13 +241,23 @@ body.fable-page #main.fable-main {
 
   p { margin-bottom: 1.1em; color: var(--fable-ink); }
   strong { color: var(--fable-ink); }
-  [lang="zh"] p { letter-spacing: 0.04em; }
+  // The Latin set as a book is, not a blog: the paragraphs told apart by their gap, not lost in the leading.
+  [lang="en"] p { margin-bottom: 0.9em; line-height: 1.7; }
+  // The Chinese on its grid: no tracking, justified character by character, no lone character on a last line.
+  [lang="zh"] p {
+    font-size: 1.04em;
+    letter-spacing: 0;
+    text-align: justify;
+    text-justify: inter-character;
+    line-break: strict;
+    text-wrap: pretty;
+  }
 
   // The site's switch, as two words in the page's inks: the one being read underlined in brass.
   .bilingual-switch {
     justify-self: center;
     margin-bottom: 2.4rem;
-    gap: 1rem;
+    gap: 1.25rem;
     border: 0;
     padding: 0;
     background: none;
@@ -253,7 +277,7 @@ body.fable-page #main.fable-main {
 
     &:hover { background: none; color: var(--fable-ink); }
     &:focus-visible { @include brass-focus; }
-    &[lang="zh"] { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; letter-spacing: 0.12em; }
+    &[lang="zh"] { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; font-size: 14px; letter-spacing: 0; } // a Song glyph at 11px is a smudge
   }
 
   .bilingual-switch__button.is-active {
@@ -264,15 +288,20 @@ body.fable-page #main.fable-main {
   }
 }
 
+// The way on: the Bestiary always in the middle, the fable before on the left and the one after on the right.
 .fable__onward {
   @include onward-links;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: baseline;
   margin: clamp(3rem, 6vw, 4.5rem) 0 0;
   padding: 1.4rem 0 clamp(1.5rem, 4vw, 2.5rem);
   border-top: 1px solid color-mix(in srgb, var(--fable-ink) 16%, transparent);
 
   a,
-  a:visited { color: var(--fable-ink-2); border-bottom-color: transparent; }
+  a:visited { grid-row: 1; grid-column: 2; justify-self: center; color: var(--fable-ink-2); border-bottom-color: transparent; }
+  a[rel="prev"] { grid-column: 1; justify-self: start; }
+  a[rel="next"] { grid-column: 3; justify-self: end; }
   a:hover,
   a:focus-visible { color: var(--fable-ink); }
 }

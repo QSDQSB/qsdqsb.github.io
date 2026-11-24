@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-24 · The Bestiary is light from its door on: the door stands on parchment with its photograph fading into it, each fable's paper is a parchment tinted by its cover, the room beside the words is the cover's colours as a pale field (and only where the window leaves room for it, so a phone reads on paper edge to edge), the cover keeps its subject clear of the fade, the paper's texture is faint, and the Chinese is set on its grid · tier 0
 - 2026-11-24 · A fable's cover now dissolves into the room on an eased curve, with no line where the painting ends, and the paper's relief is quieter still · tier 0
 - 2026-11-24 · A fable's paper now runs the whole page long, so the site's last line stands on it and can be read (it had sunk under the room's dye), the paper's relief is half as deep, and the empty field below the way on is gone · tier 0
 - 2026-11-24 · A fable opens in its own room: its painting across the window fades into a room dyed from the painting's foot, the story on a sheet of the painting's own light colour with no edge to it, one plaster texture over all, the Chinese in 宋体 · tier 2

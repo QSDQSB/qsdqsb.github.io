@@ -14,11 +14,11 @@ cover: https://img.qsdqsb.com/t/e8ddd20f70089993
 cover_position: "60% 100%" # the plate and the cat clear of the fade
 source: "stories/01. The Milk Plate.md"
 room: # from its cover by scripts/bestiary-room.py: the dye, the ground and the inks (contrast-checked)
-  ground: "#eeeceb"
+  ground: "#f0ebdf"
   ink: "#2c2518"
   ink2: "#544c3d"
   ink3: "#706858"
-  brass: "#846638"
+  brass: "#816335"
   palette: [{"hex": "#312a1c", "pc": 38.2}, {"hex": "#524a3e", "pc": 22.4}, {"hex": "#79746c", "pc": 10.7, "accent": true}, {"hex": "#959392", "pc": 8.3}, {"hex": "#4d4028", "pc": 20.4}]
 ---
 <!-- bestiary:text · from the bestiary's repository by scripts/bestiary-import.mjs: edit the story there, not here -->

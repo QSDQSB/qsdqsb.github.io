@@ -2,16 +2,28 @@
 layout: default
 ---
 {%- comment -%}
-  The Bestiary's door (/bestiary/, _pages/bestiary.md): its hero, then (no words: the owner,
+  The Bestiary's door (/bestiary/, _pages/bestiary.md), on the fables' light parchment (the owner,
+  2026-11-24: the Bestiary is the light template from its door on): its photograph across the window as
+  a fable's cover is, fading into the parchment, its name beneath, then (no words: the owner,
   2026-11-24; any the page is given show behind the site's switch) a card for every fable, in the
   order the archivist numbered them: the photograph of its place as the cover, its number, its title in
   both languages as the cover line; never its creature or place (the owner, 2026-11-24). As many as there are; a fable is a file in
   _bestiary/. Styles: _sass/_bestiary.scss.
 {%- endcomment -%}
 {% include base_path %}
-{% include page__hero.html %}
 {%- assign fables = site.bestiary | sort: "number" -%}
-<div id="main" role="main" class="bestiary-main">
+{%- assign hero = page.header.overlay_image -%}
+{%- assign first = hero | slice: 0 -%}
+{%- if hero contains "://" -%}{%- elsif first == "/" -%}{%- assign hero = hero | relative_url -%}{%- else -%}{%- assign hero = hero | prepend: "/images/" | relative_url -%}{%- endif -%}
+{% include fable-room.html room=page.room seed="bestiary" %}
+<div id="main" role="main" class="fable-main bestiary-main">
+  <div class="fable-cover" role="img" aria-label="{{ page.title | escape }}" style="--cover: url('{{ hero }}'); --cover-sm: url('{{ hero }}'); --cover-pos: {{ page.cover_position | default: '50% 60%' }}"></div>
+  <header class="fable__head bestiary__head">
+    <h1 class="fable__title">{{ page.title }}</h1>
+    {%- if page.excerpt != blank %}
+    <p class="bestiary__lede">{{ page.excerpt }}</p>
+    {%- endif %}
+  </header>
   {%- assign words = content | strip -%}
   {%- if words != "" %}
   <section class="bestiary__preface page__content">

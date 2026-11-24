@@ -3,7 +3,9 @@
 its words stand on.
 
 The palette is weighted to the cover's foot (each pixel counts by (row / height) ** 2), since the room
-begins where the cover fades out. The ground is the palette's lightest colour lifted to a pale tint; the
+begins where the cover fades out. The ground is a parchment (the owner, 2026-11-24: the Bestiary is
+the light 羊皮纸 page): pale, lightly tinted, its hue in the parchment's warm range, leaning within that
+range toward the palette's lightest colour, so each fable's paper is its own cover's and still paper; the
 inks are its darkest, deepened until they pass WCAG contrast against that ground (the words and what
 supports them 7:1, small labels and the brass 4.5:1). Written into the fable's front matter as `room:`,
 so the page is right before any script runs.
@@ -84,6 +86,17 @@ def at(lab, L, cmax):
     return rgb((L, lab[1] * k, lab[2] * k))
 
 
+def parchment(lab, L=0.94, hues=(70, 95), chroma=(0.016, 0.028)):
+    c = math.hypot(lab[1], lab[2])
+    h = math.degrees(math.atan2(lab[2], lab[1])) % 360 if c > 0.004 else 85
+    lo, hi = hues
+    # Nearest edge of the range, going the short way round the circle.
+    if not lo <= h <= hi:
+        h = lo if (lo - h) % 360 < (h - hi) % 360 else hi
+    k = min(max(c, chroma[0]), chroma[1])
+    return rgb((L, k * math.cos(math.radians(h)), k * math.sin(math.radians(h))))
+
+
 def passing(lab, L, cmax, ground, need):
     c = at(lab, L, cmax)
     while contrast(c, ground) < need and L > 0.05:
@@ -135,7 +148,7 @@ def palette(path):
 def room(pal):
     labs = [oklab(rgbof(p["hex"])) for p in pal]
     light, dark = max(labs, key=lambda c: c[0]), min(labs, key=lambda c: c[0])
-    ground = at(light, 0.945, 0.03)
+    ground = parchment(light)
     inks = {
         "ink": passing(dark, 0.27, 0.035, ground, NEED["ink"]),
         "ink2": passing(dark, 0.42, 0.04, ground, NEED["ink2"]),
