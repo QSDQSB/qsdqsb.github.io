@@ -7,7 +7,6 @@ creature_zh: "橘猫"
 place: "Val di Cenere"
 place_zh: "灰烬谷"
 excerpt: "It insists the pineapple is its crown." # the story's own sentence
-line_zh: "它执意说菠萝是它的王冠。"
 seo_description: "The Pineapple Crown, the first fable of QSD's Dolomiti Errata Bestiary: an orange cat in a pineapple crown, a valley called Ash Valley, and the plain reason for its name. In English and Chinese."
 header:
   overlay_image: https://img.qsdqsb.com/t/031b9295ba632d9e/1920.webp # dolomites/sesto/dscf9401, the last light on a peak

@@ -7,7 +7,6 @@ creature_zh: "狸花猫"
 place: "Alpe di Siusi"
 place_zh: "休斯高原"
 excerpt: "A plate of milk that no cat drank." # the story's own words
-line_zh: "一碟没有猫喝的牛奶。"
 seo_description: "The Wandering Tabby Cat, a fable of QSD's Dolomiti Errata Bestiary: a tabby that crosses Alpe di Siusi every day, an old herdsman, and a plate of milk on a grey stone. In English and Chinese."
 header:
   overlay_image: https://img.qsdqsb.com/t/e8ddd20f70089993/1920.webp # dolomites/siusi/dscf0634, the meadow and its white points

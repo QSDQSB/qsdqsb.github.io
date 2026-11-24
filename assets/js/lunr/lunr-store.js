@@ -190,6 +190,10 @@ function searchGetResultTypeMeta(collection) {
     return { label: "Voyage", className: "voyage", iconClass: "fa-solid fa-cable-car" };
   }
 
+  if (normalizedCollection === "bestiary") {
+    return { label: "Fable", className: "fable", iconClass: "fa-solid fa-feather" };
+  }
+
   if (normalizedCollection === "portfolio") {
     return { label: "Portfolio", className: "portfolio", iconClass: "fa-solid fa-helicopter" };
   }

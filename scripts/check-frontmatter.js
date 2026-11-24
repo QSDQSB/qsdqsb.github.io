@@ -44,6 +44,22 @@ const COLLECTIONS = {
   _bestiary: { required: ['title', 'number', 'creature', 'place', 'excerpt', 'cover', 'source', 'seo_description'] },
 };
 
+// The photographs the fetched manifests hold, by their R2 address (img.qsdqsb.com/t/<hash>): a fable
+// names its photograph by that address, and a re-processed or replaced original gets a new one.
+let photoUrls = null;
+function knownPhotoUrls() {
+  if (photoUrls) return photoUrls;
+  photoUrls = new Set();
+  const dir = path.join(ROOT, '_data', 'photo_manifests');
+  if (!fs.existsSync(dir)) return photoUrls;
+  for (const f of fs.readdirSync(dir).filter((n) => n.endsWith('.json') && !n.startsWith('_'))) {
+    try {
+      for (const p of JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')).photos || []) if (p.url) photoUrls.add(p.url);
+    } catch { /* a manifest that does not parse is check-gallery-integrity's to report */ }
+  }
+  return photoUrls;
+}
+
 // ---------------------------------------------------------------------------
 // Parsing
 // ---------------------------------------------------------------------------
@@ -334,6 +350,13 @@ function checkFile(absPath, tagColours) {
     if (fm.number !== undefined && !Number.isInteger(fm.number)) add('error', `number: ${fm.number} — a whole number, the archivist's (00 is the anchor story)`);
     if (!fm.header || !fm.header.overlay_image) add('error', 'no header.overlay_image — the fable opens on no photograph');
     if (!fm.title_zh) add('warn', 'no title_zh — the record and the card show no Chinese title');
+    const known = knownPhotoUrls();
+    for (const [key, raw] of [['cover', fm.cover], ['header.overlay_image', fm.header && fm.header.overlay_image]]) {
+      const base = String(raw || '').match(/^(https:\/\/img\.qsdqsb\.com\/t\/[0-9a-f]+)/);
+      if (!base) continue;
+      if (!known.size) add('warn', `${key}: no fetched manifests to check its photograph against (npm run photos:fetch)`);
+      else if (!known.has(base[1])) add('error', `${key}: ${base[1]} is in no fetched manifest — the photograph was replaced or removed, and the fable would open on nothing`);
+    }
   }
 
   if (collection === '_voyage') {

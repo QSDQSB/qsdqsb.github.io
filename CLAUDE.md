@@ -16,7 +16,7 @@ Detailed procedure lives in skills (which auto-load when relevant) and `_docs/` 
 
 ```
 _config.yml          Jekyll config — collections, defaults, plugins, site vars
-_layouts/            Page layouts (11) → _docs/layouts.md
+_layouts/            Page layouts (12) → _docs/layouts.md
 _includes/           50+ partials — masthead, gallery, map, hero, sidebar…
 _sass/               SCSS partials — _variables.scss is the token authority
 assets/js/           Custom JS (_main.js → main.min.js) + vendor (jQuery, Three.js)
@@ -188,7 +188,7 @@ The two that break most often: `gallery_name` must be a gallery the photo pipeli
 
 ## Layouts & Gallery System
 
-11 layouts. The two with real behaviour are `gallery.html` (a router: `subgalleries: true` → the index of parts; otherwise → the Photobook, `_includes/photobook.html`) and the page hero overlay (depth parallax, opening scene).
+12 layouts. The two with real behaviour are `gallery.html` (a router: `subgalleries: true` → the index of parts; otherwise → the Photobook, `_includes/photobook.html`) and the page hero overlay (depth parallax, opening scene).
 
 When a layout or include changes visible structure, validate desktop *and* mobile-small.
 

@@ -1,6 +1,6 @@
 # Layouts & Gallery System
 
-Reference for the 11 layouts in `_layouts/`. Linked from CLAUDE.md; read this
+Reference for the 12 layouts in `_layouts/`. Linked from CLAUDE.md; read this
 when touching a layout, the Photobook, or the hero.
 
 The two with real behaviour are `gallery.html` and the page hero overlay.

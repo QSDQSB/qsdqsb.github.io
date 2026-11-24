@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-24 · Search finds the Bestiary's fables and names each one a Fable · tier 0
 - 2026-11-24 · The Bestiary is open: /bestiary/ shows a card for each fable, the photograph of its place as the cover, and its first two fables, The Pineapple Crown and The Wandering Tabby Cat, each in English and Chinese behind the language switch, with ways on between them · tier 2
 - 2026-11-24 · A Subscribe page (/subscribe/, and in the site's last line): the subscribe slip opened into the page under About's cover, its address field framed in brass, holding three past letters as the mail showed them, letterhead, card, date, lines and Onward; which three is the owner's choice in _data/letters.yml (R023) · tier 2
 - 2026-11-24 · A page with no cover starts clear of the floating menu (Terms, the CV, the Bestiary), and the site's last line of links centres on the content beside the author's column, not on the window (posts, the archives, About) · tier 2

@@ -187,6 +187,13 @@ const JOURNEYS = [
     await go('/bestiary/');
     const cards = page.locator('a.bestiary-card');
     must(await cards.count() >= 2, `only ${await cards.count()} fable card(s) on the Bestiary`);
+    // Each card's photograph arrives (a cover named by an address R2 no longer serves would be blank).
+    const blank = await page.evaluate(async () => {
+      const imgs = [...document.querySelectorAll('.bestiary-card img')];
+      await Promise.all(imgs.map((i) => (i.complete ? null : new Promise((r) => { i.onload = i.onerror = r; }))));
+      return imgs.filter((i) => !i.naturalWidth).map((i) => i.currentSrc || i.src);
+    });
+    must(blank.length === 0, `a fable's cover did not load: ${blank.join(', ')}`);
     const first = await cards.first().getAttribute('href');
     must(/\/bestiary\/the-pineapple-crown\/$/.test(first), `the first card is ${first}, not the anchor story`);
     await Promise.all([page.waitForURL(`**${first}`), cards.first().click()]);

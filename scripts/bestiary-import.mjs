@@ -30,7 +30,6 @@ const value = (name) => { const i = args.indexOf(name); return i === -1 ? null :
 const usage = (why) => { console.error(`bestiary: ${why}\nSee the head of scripts/bestiary-import.mjs.`); process.exit(2); };
 
 const from = path.resolve(value('--from') || path.join(ROOT, '..', 'dolomite-errata-bestiary'));
-if (!fs.existsSync(path.join(from, 'stories'))) usage(`no bestiary checkout at ${from} (git clone https://github.com/QSDQSB/dolomite-errata-bestiary next to this one, or pass --from)`);
 
 /** A story's two texts: what follows "### English Version" and "### 中文版" under "## Content". */
 export function storyText(markdown) {
@@ -39,7 +38,7 @@ export function storyText(markdown) {
   const sections = {};
   for (const part of content.split(/^### /m).slice(1)) {
     const [heading, ...rest] = part.split('\n');
-    const body = rest.join('\n').split(/^## /m)[0].replace(/^---\s*$/gm, '').trim();
+    const body = rest.join('\n').split(/^## /m)[0].trim().replace(/\n+---$/, '').trim();
     if (/^English Version/i.test(heading)) sections.en = body;
     else if (/^中文版/.test(heading)) sections.zh = body;
   }
@@ -131,11 +130,11 @@ function start(name) {
     `place: ${q(place)}`,
     `place_zh: ${q(mandarin('locations', place))}`,
     'excerpt: "" # the line under the title: a sentence of the story\'s own',
-    'line_zh: "" # the same sentence from the 中文版',
     'seo_description: ""',
     'header:',
     '  overlay_image: "" # a photograph of the place: https://img.qsdqsb.com/t/<hash>/1920.webp # <gallery>/<slug>',
     '  overlay_filter: 0.3',
+    'cover: "" # the same photograph for the card: https://img.qsdqsb.com/t/<hash>',
     'cover_position: "50% 50%"',
     `source: ${q(source)}`,
     '---',
@@ -146,5 +145,9 @@ function start(name) {
   console.log(`bestiary: _bestiary/${slug}.md started; finish its front matter, then run this again without --new.`);
 }
 
-if (value('--new')) start(value('--new'));
-else refresh(flag('--check'));
+// Run, not imported (tests/bestiary-import.test.js imports storyText alone).
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  if (!fs.existsSync(path.join(from, 'stories'))) usage(`no bestiary checkout at ${from} (git clone https://github.com/QSDQSB/dolomite-errata-bestiary next to this one, or pass --from)`);
+  if (value('--new')) start(value('--new'));
+  else refresh(flag('--check'));
+}
