@@ -7,7 +7,7 @@ to Done with its pull request.
 ## Open
 
 - 2026-11-23 · R023 · Create a subscribe page (qsdqsb.com/subscribe), keeping the existing subscribe structure but expanding the layout and functionality into a complete page; a starting point is displaying three past letters, chosen by the owner. Work in master. → done 2026-11-24: /subscribe/, the slip opened into the page with three past letters as the mail showed them (_data/letters.yml), About's cover; with it, a page with no cover clears the menu and the site's last line centres on the content
-- 2026-11-23 · R022 · We don't need extra space for display before/after an english word, please amend the content
+- 2026-11-23 · R024 · We don't need extra space for display before/after an english word, please amend the content
 - 2026-11-22 · R021 · Add the post 谁来安慰心理咨询师 with an English title, Shihuqiao's transitions and type, Chinese only, and an excerpt in keeping with the others
 ## Done
 
