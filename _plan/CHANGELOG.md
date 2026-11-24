@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-24 · The Milk Plate's cover shows the whole mountain, summit to foot · tier 0
 - 2026-11-24 · The Milk Plate has its new cover framed with its plate clear of the fade, and its paper and inks drawn from it (shown once the plate is uploaded) · tier 0
 - 2026-11-24 · A fable's room no longer carries its cover's accent and holds every colour to a quiet chroma, so no flank of it reads as a block of colour · tier 0
 - 2026-11-24 · A fable's cover now dissolves into one paper across the window before the room's colours come in beside the words, the page ends on paper, the way on fits a phone (the fable before and after on one row, the Bestiary beneath), and the door's photograph fades on its meadow, not across the lake · tier 0

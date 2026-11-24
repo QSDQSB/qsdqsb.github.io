@@ -11,7 +11,7 @@ header:
   overlay_image: https://img.qsdqsb.com/t/e8ddd20f70089993/1920.webp # dolomites/siusi/dscf0634, the meadow and its white points
   overlay_filter: 0.3
 cover: https://img.qsdqsb.com/t/e8ddd20f70089993
-cover_position: "50% 92%" # the plate on its stone kept above the fade
+cover_position: "56% 12%" # the whole Sassolungo, summit to foot; the plate may fall to the fade (the owner, 2026-11-24)
 source: "stories/01. The Milk Plate.md"
 room: # from its cover by scripts/bestiary-room.py: the dye, the ground and the inks (contrast-checked)
   ground: "#f8e8d8"
