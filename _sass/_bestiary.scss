@@ -2,24 +2,25 @@
    THE BESTIARY — Dolomiti Errata Bestiary: its door (/bestiary/,
    _layouts/bestiary.html) and its fables (_layouts/fable.html).
 
-   Made of the grammar (_components.scss): the eyebrow for a record's
-   number and place, the display title on its cards, the card itself, the
-   onward links, the site's language switch and its arrival. Its own part is
-   the archivist's record above a fable, and the measure the fables are read
-   at: the Latin in Playfair, the Chinese in the essays' Song.
+   The door is made of the grammar (_components.scss): the eyebrow, the
+   display title on its cards, the card itself, in the dark room. A fable is
+   its own room, the Bestiary's one signature (the owner, 2026-11-24): its
+   cover across the window, a room dyed from the cover's foot by the site's
+   vat, a sheet of the cover's own pale ground eased in from the sides, and
+   the house's surface relief over both. The Latin in Playfair, the Chinese
+   in 宋体 (the device's Song, else the essays' Noto Serif SC subset).
    Breakpoints through _responsive-policy.scss only.
    ========================================================================== */
 
 // The faces a fable's two languages are read in: Playfair for the Latin, and for the Chinese the
 // device's own Song where it has one, else the subset of Noto Serif SC the essays carry (_custom.scss).
 @mixin bestiary-reading-face {
-  font-family: "Playfair Display", "Songti SC", "STSong", "Noto Serif SC", serif;
+  font-family: "Playfair Display", "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif;
   font-variant-numeric: lining-nums;
 }
 
 // One column: never the shell's row beside an author's rail (#main is a flex row where a rail can stand).
-#main.bestiary-main,
-#main.fable-main {
+#main.bestiary-main {
   display: block;
   padding-left: var(--photobook-gutter);
   padding-right: var(--photobook-gutter);
@@ -116,26 +117,165 @@
   color: var(--ink-2);
 }
 
-/* A fable
-   ========================================================================== */
+/* A fable: its own room
+   ==========================================================================
+   Painted in the order the elements come (none sets a z-index): the room, fixed behind; then, in
+   #main, the sheet, the relief over both, the cover over the relief, and the words over all. */
+
+body.fable-page {
+  background: var(--fable-ground);
+  color: var(--fable-ink);
+}
+
+// The room: the cover's dye (assets/js/bestiary/room.js), fixed behind the page.
+.fable-room {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+}
+
+// The cover runs up under the floating menu, as a hero does: no room kept for the bar above it.
+body.fable-page #main.fable-main {
+  display: block;
+  position: relative;
+  max-width: none;
+  padding: 0;
+}
+
+// The sheet: the page's ground, eased in from the sides; its head comes in softly under the cover's foot.
+.fable-sheet {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  // Head and foot both come in softly: under the cover's fading foot, and into the room above the last line.
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, rgba(0, 0, 0, 0.35) 34vh, #000 56vh, #000 calc(100% - 18rem), transparent 100%);
+          mask-image: linear-gradient(180deg, transparent 0, rgba(0, 0, 0, 0.35) 34vh, #000 56vh, #000 calc(100% - 18rem), transparent 100%);
+
+  svg { display: block; }
+}
+
+// One relief over the room and the sheet alike, as Reverie's wall has it. A fixed layer is a group of
+// its own, so the soft light is the layer's (it blends with the page beneath); the piece inside it is
+// drawn plainly, else it would blend with nothing and show as a grey veil.
+.fable-relief {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.45;
+  mix-blend-mode: soft-light;
+
+  &::after {
+    @include surface-relief;
+    opacity: 1;
+    mix-blend-mode: normal;
+  }
+}
+
+// The cover, as the house sets a hero: the whole window wide; its foot fades into the room.
+.fable-cover {
+  position: relative;
+  height: min(68vh, 720px);
+  background: var(--cover) var(--cover-pos) / cover no-repeat;
+  -webkit-mask-image: linear-gradient(180deg, #000 74%, transparent 100%);
+          mask-image: linear-gradient(180deg, #000 74%, transparent 100%);
+
+  @include responsive-down(tablet) {
+    height: 62vh;
+    background-image: var(--cover-sm);
+  }
+}
 
 .fable {
-  max-width: 38rem;
-  margin: 0 auto;
+  position: relative;
+  max-width: 36rem;
+  margin: clamp(1.5rem, 4vw, 3rem) auto 0;
+  padding: 0 1.75rem; // clear of the phone's fringe, where the sheet eases out over the first 7% of the width
+}
+
+.fable__head {
+  margin-bottom: 1.4rem;
+  text-align: center;
+}
+
+.fable__title {
+  margin: 0;
+  color: var(--fable-ink);
+  font: 700 clamp(2.1rem, 4vw, 3rem)/1.1 $global-font-family;
+  text-wrap: balance;
+}
+
+.fable__zh {
+  margin: 0.5rem 0 0;
+  font: 400 1rem/1.5 "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif;
+  letter-spacing: 0.42em;
+  color: var(--fable-ink-3);
 }
 
 .fable__text {
   @include bestiary-reading-face;
+  color: var(--fable-ink);
 
-  // The archivist's prose: the house's measure, and a little more air between paragraphs than a post's,
-  // since every paragraph here is a recorded fact.
-  p { margin-bottom: 1.05em; }
+  p { margin-bottom: 1.1em; color: var(--fable-ink); }
+  strong { color: var(--fable-ink); }
   [lang="zh"] p { letter-spacing: 0.04em; }
+
+  // The site's switch, as two words in the page's inks: the one being read underlined in brass.
+  .bilingual-switch {
+    justify-self: center;
+    margin-bottom: 2.4rem;
+    gap: 1rem;
+    border: 0;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    @include backdrop-blur(none);
+  }
+
+  .bilingual-switch__button {
+    border-radius: 0;
+    padding: 0.3rem 0.15rem;
+    border-bottom: 1px solid transparent;
+    background: none;
+    color: var(--fable-ink-3);
+    font-size: max(0.7rem, 11px);
+    letter-spacing: 0.22em;
+    box-shadow: none;
+
+    &:hover { background: none; color: var(--fable-ink); }
+    &:focus-visible { @include brass-focus; }
+    &[lang="zh"] { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; letter-spacing: 0.12em; }
+  }
+
+  .bilingual-switch__button.is-active {
+    background: none;
+    color: var(--fable-ink);
+    border-bottom-color: var(--fable-brass);
+    box-shadow: none;
+  }
 }
 
 .fable__onward {
   @include onward-links;
-  margin: clamp(3rem, 6vw, 4.5rem) 0 clamp(3rem, 6vw, 4.5rem);
-  padding-top: 1.6rem;
-  border-top: 1px solid var(--line);
+  justify-content: space-between;
+  margin: clamp(3rem, 6vw, 4.5rem) 0 0;
+  padding: 1.4rem 0 clamp(8rem, 18vh, 12rem); // the sheet's foot fades out below the way on, not under it
+  border-top: 1px solid color-mix(in srgb, var(--fable-ink) 16%, transparent);
+
+  a,
+  a:visited { color: var(--fable-ink-2); border-bottom-color: transparent; }
+  a:hover,
+  a:focus-visible { color: var(--fable-ink); }
+}
+
+// The site's last line, in the page's inks.
+body.fable-page .site-colophon {
+  position: relative;
+
+  a,
+  a:visited { color: var(--fable-ink-2); border-bottom-color: color-mix(in srgb, var(--fable-ink) 22%, transparent); }
+  a:hover,
+  a:focus-visible { color: var(--fable-ink); }
 }

@@ -196,13 +196,17 @@ screenshot workflow.
   is missing from the subset.
 - `bestiary.html` — the Bestiary's door (`/bestiary/`, `_pages/bestiary.md`): its hero, its few
   words in two languages behind the switch, then a card for every fable in `_bestiary/`, by `number`.
-- `fable.html` — a fable (`_bestiary/*.md`, the collection's default): the photograph of its place as
-  the hero, the archivist's record (number, creature, place, the Chinese names), the story's two
-  texts behind the switch in the essays' faces, and the way on to the fables either side and the
-  Bestiary. The text is brought in from QSDQSB/dolomite-errata-bestiary by
-  `node scripts/bestiary-import.mjs` (between its markers; the front matter is this site's, and the
-  story's design notes are never brought in). A new story: `--new "NN. Title"`, finish the front
-  matter, run it again, then `npm run fonts:essay`. Styles: `_sass/_bestiary.scss`.
+- `fable.html` — a fable (`_bestiary/*.md`, the collection's default), in its own room: its cover
+  across the window, its foot fading into a room dyed from the cover's lower part by the site's vat
+  (`assets/js/bestiary/room.js`), a sheet of the cover's own pale ground eased in from the sides, and the
+  house's surface relief over both. On it the title, its Chinese title, the story's two texts behind
+  the switch (Playfair, and 宋体 for the Chinese) and the way on. The colours are the front matter's
+  `room:` (ground, four inks, palette), written by `python3 scripts/bestiary-room.py` from the cover in
+  the git-ignored `photos/bestiary/` (palette weighted to the cover's foot; every ink checked against
+  the ground, 7:1 for text and 4.5:1 for labels; `--check` re-checks). The text is brought in from
+  QSDQSB/dolomite-errata-bestiary by `node scripts/bestiary-import.mjs` (never the design notes). A new
+  story: `--new "NN. Title"`, finish the front matter, run it again, then `bestiary-room.py` and
+  `npm run fonts:essay`. Styles: `_sass/_bestiary.scss`, "A fable: its own room".
 - `splash.html` — hero/landing.
 - `archive.html`, `archive-taxonomy.html` — tag/category archives.
 - `search.html`, `compress.html` — specialised.

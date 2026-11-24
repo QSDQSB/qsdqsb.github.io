@@ -350,6 +350,10 @@ function checkFile(absPath, tagColours) {
     if (fm.number !== undefined && !Number.isInteger(fm.number)) add('error', `number: ${fm.number} — a whole number, the archivist's (00 is the anchor story)`);
     if (!fm.header || !fm.header.overlay_image) add('error', 'no header.overlay_image — the fable opens on no photograph');
     if (!fm.title_zh) add('warn', 'no title_zh — the record and the card show no Chinese title');
+    const room = fm.room || {};
+    if (!['ground', 'ink', 'ink2', 'ink3', 'brass'].every((k) => /^#[0-9a-f]{6}$/i.test(room[k] || '')) || !Array.isArray(room.palette)) {
+      add('error', 'no room (its ground, inks and palette) — python3 scripts/bestiary-room.py, from its cover in photos/bestiary/');
+    }
     const known = knownPhotoUrls();
     for (const [key, raw] of [['cover', fm.cover], ['header.overlay_image', fm.header && fm.header.overlay_image]]) {
       const base = String(raw || '').match(/^(https:\/\/img\.qsdqsb\.com\/t\/[0-9a-f]+)/);

@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-24 · A fable opens in its own room: its painting across the window fades into a room dyed from the painting's foot, the story on a sheet of the painting's own light colour with no edge to it, one plaster texture over all, the Chinese in 宋体 · tier 2
 - 2026-11-24 · The Bestiary's door opens straight onto its fables, and a fable opens on its title alone, with its Chinese title (菠萝王冠, 牛奶碟) on the door · tier 2
 - 2026-11-24 · Search finds the Bestiary's fables and names each one a Fable · tier 0
 - 2026-11-24 · The Bestiary is open: /bestiary/ shows a card for each fable, the photograph of its place as the cover, and its first two fables, The Pineapple Crown and The Milk Plate, each in English and Chinese behind the language switch, with ways on between them · tier 2

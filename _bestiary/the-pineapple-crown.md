@@ -11,8 +11,15 @@ header:
   overlay_image: https://img.qsdqsb.com/t/031b9295ba632d9e/1920.webp # dolomites/sesto/dscf9401, the last light on a peak
   overlay_filter: 0.3
 cover: https://img.qsdqsb.com/t/031b9295ba632d9e # the card's, the same photograph
-cover_position: "50% 45%"
+cover_position: "74% 62%" # the cat whole on a phone
 source: "stories/00. The Pineapple Crown.md"
+room: # from its cover by scripts/bestiary-room.py: the dye, the ground and the inks (contrast-checked)
+  ground: "#fbe8e3"
+  ink: "#222825"
+  ink2: "#484f4c"
+  ink3: "#646b68"
+  brass: "#846638"
+  palette: [{"hex": "#8e9369", "pc": 33.4}, {"hex": "#bcaaa5", "pc": 22.5}, {"hex": "#767560", "pc": 18.6}, {"hex": "#4f5653", "pc": 15.4}, {"hex": "#6a86c0", "pc": 10.2, "accent": true}]
 ---
 <!-- bestiary:text · from the bestiary's repository by scripts/bestiary-import.mjs: edit the story there, not here -->
 <div data-bilingual>

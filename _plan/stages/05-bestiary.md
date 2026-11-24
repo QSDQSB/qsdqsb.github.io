@@ -41,6 +41,13 @@ unusual situation, told by a cool archivist; each built on a philosophical idea 
   the goblet stays; the lute's missing star and the Milk Plate cover's liberties are accepted; the
   close tabby; the bestiary repo renamed its story too; **no words on the door** and **no line under a
   fable's title** ("The title suffices"); the crown painting cropped at its foot.
+- **The door keeps its cards; a fable is its own room** (the owner, 2026-11-24, after prototypes in a
+  paper room and a free layout: "I like the card design... use the latest soft light setup for the
+  content"). The fable: cover across the window, its foot fading into a room dyed by the vat from the
+  cover's lower part (weighted to the foot: "the more bottom the pixel is the more weighted"), a sheet
+  of the cover's own light colour ("we don't have to use 羊皮纸色... as long as the contrast works")
+  eased in from the sides with no edge, Reverie's relief over the whole background, 宋体 for the
+  Chinese. `scripts/bestiary-room.py` writes each fable's `room:`.
 - **The plates live in R2, never git** (the owner): the site's `bestiary/` gallery, staged in the
   git-ignored `photos/bestiary/` until the owner's `QSD`; fables to name their plate, the soft edge a
   CSS mask.
