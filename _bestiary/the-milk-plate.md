@@ -11,15 +11,15 @@ header:
   overlay_image: https://img.qsdqsb.com/t/e8ddd20f70089993/1920.webp # dolomites/siusi/dscf0634, the meadow and its white points
   overlay_filter: 0.3
 cover: https://img.qsdqsb.com/t/e8ddd20f70089993
-cover_position: "60% 100%" # the plate and the cat clear of the fade
+cover_position: "50% 92%" # the plate on its stone kept above the fade
 source: "stories/01. The Milk Plate.md"
 room: # from its cover by scripts/bestiary-room.py: the dye, the ground and the inks (contrast-checked)
-  ground: "#f0ebdf"
-  ink: "#2c2518"
-  ink2: "#544c3d"
-  ink3: "#706858"
+  ground: "#f8e8d8"
+  ink: "#29261f"
+  ink2: "#504d45"
+  ink3: "#6c6960"
   brass: "#816335"
-  palette: [{"hex": "#312a1c", "pc": 38.2}, {"hex": "#524a3e", "pc": 22.4}, {"hex": "#79746c", "pc": 10.7, "accent": true}, {"hex": "#959392", "pc": 8.3}, {"hex": "#4d4028", "pc": 20.4}]
+  palette: [{"hex": "#1b1811", "pc": 35.6}, {"hex": "#373028", "pc": 17.0}, {"hex": "#947561", "pc": 7.3, "accent": true}, {"hex": "#655348", "pc": 6.3}, {"hex": "#211d15", "pc": 33.9}]
 ---
 <!-- bestiary:text · from the bestiary's repository by scripts/bestiary-import.mjs: edit the story there, not here -->
 <div data-bilingual>
