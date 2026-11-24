@@ -1,8 +1,9 @@
 /**
- * A fable's room (_layouts/fable.html, _sass/_bestiary.scss): its cover's palette poured by the site's
- * dye vat (assets/js/colour/vat.js), calm and lifted toward the page's ground so the room is a tint of
- * the painting and never louder than it; and the sheet in the middle, the ground's own colour eased in
- * from the sides on a smootherstep curve, so the dye turns to paper with no edge to be seen.
+ * A fable's room, and the door's (_includes/fable-room.html, _sass/_bestiary.scss): its cover's palette
+ * poured by the site's dye vat (assets/js/colour/vat.js), quiet and a step below the page's ground so the
+ * room is a pale endpaper of the painting and never louder than it; and the sheet over it, the ground's
+ * own colour, whole under the cover's foot and over the words and eased out on a smootherstep curve into
+ * the room beside them, so the dye turns to paper with no edge to be seen.
  *
  * Where the window leaves no room beside the words (a phone, a narrow window) there is no dye and the sheet
  * is the whole width: the room shows only where there is room for it.
@@ -10,23 +11,15 @@
  * The colours are the page's before this runs (the front matter's `room:`, from scripts/bestiary-room.py),
  * so without it the page is the plain ground and its words, which is enough to read by.
  */
-import { vat, seedOf } from '../colour/vat.js';
+import { vat, seedOf, oklab } from '../colour/vat.js';
 
 const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 const toHex = (c) => '#' + c.map((v) => Math.round(v).toString(16).padStart(2, '0')).join('');
 const ease = (t) => t * t * t * (t * (t * 6 - 15) + 10);
 
-// OKLab, to set each dye at a lightness rather than lift it by a share: a dark cover lifted by a share
-// stays dark, and its room reads as shadow round the page, not as colour.
-const lin = (v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+// Back from OKLab (the vat's `oklab` goes there), to set each dye at a lightness rather than lift it by a
+// share: a dark cover lifted by a share stays dark, and its room reads as shadow round the page, not colour.
 const gam = (v) => 255 * (v <= 0.0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055);
-function oklab([r, g, b]) {
-  [r, g, b] = [r, g, b].map(lin);
-  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
-  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
-  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
-  return [0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s, 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s];
-}
 function fromOklab([L, a, b]) {
   const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
   const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
@@ -44,7 +37,7 @@ const sheet = document.querySelector('[data-fable-sheet]');
 
 function draw() {
   const css = getComputedStyle(document.documentElement);
-  const ground = hex(css.getPropertyValue('--fable-ground').trim());
+  const groundHex = css.getPropertyValue('--fable-ground').trim();
   const ink = hex(css.getPropertyValue('--fable-ink').trim());
   const palette = JSON.parse(room.dataset.palette || '[]');
   const words = document.querySelector('.fable');
@@ -58,11 +51,11 @@ function draw() {
   // size and shown at its full size.
   room.replaceChildren();
   if (roomy) {
-    const G = oklab(ground)[0];
+    const G = oklab(groundHex)[0];
     // The cover's accent is left out (as a drop it sits by the words as a stray spot, as a layer it fills a
     // flank), and every colour is held to a chroma of .035, so the room is never a saturated block.
     const quiet = palette.filter((p) => !p.accent).map((p) => {
-      const [L, a, b] = oklab(hex(p.hex));
+      const [L, a, b] = oklab(p.hex);
       const c = Math.hypot(a, b), k = Math.min(0.8, c ? 0.035 / c : 0);
       return { ...p, hex: toHex(fromOklab([G - 0.09 - 0.05 * (1 - L), a * k, b * k])) };
     });

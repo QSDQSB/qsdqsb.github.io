@@ -64,9 +64,9 @@
   > li { margin: 0; padding: 0; } // a list item's own inset (_base.scss) would set the card off the words' edge
 }
 
-// A magazine cover: the photograph of the fable's place, its number and place and its title in two
-// languages as the cover line, on a scrim engineered for the worst light (PRINCIPLES, Cards). The
-// card lifts as one object; the photograph in it never moves.
+// A magazine cover: the fable's cover plate, its number and its title in two languages as the cover
+// line, on a scrim engineered for the worst light (PRINCIPLES, Cards). The card lifts as one object;
+// the picture in it never moves.
 .bestiary-card {
   @include card(true);
   position: relative;
