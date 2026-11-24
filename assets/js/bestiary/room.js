@@ -53,16 +53,18 @@ function draw() {
   const roomy = palette.length > 0 && gap >= ROOM;
 
   // The dye: each colour set a step below the ground's lightness (between .09 and .14 of OKLab L, the
-  // darker colours lower), its hue kept and its chroma at four fifths, so the room is the cover's colours
+  // darker colours lower), its hue kept and its chroma at four fifths or .035, whichever is less, so the room is the cover's colours
   // as a pale endpaper and never a shadow; poured calm (layers, not ribbons), drawn at half the window's
   // size and shown at its full size.
   room.replaceChildren();
   if (roomy) {
     const G = oklab(ground)[0];
-    const quiet = palette.map((p) => {
+    // The cover's accent is left out (as a drop it sits by the words as a stray spot, as a layer it fills a
+    // flank), and every colour is held to a chroma of .035, so the room is never a saturated block.
+    const quiet = palette.filter((p) => !p.accent).map((p) => {
       const [L, a, b] = oklab(hex(p.hex));
-      // No drops in a room: a cover's accent, poured as one, sits by the words as a stray spot.
-      return { ...p, accent: false, hex: toHex(fromOklab([G - 0.09 - 0.05 * (1 - L), a * 0.8, b * 0.8])) };
+      const c = Math.hypot(a, b), k = Math.min(0.8, c ? 0.035 / c : 0);
+      return { ...p, hex: toHex(fromOklab([G - 0.09 - 0.05 * (1 - L), a * k, b * k])) };
     });
     room.append(vat(quiet, { shape: 'rect', width: Math.round(W / 2), height: Math.round(innerHeight / 2), seed: seedOf(room.dataset.seed || 'bestiary'), calm: 0.8 }));
   }

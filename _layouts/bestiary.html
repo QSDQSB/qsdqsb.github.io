@@ -16,7 +16,7 @@ layout: default
 {%- assign first = hero | slice: 0 -%}
 {%- if hero contains "://" -%}{%- elsif first == "/" -%}{%- assign hero = hero | relative_url -%}{%- else -%}{%- assign hero = hero | prepend: "/images/" | relative_url -%}{%- endif -%}
 {% include fable-room.html room=page.room seed="bestiary" %}
-<div id="main" role="main" class="fable-main bestiary-main">
+<div id="main" role="main" class="fable-main">
   <div class="fable-cover" role="img" aria-label="{{ page.title | escape }}" style="--cover: url('{{ hero }}'); --cover-sm: url('{{ hero }}'); --cover-pos: {{ page.cover_position | default: '50% 60%' }}"></div>
   <header class="fable__head bestiary__head">
     <h1 class="fable__title">{{ page.title }}</h1>

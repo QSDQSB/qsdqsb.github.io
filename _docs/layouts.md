@@ -194,19 +194,25 @@ screenshot workflow.
   characters the essays and the Bestiary's fables use; OFL). After writing or changing a Chinese essay run `npm run fonts:essay` (needs
   fonttools and the font's source, see `scripts/essay-font.py`); the gate fails if a character
   is missing from the subset.
-- `bestiary.html` — the Bestiary's door (`/bestiary/`, `_pages/bestiary.md`): its hero, its few
-  words in two languages behind the switch, then a card for every fable in `_bestiary/`, by `number`.
+- `bestiary.html` — the Bestiary's door (`/bestiary/`, `_pages/bestiary.md`), on the fables' light
+  parchment (its `room:` in the page's front matter, no palette, so no dye): its photograph across the
+  window fading into the paper, its name and one line beneath, any words in two languages behind the
+  switch, then a card for every fable in `_bestiary/`, by `number`.
 - `fable.html` — a fable (`_bestiary/*.md`, the collection's default), in its own room: its cover
-  across the window, its foot fading into a room dyed from the cover's lower part by the site's vat
-  (`assets/js/bestiary/room.js`), a sheet of the cover's own pale ground eased in from the sides, and the
-  house's surface relief over both. On it the title, its Chinese title, the story's two texts behind
-  the switch (Playfair, and 宋体 for the Chinese) and the way on. The colours are the front matter's
+  across the window, dissolving into one paper; where the window leaves at least 160 px beside the words,
+  a room dyed from the cover's lower part by the site's vat beside them (each colour set a step below the
+  ground's lightness, chroma held low, the accent left out), and the sheet eased in from the sides over
+  it; on a narrower window the paper runs edge to edge and there is no dye. A faint relief over both.
+  The room, sheet and relief are `_includes/fable-room.html` and `assets/js/bestiary/room.js`, shared
+  with the door. On the paper the title, its Chinese title, the story's two texts behind the switch
+  (Playfair, and 宋体 for the Chinese, set on its grid) and the way on. The colours are the front matter's
   `room:` (ground, four inks, palette), written by `python3 scripts/bestiary-room.py` from the cover in
-  the git-ignored `photos/bestiary/` (palette weighted to the cover's foot; every ink checked against
-  the ground, 7:1 for text and 4.5:1 for labels; `--check` re-checks). The text is brought in from
-  QSDQSB/dolomite-errata-bestiary by `node scripts/bestiary-import.mjs` (never the design notes). A new
-  story: `--new "NN. Title"`, finish the front matter, run it again, then `bestiary-room.py` and
-  `npm run fonts:essay`. Styles: `_sass/_bestiary.scss`, "A fable: its own room".
+  the git-ignored `photos/bestiary/` (palette weighted to the cover's foot; the ground a parchment
+  tinted by the cover; every ink checked against the ground, 7:1 for text and 4.5:1 for labels;
+  `--check` re-checks). The text is brought in from QSDQSB/dolomite-errata-bestiary by
+  `node scripts/bestiary-import.mjs` (never the design notes). A new story: `--new "NN. Title"`, finish
+  the front matter, run it again, then `bestiary-room.py` and `npm run fonts:essay`. Styles:
+  `_sass/_bestiary.scss`, "A fable: its own room".
 - `splash.html` — hero/landing.
 - `archive.html`, `archive-taxonomy.html` — tag/category archives.
 - `search.html`, `compress.html` — specialised.
