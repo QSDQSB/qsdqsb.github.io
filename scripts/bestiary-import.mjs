@@ -129,7 +129,6 @@ function start(name) {
     `creature_zh: ${q(mandarin('characters', creature))}`,
     `place: ${q(place)}`,
     `place_zh: ${q(mandarin('locations', place))}`,
-    'excerpt: "" # the line under the title: a sentence of the story\'s own',
     'seo_description: ""',
     'header:',
     '  overlay_image: "" # a photograph of the place: https://img.qsdqsb.com/t/<hash>/1920.webp # <gallery>/<slug>',

@@ -207,6 +207,7 @@ defaults:
     values:
       layout: fable
       body_class: photobook bestiary
+      excerpt_separator: "" # no line under a fable's title, not even one Jekyll makes (the owner, 2026-11-24)
   # _posts
   - scope:
       path: ""

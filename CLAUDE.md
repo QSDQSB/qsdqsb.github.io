@@ -174,7 +174,7 @@ Enforced on touched files only — no global retrofit of untouched legacy files.
 | `_pages` | `title` |
 | `_voyage` | `title`, `date`, a cover + exactly one of `gallery_name` / `subgalleries: true` |
 | `_subvoyage` | `title`, `date`, a cover, `gallery_name` |
-| `_bestiary` | `title`, `number`, `creature`, `place`, `excerpt`, `cover`, `header.overlay_image`, `source`, `seo_description` |
+| `_bestiary` | `title`, `number`, `creature`, `place`, `cover`, `header.overlay_image`, `source`, `seo_description` |
 
 A voyage's cover is `cover: { photo, focus }` in its photo YAML (`_data/photos/<gallery>.yml`; a voyage in parts `_data/photos/<parent>.yml`), set with `npm run covers:focus`; `header.overlay_image` only where a voyage has no processed gallery yet (Venice).
 

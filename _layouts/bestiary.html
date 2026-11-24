@@ -2,8 +2,8 @@
 layout: default
 ---
 {%- comment -%}
-  The Bestiary's door (/bestiary/, _pages/bestiary.md): its hero, a few words on what it is in two
-  languages (the page's content, behind the site's switch), then a card for every fable, in the
+  The Bestiary's door (/bestiary/, _pages/bestiary.md): its hero, then (no words: the owner,
+  2026-11-24; any the page is given show behind the site's switch) a card for every fable, in the
   order the archivist numbered them: the photograph of its place as the cover, its number, its title in
   both languages as the cover line; never its creature or place (the owner, 2026-11-24). As many as there are; a fable is a file in
   _bestiary/. Styles: _sass/_bestiary.scss.
@@ -12,9 +12,12 @@ layout: default
 {% include page__hero.html %}
 {%- assign fables = site.bestiary | sort: "number" -%}
 <div id="main" role="main" class="bestiary-main">
+  {%- assign words = content | strip -%}
+  {%- if words != "" %}
   <section class="bestiary__preface page__content">
     {{ content }}
   </section>
+  {%- endif %}
   <ol class="bestiary__fables" aria-label="The fables">
     {%- for f in fables %}
     {%- assign n = f.number | plus: 0 %}

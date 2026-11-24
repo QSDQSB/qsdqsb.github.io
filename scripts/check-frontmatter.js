@@ -39,9 +39,9 @@ const COLLECTIONS = {
   // A voyage also needs a cover (checkCover): `header` is no longer required for it.
   _voyage: { required: ['title', 'date'] },
   _subvoyage: { required: ['title', 'date'] },
-  // A fable (_layouts/fable.html): its record, its line, the photograph of its place, and the story it
+  // A fable (_layouts/fable.html): its names, its cover, and the story it
   // is brought in from (scripts/bestiary-import.mjs); its number orders the Bestiary.
-  _bestiary: { required: ['title', 'number', 'creature', 'place', 'excerpt', 'cover', 'source', 'seo_description'] },
+  _bestiary: { required: ['title', 'number', 'creature', 'place', 'cover', 'source', 'seo_description'] },
 };
 
 // The photographs the fetched manifests hold, by their R2 address (img.qsdqsb.com/t/<hash>): a fable

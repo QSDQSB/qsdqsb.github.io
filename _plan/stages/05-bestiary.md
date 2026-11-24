@@ -36,8 +36,16 @@ unusual situation, told by a cool archivist; each built on a philosophical idea 
   and as that cat's image; the tabby is a 背影, walking away with its tail raised. Plates fade into the
   page; fixed objects (the lute, the cup) never change between plates.
 - PR #133 was closed: "we are still brainstorming". Nothing is pushed until the direction is settled.
+- **One round of calls, answered**: Chinese titles 菠萝王冠 and 牛奶碟; two hands (storybook creatures,
+  oil covers, both the owner's own paintings for now); **a warm paper room** for the Bestiary's pages;
+  the goblet stays; the lute's missing star and the Milk Plate cover's liberties are accepted; the
+  close tabby; the bestiary repo renamed its story too; **no words on the door** and **no line under a
+  fable's title** ("The title suffices"); the crown painting cropped at its foot.
+- **The plates live in R2, never git** (the owner): the site's `bestiary/` gallery, staged in the
+  git-ignored `photos/bestiary/` until the owner's `QSD`; fables to name their plate, the soft edge a
+  CSS mask.
 
-Waiting on the owner: the Chinese titles (菠萝王冠 and 一碟牛奶 are drafts); the door's few words (drafted from the bestiary's description, and they replace the holding
+Waiting on the owner: (the titles and the door's words are answered above; what follows is older) the door's few words (drafted from the bestiary's description, and they replace the holding
 page's 施工中 and its emoji); the two photographs (sesto/dscf9401 for Val di Cenere, which is not a
 real valley; siusi/dscf0634 for Alpe di Siusi); story 01's 中文版 is marked a draft in the bestiary.
 
