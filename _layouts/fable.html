@@ -21,10 +21,16 @@ layout: default
     {%- assign next = fables[forloop.index] -%}
   {%- endif -%}
 {%- endfor -%}
+{%- comment -%} The cover: R2's size tiers (an img.qsdqsb.com address), or a committed plate under images/ (its .webp and -960.webp). {%- endcomment -%}
+{%- if page.cover contains "://" -%}
+  {%- capture cover_big %}{{ page.cover }}/2560.webp{% endcapture -%}{%- capture cover_small %}{{ page.cover }}/1280.webp{% endcapture -%}
+{%- else -%}
+  {%- capture cover_big %}{{ page.cover | append: ".webp" | relative_url }}{% endcapture -%}{%- capture cover_small %}{{ page.cover | append: "-960.webp" | relative_url }}{% endcapture -%}
+{%- endif -%}
 {%- assign room_seed = 'bestiary/' | append: page.slug -%}
 {% include fable-room.html room=page.room seed=room_seed %}
 <div id="main" role="main" class="fable-main">
-  <div class="fable-cover" aria-hidden="true" style="--cover: url('{{ page.cover }}/2560.webp'); --cover-sm: url('{{ page.cover }}/1280.webp'); --cover-pos: {{ page.cover_position | default: '50% 50%' }}"></div>
+  <div class="fable-cover" aria-hidden="true" style="--cover: url('{{ cover_big }}'); --cover-sm: url('{{ cover_small }}'); --cover-pos: {{ page.cover_position | default: '50% 50%' }}"></div>
   <article class="fable" itemscope itemtype="http://schema.org/ShortStory">
     <header class="fable__head">
       <h1 class="fable__title" itemprop="headline">{{ page.title }}</h1>

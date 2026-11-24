@@ -8,9 +8,9 @@ place: "Val di Cenere"
 place_zh: "灰烬谷"
 seo_description: "The Pineapple Crown, the first fable of QSD's Dolomiti Errata Bestiary: an orange cat in a pineapple crown, a valley called Ash Valley, and the plain reason for its name. In English and Chinese."
 header:
-  overlay_image: https://img.qsdqsb.com/t/031b9295ba632d9e/1920.webp # dolomites/sesto/dscf9401, the last light on a peak
+  overlay_image: /images/bestiary/the-pineapple-crown.webp # its cover plate, the oil painting
   overlay_filter: 0.3
-cover: https://img.qsdqsb.com/t/031b9295ba632d9e # the card's, the same photograph
+cover: /images/bestiary/the-pineapple-crown # the plate, committed for now (the owner, 2026-11-24): .webp and -960.webp
 cover_position: "74% 62%" # the cat whole on a phone
 source: "stories/00. The Pineapple Crown.md"
 room: # from its cover by scripts/bestiary-room.py: the dye, the ground and the inks (contrast-checked)

@@ -354,6 +354,12 @@ function checkFile(absPath, tagColours) {
     if (!['ground', 'ink', 'ink2', 'ink3', 'brass'].every((k) => /^#[0-9a-f]{6}$/i.test(room[k] || '')) || !Array.isArray(room.palette)) {
       add('error', 'no room (its ground, inks and palette) — python3 scripts/bestiary-room.py, from its cover in photos/bestiary/');
     }
+    // A plate committed under images/ for now (the owner, 2026-11-24): its two sizes must be there.
+    if (typeof fm.cover === 'string' && fm.cover.startsWith('/images/')) {
+      for (const ext of ['.webp', '-960.webp']) {
+        if (!fs.existsSync(path.join(ROOT, fm.cover.slice(1) + ext))) add('error', `cover: ${fm.cover}${ext} is not in the repository — the fable would open on nothing`);
+      }
+    }
     const known = knownPhotoUrls();
     for (const [key, raw] of [['cover', fm.cover], ['header.overlay_image', fm.header && fm.header.overlay_image]]) {
       const base = String(raw || '').match(/^(https:\/\/img\.qsdqsb\.com\/t\/[0-9a-f]+)/);

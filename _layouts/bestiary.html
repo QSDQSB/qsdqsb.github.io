@@ -36,7 +36,13 @@ layout: default
     <li>
       <a class="bestiary-card" href="{{ f.url | relative_url }}">
         <span class="bestiary-card__cover">
-          {%- if f.cover %}<img src="{{ f.cover }}/1280.webp" srcset="{{ f.cover }}/960.webp 960w, {{ f.cover }}/1280.webp 1280w, {{ f.cover }}/1920.webp 1920w" sizes="(min-width: 1024px) 50vw, 100vw" alt="" loading="{% if forloop.index <= 2 %}eager{% else %}lazy{% endif %}" decoding="async" style="object-position: {{ f.cover_position | default: '50% 50%' }}">{% endif -%}
+          {%- if f.cover %}
+          {%- if f.cover contains "://" -%}
+            {%- capture c_small %}{{ f.cover }}/1280.webp{% endcapture -%}{%- capture c_set %}{{ f.cover }}/960.webp 960w, {{ f.cover }}/1280.webp 1280w, {{ f.cover }}/1920.webp 1920w{% endcapture -%}
+          {%- else -%}
+            {%- capture c_small %}{{ f.cover | append: "-960.webp" | relative_url }}{% endcapture -%}{%- capture c_set %}{{ f.cover | append: "-960.webp" | relative_url }} 960w, {{ f.cover | append: ".webp" | relative_url }} 1672w{% endcapture -%}
+          {%- endif -%}
+          <img src="{{ c_small }}" srcset="{{ c_set }}" sizes="(min-width: 1024px) 50vw, 100vw" alt="" loading="{% if forloop.index <= 2 %}eager{% else %}lazy{% endif %}" decoding="async" style="object-position: {{ f.cover_position | default: '50% 50%' }}">{% endif -%}
         </span>
         <span class="bestiary-card__words">
           <span class="bestiary-card__of">Nº {% if n < 10 %}0{% endif %}{{ n }}</span>

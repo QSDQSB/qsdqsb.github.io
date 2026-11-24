@@ -60,8 +60,10 @@ unusual situation, told by a cool archivist; each built on a philosophical idea 
   git-ignored `photos/bestiary/` until the owner's `QSD`; fables to name their plate, the soft edge a
   CSS mask.
 
-Waiting on the owner: the plates' upload to R2 (their `QSD`; until then the covers resolve to the
-older photographs sesto/dscf9401 and siusi/dscf0634); the door's one line, "An errata of creatures."
+**The plates are committed for now** under `images/bestiary/` (the owner, 2026-11-24: "wrap it to the
+repo's images for now"; the session's R2 key could not write): each a `.webp` and a `-960.webp`, the
+layouts taking either a committed plate or R2's tiers. To R2 later, with the owner's `QSD`.
+Waiting on the owner: the door's one line, "An errata of creatures."
 (keep or strike); the masthead pill over the pale pages; the door's photograph among paintings; the
 blend prototypes; story 01's 中文版 is marked a draft in the bestiary.
 
