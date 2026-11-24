@@ -180,6 +180,36 @@ const JOURNEYS = [
     must(await page.locator('h1').count() >= 1, `${href} opened without a title`);
   } },
 
+  { id: 'bestiary', name: 'The Bestiary opens from the masthead, a card opens a fable in two languages, and its way on leads on and back', async run({ page, go }) {
+    await go('/');
+    const door = page.locator('.masthead a[href$="/bestiary/"]').first();
+    must(await door.count() === 1, 'the masthead has no way to the Bestiary');
+    await go('/bestiary/');
+    const cards = page.locator('a.bestiary-card');
+    must(await cards.count() >= 2, `only ${await cards.count()} fable card(s) on the Bestiary`);
+    const first = await cards.first().getAttribute('href');
+    must(/\/bestiary\/the-pineapple-crown\/$/.test(first), `the first card is ${first}, not the anchor story`);
+    await Promise.all([page.waitForURL(`**${first}`), cards.first().click()]);
+    must(/Nº\s*00/.test(await page.locator('.fable__number').innerText()), 'the fable shows no number in its record');
+    // Its two texts: the switch shows the other, and only one is shown at a time.
+    const zh = page.locator('.bilingual-switch__button[data-bilingual-option="中"]');
+    must(await zh.count() === 1, 'the fable has no switch to its Chinese text');
+    await zh.click();
+    const shown = await page.evaluate(() => [...document.querySelectorAll('.fable__text [data-bilingual-lang]')].filter((s) => !s.hidden).map((s) => s.getAttribute('lang')));
+    must(shown.length === 1 && shown[0] === 'zh', `after the switch the fable shows ${JSON.stringify(shown)}, not its Chinese alone`);
+    must((await page.locator('.fable__text section[lang="zh"]').innerText()).includes('橘猫'), 'the Chinese text does not read as the story');
+    // Its design notes never reach the page: the philosophy that found the story stays in the bestiary.
+    const body = await page.locator('.fable__text').innerText();
+    must(!/Design Notes|Philosophical Concept|Creature Mapping|Leibniz/.test(body), 'the fable carries its design notes');
+    const next = page.locator('.fable__onward a[rel="next"]');
+    must(await next.count() === 1, 'the anchor story has no way on to the next fable');
+    const nextHref = await next.getAttribute('href');
+    await Promise.all([page.waitForURL(`**${nextHref}`), next.click()]);
+    must(await page.locator('.fable__onward a[rel="prev"]').count() === 1, `${nextHref} has no way back to the fable before it`);
+    const home = page.locator('.fable__onward a[href$="/bestiary/"]');
+    await Promise.all([page.waitForURL('**/bestiary/'), home.click()]);
+  } },
+
   { id: 'book', name: 'A print opens in the lightbox, steps, and Back returns to the book', async run({ page, go }) {
     await go('/voyage/london/');
     const prints = page.locator('.photobook-frame__print');

@@ -8,7 +8,7 @@
 # it, so a shot taken a month on would differ by its month.
 #
 # After Jekyll has read the site and before anything is generated or rendered:
-#   - a post, voyage, part or portfolio page the pin does not name is left out, so no list, search
+#   - a post, voyage, part, portfolio page or fable the pin does not name is left out, so no list, search
 #     index, feed or neighbour link sees it;
 #   - each pinned document's `updated:` is put back as the pin has it (none, where it had none),
 #     parsed as Jekyll parses front matter, so Recent Updates keeps its order;
@@ -24,7 +24,7 @@ require "time"
 module VisualContent
   PIN = "tests/visual/content-pin.json"
   FROZEN = "tests/visual/content"
-  COLLECTIONS = %w(posts voyage subvoyage portfolio).freeze
+  COLLECTIONS = %w(posts voyage subvoyage portfolio bestiary).freeze
 
   module_function
 

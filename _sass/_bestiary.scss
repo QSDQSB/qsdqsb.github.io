@@ -1,0 +1,170 @@
+/* ==========================================================================
+   THE BESTIARY — Dolomiti Errata Bestiary: its door (/bestiary/,
+   _layouts/bestiary.html) and its fables (_layouts/fable.html).
+
+   Made of the grammar (_components.scss): the eyebrow for a record's
+   number and place, the display title on its cards, the card itself, the
+   onward links, the site's language switch and its arrival. Its own part is
+   the archivist's record above a fable, and the measure the fables are read
+   at: the Latin in Playfair, the Chinese in the essays' Song.
+   Breakpoints through _responsive-policy.scss only.
+   ========================================================================== */
+
+// The faces a fable's two languages are read in: Playfair for the Latin, and for the Chinese the
+// device's own Song where it has one, else the subset of Noto Serif SC the essays carry (_custom.scss).
+@mixin bestiary-reading-face {
+  font-family: "Playfair Display", "Songti SC", "STSong", "Noto Serif SC", serif;
+  font-variant-numeric: lining-nums;
+}
+
+// One column: never the shell's row beside an author's rail (#main is a flex row where a rail can stand).
+#main.bestiary-main,
+#main.fable-main {
+  display: block;
+  padding-left: var(--photobook-gutter);
+  padding-right: var(--photobook-gutter);
+}
+
+// The language switch sits at the head of the words it changes, on the right, as in a post.
+.bestiary .page__content [data-bilingual] { @include bestiary-reading-face; }
+
+/* The door
+   ========================================================================== */
+
+.bestiary__preface {
+  max-width: 38rem;
+  margin: 0 auto clamp(2.4rem, 5vw, 4rem);
+
+  p { color: var(--ink-2); }
+}
+
+// A card for every fable: two to a row where there is room, one on a phone, as many rows as there are.
+.bestiary__fables {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 2.4vw, 2rem);
+  max-width: 82rem;
+  margin: 0 auto clamp(3rem, 6vw, 5rem);
+  padding: 0;
+  list-style: none;
+
+  @include responsive-up(desktop) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  > li { margin: 0; padding: 0; } // a list item's own inset (_base.scss) would set the card off the words' edge
+}
+
+// A magazine cover: the photograph of the fable's place, its number and place and its title in two
+// languages as the cover line, on a scrim engineered for the worst light (PRINCIPLES, Cards). The
+// card lifts as one object; the photograph in it never moves.
+.bestiary-card {
+  @include card(true);
+  position: relative;
+  aspect-ratio: 3 / 2;
+  color: var(--ink);
+  text-decoration: none;
+  background: #1d1d1f;
+
+  &,
+  &:visited,
+  &:hover { color: var(--ink); text-decoration: none; }
+}
+
+.bestiary-card__cover {
+  position: absolute;
+  inset: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    object-fit: cover;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(9, 9, 12, 0) 38%, rgba(9, 9, 12, 0.42) 64%, rgba(9, 9, 12, 0.86) 100%);
+  }
+}
+
+.bestiary-card__words {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  gap: 0.5rem;
+  padding: clamp(1.1rem, 2.6vw, 2rem);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45); // a safety net; the scrim does the work
+}
+
+.bestiary-card__of {
+  @include eyebrow;
+  color: var(--ink-2);
+}
+
+.bestiary-card__title {
+  @include display-title;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.bestiary-card__gloss {
+  font: 400 0.92rem/1.5 "Songti SC", "STSong", "Noto Serif SC", serif;
+  letter-spacing: 0.3em;
+  color: var(--ink-2);
+}
+
+/* A fable
+   ========================================================================== */
+
+.fable {
+  max-width: 38rem;
+  margin: 0 auto;
+}
+
+// The archivist's record: what the fable is filed under, before it is read. Its number a figure in
+// Didot (the owner, 2026-09-28), in brass; its creature and place an eyebrow; its Chinese names
+// spaced as an inscription is, as a post's gloss sets them.
+.fable__record {
+  margin: clamp(0.5rem, 2vw, 1.5rem) 0 clamp(2rem, 4vw, 3rem);
+
+  p { margin: 0; }
+}
+
+.fable__number {
+  font: 400 1.05rem/1 $didot-family;
+  letter-spacing: 0.08em;
+  color: $intriguing-word-color;
+
+  span { font-size: 1.9em; letter-spacing: 0.04em; }
+}
+
+.fable__record .fable__of {
+  @include eyebrow;
+  margin-top: 0.9rem;
+}
+
+.fable__record .fable__gloss {
+  margin-top: 0.55rem;
+  font: 400 0.92rem/1.6 "Songti SC", "STSong", "Noto Serif SC", serif;
+  letter-spacing: 0.3em;
+  color: var(--ink-3);
+}
+
+.fable__text {
+  @include bestiary-reading-face;
+
+  // The archivist's prose: the house's measure, and a little more air between paragraphs than a post's,
+  // since every paragraph here is a recorded fact.
+  p { margin-bottom: 1.05em; }
+  [lang="zh"] p { letter-spacing: 0.04em; }
+}
+
+.fable__onward {
+  @include onward-links;
+  margin: clamp(3rem, 6vw, 4.5rem) 0 clamp(3rem, 6vw, 4.5rem);
+  padding-top: 1.6rem;
+  border-top: 1px solid var(--line);
+}

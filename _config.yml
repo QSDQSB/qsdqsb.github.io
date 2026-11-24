@@ -192,8 +192,21 @@ collections:
     output: true
     permalink: /voyage/:path/
     sitemap: true
+  # The Bestiary's fables: their text from QSDQSB/dolomite-errata-bestiary (scripts/bestiary-import.mjs).
+  bestiary:
+    output: true
+    permalink: /bestiary/:path/
+    sitemap: true
+    sort_by: number
 # Defaults
 defaults:
+  # _bestiary
+  - scope:
+      path: ""
+      type: bestiary
+    values:
+      layout: fable
+      body_class: photobook bestiary
   # _posts
   - scope:
       path: ""

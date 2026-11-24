@@ -39,6 +39,9 @@ const COLLECTIONS = {
   // A voyage also needs a cover (checkCover): `header` is no longer required for it.
   _voyage: { required: ['title', 'date'] },
   _subvoyage: { required: ['title', 'date'] },
+  // A fable (_layouts/fable.html): its record, its line, the photograph of its place, and the story it
+  // is brought in from (scripts/bestiary-import.mjs); its number orders the Bestiary.
+  _bestiary: { required: ['title', 'number', 'creature', 'place', 'excerpt', 'cover', 'source', 'seo_description'] },
 };
 
 // ---------------------------------------------------------------------------
@@ -326,6 +329,12 @@ function checkFile(absPath, tagColours) {
   checkMap(fm, collection, add);
 
   if (collection === '_voyage' || collection === '_subvoyage') checkCover(fm, rel, add);
+
+  if (collection === '_bestiary') {
+    if (fm.number !== undefined && !Number.isInteger(fm.number)) add('error', `number: ${fm.number} — a whole number, the archivist's (00 is the anchor story)`);
+    if (!fm.header || !fm.header.overlay_image) add('error', 'no header.overlay_image — the fable opens on no photograph');
+    if (!fm.title_zh) add('warn', 'no title_zh — the record and the card show no Chinese title');
+  }
 
   if (collection === '_voyage') {
     checkVoyageMode(fm, add);

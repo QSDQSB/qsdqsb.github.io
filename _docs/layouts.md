@@ -1,6 +1,6 @@
 # Layouts & Gallery System
 
-Reference for the 9 layouts in `_layouts/`. Linked from CLAUDE.md; read this
+Reference for the 11 layouts in `_layouts/`. Linked from CLAUDE.md; read this
 when touching a layout, the Photobook, or the hero.
 
 The two with real behaviour are `gallery.html` and the page hero overlay.
@@ -190,10 +190,19 @@ screenshot workflow.
   one rhythm for pictures (`_sass/_page.scss`, "ESSAY"). `blockquote.gloss` and the colour
   figures are in `_docs/components.md`.
   An essay's Chinese is a Song face behind Playfair's Latin: the device's Songti on a Mac, else a
-  subset of Noto Serif SC the site carries (`assets/fonts/NotoSerifSC/`, about 120 KB for the few
-  hundred characters the essays use; OFL). After writing or changing a Chinese essay run `npm run fonts:essay` (needs
+  subset of Noto Serif SC the site carries (`assets/fonts/NotoSerifSC/`, about 190 KB for the
+  characters the essays and the Bestiary's fables use; OFL). After writing or changing a Chinese essay run `npm run fonts:essay` (needs
   fonttools and the font's source, see `scripts/essay-font.py`); the gate fails if a character
   is missing from the subset.
+- `bestiary.html` — the Bestiary's door (`/bestiary/`, `_pages/bestiary.md`): its hero, its few
+  words in two languages behind the switch, then a card for every fable in `_bestiary/`, by `number`.
+- `fable.html` — a fable (`_bestiary/*.md`, the collection's default): the photograph of its place as
+  the hero, the archivist's record (number, creature, place, the Chinese names), the story's two
+  texts behind the switch in the essays' faces, and the way on to the fables either side and the
+  Bestiary. The text is brought in from QSDQSB/dolomite-errata-bestiary by
+  `node scripts/bestiary-import.mjs` (between its markers; the front matter is this site's, and the
+  story's design notes are never brought in). A new story: `--new "NN. Title"`, finish the front
+  matter, run it again, then `npm run fonts:essay`. Styles: `_sass/_bestiary.scss`.
 - `splash.html` — hero/landing.
 - `archive.html`, `archive-taxonomy.html` — tag/category archives.
 - `search.html`, `compress.html` — specialised.

@@ -1,7 +1,36 @@
 # Stage 5 · Bestiary
 
-**Status:** idea. No design exists for the Bestiary itself. Its holding page is decided (Q5,
-2026-10-01) and is the next thing here. **Tier:** 2.
+**Status:** building, on the owner's request R024 (2026-11-24): "Read QSDQSB/dolomite-errata-bestiary,
+get the idea of the errata-bestiary project, then consider the scalable and sota premium design option
+to fit it in our site. In this conversation, implement the first two stories". The holding page is
+passed over: the Bestiary itself is built, with its first two fables. The owner's merge is the yes
+([0010](../decisions/0010-the-merge-is-the-yes.md)). **Tier:** 2.
+
+## What is built (2026-11-24)
+
+What the Bestiary is, from its own repository (the questions below, answered by the owner's request
+and the bestiary's `CLAUDE.md`): bilingual fables set in the Dolomites, each one creature through one
+unusual situation, told by a cool archivist; each built on a philosophical idea that is never named.
+
+- **The material** is the bestiary's repository, not this one: `scripts/bestiary-import.mjs` copies a
+  story's English and 中文版 into `_bestiary/<title>.md`, between markers, and never its design notes.
+  The front matter is this site's: the number, the creature, the place, their Chinese names, a line
+  that is a sentence of the story's own, and a photograph of the place from the owner's archive.
+- **The door** (`/bestiary/`, `_layouts/bestiary.html`): its hero, a few words in two languages, then a
+  card for every fable (the `card` piece, 18 px: the scene), the photograph as the cover, the number,
+  place and both titles as the cover line. Two to a row from 1024 px, one on a phone; as many rows as
+  there are fables.
+- **A fable** (`_layouts/fable.html`): the hero, the archivist's record (its number a Didot figure in
+  brass, the creature and place an eyebrow, the Chinese names spaced as a gloss), the story behind the
+  site's switch, its Chinese in the essays' Song (the subset now cut for the fables too), and the
+  onward links to the fables either side and the Bestiary.
+- No new piece: everything is the grammar. What the vocabulary missed is the record, which stays the
+  Bestiary's own.
+
+Waiting on the owner: the Chinese title for 00 (菠萝王冠 is a draft: the bestiary names it in English
+only); the door's few words (drafted from the bestiary's description, and they replace the holding
+page's 施工中 and its emoji); the two photographs (sesto/dscf9401 for Val di Cenere, which is not a
+real valley; siusi/dscf0634 for Alpe di Siusi); story 01's 中文版 is marked a draft in the bestiary.
 
 ## Goal
 
@@ -63,13 +92,15 @@ option; the pick is then also the owner's word on the words.
 **It waits on nothing.** The pieces it may use are built, so it need not wait for stage 2 or stage
 4. Like stages 7 and 8, it moves up whenever the owner wants it.
 
-- [ ] Frame the choice and write `design/choices/bestiary-holding/choice.json` (the lead).
-- [ ] Two or three prototypes, each through the gate, shot at both widths; the choice page published,
-      with a one-line entry in the queue that links to it.
-- [ ] The picked option built on the Photobook shell; the inline styles gone. Tier 2, on the pick.
-- [ ] A journey, `bestiary`: from the masthead the page opens, says what it is, and its way on leads
-      to a page that exists. The row in [`FEATURES.md`](../FEATURES.md) gains it.
-- [ ] A pixel baseline for `/bestiary/` at both widths; a line in the changelog.
+- [-] Frame the choice and write `design/choices/bestiary-holding/choice.json` (the lead). Passed over:
+      the Bestiary was built instead (R024).
+- [-] Two or three prototypes for the holding page. Passed over (R024).
+- [x] Built on the Photobook shell; the inline styles gone (R024, 2026-11-24).
+- [x] A journey, `bestiary`: from the masthead the page opens, a card opens a fable, its switch shows
+      the Chinese, its design notes are not on the page, and its way on leads on and back. The row in
+      [`FEATURES.md`](../FEATURES.md) gains it.
+- [ ] A pixel baseline for `/bestiary/` at both widths, re-captured on the owner's `QSD` (a capture
+      writes to R2). The line in the changelog is written.
 
 Home keeps five doors, so the overflow of Home's Wonders at 320×640 is mended with five
 ([stage 3](03-wayfinding.md)).
