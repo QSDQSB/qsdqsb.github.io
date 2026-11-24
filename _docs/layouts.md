@@ -196,8 +196,8 @@ screenshot workflow.
   is missing from the subset.
 - `bestiary.html` — the Bestiary's door (`/bestiary/`, `_pages/bestiary.md`), on the fables' light
   parchment (its `room:` in the page's front matter: a ground at its meadow's darkness, a dusk wash of aubergine,
-  plum and madder, ivory inks): the hero dissolving along a wandering line onto its own meadow carried on
-  (a reflection, smeared soft) and then a watercolour dusk over the whole page, words and all, dried in patches
+  plum and madder, ivory inks): the hero dissolving along a wandering line onto watercolour that begins in
+  the painting's own foot colours, column by column, and turns to a dusk over the whole page, words and all, dried in patches
   and veins of bare paper (`fable-room.html mode="full"`; the door's inks are checked against its deepest wash); its photograph in the house
   hero (`page__hero.html bare=true`: the picture alone) fading into the paper, its name and one line beneath, any words in two languages behind the
   switch, then a card for every fable in `_bestiary/`, by `number`.

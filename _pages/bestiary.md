@@ -10,9 +10,10 @@ header:
   overlay_position: "56% 12%" # the whole mountain, summit to foot
 # The door's dusk (the owner, 2026-11-24: the light page was incoherent with its painting; then "not similar
 # brightness", "the line shouldn't be recognisable... it should blend carried on from the lower part of the
-# hero image"; reviewed, then rebuilt): the painting's own meadow carries on under it (room.js, the mirror:
-# its meadow band turned over, smeared soft), the hero dissolving along a wandering line (_bestiary.scss),
-# into a ground at the meadow's darkness and a wash drifting from it to aubergine, plum shadow, smoke-violet
+# hero image"; reviewed, then rebuilt; "no blurred version of the picture, watercolour + transparency mask"):
+# the hero dissolving along a wandering line (_bestiary.scss) onto watercolour that begins in the painting's
+# own colours at its foot, column by column (room.js, seamColours: colours only, never the picture), and
+# drifts to a ground at the meadow's darkness and aubergine, plum shadow, smoke-violet
 # and madder (OKLab L .19 to .27), no contrast at the seam, in over a screen, quieter toward the end; one
 # faint alpenglow glaze. Ivory inks, 12.6:1 and above on the lightest of it.
 room:

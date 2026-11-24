@@ -42,8 +42,9 @@ unusual situation, told by a cool archivist; each built on a philosophical idea 
   representative colour from the hero image but follow the hue"): an aubergine ground from its shadows,
   a wash a little above it in its own hue band, ivory inks checked against the lightest wash. Judged
   ugly and abrupt (the owner, 2026-11-24: a straight line, the colour not the picture's), reviewed by an art
-  director, and rebuilt: the meadow carried on under the hero (its reflection, smeared), a wandering
-  dissolve, a ground at the meadow's darkness drifting to aubergine and plum (L .19 to .27).
+  director, and rebuilt: a wandering dissolve onto watercolour that begins in the painting's own foot
+  colours, column by column (first tried as its reflection, smeared: "I don't want blurred version of the
+  picture. It should be watercolour + transparency mask"), a ground at the meadow's darkness drifting to aubergine and plum (L .19 to .27).
 - **The blend is a watercolour bloom** (the owner, 2026-11-24, after three prototypes, bloom, soaked
   fibre and a pool of light, of a blend with "a clear linear pattern": "prefer A and B, no strong opinion
   in between"): the wash dried short of the words, its edge wandering in both axes, a faint broken tide

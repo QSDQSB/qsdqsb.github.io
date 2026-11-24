@@ -57,7 +57,7 @@ precision highp float;
 uniform sampler2D dye; uniform vec2 view; uniform float dpr, mode;
 uniform float wander, colL, colR, edge, edge2, amp, feather, warpA, tide, foot, band;
 uniform vec3 ground;
-uniform float coverBias, rampH;
+uniform float coverBias, rampH, heroH; uniform sampler2D seam; uniform vec3 dyeMean;
 ${GLSL_NOISE}
 vec3 toLin(vec3 c) { return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c)); }
 vec3 toSrgb(vec3 c) { c = clamp(c, 0.0, 1.0); return mix(12.92 * c, 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, c)); }
@@ -113,17 +113,27 @@ void main() {
   D *= 1.0 + 0.22 * fbm(p / 85.0 + 2.0 * r, 4) + 0.05 * gn(p / 2.2);
   // Never on a fable's words: the column and a little past it stay paper, whatever the noise does.
   D *= smoothstep(6.0, 26.0, d0);
-  // The door: no contrast at the hero's foot, where the painting's own meadow carries on (the mirror),
-  // the wash coming in over the first screen below it and quieting toward the page's end.
-  if (mode > 1.5) D *= smoothstep(foot, foot + rampH, p.y) * (1.0 - 0.6 * smoothstep(view.y - 900.0, view.y, p.y));
+  // The door: the wash's patches come in from under the hero's dissolve, in the painting's own colours there,
+  // stronger over the first screen below it and quieter toward the page's end.
+  if (mode > 1.5) D *= smoothstep(foot - 0.3 * heroH, foot + 0.35 * rampH, p.y) * (1.0 - 0.6 * smoothstep(view.y - 900.0, view.y, p.y));
   D = max(D, 0.0);
   // The vat, its layers bent too, so they lie as currents rather than strata.
   vec2 uv = p / view + vec2(0.11, 0.16) * 2.0 * r + vec2(0.0, 0.05 * fbm(p / 900.0 + 9.0, 2));
   uv = 1.0 - abs(1.0 - abs(uv));
   vec3 C = toLin(texture2D(dye, uv).rgb);
+  vec3 base = ground;
+  if (mode > 1.5) {
+    // The door: at the painting's foot the paper is the painting's own colour, column by column (its last
+    // rows, as colours only, never the picture), and the wash's patches are painted in those hues; over a
+    // screen below, both turn to the dusk's ground and palette.
+    vec3 sc = toLin(texture2D(seam, vec2(clamp(p.x / view.x, 0.0, 1.0), 0.5)).rgb);
+    float t = smoothstep(foot - 0.1 * heroH, foot + rampH, p.y);
+    base = mix(sc, ground, t);
+    C = mix(sc * clamp(C / max(dyeMean, vec3(1e-4)), 0.0, 4.0), C, t);
+  }
   // Laid on the paper as pigment is: the paper's light filtered by the dye, as much as there is of it.
-  vec3 T = clamp(C / max(ground, vec3(1e-4)), 0.0, 16.0); // above 1 on a dark ground: the wash glows on it
-  vec3 o = ground * pow(T, vec3(D));
+  vec3 T = clamp(C / max(base, vec3(1e-4)), 0.0, 16.0); // above 1 on a dark ground: the wash glows on it
+  vec3 o = base * pow(T, vec3(D));
   gl_FragColor = vec4(toSrgb(o) + dith, 1.0);
 }`;
 
@@ -185,8 +195,45 @@ function drawDoor(palette, groundHex, seed) {
   const dye = vat(quiet, { shape: 'rect', width: Math.round(W / 2), height: Math.round(Math.min(H, 2400) / 2), seed, calm: 0.45 });
   const out = document.createElement('canvas'); out.width = Math.round(W * dpr); out.height = Math.round(H * dpr);
   out.style.cssText = `position:absolute;left:0;top:0;width:100%;height:${H}px`;
+  const hero = document.querySelector('.page__hero--overlay');
+  const media = hero && hero.querySelector('.page__hero-media');
+  const url = media && (getComputedStyle(media).backgroundImage.match(/url\("?([^")]+)"?\)/) || [])[1];
+  const seamCanvas = document.createElement('canvas'); seamCanvas.width = 64; seamCanvas.height = 1;
+  const sctx = seamCanvas.getContext('2d'); sctx.fillStyle = groundHex; sctx.fillRect(0, 0, 64, 1);
+  const go = () => render(out, dye, seamCanvas, groundHex, seed, dark, hero, W, H, dpr, quiet);
+  if (!url) return go();
+  const img = new Image();
+  img.onload = () => { seamColours(img, hero, media, seamCanvas); go(); };
+  img.onerror = go;
+  img.src = url;
+}
+
+// The painting's last visible rows as 64 colours across the width, each the mean of its column there and
+// softened along the row, so they carry the painting's colour (the tent's dark, the fire's warmth, the
+// meadow) and none of its drawing.
+function seamColours(img, hero, media, seamCanvas) {
+  const box = hero.getBoundingClientRect(), W = box.width, H = box.height;
+  const s = Math.max(W / img.naturalWidth, H / img.naturalHeight), bw = img.naturalWidth * s, bh = img.naturalHeight * s;
+  const [px, py] = getComputedStyle(media).backgroundPosition.split(' ').map((v, i) => (v.endsWith('%') ? (parseFloat(v) / 100) * ((i ? H : W) - (i ? bh : bw)) : parseFloat(v)));
+  const c = document.createElement('canvas'); c.width = 64; c.height = 16;
+  const ctx = c.getContext('2d');
+  // The band from 70% to 86% of the hero's height: what shows as the painting dissolves.
+  const y0 = 0.7 * H, y1 = 0.86 * H;
+  ctx.drawImage(img, -px / s, (y0 - py) / s, W / s, (y1 - y0) / s, 0, 0, 64, 16);
+  const d = ctx.getImageData(0, 0, 64, 16).data, col = [];
+  for (let x = 0; x < 64; x++) { const m = [0, 0, 0]; for (let y = 0; y < 16; y++) for (let k = 0; k < 3; k++) m[k] += lin(d[(y * 64 + x) * 4 + k]); col.push(m.map((v) => v / 16)); }
+  const out = seamCanvas.getContext('2d').createImageData(64, 1);
+  for (let x = 0; x < 64; x++) {
+    const m = [0, 0, 0]; let w = 0;
+    for (let k = -6; k <= 6; k++) { const xi = Math.min(63, Math.max(0, x + k)), wi = Math.exp(-(k * k) / 18); for (let j = 0; j < 3; j++) m[j] += col[xi][j] * wi; w += wi; }
+    for (let j = 0; j < 3; j++) out.data[x * 4 + j] = Math.round(gam(m[j] / w)); out.data[x * 4 + 3] = 255;
+  }
+  seamCanvas.getContext('2d').putImageData(out, 0, 0);
+}
+
+function render(out, dye, seamCanvas, groundHex, seed, dark, hero, W, H, dpr, quiet) {
   const r = gl2(out.width, out.height);
-  if (!r) return; // no WebGL: the plain parchment
+  if (!r) return; // no WebGL: the plain ground
   sheet.append(out);
   const { gl, c, u } = r;
   const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -197,48 +244,23 @@ function drawDoor(palette, groundHex, seed) {
   const o = dark ? { feather: 220, amp: 40, edge2: 40, warpA: 30, tide: 0.1, coverBias: 0.08, rampH: innerHeight } : { feather: 150, amp: 60, edge2: 40, warpA: 30, tide: 0.5, coverBias: 0.08, rampH: 0 };
   for (const k of Object.keys(o)) gl.uniform1f(u(k), o[k]);
   gl.uniform3f(u('ground'), ...hex(groundHex).map(lin));
-  const hero = document.querySelector('.page__hero--overlay');
   gl.uniform1f(u('foot'), hero ? hero.getBoundingClientRect().bottom + scrollY : 0);
+  gl.uniform1f(u('heroH'), hero ? hero.getBoundingClientRect().height : 0);
+  const mean = [0, 0, 0]; let tw = 0;
+  for (const p of quiet) { const c = hex(p.hex).map(lin), w = p.pc || 1; for (let k = 0; k < 3; k++) mean[k] += c[k] * w; tw += w; }
+  gl.uniform3f(u('dyeMean'), ...mean.map((v) => v / tw));
+  const st = gl.createTexture(); gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, st);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, seamCanvas);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.uniform1i(u('seam'), 1); gl.activeTexture(gl.TEXTURE0);
   c.width = out.width; c.height = out.height; gl.viewport(0, 0, out.width, out.height);
   gl.uniform2f(u('view'), W, H); gl.uniform1f(u('mode'), 2);
   gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   out.getContext('2d').drawImage(c, 0, 0);
   gl.getExtension('WEBGL_lose_context')?.loseContext();
-  if (hero && dark) mirror(hero);
 }
 
-// The meadow carries on: under the hero, its own painting turned over and softened, so every column goes on
-// in its own colour (the tent's dark, the fire's warmth, the stone's grey) and fades into the wash over half
-// a screen. The hero's straight dissolve then lands on the painting itself and cannot be found.
-function mirror(hero) {
-  const media = hero.querySelector('.page__hero-media');
-  const url = media && (getComputedStyle(media).backgroundImage.match(/url\("?([^")]+)"?\)/) || [])[1];
-  if (!url) return;
-  const img = new Image();
-  img.onload = () => {
-    const box = hero.getBoundingClientRect(), W = box.width, H = box.height, pad = 60;
-    const s = Math.max(W / img.naturalWidth, H / img.naturalHeight), bw = img.naturalWidth * s, bh = img.naturalHeight * s;
-    const [px, py] = getComputedStyle(media).backgroundPosition.split(' ').map((v, i) => (v.endsWith('%') ? (parseFloat(v) / 100) * ((i ? H : W) - (i ? bh : bw)) : parseFloat(v)));
-    // Only the meadow carries on: the band of the painting under its peaks (from b0 to b1 of the hero's
-    // height), turned over and drawn long, from where the hero's fade begins, so the reflection meets the
-    // painting row for row and no mountain or sky is carried down into it.
-    // Drawn tiny and wide-soft (a few dozen pixels across, more down), so the browser's own scaling smears it
-    // sideways into a haze of the meadow's colours, never upright stripes of its tent and figures.
-    const b0 = 0.44 * H, b1 = 0.7 * H, len = 1.05 * H, c = document.createElement('canvas');
-    c.width = 48; c.height = Math.max(24, Math.round(len / 12));
-    const ctx = c.getContext('2d');
-    // Source rows b1 → b0 of the drawn cover map to canvas rows 0 → len.
-    const sy = (b0 - py) / s, sh = (b1 - b0) / s, sx = -(px + pad) / s, sw = (W + 2 * pad) / s;
-    ctx.translate(0, c.height); ctx.scale(1, -1);
-    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, c.width, c.height);
-    const top = (H - b1) / len;
-    const mask = `linear-gradient(to bottom, transparent 0%, #000 ${Math.max(6, top * 100).toFixed(1)}%, rgba(0,0,0,.75) ${((top + (1 - top) * 0.3) * 100).toFixed(1)}%, rgba(0,0,0,.32) ${((top + (1 - top) * 0.6) * 100).toFixed(1)}%, rgba(0,0,0,.08) ${((top + (1 - top) * 0.84) * 100).toFixed(1)}%, transparent 100%)`;
-    c.className = 'fable-mirror';
-    c.style.cssText = `position:absolute;left:${-pad}px;top:${box.top + scrollY + b1}px;width:${W + 2 * pad}px;height:${len}px;opacity:.55;filter:blur(28px);-webkit-mask-image:${mask};mask-image:${mask};`;
-    sheet.append(c);
-  };
-  img.src = url;
-}
 
 function draw() {
   const css = getComputedStyle(document.documentElement);
