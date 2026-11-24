@@ -14,17 +14,23 @@ unusual situation, told by a cool archivist; each built on a philosophical idea 
 
 - **The material** is the bestiary's repository, not this one: `scripts/bestiary-import.mjs` copies a
   story's English and 中文版 into `_bestiary/<title>.md`, between markers, and never its design notes.
-  The front matter is this site's: the number, the creature, the place, their Chinese names, a line
-  that is a sentence of the story's own, and a photograph of the place from the owner's archive.
-- **The door** (`/bestiary/`, `_layouts/bestiary.html`): its hero, a few words in two languages, then a
-  card for every fable (the `card` piece, 18 px: the scene), the photograph as the cover, the number,
-  place and both titles as the cover line. Two to a row from 1024 px, one on a phone; as many rows as
-  there are fables.
-- **A fable** (`_layouts/fable.html`): the hero, its title and line, then the story at once behind
-  the site's switch, its Chinese in the essays' Song (the subset now cut for the fables too), and the
-  onward links to the fables either side and the Bestiary.
-- No new piece: everything is the grammar. What the vocabulary missed is the record, which stays the
-  Bestiary's own.
+  The front matter is this site's: the number, the creature and place (kept for search and the record,
+  never shown under a title), their Chinese names, the cover plate (R2), and the `room:`.
+- **The whole Bestiary is light parchment (羊皮纸), from its door on** (the owner, 2026-11-24).
+- **The door** (`/bestiary/`, `_layouts/bestiary.html`): its photograph across the window fading into
+  the parchment, its name and one line beneath, then a card for every fable (the `card` piece: the
+  cover plate, the number, both titles as the cover line). Two to a row from 1024 px, one on a phone.
+- **A fable** (`_layouts/fable.html`): its cover plate across the window, dissolving into one paper;
+  the title and the Chinese title in 宋体; the story behind the site's switch (the Chinese set on its
+  grid); the way on (the Bestiary always in the middle). The paper is a parchment tinted by the cover
+  (`scripts/bestiary-room.py` writes each fable's `room:`: ground, four contrast-checked inks, the
+  palette weighted to the cover's foot). **Beside the words, only where the window leaves at least
+  160 px each side**, a room dyed quietly from that palette by the vat (no accent, chroma held low), the
+  paper eased into it; **on a phone, paper edge to edge, no dye** (the owner, 2026-11-24). **The texture
+  is very faint** (the owner, 2026-11-24, "too strong" three times). The room, paper and relief are
+  `_includes/fable-room.html` and `assets/js/bestiary/room.js`, shared by the door and the fables.
+- The blend between the room and the paper is still being brainstormed (the owner, 2026-11-24: "a
+  clear linear pattern"): prototypes of a watercolour bloom and of dye soaked into paper fibre.
 
 **The owner, 2026-11-24, in the same conversation** (the framework is the bestiary's
 `art/README.md`, uncommitted while it is brainstormed):
@@ -45,16 +51,17 @@ unusual situation, told by a cool archivist; each built on a philosophical idea 
   paper room and a free layout: "I like the card design... use the latest soft light setup for the
   content"). The fable: cover across the window, its foot fading into a room dyed by the vat from the
   cover's lower part (weighted to the foot: "the more bottom the pixel is the more weighted"), a sheet
-  of the cover's own light colour ("we don't have to use 羊皮纸色... as long as the contrast works")
-  eased in from the sides with no edge, Reverie's relief over the whole background, 宋体 for the
+  of the cover's own light colour eased in from the sides with no edge (later: parchment, above),
+  Reverie's relief over the whole background (later: very faint), 宋体 for the
   Chinese. `scripts/bestiary-room.py` writes each fable's `room:`.
 - **The plates live in R2, never git** (the owner): the site's `bestiary/` gallery, staged in the
   git-ignored `photos/bestiary/` until the owner's `QSD`; fables to name their plate, the soft edge a
   CSS mask.
 
-Waiting on the owner: (the titles and the door's words are answered above; what follows is older) the door's few words (drafted from the bestiary's description, and they replace the holding
-page's 施工中 and its emoji); the two photographs (sesto/dscf9401 for Val di Cenere, which is not a
-real valley; siusi/dscf0634 for Alpe di Siusi); story 01's 中文版 is marked a draft in the bestiary.
+Waiting on the owner: the plates' upload to R2 (their `QSD`; until then the covers resolve to the
+older photographs sesto/dscf9401 and siusi/dscf0634); the door's one line, "An errata of creatures."
+(keep or strike); the masthead pill over the pale pages; the door's photograph among paintings; the
+blend prototypes; story 01's 中文版 is marked a draft in the bestiary.
 
 ## Goal
 

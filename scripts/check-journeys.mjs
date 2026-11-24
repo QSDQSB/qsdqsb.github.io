@@ -221,6 +221,18 @@ const JOURNEYS = [
     must(await page.locator('.fable__onward a[rel="prev"]').count() === 1, `${nextHref} has no way back to the fable before it`);
     const home = page.locator('.fable__onward a[href$="/bestiary/"]');
     await Promise.all([page.waitForURL('**/bestiary/'), home.click()]);
+    // On a phone there is no room beside the words: no dye, paper edge to edge (the owner, 2026-11-24),
+    // and the way on in two rows, the fables either side above the Bestiary.
+    const size = page.viewportSize();
+    await page.setViewportSize({ width: 390, height: 844 });
+    await go(nextHref);
+    const phone = await page.evaluate(() => {
+      const top = (q) => document.querySelector(q)?.getBoundingClientRect().top ?? NaN;
+      return { dye: !!document.querySelector('.fable-room canvas'), sheet: !!document.querySelector('.fable-sheet svg'), prev: top('.fable__onward a[rel="prev"]'), index: top('.fable__onward a[href$="/bestiary/"]') };
+    });
+    if (size) await page.setViewportSize(size);
+    must(!phone.dye && phone.sheet, `on a phone the fable's room is ${JSON.stringify(phone)}, not paper edge to edge`);
+    must(phone.prev < phone.index, `on a phone the way on is not in two rows (${JSON.stringify(phone)})`);
   } },
 
   { id: 'book', name: 'A print opens in the lightbox, steps, and Back returns to the book', async run({ page, go }) {

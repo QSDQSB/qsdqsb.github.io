@@ -5,11 +5,13 @@
    The whole Bestiary is light, from its door on (the owner, 2026-11-24).
    The door is the plain parchment sheet, its photograph across the top as a
    fable's cover is, and its cards made of the grammar (_components.scss):
-   the eyebrow, the display title, the card itself. A fable is its own room, the Bestiary's one signature (the owner, 2026-11-24): its
-   cover across the window, a room dyed from the cover's foot by the site's
-   vat, a sheet of the cover's own pale ground eased in from the sides, and
-   the house's surface relief over both. The Latin in Playfair, the Chinese
-   in 宋体 (the device's Song, else the essays' Noto Serif SC subset).
+   the eyebrow, the display title, the card itself. A fable is its own room,
+   the Bestiary's one signature (the owner, 2026-11-24): its cover across the
+   window dissolving into a parchment tinted by the cover; beside the words,
+   where the window leaves room, a room dyed quietly from the cover's foot by
+   the site's vat, the paper eased into it; the house's surface relief,
+   faint, over both. The Latin in Playfair, the Chinese in 宋体 (the device's
+   Song, else the essays' Noto Serif SC subset).
    Breakpoints through _responsive-policy.scss only.
    ========================================================================== */
 
@@ -284,7 +286,7 @@ body.fable-page #main.fable-main {
     box-shadow: none;
 
     &:hover { background: none; color: var(--fable-ink); }
-    &:focus-visible { @include brass-focus; }
+    &:focus-visible { @include brass-focus; outline-color: var(--fable-brass); } // the house's brass is too pale on parchment
     &[lang="zh"] { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; font-size: 14px; letter-spacing: 0; } // a Song glyph at 11px is a smudge
   }
 
@@ -324,6 +326,9 @@ body.fable-page #main.fable-main {
     a[rel="next"] { grid-row: 1; grid-column: 2; text-align: right; }
   }
 }
+
+// The door's cards take focus in the page's brass: the house's is too pale on parchment (1.3:1).
+body.fable-page .bestiary-card:focus-visible { outline-color: var(--fable-brass); }
 
 // The site's last line, in the page's inks.
 body.fable-page .site-colophon {

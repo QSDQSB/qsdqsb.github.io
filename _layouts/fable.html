@@ -3,9 +3,9 @@ layout: default
 ---
 {%- comment -%}
   A fable of the Bestiary (_bestiary/*.md), in its own room (the owner, 2026-11-24): its cover across
-  the whole window, its foot fading into a room dyed from the cover's lower part (assets/js/bestiary/room.js,
-  the site's dye vat); in the middle a sheet of the cover's own pale ground, eased in from the sides; one
-  relief over the room and the sheet alike (the house's surface-relief, as Reverie's wall). On it the
+  the whole window, dissolving into a parchment tinted by the cover; beside the words, where the window
+  leaves room, a room dyed quietly from the cover's lower part by the site's vat, the paper eased into it;
+  a faint relief over both (_includes/fable-room.html, assets/js/bestiary/room.js). On the paper the
   title, its Chinese title, the story in two languages behind the site's switch, and the way on. The
   colours are the front matter's `room:` (scripts/bestiary-room.py), each ink checked against the
   ground. No line under the title and no record of creature or place (the owner, 2026-11-24).
@@ -24,7 +24,7 @@ layout: default
 {%- assign room_seed = 'bestiary/' | append: page.slug -%}
 {% include fable-room.html room=page.room seed=room_seed %}
 <div id="main" role="main" class="fable-main">
-  <div class="fable-cover" role="img" aria-label="{{ page.title | escape }}" style="--cover: url('{{ page.cover }}/2560.webp'); --cover-sm: url('{{ page.cover }}/1280.webp'); --cover-pos: {{ page.cover_position | default: '50% 50%' }}"></div>
+  <div class="fable-cover" aria-hidden="true" style="--cover: url('{{ page.cover }}/2560.webp'); --cover-sm: url('{{ page.cover }}/1280.webp'); --cover-pos: {{ page.cover_position | default: '50% 50%' }}"></div>
   <article class="fable" itemscope itemtype="http://schema.org/ShortStory">
     <header class="fable__head">
       <h1 class="fable__title" itemprop="headline">{{ page.title }}</h1>

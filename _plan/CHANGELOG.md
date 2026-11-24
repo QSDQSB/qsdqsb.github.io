@@ -11,17 +11,9 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
-- 2026-11-24 · The Milk Plate's cover shows the whole mountain, summit to foot · tier 0
-- 2026-11-24 · The Milk Plate has its new cover framed with its plate clear of the fade, and its paper and inks drawn from it (shown once the plate is uploaded) · tier 0
-- 2026-11-24 · A fable's room no longer carries its cover's accent and holds every colour to a quiet chroma, so no flank of it reads as a block of colour · tier 0
-- 2026-11-24 · A fable's cover now dissolves into one paper across the window before the room's colours come in beside the words, the page ends on paper, the way on fits a phone (the fable before and after on one row, the Bestiary beneath), and the door's photograph fades on its meadow, not across the lake · tier 0
-- 2026-11-24 · The Bestiary is light from its door on: the door stands on parchment with its photograph fading into it, each fable's paper is a parchment tinted by its cover, the room beside the words is the cover's colours as a pale field (and only where the window leaves room for it, so a phone reads on paper edge to edge), the cover keeps its subject clear of the fade, the paper's texture is faint, and the Chinese is set on its grid · tier 0
-- 2026-11-24 · A fable's cover now dissolves into the room on an eased curve, with no line where the painting ends, and the paper's relief is quieter still · tier 0
-- 2026-11-24 · A fable's paper now runs the whole page long, so the site's last line stands on it and can be read (it had sunk under the room's dye), the paper's relief is half as deep, and the empty field below the way on is gone · tier 0
-- 2026-11-24 · A fable opens in its own room: its painting across the window fades into a room dyed from the painting's foot, the story on a sheet of the painting's own light colour with no edge to it, one plaster texture over all, the Chinese in 宋体 · tier 2
-- 2026-11-24 · The Bestiary's door opens straight onto its fables, and a fable opens on its title alone, with its Chinese title (菠萝王冠, 牛奶碟) on the door · tier 2
+- 2026-11-24 · The Bestiary is open, light parchment from its door on: /bestiary/ shows its photograph fading into the paper and a card for each fable; its first two fables, The Pineapple Crown (菠萝王冠) and The Milk Plate (牛奶碟), open on their painted cover dissolving into a parchment tinted by it, on the title alone, with the story in English and Chinese (宋体, set on its grid) behind the language switch and ways on between them · tier 2
+- 2026-11-24 · Beside a fable's words, where the window leaves room for it, a quiet room dyed from its cover's colours, the paper easing into it; on a phone the paper runs edge to edge; the paper's texture is faint · tier 2
 - 2026-11-24 · Search finds the Bestiary's fables and names each one a Fable · tier 0
-- 2026-11-24 · The Bestiary is open: /bestiary/ shows a card for each fable, the photograph of its place as the cover, and its first two fables, The Pineapple Crown and The Milk Plate, each in English and Chinese behind the language switch, with ways on between them · tier 2
 - 2026-11-24 · A Subscribe page (/subscribe/, and in the site's last line): the subscribe slip opened into the page under About's cover, its address field framed in brass, holding three past letters as the mail showed them, letterhead, card, date, lines and Onward; which three is the owner's choice in _data/letters.yml (R023) · tier 2
 - 2026-11-24 · A page with no cover starts clear of the floating menu (Terms, the CV, the Bestiary), and the site's last line of links centres on the content beside the author's column, not on the window (posts, the archives, About) · tier 2
 - 2026-11-22 · A letter for a post now opens on its card, cover with title and line as a voyage's, without the palette; every letter dates itself DD.MM.YYYY (R021) · tier 2
