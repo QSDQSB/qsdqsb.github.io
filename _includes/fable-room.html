@@ -4,11 +4,11 @@
   door's its parchment), the dye of the cover's palette behind, the sheet of the ground over it, and one
   faint relief over both (assets/js/bestiary/room.js, _sass/_bestiary.scss "A fable: its own room").
   They stand outside #main, which the shell lifts above the page's last line, so that line is drawn on
-  the sheet. Pass room= and seed=.
+  the sheet. Pass room= and seed=, and mode="full" for a wash over the whole page (the door).
 {%- endcomment -%}
 {%- assign r = include.room -%}
 <style>:root { --fable-ground: {{ r.ground | default: '#efe6d2' }}; --fable-ink: {{ r.ink | default: '#2b2620' }}; --fable-ink-2: {{ r.ink2 | default: '#4f483d' }}; --fable-ink-3: {{ r.ink3 | default: '#655c4e' }}; --fable-brass: {{ r.brass | default: '#7a5b2b' }}; }</style>
-<div class="fable-room" aria-hidden="true" data-fable-room data-seed="{{ include.seed }}" data-palette="{{ r.palette | default: empty | jsonify | escape }}"></div>
+<div class="fable-room" aria-hidden="true" data-fable-room data-seed="{{ include.seed }}"{% if include.mode %} data-mode="{{ include.mode }}"{% endif %} data-palette="{{ r.palette | default: empty | jsonify | escape }}"></div>
 <div class="fable-sheet" aria-hidden="true" data-fable-sheet></div>
 <div class="fable-relief" aria-hidden="true"></div>
 <script type="module" src="{{ '/assets/js/bestiary/room.js' | relative_url }}"></script>

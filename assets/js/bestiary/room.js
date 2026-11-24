@@ -57,7 +57,10 @@ precision highp float;
 uniform sampler2D dye; uniform vec2 view; uniform float dpr, mode;
 uniform float wander, colL, colR, edge, edge2, amp, feather, warpA, tide, foot, band;
 uniform vec3 ground;
+uniform vec4 headBox, footBox; uniform float coverBias, clearR;
 ${GLSL_NOISE}
+// Signed distance to a box (left, top, right, bottom), in CSS pixels: below zero inside it.
+float sdBox(vec2 p, vec4 b) { vec2 c = 0.5 * (b.xy + b.zw), h = 0.5 * (b.zw - b.xy); vec2 q = abs(p - c) - h; return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0); }
 vec3 toLin(vec3 c) { return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c)); }
 vec3 toSrgb(vec3 c) { c = clamp(c, 0.0, 1.0); return mix(12.92 * c, 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, c)); }
 void main() {
@@ -65,13 +68,13 @@ void main() {
   // Two triangular-dither values, a pixel's own, so the long thin gradients never step in 8 bits.
   float dith = (hash(gl_FragCoord.xy + 3.7) + hash(gl_FragCoord.yx + 9.1) - 1.0) / 255.0;
   // The column of words and a little past it: the ground, and nothing to work out.
-  if (mode > 0.5 && p.y < foot - band * 0.8) { gl_FragColor = vec4(toSrgb(ground), 1.0); return; }
+  if (mode > 0.5 && mode < 1.5 && p.y < foot - band * 0.8) { gl_FragColor = vec4(toSrgb(ground), 1.0); return; }
   if (mode < 0.5 && max(colL - p.x, p.x - colR) < 6.0) { gl_FragColor = vec4(toSrgb(ground) + dith, 1.0); return; }
   // The warp: broad, then broad again through itself.
   vec2 s = p / 520.0;
   vec2 q = vec2(fbm(s, 3), fbm(s + vec2(5.2, 1.3), 3));
   vec2 r = vec2(fbm(s + 2.4 * q + vec2(1.7, 9.2), 4), fbm(s + 2.4 * q + vec2(8.3, 2.8), 4));
-  if (mode > 0.5) {
+  if (mode > 0.5 && mode < 1.5) {
     // The paper under the cover's foot: whole, then thinning out downward along a wandering line.
     float y = p.y + band * 0.55 * fbm(vec2(p.x / 300.0, 3.0) + r, 5) + band * 0.18 * r.y;
     float t = clamp((y - foot) / band, 0.0, 1.0);
@@ -80,12 +83,23 @@ void main() {
     gl_FragColor = vec4(toSrgb(ground) * a, a);
     return;
   }
-  // How far outward from the column of words, measured at a bent position.
-  vec2 pw = p + warpA * 2.0 * r;
-  float d0 = max(colL - p.x, p.x - colR);
-  float d = max(colL - pw.x, pw.x - colR);
-  // The wash thins toward the words over a broad margin, its line bent only gently (F1 wide).
-  float e1 = edge + wander * smoothstep(-0.22, 0.22, fbm(p / 560.0 + 0.5 * r + 4.4, 2)) + amp * 0.5 * fbm(p / 300.0 + r, 3);
+  float d0, d, e1;
+  if (mode > 1.5) {
+    // The door: the wash over the whole page, dried in broad patches and clearings. Its "distance" is
+    // how far inside a patch a point lies, so the same thinning, dried edge and tide line follow. Round
+    // the words (the name and its line, the site's last line) it only thins, softly and over a margin
+    // bent by noise, with no dried edge there: the words are not cut out of it, it fades from them.
+    float clear = min(sdBox(p, headBox), sdBox(p, footBox)) + 0.6 * clearR * fbm(p / 210.0 + r + 6.3, 3);
+    float cover = fbm(p / 640.0 + 1.3 * r + 2.1, 4) + coverBias;
+    d0 = clear; d = cover * 420.0 + warpA * 2.0 * r.x; e1 = 0.0;
+  } else {
+    // How far outward from the column of words, measured at a bent position.
+    vec2 pw = p + warpA * 2.0 * r;
+    d0 = max(colL - p.x, p.x - colR);
+    d = max(colL - pw.x, pw.x - colR);
+    // The wash thins toward the words over a broad margin, its line bent only gently (F1 wide).
+    e1 = edge + wander * smoothstep(-0.22, 0.22, fbm(p / 560.0 + 0.5 * r + 4.4, 2)) + amp * 0.5 * fbm(p / 300.0 + r, 3);
+  }
   float u1 = clamp((d - e1) / feather * 0.5 + 0.5, 0.0, 1.0);
   float D1 = u1 * u1 * u1 * (u1 * (u1 * 6.0 - 15.0) + 10.0);
   // Where the water stopped: a line that wanders by a finer noise bent by the warp, cutting the wash only
@@ -101,8 +115,9 @@ void main() {
   D *= 1.0 + tide * exp(-at * at) * smoothstep(-0.05, 0.3, fbm(p / 110.0 + r * 1.5 + 7.1, 3));
   // The dye's own unevenness: pooled here, thin there, and the paper's tooth under it.
   D *= 1.0 + 0.22 * fbm(p / 85.0 + 2.0 * r, 4) + 0.05 * gn(p / 2.2);
-  // Never on the words: the column and a little past it stay paper, whatever the noise does.
-  D *= smoothstep(6.0, 26.0, d0);
+  // Never on the words: the column (or, on the door, the name and the last line) and a little past it
+  // stay paper, whatever the noise does.
+  D *= mode > 1.5 ? smoothstep(8.0, clearR, d0) : smoothstep(6.0, 26.0, d0);
   D = max(D, 0.0);
   // The vat, its layers bent too, so they lie as currents rather than strata.
   vec2 uv = p / view + vec2(0.11, 0.16) * 2.0 * r + vec2(0.0, 0.05 * fbm(p / 900.0 + 9.0, 2));
@@ -153,6 +168,53 @@ function washFallback(ctx, W, H, g, o) {
 const room = document.querySelector('[data-fable-room]');
 const sheet = document.querySelector('[data-fable-sheet]');
 
+// The door's wash (`data-mode="full"`, the door's room): the photograph's colours over the whole page below
+// its hero, a canvas the page's height in the sheet, so its clearings stay round the words as they scroll.
+function drawDoor(palette, groundHex, seed) {
+  const W = innerWidth, H = document.documentElement.scrollHeight;
+  const dpr = Math.min(1.25, devicePixelRatio || 1, 4000 / H);
+  const G = oklab(groundHex)[0];
+  // The photograph's own colours, its blue included (the door's magic is its dusk), held as quiet as a room.
+  const quiet = palette.map((p) => {
+    const [L, a, b] = oklab(p.hex);
+    const c = Math.hypot(a, b), k = Math.min(0.8, c ? 0.035 / c : 0);
+    return { ...p, accent: false, hex: toHex(fromOklab([G - 0.09 - 0.05 * (1 - L), a * k, b * k])) };
+  });
+  const dye = vat(quiet, { shape: 'rect', width: Math.round(W / 2), height: Math.round(Math.min(H, 2400) / 2), seed, calm: 0.45 });
+  // The words' own extent, not their blocks' (a block runs the page's width and would clear a whole band).
+  const box = (q) => {
+    const e = document.querySelector(q), b = [1e4, 1e4, -1e4, -1e4];
+    if (!e) return [-1e4, -1e4, -1e4, -1e4];
+    const walk = document.createTreeWalker(e, NodeFilter.SHOW_TEXT), rg = document.createRange();
+    for (let t = walk.nextNode(); t; t = walk.nextNode()) {
+      if (!t.textContent.trim()) continue;
+      rg.selectNodeContents(t);
+      for (const r of rg.getClientRects()) { b[0] = Math.min(b[0], r.left); b[1] = Math.min(b[1], r.top + scrollY); b[2] = Math.max(b[2], r.right); b[3] = Math.max(b[3], r.bottom + scrollY); }
+    }
+    return b;
+  };
+  const out = document.createElement('canvas'); out.width = Math.round(W * dpr); out.height = Math.round(H * dpr);
+  out.style.cssText = `position:absolute;left:0;top:0;width:100%;height:${H}px`;
+  const r = gl2(out.width, out.height);
+  if (!r) return; // no WebGL: the plain parchment
+  sheet.append(out);
+  const { gl, c, u } = r;
+  const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, dye);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.uniform1i(u('dye'), 0); gl.uniform1f(u('dpr'), dpr); gl.uniform1f(u('seed'), seed % 997);
+  const o = { feather: 150, amp: 60, edge2: 40, warpA: 30, tide: 0.5, coverBias: 0.3, clearR: 170 };
+  for (const k of Object.keys(o)) gl.uniform1f(u(k), o[k]);
+  gl.uniform4f(u('headBox'), ...box('.bestiary__head')); gl.uniform4f(u('footBox'), ...box('.site-colophon__links'));
+  gl.uniform3f(u('ground'), ...hex(groundHex).map(lin));
+  c.width = out.width; c.height = out.height; gl.viewport(0, 0, out.width, out.height);
+  gl.uniform2f(u('view'), W, H); gl.uniform1f(u('mode'), 2);
+  gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  out.getContext('2d').drawImage(c, 0, 0);
+  gl.getExtension('WEBGL_lose_context')?.loseContext();
+}
+
 function draw() {
   const css = getComputedStyle(document.documentElement);
   const groundHex = css.getPropertyValue('--fable-ground').trim();
@@ -165,6 +227,7 @@ function draw() {
   const seed = seedOf(room.dataset.seed || 'bestiary');
 
   room.replaceChildren(); sheet.replaceChildren();
+  if (room.dataset.mode === 'full') { sheet.style.background = 'var(--fable-ground)'; if (palette.length) drawDoor(palette, groundHex, seed); return; }
   sheet.style.background = roomy ? '' : 'var(--fable-ground)';
   if (!roomy) return;
 

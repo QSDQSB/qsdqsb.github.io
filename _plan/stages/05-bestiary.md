@@ -29,6 +29,10 @@ unusual situation, told by a cool archivist; each built on a philosophical idea 
   paper eased into it; **on a phone, paper edge to edge, no dye** (the owner, 2026-11-24). **The texture
   is very faint** (the owner, 2026-11-24, "too strong" three times). The room, paper and relief are
   `_includes/fable-room.html` and `assets/js/bestiary/room.js`, shared by the door and the fables.
+- **The door is washed in watercolour** (the owner, 2026-11-24: "use watercolours with the background's
+  colour... a magical fable-like Dolomites vibe... can span on the full background"): the photograph's
+  whole-image palette, its blue kept, poured over the whole page below the hero, dried in patches and
+  thinning softly (no dried edge) round the name and the site's last line.
 - **The blend is a watercolour bloom** (the owner, 2026-11-24, after three prototypes, bloom, soaked
   fibre and a pool of light, of a blend with "a clear linear pattern": "prefer A and B, no strong opinion
   in between"): the wash dried short of the words, its edge wandering in both axes, a faint broken tide

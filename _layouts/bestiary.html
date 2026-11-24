@@ -12,7 +12,7 @@ layout: default
 {%- endcomment -%}
 {% include base_path %}
 {%- assign fables = site.bestiary | sort: "number" -%}
-{% include fable-room.html room=page.room seed="bestiary" %}
+{% include fable-room.html room=page.room seed="bestiary" mode="full" %}
 {% include page__hero.html bare=true %}
 <div id="main" role="main" class="fable-main">
   <header class="fable__head bestiary__head">

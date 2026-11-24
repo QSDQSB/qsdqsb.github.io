@@ -136,6 +136,9 @@
    the cover and the words. The sheet and the relief stand outside #main, so the site's last line, which
    comes after them, is drawn over them and on the sheet, not under them. */
 
+// The page under the page: what an over-scroll or a last half-row shows, parchment and not the site's black.
+html:has(body.fable-page) { background: var(--fable-ground); }
+
 body.fable-page {
   position: relative; // the sheet's frame: the whole page, so the site's last line stands on paper too
   background: var(--fable-ground);
