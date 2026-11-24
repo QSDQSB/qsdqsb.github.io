@@ -8,18 +8,18 @@ place: "Alpe di Siusi"
 place_zh: "休斯高原"
 seo_description: "The Milk Plate, a fable of QSD's Dolomiti Errata Bestiary: a tabby that crosses Alpe di Siusi every day, an old herdsman, and a plate of milk on a grey stone. In English and Chinese."
 header:
-  overlay_image: /images/bestiary/the-milk-plate.webp # its cover plate, the oil painting
-  overlay_position: "56% 12%" # the whole Sassolungo, summit to foot; the plate may fall to the fade (the owner, 2026-11-24)
+  overlay_image: /images/bestiary/the-milk-plate.webp # its cover plate: the tabby, the plate and the tent in the mist
+  overlay_position: "60% 78%" # the tabby and its plate, the peaks in the mist above
 cover: /images/bestiary/the-milk-plate # the plate, committed for now (the owner, 2026-11-24): .webp and -960.webp
 
 source: "stories/01. The Milk Plate.md"
 room: # from its cover by scripts/bestiary-room.py: the dye, the ground and the inks (contrast-checked)
-  ground: "#f8e8d8"
-  ink: "#29261f"
-  ink2: "#504d45"
-  ink3: "#6c6960"
+  ground: "#f0ebdf"
+  ink: "#2c2518"
+  ink2: "#544c3d"
+  ink3: "#706858"
   brass: "#816335"
-  palette: [{"hex": "#1b1811", "pc": 35.6}, {"hex": "#373028", "pc": 17.0}, {"hex": "#947561", "pc": 7.3, "accent": true}, {"hex": "#655348", "pc": 6.3}, {"hex": "#211d15", "pc": 33.9}]
+  palette: [{"hex": "#312a1c", "pc": 38.2}, {"hex": "#524a3e", "pc": 22.4}, {"hex": "#79746c", "pc": 10.7, "accent": true}, {"hex": "#959392", "pc": 8.3}, {"hex": "#4d4028", "pc": 20.4}]
 ---
 <!-- bestiary:text · from the bestiary's repository by scripts/bestiary-import.mjs: edit the story there, not here -->
 <div data-bilingual>
