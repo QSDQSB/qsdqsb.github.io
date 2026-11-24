@@ -119,10 +119,13 @@
 
 /* A fable: its own room
    ==========================================================================
-   Painted in the order the elements come (none sets a z-index): the room, fixed behind; then, in
-   #main, the sheet, the relief over both, the cover over the relief, and the words over all. */
+   Painted in the order the elements come (none sets a z-index): the room, fixed behind; the sheet;
+   the relief over both; then #main, which the shell lifts above the page's last line (z-index 8), with
+   the cover and the words. The sheet and the relief stand outside #main, so the site's last line, which
+   comes after them, is drawn over them and on the sheet, not under them. */
 
 body.fable-page {
+  position: relative; // the sheet's frame: the whole page, so the site's last line stands on paper too
   background: var(--fable-ground);
   color: var(--fable-ink);
 }
@@ -140,31 +143,33 @@ body.fable-page {
 // The cover runs up under the floating menu, as a hero does: no room kept for the bar above it.
 body.fable-page #main.fable-main {
   display: block;
-  position: relative;
   max-width: none;
   padding: 0;
 }
 
-// The sheet: the page's ground, eased in from the sides; its head comes in softly under the cover's foot.
+// The sheet: the page's ground, eased in from the sides, the whole page long (its frame is the body), so
+// the words, the way on and the site's last line all stand on the ground their inks were checked against.
 .fable-sheet {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  // Head and foot both come in softly: under the cover's fading foot, and into the room above the last line.
-  -webkit-mask-image: linear-gradient(180deg, transparent 0, rgba(0, 0, 0, 0.35) 34vh, #000 56vh, #000 calc(100% - 18rem), transparent 100%);
-          mask-image: linear-gradient(180deg, transparent 0, rgba(0, 0, 0, 0.35) 34vh, #000 56vh, #000 calc(100% - 18rem), transparent 100%);
+  // The head comes in softly under the cover's fading foot; the foot lets the room back in at the very end.
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, rgba(0, 0, 0, 0.35) 34vh, #000 56vh, #000 calc(100% - 5rem), transparent 100%);
+          mask-image: linear-gradient(180deg, transparent 0, rgba(0, 0, 0, 0.35) 34vh, #000 56vh, #000 calc(100% - 5rem), transparent 100%);
 
   svg { display: block; }
 }
 
-// One relief over the room and the sheet alike, as Reverie's wall has it. A fixed layer is a group of
-// its own, so the soft light is the layer's (it blends with the page beneath); the piece inside it is
-// drawn plainly, else it would blend with nothing and show as a grey veil.
+// One relief over the room and the sheet alike, as Reverie's wall has it, at half the wall's strength:
+// on a pale ground the soft light's shadows read twice as deep as on a dyed wall, and at the wall's
+// amount the paper turned to stucco. A fixed layer is a group of its own, so the soft light is the
+// layer's (it blends with the page beneath); the piece inside it is drawn plainly, else it would blend
+// with nothing and show as a grey veil.
 .fable-relief {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.45;
+  opacity: 0.2;
   mix-blend-mode: soft-light;
 
   &::after {
@@ -261,7 +266,7 @@ body.fable-page #main.fable-main {
   @include onward-links;
   justify-content: space-between;
   margin: clamp(3rem, 6vw, 4.5rem) 0 0;
-  padding: 1.4rem 0 clamp(8rem, 18vh, 12rem); // the sheet's foot fades out below the way on, not under it
+  padding: 1.4rem 0 clamp(1.5rem, 4vw, 2.5rem);
   border-top: 1px solid color-mix(in srgb, var(--fable-ink) 16%, transparent);
 
   a,

@@ -24,9 +24,9 @@ layout: default
 {%- assign r = page.room -%}
 <style>:root { --fable-ground: {{ r.ground | default: '#efeae2' }}; --fable-ink: {{ r.ink | default: '#2a2620' }}; --fable-ink-2: {{ r.ink2 | default: '#524c43' }}; --fable-ink-3: {{ r.ink3 | default: '#6e675d' }}; --fable-brass: {{ r.brass | default: '#846638' }}; }</style>
 <div class="fable-room" aria-hidden="true" data-fable-room data-seed="bestiary/{{ page.slug }}" data-palette="{{ r.palette | jsonify | escape }}"></div>
+<div class="fable-sheet" aria-hidden="true" data-fable-sheet></div>
+<div class="fable-relief" aria-hidden="true"></div>
 <div id="main" role="main" class="fable-main">
-  <div class="fable-sheet" aria-hidden="true" data-fable-sheet></div>
-  <div class="fable-relief" aria-hidden="true"></div>
   <div class="fable-cover" role="img" aria-label="{{ page.title | escape }}" style="--cover: url('{{ page.cover }}/2560.webp'); --cover-sm: url('{{ page.cover }}/1280.webp'); --cover-pos: {{ page.cover_position | default: '50% 50%' }}"></div>
   <article class="fable" itemscope itemtype="http://schema.org/ShortStory">
     <header class="fable__head">
