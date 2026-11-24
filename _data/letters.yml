@@ -1,0 +1,24 @@
+# The past letters the subscribe page shows (_pages/subscribe.html), in this order: the owner's
+# choice, any of them, not only the latest.
+#
+#   piece   the post or voyage the letter announced, as its path in the repository; its card (cover,
+#           title, line, a voyage's palette), its date and its kicker come from there
+#   quote   the lines the letter carried (send-letter's --quote), a paragraph each; [words](/path/)
+#           is a link
+#   gloss   their English, beneath (--gloss)
+
+- piece: _posts/2026-11-22-Who-Consoles-the-Counsellor.md
+  quote:
+    - "“我想这就是我们偶尔觉得孤独的地方。我们并不是没有可以倾诉的人，只是当有人问我们需要什么的时候，我们往往已经替他考虑过所有他能做和不能做的事情。最后能够给出的答案，好像总是没有什么。”"
+
+- piece: _subvoyage/dolomites/in-passing.md
+  quote:
+    - "每次来多洛米蒂都会因为照片太多不知道先发哪些，这次找到了第一个main theme：后视镜和车窗前的白云岩、落叶松、和多洛米蒂的初雪。"
+  gloss:
+    - "Every time I come to the Dolomites there are too many photographs to know which to show first. This time I found the first theme: the dolomite, the larches and the Dolomites' first snow, in the rear-view mirror and beyond the windscreen."
+
+- piece: _posts/2026-09-30-In-the-Naming-of-Light.md
+  quote:
+    - "写了一篇日志，记一下 qsdqsb.com 新加的两个功能：[Palette](/palette/) 和 [Reverie](/reverie/)。我们想分享的是那时候的光：从哪边来，有多低，把雪照成了什么颜色。"
+  gloss:
+    - "Wrote a diary log on two new features at qsdqsb.com: [Palette](/palette/) and [Reverie](/reverie/). What we wanted to share was the light of that moment: where it came from, how low it was, what colour it turned the snow."

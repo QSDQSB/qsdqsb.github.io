@@ -105,6 +105,13 @@ body {
   flex: 1 0 auto;
 }
 
+// A page with no hero starts under the masthead, which floats and takes no room of its own: its
+// content (the title, the profile beside it) begins clear of the bar, as a hero page's begins below
+// its hero. The bar ends 68 px down on a laptop, 56 on a phone.
+#main.no-hero {
+  padding-top: calc(3.8rem + clamp(1.25rem, 3vw, 2.5rem));
+}
+
 body.has-overlay-hero {
   #main {
     position: relative;

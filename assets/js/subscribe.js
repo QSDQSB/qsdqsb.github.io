@@ -46,6 +46,8 @@
 
   function Slip(root) {
     this.root = root;
+    // The subscribe page (_pages/subscribe.html): the form alone, always open, never folded.
+    this.page = root.hasAttribute("data-subscribe-page");
     this.peeking = false;   // expanded by hover/focus, may fold back
     this.sticky = false;    // expansion committed by click/engagement
     this.hovering = false;  // pointer currently inside the slip
@@ -60,6 +62,12 @@
     this.okNote = root.querySelector(".subscribe-slip__note--ok");
     this.errNote = root.querySelector(".subscribe-slip__note--err");
     this.card = root.querySelector(".subscribe-slip__card");
+
+    if (this.page) {
+      this.bindForm();
+      this.root.classList.add("is-in");
+      return;
+    }
     root.querySelector(".subscribe-slip__close").hidden = false; // no use without JS
 
     this.bind();
@@ -117,6 +125,11 @@
       }
     });
 
+    this.bindForm();
+  };
+
+  Slip.prototype.bindForm = function () {
+    var self = this;
     this.input.addEventListener("input", function () {
       if (self.peeking) self.engage(false);
       fetchCat();
@@ -124,7 +137,7 @@
 
     this.form.addEventListener("submit", function (event) {
       event.preventDefault();
-      self.engage(false);
+      if (!self.page) self.engage(false);
       self.submit();
     });
   };
@@ -289,6 +302,7 @@
     }
     window.requestAnimationFrame(function () { self.okNote.textContent = words; });
     storageSet(DONE_KEY, String(Date.now()));
+    if (this.page) return; // the page keeps its thanks in view
     // The card has done its job — retire it to the quiet rule after a beat.
     // Focus left on the form would be lost with it: handed to the rule first,
     // before the rule counts as folded (as dismiss does).

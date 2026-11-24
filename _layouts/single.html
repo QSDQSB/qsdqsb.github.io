@@ -20,7 +20,7 @@ layout: default
   {% assign has_right_toc = true %}
 {% endif %}
 
-<div id="main" role="main" class="{% if has_left_sidebar %}has-left-sidebar{% else %}no-left-sidebar{% endif %} {% if has_right_toc %}has-right-toc{% else %}no-right-toc{% endif %}">
+<div id="main" role="main" class="{% if has_left_sidebar %}has-left-sidebar{% else %}no-left-sidebar{% endif %} {% if has_right_toc %}has-right-toc{% else %}no-right-toc{% endif %}{% unless page.header.overlay_color or page.header.overlay_image %} no-hero{% endunless %}">
   {% if has_left_sidebar %}
     {% include sidebar.html %}
   {% endif %}
@@ -104,5 +104,7 @@ layout: default
         </div>
       </div>
     {% endif %}
+    {%- comment -%} The site's last line, inside the content column so it centres on the content, not the window. {%- endcomment -%}
+    {% include_cached colophon.html %}
   </div>
 </div>
