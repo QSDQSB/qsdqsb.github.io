@@ -160,16 +160,16 @@ body.fable-page #main.fable-main {
   svg { display: block; }
 }
 
-// One relief over the room and the sheet alike, as Reverie's wall has it, at half the wall's strength:
-// on a pale ground the soft light's shadows read twice as deep as on a dyed wall, and at the wall's
-// amount the paper turned to stucco. A fixed layer is a group of its own, so the soft light is the
+// One relief over the room and the sheet alike, as Reverie's wall has it, at a quarter of the wall's
+// strength: on a pale ground the soft light's shadows read far deeper than on a dyed wall, and at the
+// wall's amount the paper turned to stucco (the owner, 2026-11-24: too strong at half, too). A fixed layer is a group of its own, so the soft light is the
 // layer's (it blends with the page beneath); the piece inside it is drawn plainly, else it would blend
 // with nothing and show as a grey veil.
 .fable-relief {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.2;
+  opacity: 0.1;
   mix-blend-mode: soft-light;
 
   &::after {
@@ -179,13 +179,15 @@ body.fable-page #main.fable-main {
   }
 }
 
-// The cover, as the house sets a hero: the whole window wide; its foot fades into the room.
+// The cover, as the house sets a hero: from the very top, the whole window wide; its foot fades into the room.
 .fable-cover {
   position: relative;
   height: min(68vh, 720px);
   background: var(--cover) var(--cover-pos) / cover no-repeat;
-  -webkit-mask-image: linear-gradient(180deg, #000 74%, transparent 100%);
-          mask-image: linear-gradient(180deg, #000 74%, transparent 100%);
+  // Its foot dissolves on a smootherstep curve over its lowest third: a straight fade ends in a line the
+  // eye reads as an edge across the room.
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1.000) 64.0%, rgba(0, 0, 0, 0.984) 68.5%, rgba(0, 0, 0, 0.896) 73.0%, rgba(0, 0, 0, 0.725) 77.5%, rgba(0, 0, 0, 0.500) 82.0%, rgba(0, 0, 0, 0.275) 86.5%, rgba(0, 0, 0, 0.104) 91.0%, rgba(0, 0, 0, 0.016) 95.5%, rgba(0, 0, 0, 0.000) 100.0%);
+          mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1.000) 64.0%, rgba(0, 0, 0, 0.984) 68.5%, rgba(0, 0, 0, 0.896) 73.0%, rgba(0, 0, 0, 0.725) 77.5%, rgba(0, 0, 0, 0.500) 82.0%, rgba(0, 0, 0, 0.275) 86.5%, rgba(0, 0, 0, 0.104) 91.0%, rgba(0, 0, 0, 0.016) 95.5%, rgba(0, 0, 0, 0.000) 100.0%);
 
   @include responsive-down(tablet) {
     height: 62vh;
