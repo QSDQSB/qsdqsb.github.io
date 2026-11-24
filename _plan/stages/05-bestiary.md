@@ -31,8 +31,10 @@ unusual situation, told by a cool archivist; each built on a philosophical idea 
   `_includes/fable-room.html` and `assets/js/bestiary/room.js`, shared by the door and the fables.
 - **The door is washed in watercolour** (the owner, 2026-11-24: "use watercolours with the background's
   colour... a magical fable-like Dolomites vibe... can span on the full background"): the photograph's
-  whole-image palette, its blue kept, poured over the whole page below the hero, dried in patches and
-  thinning softly (no dried edge) round the name and the site's last line.
+  whole-image palette, its accent kept, poured over the whole page below the hero, dried in patches and
+  veins of bare paper. Since 2026-11-24 the door's own painting is the afterglow (its cover), and the wash
+  runs under the words too ("no need for center 羊皮纸色 rule for the errata landing page"): a shade paler
+  than a fable's room, and the door's inks deepened, each checked against the deepest wash.
 - **The blend is a watercolour bloom** (the owner, 2026-11-24, after three prototypes, bloom, soaked
   fibre and a pool of light, of a blend with "a clear linear pattern": "prefer A and B, no strong opinion
   in between"): the wash dried short of the words, its edge wandering in both axes, a faint broken tide

@@ -8,14 +8,15 @@ body_class: bestiary fable-page bestiary-door no-opening-scene
 header:
   overlay_image: /images/bestiary/the-bestiary.webp # the Bestiary's own cover: the Sassolungo in its afterglow (the owner, 2026-11-24)
   overlay_position: "56% 12%" # the whole mountain, summit to foot
-# The door's parchment and its inks (each checked against the ground: ink 12:1, ink2 7.3:1, ink3 5.3:1,
-# brass 5:1), and its wash: the afterglow painting's colours, the whole image (its pink sky, not only its foot),
-# poured over the whole page below the hero and dried short of the words (room.js, mode full).
+# The door's parchment and its inks, and its wash, which runs under the words too (the owner, 2026-11-24): each
+# ink checked against the deepest of the wash, not the paper (ink 8.7:1, ink2 6:1 for the last line's labels,
+# ink3 4.7:1 for the line under the name; scratchpad measure, room.js mode full). The wash: the afterglow painting's colours, the whole image (its pink sky, not only its foot),
+# poured over the whole page below the hero, under the words as well (room.js, mode full).
 room:
   ground: "#efe6d2"
   ink: "#2b2620"
-  ink2: "#4f483d"
-  ink3: "#655c4e"
+  ink2: "#463f34"
+  ink3: "#574f42"
   brass: "#7a5b2b"
   palette: [{"hex": "#241f17", "pc": 26.6}, {"hex": "#82776e", "pc": 24.6}, {"hex": "#453d3e", "pc": 16.1}, {"hex": "#5f514e", "pc": 15.7}, {"hex": "#9e7961", "pc": 17.1}]
 ---

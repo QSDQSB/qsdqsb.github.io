@@ -57,10 +57,8 @@ precision highp float;
 uniform sampler2D dye; uniform vec2 view; uniform float dpr, mode;
 uniform float wander, colL, colR, edge, edge2, amp, feather, warpA, tide, foot, band;
 uniform vec3 ground;
-uniform vec4 headBox, footBox; uniform float coverBias, clearR;
+uniform float coverBias;
 ${GLSL_NOISE}
-// Signed distance to a box (left, top, right, bottom), in CSS pixels: below zero inside it.
-float sdBox(vec2 p, vec4 b) { vec2 c = 0.5 * (b.xy + b.zw), h = 0.5 * (b.zw - b.xy); vec2 q = abs(p - c) - h; return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0); }
 vec3 toLin(vec3 c) { return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c)); }
 vec3 toSrgb(vec3 c) { c = clamp(c, 0.0, 1.0); return mix(12.92 * c, 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, c)); }
 void main() {
@@ -85,13 +83,11 @@ void main() {
   }
   float d0, d, e1;
   if (mode > 1.5) {
-    // The door: the wash over the whole page, dried in broad patches and clearings. Its "distance" is
-    // how far inside a patch a point lies, so the same thinning, dried edge and tide line follow. Round
-    // the words (the name and its line, the site's last line) it only thins, softly and over a margin
-    // bent by noise, with no dried edge there: the words are not cut out of it, it fades from them.
-    float clear = min(sdBox(p, headBox), sdBox(p, footBox)) + 0.6 * clearR * fbm(p / 210.0 + r + 6.3, 3);
+    // The door: the wash over the whole page, words and all (the owner, 2026-11-24: no paper kept clear in
+    // the middle), dried in broad patches and clearings. Its "distance" is how far inside a patch a point
+    // lies, so the same thinning, dried edge and tide line follow.
     float cover = fbm(p / 640.0 + 1.3 * r + 2.1, 4) + coverBias;
-    d0 = clear; d = cover * 420.0 + warpA * 2.0 * r.x; e1 = 0.0;
+    d0 = 1e4; d = cover * 420.0 + warpA * 2.0 * r.x; e1 = 0.0;
   } else {
     // How far outward from the column of words, measured at a bent position.
     vec2 pw = p + warpA * 2.0 * r;
@@ -115,9 +111,8 @@ void main() {
   D *= 1.0 + tide * exp(-at * at) * smoothstep(-0.05, 0.3, fbm(p / 110.0 + r * 1.5 + 7.1, 3));
   // The dye's own unevenness: pooled here, thin there, and the paper's tooth under it.
   D *= 1.0 + 0.22 * fbm(p / 85.0 + 2.0 * r, 4) + 0.05 * gn(p / 2.2);
-  // Never on the words: the column (or, on the door, the name and the last line) and a little past it
-  // stay paper, whatever the noise does.
-  D *= mode > 1.5 ? smoothstep(8.0, clearR, d0) : smoothstep(6.0, 26.0, d0);
+  // Never on a fable's words: the column and a little past it stay paper, whatever the noise does.
+  D *= smoothstep(6.0, 26.0, d0);
   D = max(D, 0.0);
   // The vat, its layers bent too, so they lie as currents rather than strata.
   vec2 uv = p / view + vec2(0.11, 0.16) * 2.0 * r + vec2(0.0, 0.05 * fbm(p / 900.0 + 9.0, 2));
@@ -174,25 +169,15 @@ function drawDoor(palette, groundHex, seed) {
   const W = innerWidth, H = document.documentElement.scrollHeight;
   const dpr = Math.min(1.25, devicePixelRatio || 1, 4000 / H);
   const G = oklab(groundHex)[0];
-  // The photograph's own colours, its blue included (the door's magic is its dusk), held as quiet as a room.
+  // The painting's own colours, its accent included (the door's magic is its dusk), held as quiet as a
+  // room and a shade paler than a fable's, since the door's words stand on the wash itself: every ink
+  // keeps its contrast on the deepest of it (the door's inks, _pages/bestiary.md).
   const quiet = palette.map((p) => {
     const [L, a, b] = oklab(p.hex);
     const c = Math.hypot(a, b), k = Math.min(0.8, c ? 0.035 / c : 0);
-    return { ...p, accent: false, hex: toHex(fromOklab([G - 0.09 - 0.05 * (1 - L), a * k, b * k])) };
+    return { ...p, accent: false, hex: toHex(fromOklab([G - 0.065 - 0.035 * (1 - L), a * k, b * k])) };
   });
   const dye = vat(quiet, { shape: 'rect', width: Math.round(W / 2), height: Math.round(Math.min(H, 2400) / 2), seed, calm: 0.45 });
-  // The words' own extent, not their blocks' (a block runs the page's width and would clear a whole band).
-  const box = (q) => {
-    const e = document.querySelector(q), b = [1e4, 1e4, -1e4, -1e4];
-    if (!e) return [-1e4, -1e4, -1e4, -1e4];
-    const walk = document.createTreeWalker(e, NodeFilter.SHOW_TEXT), rg = document.createRange();
-    for (let t = walk.nextNode(); t; t = walk.nextNode()) {
-      if (!t.textContent.trim()) continue;
-      rg.selectNodeContents(t);
-      for (const r of rg.getClientRects()) { b[0] = Math.min(b[0], r.left); b[1] = Math.min(b[1], r.top + scrollY); b[2] = Math.max(b[2], r.right); b[3] = Math.max(b[3], r.bottom + scrollY); }
-    }
-    return b;
-  };
   const out = document.createElement('canvas'); out.width = Math.round(W * dpr); out.height = Math.round(H * dpr);
   out.style.cssText = `position:absolute;left:0;top:0;width:100%;height:${H}px`;
   const r = gl2(out.width, out.height);
@@ -204,9 +189,8 @@ function drawDoor(palette, groundHex, seed) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.uniform1i(u('dye'), 0); gl.uniform1f(u('dpr'), dpr); gl.uniform1f(u('seed'), seed % 997);
-  const o = { feather: 150, amp: 60, edge2: 40, warpA: 30, tide: 0.5, coverBias: 0.3, clearR: 170 };
+  const o = { feather: 150, amp: 60, edge2: 40, warpA: 30, tide: 0.5, coverBias: 0.08 };
   for (const k of Object.keys(o)) gl.uniform1f(u(k), o[k]);
-  gl.uniform4f(u('headBox'), ...box('.bestiary__head')); gl.uniform4f(u('footBox'), ...box('.site-colophon__links'));
   gl.uniform3f(u('ground'), ...hex(groundHex).map(lin));
   c.width = out.width; c.height = out.height; gl.viewport(0, 0, out.width, out.height);
   gl.uniform2f(u('view'), W, H); gl.uniform1f(u('mode'), 2);
