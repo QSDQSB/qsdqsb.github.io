@@ -11,6 +11,8 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-24 · A Subscribe page (/subscribe/, and in the site's last line): the subscribe slip opened into the page under About's cover, its address field framed in brass, holding three past letters as the mail showed them, letterhead, card, date, lines and Onward; which three is the owner's choice in _data/letters.yml (R023) · tier 2
+- 2026-11-24 · A page with no cover starts clear of the floating menu (Terms, the CV, the Bestiary), and the site's last line of links centres on the content beside the author's column, not on the window (posts, the archives, About) · tier 2
 - 2026-11-22 · A letter for a post now opens on its card, cover with title and line as a voyage's, without the palette; every letter dates itself DD.MM.YYYY (R021) · tier 2
 - 2026-11-22 · A post's excerpt now stands upright in Playfair (its Chinese in Song), on its cover and its card, as a voyage's line does (R021) · tier 2, answered
 - 2026-11-22 · A new essay, Who Consoles the Counsellor (谁来安慰心理咨询师): an evening's talk in a bar with a counsellor friend, set in Shihuqiao's nocturne type and chapter plates (R021) · tier 2, answered

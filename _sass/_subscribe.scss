@@ -21,7 +21,8 @@
   transform: translateY(0.65rem);
   transition: opacity 0.9s $cubic-bezier-smooth, transform 0.9s $cubic-bezier-smooth;
 
-  &.is-in {
+  &.is-in,
+  .no-js & { // without a script it never arrives, and its form posts on its own
     opacity: 1;
     transform: none;
   }
@@ -38,7 +39,7 @@
   min-height: 0;
 }
 .subscribe-slip.is-folded .subscribe-slip__body,
-html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__body {
+html.subscribe-dismissed .subscribe-slip:not(.is-in):not([data-subscribe-page]) .subscribe-slip__body {
   grid-template-rows: 0fr;
   opacity: 0;
 }
@@ -140,7 +141,7 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__body {
   margin: 1.35rem 0 0;
   padding: 0.2rem 0.3rem 0.2rem 0.9rem;
   cursor: auto;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--subscribe-field-edge, rgba(255, 255, 255, 0.12));
   border-radius: 0.5rem;
   background: rgba(255, 255, 255, 0.05);
   transition: border-color 0.2s ease;
@@ -265,7 +266,7 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__body {
   transition: max-height 0.8s $cubic-bezier-smooth, opacity 0.55s ease 0.15s;
 }
 .subscribe-slip.is-folded .subscribe-slip__summary,
-html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__summary {
+html.subscribe-dismissed .subscribe-slip:not(.is-in):not([data-subscribe-page]) .subscribe-slip__summary {
   max-height: 2.6rem;
   padding: 0.7rem 0;
   opacity: 1;
@@ -362,5 +363,265 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in) .subscribe-slip__summary {
   .subscribe-slip__body,
   .subscribe-slip__summary {
     transition: none;
+  }
+}
+
+/* ---------- the subscribe page (_pages/subscribe.html) ----------
+   The slip, open and still, grown into the page: its glass holds the invitation and the form, and
+   beneath them three past letters, each a sheet set as the mail sets it (scripts/letter-template.mjs,
+   scripts/letter-card.mjs), scaled as one picture: 1em is a sixteenth of the letter's pixel at its
+   600 px column, so every size below is the template's own px over 16. */
+.subscribe-slip[data-subscribe-page] {
+  width: 100%;
+  max-width: none;
+  margin: 0 0 clamp(3rem, 6vw, 4.5rem);
+
+  .subscribe-slip__card {
+    padding: clamp(1.4rem, 4vw, 3.25rem);
+    cursor: auto;
+  }
+
+  // On a wide screen its head is one band: the words on the left, the form on the right.
+  @include responsive-up(desktop) {
+    .subscribe-slip__card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(20rem, 28rem);
+      column-gap: clamp(2rem, 5vw, 4rem);
+      align-items: end;
+    }
+    .subscribe-slip__card > * { grid-column: 1; }
+    .subscribe-slip__form,
+    .subscribe-slip__note,
+    .subscribe-slip__privacy,
+    .subscribe-slip__cat { grid-column: 2; }
+    .subscribe-slip__form { grid-row: 1 / span 2; }
+    .subscribe-letters { grid-column: 1 / -1; }
+  }
+  .subscribe-slip__card > :not(.subscribe-letters) { max-width: 36rem; }
+  // Its words keep the slip's own sizes inside the page's text (.page__content sets prose's).
+  .subscribe-slip__heading { padding: 0; border: 0; font-size: $type-size-3; }
+  .subscribe-slip__invite { margin: 0; font-size: $type-size-8; }
+  .subscribe-slip__note { font-size: $type-size-7; }
+
+  // The page's one task: the field is the first thing the eye takes, framed in brass, at reading size
+  // (1rem is 16 px on a phone, so an iPhone never zooms into it).
+  .subscribe-slip__form {
+    margin-top: 1.6rem;
+    padding: 0.35rem 0.4rem 0.35rem 1.15rem;
+    --subscribe-field-edge: #{rgba($intriguing-word-color, 0.5)}; // the frame at rest; focus keeps the slip's own
+    background: rgba(255, 255, 255, 0.07);
+  }
+  .subscribe-slip__input {
+    padding: 0.75rem 0;
+    font-size: 1rem;
+
+    &::placeholder { color: rgba($text-color, 0.55); font-size: 1rem; }
+  }
+  .subscribe-slip__send {
+    padding: 0.75rem 1.4rem;
+    font-size: 0.78rem;
+  }
+}
+
+.subscribe-page {
+  line-height: normal;
+  letter-spacing: normal;
+}
+
+.subscribe-letters {
+  margin-top: clamp(2.2rem, 5vw, 3.5rem);
+  padding-top: clamp(2.2rem, 5vw, 3.5rem);
+  border-top: 1px solid rgba($h2-color, 0.18);
+}
+.subscribe-letters .subscribe-letters__title {
+  @include eyebrow;
+  margin-bottom: 1.6rem;
+  padding: 0;
+  border: 0;
+}
+.subscribe-letters__row {
+  display: grid;
+  grid-template-columns: minmax(0, 37.5rem);
+  justify-content: center;
+  align-items: start; // each letter as long as it was
+  gap: clamp(1.25rem, 2.2vw, 2rem);
+
+  @include responsive-up(desktop) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+// One letter: the mail's ground, its column, its type, scaled to the sheet's width.
+.subscribe-mail { container-type: inline-size; }
+.subscribe-mail__sheet {
+  font-size: clamp(13px, 100cqi / 37.5, 16px);
+  padding: 2.5em 0;
+  overflow: hidden;
+  border-radius: $border-radius;
+  background: $background-color;
+  box-shadow: $shadow-rest;
+  color: #e4e5e5;
+  text-align: center;
+
+  p { margin: 0; }
+}
+
+.subscribe-mail__head {
+  display: grid;
+  justify-items: center;
+  margin: 0 1em;
+  padding-bottom: 1em;
+  border-bottom: 1px solid #4d453a; // the letter's lit brass hairline under its masthead
+}
+.subscribe-mail__crest {
+  width: 3.25em;
+  height: 3.25em;
+  margin-bottom: 0.875em;
+  background-color: $intriguing-word-color;
+  -webkit-mask: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg") no-repeat center / contain;
+          mask: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg") no-repeat center / contain;
+}
+.subscribe-mail__house {
+  margin-bottom: 0.4375em;
+  font: 400 max(11px, 0.6875em)/1.3 $barlow-font-family;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: $intriguing-word-color;
+}
+.subscribe-mail__motto {
+  font: italic 400 0.8125em/1.3 $didot-family;
+  letter-spacing: 0.077em;
+  color: #8a8d8f;
+}
+
+.subscribe-mail__kicker,
+.subscribe-mail__date {
+  font-family: $barlow-font-family;
+  text-transform: uppercase;
+  color: #8a8d8f;
+}
+.subscribe-mail__kicker {
+  padding: 2.4em 0.7em 0;
+  font-size: max(11px, 0.6875em);
+  letter-spacing: 0.27em;
+}
+.subscribe-mail__date {
+  padding: 0 0.67em 1.83em;
+  font-size: max(11px, 0.75em);
+  letter-spacing: 0.083em;
+}
+
+// The piece's card, as letter-card.mjs draws it for the mail.
+.subscribe-mail__card {
+  @include card(true);
+  margin: 1em 1.25em 0.875em;
+  background: #1a1a1a;
+  color: #e4e5e5;
+  text-align: left;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible { color: #e4e5e5; text-decoration: none; }
+}
+.subscribe-mail__cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  background: #222 center / cover no-repeat;
+
+  img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+// The words lie over the whole picture, after it, and carry the scrim (and a post's own dimming).
+.subscribe-mail__words {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 min(1.75em, 5cqi) min(1.5em, 4.3cqi);
+  background:
+    linear-gradient(to top, rgba(10, 10, 10, 0.8) 0%, rgba(10, 10, 10, 0.42) 24%, rgba(10, 10, 10, 0) 46%),
+    rgba(0, 0, 0, var(--dim, 0));
+  color: #e4e5e5; // its own ink, so a visited or hovered link never colours the cover's words
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+}
+.subscribe-mail__of {
+  display: block;
+  margin-bottom: 0.92em;
+  font: 500 max(11px, 0.8125em)/1 $barlow-font-family;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(228, 229, 229, 0.82);
+}
+.subscribe-mail__title {
+  display: block;
+  font: 700 min(2.75em, 7.4cqi)/1 $global-font-family; // drawn on the picture: it shrinks with it, as in the mail
+  letter-spacing: 0.015em;
+}
+.subscribe-mail__line {
+  display: block;
+  margin-top: 0.5em;
+  font: 400 min(1.25em, max(12px, 3.4cqi))/1.3 $line-serif-family;
+  color: rgba(228, 229, 229, 0.9);
+}
+.subscribe-mail__foot {
+  display: flex;
+  align-items: center;
+  gap: 1.125em;
+  padding: 0.875em 1.75em;
+}
+.subscribe-mail__vat {
+  flex: none;
+  width: 3em;
+  height: 3em;
+
+  canvas { display: block; width: 100%; height: 100%; }
+}
+.subscribe-mail__bar {
+  flex: 1;
+  display: flex;
+  height: 0.5em;
+  overflow: hidden;
+  border-radius: $radius-hair;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+
+  i { display: block; height: 100%; }
+}
+
+// Its lines, the piece's own words, set to the left; their English beneath, quieter.
+.subscribe-mail__quote,
+.subscribe-mail__gloss {
+  padding: 0 1.25em 0.875em;
+  text-align: left;
+
+  a { color: inherit; text-decoration: underline; }
+}
+.subscribe-mail__quote p {
+  font: 400 1.0625em/1.9 $didot-family;
+  letter-spacing: 0.03em;
+  color: $intriguing-word-color;
+}
+.subscribe-mail__gloss p {
+  font: italic 400 0.9375em/1.7 $didot-family;
+  color: #8a8d8f;
+}
+
+.subscribe-mail__onward {
+  padding-top: 1.125em;
+
+  a {
+    display: inline-block;
+    padding: 0.92em 2.5em;
+    border: 1px solid $intriguing-word-color;
+    border-radius: $radius-hair;
+    font: 400 max(11px, 0.75em)/1 $barlow-font-family;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: $intriguing-word-color;
+    text-decoration: none;
   }
 }

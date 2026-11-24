@@ -1,0 +1,109 @@
+---
+title: "Subscribe"
+layout: single
+author_profile: true
+permalink: /subscribe/
+body_class: photobook
+header:
+  overlay_image: QSD_Night_4v1.jpg # About's
+  overlay_filter: 0.25
+excerpt: "A letter comes only when something new does."
+seo_description: "Subscribe to QSD's House of Wonders: one email when a new post or voyage is published, and nothing else. Three of the letters already sent."
+---
+{%- comment -%}
+  The subscribe page, a page as every other (single, with the author's profile beside it): the
+  subscribe slip, open and still, grown into the page (_includes/subscribe.html
+  page=true), holding three past letters, the owner's choice (_data/letters.yml), each as it arrived
+  in the mail (scripts/letter-template.mjs, scripts/letter-card.mjs): the letterhead, the kicker,
+  the piece's card (cover, title, line; a voyage's vat and bar), the date, the lines the letter
+  carried and their English, the way Onward. Styles: _sass/_subscribe.scss, "the subscribe page".
+{%- endcomment -%}
+{%- capture letters -%}
+<section class="subscribe-letters" aria-labelledby="subscribe-letters-title">
+  <h2 class="subscribe-letters__title" id="subscribe-letters-title">Past letters</h2>
+  <div class="subscribe-letters__row">
+  {%- for l in site.data.letters %}
+  {%- assign doc = site.documents | where: "path", l.piece | first %}
+  {%- if doc %}
+    {%- assign parent = nil %}
+    {%- assign palette = nil %}
+    {%- assign cover = nil %}
+    {%- assign cover_ph = nil %}
+    {%- assign dim = 0 %}
+    {%- if doc.collection == "posts" %}
+      {%- assign kicker = "Fresh ink from QSD" %}
+      {%- assign img = doc.header.overlay_image | default: "" %}
+      {%- if img contains "://" %}{% assign cover = img %}{% else %}{% assign cover = img | prepend: "/images/" | relative_url %}{% endif %}
+      {%- assign cover_pos = doc.header.overlay_position | default: "50% 50%" %}
+      {%- assign dim = doc.header.overlay_filter | default: 0 %}
+    {%- else %}
+      {%- assign kicker = "New prints from QSD" %}
+      {%- include voyage-cover.html doc=doc %}
+      {%- if vc %}
+        {%- assign cover = vc.url | append: "/1280.webp" %}
+        {%- assign cover_pos = vc.pos.tall | default: vc.pos.card %}
+        {%- assign cover_ph = vc.ph %}
+      {%- endif %}
+      {%- if doc.collection == "subvoyage" %}
+        {%- assign parent_path = doc.path | split: "/" %}
+        {%- assign parent_path = "_voyage/" | append: parent_path[1] | append: ".md" %}
+        {%- assign parent = site.voyage | where: "path", parent_path | first %}
+      {%- endif %}
+      {%- if doc.gallery_name %}
+        {%- assign mkey = doc.gallery_name | replace: "/", "_" %}
+        {%- assign palette = site.data.photo_manifests[mkey].book.colour.palette %}
+      {%- endif %}
+    {%- endif %}
+    <article class="subscribe-mail" aria-label="The letter for {{ doc.title | strip_html | escape }}">
+      <div class="subscribe-mail__sheet">
+        <div class="subscribe-mail__head" aria-hidden="true">
+          <span class="subscribe-mail__crest"></span>
+          <span class="subscribe-mail__house">QSD’s House of Wonders</span>
+          <span class="subscribe-mail__motto">Mors potius quam taedium</span>
+        </div>
+        <div class="subscribe-mail__kicker">{{ kicker }}</div>
+        <a class="subscribe-mail__card" href="{{ doc.url | relative_url }}">
+          <span class="subscribe-mail__cover" style="--dim: {{ dim }}{% if cover_ph %}; background-image: url({{ cover_ph }}){% endif %}">
+            {%- if cover %}<img src="{{ cover }}" alt="" loading="lazy" decoding="async" style="object-position: {{ cover_pos }}">{% endif -%}
+            <span class="subscribe-mail__words">
+              {%- if parent %}<span class="subscribe-mail__of">{{ parent.title | strip_html }}</span>{% endif %}
+              <span class="subscribe-mail__title">{{ doc.title | strip_html }}</span>
+              {%- if doc.excerpt %}<span class="subscribe-mail__line">{{ doc.excerpt | strip_html | strip }}</span>{% endif %}
+            </span>
+          </span>
+          {%- if palette.size > 0 %}
+          <span class="subscribe-mail__foot" aria-hidden="true">
+            <span class="subscribe-mail__vat" data-vat="{{ palette | jsonify | escape }}" data-g="{{ doc.gallery_name | escape }}"></span>
+            <span class="subscribe-mail__bar">{% for s in palette %}<i style="flex: {{ s.pc | at_least: 1 }}; background: {{ s.hex }}"></i>{% endfor %}</span>
+          </span>
+          {%- endif %}
+        </a>
+        <div class="subscribe-mail__date"><time datetime="{{ doc.date | date_to_xmlschema }}">{{ doc.date | date: "%d.%m.%Y" }}</time></div>
+        {%- for q in l.quote %}
+        <div class="subscribe-mail__quote" lang="zh-Hans">{{ q | markdownify }}</div>
+        {%- endfor %}
+        {%- for g in l.gloss %}
+        <div class="subscribe-mail__gloss" lang="en">{{ g | markdownify }}</div>
+        {%- endfor %}
+        <div class="subscribe-mail__onward"><a href="{{ doc.url | relative_url }}" tabindex="-1">Onward</a></div>
+      </div>
+    </article>
+  {%- endif %}
+  {%- endfor %}
+  </div>
+</section>
+{%- endcapture -%}
+<div class="subscribe-page">
+  {% include subscribe.html page=true letters=letters %}
+  {% include presented-by-qsd.html %}
+</div>
+<script type="module">
+  // A voyage's dye vat, as its letter carries it and QSD's Palette pours it (assets/js/colour/vat.js).
+  const slots = document.querySelectorAll('.subscribe-mail__vat[data-vat]');
+  if (slots.length) {
+    const { vat, seedOf } = await import('{{ "/assets/js/colour/vat.js" | relative_url }}');
+    slots.forEach((slot) => {
+      try { slot.append(vat(JSON.parse(slot.dataset.vat), { size: 48, seed: seedOf(slot.dataset.g) })); } catch { /* the bar still says it */ }
+    });
+  }
+</script>
