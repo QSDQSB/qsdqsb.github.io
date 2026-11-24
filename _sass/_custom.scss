@@ -108,9 +108,10 @@ font-style: italic;
 
 // Noto Serif SC (Google's release of Source Han Serif, OFL 1.1): a Song face for an essay's Chinese
 // on a device with no Songti a page may use (an iPhone, Android, Windows). A subset: the characters
-// the essays use and no others (scripts/essay-font.py cuts it; the gate checks it still covers them).
-// Asked for Han characters and their punctuation alone, and only by a stack that names it after the
-// Latin faces and the device's own Songti (_page.scss, ESSAY), so a Mac never fetches it.
+// the essays and the Bestiary's fables use and no others (scripts/essay-font.py cuts it; the gate checks
+// it still covers them). Asked for Han characters and their punctuation alone, and only by a stack that
+// names it after the Latin faces and the device's own Songti (_page.scss, ESSAY; _bestiary.scss), so a
+// Mac never fetches it.
 @font-face {
   font-family: 'Noto Serif SC';
   src: local('Noto Serif SC'), local('Noto Serif CJK SC'), local('Source Han Serif SC'),

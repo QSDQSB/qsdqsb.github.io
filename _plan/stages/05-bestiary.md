@@ -1,7 +1,87 @@
 # Stage 5 · Bestiary
 
-**Status:** idea. No design exists for the Bestiary itself. Its holding page is decided (Q5,
-2026-10-01) and is the next thing here. **Tier:** 2.
+**Status:** building, on the owner's request R024 (2026-11-24): "Read QSDQSB/dolomite-errata-bestiary,
+get the idea of the errata-bestiary project, then consider the scalable and sota premium design option
+to fit it in our site. In this conversation, implement the first two stories". The holding page is
+passed over: the Bestiary itself is built, with its first two fables. The owner's merge is the yes
+([0010](../decisions/0010-the-merge-is-the-yes.md)). **Tier:** 2.
+
+## What is built (2026-11-24)
+
+What the Bestiary is, from its own repository (the questions below, answered by the owner's request
+and the bestiary's `CLAUDE.md`): bilingual fables set in the Dolomites, each one creature through one
+unusual situation, told by a cool archivist; each built on a philosophical idea that is never named.
+
+- **The material** is the bestiary's repository, not this one: `scripts/bestiary-import.mjs` copies a
+  story's English and 中文版 into `_bestiary/<title>.md`, between markers, and never its design notes.
+  The front matter is this site's: the number, the creature and place (kept for search and the record,
+  never shown under a title), their Chinese names, the cover plate (R2), and the `room:`.
+- **The fables are light parchment (羊皮纸); the door is its painting's dusk** (the owner, 2026-11-24; the door was parchment first, then dark: see below).
+- **The door** (`/bestiary/`, `_layouts/bestiary.html`): its photograph across the window fading into
+  the parchment, its name and one line beneath, then a card for every fable (the `card` piece: the
+  cover plate, the number, both titles as the cover line). Two to a row from 1024 px, one on a phone.
+- **A fable** (`_layouts/fable.html`): its cover plate across the window, dissolving into one paper;
+  the title and the Chinese title in 宋体; the story behind the site's switch (the Chinese set on its
+  grid); the way on (the Bestiary always in the middle). The paper is a parchment tinted by the cover
+  (`scripts/bestiary-room.py` writes each fable's `room:`: ground, four contrast-checked inks, the
+  palette weighted to the cover's foot). **Beside the words, only where the window leaves at least
+  160 px each side**, a room dyed quietly from that palette by the vat (no accent, chroma held low), the
+  paper eased into it; **on a phone, paper edge to edge, no dye** (the owner, 2026-11-24). **The texture
+  is very faint** (the owner, 2026-11-24, "too strong" three times). The room, paper and relief are
+  `_includes/fable-room.html` and `assets/js/bestiary/room.js`, shared by the door and the fables.
+- **The door is washed in watercolour** (the owner, 2026-11-24: "use watercolours with the background's
+  colour... a magical fable-like Dolomites vibe... can span on the full background"): the photograph's
+  whole-image palette, its accent kept, poured over the whole page below the hero, dried in patches and
+  veins of bare paper. Since 2026-11-24 the door's own painting is the afterglow (its cover), and the wash
+  runs under the words too ("no need for center 羊皮纸色 rule for the errata landing page"): a shade paler
+  than a fable's room, and the door's inks deepened, each checked against the deepest wash. Then (the
+  owner, 2026-11-24): the wash runs up under the hero ("we wouldn't have this awkward notable border"), in
+  the painting's essential colours (its alpenglow, not its umbers), on a ground tinted by the alpenglow
+  ("no need to stay paper-yellow because we don't have long text here"). Then dark (the owner,
+  2026-11-24: "the light background is incoherent with the overlay image hero... dark purple, pink, the
+  representative colour from the hero image but follow the hue"): an aubergine ground from its shadows,
+  a wash a little above it in its own hue band, ivory inks checked against the lightest wash. Judged
+  ugly and abrupt (the owner, 2026-11-24: a straight line, the colour not the picture's), reviewed by an art
+  director, and rebuilt: a wandering dissolve onto watercolour that begins in the painting's own foot
+  colours, column by column (first tried as its reflection, smeared: "I don't want blurred version of the
+  picture. It should be watercolour + transparency mask"), a ground at the meadow's darkness drifting to aubergine and plum (L .19 to .27).
+- **The blend is a watercolour bloom** (the owner, 2026-11-24, after three prototypes, bloom, soaked
+  fibre and a pool of light, of a blend with "a clear linear pattern": "prefer A and B, no strong opinion
+  in between"): the wash dried short of the words, its edge wandering in both axes, a faint broken tide
+  line; the dye poured with a current (calm .45) so it lies in drifts, not strata.
+
+**The owner, 2026-11-24, in the same conversation** (the framework is the bestiary's
+`art/README.md`, uncommitted while it is brainstormed):
+- The stories are named **The Pineapple Crown** and **The Milk Plate**: a fable is named by its story,
+  not its creature.
+- **A fable opens as a story**: no creature's name or place under the title ("That's underwhelming").
+  The record is gone from the page and the place from the door's cards.
+- **The art is a vintage storybook plate**, the owner's own picture of the orange cat as the measure
+  and as that cat's image; the tabby is a 背影, walking away with its tail raised. Plates fade into the
+  page; fixed objects (the lute, the cup) never change between plates.
+- PR #133 was closed: "we are still brainstorming". Nothing is pushed until the direction is settled.
+- **One round of calls, answered**: Chinese titles 菠萝王冠 and 牛奶碟; two hands (storybook creatures,
+  oil covers, both the owner's own paintings for now); **a warm paper room** for the Bestiary's pages;
+  the goblet stays; the lute's missing star and the Milk Plate cover's liberties are accepted; the
+  close tabby; the bestiary repo renamed its story too; **no words on the door** and **no line under a
+  fable's title** ("The title suffices"); the crown painting cropped at its foot.
+- **The door keeps its cards; a fable is its own room** (the owner, 2026-11-24, after prototypes in a
+  paper room and a free layout: "I like the card design... use the latest soft light setup for the
+  content"). The fable: cover across the window, its foot fading into a room dyed by the vat from the
+  cover's lower part (weighted to the foot: "the more bottom the pixel is the more weighted"), a sheet
+  of the cover's own light colour eased in from the sides with no edge (later: parchment, above),
+  Reverie's relief over the whole background (later: very faint), 宋体 for the
+  Chinese. `scripts/bestiary-room.py` writes each fable's `room:`.
+- **The plates live in R2, never git** (the owner): the site's `bestiary/` gallery, staged in the
+  git-ignored `photos/bestiary/` until the owner's `QSD`; fables to name their plate, the soft edge a
+  CSS mask.
+
+**The plates are committed for now** under `images/bestiary/` (the owner, 2026-11-24: "wrap it to the
+repo's images for now"; the session's R2 key could not write): each a `.webp` and a `-960.webp`, the
+layouts taking either a committed plate or R2's tiers. To R2 later, with the owner's `QSD`.
+Waiting on the owner: the door's one line, "An errata of creatures."
+(keep or strike); the masthead pill over the pale pages; the door's photograph among paintings; the
+blend prototypes; story 01's 中文版 is marked a draft in the bestiary.
 
 ## Goal
 
@@ -63,13 +143,15 @@ option; the pick is then also the owner's word on the words.
 **It waits on nothing.** The pieces it may use are built, so it need not wait for stage 2 or stage
 4. Like stages 7 and 8, it moves up whenever the owner wants it.
 
-- [ ] Frame the choice and write `design/choices/bestiary-holding/choice.json` (the lead).
-- [ ] Two or three prototypes, each through the gate, shot at both widths; the choice page published,
-      with a one-line entry in the queue that links to it.
-- [ ] The picked option built on the Photobook shell; the inline styles gone. Tier 2, on the pick.
-- [ ] A journey, `bestiary`: from the masthead the page opens, says what it is, and its way on leads
-      to a page that exists. The row in [`FEATURES.md`](../FEATURES.md) gains it.
-- [ ] A pixel baseline for `/bestiary/` at both widths; a line in the changelog.
+- [-] Frame the choice and write `design/choices/bestiary-holding/choice.json` (the lead). Passed over:
+      the Bestiary was built instead (R024).
+- [-] Two or three prototypes for the holding page. Passed over (R024).
+- [x] Built on the Photobook shell; the inline styles gone (R024, 2026-11-24).
+- [x] A journey, `bestiary`: from the masthead the page opens, a card opens a fable, its switch shows
+      the Chinese, its design notes are not on the page, and its way on leads on and back. The row in
+      [`FEATURES.md`](../FEATURES.md) gains it.
+- [ ] A pixel baseline for `/bestiary/` at both widths, re-captured on the owner's `QSD` (a capture
+      writes to R2). The line in the changelog is written.
 
 Home keeps five doors, so the overflow of Home's Wonders at 320×640 is mended with five
 ([stage 3](03-wayfinding.md)).

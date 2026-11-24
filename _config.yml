@@ -192,8 +192,22 @@ collections:
     output: true
     permalink: /voyage/:path/
     sitemap: true
+  # The Bestiary's fables: their text from QSDQSB/dolomite-errata-bestiary (scripts/bestiary-import.mjs).
+  bestiary:
+    output: true
+    permalink: /bestiary/:path/
+    sitemap: true
+    sort_by: number
 # Defaults
 defaults:
+  # _bestiary
+  - scope:
+      path: ""
+      type: bestiary
+    values:
+      layout: fable
+      body_class: bestiary fable-page no-opening-scene
+      excerpt_separator: "" # no line under a fable's title, not even one Jekyll makes (the owner, 2026-11-24)
   # _posts
   - scope:
       path: ""

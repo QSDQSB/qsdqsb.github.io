@@ -1,0 +1,44 @@
+---
+layout: default
+---
+{%- comment -%}
+  A fable of the Bestiary (_bestiary/*.md), in its own room (the owner, 2026-11-24): its cover in the
+  house hero (page__hero.html, bare: the picture alone), dissolving into a parchment tinted by the cover; beside the words, where the window
+  leaves room, a room dyed quietly from the cover's lower part by the site's vat, the paper eased into it;
+  a faint relief over both (_includes/fable-room.html, assets/js/bestiary/room.js). On the paper the
+  title, its Chinese title, the story in two languages behind the site's switch, and the way on. The
+  colours are the front matter's `room:` (scripts/bestiary-room.py), each ink checked against the
+  ground. No line under the title and no record of creature or place (the owner, 2026-11-24).
+  Styles: _sass/_bestiary.scss, "A fable". The text is brought in by scripts/bestiary-import.mjs.
+{%- endcomment -%}
+{% include base_path %}
+{%- assign fables = site.bestiary | sort: "number" -%}
+{%- assign prev = nil -%}{%- assign next = nil -%}
+{%- for f in fables -%}
+  {%- if f.url == page.url -%}
+    {%- assign i_prev = forloop.index0 | minus: 1 -%}
+    {%- if i_prev >= 0 %}{% assign prev = fables[i_prev] %}{% endif -%}
+    {%- assign next = fables[forloop.index] -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- assign room_seed = 'bestiary/' | append: page.slug -%}
+{% include fable-room.html room=page.room seed=room_seed %}
+{% include page__hero.html bare=true %}
+<div id="main" role="main" class="fable-main">
+  <article class="fable" itemscope itemtype="http://schema.org/ShortStory">
+    <header class="fable__head">
+      <h1 class="fable__title" itemprop="headline">{{ page.title }}</h1>
+      {%- if page.title_zh != blank %}
+      <p class="fable__zh" lang="zh">{{ page.title_zh }}</p>
+      {%- endif %}
+    </header>
+    <section class="fable__text page__content" itemprop="text">
+      {{ content }}
+    </section>
+    <nav class="fable__onward" aria-label="Elsewhere in the Bestiary">
+      {%- if prev %}<a href="{{ prev.url | relative_url }}" rel="prev"><span aria-hidden="true">‹ </span>{{ prev.title }}</a>{% endif %}
+      <a href="{{ '/bestiary/' | relative_url }}">The Bestiary</a>
+      {%- if next %}<a href="{{ next.url | relative_url }}" rel="next">{{ next.title }}<span aria-hidden="true"> ›</span></a>{% endif %}
+    </nav>
+  </article>
+</div>
