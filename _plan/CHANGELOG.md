@@ -11,6 +11,19 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-24 · The Bestiary door's painting dissolves onto watercolour that begins in the painting's own colours at its foot and turns to dusk; no blurred copy of the picture · tier 0
+- 2026-11-24 · The Bestiary's door: its painting dissolves along a wandering line into its own meadow carried on, then into a dark dusk of aubergine and plum, with no line where the picture ends · tier 0
+- 2026-11-24 · The Bestiary door's dusk is lifted to its painting's own brightness, so the painting runs into the page without a drop · tier 0
+- 2026-11-24 · The Bestiary's door is now dusk: its afterglow painting dissolves into a dark watercolour of its own hues, aubergine, plum and alpenglow rose, with its name and links in ivory · tier 0
+- 2026-11-24 · The Bestiary's door dissolves its painting straight into a watercolour of the painting's own alpenglow, rose, ochre and dusk mauve, on a ground tinted by it, with no band of paper under the picture · tier 0
+- 2026-11-24 · The Bestiary's door wash runs under its words too, dried in patches and veins of bare paper, its inks deepened to read on the deepest of it · tier 0
+- 2026-11-24 · The Bestiary's door opens on its own painting, the Sassolungo in its afterglow, its wash in the painting's dusk rose; The Milk Plate opens on the tabby and its plate in the mist · tier 0
+- 2026-11-24 · The Bestiary's door is washed in watercolour in its photograph's dusk colours, over the whole page below the hero, thinning softly round its name and the site's last line; under a Bestiary page there is parchment, not black · tier 0
+- 2026-11-24 · The Bestiary's door and fables open on the site's own hero, their titles on the paper beneath it · tier 0
+- 2026-11-24 · The Bestiary's door cards and each fable now open on their oil paintings: The Pineapple Crown's meadow and The Milk Plate's dusk Sassolungo · tier 0
+- 2026-11-24 · The Bestiary is open, light parchment from its door on: /bestiary/ shows its photograph fading into the paper and a card for each fable; its first two fables, The Pineapple Crown (菠萝王冠) and The Milk Plate (牛奶碟), open on their painted cover dissolving into a parchment tinted by it, on the title alone, with the story in English and Chinese (宋体, set on its grid) behind the language switch and ways on between them · tier 2
+- 2026-11-24 · Beside a fable's words, where the window leaves room for it, a quiet room dyed from its cover's colours, laid as a watercolour wash that dried short of the words, its edge wandering like a dried wash; on a phone the paper runs edge to edge; the paper's texture is faint · tier 2
+- 2026-11-24 · Search finds the Bestiary's fables and names each one a Fable · tier 0
 - 2026-11-24 · A Subscribe page (/subscribe/, and in the site's last line): the subscribe slip opened into the page under About's cover, its address field framed in brass, holding three past letters as the mail showed them, letterhead, card, date, lines and Onward; which three is the owner's choice in _data/letters.yml (R023) · tier 2
 - 2026-11-24 · A page with no cover starts clear of the floating menu (Terms, the CV, the Bestiary), and the site's last line of links centres on the content beside the author's column, not on the window (posts, the archives, About) · tier 2
 - 2026-11-22 · A letter for a post now opens on its card, cover with title and line as a voyage's, without the palette; every letter dates itself DD.MM.YYYY (R021) · tier 2

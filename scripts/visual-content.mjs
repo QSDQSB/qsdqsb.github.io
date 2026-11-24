@@ -44,8 +44,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const PIN_FILE = path.join('tests', 'visual', 'content-pin.json');
 export const FROZEN_DIR = path.join('tests', 'visual', 'content', 'photo_manifests');
 // The collections whose documents list one another (Recent Updates, the voyage lists, the search,
-// a post's neighbours). Pages (_pages/) are the site's own and stay live.
-export const COLLECTIONS = ['_posts', '_voyage', '_subvoyage', '_portfolio'];
+// a post's neighbours, the Bestiary's cards and a fable's). Pages (_pages/) are the site's own and stay live.
+export const COLLECTIONS = ['_posts', '_voyage', '_subvoyage', '_portfolio', '_bestiary'];
 
 function walk(dir) {
   if (!fs.existsSync(dir)) return [];

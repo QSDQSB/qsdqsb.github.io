@@ -10,6 +10,8 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-11-24 · F102 · scripts/visual-baseline.mjs · no shots of /bestiary/ or a fable: add both at the re-capture after the plates reach R2 (reviewer)
+- 2026-11-24 · F101 · assets/fonts/NotoSerifSC, essay-font.py · The Chinese subset is shared by the essays and the Bestiary (192 KB, up from 120 KB) and grows with each fable, so a reader of a Chinese essay pays for the fables; and full-content search carries both languages of every fable. A subset of the fables' own, and excerpt-only search for them, would hold both still (R024). (reviewer)
 - 2026-11-22 · F100 · workers/photos-trigger, any folder in qsdqsb-originals · any non-dotted folder of pictures there is processed as a gallery, published to img.qsdqsb.com and fires a production deploy; the pixel baselines briefly sat at visual-baseline/ on 2026-11-22 (two runs). Keep tooling objects under dotted prefixes (reviewer)
 - 2026-10-30 · F099 · scripts/check-journeys.mjs, the atlas on /voyage/ · no journey sees the index atlas open near: on /voyage/, once .map-container--ready, the tiles' zoom should be at least 4 (R019 set it to Europe at zoom 4; the atlas journey's tile-zoom reading is the model) (reviewer) (reviewer)
 - 2026-10-30 · F098 · scripts/check-journeys.mjs, Home's Recent Updates · no journey sees the board name a part: once the newest updated: is on a sub-voyage, some .wn-card should link /voyage/<parent>/<part>/ and none its subgalleries parent (R019 fixed it; only the pixel diff of home catches a regression, and only while the data holds still) (reviewer) (reviewer)

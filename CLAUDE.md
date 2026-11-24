@@ -16,7 +16,7 @@ Detailed procedure lives in skills (which auto-load when relevant) and `_docs/` 
 
 ```
 _config.yml          Jekyll config — collections, defaults, plugins, site vars
-_layouts/            Page layouts (9) → _docs/layouts.md
+_layouts/            Page layouts (12) → _docs/layouts.md
 _includes/           50+ partials — masthead, gallery, map, hero, sidebar…
 _sass/               SCSS partials — _variables.scss is the token authority
 assets/js/           Custom JS (_main.js → main.min.js) + vendor (jQuery, Three.js)
@@ -24,6 +24,7 @@ _posts/              Blog posts
 _pages/              Static pages (about, cv, portfolio…)
 _voyage/             Travel voyage collection
 _subvoyage/          Nested sub-voyages
+_bestiary/           The Bestiary's fables (text from QSDQSB/dolomite-errata-bestiary, scripts/bestiary-import.mjs)
 _data/               YAML data: navigation, UI text, maps, tag colours, gallery SVGs
 photos/              Local originals, gitignored → R2 → _docs/photos-recipes.md (tasks), _docs/photos-pipeline.md (reference)
 _data/photos/        Authored photo layer: captions, order, stories (committed)
@@ -173,6 +174,7 @@ Enforced on touched files only — no global retrofit of untouched legacy files.
 | `_pages` | `title` |
 | `_voyage` | `title`, `date`, a cover + exactly one of `gallery_name` / `subgalleries: true` |
 | `_subvoyage` | `title`, `date`, a cover, `gallery_name` |
+| `_bestiary` | `title`, `number`, `creature`, `place`, `cover`, `header.overlay_image`, `source`, `seo_description`, `room` (from `scripts/bestiary-room.py`) |
 
 A voyage's cover is `cover: { photo, focus }` in its photo YAML (`_data/photos/<gallery>.yml`; a voyage in parts `_data/photos/<parent>.yml`), set with `npm run covers:focus`; `header.overlay_image` only where a voyage has no processed gallery yet (Venice).
 
@@ -186,7 +188,7 @@ The two that break most often: `gallery_name` must be a gallery the photo pipeli
 
 ## Layouts & Gallery System
 
-9 layouts. The two with real behaviour are `gallery.html` (a router: `subgalleries: true` → the index of parts; otherwise → the Photobook, `_includes/photobook.html`) and the page hero overlay (depth parallax, opening scene).
+12 layouts. The two with real behaviour are `gallery.html` (a router: `subgalleries: true` → the index of parts; otherwise → the Photobook, `_includes/photobook.html`) and the page hero overlay (depth parallax, opening scene).
 
 When a layout or include changes visible structure, validate desktop *and* mobile-small.
 

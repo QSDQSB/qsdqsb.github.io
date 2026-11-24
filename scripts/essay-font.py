@@ -46,12 +46,16 @@ def wanted(ch):
 
 
 def essays():
-    """Every post whose front matter sets `body_class` with `essay` in it."""
+    """Every post whose front matter sets `body_class` with `essay` in it, and the Bestiary: its
+    fables (_bestiary/, set in the same Song by _sass/_bestiary.scss) and its door."""
     for path in sorted((ROOT / "_posts").glob("*.md")):
         text = path.read_text(encoding="utf-8")
         front = re.match(r"---\n(.*?)\n---\n", text, re.S)
         if front and re.search(r"^body_class:.*\bessay\b", front.group(1), re.M):
             yield path, text
+    for path in sorted((ROOT / "_bestiary").glob("*.md")) + [ROOT / "_pages" / "bestiary.md"]:
+        if path.exists():
+            yield path, path.read_text(encoding="utf-8")
 
 
 def used():

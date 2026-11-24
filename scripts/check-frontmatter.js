@@ -39,7 +39,26 @@ const COLLECTIONS = {
   // A voyage also needs a cover (checkCover): `header` is no longer required for it.
   _voyage: { required: ['title', 'date'] },
   _subvoyage: { required: ['title', 'date'] },
+  // A fable (_layouts/fable.html): its names, its cover, and the story it
+  // is brought in from (scripts/bestiary-import.mjs); its number orders the Bestiary.
+  _bestiary: { required: ['title', 'number', 'creature', 'place', 'cover', 'source', 'seo_description'] },
 };
+
+// The photographs the fetched manifests hold, by their R2 address (img.qsdqsb.com/t/<hash>): a fable
+// names its photograph by that address, and a re-processed or replaced original gets a new one.
+let photoUrls = null;
+function knownPhotoUrls() {
+  if (photoUrls) return photoUrls;
+  photoUrls = new Set();
+  const dir = path.join(ROOT, '_data', 'photo_manifests');
+  if (!fs.existsSync(dir)) return photoUrls;
+  for (const f of fs.readdirSync(dir).filter((n) => n.endsWith('.json') && !n.startsWith('_'))) {
+    try {
+      for (const p of JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')).photos || []) if (p.url) photoUrls.add(p.url);
+    } catch { /* a manifest that does not parse is check-gallery-integrity's to report */ }
+  }
+  return photoUrls;
+}
 
 // ---------------------------------------------------------------------------
 // Parsing
@@ -326,6 +345,29 @@ function checkFile(absPath, tagColours) {
   checkMap(fm, collection, add);
 
   if (collection === '_voyage' || collection === '_subvoyage') checkCover(fm, rel, add);
+
+  if (collection === '_bestiary') {
+    if (fm.number !== undefined && !Number.isInteger(fm.number)) add('error', `number: ${fm.number} — a whole number, the archivist's (00 is the anchor story)`);
+    if (!fm.header || !fm.header.overlay_image) add('error', 'no header.overlay_image — the fable opens on no photograph');
+    if (!fm.title_zh) add('warn', 'no title_zh — the record and the card show no Chinese title');
+    const room = fm.room || {};
+    if (!['ground', 'ink', 'ink2', 'ink3', 'brass'].every((k) => /^#[0-9a-f]{6}$/i.test(room[k] || '')) || !Array.isArray(room.palette)) {
+      add('error', 'no room (its ground, inks and palette) — python3 scripts/bestiary-room.py, from its cover in photos/bestiary/');
+    }
+    // A plate committed under images/ for now (the owner, 2026-11-24): its two sizes must be there.
+    if (typeof fm.cover === 'string' && fm.cover.startsWith('/images/')) {
+      for (const ext of ['.webp', '-960.webp']) {
+        if (!fs.existsSync(path.join(ROOT, fm.cover.slice(1) + ext))) add('error', `cover: ${fm.cover}${ext} is not in the repository — the fable would open on nothing`);
+      }
+    }
+    const known = knownPhotoUrls();
+    for (const [key, raw] of [['cover', fm.cover], ['header.overlay_image', fm.header && fm.header.overlay_image]]) {
+      const base = String(raw || '').match(/^(https:\/\/img\.qsdqsb\.com\/t\/[0-9a-f]+)/);
+      if (!base) continue;
+      if (!known.size) add('warn', `${key}: no fetched manifests to check its photograph against (npm run photos:fetch)`);
+      else if (!known.has(base[1])) add('error', `${key}: ${base[1]} is in no fetched manifest — the photograph was replaced or removed, and the fable would open on nothing`);
+    }
+  }
 
   if (collection === '_voyage') {
     checkVoyageMode(fm, add);

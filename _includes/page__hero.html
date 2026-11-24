@@ -1,4 +1,5 @@
-{% comment %} A voyage's cover (voyage-cover.html) turns the overlay hero on, as header.overlay_image does for other pages. {% endcomment %}
+{% comment %} A voyage's cover (voyage-cover.html) turns the overlay hero on, as header.overlay_image does for other pages.
+  bare=true: the picture alone, no title on it and no scrim for one; the page sets its title beneath (the Bestiary). {% endcomment %}
 {% include voyage-cover.html doc=page %}
 {% if page.header.overlay_color or page.header.overlay_image or page.header.image or vc %}
 {% include base_path %}
@@ -34,7 +35,7 @@
 {% endif %}
 
 
-<div class="page__hero{% if page.header.overlay_color or page.header.overlay_image or vc %}--overlay{% endif %}"
+<div class="page__hero{% if page.header.overlay_color or page.header.overlay_image or vc %}--overlay{% endif %}{% if include.bare %} page__hero--bare{% endif %}"
   style="{% if page.header.overlay_color %}background-color: {{ page.header.overlay_color | default: 'transparent' }};{% endif %}"
 >
   {% if page.header.overlay_color or page.header.overlay_image or vc %}
@@ -66,6 +67,7 @@
       {% endunless %}
       <div class="page__hero-media" style="background-image: {% if overlay_filter %}linear-gradient({{ overlay_filter }}, {{ overlay_filter }}), {% endif %}url('{{ overlay_img_path }}');{% if page.header.overlay_position %} --hero-pos: {{ page.header.overlay_position }};{% endif %}"{% if depth_file %} data-depth-map="{{ depth_path | prepend: base_path }}" data-depth-photo="{{ overlay_img_path }}"{% if overlay_filter %} data-depth-filter="{{ overlay_filter }}"{% endif %}{% if page.header.depth_amp %} data-depth-amp="{{ page.header.depth_amp }}"{% endif %}{% if page.header.depth_focus %} data-depth-focus="{{ page.header.depth_focus }}"{% endif %}{% endif %}></div>
     {% endif %}
+    {%- unless include.bare %}
     <div class="wrapper">
       <div class="page__hero-copy">
         <h1 class="page__title" itemprop="headline">
@@ -86,6 +88,7 @@
         {% endif %}
       </div>
     </div>
+    {%- endunless %}
   {% else %}
     <img src="{{ img_path }}" alt="{{ page.title }}" class="page__hero-image" loading="eager" fetchpriority="high" decoding="async">
   {% endif %}
