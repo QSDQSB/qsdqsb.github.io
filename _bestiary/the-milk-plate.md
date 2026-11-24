@@ -1,13 +1,13 @@
 ---
-title: "The Wandering Tabby Cat"
-title_zh: "游荡的狸花猫"
+title: "The Milk Plate" # the owner, 2026-11-24; the bestiary files it as The Wandering Tabby Cat
+title_zh: "一碟牛奶" # a draft, from the story's 一碟牛奶
 number: 1
 creature: "The Tabby Cat"
 creature_zh: "狸花猫"
 place: "Alpe di Siusi"
 place_zh: "休斯高原"
 excerpt: "A plate of milk that no cat drank." # the story's own words
-seo_description: "The Wandering Tabby Cat, a fable of QSD's Dolomiti Errata Bestiary: a tabby that crosses Alpe di Siusi every day, an old herdsman, and a plate of milk on a grey stone. In English and Chinese."
+seo_description: "The Milk Plate, a fable of QSD's Dolomiti Errata Bestiary: a tabby that crosses Alpe di Siusi every day, an old herdsman, and a plate of milk on a grey stone. In English and Chinese."
 header:
   overlay_image: https://img.qsdqsb.com/t/e8ddd20f70089993/1920.webp # dolomites/siusi/dscf0634, the meadow and its white points
   overlay_filter: 0.3

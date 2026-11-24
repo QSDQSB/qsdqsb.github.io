@@ -2,9 +2,9 @@
 layout: default
 ---
 {%- comment -%}
-  A fable of the Bestiary (_bestiary/*.md): the photograph of its place as the page's hero, its title
-  and its line; beneath, the archivist's record (its number, its creature, its place, its Chinese
-  title); then the story in two languages behind the site's switch (assets/js/bilingual-switch.js),
+  A fable of the Bestiary (_bestiary/*.md): its plate as the page's hero, its title and its line,
+  then the story at once, as a story opens: no record of its creature or place under the title (the
+  owner, 2026-11-24); the story in two languages behind the site's switch (assets/js/bilingual-switch.js),
   each in its own face (the essays' Song for the Chinese); then the way on, to the fables either side
   and to the Bestiary. Styles: _sass/_bestiary.scss. The text is brought in from the bestiary's own
   repository by scripts/bestiary-import.mjs; the front matter is this site's.
@@ -20,18 +20,10 @@ layout: default
     {%- assign next = fables[forloop.index] -%}
   {%- endif -%}
 {%- endfor -%}
-{%- assign n = page.number | plus: 0 -%}
 <div id="main" role="main" class="fable-main">
   <article class="fable" itemscope itemtype="http://schema.org/ShortStory">
     <meta itemprop="headline" content="{{ page.title | escape }}">
     {% if page.excerpt %}<meta itemprop="description" content="{{ page.excerpt | strip_html | strip | escape }}">{% endif %}
-    <header class="fable__record">
-      <p class="fable__number">Nº <span>{% if n < 10 %}0{% endif %}{{ n }}</span></p>
-      <p class="fable__of">{{ page.creature }}{% if page.place %} · {{ page.place }}{% endif %}</p>
-      {%- if page.title_zh != blank %}
-      <p class="fable__gloss" lang="zh">{{ page.title_zh }}{% if page.creature_zh != blank %} · {{ page.creature_zh }}{% endif %}{% if page.place_zh != blank %} · {{ page.place_zh }}{% endif %}</p>
-      {%- endif %}
-    </header>
     <section class="fable__text page__content" itemprop="text">
       {{ content }}
     </section>

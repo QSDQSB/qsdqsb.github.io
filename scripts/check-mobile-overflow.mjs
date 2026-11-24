@@ -22,7 +22,7 @@ const args = process.argv.slice(2);
 const at = args.indexOf('--base');
 const base = at >= 0 ? args.splice(at, 2)[1] : 'http://localhost:4100';
 const PAGES = args.length ? args : [
-  '/', '/about/', '/cv/', '/bestiary/', '/bestiary/the-wandering-tabby-cat/', '/year-archive/', '/posts/shihuqiao/', '/posts/defined-by-archive/',
+  '/', '/about/', '/cv/', '/bestiary/', '/bestiary/the-milk-plate/', '/year-archive/', '/posts/shihuqiao/', '/posts/defined-by-archive/',
   '/voyage/', '/voyage/prague/', '/voyage/london/', '/voyage-by-tags/', '/portfolio/',
   '/palette/', '/palette/#london', '/reverie/?c=4a6fa5', '/drift/?from=london%2Fdscf0958&c=4a6fa5',
   '/utils/', '/utils/ridgway/',

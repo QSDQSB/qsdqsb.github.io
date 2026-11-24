@@ -197,7 +197,14 @@ const JOURNEYS = [
     const first = await cards.first().getAttribute('href');
     must(/\/bestiary\/the-pineapple-crown\/$/.test(first), `the first card is ${first}, not the anchor story`);
     await Promise.all([page.waitForURL(`**${first}`), cards.first().click()]);
-    must(/Nº\s*00/.test(await page.locator('.fable__number').innerText()), 'the fable shows no number in its record');
+    // It opens as a story: under the title, no record of its creature or its place (the owner, 2026-11-24).
+    const before = await page.evaluate(() => {
+      const article = document.querySelector('.fable');
+      const first = article && [...article.children].find((el) => el.tagName !== 'META');
+      const lead = first && first.matches('.fable__text') ? '' : 'something stands before the story';
+      return [document.querySelector('.page__hero-copy')?.innerText || '', lead].join(' ');
+    });
+    must(!/Orange Cat|Val di Cenere|橘猫|灰烬谷|something stands/.test(before), `the fable names its creature or place before the story: ${before.slice(0, 80)}`);
     // Its two texts: the switch shows the other, and only one is shown at a time.
     const zh = page.locator('.bilingual-switch__button[data-bilingual-option="中"]');
     must(await zh.count() === 1, 'the fable has no switch to its Chinese text');

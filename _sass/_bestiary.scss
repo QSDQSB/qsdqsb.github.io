@@ -124,35 +124,6 @@
   margin: 0 auto;
 }
 
-// The archivist's record: what the fable is filed under, before it is read. Its number a figure in
-// Didot (the owner, 2026-09-28), in brass; its creature and place an eyebrow; its Chinese names
-// spaced as an inscription is, as a post's gloss sets them.
-.fable__record {
-  margin: clamp(0.5rem, 2vw, 1.5rem) 0 clamp(2rem, 4vw, 3rem);
-
-  p { margin: 0; }
-}
-
-.fable__number {
-  font: 400 1.05rem/1 $didot-family;
-  letter-spacing: 0.08em;
-  color: $intriguing-word-color;
-
-  span { font-size: 1.9em; letter-spacing: 0.04em; }
-}
-
-.fable__record .fable__of {
-  @include eyebrow;
-  margin-top: 0.9rem;
-}
-
-.fable__record .fable__gloss {
-  margin-top: 0.55rem;
-  font: 400 0.92rem/1.6 "Songti SC", "STSong", "Noto Serif SC", serif;
-  letter-spacing: 0.3em;
-  color: var(--ink-3);
-}
-
 .fable__text {
   @include bestiary-reading-face;
 

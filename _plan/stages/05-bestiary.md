@@ -20,15 +20,24 @@ unusual situation, told by a cool archivist; each built on a philosophical idea 
   card for every fable (the `card` piece, 18 px: the scene), the photograph as the cover, the number,
   place and both titles as the cover line. Two to a row from 1024 px, one on a phone; as many rows as
   there are fables.
-- **A fable** (`_layouts/fable.html`): the hero, the archivist's record (its number a Didot figure in
-  brass, the creature and place an eyebrow, the Chinese names spaced as a gloss), the story behind the
-  site's switch, its Chinese in the essays' Song (the subset now cut for the fables too), and the
+- **A fable** (`_layouts/fable.html`): the hero, its title and line, then the story at once behind
+  the site's switch, its Chinese in the essays' Song (the subset now cut for the fables too), and the
   onward links to the fables either side and the Bestiary.
 - No new piece: everything is the grammar. What the vocabulary missed is the record, which stays the
   Bestiary's own.
 
-Waiting on the owner: the Chinese title for 00 (菠萝王冠 is a draft: the bestiary names it in English
-only); the door's few words (drafted from the bestiary's description, and they replace the holding
+**The owner, 2026-11-24, in the same conversation** (the framework is the bestiary's
+`art/README.md`, uncommitted while it is brainstormed):
+- The stories are named **The Pineapple Crown** and **The Milk Plate**: a fable is named by its story,
+  not its creature.
+- **A fable opens as a story**: no creature's name or place under the title ("That's underwhelming").
+  The record is gone from the page and the place from the door's cards.
+- **The art is a vintage storybook plate**, the owner's own picture of the orange cat as the measure
+  and as that cat's image; the tabby is a 背影, walking away with its tail raised. Plates fade into the
+  page; fixed objects (the lute, the cup) never change between plates.
+- PR #133 was closed: "we are still brainstorming". Nothing is pushed until the direction is settled.
+
+Waiting on the owner: the Chinese titles (菠萝王冠 and 一碟牛奶 are drafts); the door's few words (drafted from the bestiary's description, and they replace the holding
 page's 施工中 and its emoji); the two photographs (sesto/dscf9401 for Val di Cenere, which is not a
 real valley; siusi/dscf0634 for Alpe di Siusi); story 01's 中文版 is marked a draft in the bestiary.
 
