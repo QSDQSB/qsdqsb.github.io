@@ -201,8 +201,9 @@ screenshot workflow.
 - `fable.html` — a fable (`_bestiary/*.md`, the collection's default), in its own room: its cover
   across the window, dissolving into one paper; where the window leaves at least 160 px beside the words,
   a room dyed from the cover's lower part by the site's vat beside them (each colour set a step below the
-  ground's lightness, chroma held low, the accent left out), and the sheet eased in from the sides over
-  it; on a narrower window the paper runs edge to edge and there is no dye. A faint relief over both.
+  ground's lightness, chroma held low, the accent left out), laid as a watercolour wash that dried short
+  of the words, its edge wandering in both axes with a faint broken tide line (a WebGL pass, drawn once;
+  a canvas fallback without WebGL); on a narrower window the paper runs edge to edge and there is no dye. A faint relief over both.
   The room, sheet and relief are `_includes/fable-room.html` and `assets/js/bestiary/room.js`, shared
   with the door. On the paper the title, its Chinese title, the story's two texts behind the switch
   (Playfair, and 宋体 for the Chinese, set on its grid) and the way on. The colours are the front matter's

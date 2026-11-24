@@ -12,7 +12,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 ## 2026
 
 - 2026-11-24 · The Bestiary is open, light parchment from its door on: /bestiary/ shows its photograph fading into the paper and a card for each fable; its first two fables, The Pineapple Crown (菠萝王冠) and The Milk Plate (牛奶碟), open on their painted cover dissolving into a parchment tinted by it, on the title alone, with the story in English and Chinese (宋体, set on its grid) behind the language switch and ways on between them · tier 2
-- 2026-11-24 · Beside a fable's words, where the window leaves room for it, a quiet room dyed from its cover's colours, the paper easing into it; on a phone the paper runs edge to edge; the paper's texture is faint · tier 2
+- 2026-11-24 · Beside a fable's words, where the window leaves room for it, a quiet room dyed from its cover's colours, laid as a watercolour wash that dried short of the words, its edge wandering like a dried wash; on a phone the paper runs edge to edge; the paper's texture is faint · tier 2
 - 2026-11-24 · Search finds the Bestiary's fables and names each one a Fable · tier 0
 - 2026-11-24 · A Subscribe page (/subscribe/, and in the site's last line): the subscribe slip opened into the page under About's cover, its address field framed in brass, holding three past letters as the mail showed them, letterhead, card, date, lines and Onward; which three is the owner's choice in _data/letters.yml (R023) · tier 2
 - 2026-11-24 · A page with no cover starts clear of the floating menu (Terms, the CV, the Bestiary), and the site's last line of links centres on the content beside the author's column, not on the window (posts, the archives, About) · tier 2

@@ -29,8 +29,10 @@ unusual situation, told by a cool archivist; each built on a philosophical idea 
   paper eased into it; **on a phone, paper edge to edge, no dye** (the owner, 2026-11-24). **The texture
   is very faint** (the owner, 2026-11-24, "too strong" three times). The room, paper and relief are
   `_includes/fable-room.html` and `assets/js/bestiary/room.js`, shared by the door and the fables.
-- The blend between the room and the paper is still being brainstormed (the owner, 2026-11-24: "a
-  clear linear pattern"): prototypes of a watercolour bloom and of dye soaked into paper fibre.
+- **The blend is a watercolour bloom** (the owner, 2026-11-24, after three prototypes, bloom, soaked
+  fibre and a pool of light, of a blend with "a clear linear pattern": "prefer A and B, no strong opinion
+  in between"): the wash dried short of the words, its edge wandering in both axes, a faint broken tide
+  line; the dye poured with a current (calm .45) so it lies in drifts, not strata.
 
 **The owner, 2026-11-24, in the same conversation** (the framework is the bestiary's
 `art/README.md`, uncommitted while it is brainstormed):

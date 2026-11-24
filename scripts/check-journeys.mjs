@@ -201,8 +201,9 @@ const JOURNEYS = [
     const head = await page.evaluate(() => document.querySelector('.fable__head')?.innerText || '');
     must(/The Pineapple Crown/.test(head), `the fable's head does not carry its title: ${head.slice(0, 80)}`);
     must(!/Orange Cat|Val di Cenere|橘猫|灰烬谷/.test(head), `the fable names its creature or place before the story: ${head.slice(0, 80)}`);
-    // Its room: the dye poured, the sheet drawn, and the words in the room's own ink on its ground.
-    const room = await page.evaluate(() => ({ dye: !!document.querySelector('.fable-room canvas'), sheet: !!document.querySelector('.fable-sheet svg'), ground: getComputedStyle(document.documentElement).getPropertyValue('--fable-ground').trim() }));
+    // Its room: the wash poured beside the words, the paper drawn under the cover, and the words in the
+    // room's own ink on its ground.
+    const room = await page.evaluate(() => ({ dye: !!document.querySelector('.fable-room canvas'), sheet: !!document.querySelector('.fable-sheet canvas'), ground: getComputedStyle(document.documentElement).getPropertyValue('--fable-ground').trim() }));
     must(room.dye && room.sheet && /^#[0-9a-f]{6}$/i.test(room.ground), `the fable's room is not drawn (${JSON.stringify(room)})`);
     // Its two texts: the switch shows the other, and only one is shown at a time.
     const zh = page.locator('.bilingual-switch__button[data-bilingual-option="中"]');
@@ -228,7 +229,7 @@ const JOURNEYS = [
     await go(nextHref);
     const phone = await page.evaluate(() => {
       const top = (q) => document.querySelector(q)?.getBoundingClientRect().top ?? NaN;
-      return { dye: !!document.querySelector('.fable-room canvas'), sheet: !!document.querySelector('.fable-sheet svg'), prev: top('.fable__onward a[rel="prev"]'), index: top('.fable__onward a[href$="/bestiary/"]') };
+      return { dye: !!document.querySelector('.fable-room canvas'), sheet: getComputedStyle(document.querySelector('.fable-sheet')).backgroundColor !== 'rgba(0, 0, 0, 0)', prev: top('.fable__onward a[rel="prev"]'), index: top('.fable__onward a[href$="/bestiary/"]') };
     });
     if (size) await page.setViewportSize(size);
     must(!phone.dye && phone.sheet, `on a phone the fable's room is ${JSON.stringify(phone)}, not paper edge to edge`);

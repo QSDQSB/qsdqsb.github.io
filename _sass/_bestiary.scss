@@ -159,8 +159,10 @@ body.fable-page #main.fable-main {
   padding: 0;
 }
 
-// The sheet: the page's ground, eased in from the sides where the window leaves room beside the words (on
-// a narrower one it is the whole width, and there is no dye to see: room.js), the whole page long (its frame is the body), so
+// The sheet: the page's own paper under the cover's foot, whole across the width and thinning downward
+// along a wandering line (room.js draws it; beside the words the paper is the room's own, the wash
+// stopping short of them); where the window leaves no room beside the words it is the ground, the whole
+// width and the whole page long (its frame is the body), so
 // the words, the way on and the site's last line all stand on the ground their inks were checked against.
 .fable-sheet {
   position: absolute;
@@ -171,7 +173,6 @@ body.fable-page #main.fable-main {
   -webkit-mask-image: linear-gradient(180deg, transparent calc(min(68vh, 720px) - 5rem), #000 calc(min(68vh, 720px) + 3rem));
           mask-image: linear-gradient(180deg, transparent calc(min(68vh, 720px) - 5rem), #000 calc(min(68vh, 720px) + 3rem));
 
-  svg { display: block; }
 }
 
 // One relief over the room and the sheet alike, as Reverie's wall has it, at a ninth of the wall's
