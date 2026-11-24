@@ -736,6 +736,10 @@ body.essay .page__content {
   }
 }
 
+// A bare hero (page__hero.html bare=true): the picture alone, its title set on the page beneath, so
+// no scrim darkens it for words that are not there.
+.page__hero--bare .page__hero-media::after { content: none; }
+
 // A voyage's cover (_includes/page__hero.html): the photo's tier and where its subject sits, for each
 // shape the hero takes (about 2.4:1, 16:9 under a desktop, 4:3 on a phone). After the rules above that
 // centre every hero, so it wins at the same specificity; the seam blur (::before) inherits it.

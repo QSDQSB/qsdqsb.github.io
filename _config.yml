@@ -206,7 +206,7 @@ defaults:
       type: bestiary
     values:
       layout: fable
-      body_class: bestiary fable-page
+      body_class: bestiary fable-page no-opening-scene
       excerpt_separator: "" # no line under a fable's title, not even one Jekyll makes (the owner, 2026-11-24)
   # _posts
   - scope:

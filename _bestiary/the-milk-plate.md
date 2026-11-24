@@ -9,9 +9,9 @@ place_zh: "休斯高原"
 seo_description: "The Milk Plate, a fable of QSD's Dolomiti Errata Bestiary: a tabby that crosses Alpe di Siusi every day, an old herdsman, and a plate of milk on a grey stone. In English and Chinese."
 header:
   overlay_image: /images/bestiary/the-milk-plate.webp # its cover plate, the oil painting
-  overlay_filter: 0.3
+  overlay_position: "56% 12%" # the whole Sassolungo, summit to foot; the plate may fall to the fade (the owner, 2026-11-24)
 cover: /images/bestiary/the-milk-plate # the plate, committed for now (the owner, 2026-11-24): .webp and -960.webp
-cover_position: "56% 12%" # the whole Sassolungo, summit to foot; the plate may fall to the fade (the owner, 2026-11-24)
+
 source: "stories/01. The Milk Plate.md"
 room: # from its cover by scripts/bestiary-room.py: the dye, the ground and the inks (contrast-checked)
   ground: "#f8e8d8"

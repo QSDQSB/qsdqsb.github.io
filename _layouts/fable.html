@@ -2,8 +2,8 @@
 layout: default
 ---
 {%- comment -%}
-  A fable of the Bestiary (_bestiary/*.md), in its own room (the owner, 2026-11-24): its cover across
-  the whole window, dissolving into a parchment tinted by the cover; beside the words, where the window
+  A fable of the Bestiary (_bestiary/*.md), in its own room (the owner, 2026-11-24): its cover in the
+  house hero (page__hero.html, bare: the picture alone), dissolving into a parchment tinted by the cover; beside the words, where the window
   leaves room, a room dyed quietly from the cover's lower part by the site's vat, the paper eased into it;
   a faint relief over both (_includes/fable-room.html, assets/js/bestiary/room.js). On the paper the
   title, its Chinese title, the story in two languages behind the site's switch, and the way on. The
@@ -21,16 +21,10 @@ layout: default
     {%- assign next = fables[forloop.index] -%}
   {%- endif -%}
 {%- endfor -%}
-{%- comment -%} The cover: R2's size tiers (an img.qsdqsb.com address), or a committed plate under images/ (its .webp and -960.webp). {%- endcomment -%}
-{%- if page.cover contains "://" -%}
-  {%- capture cover_big %}{{ page.cover }}/2560.webp{% endcapture -%}{%- capture cover_small %}{{ page.cover }}/1280.webp{% endcapture -%}
-{%- else -%}
-  {%- capture cover_big %}{{ page.cover | append: ".webp" | relative_url }}{% endcapture -%}{%- capture cover_small %}{{ page.cover | append: "-960.webp" | relative_url }}{% endcapture -%}
-{%- endif -%}
 {%- assign room_seed = 'bestiary/' | append: page.slug -%}
 {% include fable-room.html room=page.room seed=room_seed %}
+{% include page__hero.html bare=true %}
 <div id="main" role="main" class="fable-main">
-  <div class="fable-cover" aria-hidden="true" style="--cover: url('{{ cover_big }}'); --cover-sm: url('{{ cover_small }}'); --cover-pos: {{ page.cover_position | default: '50% 50%' }}"></div>
   <article class="fable" itemscope itemtype="http://schema.org/ShortStory">
     <header class="fable__head">
       <h1 class="fable__title" itemprop="headline">{{ page.title }}</h1>

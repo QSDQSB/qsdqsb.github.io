@@ -152,7 +152,7 @@ body.fable-page {
   canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 }
 
-// The cover runs up under the floating menu, as a hero does: no room kept for the bar above it.
+// The words follow the house hero (page__hero.html, bare) at once: no room kept for the bar above them.
 body.fable-page #main.fable-main {
   display: block;
   max-width: none;
@@ -168,11 +168,10 @@ body.fable-page #main.fable-main {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  // The head comes in only as the cover fades (under the painting it would show as a pale haze with
+  // The house hero's height (_page.scss). The head comes in only as the cover fades (under the painting it would show as a pale haze with
   // shoulders), whole by just past the cover's foot, and whole to the very end: the page ends on paper.
-  -webkit-mask-image: linear-gradient(180deg, transparent calc(min(68vh, 720px) - 5rem), #000 calc(min(68vh, 720px) + 3rem));
-          mask-image: linear-gradient(180deg, transparent calc(min(68vh, 720px) - 5rem), #000 calc(min(68vh, 720px) + 3rem));
-
+  -webkit-mask-image: linear-gradient(180deg, transparent calc(clamp(24rem, 68svh, 38rem) - 5rem), #000 calc(clamp(24rem, 68svh, 38rem) + 3rem));
+          mask-image: linear-gradient(180deg, transparent calc(clamp(24rem, 68svh, 38rem) - 5rem), #000 calc(clamp(24rem, 68svh, 38rem) + 3rem));
 }
 
 // One relief over the room and the sheet alike, as Reverie's wall has it, at a ninth of the wall's
@@ -192,30 +191,6 @@ body.fable-page #main.fable-main {
     opacity: 1;
     mix-blend-mode: normal;
   }
-}
-
-// The cover, as the house sets a hero: from the very top, the whole window wide; its foot fades into the room.
-.fable-cover {
-  position: relative;
-  height: min(68vh, 720px);
-  background: var(--cover) var(--cover-pos) / cover no-repeat;
-  // Its foot dissolves on a smootherstep curve over its lowest fifth, below where a plate's subject stands: a straight fade ends in a line the
-  // eye reads as an edge across the room.
-  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1.000) 78.00%, rgba(0, 0, 0, 0.984) 80.75%, rgba(0, 0, 0, 0.896) 83.50%, rgba(0, 0, 0, 0.725) 86.25%, rgba(0, 0, 0, 0.500) 89.00%, rgba(0, 0, 0, 0.275) 91.75%, rgba(0, 0, 0, 0.104) 94.50%, rgba(0, 0, 0, 0.016) 97.25%, rgba(0, 0, 0, 0.000) 100.00%);
-          mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1.000) 78.00%, rgba(0, 0, 0, 0.984) 80.75%, rgba(0, 0, 0, 0.896) 83.50%, rgba(0, 0, 0, 0.725) 86.25%, rgba(0, 0, 0, 0.500) 89.00%, rgba(0, 0, 0, 0.275) 91.75%, rgba(0, 0, 0, 0.104) 94.50%, rgba(0, 0, 0, 0.016) 97.25%, rgba(0, 0, 0, 0.000) 100.00%);
-
-  @include responsive-down(tablet) {
-    height: 62vh;
-    background-image: var(--cover-sm);
-  }
-}
-
-// The door's photograph (3:1) drawn a fifth taller than its frame, so its foot, the lake's bright
-// reflection, falls outside it and the fade lands on the meadow, not on a cyan strip.
-.bestiary-door .fable-cover {
-  background-size: max(100%, calc(3.6 * min(68vh, 720px))) auto;
-
-  @include responsive-down(tablet) { background-size: max(100%, calc(3.6 * 62vh)) auto; }
 }
 
 .fable {

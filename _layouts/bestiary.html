@@ -3,8 +3,8 @@ layout: default
 ---
 {%- comment -%}
   The Bestiary's door (/bestiary/, _pages/bestiary.md), on the fables' light parchment (the owner,
-  2026-11-24: the Bestiary is the light template from its door on): its photograph across the window as
-  a fable's cover is, fading into the parchment, its name beneath, then (no words: the owner,
+  2026-11-24: the Bestiary is the light template from its door on): its photograph in the house hero (bare),
+  fading into the parchment, its name beneath, then (no words: the owner,
   2026-11-24; any the page is given show behind the site's switch) a card for every fable, in the
   order the archivist numbered them: its cover plate as the cover, its number, its title in
   both languages as the cover line; never its creature or place (the owner, 2026-11-24). As many as there are; a fable is a file in
@@ -12,12 +12,9 @@ layout: default
 {%- endcomment -%}
 {% include base_path %}
 {%- assign fables = site.bestiary | sort: "number" -%}
-{%- assign hero = page.header.overlay_image -%}
-{%- assign first = hero | slice: 0 -%}
-{%- if hero contains "://" -%}{%- elsif first == "/" -%}{%- assign hero = hero | relative_url -%}{%- else -%}{%- assign hero = hero | prepend: "/images/" | relative_url -%}{%- endif -%}
 {% include fable-room.html room=page.room seed="bestiary" %}
+{% include page__hero.html bare=true %}
 <div id="main" role="main" class="fable-main">
-  <div class="fable-cover" aria-hidden="true" style="--cover: url('{{ hero }}'); --cover-sm: url('{{ hero }}'); --cover-pos: {{ page.cover_position | default: '50% 60%' }}"></div>
   <header class="fable__head bestiary__head">
     <h1 class="fable__title">{{ page.title }}</h1>
     {%- if page.excerpt != blank %}
@@ -42,7 +39,7 @@ layout: default
           {%- else -%}
             {%- capture c_small %}{{ f.cover | append: "-960.webp" | relative_url }}{% endcapture -%}{%- capture c_set %}{{ f.cover | append: "-960.webp" | relative_url }} 960w, {{ f.cover | append: ".webp" | relative_url }} 1672w{% endcapture -%}
           {%- endif -%}
-          <img src="{{ c_small }}" srcset="{{ c_set }}" sizes="(min-width: 1024px) 50vw, 100vw" alt="" loading="{% if forloop.index <= 2 %}eager{% else %}lazy{% endif %}" decoding="async" style="object-position: {{ f.cover_position | default: '50% 50%' }}">{% endif -%}
+          <img src="{{ c_small }}" srcset="{{ c_set }}" sizes="(min-width: 1024px) 50vw, 100vw" alt="" loading="{% if forloop.index <= 2 %}eager{% else %}lazy{% endif %}" decoding="async" style="object-position: {{ f.header.overlay_position | default: '50% 50%' }}">{% endif -%}
         </span>
         <span class="bestiary-card__words">
           <span class="bestiary-card__of">Nº {% if n < 10 %}0{% endif %}{{ n }}</span>

@@ -182,7 +182,7 @@ function draw() {
   const feather = Math.min(0.3 * gap, 170), amp = Math.min(0.12 * gap, 80), edge2 = Math.min(0.1 * gap, 50), warpA = Math.min(0.06 * gap, 36);
   const o = { colL: box.left, colR: box.right, amp, feather, edge2, warpA, wander: Math.min(0.24 * gap, 130), edge: 26 + edge2 + amp * 1.3 + warpA * 0.6 + 0.45 * feather, tide: 0.5, seed: seed % 997 };
   const ground = hex(groundHex);
-  const cover = document.querySelector('.fable-cover');
+  const cover = document.querySelector('.page__hero--overlay');
   const foot = (cover ? cover.getBoundingClientRect().bottom + scrollY : Math.min(H * 0.68, 720)) + 24, band = H * 0.32;
 
   const out = document.createElement('canvas'); out.width = Math.round(W * dpr); out.height = Math.round(H * dpr);
