@@ -165,9 +165,9 @@ body.fable-page #main.fable-main {
   inset: 0;
   pointer-events: none;
   // The head comes in only as the cover fades (under the painting it would show as a pale haze with
-  // shoulders), whole by just past the cover's foot; the foot lets the room back in at the very end.
-  -webkit-mask-image: linear-gradient(180deg, transparent calc(min(68vh, 720px) - 5rem), #000 calc(min(68vh, 720px) + 3rem), #000 calc(100% - 5rem), transparent 100%);
-          mask-image: linear-gradient(180deg, transparent calc(min(68vh, 720px) - 5rem), #000 calc(min(68vh, 720px) + 3rem), #000 calc(100% - 5rem), transparent 100%);
+  // shoulders), whole by just past the cover's foot, and whole to the very end: the page ends on paper.
+  -webkit-mask-image: linear-gradient(180deg, transparent calc(min(68vh, 720px) - 5rem), #000 calc(min(68vh, 720px) + 3rem));
+          mask-image: linear-gradient(180deg, transparent calc(min(68vh, 720px) - 5rem), #000 calc(min(68vh, 720px) + 3rem));
 
   svg { display: block; }
 }
@@ -205,6 +205,14 @@ body.fable-page #main.fable-main {
     height: 62vh;
     background-image: var(--cover-sm);
   }
+}
+
+// The door's photograph (3:1) drawn a fifth taller than its frame, so its foot, the lake's bright
+// reflection, falls outside it and the fade lands on the meadow, not on a cyan strip.
+.bestiary-door .fable-cover {
+  background-size: max(100%, calc(3.6 * min(68vh, 720px))) auto;
+
+  @include responsive-down(tablet) { background-size: max(100%, calc(3.6 * 62vh)) auto; }
 }
 
 .fable {
@@ -304,6 +312,17 @@ body.fable-page #main.fable-main {
   a[rel="next"] { grid-column: 3; justify-self: end; }
   a:hover,
   a:focus-visible { color: var(--fable-ink); }
+
+  // On a phone a third of the width will not hold a title in tracked capitals: the fable before and the
+  // one after share the first row, the Bestiary below them in the middle.
+  @include responsive-down(compact) {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1.5rem;
+
+    a, a:visited { grid-row: 2; grid-column: 1 / -1; line-height: 1.45; }
+    a[rel="prev"] { grid-row: 1; grid-column: 1; text-align: left; }
+    a[rel="next"] { grid-row: 1; grid-column: 2; text-align: right; }
+  }
 }
 
 // The site's last line, in the page's inks.
