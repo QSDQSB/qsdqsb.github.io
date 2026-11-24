@@ -10,13 +10,15 @@ header:
   overlay_position: "56% 12%" # the whole mountain, summit to foot
 # The door's parchment and its inks, and its wash, which runs under the words too (the owner, 2026-11-24): each
 # ink checked against the deepest of the wash, not the paper (ink 8.7:1, ink2 6:1 for the last line's labels,
-# ink3 4.7:1 for the line under the name; scratchpad measure, room.js mode full). The wash: the afterglow painting's colours, the whole image (its pink sky, not only its foot),
-# poured over the whole page below the hero, under the words as well (room.js, mode full).
+# ink3 4.7:1 for the line under the name; scratchpad measure, room.js mode full). The ground: a pale tint of the painting's alpenglow, not paper (the owner, 2026-11-24: "no need to stay
+# paper-yellow"). The wash: the painting's essential colours, weighted by how colourful each pixel is (its
+# alpenglow rose, ochre glow, dusk mauve, sky grey, umber), richer than a fable's room, over the whole page
+# from under the hero, so the painting dissolves straight into it (room.js, mode full).
 room:
-  ground: "#efe6d2"
+  ground: "#f9e5db"
   ink: "#2b2620"
   ink2: "#463f34"
   ink3: "#574f42"
   brass: "#7a5b2b"
-  palette: [{"hex": "#241f17", "pc": 26.6}, {"hex": "#82776e", "pc": 24.6}, {"hex": "#453d3e", "pc": 16.1}, {"hex": "#5f514e", "pc": 15.7}, {"hex": "#9e7961", "pc": 17.1}]
+  palette: [{"hex": "#9d6450", "pc": 30}, {"hex": "#a47d61", "pc": 26}, {"hex": "#8a6f78", "pc": 18}, {"hex": "#7f7772", "pc": 14}, {"hex": "#56453d", "pc": 12}]
 ---

@@ -177,6 +177,13 @@ body.fable-page #main.fable-main {
           mask-image: linear-gradient(180deg, transparent calc(clamp(24rem, 68svh, 38rem) - 5rem), #000 calc(clamp(24rem, 68svh, 38rem) + 3rem));
 }
 
+// On the door the wash runs up under the hero, so the painting dissolves straight into it: no band of bare
+// paper between the picture and the watercolour.
+.bestiary-door .fable-sheet {
+  -webkit-mask-image: none;
+          mask-image: none;
+}
+
 // One relief over the room and the sheet alike, as Reverie's wall has it, at a ninth of the wall's
 // strength: on a pale ground the soft light's shadows read far deeper than on a dyed wall, and at the
 // wall's amount the paper turned to stucco (the owner, 2026-11-24: too strong at a half and a quarter). A fixed layer is a group of its own, so the soft light is the

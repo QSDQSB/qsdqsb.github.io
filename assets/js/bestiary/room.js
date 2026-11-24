@@ -87,6 +87,9 @@ void main() {
     // the middle), dried in broad patches and clearings. Its "distance" is how far inside a patch a point
     // lies, so the same thinning, dried edge and tide line follow.
     float cover = fbm(p / 640.0 + 1.3 * r + 2.1, 4) + coverBias;
+    // Whole under the hero and just below its foot, so the painting always dissolves into colour and
+    // never onto a vein of bare paper, which would read as a border under it.
+    cover += 0.45 * (1.0 - smoothstep(foot - 40.0, foot + 280.0, p.y));
     d0 = 1e4; d = cover * 420.0 + warpA * 2.0 * r.x; e1 = 0.0;
   } else {
     // How far outward from the column of words, measured at a bent position.
@@ -169,13 +172,13 @@ function drawDoor(palette, groundHex, seed) {
   const W = innerWidth, H = document.documentElement.scrollHeight;
   const dpr = Math.min(1.25, devicePixelRatio || 1, 4000 / H);
   const G = oklab(groundHex)[0];
-  // The painting's own colours, its accent included (the door's magic is its dusk), held as quiet as a
-  // room and a shade paler than a fable's, since the door's words stand on the wash itself: every ink
-  // keeps its contrast on the deepest of it (the door's inks, _pages/bestiary.md).
+  // The painting's essential colours (its alpenglow, its ochre, its dusk), with more colour than a fable's
+  // room is let have (the door has no long text: the owner, 2026-11-24), a step below the ground; the
+  // door's words stand on the wash itself, so every ink is checked against its deepest (_pages/bestiary.md).
   const quiet = palette.map((p) => {
     const [L, a, b] = oklab(p.hex);
-    const c = Math.hypot(a, b), k = Math.min(0.8, c ? 0.035 / c : 0);
-    return { ...p, accent: false, hex: toHex(fromOklab([G - 0.065 - 0.035 * (1 - L), a * k, b * k])) };
+    const c = Math.hypot(a, b), k = Math.min(0.9, c ? 0.07 / c : 0);
+    return { ...p, accent: false, hex: toHex(fromOklab([G - 0.075 - 0.04 * (1 - L), a * k, b * k])) };
   });
   const dye = vat(quiet, { shape: 'rect', width: Math.round(W / 2), height: Math.round(Math.min(H, 2400) / 2), seed, calm: 0.45 });
   const out = document.createElement('canvas'); out.width = Math.round(W * dpr); out.height = Math.round(H * dpr);
@@ -192,6 +195,8 @@ function drawDoor(palette, groundHex, seed) {
   const o = { feather: 150, amp: 60, edge2: 40, warpA: 30, tide: 0.5, coverBias: 0.08 };
   for (const k of Object.keys(o)) gl.uniform1f(u(k), o[k]);
   gl.uniform3f(u('ground'), ...hex(groundHex).map(lin));
+  const hero = document.querySelector('.page__hero--overlay');
+  gl.uniform1f(u('foot'), hero ? hero.getBoundingClientRect().bottom + scrollY : 0);
   c.width = out.width; c.height = out.height; gl.viewport(0, 0, out.width, out.height);
   gl.uniform2f(u('view'), W, H); gl.uniform1f(u('mode'), 2);
   gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

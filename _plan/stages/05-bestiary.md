@@ -34,7 +34,10 @@ unusual situation, told by a cool archivist; each built on a philosophical idea 
   whole-image palette, its accent kept, poured over the whole page below the hero, dried in patches and
   veins of bare paper. Since 2026-11-24 the door's own painting is the afterglow (its cover), and the wash
   runs under the words too ("no need for center 羊皮纸色 rule for the errata landing page"): a shade paler
-  than a fable's room, and the door's inks deepened, each checked against the deepest wash.
+  than a fable's room, and the door's inks deepened, each checked against the deepest wash. Then (the
+  owner, 2026-11-24): the wash runs up under the hero ("we wouldn't have this awkward notable border"), in
+  the painting's essential colours (its alpenglow, not its umbers), on a ground tinted by the alpenglow
+  ("no need to stay paper-yellow because we don't have long text here").
 - **The blend is a watercolour bloom** (the owner, 2026-11-24, after three prototypes, bloom, soaked
   fibre and a pool of light, of a blend with "a clear linear pattern": "prefer A and B, no strong opinion
   in between"): the wash dried short of the words, its edge wandering in both axes, a faint broken tide
