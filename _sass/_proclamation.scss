@@ -253,6 +253,13 @@ body.proclamation .page__content {
 
   .proclamation--grand:lang(zh) .proclamation-head__kind { letter-spacing: 0.5em; padding-left: 0.5em; }
 
+  // Last in a language panel, the proclamation keeps the room its seal hangs into: the panel
+  // zeroes its last child's margin (_bilingual-switch.scss), which would let the page's date
+  // run under the seal.
+  [data-bilingual].is-bilingual-enhanced > [data-bilingual-lang]:not([hidden]) > .proclamation--grand:last-child {
+    margin-bottom: calc(var(--seal) / 2 + 2rem);
+  }
+
   /* ---- an intelligence report: plainer still. No arms, no corners: a single rule ---- */
   .proclamation--intelligence {
     padding: clamp(2.2rem, 6vw, 3.6rem) clamp(1.4rem, 6vw, 4.2rem);
