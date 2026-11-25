@@ -6,7 +6,7 @@ CLAUDE.md's rule is "never hand-edit main.min.js — edit _main.js, then run
 the source, forget the rebuild, commit, and Cloudflare Pages serves the old
 bundle. Nothing in the site breaks visibly, so it can go unnoticed for weeks.
 
-With no bundle source edited (a clean tree, as in CI), the bundle is rebuilt
+In CI, with no bundle source edited (a clean checkout), the bundle is rebuilt
 into a temp file and compared byte for byte. With a source edited:
 
 Detection rule — all three must hold for the bundle to be called stale:
@@ -33,6 +33,7 @@ Exit codes:
 from __future__ import annotations
 
 import json
+import os
 import shlex
 import subprocess
 import sys
@@ -120,8 +121,12 @@ def main() -> int:
     dirty = dirty_paths()
     changed = [s for s in sources if s in dirty]
     if not changed:
-        # A clean tree (CI) has no edit to date: rebuild and compare the bytes instead.
-        return compare_rebuild(sources, artifact)
+        # In CI a clean checkout has no edit to date: rebuild and compare the bytes instead.
+        # Locally the check stays scoped to this session's edits (the Stop hook runs it).
+        if os.environ.get("CI"):
+            return compare_rebuild(sources, artifact)
+        print(f"OK — no bundle sources modified ({len(sources)} tracked).")
+        return 0
 
     if ARTIFACT in dirty:
         print(f"OK — {ARTIFACT} rebuilt alongside {', '.join(changed)}.")

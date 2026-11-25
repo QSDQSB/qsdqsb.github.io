@@ -65,7 +65,7 @@ import {
   LOGO_CID,
   WELCOME_SUBJECT,
 } from "./letter-template.mjs";
-import { reverieCard, voyageCard, plainLine } from "./letter-card.mjs";
+import { reverieCard, voyageCard, plainLine, sendKey } from "./letter-card.mjs";
 
 // Repo-level secrets: load KEY=VALUE lines from a gitignored .env at the repo
 // root (next to package.json), without overriding anything already exported.
@@ -254,7 +254,7 @@ async function resendSend(to, token, key = null, tries = 0) {
     headers: {
       Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
       "content-type": "application/json",
-      ...(key ? { "Idempotency-Key": key.slice(0, 256) } : {}),
+      ...(key ? { "Idempotency-Key": key } : {}),
     },
     body: JSON.stringify({
       from: FROM,
@@ -308,7 +308,7 @@ if (optSendTest) {
   const failed = [];
   for (const s of subs) {
     try {
-      await resendSend(s.email, s.token, `${subject}:${s.token}`);
+      await resendSend(s.email, s.token, sendKey(subject, s.token));
       sent += 1;
       process.stdout.write(`  sent ${sent}/${subs.length}\r`);
     } catch (e) {
@@ -319,6 +319,7 @@ if (optSendTest) {
   console.log(`\n✓ sent ${sent}/${subs.length}`);
   if (failed.length) {
     console.log(`✗ failed ${failed.length}:`);
+    console.log("  (a 409 means that address already had this letter in the last 24 hours: the run was started again)");
     for (const f of failed) console.log(`   ${f.email} — ${f.error}`);
     process.exit(1);
   }

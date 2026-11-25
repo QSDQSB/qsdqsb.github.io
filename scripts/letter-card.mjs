@@ -29,6 +29,7 @@ import { tmpdir } from 'node:os';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import { createHash } from 'node:crypto';
 import { chromium } from 'playwright-core';
 import { GROUND } from './letter-template.mjs';
 import { positionFor, shapeOf } from './photos/lib/cover.mjs';
@@ -114,6 +115,10 @@ export async function reverieCard(hex, { site = 'https://qsdqsb.com' } = {}) {
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 /** A line as a reader sees it: no markdown emphasis marks (`___enchanted___`). */
+// The bulk send's idempotency key: one per letter and subscriber, and ASCII, since a header
+// cannot carry the title's own characters (打工日记, Žižkov, an em dash); fetch throws on them.
+export const sendKey = (subject, token) => `${createHash('sha256').update(subject).digest('hex').slice(0, 32)}:${token}`;
+
 export const plainLine = (s) => String(s || '').replace(/(\*{1,3}|_{1,3})(\S(?:.*?\S)?)\1/g, '$2');
 // 4:3, the site's own "tall" cover shape: tall enough that a subject in the lower half still sits
 // above the words, which stay at the foot on the left, as every voyage card sets its line.

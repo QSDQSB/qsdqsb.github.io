@@ -174,3 +174,15 @@ test("a voyage's card is drawn from its page's own words, cover and palette", as
   assert.throws(() => voyageCardData('_posts/y.md', { root }), /no header.overlay_image/);
   assert.throws(() => voyageCardData('_pages/z.md', { root }), /not a voyage or a post/);
 });
+
+test('the bulk send key is ASCII whatever the title, and one per letter and subscriber', async () => {
+  const { sendKey } = await import('../scripts/letter-card.mjs');
+  const token = '11111111-2222-4333-8444-555555555555';
+  for (const subject of ['2022打工日记', 'Žižkov TV tower · Prague', 'In Passing — x', 'GPT-4o 🌈💨']) {
+    const key = sendKey(subject, token);
+    assert.match(key, /^[\x21-\x7e]+$/);
+    assert.doesNotThrow(() => new Headers({ 'Idempotency-Key': key }));
+  }
+  assert.notEqual(sendKey('A', token), sendKey('B', token));
+  assert.notEqual(sendKey('A', token), sendKey('A', token.replace('1', '9')));
+});
