@@ -77,7 +77,9 @@ async function privateJson(key) {
   if (r2) return r2.getJson(key);
   if (viaRclone) {
     const r = spawnSync('rclone', ['cat', `${env.rcloneRemote}:${env.originalsBucket}/${key}`], { encoding: 'utf8', timeout: TIMEOUT_MS * 2 });
-    return r.status === 0 && r.stdout.trim() ? JSON.parse(r.stdout) : null;
+    // rclone cat of a missing object exits 0 with nothing: a non-zero exit is a real failure.
+    if (r.status !== 0) throw new Error((r.stderr || 'rclone cat failed').trim());
+    return r.stdout.trim() ? JSON.parse(r.stdout) : null;
   }
   return null;
 }
@@ -249,7 +251,7 @@ async function main() {
     if (!problems.length) console.log(`OK ${args.shape}`);
     return args.strict && problems.length ? 1 : 0;
   }
-  const local = args.local ? new FsStore(path.join(typeof args.local === 'string' ? args.local : PATHS.localStore, 'public')) : null;
+  const local = args.local ? new FsStore(path.join(typeof args.local === 'string' ? args.local : PATHS.localStore, 'originals')) : null;
   const { index, unreachable } = await fetchAll({ local });
   const rows = Object.entries(index.galleries);
   let warned = 0;

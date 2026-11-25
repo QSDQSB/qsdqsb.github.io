@@ -24,13 +24,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline/promises';
 import { spawnSync } from 'node:child_process';
-import { PATHS, parseArgs } from './lib/config.mjs';
+import { PATHS, ROOT, parseArgs } from './lib/config.mjs';
 import { galleriesUnder } from './lib/inventory.mjs';
 
 const CONFIRM = 'QSD';
 const args = parseArgs(process.argv.slice(2), { multi: ['new-gallery'] });
-const node = (script, extra) => spawnSync(process.execPath, [path.join(PATHS.photosDir, '..', 'scripts', 'photos', script), ...extra], { stdio: 'inherit' }).status;
-const quiet = (script, extra) => spawnSync(process.execPath, [path.join(PATHS.photosDir, '..', 'scripts', 'photos', script), ...extra], { encoding: 'utf8' });
+const node = (script, extra) => spawnSync(process.execPath, [path.join(ROOT, 'scripts', 'photos', script), ...extra], { stdio: 'inherit' }).status;
+const quiet = (script, extra) => spawnSync(process.execPath, [path.join(ROOT, 'scripts', 'photos', script), ...extra], { encoding: 'utf8' });
 
 /** Every original under photos/, by gallery: name → size + mtime, to see what an import changed. */
 function snapshot() {

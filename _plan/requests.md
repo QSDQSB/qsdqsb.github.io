@@ -6,6 +6,7 @@ to Done with its pull request.
 
 ## Open
 
+- 2026-11-24 · R025 · The title and excerpt on the year-archive and voyage pages don't line up with the content; align them as the post page does, with the main content.
 - 2026-11-24 · R024 · Read QSDQSB/dolomite-errata-bestiary, get the idea of the errata-bestiary project, then consider the scalable and sota premium design option to fit it in our site. In this conversation, implement the first two stories - the pineapple crown and the milk plate.
 - 2026-11-23 · R023 · Create a subscribe page (qsdqsb.com/subscribe), keeping the existing subscribe structure but expanding the layout and functionality into a complete page; a starting point is displaying three past letters, chosen by the owner. Work in master. → done 2026-11-24: /subscribe/, the slip opened into the page with three past letters as the mail showed them (_data/letters.yml), About's cover; with it, a page with no cover clears the menu and the site's last line centres on the content
 - 2026-11-23 · R024 · We don't need extra space for display before/after an english word, please amend the content

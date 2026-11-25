@@ -240,7 +240,7 @@ export async function planImport(fromDir, { photosDir = PATHS.photosDir, gallery
       }
     }
     // 3. by folder: a voyage folder with a frame nothing in photos/ matches is a new frame.
-    if (!target && known.has(src.folder) && !byName.length) {
+    if (!target && known.has(src.folder) && !byName.includes(src.folder)) {
       const v = await verifyOriginal(src.abs, src.folder, src.slug, vopts);
       if (v.ok) { target = src.folder; verdict = v; }
       else { out.push({ ...step, action: 'refuse', checks: v.checks, why: v.checks.filter(c => !c.ok).map(c => c.detail).join('; ') }); continue; }

@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-25 · The random-post card on Posts lands on every post, the one whose title starts with a digit too; and a Photobook never closes on a lone portrait standing full width · tier 1
 - 2026-11-24 · The Bestiary door's painting dissolves onto watercolour that begins in the painting's own colours at its foot and turns to dusk; no blurred copy of the picture · tier 0
 - 2026-11-24 · The Bestiary's door: its painting dissolves along a wandering line into its own meadow carried on, then into a dark dusk of aubergine and plum, with no line where the picture ends · tier 0
 - 2026-11-24 · The Bestiary door's dusk is lifted to its painting's own brightness, so the painting runs into the page without a drop · tier 0
@@ -24,6 +25,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 - 2026-11-24 · The Bestiary is open, light parchment from its door on: /bestiary/ shows its photograph fading into the paper and a card for each fable; its first two fables, The Pineapple Crown (菠萝王冠) and The Milk Plate (牛奶碟), open on their painted cover dissolving into a parchment tinted by it, on the title alone, with the story in English and Chinese (宋体, set on its grid) behind the language switch and ways on between them · tier 2
 - 2026-11-24 · Beside a fable's words, where the window leaves room for it, a quiet room dyed from its cover's colours, laid as a watercolour wash that dried short of the words, its edge wandering like a dried wash; on a phone the paper runs edge to edge; the paper's texture is faint · tier 2
 - 2026-11-24 · Search finds the Bestiary's fables and names each one a Fable · tier 0
+- 2026-11-24 · On Posts, Voyage and the other list pages, the hero's title and line now stand on the list's own left edge, as a post's stand on its text, at every width where the profile shows · tier 2
 - 2026-11-24 · A Subscribe page (/subscribe/, and in the site's last line): the subscribe slip opened into the page under About's cover, its address field framed in brass, holding three past letters as the mail showed them, letterhead, card, date, lines and Onward; which three is the owner's choice in _data/letters.yml (R023) · tier 2
 - 2026-11-24 · A page with no cover starts clear of the floating menu (Terms, the CV, the Bestiary), and the site's last line of links centres on the content beside the author's column, not on the window (posts, the archives, About) · tier 2
 - 2026-11-22 · The War Declaration is written at last: QSD’s fable of a king who founds a Ministry of Novelty, told in the papers of his kingdom (the decree, the Ministry’s reports, a refused request for a second eclipse, the Archive’s cautious report) set as nineteenth-century state papers under QSD’s arms, until a last cup of coffee outside every frame; in Chinese and in English (R022) · tier 2

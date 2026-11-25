@@ -56,7 +56,8 @@ async function main() {
   const { originals, pub } = stores;
   log(`processor: ${stores.local ? `local store ${stores.local}` : `R2 ${env.originalsBucket} → ${env.publicBucket}`}${DRY ? ' (dry run)' : ''}${FORCE ? ' (force)' : ''}, formats ${formats.join('/')}`);
 
-  const objects = (await originals.list('')).filter(o => isOriginal(o.key));
+  const listed = await originals.list('');
+  const objects = listed.filter(o => isOriginal(o.key));
   const byGallery = new Map();
   for (const o of objects) {
     const gallery = path.posix.dirname(o.key);
@@ -65,8 +66,15 @@ async function main() {
     if (!byGallery.has(gallery)) byGallery.set(gallery, []);
     byGallery.get(gallery).push(o);
   }
-  // A gallery named in the filter with no originals left still needs its manifest reconciled.
+  // A gallery with no originals left still needs its manifest reconciled: one named in the filter,
+  // and one whose manifest is still there (its last photo pruned), so nothing it held stays published.
   for (const g of galleryFilter) if (!byGallery.has(g)) byGallery.set(g, []);
+  for (const o of listed) {
+    const inTool = IGNORED_PREFIXES.some(p => o.key.startsWith(p)) || o.key.split('/').slice(0, -1).some(seg => seg.startsWith('.'));
+    if (!o.key.endsWith(`/${MANIFEST_FILE}`) || inTool) continue;
+    const g = path.posix.dirname(o.key);
+    if (!byGallery.has(g) && (!galleryFilter.size || galleryFilter.has(g))) byGallery.set(g, []);
+  }
 
   let changed = 0, failed = 0, skipped = 0, removed = 0, lit = 0;
   for (const [gallery, files] of [...byGallery].sort()) {

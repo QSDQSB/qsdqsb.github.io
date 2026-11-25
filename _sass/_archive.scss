@@ -11,6 +11,25 @@
   @include responsive-shell-content-with-left-rail;
 }
 
+// The hero's words on the list's own left edge, as a post's stand on its text: the hero's row is
+// laid out as the shell's below it (padding, gap, the clearfix box at the end), with an empty box
+// holding the profile's column open, so the two rows break at the same x at every width.
+.page__hero--overlay:has(~ #main.has-sidebar > .archive) .wrapper {
+  @include responsive-up($responsive-left-rail-breakpoint) {
+    max-width: none;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    gap: $responsive-single-shell-gap;
+
+    &::before {
+      content: "";
+      @include responsive-shell-left-rail;
+    }
+
+    .page__hero-copy { @include responsive-shell-content-with-left-rail; }
+  }
+}
+
 #main.no-sidebar .archive {
   @include responsive-up($responsive-left-rail-breakpoint) {
     width: 100%;

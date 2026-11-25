@@ -97,7 +97,12 @@ export function resolve(entries, priv, known, mint = newId) {
     let id = src?.photo_id, how = 'source';
     if (!id && cameraKey && known.byCamera.has(cameraKey)) { id = known.byCamera.get(cameraKey); how = 'camera'; }
     if (!id && p.hash && known.byHash.has(p.hash)) { id = known.byHash.get(p.hash); how = 'hash'; }
-    if (!id) { id = mint(); how = 'new'; }
+    if (!id) {
+      id = mint(); how = 'new';
+      // Known to the rest of the batch: a second entry for the same exposure or bytes takes this id.
+      if (cameraKey) known.byCamera.set(cameraKey, id);
+      if (p.hash) known.byHash.set(p.hash, id);
+    }
     const facts = factsDigest(p);
     const unchanged = !!(src && !src.removed_at && (src.version ?? null) === (p.version ?? null) && (src.hash ?? null) === (p.hash ?? null) && (src.facts ?? null) === facts);
     out.push({ p, pr, id, how, cameraKey, unchanged, facts });

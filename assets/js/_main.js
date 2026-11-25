@@ -643,7 +643,8 @@ document.querySelectorAll('[data-random-jump]').forEach(function(link) {
     var pick = targets[Math.floor(Math.random() * targets.length)];
 
     if (link.getAttribute('data-random-jump-mode') === 'scroll') {
-      var target = document.querySelector(pick);
+      // By id, not by selector: an id that starts with a digit is no selector.
+      var target = document.getElementById(pick.slice(1));
       if (!target) return;
       var top = target.getBoundingClientRect().top + window.scrollY - 50;
       window.scrollTo({ top: top, behavior: window.QSD.motionOff() ? 'auto' : 'smooth' });

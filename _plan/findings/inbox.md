@@ -10,6 +10,10 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-11-25 · F106 · tests/photos-import.test.js · no test for import step 3 with a frame number held only by another gallery: stage cornwall/DSCF0001.JPG as a different picture while devon/DSCF0001.JPG exists, expect add to cornwall (reviewer)
+- 2026-11-25 · F105 · scripts/check-journeys.mjs, the random-post card · no journey clicks the scroll-mode card ([data-random-jump-mode=scroll] on /posts/): stub Math.random onto the digit-led post, click, and see scrollY move and the card in view (adfd9bc1 fixed querySelector throwing on it) (reviewer)
+- 2026-11-24 · F104 · check-responsive-policy.sh · The breakpoint guard calls rg, which is not installed outside Claude Code; rg exits 127, read as no violations, so the guard passes on anything (planted raw @media passed). Use grep -nE and treat exit >= 2 as an error. (session)
+- 2026-11-24 · F103 · check-journeys · R025's archive hero alignment has no guard below 1440 or on /year-archive/: add a journey checking that the title starts at the list's x at 1152 and 1440. (reviewer)
 - 2026-11-24 · F102 · scripts/visual-baseline.mjs · no shots of /bestiary/ or a fable: add both at the re-capture after the plates reach R2 (reviewer)
 - 2026-11-24 · F101 · assets/fonts/NotoSerifSC, essay-font.py · The Chinese subset is shared by the essays and the Bestiary (192 KB, up from 120 KB) and grows with each fable, so a reader of a Chinese essay pays for the fables; and full-content search carries both languages of every fable. A subset of the fables' own, and excerpt-only search for them, would hold both still (R024). (reviewer)
 - 2026-11-22 · F108 · scripts/visual-baseline.mjs · no pixel shot covers the royal letters (seal over the frame, band of beads, corners): add post-proclamation at desktop and mobile; the post is already in the pin (session)

@@ -61,3 +61,16 @@ test('manifest and private-file events both mark their gallery as touched; trash
   assert.deepStrictEqual(touched([msg('london/manifest.json'), msg('prague/twilight/.private.json'), msg('london/.private.json'),
     msg('trash/2026-09-24/london/.private.json'), msg('t/abc/960.webp')]).sort(), ['london', 'prague/twilight']);
 });
+
+test('two new entries for one exposure, or for the same bytes, share the id minted for the first', async () => {
+  const { resolve } = await db();
+  let n = 0; const mint = () => `p_NEW${++n}`;
+  const known = { sources: new Map(), byCamera: new Map(), byHash: new Map() };
+  const r = resolve([
+    { slug: 'a', key: 'rome/A.jpg', camera: 'X-T5', shutterCount: 7 },
+    { slug: 'b', key: 'japan/B.jpg', camera: 'X-T5', shutterCount: 7 },
+    { slug: 'c', key: 'rome/C.jpg', hash: 'h1' },
+    { slug: 'd', key: 'japan/D.jpg', hash: 'h1' },
+  ], {}, known, mint);
+  assert.deepStrictEqual(r.map(x => [x.id, x.how]), [['p_NEW1', 'new'], ['p_NEW1', 'camera'], ['p_NEW2', 'new'], ['p_NEW2', 'hash']]);
+});
