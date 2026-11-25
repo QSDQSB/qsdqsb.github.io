@@ -76,7 +76,7 @@ if (existsSync(envFile)) {
   for (const line of readFileSync(envFile, "utf8").split(/\r?\n/)) {
     const kv = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
     if (!kv || line.trim().startsWith("#")) continue;
-    let v = kv[2];
+    let v = kv[2].trim(); // a trailing space in a key is a 401 on every send
     if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
       v = v.slice(1, -1);
     }
@@ -245,13 +245,16 @@ function fetchActiveSubscribers() {
 
 /* ---------- Resend ---------- */
 
-async function resendSend(to, token) {
+// `key`, on the bulk send only: Resend drops a repeat of it for 24 hours, so a run started again
+// after it broke off does not reach anyone twice. (A test send stays free to repeat.)
+async function resendSend(to, token, key = null, tries = 0) {
   const unsub = unsubscribeUrlFor(token);
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
       "content-type": "application/json",
+      ...(key ? { "Idempotency-Key": key.slice(0, 256) } : {}),
     },
     body: JSON.stringify({
       from: FROM,
@@ -270,9 +273,10 @@ async function resendSend(to, token) {
       },
     }),
   });
-  if (res.status === 429) {
+  // A rate limit passes in seconds; a spent daily quota does not, so after three waits it is a failure.
+  if (res.status === 429 && tries < 3) {
     await new Promise((r) => setTimeout(r, 2000));
-    return resendSend(to, token);
+    return resendSend(to, token, key, tries + 1);
   }
   if (!res.ok) throw new Error(`Resend ${res.status}: ${await res.text()}`);
   return res.json();
@@ -304,7 +308,7 @@ if (optSendTest) {
   const failed = [];
   for (const s of subs) {
     try {
-      await resendSend(s.email, s.token);
+      await resendSend(s.email, s.token, `${subject}:${s.token}`);
       sent += 1;
       process.stdout.write(`  sent ${sent}/${subs.length}\r`);
     } catch (e) {

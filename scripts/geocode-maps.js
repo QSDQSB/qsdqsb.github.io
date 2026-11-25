@@ -74,8 +74,8 @@ async function geocodeQuery(query, cache) {
     cache[normalizedQuery] = null;
     return null;
   } catch (error) {
+    // Not cached: a network error or a refused request is tried again on the next build.
     console.error(`❌ Geocoding error for atlas query "${query}":`, error.message);
-    cache[normalizedQuery] = null;
     return null;
   }
 }

@@ -20,6 +20,10 @@ test('a portrait never takes a spread', async () => {
   const { bookRows } = await lib();
   const ps = [{ ratio: 0.66 }, { ratio: 1.5 }, { ratio: 1.5 }, { ratio: 1.5 }];
   assert.equal(bookRows(ps).map(r => r.kind).join(','), 'pair,pair');
+  // Nor at the close: a last lone portrait joins the row before, or pairs with its last frame.
+  const L = { ratio: 1.5 }, P = { ratio: 0.66 };
+  assert.equal(bookRows([L, L, L, P]).map(r => r.kind).join(','), 'spread,triple');
+  assert.deepEqual(bookRows([L, L, L, L, L, L, P]).map(r => r.items), [[0], [1, 2], [3, 4], [5, 6]]);
 });
 
 test('the cover is the first featured landscape, else the first landscape', async () => {

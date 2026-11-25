@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-25 · The random-post card on Posts lands on every post, the one whose title starts with a digit too; and a Photobook never closes on a lone portrait standing full width · tier 1
 - 2026-11-24 · The Bestiary door's painting dissolves onto watercolour that begins in the painting's own colours at its foot and turns to dusk; no blurred copy of the picture · tier 0
 - 2026-11-24 · The Bestiary's door: its painting dissolves along a wandering line into its own meadow carried on, then into a dark dusk of aubergine and plum, with no line where the picture ends · tier 0
 - 2026-11-24 · The Bestiary door's dusk is lifted to its painting's own brightness, so the painting runs into the page without a drop · tier 0

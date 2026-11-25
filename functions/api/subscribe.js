@@ -18,7 +18,7 @@
  * for local `wrangler pages dev`, a .dev.vars file). Without it, the row is
  * still stored and no email is attempted.
  */
-import { normalizeEmail, normalizeSource, isHoneypotTripped } from "./_lib.js";
+import { normalizeEmail, normalizeSource, isHoneypotTripped, htmlPage, SUBSCRIBE_SQL } from "./_lib.js";
 import {
   renderWelcomeHtml,
   renderWelcomeText,
@@ -31,22 +31,6 @@ const JSON_HEADERS = { "content-type": "application/json; charset=utf-8" };
 
 function json(body, status) {
   return new Response(JSON.stringify(body), { status: status, headers: JSON_HEADERS });
-}
-
-// Minimal dark page for the no-JS form submission path.
-function htmlPage(title, line, status) {
-  const body =
-    "<!doctype html><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>" +
-    "<title>" + title + "</title>" +
-    "<body style='margin:0;background:#151515;color:#e4e5e5;font-family:Didot,\"Playfair Display\",serif;" +
-    "display:grid;place-items:center;min-height:100vh;text-align:center;padding:2rem'>" +
-    "<div><p style='color:#c3b498;font-size:1.3rem;font-style:italic;margin:0 0 0.75rem'>" + title + "</p>" +
-    "<p style='margin:0;opacity:0.75'>" + line + "</p>" +
-    "<p style='margin-top:2rem'><a href='/' style='color:#c3b498'>Back to the house</a></p></div>";
-  return new Response(body, {
-    status: status,
-    headers: { "content-type": "text/html; charset=utf-8" },
-  });
 }
 
 async function readPayload(request) {
@@ -74,7 +58,7 @@ async function sendWelcome(env, toEmail, token) {
   const from = env.LETTERS_FROM || "QSD <scripta@qsdqsb.com>";
   const unsub = `${siteUrl}/api/unsubscribe?token=${token}`;
   try {
-    await fetch("https://api.resend.com/emails", {
+    const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -96,6 +80,8 @@ async function sendWelcome(env, toEmail, token) {
         },
       }),
     });
+    // fetch does not throw on a refusal (a bad key, an unverified domain): say so in the Pages logs.
+    if (!res.ok) console.error("welcome not sent:", res.status, (await res.text()).slice(0, 300));
   } catch (_) {
     // A failed welcome must never affect the subscription. Swallow it.
   }
@@ -129,18 +115,8 @@ export async function onRequestPost(context) {
 
   let row;
   try {
-    // Fresh token on first insert; a resubscribe from an unsubscribed row
-    // reactivates it and keeps its original token, so previously sent
-    // unsubscribe links stay valid. The `WHERE status <> 'active'` guard means
-    // an address that is ALREADY active is left untouched and RETURNING yields
-    // no row — so the welcome fires only for new or returning subscribers, not
-    // for someone who submits the form twice.
-    row = await context.env.SUBSCRIBERS.prepare(
-      "INSERT INTO subscribers (email, token, status, source) VALUES (?1, ?2, 'active', ?3) " +
-      "ON CONFLICT(email) DO UPDATE SET status = 'active', unsubscribed_at = NULL " +
-      "WHERE subscribers.status <> 'active' " +
-      "RETURNING token"
-    ).bind(email, crypto.randomUUID(), source).first();
+    row = await context.env.SUBSCRIBERS.prepare(SUBSCRIBE_SQL)
+      .bind(email, crypto.randomUUID(), source).first();
   } catch (_) {
     return isForm
       ? htmlPage("That didn’t go through.", "QSD apologises. Try once more.", 500)

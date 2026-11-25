@@ -22,5 +22,14 @@ export function bookRows(photos) {
     rows.push({ kind: kinds[take - 1], items: Array.from({ length: take }, (_, j) => k + j) });
     k += take;
   }
+  // A lone portrait closing the book would stand full width: it joins the row before, or takes
+  // that row's last frame for a pair when the row is already a three.
+  const last = rows[rows.length - 1], prev = rows[rows.length - 2];
+  if (prev && last.items.length === 1 && (photos[last.items[0]].ratio || 1.5) < PORTRAIT) {
+    rows.pop();
+    if (prev.items.length < 3) prev.items.push(last.items[0]);
+    else rows.push({ items: [prev.items.pop(), last.items[0]] });
+    for (const r of rows.slice(-2)) r.kind = kinds[r.items.length - 1];
+  }
   return rows;
 }

@@ -121,7 +121,7 @@ async function main() {
   // --by-time looks items up by capture time alone, for files whose names Photos does not know;
   // it retries the ones the name lookup gave up on.
   const byTime = !!args['by-time'];
-  const todo = (await targets(only)).filter(t => !state.done[`${t.gallery}/${t.slug}`] && (byTime || !(state.failed[`${t.gallery}/${t.slug}`] >= 2)));
+  const todo = (await targets(only)).filter(t => (byTime || !(state.failed[`${t.gallery}/${t.slug}`] >= 2)));
   log(`${todo.length} original(s) without maker notes`);
   if (args['dry-run'] || !todo.length) return 0;
 
@@ -146,7 +146,9 @@ async function main() {
     for (const p of wanted) {
       const key = `${p.t.gallery}/${p.t.slug}`;
       const want = p.t.taken.slice(0, 19).replace('T', ' ').replace(/-/g, ':');
-      const orig = exported.find(e => String(e.x.DateTimeOriginal || '').slice(0, 19) === want);
+      // Only a single match: two frames of a burst share the second, and must not share a camera record.
+      const same = exported.filter(e => String(e.x.DateTimeOriginal || '').slice(0, 19) === want);
+      const orig = same.length === 1 ? same[0] : null;
       if (!orig) { state.failed[key] = (state.failed[key] || 0) + 1; continue; }
       const before = fs.readFileSync(p.t.abs);
       const size = await sharp(p.t.abs).metadata();

@@ -14,13 +14,19 @@ if [ ${#TARGETS[@]} -eq 0 ]; then
   exit 0
 fi
 
-PATTERN='@include breakpoint\(|@media\s*\(|@container\s*\('
+PATTERN='@include breakpoint\(|@media[[:space:]]*\(|@container[[:space:]]*\('
 
-if rg -n "$PATTERN" "${TARGETS[@]}" >/tmp/responsive_policy_violations.txt 2>/dev/null; then
+# grep, not rg: rg is not on every machine, and a missing tool must never read as "clean".
+status=0
+grep -nE "$PATTERN" "${TARGETS[@]}" >/tmp/responsive_policy_violations.txt || status=$?
+if [ "$status" -eq 0 ]; then
   echo "Responsive policy violations detected. Use mixins from _sass/_responsive-policy.scss:"
   cat /tmp/responsive_policy_violations.txt
   rm -f /tmp/responsive_policy_violations.txt
   exit 1
+elif [ "$status" -ge 2 ]; then
+  echo "Responsive policy check could not run (grep exit $status)." >&2
+  exit 2
 fi
 
 rm -f /tmp/responsive_policy_violations.txt

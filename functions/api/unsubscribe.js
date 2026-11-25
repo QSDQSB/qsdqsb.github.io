@@ -6,31 +6,14 @@
  * old link twice is harmless. The address itself never appears in the URL.
  */
 
-const TOKEN_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+import { htmlPage, UNSUBSCRIBE_SQL } from "./_lib.js";
 
-function htmlPage(title, line, status) {
-  const body =
-    "<!doctype html><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>" +
-    "<title>" + title + "</title>" +
-    "<body style='margin:0;background:#151515;color:#e4e5e5;font-family:Didot,\"Playfair Display\",serif;" +
-    "display:grid;place-items:center;min-height:100vh;text-align:center;padding:2rem'>" +
-    "<div><p style='color:#c3b498;font-size:1.3rem;font-style:italic;margin:0 0 0.75rem'>" + title + "</p>" +
-    "<p style='margin:0;opacity:0.75'>" + line + "</p>" +
-    "<p style='margin-top:2rem'><a href='/' style='color:#c3b498'>Back to the house</a></p></div>";
-  return new Response(body, {
-    status: status,
-    headers: { "content-type": "text/html; charset=utf-8" },
-  });
-}
+const TOKEN_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 async function unsubscribeByToken(env, token) {
   if (!TOKEN_RE.test(token)) return "bad_token";
   try {
-    const result = await env.SUBSCRIBERS.prepare(
-      "UPDATE subscribers SET status = 'unsubscribed', " +
-      "unsubscribed_at = strftime('%Y-%m-%dT%H:%M:%SZ','now') " +
-      "WHERE token = ?1 AND status = 'active'"
-    ).bind(token).run();
+    const result = await env.SUBSCRIBERS.prepare(UNSUBSCRIBE_SQL).bind(token).run();
     return result.meta && result.meta.changes > 0 ? "done" : "noop";
   } catch (_) {
     return "error";

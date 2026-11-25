@@ -104,8 +104,7 @@ export async function locateGallery(g, { log = () => {} } = {}) {
   const { doc } = readAuthored(g);
   const suffix = captionSuffix(doc);
   const out = { located: 0, guess: [] };
-  const live = new Set(files.map(f => f.slug));
-  for (const slug of Object.keys(photos)) if (!live.has(slug)) delete photos[slug];
+  // Entries for frames not on this disk are kept: the mirror may be partial, and a place is read by slug.
   for (const f of files) {
     const x = await readHeadExif(f.abs).catch(() => null);
     if (x?.gps) {

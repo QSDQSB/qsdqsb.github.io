@@ -6,6 +6,9 @@ CLAUDE.md's rule is "never hand-edit main.min.js — edit _main.js, then run
 the source, forget the rebuild, commit, and Cloudflare Pages serves the old
 bundle. Nothing in the site breaks visibly, so it can go unnoticed for weeks.
 
+With no bundle source edited (a clean tree, as in CI), the bundle is rebuilt
+into a temp file and compared byte for byte. With a source edited:
+
 Detection rule — all three must hold for the bundle to be called stale:
 
   1. A bundle source differs from git HEAD (edited this session), AND
@@ -33,6 +36,7 @@ import json
 import shlex
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -80,6 +84,26 @@ def dirty_paths() -> set[str]:
     return paths
 
 
+def compare_rebuild(sources: list[str], artifact: Path) -> int:
+    """Rebuild the bundle into a temp file with the `uglify` command; compare byte for byte."""
+    cmd = shlex.split(json.loads((ROOT / "package.json").read_text())["scripts"]["uglify"])
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "main.min.js"
+        cmd[cmd.index("-o") + 1] = str(out)
+        r = subprocess.run(["npx", "--no-install", *cmd], cwd=ROOT,
+                           capture_output=True, text=True)
+        if r.returncode != 0 or not out.is_file():
+            print("Could not rebuild the bundle to compare: "
+                  f"{(r.stderr or r.stdout).strip()[-300:]}", file=sys.stderr)
+            return 2
+        if out.read_bytes() == artifact.read_bytes():
+            print(f"OK — {ARTIFACT} matches a fresh build of its {len(sources)} sources.")
+            return 0
+    print(f"{ARTIFACT} does not match a fresh build of its sources. "
+          "Run `npm run build:js` and commit it.")
+    return 1
+
+
 def main() -> int:
     try:
         git("rev-parse", "--is-inside-work-tree")
@@ -96,8 +120,8 @@ def main() -> int:
     dirty = dirty_paths()
     changed = [s for s in sources if s in dirty]
     if not changed:
-        print(f"OK — no bundle sources modified ({len(sources)} tracked).")
-        return 0
+        # A clean tree (CI) has no edit to date: rebuild and compare the bytes instead.
+        return compare_rebuild(sources, artifact)
 
     if ARTIFACT in dirty:
         print(f"OK — {ARTIFACT} rebuilt alongside {', '.join(changed)}.")

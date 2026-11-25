@@ -92,14 +92,19 @@ function walk(dir, out = []) {
 function changedFiles() {
   let out = '';
   try {
-    out = execFileSync('git', ['status', '--porcelain'], { cwd: ROOT, encoding: 'utf8' });
+    // -z: paths unquoted (a Chinese file name stays itself); every file of a new folder listed.
+    out = execFileSync('git', ['status', '--porcelain', '-z', '--untracked-files=all'], { cwd: ROOT, encoding: 'utf8' });
   } catch {
     return null;
   }
-  return out
-    .split('\n')
-    .filter(Boolean)
-    .map((l) => l.slice(3).trim())
+  const paths = [];
+  const st = out.split('\0');
+  for (let i = 0; i < st.length; i++) {
+    if (!st[i]) continue;
+    paths.push(st[i].slice(3));
+    if (/[RC]/.test(st[i].slice(0, 2))) i++; // a rename's old path follows it
+  }
+  return paths
     .filter((p) => collectionOf(p) && /\.(md|markdown|html)$/.test(p))
     .map((p) => path.join(ROOT, p))
     .filter((p) => fs.existsSync(p));
