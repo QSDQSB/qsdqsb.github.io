@@ -88,13 +88,13 @@ QSD，第五届熬夜锦标赛全球总亚军，摸鱼王，时间管理废物�
 
 QSD 不向重复宣战。大海几十亿年来一直重复着同一个动作，猫每天下午回到同一个窗台；有些曲子他听了几百遍，下一个音比晚饭吃什么还要确定。它们未必无聊。
 
-QSD 也不向闲散宣战，甚至不向无聊本身宣战。偶尔的无聊没有什么问题。
+QSD 也不向闲散宣战，甚至不向无聊本身宣战。
 
-他所宣战的，是一种处境：人仍在生活，却渐渐成了自己生活的旁观者。时间照样经过，事情照样发生，甚至每天都有新鲜事物，但这一切不再是他愿意投入的东西。
+他所宣战的，是一种处境：人仍在生活，却渐渐成了自己生活的旁观者。
 
-这个敌人有两副面孔。一副让人对什么都提不起兴趣；另一副让人害怕无聊，于是不再允许自己拥有一个无所事事的下午。前者使人无法享受生活，后者使人没有时间享受生活。那位国王向前者宣战，亲手建立了后者。
+这个敌人有两副面孔。一副让人对什么都提不起兴趣；另一副让人害怕无聊，于是不再允许自己拥有一个无所事事的下午。
 
-还须报告一个不幸的发现：敌人的主要合作者，可能正是 QSD 原本打算用来抵抗它的东西，理性。一段关系尚未展开，便已被预测；一片风景尚未离开，便已等待归档。敌人已经渗透进了指挥部。
+还须报告一个不幸的发现：敌人的主要合作者，可能正是 QSD 原本打算用来抵抗它的理性。敌人已经渗透进了指挥部。
 
 **因此**，QSD 郑重宣布：
 
@@ -180,13 +180,13 @@ QSD, Protector of Deconstructionism, Guardian of Procrastination, Keeper of QSB'
 
 QSD declares no war upon repetition. The sea has been performing essentially the same manoeuvre for several billion years, and a cat returns to the same windowsill every afternoon. There are pieces of music QSD has heard hundreds of times, whose next note he knows with greater certainty than what he shall have for dinner. None of these need bore him.
 
-Nor does he declare war upon idleness, nor even upon boredom itself. An occasional boring hour does no harm.
+Nor does he declare war upon idleness, nor even upon boredom itself.
 
-The enemy is a condition: that in which a man goes on living and becomes, by degrees, a spectator of his own existence. Time still passes, things still happen, there may even be something new every day; none of it is any longer something he wishes to take part in.
+The enemy is a condition: that in which a man goes on living and becomes, by degrees, a spectator of his own existence.
 
-The enemy has two faces. One leaves a man unable to take an interest in anything. The other leaves him so afraid of boredom that he no longer permits himself an afternoon with nothing in it. The first makes life impossible to enjoy; the second leaves no time to enjoy it. The old King declared war upon the first, and built the second with his own hands.
+The enemy has two faces. One leaves a man unable to take an interest in anything. The other leaves him so afraid of boredom that he no longer permits himself an afternoon with nothing in it.
 
-An unfortunate discovery must also be reported. The enemy's principal collaborator may be the very faculty with which QSD had intended to resist him: reason. A relationship is predicted before it has begun; a view is waiting to be archived before he has left it. The enemy has infiltrated the headquarters.
+An unfortunate discovery must also be reported. The enemy's principal collaborator may be the very faculty with which QSD had intended to resist him: reason. The enemy has infiltrated the headquarters.
 
 **Now, therefore,** QSD does hereby declare:
 
