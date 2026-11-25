@@ -21,7 +21,7 @@ lang: zh # the Chinese is the original and comes first (_layouts/single.html set
 <div data-bilingual>
 <section data-bilingual-lang="中" lang="zh" markdown="1">
 
-QSD 在贝希特斯加登遇到了一只猫。猫给他讲了一个故事，关于一位巴伐利亚的老国王。
+QSD 在贝希特斯加登遇到了一只猫。猫给他讲了一位巴伐利亚老国王的故事。
 
 {% include proclamation/open.html variant="despatch" by="一只猫讲述" kind="序章" subject="新鲜事物部" %}
 
@@ -86,7 +86,7 @@ QSD 在贝希特斯加登遇到了一只猫。猫给他讲了一个故事，关�
 QSD，第五届熬夜锦标赛全球总亚军，摸鱼王，时间管理废物，选恐晚期患者，热衷无所事事者，QSB 记忆的保管人，精神布拉格+多洛米蒂人，致他的全部子民，谨致问候。
 {: .proclamation-style}
 
-QSD 不向重复宣战。大海几十亿年来一直重复着同一个动作，猫每天下午回到同一个窗台；有些曲子他听了几百遍，下一个音比晚饭吃什么还要确定。它们都不无聊。
+QSD 不向重复宣战。大海几十亿年来一直重复着同一个动作，猫每天下午回到同一个窗台；有些曲子他听了几百遍，下一个音比晚饭吃什么还要确定。它们未必无聊。
 
 QSD 也不向闲散宣战，甚至不向无聊本身宣战。偶尔的无聊没有什么问题。
 
@@ -153,7 +153,7 @@ From tomorrow, every day in the Kingdom would be a day without precedent. Every 
 
 The King was pleased, and made the coffee for the two of them with his own hands.
 
-Before he left, the Minister praised it.
+Before he left, the Minister praised the taste of the coffee.
 
 “A pity we shan't have it again,” he said.
 
@@ -178,7 +178,7 @@ He hoped tomorrow would be the same.
 QSD, Protector of Deconstructionism, Guardian of Procrastination, Keeper of QSB's Memories, Runner-up Overall in the Fifth Global Championship of Staying Up Late, Spiritually of Prague + the Dolomites, to all his Faculties and Loyal Subjects, Greeting.
 {: .proclamation-style}
 
-QSD declares no war upon repetition. The sea has been performing essentially the same manoeuvre for several billion years, and a cat returns to the same windowsill every afternoon. There are pieces of music QSD has heard hundreds of times, whose next note he knows with greater certainty than what he shall have for dinner. None of these bores him.
+QSD declares no war upon repetition. The sea has been performing essentially the same manoeuvre for several billion years, and a cat returns to the same windowsill every afternoon. There are pieces of music QSD has heard hundreds of times, whose next note he knows with greater certainty than what he shall have for dinner. None of these need bore him.
 
 Nor does he declare war upon idleness, nor even upon boredom itself. An occasional boring hour does no harm.
 
@@ -186,7 +186,7 @@ The enemy is a condition: that in which a man goes on living and becomes, by deg
 
 The enemy has two faces. One leaves a man unable to take an interest in anything. The other leaves him so afraid of boredom that he no longer permits himself an afternoon with nothing in it. The first makes life impossible to enjoy; the second leaves no time to enjoy it. The old King declared war upon the first, and built the second with his own hands.
 
-An unfortunate discovery must also be reported. The enemy's principal collaborator may be the very faculty with which QSD had intended to resist him: reason. A friendship is predicted before it has begun; a view is waiting to be archived before he has left it. The enemy has infiltrated the headquarters.
+An unfortunate discovery must also be reported. The enemy's principal collaborator may be the very faculty with which QSD had intended to resist him: reason. A relationship is predicted before it has begun; a view is waiting to be archived before he has left it. The enemy has infiltrated the headquarters.
 
 **Now, therefore,** QSD does hereby declare:
 
