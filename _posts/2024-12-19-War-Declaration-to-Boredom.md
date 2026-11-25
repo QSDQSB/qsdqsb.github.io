@@ -6,7 +6,7 @@ permalink: /posts/war-declaration-to-boredom/
 redirect_from:
   - /posts/2024/war-declaration-to-boredom/
 excerpt: "The King yawned three times at his own coronation."
-seo_description: "The papers of a kingdom at war with boredom: the decree founding a Ministry of Novelty, its reports, a refused request for a second eclipse, a cautious report from the Archive, and a cup of coffee. By QSD."
+seo_description: "The papers of a kingdom at war with boredom: the decree founding a Ministry of Novelty, its reports, a request for a second eclipse, a cautious report from the Archive, and a cup of coffee. By QSD."
 tags:
   - 🧼QSD's Philosophy
 header:
@@ -50,8 +50,6 @@ lang: zh # the Chinese is the original and comes first (_layouts/single.html set
 
 部长提醒国王，这将有违本部门成立的初衷。
 
-申请不予批准。
-
 {% include proclamation/close.html variant="despatch" given="即位第四年春。" signed="附国王批注：有道理。" %}
 
 {% include proclamation/open.html variant="despatch" by="新鲜事物部呈" kind="第十二年" subject="明日" %}
@@ -66,11 +64,9 @@ lang: zh # the Chinese is the original and comes first (_layouts/single.html set
 
 {% include proclamation/open.html variant="intelligence" by="绝密" kind="档案处" subject="一份措辞谨慎的报告" %}
 
-部长认为，事情是否新鲜，很大程度上取决于人们记得多少事情。档案处因此设立，负责记录王国里一切曾经发生过的事，以防它们在不经意间再次发生。
+部长发现，事情是否新鲜，很大程度上取决于人们记得多少事情。档案处因此设立，负责记录王国里一切曾经发生过的事，以防它们在不经意间再次发生。
 
-经初步核查，本人研究了一辈子的历史中，有相当一部分内容，可能已经发生过不止一次。
-
-本处尚不能确定，这是否属于本处的职责范围。
+经初步核查，本人研究了一辈子的历史中，有相当一部分内容已经发生过不止一次。
 
 {% include proclamation/close.html variant="intelligence" given="即位第二十一年呈报。呈报人于次年退休。" signed="档案处首任主任" %}
 
@@ -80,17 +76,17 @@ lang: zh # the Chinese is the original and comes first (_layouts/single.html set
 
 庆典的安排相当困难。王国已经举办过三十八次阅兵、二十七次烟火表演和九次假面舞会。一位年轻的官员提议让烟火从天空落向地面，但遭到了消防部门的反对。
 
-最终，本部决定在庆典上向国王赠送一件王国历史上从未出现过的东西：一整天未经任何人使用的时间。
+最终，部长决定在庆典上向国王赠送一件王国历史上从未出现过的东西：一整天未经任何人使用的时间。
 
 那一天将不属于历法中的任何月份，也不属于一周中的任何一天。天文学家花了七个月才将它安插进日历。财政大臣则花了另外两个月决定这一天是否应该发放工资。
 
-{% include proclamation/close.html variant="despatch" given="即位第三十九年春。" signed="新鲜事物部部长" %}
+{% include proclamation/close.html variant="despatch" signed="新鲜事物部部长" %}
 
 {% include proclamation/open.html variant="despatch" by="新鲜事物部呈" kind="最终报告" subject="本部使命已全部完成" %}
 
 从明日起，王国的每一天都将是前所未有的一天。每一场雨都将以不同的方式落下，每一封信都将包含此前未曾写过的话。即使是做梦的人，也不会再梦见曾经梦见过的地方。
 
-{% include proclamation/close.html variant="despatch" given="即位第三十九年冬，庆典前夜，于国王的晚餐桌上。" signed="新鲜事物部部长" %}
+{% include proclamation/close.html variant="despatch" given="庆典前夜，于国王的晚餐桌上。" signed="新鲜事物部部长" %}
 
 国王很满意，亲自为部长煮了两杯咖啡。
 
@@ -136,15 +132,13 @@ This year it imported the aurora from the north and, from the east, a kind of th
 
 The King was much taken with the eclipse.
 
-He asks whether another might be arranged for his birthday next year.
+His Majesty asks whether another might be arranged for his birthday next year.
 
 {% include proclamation/close.html variant="despatch" sealed=true given="Spring, in the fourth year of the reign." %}
 
 {% include proclamation/open.html variant="despatch" by="From the Ministry of Novelty" kind="A Reply" subject="To the King’s Request" %}
 
 The Minister begs to remind His Majesty that this would run contrary to the purpose for which the Ministry was established.
-
-The request is refused.
 
 {% include proclamation/close.html variant="despatch" given="Spring, in the fourth year of the reign." signed="Endorsed in the King’s hand: a fair point." %}
 
@@ -160,11 +154,9 @@ For a time this year the Kingdom's river changed direction daily. Merchants from
 
 {% include proclamation/open.html variant="intelligence" by="Most Secret" kind="The Archive" subject="A Cautiously Worded Report" %}
 
-The Minister holds that whether a thing is new depends largely on how much people remember. The Archive was established accordingly, to record everything that has ever happened in the Kingdom, lest any of it happen again by accident.
+The Minister has discovered that whether a thing is new depends largely on how much people remember. The Archive was established accordingly, to record everything that has ever happened in the Kingdom, lest any of it happen again by accident.
 
-A preliminary review suggests that a considerable part of the history to which the undersigned has devoted his life may have happened more than once.
-
-It is not yet clear whether this falls within the Archive's remit.
+A preliminary review finds that a considerable part of the history to which the undersigned has devoted his life has already happened more than once.
 
 {% include proclamation/close.html variant="intelligence" given="Filed in the twenty-first year of the reign. The author retired the following year." signed="The first Director of the Archive" %}
 
@@ -174,11 +166,11 @@ In the thirty-ninth year of the reign the Ministry began preparing for the forti
 
 The arrangements have proved difficult. The Kingdom has already held thirty-eight military parades, twenty-seven displays of fireworks and nine masked balls. A young official proposed fireworks that would fall from the sky to the ground; the fire brigade objected.
 
-The Ministry has at last resolved to present the King, at the celebrations, with something the Kingdom has never seen: one whole day of time that nobody has used.
+The Minister has at last resolved to present the King, at the celebrations, with something the Kingdom has never seen: one whole day of time that nobody has used.
 
 The day will belong to no month and to no day of the week. The astronomers needed seven months to fit it into the calendar. The Chancellor of the Exchequer needed a further two to decide whether wages should be paid on it.
 
-{% include proclamation/close.html variant="despatch" given="Spring, in the thirty-ninth year of the reign." signed="The Minister of Novelty" %}
+{% include proclamation/close.html variant="despatch" signed="The Minister of Novelty" %}
 
 {% include proclamation/open.html variant="despatch" by="From the Ministry of Novelty" kind="Final Report" subject="The Ministry’s Work Complete" %}
 
@@ -194,7 +186,7 @@ Before he left, the Minister praised it.
 
 The King looked down at his cup.
 
-That night every clock in the Kingdom moved on one notch further. The astronomers opened the champagne, and the Archive sealed the last volume of the old days.
+That night every clock in the Kingdom moved one notch further. The astronomers opened the champagne, and the Archive sealed the last volume of the old days.
 
 At last, nothing in the Kingdom could happen twice.
 
@@ -204,7 +196,7 @@ He had not been so happy in a long time.
 
 When he had finished, he found that he was rather looking forward to tomorrow.
 
-He hoped it would be like this.
+He hoped tomorrow would be the same.
 
 </section>
 </div>
