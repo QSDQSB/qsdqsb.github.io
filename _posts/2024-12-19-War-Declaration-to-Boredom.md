@@ -86,27 +86,21 @@ QSD 在贝希特斯加登遇到了一只猫。猫给他讲了一位巴伐利亚�
 QSD，第五届熬夜锦标赛全球总亚军，摸鱼王，时间管理废物，选恐晚期患者，热衷无所事事者，QSB 记忆的保管人，精神布拉格+多洛米蒂人，致他的全部子民，谨致问候。
 {: .proclamation-style}
 
-QSD 不向重复宣战。大海几十亿年来一直重复着同一个动作，猫每天下午回到同一个窗台；有些曲子他听了几百遍，下一个音比晚饭吃什么还要确定。它们未必无聊。
+无聊不在事物里。
 
-QSD 也不向闲散宣战，甚至不向无聊本身宣战。
+同一部慢热的电影，头一个小时让人无聊；看进去以后，再看几遍也不会。电影没有变。
 
-他所宣战的，是一种处境：人仍在生活，却渐渐成了自己生活的旁观者。
+所以 QSD 不向重复宣战。
 
-这个敌人有两副面孔。一副让人对什么都提不起兴趣；另一副让人害怕无聊，于是不再允许自己拥有一个无所事事的下午。
+无聊是想投入，却投入不了。值得宣战的，是投入的能力一点点消失：人仍在生活，却渐渐退到一旁，看着自己生活。
 
-还须报告一个不幸的发现：敌人的主要合作者，可能正是 QSD 原本打算用来抵抗它的理性。敌人已经渗透进了指挥部。
+还有一种更隐蔽的：害怕无聊。于是每个下午都要被安排，每次旅行都要有收获，连难过都要写成一篇像样的文章。
 
-**因此**，QSD 郑重宣布：
+QSD 擅长给人建模型。模型收敛得越快，那个人就显得越无聊。他至今分不清，是对方简单，还是自己的模型太粗。
 
-**第一条**　对平凡、熟悉、重复与安静，不采取任何敌对行动。
+没有终极意义，也就没有必须有趣的义务。QSD 要的，只是自己决定投入什么：包括重复，包括无所事事。
 
-**第二条**　QSD 保留被自以为熟悉的事物惊讶的权利。
-
-**第三条**　QSD 保留追求用处尚未确定之事物的权利。
-
-**第四条**　QSD 保留让某些问题悬而未决、且不视之为个人失败的权利。
-
-**第五条**　QSD 保留感到无聊的权利。
+**因此**，QSD 郑重宣布：自即日起，与无聊进入战争状态；同时保留感到无聊的权利。
 
 {% include proclamation/close.html given="特此宣告。二〇二四年十二月十九日，星期四，下午三点五十分，于书桌前。" %}
 
@@ -178,27 +172,21 @@ He hoped tomorrow would be the same.
 QSD, Protector of Deconstructionism, Guardian of Procrastination, Keeper of QSB's Memories, Runner-up Overall in the Fifth Global Championship of Staying Up Late, Spiritually of Prague + the Dolomites, to all his Faculties and Loyal Subjects, Greeting.
 {: .proclamation-style}
 
-QSD declares no war upon repetition. The sea has been performing essentially the same manoeuvre for several billion years, and a cat returns to the same windowsill every afternoon. There are pieces of music QSD has heard hundreds of times, whose next note he knows with greater certainty than what he shall have for dinner. None of these need bore him.
+Boredom does not live in things.
 
-Nor does he declare war upon idleness, nor even upon boredom itself.
+The same slow film bores you for its first hour; once you are in, it will not bore you however often you watch it again. The film has not changed.
 
-The enemy is a condition: that in which a man goes on living and becomes, by degrees, a spectator of his own existence.
+QSD therefore declares no war upon repetition.
 
-The enemy has two faces. One leaves a man unable to take an interest in anything. The other leaves him so afraid of boredom that he no longer permits himself an afternoon with nothing in it.
+Boredom is wanting to take part and being unable to. What is worth a war is that ability wearing away: a man goes on living, and by degrees steps aside to watch himself do it.
 
-An unfortunate discovery must also be reported. The enemy's principal collaborator may be the very faculty with which QSD had intended to resist him: reason. The enemy has infiltrated the headquarters.
+There is a quieter kind as well: the fear of boredom. Every afternoon must then be arranged, every journey must yield something, and even sorrow must be written up into a respectable essay.
 
-**Now, therefore,** QSD does hereby declare:
+QSD is good at building models of people. The faster a model converges, the more boring the person seems. He still cannot tell whether the person is simple or his model coarse.
 
-**I.** No hostilities shall be conducted against the ordinary, the familiar, the repetitive or the quiet.
+Without an ultimate meaning there is no duty to be interesting either. All QSD wants is to decide for himself what to take part in: repetition included, idleness included.
 
-**II.** QSD reserves the right to be surprised by what he thought he knew.
-
-**III.** QSD reserves the right to pursue things whose usefulness remains indefinitely unestablished.
-
-**IV.** QSD reserves the right to leave certain questions unanswered, without regarding their unansweredness as a personal defeat.
-
-**V.** QSD reserves the right to be bored.
+**Now, therefore,** QSD does hereby declare a state of war with boredom, from this day forth, and reserves the right to be bored.
 
 {% include proclamation/close.html given="Given at his desk, Thursday, 19 December 2024, at ten to four in the afternoon." %}
 
