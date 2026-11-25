@@ -1,12 +1,12 @@
 ---
 title: "War Declaration Upon the Tyranny of Boredom"
 date: 2024-12-19
-updated: 2026-11-04
+updated: 2026-11-25
 permalink: /posts/war-declaration-to-boredom/
 redirect_from:
   - /posts/2024/war-declaration-to-boredom/
-excerpt: "QSD proclaims his enduring hostilities against the reign of Boredom and all disciples in its service."
-seo_description: "A royal proclamation of war upon boredom, with its articles of war, despatches from the front, and a reply from His Majesty to a request for a ceasefire. By QSD."
+excerpt: "The King yawned three times at his own coronation."
+seo_description: "The papers of a kingdom at war with boredom: the decree founding a Ministry of Novelty, its reports, a refused request for a second eclipse, a cautious report from the Archive, and a cup of coffee. By QSD."
 tags:
   - 🧼QSD's Philosophy
 header:
@@ -21,240 +21,190 @@ lang: zh # the Chinese is the original and comes first (_layouts/single.html set
 <div data-bilingual>
 <section data-bilingual-lang="中" lang="zh" markdown="1">
 
-{% include proclamation/open.html kind="宣战书" by="QSD" subject="向自称「无聊」的僭主宣战" %}
+{% include proclamation/open.html kind="宣战书" by="国王颁布" subject="设立新鲜事物部" %}
 
-QSD，第五届熬夜锦标赛全球总亚军，摸鱼王，时间管理废物，选恐晚期患者，热衷无所事事者，QSB 记忆的保管人，精神布拉格+多洛米蒂人，致他的全部子民，谨致问候。
+国王在自己的加冕典礼上打了三个哈欠。据王室档案馆记载，第一个发生在大主教讲话的时候，第二个发生在乐队演奏的时候。第三个的时间存在争议。
 {: .proclamation-style}
 
-QSD 心里清楚这事在旁人看来是什么样子：一个没有军队、领土只有一个网站的人，要向一个抽象名词宣战。这个抽象名词自称「无聊」，这几年一直占着 QSD 的下午，没有人请过它。前线在哪里，QSD 也不完全确定。
+**因此**，国王宣布：设立新鲜事物部，授予其内阁席位、一笔相当可观的预算，以及调度王国明日的权力。
 
-阴天的周二，一节测度论，一条长队，QSD 对它们都没有意见。他最好的几个下午里，有一些什么也没有发生，他也说不清那些下午比别的下午多了什么。
+{% include proclamation/close.html given="即位第二年春，于王宫。" %}
 
-可有时候，手机亮着，他不记得自己刚才要查什么。一九三九年英法对德宣战，此后八个月，西线几乎没有开过一枪，有些英国人管那段日子叫 Bore War。大概就是这样：全面动员，无处可去。这不是品味问题，是抢劫。
+{% include proclamation/open.html variant="despatch" by="新鲜事物部呈" kind="第三年" subject="引进事项" %}
 
-常见的办法都试过了，所幸都有纸面记录。他有一台比这个网站早到四百零六天的富士；从二〇二一年二月起，他给喝下的每一杯咖啡记账，记到二〇二二年二月，停了；他还签过一份 commitment，严禁晚上十点到早上六点之间摄入任何非液体。可僭主还是会在下午四点坐上他的椅子。有些日子，QSD 怀疑是这些办法替它开的门。
+本部最初的工作，是从世界各地搜集尚未在王国发生过的事情。
 
-所以 QSD 没有什么战略可以宣布。无聊的一小时不是悲剧。不再介意自己的生命是否无聊，才是。截至今日，QSD 仍然介意。
+本年度，本部从北方引进了极光，从东方引进了一种用影子演出的戏剧，又通过外交途径，从一个遥远的岛国借来了一次日食。作为交换，王国向该国赠送了一个格外漫长的黄昏。
 
-**因此**，QSD 郑重宣布：自即日起，QSD 与上述僭主进入战争状态。
+{% include proclamation/close.html variant="despatch" given="即位第三年冬。" signed="新鲜事物部部长" %}
 
-{% include proclamation/close.html given="特此宣告。二〇二四年十二月十九日，星期四，下午三点五十分，于书桌前。" %}
+{% include proclamation/open.html variant="despatch" by="国王致新鲜事物部" kind="一项申请" subject="关于日食" %}
 
-{% include proclamation/open.html variant="despatch" by="QSD 颁布" kind="战争条款" subject="本次战役适用" %}
+日食颇受国王喜爱。
 
-**第一条**　战争状态于每周七天有效。周日另行规定，相关文件尚未起草。
+国王询问，能否在明年生日的时候再安排一次。
 
-**第二条**　任何臣民均有权浪费自己的时间。本条所称浪费，由该臣民自行认定；事后不得追究。
+{% include proclamation/close.html variant="despatch" sealed=true given="即位第四年春。" %}
 
-**第三条**　严禁任何「下周一再开始」的计划；每学期可豁免一次。
+{% include proclamation/open.html variant="despatch" by="新鲜事物部呈" kind="批复" subject="就国王的申请" %}
 
-**第四条**　「下一集」每晚以两集为限。
-
-**第五条**　失去的周日不予清点。清点它们，正是敌人连周一也一并拿走的方式。
-
-**第六条**　违反本条款任何一条者，由陛下审理。被告为陛下本人时，案件延期审理。
-
-**第七条**　停火须由前线提出申请，仅陛下有权批准。陛下无须说明理由。
-
-**第八条**　每次违规罚款十英镑，支付给乙方（QSB）。
-
-{% include proclamation/close.html variant="despatch" sealed=true given="二〇二四年十二月二十一日，星期六，于书桌前。" %}
-
-{% include proclamation/open.html variant="despatch" by="呈陛下，发自前线" kind="战报 第一号" subject="四十一家" %}
-
-陛下：
-
-今晚七点十分，QSD 打开地图，搜索步行十五分钟以内的餐厅，一共四十一家。到七点五十，他看完了其中十一家的 review，出于原则排除了三家，出于字体排除了一家，比刚开始的时候更饿了。（选恐晚期，病情稳定。）
-
-八点二十，他在楼下的便利店买了一个三明治。鸡蛋沙拉的。还行。
-
-{% include proclamation/close.html variant="despatch" given="发自前线，二〇二五年一月九日，星期四。" signed="陛下最恭顺的仆人|QSB|前线指挥官" %}
-
-{% include proclamation/open.html variant="intelligence" by="绝密" kind="战地情报" subject="一个倒计时" %}
-
-自一月底起，每一集结束时，屏幕角落都会出现一个小小的倒计时：「下一集将在 5 秒后播放」。它不提问，也不需要回答。如果什么都不做，下一集就开始了。
-
-观察记录如下：
-
-| 日期 | 星期 | 出现 | 注意到 |
-|:--:|:--:|:--:|:--:|
-| 1月29日 | 三 | 2 | 2 |
-| 1月31日 | 五 | 3 | 3 |
-| 2月1日 | 六 | 5 | 3 |
-| 2月2日 | 日 | 4 | 3 |
-
-评估：无法确定。尚不清楚这个装置属于敌方装备，还是只是格外称职。
-
-{% include proclamation/close.html variant="intelligence" given="呈报于二〇二五年二月三日，星期一。" signed="仅供 QSD 本人阅读。" %}
-
-{% include proclamation/open.html variant="despatch" by="呈陛下，发自前线" kind="战报 第二号" subject="第 312 回合" %}
-
-陛下：
-
-战斗周六晚上九点重新打响，是一局上周开的《文明 VI》，凌晨三点二十分结束，第 312 回合。QSD 输了，和往常一样。
-
-大约到午夜，他不再读每一回合发生了什么。屏幕右下角的按钮上的字会变，但整晚都是同一个按钮，在同一个位置。过了一阵子，手不用眼睛也能找到它。
-
-他不确定这算不算败仗。他把它记作一场。
-
-{% include proclamation/close.html variant="despatch" given="发自前线，二〇二五年四月六日，星期日，凌晨三点二十分。" signed="陛下最恭顺的仆人|QSB|前线指挥官" %}
-
-{% include proclamation/open.html variant="despatch" by="呈陛下，发自前线" kind="战报 第三号" subject="一项申请" %}
-
-陛下：
-
-QSB 恳请于四月二十六日、二十七日这个周末停火，理由如下：
-
-一、这一周很长；
-
-二、敌人最近很安静，而安静的敌人或许已经被打败了；
-
-三、QSB 想在沙发上躺着，看看会发生什么。
-
-QSB 注意到，按第二条，这严格来说不算临阵脱逃，只请陛下确认这一点。
-
-{% include proclamation/close.html variant="despatch" given="发自前线，二〇二五年四月二十五日，星期五。" signed="陛下最恭顺的仆人|QSB|前线指挥官" %}
-
-{% include proclamation/open.html variant="despatch" by="QSD 颁布" kind="批复" subject="就第三号战报" %}
-
-申请及所引条款，陛下均已阅。
+部长提醒国王，这将有违本部门成立的初衷。
 
 申请不予批准。
 
-陛下在沙发上度过了四月二十六日、二十七日这个周末。
+{% include proclamation/close.html variant="despatch" given="即位第四年春。" signed="附国王批注：有道理。" %}
 
-{% include proclamation/close.html variant="despatch" sealed=true given="二〇二五年四月二十八日，星期一，于书桌前。" %}
+{% include proclamation/open.html variant="despatch" by="新鲜事物部呈" kind="第十二年" subject="明日" %}
 
-{% include proclamation/open.html variant="despatch" by="呈陛下，发自前线" kind="战报 第四号" subject="西线无战事" %}
+到了第十二年，世界上值得引进的事情已经所剩无几。本部于是开始自行制造明日。
 
-陛下：
+王国的地图从此分为两种：一种记载王国今日的模样，另一种记载王国明日的模样。两种地图均于每天傍晚发行。居民可以在晚餐时决定明天去哪里散步，前提是那条路明天仍然存在。
 
-周日，下午两点至六点。
+本年度有一阵子，王国的河流每天改变流向。威尼斯来的商人对此颇为赞赏，认为王国拥有十分先进的水利工程。渔夫们则持有不同的意见。
 
-无事可报。
+{% include proclamation/close.html variant="despatch" given="即位第十二年冬。" signed="新鲜事物部部长" %}
 
-QSD 身体健康。
+{% include proclamation/open.html variant="intelligence" by="绝密" kind="档案处" subject="一份措辞谨慎的报告" %}
 
-{% include proclamation/close.html variant="despatch" given="发自前线，二〇二五年五月十一日，星期日。" signed="陛下最恭顺的仆人|QSB|前线指挥官" %}
+部长认为，事情是否新鲜，很大程度上取决于人们记得多少事情。档案处因此设立，负责记录王国里一切曾经发生过的事，以防它们在不经意间再次发生。
+
+经初步核查，本人研究了一辈子的历史中，有相当一部分内容，可能已经发生过不止一次。
+
+本处尚不能确定，这是否属于本处的职责范围。
+
+{% include proclamation/close.html variant="intelligence" given="即位第二十一年呈报。呈报人于次年退休。" signed="档案处首任主任" %}
+
+{% include proclamation/open.html variant="despatch" by="新鲜事物部呈" kind="筹备" subject="加冕四十周年庆典" %}
+
+国王即位后的第三十九年，本部开始筹备四十周年庆典。
+
+庆典的安排相当困难。王国已经举办过三十八次阅兵、二十七次烟火表演和九次假面舞会。一位年轻的官员提议让烟火从天空落向地面，但遭到了消防部门的反对。
+
+最终，本部决定在庆典上向国王赠送一件王国历史上从未出现过的东西：一整天未经任何人使用的时间。
+
+那一天将不属于历法中的任何月份，也不属于一周中的任何一天。天文学家花了七个月才将它安插进日历。财政大臣则花了另外两个月决定这一天是否应该发放工资。
+
+{% include proclamation/close.html variant="despatch" given="即位第三十九年春。" signed="新鲜事物部部长" %}
+
+{% include proclamation/open.html variant="despatch" by="新鲜事物部呈" kind="最终报告" subject="本部使命已全部完成" %}
+
+从明日起，王国的每一天都将是前所未有的一天。每一场雨都将以不同的方式落下，每一封信都将包含此前未曾写过的话。即使是做梦的人，也不会再梦见曾经梦见过的地方。
+
+{% include proclamation/close.html variant="despatch" given="即位第三十九年冬，庆典前夜，于国王的晚餐桌上。" signed="新鲜事物部部长" %}
+
+国王很满意，亲自为部长煮了两杯咖啡。
+
+部长临走前称赞了咖啡的味道。
+
+「可惜以后喝不到了。」他说。
+
+国王低头看了看自己的杯子。
+
+那天夜里，王国所有的钟都多走了一格。天文学家们打开香槟，档案处封存了最后一册旧日的记录。
+
+王国终于没有任何事情能够重复发生。
+
+加冕四十周年的清晨，在那段举世无双、甚至没有名字的时间里，国王偷偷走进厨房，给自己煮了一杯与昨天完全相同的咖啡。
+
+他已经很久没有这么开心过了。
+
+喝完以后，他忽然有些期待明天。
+
+他希望明天也是这样。
 
 </section>
 <section data-bilingual-lang="EN" lang="en" markdown="1">
 
-{% include proclamation/open.html kind="A Proclamation" subject="Declaring War upon the Pretender Boredom" %}
+{% include proclamation/open.html kind="A Proclamation" by="By the King" subject="Establishing a Ministry of Novelty" %}
 
-QSD, Protector of Deconstructionism, Guardian of Procrastination, Keeper of QSB's Memories, Runner-up Overall in the Fifth Global Championship of Staying Up Late, Spiritually of Prague + the Dolomites, to all his Faculties and Loyal Subjects, Greeting.
+The King yawned three times at his own coronation. The Royal Archive records that the first occurred during the Archbishop's address and the second while the band was playing. The time of the third is disputed.
 {: .proclamation-style}
 
-QSD is not unaware of how this appears. A man without an army, whose entire territory is a website, hereby takes up arms against an abstract noun: a pretender styling himself Boredom, who has for some years, and without the least invitation, occupied QSD's afternoons. Where the front lies, QSD is not entirely sure.
+**Now, therefore,** the King does hereby establish a Ministry of Novelty, and grants it a seat in the Cabinet, a not inconsiderable budget, and authority over the Kingdom's tomorrows.
 
-Against a grey Tuesday, a lecture on measure theory or a queue, QSD harbours no grievance whatsoever. Several of his finest afternoons contained nothing at all, and he is unable to say what they possessed that the others lacked.
+{% include proclamation/close.html given="Given at the Palace, in the spring of the second year of the reign." %}
 
-But there are times when the phone is lit in his hand and he cannot remember what he meant to look up. In 1939 Britain and France declared war on Germany, after which, for some eight months, hardly a shot was fired in the West; some in Britain called it the Bore War. That is near enough: full mobilisation, with nowhere to go. It is not a matter of taste. It is robbery.
+{% include proclamation/open.html variant="despatch" by="From the Ministry of Novelty" kind="Year III" subject="Imports" %}
 
-The customary remedies have been tried and, fortunately, documented. QSD is in possession of a Fujifilm that arrived 406 days before this website did. He kept a ledger of every coffee consumed from February 2021 until February 2022, when he stopped. In a moment of unprecedented resoluteness he once signed a strict prohibition on any non-liquid intake between 10pm and 6am. The Pretender nonetheless takes his chair at four o'clock. On certain days QSD suspects the remedies held the door.
+The Ministry's first undertaking has been to collect, from every part of the world, things that have not yet happened in the Kingdom.
 
-QSD has, accordingly, no strategy to announce. A boring hour is no tragedy. To stop minding whether one's life is boring would be. As of this day, QSD still minds.
+This year it imported the aurora from the north and, from the east, a kind of theatre performed with shadows. By diplomatic means it also borrowed a solar eclipse from a distant island nation. In exchange, the Kingdom presented that nation with an exceptionally long dusk.
 
-**Now, therefore,** QSD does hereby declare that a State of War exists between himself and the said Pretender, from this day forth.
+{% include proclamation/close.html variant="despatch" given="Winter, in the third year of the reign." signed="The Minister of Novelty" %}
 
-{% include proclamation/close.html given="Given at his desk, Thursday, 19 December 2024, at ten to four in the afternoon." %}
+{% include proclamation/open.html variant="despatch" by="From the King" kind="A Request" subject="Concerning the Eclipse" %}
 
-{% include proclamation/open.html variant="despatch" kind="Articles of War" subject="For the Conduct of the Present Campaign" %}
+The King was much taken with the eclipse.
 
-**I.** A State of War is in force on every day of the week. Sundays are covered by a separate instrument, not yet drafted.
+He asks whether another might be arranged for his birthday next year.
 
-**II.** Every subject has the right to waste his own time. What counts as waste, for the purposes of this Article, is for the subject himself to determine, and no proceedings may be brought afterwards.
+{% include proclamation/close.html variant="despatch" sealed=true given="Spring, in the fourth year of the reign." %}
 
-**III.** A strict prohibition on any plan to begin on a Monday, with an exemption of one such plan per term.
+{% include proclamation/open.html variant="despatch" by="From the Ministry of Novelty" kind="A Reply" subject="To the King’s Request" %}
 
-**IV.** A restriction on *Next Episode* to two per evening.
-
-**V.** Lost Sundays are not to be counted. Counting them is how the enemy takes the Monday as well.
-
-**VI.** Breaches of these Articles are to be tried by His Majesty. Where His Majesty is the accused, the case is adjourned.
-
-**VII.** A ceasefire may be granted by His Majesty alone, on application from the Front. His Majesty need give no reasons.
-
-**VIII.** Any violation will result in a £10 penalty, payable to *Party B* (QSB).
-
-{% include proclamation/close.html variant="despatch" sealed=true given="Given at his desk, Saturday, 21 December 2024." %}
-
-{% include proclamation/open.html variant="despatch" by="To His Majesty, from the Front" kind="Despatch No. I" subject="Forty-One" %}
-
-Sire,
-
-At ten past seven this evening, QSD opened a map of every restaurant within fifteen minutes' walk. There were forty-one. By ten to eight he had read the reviews of eleven, excluded three on principle and one on account of its font, and was hungrier than when he began. (The condition, diagnosed some years ago as terminal, remains stable.)
-
-At twenty past eight he purchased a sandwich from the shop downstairs. Egg mayonnaise. It was fine.
-
-{% include proclamation/close.html variant="despatch" given="Dated at the Front, Thursday, 9 January 2025." signed="I have the honour to be, Sire, Your Majesty’s most obedient servant,|QSB|Commanding at the Front" %}
-
-{% include proclamation/open.html variant="intelligence" by="Most Secret" kind="Field Intelligence" subject="A Countdown" %}
-
-Since the end of January, a small countdown has been seen in the corner of the screen at the end of each episode: *Next episode in 5*. It asks nothing and requires no answer. If nothing is done, the next episode begins.
-
-The observations are recorded below:
-
-| Date | Day | Shown | Noticed |
-|:--:|:--:|:--:|:--:|
-| 29 Jan | Wed | 2 | 2 |
-| 31 Jan | Fri | 3 | 3 |
-| 1 Feb | Sat | 5 | 3 |
-| 2 Feb | Sun | 4 | 3 |
-
-Assessment: inconclusive. It is not clear whether the device is enemy equipment or merely very good at its job.
-
-{% include proclamation/close.html variant="intelligence" given="Filed Monday, 3 February 2025." signed="For QSD’s eyes only." %}
-
-{% include proclamation/open.html variant="despatch" by="To His Majesty, from the Front" kind="Despatch No. II" subject="Turn 312" %}
-
-Sire,
-
-The engagement resumed at nine on Saturday evening, in a game of Civilization VI begun the week before, and concluded at twenty past three in the morning, on turn 312. QSD lost, as is his custom.
-
-At about midnight he ceased to read what each turn said. The button in the lower right corner says *Next Turn*, or *Choose Production*, or *Unit Needs Orders*. It is the same button all night, in the same place, and after a while the hand finds it without the eyes.
-
-He is not sure this counts as a defeat. He records it as one.
-
-{% include proclamation/close.html variant="despatch" given="Dated at the Front, Sunday, 6 April 2025, 3.20 a.m." signed="I have the honour to be, Sire, Your Majesty’s most obedient servant,|QSB|Commanding at the Front" %}
-
-{% include proclamation/open.html variant="despatch" by="To His Majesty, from the Front" kind="Despatch No. III" subject="A Request" %}
-
-Sire,
-
-QSB respectfully requests a ceasefire for the weekend of 26 and 27 April, on the following grounds:
-
-first, that the week has been long;
-
-second, that the enemy has been quiet, and a quiet enemy may be a beaten one;
-
-third, that QSB would like to lie on the sofa and see what happens.
-
-QSB notes that under Article II this would not, strictly, be desertion, and asks only that Your Majesty confirm it.
-
-{% include proclamation/close.html variant="despatch" given="Dated at the Front, Friday, 25 April 2025." signed="I have the honour to be, Sire, Your Majesty’s most obedient servant,|QSB|Commanding at the Front" %}
-
-{% include proclamation/open.html variant="despatch" kind="A Reply" subject="To Despatch No. III" %}
-
-His Majesty has read the request, and the Article cited.
+The Minister begs to remind His Majesty that this would run contrary to the purpose for which the Ministry was established.
 
 The request is refused.
 
-His Majesty spent the weekend of 26 and 27 April on the sofa.
+{% include proclamation/close.html variant="despatch" given="Spring, in the fourth year of the reign." signed="Endorsed in the King’s hand: a fair point." %}
 
-{% include proclamation/close.html variant="despatch" sealed=true given="Given at his desk, Monday, 28 April 2025." %}
+{% include proclamation/open.html variant="despatch" by="From the Ministry of Novelty" kind="Year XII" subject="Tomorrow" %}
 
-{% include proclamation/open.html variant="despatch" by="To His Majesty, from the Front" kind="Despatch No. IV" subject="All Quiet" %}
+By the twelfth year few things in the world remained worth importing. The Ministry has accordingly begun to manufacture tomorrows of its own.
 
-Sire,
+The Kingdom's maps are henceforth issued in two kinds: one showing the Kingdom as it is today, the other as it will be tomorrow. Both are published every evening. Residents may decide over dinner where to walk tomorrow, provided the road in question still exists.
 
-Sunday, from two o'clock until six.
+For a time this year the Kingdom's river changed direction daily. Merchants from Venice admired it greatly, and took the Kingdom to possess a most advanced system of waterworks. The fishermen held a different view.
 
-Nothing to report.
+{% include proclamation/close.html variant="despatch" given="Winter, in the twelfth year of the reign." signed="The Minister of Novelty" %}
 
-QSD is in good health.
+{% include proclamation/open.html variant="intelligence" by="Most Secret" kind="The Archive" subject="A Cautiously Worded Report" %}
 
-{% include proclamation/close.html variant="despatch" given="Dated at the Front, Sunday, 11 May 2025." signed="I have the honour to be, Sire, Your Majesty’s most obedient servant,|QSB|Commanding at the Front" %}
+The Minister holds that whether a thing is new depends largely on how much people remember. The Archive was established accordingly, to record everything that has ever happened in the Kingdom, lest any of it happen again by accident.
+
+A preliminary review suggests that a considerable part of the history to which the undersigned has devoted his life may have happened more than once.
+
+It is not yet clear whether this falls within the Archive's remit.
+
+{% include proclamation/close.html variant="intelligence" given="Filed in the twenty-first year of the reign. The author retired the following year." signed="The first Director of the Archive" %}
+
+{% include proclamation/open.html variant="despatch" by="From the Ministry of Novelty" kind="Preparations" subject="For the Fortieth Anniversary of the Coronation" %}
+
+In the thirty-ninth year of the reign the Ministry began preparing for the fortieth anniversary.
+
+The arrangements have proved difficult. The Kingdom has already held thirty-eight military parades, twenty-seven displays of fireworks and nine masked balls. A young official proposed fireworks that would fall from the sky to the ground; the fire brigade objected.
+
+The Ministry has at last resolved to present the King, at the celebrations, with something the Kingdom has never seen: one whole day of time that nobody has used.
+
+The day will belong to no month and to no day of the week. The astronomers needed seven months to fit it into the calendar. The Chancellor of the Exchequer needed a further two to decide whether wages should be paid on it.
+
+{% include proclamation/close.html variant="despatch" given="Spring, in the thirty-ninth year of the reign." signed="The Minister of Novelty" %}
+
+{% include proclamation/open.html variant="despatch" by="From the Ministry of Novelty" kind="Final Report" subject="The Ministry’s Work Complete" %}
+
+From tomorrow, every day in the Kingdom will be a day without precedent. Every rain will fall in its own way, and every letter will contain words not written before. Even those who dream will not dream again of a place they have dreamt of.
+
+{% include proclamation/close.html variant="despatch" given="The eve of the celebrations, at the King’s dinner table." signed="The Minister of Novelty" %}
+
+The King was pleased, and made the coffee for the two of them with his own hands.
+
+Before he left, the Minister praised it.
+
+“A pity we shan't have it again,” he said.
+
+The King looked down at his cup.
+
+That night every clock in the Kingdom moved on one notch further. The astronomers opened the champagne, and the Archive sealed the last volume of the old days.
+
+At last, nothing in the Kingdom could happen twice.
+
+On the morning of the fortieth anniversary of his coronation, in that peerless stretch of time that did not even have a name, the King crept into the kitchen and made himself a cup of coffee exactly like yesterday's.
+
+He had not been so happy in a long time.
+
+When he had finished, he found that he was rather looking forward to tomorrow.
+
+He hoped it would be like this.
 
 </section>
 </div>
