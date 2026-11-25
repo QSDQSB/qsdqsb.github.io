@@ -6,7 +6,7 @@ permalink: /posts/war-declaration-to-boredom/
 redirect_from:
   - /posts/2024/war-declaration-to-boredom/
 excerpt: "The King yawned three times at his own coronation."
-seo_description: "The papers of a kingdom at war with boredom: the decree founding a Ministry of Novelty, its reports, a request for a second eclipse, a cautious report from the Archive, and a cup of coffee. By QSD."
+seo_description: "A cat in Berchtesgaden tells QSD the fable of an old Bavarian king and his Ministry of Novelty; then QSD declares war on boredom, and says what the war is against. By QSD."
 tags:
   - 🧼QSD's Philosophy
 header:
@@ -21,58 +21,31 @@ lang: zh # the Chinese is the original and comes first (_layouts/single.html set
 <div data-bilingual>
 <section data-bilingual-lang="中" lang="zh" markdown="1">
 
-{% include proclamation/open.html kind="宣战书" by="国王颁布" subject="设立新鲜事物部" %}
+QSD 在贝希特斯加登遇到了一只猫。猫给他讲了一个故事，关于一位巴伐利亚的老国王。
+
+{% include proclamation/open.html variant="despatch" by="一只猫讲述" kind="序章" subject="新鲜事物部" %}
 
 国王在自己的加冕典礼上打了三个哈欠。据王室档案馆记载，第一个发生在大主教讲话的时候，第二个发生在乐队演奏的时候。第三个的时间存在争议。
-{: .proclamation-style}
 
-**因此**，国王宣布：设立新鲜事物部，授予其内阁席位、一笔相当可观的预算，以及调度王国明日的权力。
+次年春天，国王成立了新鲜事物部，授予其内阁席位、一笔相当可观的预算，以及调度王国明日的权力。
 
-{% include proclamation/close.html given="即位第二年春，于王宫。" %}
+新鲜事物部最初的工作是从世界各地搜集尚未在王国发生过的事情。他们从北方引进了极光，从东方引进了一种用影子演出的戏剧，又通过外交途径从一个遥远的岛国借来了一次日食。作为交换，王国向该国赠送了一个格外漫长的黄昏。
 
-{% include proclamation/open.html variant="despatch" by="新鲜事物部呈" kind="第三年" subject="引进事项" %}
+日食颇受国王喜爱。他询问部长能否在明年生日的时候再安排一次。部长提醒他，这将有违本部门成立的初衷。
 
-本部最初的工作，是从世界各地搜集尚未在王国发生过的事情。
+国王认为他说得有道理。
 
-本年度，本部从北方引进了极光，从东方引进了一种用影子演出的戏剧，又通过外交途径，从一个遥远的岛国借来了一次日食。作为交换，王国向该国赠送了一个格外漫长的黄昏。
-
-{% include proclamation/close.html variant="despatch" given="即位第三年冬。" signed="新鲜事物部部长" %}
-
-{% include proclamation/open.html variant="despatch" by="国王致新鲜事物部" kind="一项申请" subject="关于日食" %}
-
-日食颇受国王喜爱。
-
-国王询问，能否在明年生日的时候再安排一次。
-
-{% include proclamation/close.html variant="despatch" sealed=true given="即位第四年春。" %}
-
-{% include proclamation/open.html variant="despatch" by="新鲜事物部呈" kind="批复" subject="就国王的申请" %}
-
-部长提醒国王，这将有违本部门成立的初衷。
-
-{% include proclamation/close.html variant="despatch" given="即位第四年春。" signed="附国王批注：有道理。" %}
-
-{% include proclamation/open.html variant="despatch" by="新鲜事物部呈" kind="第十二年" subject="明日" %}
-
-到了第十二年，世界上值得引进的事情已经所剩无几。本部于是开始自行制造明日。
+到了第十二年，世界上值得引进的事情已经所剩无几。新鲜事物部于是开始自行制造明日。
 
 王国的地图从此分为两种：一种记载王国今日的模样，另一种记载王国明日的模样。两种地图均于每天傍晚发行。居民可以在晚餐时决定明天去哪里散步，前提是那条路明天仍然存在。
 
-本年度有一阵子，王国的河流每天改变流向。威尼斯来的商人对此颇为赞赏，认为王国拥有十分先进的水利工程。渔夫们则持有不同的意见。
+有一阵子，王国的河流每天改变流向。威尼斯来的商人对此颇为赞赏，认为王国拥有十分先进的水利工程。渔夫们则持有不同的意见。
 
-{% include proclamation/close.html variant="despatch" given="即位第十二年冬。" signed="新鲜事物部部长" %}
+后来，部长发现，事情是否新鲜，很大程度上取决于人们记得多少事情。为此，新鲜事物部增设了一个档案处，负责记录王国里一切曾经发生过的事，以防它们在不经意间再次发生。
 
-{% include proclamation/open.html variant="intelligence" by="绝密" kind="档案处" subject="一份措辞谨慎的报告" %}
+档案处的第一任主任是一位历史学家。他在任职期间不幸发现，自己研究了一辈子的历史中，有相当一部分内容已经发生过不止一次。他为此提交了一份措辞谨慎的报告，并于次年退休。
 
-部长发现，事情是否新鲜，很大程度上取决于人们记得多少事情。档案处因此设立，负责记录王国里一切曾经发生过的事，以防它们在不经意间再次发生。
-
-经初步核查，本人研究了一辈子的历史中，有相当一部分内容已经发生过不止一次。
-
-{% include proclamation/close.html variant="intelligence" given="即位第二十一年呈报。呈报人于次年退休。" signed="档案处首任主任" %}
-
-{% include proclamation/open.html variant="despatch" by="新鲜事物部呈" kind="筹备" subject="加冕四十周年庆典" %}
-
-国王即位后的第三十九年，本部开始筹备四十周年庆典。
+国王即位后的第三十九年，新鲜事物部开始筹备四十周年庆典。
 
 庆典的安排相当困难。王国已经举办过三十八次阅兵、二十七次烟火表演和九次假面舞会。一位年轻的官员提议让烟火从天空落向地面，但遭到了消防部门的反对。
 
@@ -80,13 +53,11 @@ lang: zh # the Chinese is the original and comes first (_layouts/single.html set
 
 那一天将不属于历法中的任何月份，也不属于一周中的任何一天。天文学家花了七个月才将它安插进日历。财政大臣则花了另外两个月决定这一天是否应该发放工资。
 
-{% include proclamation/close.html variant="despatch" signed="新鲜事物部部长" %}
+庆典前夜，国王邀请部长共进晚餐。
 
-{% include proclamation/open.html variant="despatch" by="新鲜事物部呈" kind="最终报告" subject="本部使命已全部完成" %}
+部长带来了一份报告，宣布新鲜事物部已经完成了它的全部使命。
 
 从明日起，王国的每一天都将是前所未有的一天。每一场雨都将以不同的方式落下，每一封信都将包含此前未曾写过的话。即使是做梦的人，也不会再梦见曾经梦见过的地方。
-
-{% include proclamation/close.html variant="despatch" given="庆典前夜，于国王的晚餐桌上。" signed="新鲜事物部部长" %}
 
 国王很满意，亲自为部长煮了两杯咖啡。
 
@@ -108,75 +79,77 @@ lang: zh # the Chinese is the original and comes first (_layouts/single.html set
 
 他希望明天也是这样。
 
+{% include proclamation/close.html variant="despatch" %}
+
+{% include proclamation/open.html kind="宣战书" by="QSD" subject="向自称「无聊」的僭主宣战" %}
+
+QSD，第五届熬夜锦标赛全球总亚军，摸鱼王，时间管理废物，选恐晚期患者，热衷无所事事者，QSB 记忆的保管人，精神布拉格+多洛米蒂人，致他的全部子民，谨致问候。
+{: .proclamation-style}
+
+QSD 不向重复宣战。大海几十亿年来一直重复着同一个动作，猫每天下午回到同一个窗台；有些曲子他听了几百遍，下一个音比晚饭吃什么还要确定。它们都不无聊。
+
+QSD 也不向闲散宣战，甚至不向无聊本身宣战。偶尔的无聊没有什么问题。
+
+他所宣战的，是一种处境：人仍在生活，却渐渐成了自己生活的旁观者。时间照样经过，事情照样发生，甚至每天都有新鲜事物，但这一切不再是他愿意投入的东西。
+
+这个敌人有两副面孔。一副让人对什么都提不起兴趣；另一副让人害怕无聊，于是不再允许自己拥有一个无所事事的下午。前者使人无法享受生活，后者使人没有时间享受生活。那位国王向前者宣战，亲手建立了后者。
+
+还须报告一个不幸的发现：敌人的主要合作者，可能正是 QSD 原本打算用来抵抗它的东西，理性。一段关系尚未展开，便已被预测；一片风景尚未离开，便已等待归档。敌人已经渗透进了指挥部。
+
+**因此**，QSD 郑重宣布：
+
+**第一条**　对平凡、熟悉、重复与安静，不采取任何敌对行动。
+
+**第二条**　QSD 保留被自以为熟悉的事物惊讶的权利。
+
+**第三条**　QSD 保留追求用处尚未确定之事物的权利。
+
+**第四条**　QSD 保留让某些问题悬而未决、且不视之为个人失败的权利。
+
+**第五条**　QSD 保留感到无聊的权利。
+
+{% include proclamation/close.html given="特此宣告。二〇二四年十二月十九日，星期四，下午三点五十分，于书桌前。" %}
+
 </section>
 <section data-bilingual-lang="EN" lang="en" markdown="1">
 
-{% include proclamation/open.html kind="A Proclamation" by="By the King" subject="Establishing a Ministry of Novelty" %}
+In Berchtesgaden, QSD met a cat. The cat told him a story about an old king of Bavaria.
 
-The King yawned three times at his own coronation. The Royal Archive records that the first occurred during the Archbishop's address and the second while the band was playing. The time of the third is disputed.
-{: .proclamation-style}
+{% include proclamation/open.html variant="despatch" by="As Told by a Cat" kind="Prologue" subject="The Ministry of Novelty" %}
 
-**Now, therefore,** the King does hereby establish a Ministry of Novelty, and grants it a seat in the Cabinet, a not inconsiderable budget, and authority over the Kingdom's tomorrows.
+The King yawned three times at his own coronation. According to the Royal Archive, the first came during the Archbishop's address and the second while the band was playing. The time of the third is disputed.
 
-{% include proclamation/close.html given="Given at the Palace, in the spring of the second year of the reign." %}
+The following spring the King established a Ministry of Novelty, and granted it a seat in the Cabinet, a not inconsiderable budget, and the authority to schedule the Kingdom's tomorrows.
 
-{% include proclamation/open.html variant="despatch" by="From the Ministry of Novelty" kind="Year III" subject="Imports" %}
+The Ministry's first task was to collect, from every part of the world, things that had not yet happened in the Kingdom. It imported the aurora from the north and, from the east, a kind of theatre performed with shadows; by diplomatic means it borrowed a solar eclipse from a distant island nation. In exchange, the Kingdom presented that nation with an exceptionally long dusk.
 
-The Ministry's first undertaking has been to collect, from every part of the world, things that have not yet happened in the Kingdom.
+The King was much taken with the eclipse. He asked the Minister whether another might be arranged for his birthday the following year. The Minister reminded him that this would run contrary to the purpose for which the Ministry had been established.
 
-This year it imported the aurora from the north and, from the east, a kind of theatre performed with shadows. By diplomatic means it also borrowed a solar eclipse from a distant island nation. In exchange, the Kingdom presented that nation with an exceptionally long dusk.
+The King thought he had a point.
 
-{% include proclamation/close.html variant="despatch" given="Winter, in the third year of the reign." signed="The Minister of Novelty" %}
+By the twelfth year few things in the world remained worth importing, and the Ministry began to manufacture tomorrows of its own.
 
-{% include proclamation/open.html variant="despatch" by="From the King" kind="A Request" subject="Concerning the Eclipse" %}
+From then on the Kingdom's maps came in two kinds: one recorded the Kingdom as it was today, the other as it would be tomorrow. Both were published every evening. Residents could decide over dinner where to walk the next day, provided the road in question still existed.
 
-The King was much taken with the eclipse.
+For a time the Kingdom's river changed direction daily. Merchants from Venice admired it greatly, taking the Kingdom to possess a most advanced system of waterworks. The fishermen held a different view.
 
-His Majesty asks whether another might be arranged for his birthday next year.
+Later the Minister discovered that whether a thing was new depended largely on how much people remembered. The Ministry therefore added an Archive, charged with recording everything that had ever happened in the Kingdom, lest any of it happen again by accident.
 
-{% include proclamation/close.html variant="despatch" sealed=true given="Spring, in the fourth year of the reign." %}
+The first Director of the Archive was a historian. During his tenure he made the unfortunate discovery that a considerable part of the history to which he had devoted his life had already happened more than once. He submitted a carefully worded report to this effect, and retired the following year.
 
-{% include proclamation/open.html variant="despatch" by="From the Ministry of Novelty" kind="A Reply" subject="To the King’s Request" %}
+In the thirty-ninth year of the reign, the Ministry began preparing for the fortieth anniversary.
 
-The Minister begs to remind His Majesty that this would run contrary to the purpose for which the Ministry was established.
+The arrangements proved difficult. The Kingdom had already held thirty-eight military parades, twenty-seven displays of fireworks and nine masked balls. A young official proposed fireworks that would fall from the sky to the ground, but the fire brigade objected.
 
-{% include proclamation/close.html variant="despatch" given="Spring, in the fourth year of the reign." signed="Endorsed in the King’s hand: a fair point." %}
+In the end the Minister resolved to present the King, at the celebrations, with something never before seen in the Kingdom's history: one whole day of time that nobody had used.
 
-{% include proclamation/open.html variant="despatch" by="From the Ministry of Novelty" kind="Year XII" subject="Tomorrow" %}
+That day would belong to no month of the calendar and to no day of the week. The astronomers needed seven months to fit it into the calendar. The Chancellor of the Exchequer needed a further two to decide whether wages should be paid on it.
 
-By the twelfth year few things in the world remained worth importing. The Ministry has accordingly begun to manufacture tomorrows of its own.
+On the eve of the celebrations the King invited the Minister to dinner.
 
-The Kingdom's maps are henceforth issued in two kinds: one showing the Kingdom as it is today, the other as it will be tomorrow. Both are published every evening. Residents may decide over dinner where to walk tomorrow, provided the road in question still exists.
+The Minister brought a report announcing that the Ministry of Novelty had completed its mission.
 
-For a time this year the Kingdom's river changed direction daily. Merchants from Venice admired it greatly, and took the Kingdom to possess a most advanced system of waterworks. The fishermen held a different view.
-
-{% include proclamation/close.html variant="despatch" given="Winter, in the twelfth year of the reign." signed="The Minister of Novelty" %}
-
-{% include proclamation/open.html variant="intelligence" by="Most Secret" kind="The Archive" subject="A Cautiously Worded Report" %}
-
-The Minister has discovered that whether a thing is new depends largely on how much people remember. The Archive was established accordingly, to record everything that has ever happened in the Kingdom, lest any of it happen again by accident.
-
-A preliminary review finds that a considerable part of the history to which the undersigned has devoted his life has already happened more than once.
-
-{% include proclamation/close.html variant="intelligence" given="Filed in the twenty-first year of the reign. The author retired the following year." signed="The first Director of the Archive" %}
-
-{% include proclamation/open.html variant="despatch" by="From the Ministry of Novelty" kind="Preparations" subject="For the Fortieth Anniversary of the Coronation" %}
-
-In the thirty-ninth year of the reign the Ministry began preparing for the fortieth anniversary.
-
-The arrangements have proved difficult. The Kingdom has already held thirty-eight military parades, twenty-seven displays of fireworks and nine masked balls. A young official proposed fireworks that would fall from the sky to the ground; the fire brigade objected.
-
-The Minister has at last resolved to present the King, at the celebrations, with something the Kingdom has never seen: one whole day of time that nobody has used.
-
-The day will belong to no month and to no day of the week. The astronomers needed seven months to fit it into the calendar. The Chancellor of the Exchequer needed a further two to decide whether wages should be paid on it.
-
-{% include proclamation/close.html variant="despatch" signed="The Minister of Novelty" %}
-
-{% include proclamation/open.html variant="despatch" by="From the Ministry of Novelty" kind="Final Report" subject="The Ministry’s Work Complete" %}
-
-From tomorrow, every day in the Kingdom will be a day without precedent. Every rain will fall in its own way, and every letter will contain words not written before. Even those who dream will not dream again of a place they have dreamt of.
-
-{% include proclamation/close.html variant="despatch" given="The eve of the celebrations, at the King’s dinner table." signed="The Minister of Novelty" %}
+From tomorrow, every day in the Kingdom would be a day without precedent. Every rain would fall in its own way, and every letter would contain words never written before. Even those who dreamt would never again dream of a place they had dreamt of before.
 
 The King was pleased, and made the coffee for the two of them with his own hands.
 
@@ -197,6 +170,37 @@ He had not been so happy in a long time.
 When he had finished, he found that he was rather looking forward to tomorrow.
 
 He hoped tomorrow would be the same.
+
+{% include proclamation/close.html variant="despatch" %}
+
+{% include proclamation/open.html kind="A Proclamation" subject="Declaring War upon the Pretender Boredom" %}
+
+QSD, Protector of Deconstructionism, Guardian of Procrastination, Keeper of QSB's Memories, Runner-up Overall in the Fifth Global Championship of Staying Up Late, Spiritually of Prague + the Dolomites, to all his Faculties and Loyal Subjects, Greeting.
+{: .proclamation-style}
+
+QSD declares no war upon repetition. The sea has been performing essentially the same manoeuvre for several billion years, and a cat returns to the same windowsill every afternoon. There are pieces of music QSD has heard hundreds of times, whose next note he knows with greater certainty than what he shall have for dinner. None of these bores him.
+
+Nor does he declare war upon idleness, nor even upon boredom itself. An occasional boring hour does no harm.
+
+The enemy is a condition: that in which a man goes on living and becomes, by degrees, a spectator of his own existence. Time still passes, things still happen, there may even be something new every day; none of it is any longer something he wishes to take part in.
+
+The enemy has two faces. One leaves a man unable to take an interest in anything. The other leaves him so afraid of boredom that he no longer permits himself an afternoon with nothing in it. The first makes life impossible to enjoy; the second leaves no time to enjoy it. The old King declared war upon the first, and built the second with his own hands.
+
+An unfortunate discovery must also be reported. The enemy's principal collaborator may be the very faculty with which QSD had intended to resist him: reason. A friendship is predicted before it has begun; a view is waiting to be archived before he has left it. The enemy has infiltrated the headquarters.
+
+**Now, therefore,** QSD does hereby declare:
+
+**I.** No hostilities shall be conducted against the ordinary, the familiar, the repetitive or the quiet.
+
+**II.** QSD reserves the right to be surprised by what he thought he knew.
+
+**III.** QSD reserves the right to pursue things whose usefulness remains indefinitely unestablished.
+
+**IV.** QSD reserves the right to leave certain questions unanswered, without regarding their unansweredness as a personal defeat.
+
+**V.** QSD reserves the right to be bored.
+
+{% include proclamation/close.html given="Given at his desk, Thursday, 19 December 2024, at ten to four in the afternoon." %}
 
 </section>
 </div>

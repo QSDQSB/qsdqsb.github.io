@@ -463,7 +463,7 @@ const JOURNEYS = [
   { id: 'proclamation', phone: true, name: 'Every royal letter keeps its title on one line inside its frame on a phone, in both languages, and the arms and seal load', async run({ page, go }) {
     await go('/posts/war-declaration-to-boredom/');
     const letter = await page.evaluate(async () => {
-      const frame = document.querySelector('div.proclamation'), kind = document.querySelector('.proclamation-head__kind');
+      const frame = document.querySelector('div.proclamation--grand'), kind = frame && frame.querySelector('.proclamation-head__kind');
       if (!frame || !kind) return null;
       const arms = [...frame.querySelectorAll('.proclamation-head__arms, .proclamation-seal__arms')];
       for (const img of arms) { img.loading = 'eager'; if (!img.complete) await new Promise((done) => { img.onload = img.onerror = done; }); }
