@@ -239,6 +239,9 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
             and its × take `brass-focus` (`_sass/_map.scss`); a tag the filter dims comes to full
             strength under focus, so its ring is not dimmed with it. The veil keeps its own ring, drawn 6 px
             inside: the frame's `overflow: hidden` would cut one set off its edge.
+      - [x] 2026-11-26 · A code block's Copy button: its own ring (a two-pixel shadow in the old
+            primary colour, with `outline: none`) gives way to `brass-focus`; the block clips nothing,
+            so the ring sits off the button's edge as elsewhere.
 - [ ] C03, under the threshold · A radius the sorted list moves by less than 0.25rem and less than
       20 per cent, once the owner has seen the list.
 - [ ] C04, under the threshold · A timing within a fifth of its step moves onto it (0.28 s to
