@@ -127,7 +127,7 @@ QSD认为值得。
 
 他愿意花费一个下午去研究一件毫无用处的事情，也愿意为了看一处已经看过的风景而再次踏上旅途。
 
-有些事情在做完以后，什么也没有留下，甚至连做过这些事情的人也会逐渐忘记它们。QSD对此并无异议。一个曾经十分愉快的下午，不会因为多年以后无人记得，就变成一个不那么愉快的下午。
+有些事情在做完以后，什么也没有留下，甚至连做过这些事情的人也会逐渐忘记它们。
 
 同样，曾经喜欢一件事情，也不构成今后必须继续喜欢它的理由。一个人没有义务为了维持自己一贯的品味、兴趣或形象，而继续做一些自己已经不再享受的事情。
 
@@ -229,7 +229,7 @@ QSD has spent many enjoyable afternoons, and many others wishing they would pass
 
 QSD does not regret that these afternoons were not devoted to something more _important_. He does not believe that an afternoon needs to yield anything to have been well spent. These afternoons simply felt hollow to him.
 
-One may, of course, endure the present for the sake of the future. QSD has no objection to this; much of life is not a matter of personal preference. But if one is forever waiting for work to finish, for the weekend to arrive, or for the next holiday, whose life, exactly, is being lived in the meantime?
+Of course, one may endure the present for the sake of the future. QSD has no objection to this; much of life is not a matter of personal preference. But if one is forever waiting for work to finish, for the weekend to arrive, or for the next holiday, whose life is being lived in the meantime?
 
 Such is the case for war.
 
@@ -265,7 +265,7 @@ QSD believes they would.
 
 He is quite willing to spend an afternoon investigating something of no practical use, or to undertake a journey for the sake of a landscape he has already seen.
 
-Some things leave nothing behind once they are over. Even those who experienced them may eventually forget them. QSD has no objection to this. An afternoon that was thoroughly enjoyable does not become any less so merely because, years later, nobody remembers it.
+Some things leave nothing behind once they are over. Even those who experienced them may eventually forget them.
 
 Likewise, having once enjoyed something does not oblige one to continue enjoying it. There is no obligation to persist with an activity one no longer enjoys merely to remain consistent with one's former tastes, interests, or image of oneself.
 
