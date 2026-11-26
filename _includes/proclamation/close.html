@@ -1,0 +1,23 @@
+{%- comment -%}
+  Closes a letter opened with proclamation/open.html: where and when it was given, who signs it,
+  and, on a paper of QSD's own, his seal: on a proclamation pressed over the foot of the frame,
+  on a lesser paper small beneath it. A despatch QSB writes carries his signature and no seal.
+    given    the dating clause: "Given at his desk, Thursday, 19 December 2024"
+    signed   the subscription, its lines parted by "|" (optional):
+             "Your Majesty’s most obedient servant,|QSD|General Officer Commanding" (curly quotes: an include's words are not smartened)
+    variant  the same as the letter was opened with (optional); a proclamation is always sealed
+    sealed   true on a despatch-grade paper QSD issues himself (articles, a reply) (optional)
+{%- endcomment -%}
+<div class="proclamation-seal">
+  <img class="proclamation-flourish" src="{{ '/images/QSDSigils/proclamation-flourish.svg' | relative_url }}" alt="" width="120" height="16" loading="lazy" decoding="async">
+  {%- if include.given %}
+  <p class="proclamation-seal__given">{{ include.given }}</p>
+  {%- endif %}
+  {%- if include.signed %}
+  <p class="proclamation-seal__signed">{{ include.signed | split: "|" | join: "<br>" }}</p>
+  {%- endif %}
+  {%- if include.sealed or include.variant == nil %}
+  <img class="proclamation-seal__arms" src="{{ '/images/QSDSigils/proclamation-seal.webp' | relative_url }}" alt="The seal of QSD, struck in brass: his arms, a cat crowned with a pineapple, holding a cup and a lute, within the legend Mors potius quam taedium, Sigillum QSD" width="720" height="720" loading="lazy" decoding="async">
+  {%- endif %}
+</div>
+</div>

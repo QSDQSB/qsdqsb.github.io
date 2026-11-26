@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="#c3b498" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+  <!-- The corner piece of a royal letter (_sass/_proclamation.scss): drawn for the top left, mirrored for the others. -->
+  <path d="M7 1.5L12.5 7L7 12.5L1.5 7Z"/>
+  <circle cx="7" cy="7" r="1.4" fill="#c3b498" stroke="none"/>
+  <path d="M18 7H64C74 7 79 12 77 18C75.5 23 69 23 69.5 18.5C70 15.5 73.5 15.5 74 18"/>
+  <path d="M7 18V64C7 74 12 79 18 77C23 75.5 23 69 18.5 69.5C15.5 70 15.5 73.5 18 74"/>
+  <path d="M18 11.5H56M11.5 18V56" stroke-width="0.6"/>
+  <path d="M16 50C16 30 30 16 50 16C58 16 62 21 59.5 25C57.5 28 53 27 53.5 24"/>
+  <path d="M16 50C16 58 21 62 25 59.5C28 57.5 27 53 24 53.5"/>
+  <path d="M20 36C20 27 27 20 36 20C41 20 43 23 41.5 25.5C40.5 27 38 26.5 38.5 24.5" stroke-width="0.8"/>
+  <path d="M20 36C20 41 23 43 25.5 41.5C27 40.5 26.5 38 24.5 38.5" stroke-width="0.8"/>
+  <path d="M22 22C33 24 40 31 42 42C31 40 24 33 22 22Z" fill="#c3b498"/>
+  <path d="M23 23L39 39" stroke="#151515" stroke-width="0.7"/>
+  <path d="M30 30C36 26 42 26 46 29C41 31 35 32 30 30Z" fill="#c3b498" stroke-width="0.6"/>
+  <path d="M30 30C26 36 26 42 29 46C31 41 32 35 30 30Z" fill="#c3b498" stroke-width="0.6"/>
+  <path d="M42 42C47 47 47 53 43 56C40.5 58 38 55.5 40.5 54M42 42C47 47 53 47 56 43C58 40.5 55.5 38 54 40.5" stroke-width="0.8"/>
+  <circle cx="60" cy="31" r="1.3" fill="#c3b498" stroke="none"/>
+  <circle cx="31" cy="60" r="1.3" fill="#c3b498" stroke="none"/>
+  <circle cx="53" cy="53" r="1.5" fill="#c3b498" stroke="none"/>
+</svg>

@@ -11,6 +11,8 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-26 · The War Declaration's chapters stand as centred brass headings, and QSD signs it in a large italic over a brass rule (R022) · tier 2
+- 2026-11-25 · The War Declaration's seal keeps its room at the foot of the post: the date and tags below no longer run under it (R022) · tier 2
 - 2026-11-25 · The random-post card on Posts lands on every post, the one whose title starts with a digit too; and a Photobook never closes on a lone portrait standing full width · tier 1
 - 2026-11-24 · The Bestiary door's painting dissolves onto watercolour that begins in the painting's own colours at its foot and turns to dusk; no blurred copy of the picture · tier 0
 - 2026-11-24 · The Bestiary's door: its painting dissolves along a wandering line into its own meadow carried on, then into a dark dusk of aubergine and plum, with no line where the picture ends · tier 0
@@ -28,6 +30,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 - 2026-11-24 · On Posts, Voyage and the other list pages, the hero's title and line now stand on the list's own left edge, as a post's stand on its text, at every width where the profile shows · tier 2
 - 2026-11-24 · A Subscribe page (/subscribe/, and in the site's last line): the subscribe slip opened into the page under About's cover, its address field framed in brass, holding three past letters as the mail showed them, letterhead, card, date, lines and Onward; which three is the owner's choice in _data/letters.yml (R023) · tier 2
 - 2026-11-24 · A page with no cover starts clear of the floating menu (Terms, the CV, the Bestiary), and the site's last line of links centres on the content beside the author's column, not on the window (posts, the archives, About) · tier 2
+- 2026-11-22 · The War Declaration is written at last: a cat in Berchtesgaden tells QSD the fable of an old Bavarian king and his Ministry of Novelty, as a prologue; then QSD’s own declaration of war on boredom says what the war is against, set as a nineteenth-century state paper under QSD’s arms; in Chinese and in English (R022) · tier 2
 - 2026-11-22 · A letter for a post now opens on its card, cover with title and line as a voyage's, without the palette; every letter dates itself DD.MM.YYYY (R021) · tier 2
 - 2026-11-22 · A post's excerpt now stands upright in Playfair (its Chinese in Song), on its cover and its card, as a voyage's line does (R021) · tier 2, answered
 - 2026-11-22 · A new essay, Who Consoles the Counsellor (谁来安慰心理咨询师): an evening's talk in a bar with a counsellor friend, set in Shihuqiao's nocturne type and chapter plates (R021) · tier 2, answered
