@@ -253,6 +253,31 @@ body.proclamation .page__content {
 
   .proclamation--grand:lang(zh) .proclamation-head__kind { letter-spacing: 0.5em; padding-left: 0.5em; }
 
+  // A chapter of a paper: a centred heading in the letterhead's spaced brass capitals.
+  .proclamation h3 {
+    margin: 3rem 0 1.4rem;
+    padding-left: 0.34em;
+    text-align: center;
+    font: 400 max(0.82rem, 13px)/1.4 $didot-family;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: $intriguing-word-color;
+  }
+
+  .proclamation-head + h3 { margin-top: 0; }
+
+  // The proclamation's signature: the name written large in the italic of the site's titles, over
+  // a short brass rule, between the dating clause and the seal.
+  .proclamation.proclamation--grand .proclamation-seal__signed {
+    display: table;
+    margin: 2.4rem auto 0;
+    padding: 0.7rem 1.2rem 0;
+    border-top: 1px solid $intriguing-word-color;
+    font: italic 400 2rem/1.2 $global-font-family;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+  }
+
   // Last in a language panel, the proclamation keeps the room its seal hangs into: the panel
   // zeroes its last child's margin (_bilingual-switch.scss), which would let the page's date
   // run under the seal.

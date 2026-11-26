@@ -1,29 +1,30 @@
 ---
 title: "War Declaration Upon the Tyranny of Boredom"
 date: 2024-12-19
-updated: 2026-11-25
+updated: 2026-11-26
 permalink: /posts/war-declaration-to-boredom/
 redirect_from:
   - /posts/2024/war-declaration-to-boredom/
-excerpt: "The King yawned three times at his own coronation."
+excerpt: "I adore simple pleasures. They are the last refuge of the complex."
 seo_description: "A cat in Berchtesgaden tells QSD the fable of an old Bavarian king and his Ministry of Novelty; then QSD declares war on boredom, and says what the war is against. By QSD."
 tags:
   - 🧼QSD's Philosophy
 header:
   overlay_image: cover/Vienna-st-charles-church-statue-3v1.jpg
   overlay_filter: 0.3
+  caption: "Oscar Wilde, *The Picture of Dorian Gray*."
 body_class: essay proclamation
-toc: true # one entry per paper: each letterhead's title is its heading (_includes/proclamation/open.html)
+toc: true 
 toc_sticky: true
-lang: zh # the Chinese is the original and comes first (_layouts/single.html sets it on the text)
+lang: zh 
 ---
 
 <div data-bilingual>
 <section data-bilingual-lang="中" lang="zh" markdown="1">
 
-QSD 在贝希特斯加登遇到了一只猫。猫给他讲了一位巴伐利亚老国王的故事。
+2025年12月31日，QSD在Berchtesgaden的雪地上偶遇一只三花猫。猫给他讲了一位巴伐利亚老国王的故事。
 
-{% include proclamation/open.html variant="despatch" by="一只猫讲述" kind="序章" subject="新鲜事物部" %}
+{% include proclamation/open.html variant="despatch" by="By a random cat in Berchtesgaden" kind="序章" subject="新鲜事物部" %}
 
 国王在自己的加冕典礼上打了三个哈欠。据王室档案馆记载，第一个发生在大主教讲话的时候，第二个发生在乐队演奏的时候。第三个的时间存在争议。
 
@@ -83,33 +84,85 @@ QSD 在贝希特斯加登遇到了一只猫。猫给他讲了一位巴伐利亚�
 
 {% include proclamation/open.html kind="宣战书" by="QSD" subject="向自称「无聊」的僭主宣战" %}
 
-QSD，第五届熬夜锦标赛全球总亚军，摸鱼王，时间管理废物，选恐晚期患者，热衷无所事事者，QSB 记忆的保管人，精神布拉格+多洛米蒂人，致他的全部子民，谨致问候。
+### Case of War
+
+QSD度过了许多愉快的下午，也度过了许多只希望它们赶快过去的下午。后者往往没有发生什么不幸的事情，只是到了晚上，唯一值得高兴的事情是：这无聊的一天终于结束了。
 {: .proclamation-style}
 
-无聊不在事物里。
+QSD并不遗憾这些下午没有被用于更*重要*的事情。他不认为一个下午非得留下什么成果才算过得好。只是，这些下午对他来说是空心的。
 
-同一部慢热的电影，头一个小时让人无聊；看进去以后，再看几遍也不会。电影没有变。
+人当然可以为了将来而忍受现在。QSD对此没有异议，生活中有许多事情并不以个人喜好为转移。但如果一个人总是在等待工作结束、等待周末、等待下一次旅行，这些用来等待的时间究竟算是谁的生活？
 
-所以 QSD 不向重复宣战。
+这便是此次宣战的缘由。
 
-无聊是想投入，却投入不了。值得宣战的，是投入的能力一点点消失：人仍在生活，却渐渐退到一旁，看着自己生活。
+### The Enemy
 
-还有一种更隐蔽的：害怕无聊。于是每个下午都要被安排，每次旅行都要有收获，连难过都要写成一篇像样的文章。
+有必要明确敌人的身份。
 
-QSD 擅长给人建模型。模型收敛得越快，那个人就显得越无聊。他至今分不清，是对方简单，还是自己的模型太粗。
+平凡不是敌人，重复不是敌人。QSD可以将Lana Del Rey的California单曲循环一整个七月，也可以每周末花半天玩血染钟楼。
 
-没有终极意义，也就没有必须有趣的义务。QSD 要的，只是自己决定投入什么：包括重复，包括无所事事。
+无所事事也不是敌人。发呆、散步是两项很好的爱好。
 
-**因此**，QSD 郑重宣布：自即日起，与无聊进入战争状态；同时保留感到无聊的权利。
+一件事情也不会仅凭「从未经历过」便变得有趣。人可以在世界上最壮丽的瀑布面前感到无聊，也可以在一间住了多年的学生宿舍里度过一个十分愉快的圣诞。
 
-{% include proclamation/close.html given="特此宣告。二〇二四年十二月十九日，星期四，下午三点五十分，于书桌前。" %}
+此处所说的无聊，是人想做些什么，却无法对当下能够做的事情产生兴趣。
+
+偶尔如此并不值得大动干戈。真正令QSD感到不安的是，人有可能逐渐习惯这样的生活。他不再关心自己喜欢什么，只关心接下来有什么可以做。只要有足够多的东西填满时间，「自己是否真的享受它们」便成了一个不太重要的问题。
+
+而无聊还有另一种统治方式。一个人也可能因为过于害怕无聊，不断要求自己去新的地方，认识新的人，学习新的东西。每一次体验还没结束，他就开始筹划下一次体验。做这些事情的起因是享受生活，后来却变成了一种负担——必须不断前进，才能*相信*自己正在享受生活。
+
+享受生活与拥有一个看起来值得享受的生活，并不是同一件事情。一个人可以在年底回顾自己的种种经历时，觉得这一年过得十分精彩，却想不起自己在其中究竟有多少个愉快的下午。
+
+在这两种处境中，人都可能拥有相当充分的选择，却越来越少地根据自己的喜好作出选择。
+
+QSD所反抗的，并非无聊这种感受，而是无聊开始替自己作出决定的那一刻。
+
+### Sovereignty
+
+QSD认为，喜欢一件事情，本身就可以构成做这件事情的理由。
+
+人当然可以为了增长见识而旅行，为了获得知识而阅读。但如果除了喜欢这些事情本身，人不能从中获得任何其他好处，那么这些事情是否仍然值得去做？
+
+QSD认为值得。
+
+他愿意花费一个下午去研究一件毫无用处的事情，也愿意为了看一处已经看过的风景而再次踏上旅途。
+
+有些事情在做完以后，什么也没有留下，甚至连做过这些事情的人也会逐渐忘记它们。QSD对此并无异议。一个曾经十分愉快的下午，不会因为多年以后无人记得，就变成一个不那么愉快的下午。
+
+同样，曾经喜欢一件事情，也不构成今后必须继续喜欢它的理由。一个人没有义务为了维持自己一贯的品味、兴趣或形象，而继续做一些自己已经不再享受的事情。
+
+个人的喜好未必合理，未必高尚，有时甚至连本人也无法解释。QSD并不认为自己能够决定将来喜欢什么，也不认为这是一个需要解决的问题。
+
+既然他无法决定自己喜欢什么，那么至少，他不愿意再规定自己应该喜欢什么。
+
+他不希望先证明一种快乐值得拥有，才允许自己享受它。
+
+QSD可以对一些无关紧要的事情怀有极大的热情，也可以对一些公认十分精彩的事情毫无兴趣。他不打算为前者道歉，也无意为后者作出补偿。
+
+### Declaration of War
+
+为此，QSD正式向无聊的暴政宣战。
+
+QSD将尽可能保留对世界的兴趣。如果有一天他发现自己不再享受某种生活，他也希望自己仍然有改变它的意愿。
+
+QSD在此保留重复、闲散、改变主意以及对无关紧要之事抱有过度热情的权利。
+
+任何原本令人愉快的事情，不得因本次宣战而成为义务。此次战争亦不以消灭所有无聊的时刻为目的。
+
+QSD不保证自己此后不会感到无聊，也不保证自己永远有能力改变这一处境。但他不愿意有一天，自己对于如何度过这一生已经没有什么特别的意见。
+
+此次宣战不涉及其他任何人的生活方式。QSD无意征服任何领土，亦不寻求扩大其管辖范围。
+
+本宣言即日起生效。
+
+{% include proclamation/close.html signed="QSD" given="特此宣告。二〇二六年十一月二十六日，星期四，于书桌前。较原定日期迟了近两年，谨此致歉。" %}
 
 </section>
 <section data-bilingual-lang="EN" lang="en" markdown="1">
 
-In Berchtesgaden, QSD met a cat. The cat told him a story about an old king of Bavaria.
+31 December 2025. In the snow at Berchtesgaden, QSD came upon a calico cat. The cat told him a story about an old king of Bavaria.
 
-{% include proclamation/open.html variant="despatch" by="As Told by a Cat" kind="Prologue" subject="The Ministry of Novelty" %}
+{% include proclamation/open.html variant="despatch" by="By a random cat in Berchtesgaden" kind="Prologue" subject="The Ministry of Novelty" %}
 
 The King yawned three times at his own coronation. According to the Royal Archive, the first came during the Archbishop's address and the second while the band was playing. The time of the third is disputed.
 
@@ -169,26 +222,78 @@ He hoped tomorrow would be the same.
 
 {% include proclamation/open.html kind="A Proclamation" subject="Declaring War upon the Pretender Boredom" %}
 
-QSD, Protector of Deconstructionism, Guardian of Procrastination, Keeper of QSB's Memories, Runner-up Overall in the Fifth Global Championship of Staying Up Late, Spiritually of Prague + the Dolomites, to all his Faculties and Loyal Subjects, Greeting.
+### Case of War
+
+QSD has spent many enjoyable afternoons, and many others wishing they would pass more quickly. Nothing particularly unfortunate happened during the latter. It was simply that, by evening, the only thing to be pleased about was that another boring day had finally come to an end.
 {: .proclamation-style}
 
-Boredom does not live in things.
+QSD does not regret that these afternoons were not devoted to something more _important_. He does not believe that an afternoon needs to yield anything to have been well spent. These afternoons simply felt hollow to him.
 
-The same slow film bores you for its first hour; once you are in, it will not bore you however often you watch it again. The film has not changed.
+One may, of course, endure the present for the sake of the future. QSD has no objection to this; much of life is not a matter of personal preference. But if one is forever waiting for work to finish, for the weekend to arrive, or for the next holiday, whose life, exactly, is being lived in the meantime?
 
-QSD therefore declares no war upon repetition.
+Such is the case for war.
 
-Boredom is wanting to take part and being unable to. What is worth a war is that ability wearing away: a man goes on living, and by degrees steps aside to watch himself do it.
+### The Enemy
 
-There is a quieter kind as well: the fear of boredom. Every afternoon must then be arranged, every journey must yield something, and even sorrow must be written up into a respectable essay.
+The identity of the enemy must first be established.
 
-QSD is good at building models of people. The faster a model converges, the more boring the person seems. He still cannot tell whether the person is simple or his model coarse.
+Ordinariness is not the enemy. Nor is repetition. QSD can spend an entire July listening to Lana Del Rey's _California_ on repeat, and half a day every weekend playing _Blood on the Clocktower_.
 
-Without an ultimate meaning there is no duty to be interesting either. All QSD wants is to decide for himself what to take part in: repetition included, idleness included.
+Idleness is not the enemy either. Sitting about and wandering aimlessly are both perfectly respectable hobbies.
 
-**Now, therefore,** QSD does hereby declare a state of war with boredom, from this day forth, and reserves the right to be bored.
+Nor does something become interesting merely because one has never experienced it before. One may be bored in front of the most magnificent waterfall in the world, and spend a thoroughly enjoyable Christmas in a student room one has lived in for years.
 
-{% include proclamation/close.html given="Given at his desk, Thursday, 19 December 2024, at ten to four in the afternoon." %}
+Boredom, as understood here, is the experience of wanting to do something whilst being unable to take an interest in anything presently available to oneself.
+
+Its occasional occurrence hardly warrants a war. What troubles QSD is the possibility of growing accustomed to such a life. One becomes less concerned with what one enjoys and more concerned with what there is to do next. Provided there are enough things to fill the hours, whether one actually enjoys them becomes a matter of diminishing importance.
+
+Boredom has another means of exercising its authority. One may become so afraid of being bored that one continually demands new places to visit, new people to meet, and new things to learn. Before one experience has even ended, arrangements for the next are already being made. What began as an attempt to enjoy life gradually becomes a burden: one must keep moving forward in order to _believe_ that one is enjoying it.
+
+Enjoying life and having a life that appears enjoyable are not quite the same thing. One may look back upon the year in December, conclude that it has been a remarkable year, and struggle to recall how many genuinely pleasant afternoons it contained.
+
+In both circumstances, one may have an abundance of choices whilst making fewer and fewer of them according to one's own preferences.
+
+It is not the feeling of boredom that QSD opposes, but the moment at which Boredom begins making decisions on his behalf.
+
+### Sovereignty
+
+QSD believes that liking something may, in itself, be sufficient reason to do it.
+
+One may travel to broaden one's horizons or read to acquire knowledge. But if one were to gain nothing from these activities beyond the enjoyment of the activities themselves, would they still be worth undertaking?
+
+QSD believes they would.
+
+He is quite willing to spend an afternoon investigating something of no practical use, or to undertake a journey for the sake of a landscape he has already seen.
+
+Some things leave nothing behind once they are over. Even those who experienced them may eventually forget them. QSD has no objection to this. An afternoon that was thoroughly enjoyable does not become any less so merely because, years later, nobody remembers it.
+
+Likewise, having once enjoyed something does not oblige one to continue enjoying it. There is no obligation to persist with an activity one no longer enjoys merely to remain consistent with one's former tastes, interests, or image of oneself.
+
+Personal preferences need not be reasonable or admirable, and sometimes cannot even be explained by those who possess them. QSD does not believe that he can determine what he will come to enjoy, nor does he consider this a problem in need of a solution.
+
+If he cannot decide what he likes, he would at least prefer not to prescribe what he ought to like.
+
+He does not wish to establish that a pleasure is worth having before permitting himself to enjoy it.
+
+QSD may be immensely enthusiastic about matters of little consequence, and thoroughly uninterested in things widely considered fascinating. He intends neither to apologise for the former nor to compensate for the latter.
+
+### Declaration of War
+
+For these reasons, QSD hereby declares war upon the tyranny of Boredom.
+
+QSD shall endeavour to retain his interest in the world. Should he one day find that he no longer enjoys the way he lives, he hopes to retain the willingness to change it.
+
+QSD hereby reserves the rights to repetition, idleness, a change of mind, and disproportionate enthusiasm for matters of negligible importance.
+
+No activity previously enjoyed shall become an obligation by virtue of this declaration. Nor shall the elimination of every instance of boredom constitute the objective of this war.
+
+QSD offers no assurance that he shall never again be bored, nor that he shall always be able to do something about it. He would, however, rather not arrive at a point where he no longer has any particular opinion about how his life is spent.
+
+This declaration concerns no one else's way of life. QSD seeks neither the conquest of territory nor any extension of his jurisdiction.
+
+This declaration takes effect immediately.
+
+{% include proclamation/close.html signed="QSD" given="Given at his desk, Thursday, 26 November 2026. Nearly two years later than intended, for which QSD apologises." %}
 
 </section>
 </div>
