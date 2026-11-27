@@ -32,7 +32,50 @@ layout: compress
   {% if page.excerpt %}<meta itemprop="description" content="{{ page.excerpt | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
   {% if page.date %}<meta itemprop="datePublished" content="{{ page.date | date: "%B %d, %Y" }}">{% endif %}
 
-  {% include page__hero.html %}
+  {% assign voyage_name = page.path | split: '/' | last | split: '.' | first %}
+  {% assign subvoyage_folder = voyage_name | append: "/" %}
+  {% assign subs = site.subvoyage | where_exp: "item", "item.path contains subvoyage_folder" %}
+
+  {%- comment -%}
+    The facts a single voyage's cover carries (_includes/photobook/cover.html), for the whole of a
+    voyage in parts: when, how many parts, how many frames. When is the first part's month where the parts share
+    a year, else the years they span.
+  {%- endcomment -%}
+  {%- assign parts_count = 0 -%}
+  {%- assign parts_frames = 0 -%}
+  {%- assign parts_first = nil -%}
+  {%- assign parts_last = nil -%}
+  {%- assign subs_by_date = subs | sort: "date" -%}
+  {%- for post in subs_by_date -%}
+    {%- include photobook-ready.html doc=post -%}
+    {%- unless photobook_ready %}{% continue %}{% endunless -%}
+    {%- assign parts_count = parts_count | plus: 1 -%}
+    {%- assign part_key = post.gallery_name | replace: "/", "_" -%}
+    {%- assign parts_frames = parts_frames | plus: site.data.photo_manifests[part_key].count -%}
+    {%- unless parts_first %}{% assign parts_first = post.date %}{% endunless -%}
+    {%- assign parts_last = post.date -%}
+  {%- endfor -%}
+  {%- assign parts_first_year = parts_first | date: "%Y" -%}
+  {%- assign parts_last_year = parts_last | date: "%Y" -%}
+  {%- if parts_first_year != parts_last_year -%}
+    {%- capture parts_when %}{{ parts_first_year }} to {{ parts_last_year }}{% endcapture -%}
+  {%- elsif parts_first -%}
+    {%- assign parts_when = parts_first | date: "%b %Y" -%}
+  {%- else -%}
+    {%- assign parts_first = page.date -%}
+    {%- assign parts_when = page.date | date: "%b %Y" -%}
+  {%- endif -%}
+  {%- capture parts_facts -%}
+    {%- if parts_count > 0 -%}
+    <dl class="photobook-facts page__hero-facts">
+      <div><dt>When</dt><dd><time datetime="{{ parts_first | date: "%Y-%m" }}">{{ parts_when }}</time></dd></div>
+      <div><dt>Parts</dt><dd>{{ parts_count }}</dd></div>
+      {%- if parts_frames > 0 %}<div><dt>Frames</dt><dd>{{ parts_frames }}</dd></div>{% endif -%}
+    </dl>
+    {%- endif -%}
+  {%- endcapture -%}
+
+  {% include page__hero.html facts=parts_facts %}
 
   {% if page.url != "/" and site.breadcrumbs %}
     {% unless paginator %}
@@ -42,10 +85,7 @@ layout: compress
 
   <div id="main" role="main">
     {% include sidebar.html %}
-    <div class="container">
-      {% assign voyage_name = page.path | split: '/' | last | split: '.' | first %}
-      {% assign subvoyage_folder = voyage_name | append: "/" %}
-      {% assign subs = site.subvoyage | where_exp: "item", "item.path contains subvoyage_folder" %}
+    <div class="container container--parts">
       {% for post in subs %}
         {% include photobook-ready.html doc=post %}
         {% unless photobook_ready %}{% continue %}{% endunless %}
@@ -54,20 +94,8 @@ layout: compress
         {% include archive-single.html defer_cover=true %}
       {% endfor %}
 
-      {%- comment -%}
-        The atlas as an editorial section, inside `.container` so it shares the
-        voyage-card column exactly. Every voyage with `subgalleries: true` gets
-        an atlas auto-derived from its `_subvoyage/<slug>/*.md` children (one
-        feature per child, with tags + editorial popup); scripts/geocode-maps.js
-        writes the GeoJSON to `assets/maps/voyage-<slug>.geojson`.
-      {%- endcomment -%}
       {% assign auto_map_id = "voyage-" | append: voyage_name %}
-      <section class="voyage-atlas unselectable-div" aria-labelledby="voyage-atlas-title">
-        <h5 id="voyage-atlas-title" class="voyage-atlas__title">
-          <i class="fa-solid fa-location-dot" aria-hidden="true"></i> The Atlas
-        </h5>
-        {% include map.html dataset=auto_map_id %}
-      </section>
+      {% include voyage-atlas.html dataset=auto_map_id %}
     </div>
   {% include scripts.html %}
   </div>
@@ -80,8 +108,12 @@ layout: compress
   {% if page.subscribe != false %}
     {% include subscribe.html %}
   {% endif %}
+  {%- comment -%} The span of its parts, in the words of When above: the voyage's own date is only its first part's. {%- endcomment -%}
   <footer class="page__meta">
-    {% include page__dates.html %}
+    <p class="page__date">
+      <i class="fa fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="{{ parts_first | date: "%Y-%m" }}">{{ parts_when }}</time>
+    </p>
   </footer>
   {% include presented-by-qsd.html %}
   {% include random_voyage_anchor.html posts = subs %}

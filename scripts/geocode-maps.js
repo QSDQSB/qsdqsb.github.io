@@ -210,10 +210,11 @@ function formatDateDisplay(value) {
     return String(value);
   }
 
+  // The month and year, as a voyage's cover and its card give it ("Aug 2023").
   return new Intl.DateTimeFormat('en', {
-    day: 'numeric',
     month: 'short',
     year: 'numeric',
+    timeZone: 'UTC',
   }).format(date);
 }
 

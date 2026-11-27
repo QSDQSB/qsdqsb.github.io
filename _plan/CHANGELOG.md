@@ -11,6 +11,10 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-27 · A wide cover does nothing under the pointer: no rise, growth or change of shape; its line, read time and date fade in, in place, over one second. A cover's edge is level with its page's title on Posts, Voyage, Portfolio and a voyage in parts (Q24 cover-words) · tier 0
+- 2026-11-27 · A voyage in parts states When, Parts and Frames beside its title, set as a single voyage's cover sets them; its map opens close on its parts with each part's name beside its marker, and its foot gives the span of its parts (Dolomites: 2023 to 2026) (Q25 parts-intro, parts-map-close) · tier 0
+- 2026-11-27 · A marker on the map opens a label with the voyage's name and month, on hover or click, leading to the voyage with no arrow; on a phone a strip of words along the map's foot, clear of its buttons. The markers keep their tag colours; the tag list is one slim column with no title bar (Q25 map-card, map-card-phone, map-tags; Q24 map-dots) · tier 0
+- 2026-11-27 · The map stands after the covers on the Voyage page and on a voyage in parts, under the same heading and on the covers' edges; on a desktop it is awake from the start with no veil, and its zoom, reset and full-screen buttons are the site's own tools (10 px corners, hairline marks, nothing lifts); on a phone it is a still preview that one tap unfolds to the whole screen, with a close mark and Tags (Q24 atlas, Q25 map-asleep, map-phone-buttons) · tier 0
 - 2026-11-27 · On a phone the rooms that do not fit in the menu bar open beneath it as the same bar continued: the same size, weight and corners, no pointer triangle; the room you are in is marked there too, with a hairline exactly as wide as its word, and a tap no longer leaves a filled square on the button (R034) · tier 2
 - 2026-11-27 · A tag under a post or a voyage is ink on one line, with no colour of its own (R026) · tier 2
 - 2026-11-27 · On a phone a hero's title is a quarter larger, and a picture's credit has its own line under the excerpt (it also shows now for readers with motion off) (R031) · tier 2

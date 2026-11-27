@@ -18,10 +18,6 @@ header:
 ---
 {% include base_path %}
 
-  <div class="unselectable-div" style="padding: 1em;">
-    {% include map.html %}
-  </div>
-
   <div class="container">
     {% for post in site.voyage reversed%}
       {% include photobook-ready.html doc=post %}
@@ -30,6 +26,7 @@ header:
       <div id="{{ title | slugify }}" style="width: 0; height: 0" aria-hidden="true"></div>
       {% include archive-single.html defer_cover=true %}
     {% endfor %}
+    {% include voyage-atlas.html %}
   </div>
 
   {% include presented-by-qsd.html %}

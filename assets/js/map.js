@@ -30,17 +30,29 @@
     maxZoom: 19
   };
 
-  const ATLAS_POPUP_TAG_LIMIT = 3;
   const ATLAS_FALLBACK_COLOR = '#7d746d';
   const DEFAULT_BOUNDS_PADDING = [50, 50];
   const ATLAS_BOUNDS_PADDING = [64, 64];
-  const TAG_ARCHIVE_PATH = '/voyage-by-tags/';
 
-  // Interaction handlers unlocked when the reader activates the map. The
-  // absence of scrollWheelZoom is deliberate — see activateMap().
+  // The map's interaction handlers: on from the start under a pointer, on a touch screen once the map
+  // is unfolded. scrollWheelZoom is never among them, so a wheel over the map always scrolls the page.
   const ACTIVATION_HANDLERS = ['dragging', 'doubleClickZoom', 'touchZoom', 'boxZoom', 'keyboard'];
   // The site's one answer to "has this reader asked for stillness?" (_includes/head/custom.html).
   const still = () => typeof window !== 'undefined' && !!(window.QSD && window.QSD.motionOff && window.QSD.motionOff());
+  // The stylesheet's own test for a touch screen (responsive-coarse-pointer, _responsive-policy.scss).
+  const touch = () => typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+  // The controls' marks: hairlines in ink, as every icon on the site (decisions/0012, line 5).
+  const ICONS = {
+    plus: 'M12 5v14M5 12h14',
+    minus: 'M5 12h14',
+    reset: 'M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4v4h4',
+    expand: 'M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5',
+    compress: 'M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5',
+    close: 'M6 6l12 12M18 6L6 18',
+    tag: 'M3.5 3.5h7.8l9.2 9.2-7.8 7.8-9.2-9.2zM8 8h.01'
+  };
+  const icon = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[name]}"/></svg>`;
 
   function getViewportPreset(viewportData) {
     if (viewportData) {
@@ -75,6 +87,15 @@
     return (preset.center || preset.zoom !== undefined) ? preset : null;
   }
 
+  // Back to the page's own view (the index), else to the parts, fitted again.
+  function resetView(map, preset, animate) {
+    if (preset && preset.center && preset.zoom !== undefined) {
+      map.setView(preset.center, preset.zoom, { animate, duration: 0.5 });
+    } else if (map._loadedGeoJSON) {
+      fitMapBounds(map, map._loadedGeoJSON, { animate });
+    }
+  }
+
   function createResetControl(map, initialPreset) {
     const ResetControl = L.Control.extend({
       options: {
@@ -86,29 +107,12 @@
         const button = L.DomUtil.create('a', 'leaflet-control-reset-button', container);
         button.href = '#';
         button.title = 'Reset view';
-        button.innerHTML = '<i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i>';
+        button.innerHTML = icon('reset');
         button.setAttribute('role', 'button');
         button.setAttribute('aria-label', 'Reset map view');
 
         L.DomEvent.on(button, 'click', L.DomEvent.stop);
-        L.DomEvent.on(button, 'click', () => {
-          // Effective initial view, in precedence order:
-          //   1. `map._initialPreset` — the preset that was actually applied
-          //      after fetch (combines the constructor-time `initialPreset`
-          //      with any viewport carried in `geojson.properties.viewport`).
-          //      Falls back to the constructor-time preset if the GeoJSON
-          //      hasn't loaded yet (rare).
-          //   2. fitMapBounds against the loaded GeoJSON (derived atlases
-          //      with no curated viewport — reset = "back to cluster view").
-          const effective = map._initialPreset || initialPreset;
-          if (effective && effective.center && effective.zoom !== undefined) {
-            map.setView(effective.center, effective.zoom, { animate: !still(), duration: 0.5 });
-            return;
-          }
-          if (map._loadedGeoJSON) {
-            fitMapBounds(map, map._loadedGeoJSON);
-          }
-        });
+        L.DomEvent.on(button, 'click', () => resetView(map, initialPreset, !still()));
 
         return container;
       }
@@ -117,7 +121,9 @@
     return new ResetControl();
   }
 
-  function createFullscreenControl(mapContainer) {
+  // Under a pointer, the Fullscreen API. On a touch screen the same button folds an unfolded map
+  // back (it shows only then, as a close mark): see setUnfolded.
+  function createFullscreenControl(map, mapContainer) {
     const FullscreenControl = L.Control.extend({
       options: {
         position: 'topleft'
@@ -128,21 +134,20 @@
         const button = L.DomUtil.create('a', 'leaflet-control-fullscreen-button', controlContainer);
         button.href = '#';
         button.title = 'Toggle fullscreen';
-        button.innerHTML = '<i class="fa-solid fa-expand" aria-hidden="true"></i>';
+        button.innerHTML = icon('expand');
         button.setAttribute('role', 'button');
         button.setAttribute('aria-label', 'Toggle fullscreen mode');
 
         L.DomEvent.on(button, 'click', L.DomEvent.stop);
         L.DomEvent.on(button, 'click', () => {
-          toggleFullscreen(mapContainer);
+          if (mapContainer.classList.contains('map-container--unfolded')) setUnfolded(map, mapContainer, false);
+          else toggleFullscreen(mapContainer);
         });
 
         this._onFullscreenChange = function() {
           const active = isCurrentlyFullscreen();
           button.classList.toggle('leaflet-fullscreen-active', active);
-          button.innerHTML = active
-            ? '<i class="fa-solid fa-compress" aria-hidden="true"></i>'
-            : '<i class="fa-solid fa-expand" aria-hidden="true"></i>';
+          button.innerHTML = icon(active ? 'compress' : 'expand');
         };
 
         document.addEventListener('fullscreenchange', this._onFullscreenChange);
@@ -200,102 +205,52 @@
     }
   }
 
-  // Click-to-activate veil. The map is inert until the reader chooses to
-  // explore it, so scrolling the page over the map never zooms it. The veil
-  // also doubles as the loading surface (a quiet "Charting…" state) before it
-  // arms into the "Click to explore" affordance.
-  function createActivationVeil(container) {
-    if (!container || container.querySelector('.map-veil')) return null;
-    const veil = document.createElement('div');
-    veil.className = 'map-veil map-veil--loading';
-    veil.setAttribute('aria-hidden', 'true');
-    veil.innerHTML = buildActivationVeilInner('loading');
-    container.appendChild(veil);
-    return veil;
-  }
-
-  function armActivationVeil(map, container) {
-    const veil = container ? container.querySelector('.map-veil') : null;
-    if (!veil) return;
-
-    veil.classList.remove('map-veil--loading');
-    veil.classList.add('map-veil--ready');
-    veil.innerHTML = buildActivationVeilInner('ready');
-    veil.setAttribute('role', 'button');
-    veil.setAttribute('tabindex', '0');
-    veil.setAttribute('aria-label', 'Explore the map');
-    veil.removeAttribute('aria-hidden');
-
-    if (typeof L !== 'undefined' && L.DomEvent) {
-      L.DomEvent.disableClickPropagation(veil);
-    }
-
-    const activate = () => activateMap(map, container);
-    veil.addEventListener('click', activate);
-    veil.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        activate();
-      }
-    });
-  }
-
-  function activateMap(map, container) {
-    if (!map || !container || container.classList.contains('map-container--active')) {
-      return;
-    }
-    container.classList.add('map-container--active');
-    // Enable pan/pinch/keyboard/double-click zoom — but NOT scrollWheelZoom.
-    // Even once activated, wheeling over the map scrolls the page rather than
-    // trapping it; zoom is via the +/- controls, double-click, or pinch. This
-    // keeps a long voyage page reliably scrollable end to end.
+  function setHandlers(map, on) {
     ACTIVATION_HANDLERS.forEach((handler) => {
-      if (map[handler] && typeof map[handler].enable === 'function') {
-        map[handler].enable();
-      }
+      if (map[handler]) map[handler][on ? 'enable' : 'disable']();
     });
-    restWhenOutOfView(map, container);
-    // Enabling `keyboard` gives the container a tabindex, so move focus onto
-    // the now-navigable map. Otherwise a reader who activated it from the
-    // keyboard is stranded on the hidden veil. preventScroll stops the page
-    // from jumping to the map on focus.
-    if (typeof container.focus === 'function') {
-      try {
-        container.focus({ preventScroll: true });
-      } catch (error) {
-        container.focus();
-      }
+  }
+
+  // On a touch screen the small map is a preview: a finger on its way down the page scrolls past it,
+  // and a tap unfolds it across the whole screen. The unfolding is the stylesheet's
+  // (.map-container--unfolded), so it works where the Fullscreen API does not: on an iPhone.
+  function makeFoldable(map, container) {
+    container.classList.add('map-container--foldable');
+    const open = L.DomUtil.create('button', 'map-unfold', container);
+    open.type = 'button';
+    open.innerHTML = '<span>Explore the map</span>';
+    L.DomEvent.disableClickPropagation(open);
+    open.addEventListener('click', () => setUnfolded(map, container, true));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') setUnfolded(map, container, false);
+    });
+  }
+
+  function setUnfolded(map, container, on) {
+    if (container.classList.contains('map-container--unfolded') === on) return;
+    // Unfolded, the map stands at the body's own level: inside the page's column (#main, a size
+    // container) a fixed box would be held to the column and stay under the masthead.
+    if (on) {
+      container._fold = container._fold || document.createComment('map');
+      container.before(container._fold);
+      document.body.appendChild(container);
+    } else if (container._fold) {
+      container._fold.replaceWith(container);
     }
-  }
-
-  // A map left live keeps any finger that meets it on the way down the page: a phone
-  // pans the map instead of scrolling. So once the map has left the screen entirely it
-  // rests again behind its veil, and exploring it again is one more tap.
-  function restWhenOutOfView(map, container) {
-    if (container._restObserver || typeof IntersectionObserver === 'undefined') return;
-    container._restObserver = new IntersectionObserver((entries) => {
-      if (entries.some((entry) => entry.isIntersecting)) return;
-      deactivateMap(map, container);
-    });
-    container._restObserver.observe(container);
-  }
-
-  function deactivateMap(map, container) {
-    if (!container.classList.contains('map-container--active')) return;
-    if (container.contains(document.activeElement)) return; // still in the reader's hands (keyboard)
-    container.classList.remove('map-container--active');
-    ACTIVATION_HANDLERS.forEach((handler) => {
-      if (map[handler] && typeof map[handler].disable === 'function') {
-        map[handler].disable();
-      }
-    });
-  }
-
-  function buildActivationVeilInner(state) {
-    if (state === 'loading') {
-      return '<span class="map-veil__status"><span class="map-veil__spinner" aria-hidden="true"></span>Charting…</span>';
+    container.classList.toggle('map-container--unfolded', on);
+    document.documentElement.classList.toggle('map-unfolded', on);
+    setHandlers(map, on);
+    hideStrip(map, container);
+    const button = container.querySelector('.leaflet-control-fullscreen-button');
+    if (button) {
+      button.innerHTML = icon(on ? 'close' : 'expand');
+      button.setAttribute('aria-label', on ? 'Close the map' : 'Toggle fullscreen mode');
     }
-    return '<span class="map-veil__cta"><i class="fa-solid fa-compass" aria-hidden="true"></i><span>Click to explore</span></span>';
+    map.invalidateSize({ animate: false });
+    // A new size, so the first view again: the preview's fit is not the whole screen's.
+    resetView(map, map._preset, false);
+    const focusTarget = on ? button : container.querySelector('.map-unfold');
+    if (focusTarget) focusTarget.focus({ preventScroll: true });
   }
 
   function init(container, options) {
@@ -312,7 +267,7 @@
     container.classList.add('map-container--booting');
     container.classList.remove('map-container--ready');
 
-    const { geojsonPath, viewport } = options || {};
+    const { geojsonPath, viewport, parts } = options || {};
     if (!geojsonPath) {
       showError(container, 'GeoJSON path not provided');
       return;
@@ -322,7 +277,7 @@
     // voyage's part cards it sits far below the fold, and a reader who never
     // scrolls that far pays for none of it.
     if (typeof IntersectionObserver === 'undefined') {
-      start(container, geojsonPath, viewport);
+      start(container, geojsonPath, viewport, parts);
       return;
     }
     container._mapPending = true;
@@ -330,12 +285,12 @@
       if (!entries.some((entry) => entry.isIntersecting)) return;
       near.disconnect();
       container._mapPending = false;
-      start(container, geojsonPath, viewport);
+      start(container, geojsonPath, viewport, parts);
     }, { rootMargin: '600px 0px' });
     near.observe(container);
   }
 
-  function start(container, geojsonPath, viewport) {
+  function start(container, geojsonPath, viewport, parts) {
     const viewportPreset = getViewportPreset(viewport);
     const presetForInit = viewportPreset || VIEWPORT_PRESETS.world;
     const mapInstance = L.map(container, {
@@ -343,9 +298,8 @@
       zoom: presetForInit.zoom !== undefined ? presetForInit.zoom : 2,
       minZoom: presetForInit.minZoom || 1,
       maxZoom: presetForInit.maxZoom || 18,
-      // The map rests until the reader activates it (see the veil below), so
-      // plain page-scroll is never hijacked on a long voyage page. Every
-      // interaction handler starts disabled and is enabled on activation.
+      // Every interaction handler starts disabled: under a pointer they are enabled once the data is
+      // in, on a touch screen when the map is unfolded (setUnfolded).
       zoomControl: false,
       attributionControl: true,
       scrollWheelZoom: false,
@@ -381,22 +335,21 @@
       className: 'map-tiles'
     });
 
-    // FontAwesome control glyphs, matching the site's icon language.
     L.control.zoom({
       position: 'topleft',
-      zoomInText: '<i class="fa-solid fa-plus" aria-hidden="true"></i>',
-      zoomOutText: '<i class="fa-solid fa-minus" aria-hidden="true"></i>',
+      zoomInText: icon('plus'),
+      zoomOutText: icon('minus'),
       zoomInTitle: 'Zoom in',
       zoomOutTitle: 'Zoom out'
     }).addTo(mapInstance);
+    mapInstance._preset = viewportPreset;
     createResetControl(mapInstance, viewportPreset).addTo(mapInstance);
-    createFullscreenControl(container).addTo(mapInstance);
-    createActivationVeil(container);
+    createFullscreenControl(mapInstance, container).addTo(mapInstance);
 
-    loadAndRenderGeoJSON(mapInstance, geojsonPath, container, viewportPreset, tiles);
+    loadAndRenderGeoJSON(mapInstance, geojsonPath, container, viewportPreset, tiles, parts);
   }
 
-  function loadAndRenderGeoJSON(map, geojsonPath, container, viewportPreset, tiles) {
+  function loadAndRenderGeoJSON(map, geojsonPath, container, viewportPreset, tiles, parts) {
     const normalizedPath = geojsonPath.startsWith('/') ? geojsonPath : `/${geojsonPath}`;
 
     fetch(normalizedPath, { method: 'GET', credentials: 'same-origin' })
@@ -412,9 +365,7 @@
         map._loadedGeoJSON = geojson;
 
         const atlasDataset = isAtlasDataset(geojson);
-        if (atlasDataset) {
-          renderAtlasMap(map, geojson, container);
-        } else {
+        if (!atlasDataset) {
           // Every dataset scripts/geocode-maps.js generates carries
           // kind: 'voyage-atlas'; a non-atlas GeoJSON here means malformed
           // input, not a supported alternate format.
@@ -422,37 +373,25 @@
           showError(container, 'Map data is in an unsupported format.');
           return;
         }
+        renderAtlasMap(map, geojson, container);
 
-        // Effective viewport precedence:
-        //   1. viewportPreset (explicit include override)
-        //   2. geojson.properties.viewport (new home for parent-voyage
-        //      curated viewport, written by scripts/geocode-maps.js from
-        //      the parent's `map: { center, zoom, minZoom, maxZoom }`)
-        //   3. fitMapBounds (auto-fit to feature bounds)
-        const datasetPreset = buildPresetFromViewportData(geojson.properties && geojson.properties.viewport);
-        const effectivePreset = viewportPreset || datasetPreset;
-        // Stash for the reset control so it knows where "initial view" is.
-        map._initialPreset = effectivePreset;
-
-        if (effectivePreset) {
-          if (effectivePreset.minZoom !== undefined) map.setMinZoom(effectivePreset.minZoom);
-          if (effectivePreset.maxZoom !== undefined) map.setMaxZoom(effectivePreset.maxZoom);
-          // The first view is set at once (the map is still behind its veil), so
-          // the tiles that follow are asked for at one view only.
-          if (effectivePreset.center && effectivePreset.zoom !== undefined) {
-            map.setView(effectivePreset.center, effectivePreset.zoom, { animate: false });
-          } else if (effectivePreset.center) {
-            map.panTo(effectivePreset.center, { animate: false });
-          } else {
-            fitMapBounds(map, geojson, { animate: false });
-          }
+        // The index of voyages opens on the view its page names (Europe). A voyage in parts opens
+        // close, on its parts, whatever its `map:` centre and zoom: only its zoom limits are kept.
+        const limits = buildPresetFromViewportData(geojson.properties && geojson.properties.viewport) || {};
+        if (limits.minZoom !== undefined) map.setMinZoom(limits.minZoom);
+        if (limits.maxZoom !== undefined) map.setMaxZoom(limits.maxZoom);
+        // The first view is set at once, so the tiles that follow are asked for at one view only.
+        if (viewportPreset && viewportPreset.center && viewportPreset.zoom !== undefined) {
+          map.setView(viewportPreset.center, viewportPreset.zoom, { animate: false });
         } else {
           fitMapBounds(map, geojson, { animate: false });
         }
+        if (parts) nameParts(map);
         if (tiles) tiles.addTo(map);
 
         scheduleMapEntrance(container, atlasDataset);
-        armActivationVeil(map, container);
+        if (touch()) makeFoldable(map, container);
+        else setHandlers(map, true);
       })
       .catch((error) => {
         console.error('Failed to load GeoJSON:', error);
@@ -472,6 +411,7 @@
     }
 
     const markerGroup = L.featureGroup();
+    const onTouch = touch();
     const atlasState = {
       markers: [],
       drawerOpen: false,
@@ -497,7 +437,9 @@
         weight: 2,
         opacity: 0.95,
         fillOpacity: 0.78,
-        className: 'marker-atlas'
+        className: 'marker-atlas',
+        // A marker's click is its own: on a touch screen it opens the strip, which a click on the map closes.
+        bubblingMouseEvents: false
       });
 
       marker._atlas = {
@@ -507,46 +449,15 @@
         properties
       };
 
-      marker.bindTooltip(properties.title || 'Untitled voyage', {
-        permanent: false,
-        direction: 'top',
-        offset: [0, -10],
-        className: 'map-tooltip'
-      });
-
-      marker.bindPopup(createAtlasPopupContent(properties), {
-        closeButton: true,
-        maxWidth: 320,
-        minWidth: 220,
-        className: 'map-popup map-popup--atlas'
-      });
-
-      marker.on('mouseover', function() {
-        if (atlasState.selectedMarker !== this) {
-          this.setStyle({ weight: 3, fillOpacity: 0.92 });
-        }
-      });
-
-      marker.on('mouseout', function() {
-        updateAtlasMarkerStyles(map);
-      });
-
-      marker.on('popupopen', function() {
-        atlasState.selectedMarker = this;
-        updateAtlasMarkerStyles(map);
-      });
-
-      marker.on('popupclose', function() {
-        if (atlasState.selectedMarker === this) {
-          atlasState.selectedMarker = null;
-        }
-        updateAtlasMarkerStyles(map);
-      });
-
-      marker.on('click', function() {
-        atlasState.selectedMarker = this;
-        updateAtlasMarkerStyles(map);
-      });
+      // A marker opens its label: under a pointer as it passes over (a click keeps it open), on a
+      // touch screen as a strip of words along the map's foot, clear of its buttons. Either leads on.
+      if (onTouch) {
+        marker.on('click', () => showStrip(map, container, marker));
+      } else {
+        marker.on('mouseover', () => openLabel(map, marker, false));
+        marker.on('mouseout', () => closeLabelSoon(map));
+        marker.on('click', () => openLabel(map, marker, true));
+      }
 
       markerGroup.addLayer(marker);
       atlasState.markers.push(marker);
@@ -556,49 +467,128 @@
     map._markerGroup = markerGroup;
     map._atlasState = atlasState;
 
+    if (onTouch) map.on('click', () => hideStrip(map, container));
+    else map.on('popupclose', () => {
+      atlasState.pinned = false;
+      atlasState.selectedMarker = null;
+      updateAtlasMarkerStyles(map);
+    });
+
     renderAtlasLegend(map, geojson, container);
     updateAtlasMarkerStyles(map);
     updateAtlasLegendState(map);
   }
 
-  function createAtlasPopupContent(properties) {
+  // One label for the whole map, moved from marker to marker. It stays while the pointer is on it,
+  // so the pointer can travel from the marker to the label and follow it.
+  function openLabel(map, marker, pin) {
+    const state = map._atlasState;
+    clearTimeout(state.closeTimer);
+    if (!state.label) {
+      state.label = L.popup({ closeButton: false, autoPan: false, minWidth: 0, className: 'map-popup map-popup--atlas', offset: [0, -6] });
+      state.label.on('add', () => {
+        const el = state.label.getElement();
+        if (!el || el._labelBound) return;
+        el._labelBound = true;
+        el.addEventListener('mouseenter', () => clearTimeout(state.closeTimer));
+        el.addEventListener('mouseleave', () => closeLabelSoon(map));
+      });
+    }
+    if (state.selectedMarker !== marker) {
+      state.label.setLatLng(marker.getLatLng()).setContent(createAtlasPopupContent(marker._atlas.properties));
+      state.label.openOn(map);
+      state.selectedMarker = marker;
+      updateAtlasMarkerStyles(map);
+    }
+    if (pin) state.pinned = true;
+  }
+
+  function closeLabelSoon(map) {
+    const state = map._atlasState;
+    clearTimeout(state.closeTimer);
+    if (state.pinned) return;
+    state.closeTimer = setTimeout(() => map.closePopup(state.label), 250);
+  }
+
+  function showStrip(map, container, marker) {
+    let strip = container.querySelector('.map-strip');
+    if (!strip) {
+      strip = L.DomUtil.create('div', 'map-strip', container);
+      L.DomEvent.disableClickPropagation(strip);
+    }
+    strip.innerHTML = createAtlasPopupContent(marker._atlas.properties, true);
+    strip.hidden = false;
+    map._atlasState.selectedMarker = marker;
+    updateAtlasMarkerStyles(map);
+  }
+
+  function hideStrip(map, container) {
+    const strip = container.querySelector('.map-strip');
+    if (strip) strip.hidden = true;
+    if (map._atlasState) {
+      map._atlasState.selectedMarker = null;
+      updateAtlasMarkerStyles(map);
+    }
+  }
+
+  // A voyage in parts writes each part's name beside its marker, as places are written on a map.
+  // Each name takes the first place, of right, left, below and above its marker, that keeps clear of
+  // the markers and of the names already set, and inside the map; set again at every zoom.
+  const NAME_PLACES = [['right', 0], ['left', 0], ['right', 1], ['left', 1], ['right', -1], ['left', -1]];
+
+  function nameParts(map) {
+    map._atlasState.markers.forEach((marker) => {
+      marker.bindTooltip(escapeHtml(marker._atlas.properties.title || ''), {
+        permanent: true,
+        interactive: false,
+        direction: 'right',
+        offset: [12, 0],
+        className: 'map-name'
+      });
+    });
+    placeNames(map);
+    map.on('zoomend resize', () => placeNames(map));
+  }
+
+  function placeNames(map) {
+    const size = map.getSize();
+    const markers = map._atlasState.markers.map((m) => ({ m, p: map.latLngToContainerPoint(m.getLatLng()) }));
+    const taken = markers.map(({ p }) => [p.x - 10, p.y - 10, p.x + 10, p.y + 10]);
+    const clear = (b) => b[0] >= 0 && b[1] >= 0 && b[2] <= size.x && b[3] <= size.y
+      && !taken.some((t) => b[0] < t[2] && b[2] > t[0] && b[1] < t[3] && b[3] > t[1]);
+    markers.sort((a, b) => a.p.y - b.p.y).forEach(({ m, p }) => {
+      const tip = m.getTooltip();
+      const el = tip && tip.getElement();
+      if (!el) return;
+      const w = el.offsetWidth;
+      const h = el.offsetHeight;
+      const box = ([side, row]) => {
+        const x = side === 'right' ? p.x + 12 : p.x - 12 - w;
+        const y = p.y - h / 2 + row * (h / 2 + 6);
+        return [x, y, x + w, y + h];
+      };
+      // A name with no clear place waits, unwritten, for a closer view; its marker still opens its label.
+      const found = NAME_PLACES.find((c) => clear(box(c)));
+      el.classList.toggle('is-crowded', !found);
+      if (!found) return;
+      taken.push(box(found));
+      tip.options.direction = found[0];
+      tip.options.offset = L.point(found[0] === 'right' ? 12 : -12, found[1] * (h / 2 + 6));
+      tip.update();
+    });
+  }
+
+  // A label: the voyage's name and when, leading to it, with no arrow. The strip on a touch screen
+  // also says so in words.
+  function createAtlasPopupContent(properties, words) {
     const title = properties.title || 'Untitled voyage';
-    const excerpt = properties.excerpt || '';
-    const dateDisplay = properties.dateDisplay || properties.date || '';
-    const tags = Array.isArray(properties.tags) ? properties.tags : [];
-    const visibleTags = tags.slice(0, ATLAS_POPUP_TAG_LIMIT);
-    const remainingTagCount = Math.max(tags.length - visibleTags.length, 0);
-
-    let html = '<div class="popup-content popup-content--atlas">';
-    html += `<div class="popup-title">${escapeHtml(title)}</div>`;
-
-    if (dateDisplay) {
-      html += `<div class="popup-meta">${escapeHtml(dateDisplay)}</div>`;
-    }
-
-    if (excerpt) {
-      html += `<div class="popup-description popup-description--static">${escapeHtml(excerpt)}</div>`;
-    }
-
-    if (visibleTags.length > 0) {
-      html += '<div class="popup-tags">';
-      html += visibleTags.map((tag) => {
-        const color = properties.tagColors && properties.tagColors[tag] ? properties.tagColors[tag] : properties.fallbackColor || ATLAS_FALLBACK_COLOR;
-        const href = `${TAG_ARCHIVE_PATH}#${slugifyTagArchiveFragment(tag)}`;
-        return `<a class="popup-tag" href="${escapeHtml(href)}" style="--tag-color: ${escapeHtml(color)};">${escapeHtml(tag)}</a>`;
-      }).join('');
-      if (remainingTagCount > 0) {
-        html += `<span class="popup-tag popup-tag--overflow">+${remainingTagCount}</span>`;
-      }
-      html += '</div>';
-    }
-
-    if (properties.url) {
-      html += `<a class="popup-action" href="${escapeHtml(properties.url)}"><span>Open voyage</span><span aria-hidden="true">→</span></a>`;
-    }
-
-    html += '</div>';
-    return html;
+    const date = properties.dateDisplay || '';
+    const inner = `<span class="popup-title">${escapeHtml(title)}</span>`
+      + (date ? `<span class="popup-meta">${escapeHtml(date)}</span>` : '')
+      + (words ? '<span class="popup-action">Open voyage</span>' : '');
+    return properties.url
+      ? `<a class="popup-content popup-content--atlas" href="${escapeHtml(properties.url)}">${inner}</a>`
+      : `<div class="popup-content popup-content--atlas">${inner}</div>`;
   }
 
   function scheduleMapEntrance(container, isAtlas) {
@@ -635,11 +625,9 @@
     const legendRoot = container.querySelector('.map-legend--atlas');
     const drawerRoot = container.querySelector('.map-legend-palette');
     const drawerToggle = legendRoot.querySelector('.legend-pill');
-    const drawerClose = drawerRoot ? drawerRoot.querySelector('.legend-palette-close') : null;
     map._atlasState.legendRoot = legendRoot;
     map._atlasState.drawerRoot = drawerRoot;
     map._atlasState.drawerToggle = drawerToggle;
-    map._atlasState.drawerClose = drawerClose;
 
     if (drawerRoot) {
       L.DomEvent.disableScrollPropagation(drawerRoot);
@@ -681,16 +669,10 @@
     return `
       <div class="map-legend map-legend--atlas map-legend--atlas-pill">
         <button type="button" class="legend-pill${drawerOpen ? ' is-active' : ''}" aria-controls="${escapeHtml(paletteId)}" aria-expanded="${drawerOpen ? 'true' : 'false'}" aria-haspopup="dialog">
-          <i class="fa-solid fa-tags" aria-hidden="true"></i><span>Tags</span>
+          ${icon('tag')}<span>Tags</span>
         </button>
       </div>
       <div id="${escapeHtml(paletteId)}" class="map-legend-palette${drawerOpen ? ' is-open' : ''}"${drawerOpen ? '' : ' hidden'} tabindex="-1" role="dialog" aria-label="Browse voyage tags">
-          <div class="legend-palette-header">
-            <div class="legend-palette-title">Browse tags</div>
-            <div class="legend-palette-actions">
-              <button type="button" class="legend-palette-close" aria-label="Close tag palette">×</button>
-            </div>
-          </div>
           <div class="legend-palette-body">
             <div class="legend-group legend-group--palette">
               ${tagEntries.map(renderAtlasLegendItem).join('')}
@@ -710,19 +692,6 @@
     `;
   }
 
-  function slugifyTagArchiveFragment(tag) {
-    const normalized = String(tag ?? '')
-      .normalize('NFKD')
-      .replace(/[\u0300-\u036f]/g, '');
-
-    const slug = normalized
-      .replace(/[^0-9A-Za-z]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .toLowerCase();
-
-    return slug || 'tag';
-  }
-
   function bindAtlasDrawerEvents(map, container) {
     const state = map._atlasState;
     if (!state.drawerRoot || !state.drawerToggle) return;
@@ -730,12 +699,6 @@
     state.drawerToggle.addEventListener('click', function() {
       setAtlasDrawerOpen(map, !state.drawerOpen);
     });
-
-    if (state.drawerClose) {
-      state.drawerClose.addEventListener('click', function() {
-        setAtlasDrawerOpen(map, false);
-      });
-    }
 
     state.drawerRoot.addEventListener('click', function(event) {
       const item = event.target.closest('.legend-item[data-tag]');
@@ -787,7 +750,7 @@
     state.drawerToggle.classList.toggle('is-active', state.drawerOpen);
 
     if (state.drawerOpen) {
-      const focusTarget = state.drawerClose || state.drawerRoot.querySelector('.legend-item[data-tag]');
+      const focusTarget = state.drawerRoot.querySelector('.legend-item[data-tag]');
       if (focusTarget) {
         focusTarget.focus();
       }
@@ -919,11 +882,9 @@
   return {
     init,
     ACTIVATION_HANDLERS,
-    buildActivationVeilInner,
     buildAtlasLegendMarkup,
     createAtlasPopupContent,
     getMapBoundsPadding,
-    resolveAtlasMarkerStyle,
-    slugifyTagArchiveFragment
+    resolveAtlasMarkerStyle
   };
 });
