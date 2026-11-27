@@ -462,6 +462,8 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
     e.preventDefault(); wake();
   });
   window.addEventListener('resize', () => { if (lb.open && pos >= 0) { fitFor(cur()); placeSpecs(); upgrade(); keepMat(); } });
+  // The pinned panel hangs from the print's top (--pr, _photobook.scss): once the print has taken its new shape, fit the panel again.
+  lb.addEventListener('transitionend', (e) => { if (e.target === lb && e.propertyName === '--pr' && lb.open && pos >= 0) placeSpecs(); });
 
   // Loupe: double-click (or Z) to look closer, or pinch on a trackpad for any depth from 1× to 4×,
   // about the point between the fingers; the print follows the pointer.

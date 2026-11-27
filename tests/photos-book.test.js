@@ -33,7 +33,7 @@ test('marked frames take the full width; the rest run in pairs and threes', asyn
   assert.equal(kinds([S, L, L, L, L, L, L, S, L]), 'spread,pair,pair,pair,spread,pair');
   assert.equal(kinds([L, L, L, L, L, L, L, S]), 'pair,triple,pair,spread');
   assert.equal(kinds([L, L, L, L, L, L, S]), 'pair,pair,pair,spread', 'never one frame left over');
-  assert.equal(kinds([S, L, S]), 'spread,pair,spread', 'a frame alone between two marks is a row of one');
+  assert.equal(kinds([S, L, S]), 'spread,pair,spread', 'a frame alone between two marks is a row of one, set at a pair\'s share (_photobook.scss)');
   assert.equal(kinds([P, L, L]), 'triple', 'a marked portrait still never takes a spread');
   assert.equal(kinds(land(6), true), 'pair,pair,pair', 'a filtered book with no marked frame keeps the marked rhythm');
   assert.equal(kinds(land(6)), 'spread,pair,triple', 'nothing marked: the count decides, as before');

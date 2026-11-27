@@ -588,6 +588,12 @@ html.is-reordering::view-transition-group(*) {
   .photobook-frame { flex: var(--ratio) 1 0; }
 }
 
+// A frame left alone between two marked spreads (rows.mjs) takes a pair's share, on the middle.
+// (A phone's strip already gives every frame its own width.)
+@include responsive-up(tablet) {
+  .photobook-row--pair > .photobook-frame:only-child { flex: 0 1 calc(50% - var(--photobook-gap) / 2); margin-inline: auto; }
+}
+
 .photobook-row--spread {
   padding: 0;
   margin-block: clamp(2.2rem, 5vw, 5rem);
@@ -995,11 +1001,11 @@ html.is-reordering::view-transition-group(*) {
     padding: 0;
     border: 0;
     background: linear-gradient(var(--t), var(--m), var(--b));
-
-    // A finger's target, larger than the vat: half the gap to each neighbour, and a little more.
-    &::after { content: ""; position: absolute; inset: -6px; }
     cursor: pointer;
     transition: opacity 0.3s $cubic-bezier-smooth, transform 0.3s $cubic-bezier-smooth;
+
+    // A finger's target, larger than the vat, overlapping its neighbour's a little across the gap.
+    &::after { content: ""; position: absolute; inset: -6px; }
 
     // Poured: the vat takes the place of the colours standing in for it.
     &:has(canvas) { background: none; }
@@ -1026,9 +1032,8 @@ html.is-reordering::view-transition-group(*) {
   padding: 0 var(--photobook-gutter) calc(3rem + env(safe-area-inset-bottom, 0px));
 }
 
-// The ways on come last, after the sign-off (the owner, 2026-10-17), with the end's own air above them.
-.photobook-end__more { margin-top: clamp(3rem, 6vw, 5rem); }
-.photobook-end__more + .photobook-end__more { margin-top: 0; } // a part's Other <parent> and Elsewhere stay together
+// The ways on come first, under the end's own air; a part's Other <parent> and Elsewhere stay together.
+.photobook-end__more { margin-top: 0; }
 
 .photobook-end__title {
   font: 600 1.1rem $didot-family;
@@ -1368,7 +1373,8 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   // The frame under the pointer, or under a scrubbing finger, stands up.
   button:hover::before,
   &.is-scrubbing button.is-scrub::before { height: 22px; }
-  button.is-on:hover::before { height: 30px; }
+  button.is-on:hover::before,
+  &.is-scrubbing button.is-on::before { height: 30px; }
 }
 
 // Marks a page gives for the frames (away from the book: each photograph's dye vat, in Reverie): a
