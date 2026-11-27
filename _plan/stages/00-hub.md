@@ -116,6 +116,43 @@ stops being the only reviewer.
       deployed the same commit: the sixteen fixes of stage 1's first batch are live.
 - [ ] A cloud session starting from the hook: unproven until one does.
 
+**From the inbox, sorted 2026-11-27.** The hub's own tooling, tier 0. This stage is done, so no run
+takes these by itself: a session that is in the file anyway mends the one beside it.
+- [ ] F114 · `CLAUDE.md:138` and the `css-token-steward` and `css-scss-janitor` skills cite
+      `$nav-action-sweep-duration` as an example of a single-use variable; it was deleted with the
+      menu's old button shell. Outside `_plan/`: the main session edits them.
+- [ ] F073, what is left · R2's writers ask each time since Q15 (`.claude/settings.json`, "ask":
+      push, prune, trash, process, rclone, wrangler). One way round is left:
+      `npm run photos:recollect -- --push` goes on to the push with no prompt. Add it to "ask".
+- [ ] F096 · `check-plan`'s changelog rule counts a comment-only edit to a file readers get as a
+      change readers get; lines that are only comments or blank should not count.
+- [ ] F084 · Two branches can give out the same F or Q number before either reaches GitHub; nothing
+      checks until the merge.
+- [ ] F076 · A stage's task lines do not carry their tier or what they wait on in a form a program
+      can read. The briefs of 2026-11-27 (stages 4, 6, 11 to 14) say the tier on the line or at the
+      head of its group; `plan.mjs next` still reads waiting from a list of phrases.
+- [ ] F052 · Features with no journey: 13 of 35 on 2026-11-27 (18 of 30 when filed). The six batches
+      add journeys for the dial, the colophon, Ridgway, About and the CV, and the tag pages; the
+      check still counts the rest and names none. Have it name them.
+- [ ] F046 · `plan.mjs take`, `answer` and `decide` still write in the main checkout with
+      `hub/daily` ahead; a warning on stderr would say to merge first.
+- [ ] F053, F054 · The command centre always says of itself that it is behind the plan (it is built
+      before its own hash is recorded), and is 360 KB because every document is inside it.
+- [ ] F086 · `scripts/hub-daily.sh`, `limit()`: on a cut-off it kills only the direct child; run it
+      in its own process group as `hub-work.sh` does.
+- [ ] F085, F061, F090 · `tests/plan-hub.test.js`: the lease on a restarted push, the count behind
+      the daily warning and the fetch before the hand-over are untested; the stop-hook test's first
+      assertion passes with its case removed when the tree is clean; and it allows 15 s where a
+      loaded Mac took 20.
+- [ ] F094 · Harvest: the scripted export of an edited frame took 2 to 5 minutes each (one scripted
+      call to Photos per item); `bring` sends no `--new-gallery` for a part whose page was written
+      first; a failed bring still consumes the go; the scope hook refuses an argument that merely
+      names the helpers' file. Time it before the next large album.
+- [ ] F074 · [0004](../decisions/0004-budgets-that-only-fall.md) and the audit speak of a daily
+      tech-debt run that nothing here starts; nine `tech-debt/` branches sit unmerged on GitHub.
+      Whether it still runs is the owner's to say (I003, question 3): it goes to the owner on the
+      next sheet.
+
 **From I002, which the lead advised parking (2026-10-01).** The owner's note on merging was shaped,
 tried and challenged. These went ahead whatever the owner tapped; each is tier 0 unless it says
 otherwise. On 2026-10-18 the owner pursued it: one class merges itself, below.

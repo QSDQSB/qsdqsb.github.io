@@ -139,6 +139,18 @@ monospace stack and nothing else is: Home's eyebrows in Monaco are a fault (audi
 Chinese falls through to Songti. The site speaks two languages in its writing; the Photobook
 speaks one.
 
+**Amended by the owner's picks of 2026-11-27** ([0013](decisions/0013-what-the-sheets-settled.md));
+the table above is as built until the six batches land, and this is what it becomes:
+
+- No line of words is Didot italic: the colour pages' line, the subscribe card's, Home's and the
+  colophon's are Playfair upright, and `lede` with them. The gloss's Latin line was not asked.
+- Didot has two jobs: a figure meant to be seen, and a small heading of a section or a card. A small
+  hex code or count is Barlow. Home's name keeps Didot, as a signature.
+- A fourth face, CMU Serif, has one job: the voice of a quotation (a motto, a lyric, a definition, a
+  quotation in a post).
+- Chinese is Songti wherever the Latin beside it is a serif, in an article by default and in a name
+  on a card, in the contents and beside the portrait.
+
 The scale is `$type-size-1` to `-8`, in rem, so nothing compounds. A size outside it is a decision
 to justify.
 
@@ -235,6 +247,11 @@ line below differs, this holds.
 4. Where you are, and what is on, is marked by a one-pixel brass hairline.
 5. Everything pressable has 10 px corners. An icon is a hairline in ink. Keyboard focus is the brass
    ring.
+
+Since the sheets of 2026-11-27 ([0013](decisions/0013-what-the-sheets-settled.md)): there are two
+brasses, the pale for lines and rings and the warm for a thing that is on; a way on carries no
+arrow; and what the owner kept as it stands, the Photobook's own marks and motion among it, is
+listed there and is not brought to these lines unasked.
 
 - **Quiet by default.** Detail appears on hover or in hand. Whatever hover reveals, keyboard focus
   reveals too, and a touch reader gets it at rest or on a first tap. Quiet is about what is shown,

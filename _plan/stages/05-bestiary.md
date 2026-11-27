@@ -150,6 +150,9 @@ option; the pick is then also the owner's word on the words.
 - [x] A journey, `bestiary`: from the masthead the page opens, a card opens a fable, its switch shows
       the Chinese, its design notes are not on the page, and its way on leads on and back. The row in
       [`FEATURES.md`](../FEATURES.md) gains it.
+- [ ] 2026-11-27 · A fable's story opens on "An illuminated initial" (Q25): built with the small pages,
+      [stage 14](14-shell-and-small-pages.md), and shot there.
+- [ ] F102 · No shot of a fable either: add both with the one below (`scripts/visual-baseline.mjs`).
 - [ ] A pixel baseline for `/bestiary/` at both widths, re-captured on the owner's `QSD` (a capture
       writes to R2). The line in the changelog is written.
 
