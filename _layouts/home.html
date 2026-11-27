@@ -74,10 +74,22 @@ than the screen scrolls it inside its .home__panel-body. {% endcomment %}
       <p class="home__motto" lang="la"><span>Mors potius quam taedium</span></p>
     </div>
     <span class="home__scroll-hint" aria-hidden="true"></span>
+    {%- comment -%} PROTOTYPE (home-first-screen, three options for the owner): ?hint=a|b|c shows one in
+    place of the line. A link to the next panel, so a press, Enter and the site's anchor glide all work. {%- endcomment %}
+    <script>(function () { var m = /[?&]hint=([abc])\b/.exec(location.search); if (m) document.documentElement.setAttribute("data-hint", m[1]); })();</script>
+    <a class="home__hint" href="#home-new" aria-label="On to Recent updates">
+      <span class="home__hint-word home__hint-word--a">Scroll</span>
+      <span class="home__hint-word home__hint-word--c">Recent updates</span>
+      <svg class="home__hint-mark" viewBox="0 0 24 36" aria-hidden="true">
+        <g class="m-a"><path d="M5 15l7 7 7-7"/></g>
+        <g class="m-b"><path d="M12 9v18M6 21l6 6 6-6"/></g>
+        <g class="m-c"><path d="M6 6l6 6 6-6"/><path d="M6 15l6 6 6-6"/><path d="M6 24l6 6 6-6"/></g>
+      </svg>
+    </a>
     <span class="home__marks" aria-hidden="true"></span>
   </section>
 
-  <section class="home__panel home__panel--new">
+  <section class="home__panel home__panel--new" id="home-new">
     <div class="home__panel-body">
       {% include home/whats-new.html %}
     </div>
