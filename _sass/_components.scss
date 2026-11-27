@@ -168,8 +168,11 @@ qsd-cat::part(say) {
   svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linejoin: round; stroke-linecap: round; }
 
   &:visited { color: var(--photobook-ink-3); }
-  &:hover,
   &:focus-visible { color: var(--photobook-ink); background: rgba(255, 255, 255, 0.06); text-decoration: none; }
+  // Only under a real pointer: a tap would leave the fill behind.
+  @include responsive-hover {
+    &:hover { color: var(--photobook-ink); background: rgba(255, 255, 255, 0.06); text-decoration: none; }
+  }
 }
 
 // A tag (decisions/0009, "A tag"): ink, one look for every tag, no fill and no colour of its own,

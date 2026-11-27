@@ -4,11 +4,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // The section this page belongs to (masthead.html is cached, so it is marked here, not in
   // Liquid): the link whose data-section holds the longest path this page's path starts with.
+  // Looked for in the whole bar: on a narrow screen the room may already sit among those that did not fit.
   (function markCurrentSection() {
     const here = window.location.pathname;
     let best = null;
     let bestLength = 0;
-    masthead.querySelectorAll(".visible-links a[data-section]").forEach(function (link) {
+    masthead.querySelectorAll(".greedy-nav a[data-section]").forEach(function (link) {
       link.dataset.section.split(/\s+/).forEach(function (path) {
         if (path.length > 1 && here.indexOf(path) === 0 && path.length > bestLength) {
           best = link;

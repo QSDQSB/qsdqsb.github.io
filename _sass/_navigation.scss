@@ -205,7 +205,8 @@
     display: inline-flex;
     align-items: center;
     margin: 0;
-    padding: 0.36rem 0.68rem;
+    --room-inset: 0.68rem; // a room's side padding, which its hairline for "here" follows
+    padding: 0.36rem var(--room-inset);
     color: $primary-color;
     font-weight: 700; // a room is as strong as the site's name
     text-decoration: none;
@@ -218,9 +219,32 @@
       background-color $duration-base $cubic-bezier-standard,
       opacity 0.28s $cubic-bezier-smooth;
 
-    &:hover {
-      color: white;
+    // Only under a real pointer: a tap would leave the fill behind.
+    @include responsive-hover {
+      &:hover {
+        color: white;
+        background-color: var(--control-soft);
+      }
+    }
+
+    &:focus-visible {
       background-color: var(--control-soft);
+      color: white;
+      @include brass-focus;
+      outline-offset: -2px; // inside: the bar's clip would cut a ring set off its edge
+    }
+
+    // The section this page belongs to (marked by masthead-intent.js): a brass hairline under its
+    // name, in the bar and in the rooms that did not fit.
+    &[aria-current="page"]::after {
+      content: "";
+      position: absolute;
+      left: var(--room-inset);
+      right: var(--room-inset);
+      bottom: 0.2rem;
+      height: 1px;
+      background: rgba($intriguing-word-color, 0.7);
+      pointer-events: none;
     }
   }
 
@@ -274,12 +298,14 @@
       }
     }
 
-    &:hover,
-    &:focus-visible { background-color: var(--control-soft); }
-
     &:focus-visible {
+      background-color: var(--control-soft);
       @include brass-focus;
       outline-offset: -2px; // inside: the bar's clip would cut a ring set off its edge
+    }
+
+    @include responsive-hover {
+      &:hover { background-color: var(--control-soft); }
     }
   }
 
@@ -320,42 +346,22 @@
       }
     }
 
-    a {
-      position: relative;
-      &:focus-visible {
-        background-color: var(--control-soft);
-        color: white;
-        @include brass-focus;
-        outline-offset: -2px; // inside: the bar's clip would cut a ring set off its edge
-      }
-
-      // The section this page belongs to (marked by masthead-intent.js): a brass hairline under its name.
-      &[aria-current="page"]::after {
-        content: "";
-        position: absolute;
-        left: 0.68rem;
-        right: 0.68rem;
-        bottom: 0.2rem;
-        height: 1px;
-        background: rgba($intriguing-word-color, 0.7);
-        pointer-events: none;
-      }
-    }
   }
 
+  // The rooms that did not fit: the same bar, continued beneath it. Its links are the bar's own.
   .hidden-links {
     html.motion-off & { transition: none; }
     position: absolute;
     top: 100%;
     right: 0;
     z-index: 52;
-    margin-top: 0.85rem;
-    padding: 0.45rem;
-    border: 1px solid $border-color;
+    margin-top: 0.4rem;
+    padding: 0.16rem $nav-shell-padding-x;
+    border: 1px solid var(--glass-edge);
     border-radius: $border-radius;
-    background: rgba(10, 10, 12, 0.82);
+    background: var(--glass);
     box-shadow: $shadow-soft;
-    @include backdrop-blur(blur(18px));
+    @include backdrop-blur(blur(18px) saturate(140%));
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -366,51 +372,7 @@
       transform 0.24s $cubic-bezier-smooth,
       visibility 0s linear 0.24s;
 
-    a {
-      margin: 0;
-      padding: 10px 20px;
-      font-size: $type-size-5;
-
-      &:hover {
-        color: mix(#000, $primary-color, 35%);
-        background: rgba(255, 255, 255, 0.08);
-      }
-    }
-
-    &:before {
-      content: "";
-      position: absolute;
-      top: -11px;
-      right: 10px;
-      width: 0;
-      border-style: solid;
-      border-width: 0 10px 10px;
-      border-color: $border-color transparent;
-      display: block;
-      z-index: 0;
-    }
-
-    &:after {
-      content: "";
-      position: absolute;
-      top: -10px;
-      right: 10px;
-      width: 0;
-      border-style: solid;
-      border-width: 0 10px 10px;
-      border-color: #000 transparent;
-      display: block;
-      z-index: 1;
-    }
-
-    li {
-      display: block;
-      border-bottom: 1px solid $border-color;
-
-      &:last-child {
-        border-bottom: none;
-      }
-    }
+    li { display: block; }
   }
 
   &.greedy-nav--menu-open .hidden-links:not(.hidden) {
@@ -448,7 +410,8 @@
     padding: 0.18rem $nav-shell-padding-x;
 
     a {
-      padding: 0.34rem 0.52rem;
+      --room-inset: 0.52rem;
+      padding: 0.34rem var(--room-inset);
     }
 
     .masthead__brand-name {

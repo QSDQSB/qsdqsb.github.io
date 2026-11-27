@@ -21,8 +21,10 @@
 
   svg { width: 17px; height: 17px; stroke-width: 1.5; }
 
-  &:hover,
   &:focus-visible { background-color: var(--control-soft); }
+  @include responsive-hover {
+    &:hover { background-color: var(--control-soft); }
+  }
 
   &:focus-visible {
     @include brass-focus;
