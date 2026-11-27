@@ -5,12 +5,10 @@ const path = require('node:path');
 
 const {
   ACTIVATION_HANDLERS,
-  buildActivationVeilInner,
   buildAtlasLegendMarkup,
   createAtlasPopupContent,
   getMapBoundsPadding,
   resolveAtlasMarkerStyle,
-  slugifyTagArchiveFragment,
 } = require('../assets/js/map.js');
 
 const mapStylesheet = fs.readFileSync(path.join(__dirname, '..', '_sass', '_map.scss'), 'utf8');
@@ -29,7 +27,9 @@ test('buildAtlasLegendMarkup renders a quiet hero tags pill with a hidden floati
 
   assert.match(markup, /class="map-legend map-legend--atlas map-legend--atlas-pill"/);
   assert.match(markup, /class="legend-pill"/);
-  assert.match(markup, /<i class="fa-solid fa-tags"[^>]*><\/i><span>Tags<\/span>/);
+  assert.match(markup, /<svg viewBox="0 0 24 24" aria-hidden="true">[\s\S]*<\/svg><span>Tags<\/span>/);
+  // One slim list: no title bar repeating the button, no close mark of its own.
+  assert.doesNotMatch(markup, /legend-palette-header|Browse tags|legend-palette-close/);
   assert.match(markup, /class="map-legend-palette"/);
   assert.match(markup, /aria-controls="voyage-tag-palette"/);
   assert.match(markup, /class="map-legend-palette" hidden/);
@@ -55,12 +55,6 @@ test('buildAtlasLegendMarkup renders palette tags as local filter buttons, not a
   assert.match(markup, /type="button" class="legend-item"/);
   assert.doesNotMatch(markup, /href="\/voyage-by-tags\/#qsd-s-favourite"/);
   assert.doesNotMatch(markup, /legend-palette-clear/);
-});
-
-test('slugifyTagArchiveFragment matches the tag archive anchor format for representative tags', () => {
-  assert.equal(slugifyTagArchiveFragment('Historic'), 'historic');
-  assert.equal(slugifyTagArchiveFragment('QSD\'s Favourite'), 'qsd-s-favourite');
-  assert.equal(slugifyTagArchiveFragment('🌴 Tropical (≈hot as hell)'), 'tropical-hot-as-hell');
 });
 
 test('resolveAtlasMarkerStyle keeps selected non-matching markers visually anchored', () => {
@@ -97,32 +91,25 @@ test('resolveAtlasMarkerStyle keeps selected non-matching markers visually ancho
   assert.ok(selectedMatch.weight >= selectedNonMatch.weight);
 });
 
-test('createAtlasPopupContent keeps the atlas popup lightweight and structured', () => {
-  const html = createAtlasPopupContent({
+test('createAtlasPopupContent is a label, as on a map: a name and a date, leading to the voyage', () => {
+  const properties = {
     title: 'Rome',
-    dateDisplay: '2024',
+    dateDisplay: 'May 2025',
     excerpt: 'An evening walk through the old city.',
-    tags: ['historic', 'italy', 'sunset', 'food', 'streets'],
-    tagColors: {
-      historic: '#6e5240',
-      italy: '#47733f',
-      sunset: '#9b5f41',
-      food: '#7a5d33',
-      streets: '#5f6477',
-    },
+    tags: ['historic', 'italy'],
+    tagColors: { historic: '#6e5240', italy: '#47733f' },
     url: '/voyage/rome/',
-  });
+  };
+  const label = createAtlasPopupContent(properties);
+  assert.match(label, /^<a class="popup-content popup-content--atlas" href="\/voyage\/rome\/">/);
+  assert.match(label, /class="popup-title">Rome</);
+  assert.match(label, /class="popup-meta">May 2025</);
+  assert.doesNotMatch(label, /popup-description|popup-tag|→|Open voyage/);
 
-  assert.match(html, /class="popup-title"/);
-  assert.match(html, />Rome</);
-  assert.match(html, /class="popup-meta"/);
-  assert.match(html, /class="popup-description popup-description--static"/);
-  assert.match(html, /class="popup-tags"/);
-  // Tags are now clickable archive links (first 3 shown, ATLAS_POPUP_TAG_LIMIT = 3)
-  assert.match(html, /href="\/voyage-by-tags\/#historic"/);
-  assert.match(html, /href="\/voyage-by-tags\/#italy"/);
-  assert.match(html, /\+2/); // 5 tags − 3 visible = 2 overflow
-  assert.match(html, /Open voyage/);
+  // On a touch screen the strip along the map's foot says it in words, still with no arrow.
+  const strip = createAtlasPopupContent(properties, true);
+  assert.match(strip, /class="popup-action">Open voyage</);
+  assert.doesNotMatch(strip, /→/);
 });
 
 test('getMapBoundsPadding gives atlas maps more breathing room than default maps', () => {
@@ -137,29 +124,14 @@ test('atlas palette stylesheet gives the tag list real spacing and isolated scro
   assert.match(mapStylesheet, /\.legend-group--palette\s*\{[\s\S]*gap:\s*2px;/);
 });
 
-test('activating the map never re-traps page scroll (no scrollWheelZoom) but restores pan + keyboard', () => {
-  // The whole point of the click-to-activate veil is that plain wheel-scroll
-  // is never hijacked — not before activation, and not after it either.
+test('the awake map never traps page scroll (no scrollWheelZoom) but pans, pinches and takes the keyboard', () => {
+  // The map is awake from the start under a pointer, and a wheel over it still scrolls the page.
   assert.ok(!ACTIVATION_HANDLERS.includes('scrollWheelZoom'),
     'scrollWheelZoom must stay disabled so the long voyage page is always scrollable');
   // Pan, pinch and keyboard navigation are restored on activation.
   assert.ok(ACTIVATION_HANDLERS.includes('dragging'));
   assert.ok(ACTIVATION_HANDLERS.includes('touchZoom'));
   assert.ok(ACTIVATION_HANDLERS.includes('keyboard'));
-});
-
-test('buildActivationVeilInner offers a quiet loading state and an armed click-to-explore CTA', () => {
-  const loading = buildActivationVeilInner('loading');
-  assert.match(loading, /class="map-veil__status"/);
-  assert.match(loading, /class="map-veil__spinner"/);
-  assert.match(loading, /Charting/);
-  assert.doesNotMatch(loading, /Click to explore/);
-
-  const ready = buildActivationVeilInner('ready');
-  assert.match(ready, /class="map-veil__cta"/);
-  assert.match(ready, /class="fa-solid fa-compass"/);
-  assert.match(ready, /<span>Click to explore<\/span>/);
-  assert.doesNotMatch(ready, /map-veil__spinner/);
 });
 
 test('atlas map frame drops the hard 2px widget border for the on-system glass card language', () => {
@@ -171,16 +143,16 @@ test('atlas map frame drops the hard 2px widget border for the on-system glass c
   assert.match(mapStylesheet, /box-shadow:\s*\$shadow-soft;/);
 });
 
-test('click-to-activate veil is styled and hides once the map is activated', () => {
-  assert.match(mapStylesheet, /\.map-veil\s*\{[\s\S]*?cursor:\s*pointer;/);
-  assert.match(mapStylesheet, /\.map-container--active\s+\.map-veil\s*\{[\s\S]*?pointer-events:\s*none;/);
-  assert.match(mapStylesheet, /\.map-veil__cta\s*\{/);
-});
-
 test('atlas polish no longer animates the leaflet map pane or control container', () => {
   assert.doesNotMatch(mapStylesheet, /\.map-container\s+\.leaflet-map-pane,\s*[\s\S]*transition:\s*opacity 0\.24s ease-out, transform 0\.24s ease-out;/);
   assert.doesNotMatch(mapStylesheet, /\.map-container--booting\s+\.leaflet-map-pane,/);
   assert.doesNotMatch(mapStylesheet, /\.map-container--booting\s+\.leaflet-control-container,/);
   assert.doesNotMatch(mapStylesheet, /\.map-container--ready\s+\.leaflet-map-pane,/);
   assert.doesNotMatch(mapStylesheet, /\.map-container--ready\s+\.leaflet-control-container,/);
+});
+
+test('a touch screen unfolds the map with the stylesheet, which an iPhone can do, and folds it back', () => {
+  assert.match(mapStylesheet, /\.map-container\.map-container--unfolded\s*\{[\s\S]*?position:\s*fixed;[\s\S]*?inset:\s*0;/);
+  assert.match(mapStylesheet, /\.map-container--unfolded \.map-unfold\s*\{\s*display:\s*none;/);
+  assert.doesNotMatch(mapStylesheet, /\.map-veil/);
 });

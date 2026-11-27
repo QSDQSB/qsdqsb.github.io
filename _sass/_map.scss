@@ -19,6 +19,10 @@
   border-radius: clamp(0.6rem, 1.2vw, 1rem);
   border: 1px solid rgba($lighter-gray, 0.09);
   box-shadow: $shadow-soft;
+  // The site's viewer tools (round-tool) on the map's own glass: near-black, darker than the
+  // page, so the marks keep their contrast over the tiles.
+  --photobook-button: rgba(14, 14, 14, 0.58);
+  --photobook-button-hover: rgba(36, 36, 36, 0.82);
 
   @include responsive-up(desktop) {
     min-height: 500px;
@@ -37,10 +41,8 @@
   }
 }
 
-// The atlas as a titled editorial section, sharing the voyage-card column.
-// Rendered inside `.container` by _layouts/gallery.html, so its heading and
-// caption sit in the same rhythm as the page's other "Other <place>" /
-// "Fancy a Markov Chain…?" section labels.
+// The atlas as a titled editorial section after the covers (_includes/voyage-atlas.html), inside
+// `.container` on the Voyage page and on a voyage in parts, so it shares the covers' edges.
 .voyage-atlas {
   margin: clamp(1.75rem, 4vw, 2.75rem) 0 0;
 }
@@ -68,129 +70,94 @@
   margin: 0.9rem 0 0;
 }
 
-// Leaflet base overrides
-.map-container .leaflet-container {
-  background-color: $background-color;
-  font-family: $global-font-family;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: $background-color;
-    pointer-events: none;
-    z-index: 0;
-  }
-}
-
-// Tile loading fix — prevent light rectangles during zoom. leaflet.css loads
-// after main.css and sets `.leaflet-container { background: #ddd }` (0,1,0);
-// the two classes share one element, so this outranks it.
+// leaflet.css loads after main.css and sets `.leaflet-container { background: #ddd; font: 12px
+// "Helvetica Neue"… }` (0,1,0); the two classes share one element, so this outranks it. Every word
+// on the map's controls is Barlow; a part's name takes the serif back (.map-name).
 .map-container.leaflet-container {
   background-color: $background-color;
+  font-family: $barlow-font-family;
 }
 
-// Controls (zoom, reset, fullscreen)
-// Tier 3 exception: glass control surfaces use near-black values
-// deliberately darker than $background-color for depth separation.
-.map-container .leaflet-control {
-  border-radius: 14px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
-  background: rgba(14, 14, 14, 0.58);
-  @include backdrop-blur(blur(14px));
-  border: 1px solid rgba($lighter-gray, 0.1);
-}
-
-// Shared base for all map control buttons
-.map-container .leaflet-control-zoom a,
-.map-container .leaflet-control-reset .leaflet-control-reset-button,
-.map-container .leaflet-control-fullscreen .leaflet-control-fullscreen-button {
-  color: $text-color;
-  background-color: transparent;
-  border: none;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 1;
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
-
-  &:hover {
-    background-color: rgba($lighter-gray, 0.06);
-    color: $lighter-gray;
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  &:focus-visible {
-    @include brass-focus;
-  }
-}
-
-.map-container .leaflet-control-zoom {
-  background: transparent;
+// Controls (zoom, reset, fullscreen): the site's viewer tools, each a round-tool, one under another.
+// leaflet.css draws its bar at up to (0,3,1) (`.leaflet-touch .leaflet-bar a:first-child`: 2 px
+// corners, a white face, Lucida Console), so these name one class more.
+.map-container .leaflet-control-container .leaflet-control.leaflet-bar {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
 
   a {
-    &.leaflet-disabled {
-      color: $darker-gray;
-      cursor: not-allowed;
-      opacity: 0.5;
+    @include round-tool;
 
-      &:hover {
-        background-color: transparent;
-        color: $darker-gray;
-        transform: none;
-      }
-    }
+    + a { margin-top: 6px; }
 
-    &:first-child {
-      border-bottom: 1px solid rgba($lighter-gray, 0.08);
-    }
+    &:focus-visible { @include brass-focus; }
+
+    &.leaflet-disabled { @include text-button-unavailable; background: var(--photobook-button); }
   }
 }
 
-.map-container .leaflet-control-reset {
-  background: transparent;
-
-  .leaflet-control-reset-button {
-    font-size: 15px;
-  }
-}
-
-.map-container .leaflet-control-fullscreen {
-  background: transparent;
-
-  .leaflet-control-fullscreen-button {
-    &.leaflet-fullscreen-active {
-      color: $lighter-gray;
-      background-color: rgba($lighter-gray, 0.08);
-    }
-  }
-}
-
+// One rule for every way the map takes the whole screen: the Fullscreen API under a pointer, and
+// on a touch screen its unfolding (map.js setUnfolded), which an iPhone, with no Fullscreen API
+// for an element, can do too. Inset on all sides rather than 100vh, which on a phone runs under
+// the browser's own bar.
 .map-container:-webkit-full-screen,
-.map-container:fullscreen {
-  width: 100vw;
-  height: 100vh;
-  max-height: 100vh;
+.map-container:fullscreen,
+.map-container.map-container--unfolded {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  max-height: none;
   z-index: 999999;
+  border: 0;
   border-radius: 0;
   margin: 0;
 }
+
+// The page beneath an unfolded map stays where it was.
+html.map-unfolded { overflow: hidden; }
+
+// On a touch screen the folded map is a preview: one button over the whole of it (map.js
+// makeFoldable), and none of the small buttons. Fingers zoom an unfolded map, so the zoom and reset
+// tools never show; the full-screen tool shows only unfolded, as its close mark, with Tags.
+.map-unfold {
+  position: absolute;
+  inset: 0;
+  z-index: 1100; // above Leaflet's controls and panes
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  cursor: pointer;
+
+  &:focus-visible { @include brass-focus; outline-offset: -6px; }
+
+  // Its words, at the preview's foot: a label, not a veil, so the map stays whole above it.
+  span {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    padding: 0.5rem 0.75rem;
+    border-radius: $border-radius;
+    background: var(--photobook-button);
+    @include eyebrow;
+    color: $lighter-gray;
+  }
+}
+
+.map-container--unfolded .map-unfold { display: none; }
+
+// Keyed to the class map.js sets with the button (not to a media query of its own), so the two can
+// never disagree about which screen this is.
+.map-container--foldable .leaflet-control-container .leaflet-control-zoom,
+.map-container--foldable .leaflet-control-container .leaflet-control-reset,
+.map-container--foldable:not(.map-container--unfolded) .leaflet-control-container .leaflet-control-fullscreen,
+.map-container--foldable:not(.map-container--unfolded) .map-legend--atlas,
+.map-container--foldable:not(.map-container--unfolded) .map-legend-palette { display: none; }
 
 // leaflet.css sets the attribution background from
 // `.leaflet-container .leaflet-control-attribution` (0,2,0) and loads after
@@ -214,40 +181,19 @@
   }
 }
 
-// Popup
+// A marker's label (map.js openLabel), as a name is written on a map: the voyage's name and when,
+// with no arrow; the whole label leads to the voyage.
 .map-container .leaflet-popup {
   .leaflet-popup-content-wrapper {
     background-color: $obsidian-gray;
     border: 1px solid rgba($lighter-gray, 0.09);
-    border-radius: 12px;
+    border-radius: $border-radius;
     box-shadow: 0 20px 48px rgba(0, 0, 0, 0.34);
-    padding: 12px 14px;
-    font-family: $barlow-font-family;
+    padding: 0;
 
     .leaflet-popup-content {
       margin: 0;
-      color: $text-color;
-      font-size: 13px;
-      line-height: 1.5;
-
-      .popup-title {
-        font-size: 15px;
-        font-weight: 600;
-        color: $lighter-gray;
-        margin-bottom: 7px;
-        line-height: 1.3;
-        font-family: $barlow-font-family;
-      }
-
-      // Shared font-size/font-family; .popup-description--static (below)
-      // overrides color/line-height/font-style for the atlas popup body.
-      .popup-description {
-        font-size: 12px;
-        color: $gray;
-        line-height: 1.5;
-        font-style: italic;
-        font-family: $barlow-font-family;
-      }
+      line-height: 1.3;
     }
   }
 
@@ -255,43 +201,84 @@
     background-color: $obsidian-gray;
     border: 1px solid $border-color;
   }
+}
 
-  // leaflet.css styles this from `.leaflet-container a.leaflet-popup-close-button`
-  // (0,2,1) and its :hover (0,3,1); at (0,3,0) and (0,4,0) these outrank both.
-  .leaflet-popup-close-button {
-    top: 10px;
-    right: 10px;
-    color: rgba($lighter-gray, 0.38);
-    font-size: 16px;
-    font-weight: 300;
-    line-height: 1;
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: color 0.15s ease, background 0.15s ease;
+.popup-content--atlas {
+  display: grid;
+  column-gap: 22px;
+  align-items: center;
+  padding: 12px 16px;
+  white-space: nowrap;
+  color: $text-color;
+  text-decoration: none;
 
-    &:hover {
-      color: $lighter-gray;
-      background: rgba($lighter-gray, 0.08);
-    }
+  .popup-title {
+    grid-column: 1;
+    font: italic 400 17px/1.3 $cmu-serif-family;
+    letter-spacing: 0.01em;
+    color: $lighter-gray;
+  }
 
-    &:focus-visible {
-      @include brass-focus;
-    }
+  .popup-meta {
+    grid-column: 1;
+    margin-top: 3px;
+    @include eyebrow;
+    color: $gray;
+  }
+
+  .popup-title,
+  .popup-meta { transition: color $duration-base $cubic-bezier-standard; }
+
+  .popup-action {
+    grid-column: 2;
+    grid-row: 1 / 3;
   }
 }
 
-// Atlas popup: editorial title — design language: display/editorial role → $cmu-serif-family
-.map-container .leaflet-popup.map-popup--atlas .leaflet-popup-content .popup-title {
-  font-family: $cmu-serif-family;
-  font-size: 17px;
-  font-weight: normal;
-  font-style: italic;
-  letter-spacing: 0.01em;
-  padding-right: 18px; // clear of close button
+// leaflet.css colours every link in the map (`.leaflet-container a`, (0,1,1)). Under the pointer
+// the label's ink brightens.
+.map-container a.popup-content--atlas {
+  color: $text-color;
+  text-decoration: none;
+
+  &:hover .popup-title { color: #fff; }
+  &:hover .popup-meta { color: $light-gray; }
+  &:focus-visible { @include brass-focus; }
+}
+
+// On a touch screen a marker's label is a strip of words along the map's foot (map.js showStrip),
+// clear of the buttons at its head and of the attribution beneath.
+.map-strip {
+  left: 12px;
+  right: 12px;
+  bottom: 24px;
+  background-color: $obsidian-gray;
+  border: 1px solid rgba($lighter-gray, 0.09);
+  border-radius: $border-radius;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.34);
+
+  &[hidden] { display: none; }
+
+  .popup-content--atlas { grid-template-columns: minmax(0, 1fr) auto; }
+  .popup-title { overflow: hidden; text-overflow: ellipsis; }
+  .popup-action { @include text-button; font-size: 0.82rem; }
+}
+
+// A part's name written beside its marker (map.js nameParts): the serif, in ink, with no box and no
+// tip; a shadow only so it reads over the tiles. leaflet.css boxes a tooltip at (0,1,0) and draws its
+// tip at (0,1,1).
+.map-container .leaflet-tooltip.map-name {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: $lighter-gray;
+  font: 400 15px/1.3 $global-font-family;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 8px rgba(0, 0, 0, 0.8);
+
+  &::before { content: none; }
+
+  &.is-crowded { visibility: hidden; }
 }
 
 // Markers (CircleMarkers)
@@ -301,14 +288,18 @@
 }
 
 .map-container .leaflet-interactive {
-  transition: opacity 0.2s ease-out, fill-opacity 0.2s ease-out, stroke-opacity 0.2s ease-out, fill 0.2s ease-out, stroke 0.2s ease-out, stroke-width 0.2s ease-out;
+  transition: opacity $duration-fast $cubic-bezier-standard, fill-opacity $duration-fast $cubic-bezier-standard, stroke-opacity $duration-fast $cubic-bezier-standard, fill $duration-fast $cubic-bezier-standard, stroke $duration-fast $cubic-bezier-standard, stroke-width $duration-fast $cubic-bezier-standard;
 }
 
-// Atlas pill toggle — pinned over the map's top-right corner, under the
-// click-to-explore veil (1100) and the tag palette it opens (1005).
-.map-legend--atlas-pill {
+// Tags, pinned over the map's top-right corner, under the tag list it opens (1005); a marker's
+// strip shares its layer, at the map's foot.
+.map-legend--atlas-pill,
+.map-strip {
   position: absolute;
   z-index: 1000;
+}
+
+.map-legend--atlas-pill {
   top: 14px;
   right: 14px;
   left: auto;
@@ -322,7 +313,7 @@
 
 .map-container .map-legend--atlas,
 .map-container .map-legend-palette {
-  transition: opacity 0.24s ease-out, transform 0.24s ease-out;
+  transition: opacity $duration-base $cubic-bezier-standard, transform $duration-base $cubic-bezier-standard;
 }
 
 .map-container--booting .map-legend--atlas,
@@ -337,55 +328,35 @@
   transform: none;
 }
 
-.map-legend--atlas {
-  .legend-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    min-width: 4.5rem;
-    padding: 0.45rem 0.9rem;
-    border-radius: 999px;
-    border: 1px solid rgba($lighter-gray, 0.12);
-    background: rgba(14, 14, 14, 0.62); // Tier 3: glass pill surface
-    @include backdrop-blur(blur(14px));
-    color: $lighter-gray;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease, color 0.18s ease;
+// A text button in the tools' height and glass, its word a label's.
+.map-legend--atlas .legend-pill {
+  @include text-button;
+  @include eyebrow;
+  min-height: 40px;
+  padding: 0 0.9rem;
+  background: var(--photobook-button);
+  border-color: rgba($lighter-gray, 0.12);
+  @include backdrop-blur($glass-blur);
+  color: $lighter-gray;
 
-    &:hover {
-      transform: translateY(-1px);
-      background: rgba(18, 18, 18, 0.78); // Tier 3: glass pill surface hover
-      border-color: rgba($lighter-gray, 0.18);
-    }
+  svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linejoin: round; stroke-linecap: round; }
 
-    &.is-active {
-      background: rgba(26, 26, 26, 0.82); // Tier 3: glass pill surface active
-      border-color: rgba($lighter-gray, 0.24);
-    }
+  &.is-active { background: var(--photobook-button-hover); }
 
-    &:focus-visible {
-      @include brass-focus;
-    }
-
-    &.has-filter::after {
-      content: '';
-      display: inline-block;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: $intriguing-word-color;
-      margin-left: 7px;
-      flex-shrink: 0;
-    }
+  &.has-filter::after {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: $intriguing-word-color;
+    margin-left: 2px;
+    flex-shrink: 0;
   }
 }
 
-// Atlas tag palette panel. Nothing sets display on the panel, so the UA's
-// [hidden] rule would do; this just keeps the intent visible.
+// Atlas tag list: one slim column, every tag in view, no title bar. Nothing sets display on the
+// panel, so the UA's [hidden] rule would do; this just keeps the intent visible.
 .map-legend-palette[hidden] {
   display: none;
 }
@@ -394,21 +365,21 @@
   position: absolute;
   top: 62px;
   right: 14px;
-  width: min(320px, calc(100% - 28px));
+  width: min(236px, calc(100% - 28px));
   max-height: min(28rem, calc(100% - 84px));
   display: flex;
   flex-direction: column;
   background: rgba(16, 16, 16, 0.82); // Tier 3: glass palette surface
   @include backdrop-blur(blur(18px));
   border: 1px solid rgba($lighter-gray, 0.08);
-  border-radius: 18px;
+  border-radius: $border-radius;
   box-shadow: 0 22px 54px rgba(0, 0, 0, 0.42);
   z-index: 1005;
   overflow: hidden;
   transform: translateY(-8px) scale(0.985);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity $duration-base $cubic-bezier-standard, transform $duration-base $cubic-bezier-standard;
 
   &.is-open {
     opacity: 1;
@@ -416,75 +387,28 @@
     pointer-events: auto;
   }
 
-  .legend-palette-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 0.95rem 1rem 0.85rem;
-    border-bottom: 1px solid rgba($lighter-gray, 0.08);
-  }
-
-  .legend-palette-title {
-    color: $lighter-gray;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .legend-palette-actions {
-    display: flex;
-    align-items: center;
-    gap: 0;
-  }
-
-  .legend-palette-close {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    font-size: 1rem;
-    line-height: 1;
-    border-radius: 999px;
-    border: 1px solid rgba($lighter-gray, 0.1);
-    background: rgba($lighter-gray, 0.04);
-    color: $lighter-gray;
-    cursor: pointer;
-    transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
-
-    &:hover {
-      background: rgba($lighter-gray, 0.08);
-      border-color: rgba($lighter-gray, 0.16);
-      transform: translateY(-1px);
-    }
-
-    &:focus-visible {
-      @include brass-focus;
-    }
-  }
-
   .legend-palette-body {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: 0.75rem 0.5rem 1rem;
+    padding: 8px 6px;
   }
 
   .legend-item {
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 0.3rem 0.5rem;
+    padding: 1px 8px;
     border: 1px solid transparent;
-    border-radius: 6px;
+    border-radius: $border-radius;
     background: transparent;
     color: $text-color;
+    font-family: $barlow-font-family;
     text-align: left;
     cursor: pointer;
     text-decoration: none;
-    transition: color 0.22s ease, opacity 0.22s ease, background 0.22s ease, border-color 0.22s ease;
+    transition: color $duration-fast $cubic-bezier-standard, opacity $duration-fast $cubic-bezier-standard, background $duration-fast $cubic-bezier-standard, border-color $duration-fast $cubic-bezier-standard;
 
     &:hover {
       color: $lighter-gray;
@@ -495,11 +419,6 @@
       color: $lighter-gray;
       background: rgba($lighter-gray, 0.06);
       border-color: rgba($lighter-gray, 0.14);
-
-      .legend-color {
-        transform: scale(1.2);
-        box-shadow: 0 0 0 2px rgba($lighter-gray, 0.12);
-      }
     }
 
     &:focus-visible {
@@ -513,15 +432,16 @@
       flex-shrink: 0;
       border-radius: 50%;
       border: 1px solid rgba($lighter-gray, 0.1);
-      transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
     }
 
     .legend-label {
       flex: 1;
       min-width: 0;
-      font-size: $type-code-size;
-      font-family: $barlow-font-family;
+      overflow: hidden;
+      font-size: 13px;
       line-height: 1.35;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     .legend-count {
@@ -545,6 +465,7 @@
   .legend-group--palette {
     display: grid;
     gap: 2px;
+    grid-template-columns: minmax(0, 1fr); // a long name is cut to the column, not the column widened to it
   }
 }
 
@@ -556,7 +477,6 @@
   }
 
   .map-legend-palette {
-    width: min(280px, calc(100% - 20px));
     top: 58px;
     right: 10px;
   }
@@ -576,20 +496,6 @@
   text-align: center;
 }
 
-.leaflet-tooltip {
-  background-color: rgba($background-color, 0.95);
-  border: 1px solid $border-color;
-  border-radius: 4px;
-  color: $text-color;
-  font-size: 12px;
-  padding: 6px 10px;
-  box-shadow: $box-shadow;
-
-  &::before {
-    border-top-color: rgba($background-color, 0.95);
-  }
-}
-
 // Z-index stacking
 .map-container {
   .leaflet-pane {
@@ -605,198 +511,20 @@
   }
 }
 
-// Atlas popup content
-.popup-content--atlas {
-  min-width: 214px;
-
-  .popup-meta {
-    color: $gray;
-    font-size: 10px;
-    margin-top: 3px;
-    margin-bottom: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .popup-description--static {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    margin-bottom: 13px;
-    color: rgba($lighter-gray, 0.72);
-    font-style: normal;
-    line-height: 1.58;
-  }
-
-  .popup-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 14px;
-  }
-
-  .popup-tag {
-    display: inline-flex;
-    align-items: center;
-    max-width: 100%;
-    padding: 0.14rem 0.46rem;
-    border-radius: 999px;
-    border: 1px solid var(--tag-color, #7d746d);
-    background: rgba($lighter-gray, 0.04);
-    color: $lighter-gray;
-    font-size: 9.5px;
-    line-height: 1.3;
-    text-decoration: none;
-    transition: background 0.16s ease, border-color 0.16s ease;
-
-    &:hover {
-      background: rgba($lighter-gray, 0.08);
-      color: $lighter-gray;
-    }
-
-    &:focus-visible {
-      @include brass-focus;
-    }
-  }
-
-  .popup-tag--overflow {
-    border-color: $border-color;
-    background: rgba($lighter-gray, 0.04);
-    cursor: default;
-  }
-
-  .popup-action {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0.4rem 0.82rem;
-    border-radius: 999px;
-    border: 1px solid $border-color;
-    color: $lighter-gray;
-    text-decoration: none;
-    font-size: 10.5px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    transition: background 0.18s ease, border-color 0.18s ease;
-
-    &:hover {
-      color: $lighter-gray;
-      border-color: $gray;
-      background: rgba($lighter-gray, 0.04);
-    }
-
-    &:focus-visible {
-      @include brass-focus;
-    }
-  }
-}
-
-// Click-to-activate veil — the map rests behind it until the reader chooses to
-// explore, so plain page-scroll is never hijacked. The same surface carries
-// the quiet loading state ("Charting…") before it arms into the CTA.
-.map-veil {
-  position: absolute;
-  inset: 0;
-  z-index: 1100; // above Leaflet controls and the tag palette
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  background: rgba(12, 13, 14, 0.42); // Tier 3: near-black scrim over the tiles
-  @include backdrop-blur(blur(2px));
-  transition: opacity 0.5s ease, visibility 0.5s ease;
-
-  &--loading {
-    cursor: default;
-  }
-
-  &:focus-visible {
-    outline: 2px solid rgba($intriguing-word-color, 0.6);
-    outline-offset: -6px;
-  }
-}
-
-.map-veil__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.6rem 1.1rem;
-  border-radius: 999px;
-  background: rgba(14, 14, 14, 0.58); // Tier 3: glass, matching the control bar
-  @include backdrop-blur(blur(14px));
-  border: 1px solid rgba($lighter-gray, 0.16);
-  box-shadow: $shadow-soft;
-  color: $text-color;
-  font-family: $barlow-font-family;
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  transition: transform 0.25s ease, border-color 0.25s ease;
-
-  i {
-    color: $intriguing-word-color;
-  }
-}
-
-.map-veil:hover .map-veil__cta {
-  transform: translateY(-1px);
-  border-color: rgba($intriguing-word-color, 0.4);
-}
-
-.map-veil__status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  // Muted ivory (not $gray) so the transient "Charting…" label clears AA
-  // contrast on the near-black tiles; matches the popup's muted-ivory tone.
-  color: rgba($lighter-gray, 0.72);
-  font-family: $barlow-font-family;
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.map-veil__spinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid $darker-gray;
-  border-top-color: $intriguing-word-color;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-.map-container--active .map-veil {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
 // Every selector here matches (or outranks) the rule that gives the element
 // its motion, and the block sits after them all, so it wins by order. The
 // motion-off block below reuses the list.
 @mixin map-motion-still {
-  .map-container .leaflet-control-zoom a,
-  .map-container .leaflet-control-reset .leaflet-control-reset-button,
-  .map-container .leaflet-control-fullscreen .leaflet-control-fullscreen-button,
+  .map-container .leaflet-control-container .leaflet-control.leaflet-bar a,
   .map-container .leaflet-interactive,
   .map-container .map-legend--atlas,
   .map-container .map-legend--atlas .legend-pill,
   .map-container .map-legend-palette,
-  .map-container .map-legend-palette .legend-palette-close,
   .map-container .map-legend-palette .legend-item,
-  .map-container .map-legend-palette .legend-item .legend-color,
-  .map-container .popup-action,
-  .map-container .leaflet-popup .leaflet-popup-close-button,
-  .map-container .map-veil,
-  .map-container .map-veil__cta {
+  .map-container .popup-content--atlas .popup-title,
+  .map-container .popup-content--atlas .popup-meta,
+  .map-container .popup-content--atlas .popup-action {
     transition: none;
-  }
-
-  .map-container .map-veil__spinner {
-    animation: none;
   }
 }
 

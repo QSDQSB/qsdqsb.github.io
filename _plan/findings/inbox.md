@@ -10,6 +10,10 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-11-27 · F122 · a voyage in parts, at the wide breakpoint · The hero's wrapper is centred with a max-width at wide, so its title stands inside the parts covers' edge (283 px against 43 px at 1920); levelling it would shrink the parts covers, which the owner kept as today (session)
+- 2026-11-27 · F121 · _sass/_map.scss .legend-pill.has-filter, .legend-item.is-active · What is on in the map's tag list is still a brass dot and a grey outline, not 0012's one-pixel brass hairline; belongs with stage 10's tag work (reviewer)
+- 2026-11-27 · F120 · _sass/_archive.scss .container--parts · clamp(1rem, 3vw, 2.4rem), the house gutter, is now written literally in six places (_page.scss, _bestiary.scss, _colour.scss, --photobook-gutter, here): one token in a later sweep (reviewer)
+- 2026-11-27 · F119 · scripts/gate.sh · The diff-scoped guards (vocabulary and !important ratchets, house style, frontmatter) compare the working tree with HEAD, so on a fully committed branch they see nothing; compare against the merge base with origin/master when the tree is clean (reviewer)
 
 ## Taken
 

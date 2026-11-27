@@ -1,5 +1,6 @@
 {% comment %} A voyage's cover (voyage-cover.html) turns the overlay hero on, as header.overlay_image does for other pages.
-  bare=true: the picture alone, no title on it and no scrim for one; the page sets its title beneath (the Bestiary). {% endcomment %}
+  bare=true: the picture alone, no title on it and no scrim for one; the page sets its title beneath (the Bestiary).
+  facts: markup set at the hero's right, beside the title (a voyage in parts, _layouts/gallery.html). {% endcomment %}
 {% include voyage-cover.html doc=page %}
 {% if page.header.overlay_color or page.header.overlay_image or page.header.image or vc %}
 {% include base_path %}
@@ -86,6 +87,7 @@
           <p><a href="{{ cta_path }}" class="btn btn--light-outline btn--large">{{ page.header.cta_label | default: site.data.ui-text[site.locale].more_label | default: "Learn More" }}</a></p>
         {% endif %}
       </div>
+      {{ include.facts }}
     </div>
     {%- endunless %}
   {% else %}

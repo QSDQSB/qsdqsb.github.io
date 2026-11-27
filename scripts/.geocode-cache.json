@@ -300,5 +300,13 @@
   "wengen, lauterbrunnen, switzerland": {
     "lat": 46.6054411,
     "lng": 7.9217237
+  },
+  "lungern, obwalden, switzerland": {
+    "lat": 46.7857297,
+    "lng": 8.1607283
+  },
+  "titlis": {
+    "lat": 46.772034,
+    "lng": 8.437814
   }
 }
