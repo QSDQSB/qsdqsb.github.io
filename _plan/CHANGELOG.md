@@ -11,6 +11,11 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-27 · In the book and its viewer keyboard focus is the brass ring and no label is under 11 px; a phone's place names under paired prints are never cut short, and the view switch and the colophon's frame vats take a finger's width (Q24) · tier 2
+- 2026-11-27 · Words written for a voyage are an afterword in a reading column set as a post's text; after the colophon come Elsewhere as two covers, the tags and date on one line, the subscribe slip, and the sign-off last (Q24, Q25) · tier 2
+- 2026-11-27 · An opened print beside its specs hangs at eye level, the specs level with its top; each mark on the rail beneath takes its frame's own colour; the specs' labels sit on one line (Q25) · tier 2
+- 2026-11-27 · A voyage's YAML can mark the photographs that take the book's full width (spread: true); where none is marked the book keeps every sixth by count, and it never opens on the cover's own photograph (Q25) · tier 2
+- 2026-11-27 · Inside a voyage, the cover's figures (date, frames, lenses, films, body) stand in the band under the cover beside the dial; on a phone four of them stay on the picture over a darker shade (Q24, Q25) · tier 2
 - 2026-11-27 · On a phone the rooms that do not fit in the menu bar open beneath it as the same bar continued: the same size, weight and corners, no pointer triangle; the room you are in is marked there too, with a hairline exactly as wide as its word, and a tap no longer leaves a filled square on the button (R034) · tier 2
 - 2026-11-27 · A tag under a post or a voyage is ink on one line, with no colour of its own (R026) · tier 2
 - 2026-11-27 · On a phone a hero's title is a quarter larger, and a picture's credit has its own line under the excerpt (it also shows now for readers with motion off) (R031) · tier 2

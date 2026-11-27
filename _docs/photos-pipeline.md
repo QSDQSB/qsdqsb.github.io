@@ -63,12 +63,22 @@ photos:
     story: |
       Taken between two buses.
     featured: true
+    spread: true             # this frame takes the book's full width (see below)
   dscf6533:
     hidden: true             # processed but not shown
 ```
 
 Every key is optional. A photograph with no entry still shows, sorted by
-capture time, captioned by nothing. `npm run photos:fetch` validates the
+capture time, captioned by nothing.
+
+`spread: true` is how a voyage is sequenced by hand: once any frame of a
+gallery carries it, exactly the marked frames take the Photobook's full width
+and the frames between them run in pairs and threes
+(`assets/js/photobook/rows.mjs`). A marked portrait still never takes the full
+width. Where nothing is marked, the count decides as before: a spread, a pair,
+a three, again. The book never opens on the cover's own photograph: when the
+cover is the first frame it changes places with the second
+(`awayFromCover`, `scripts/photos/lib/book.mjs`). `npm run photos:fetch` validates the
 shape and reports slugs that no processed photo matches.
 
 ### The voyage cover

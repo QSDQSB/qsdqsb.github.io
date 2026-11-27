@@ -58,7 +58,9 @@ The walks become journeys in `scripts/check-journeys.mjs` once the routes are se
 
 ## Open questions, for the queue when the walk is done
 
-- Does Home's hero need a way on besides scrolling?
+- Does Home's hero need a way on besides scrolling? Answered 2026-11-27 (Q25): the welcome keeps the
+  whole screen, with "clear indications (animation) such that user is hinted to scroll down".
+  Built in [stage 13](13-home.md).
 - How does a reader find one voyage among thirty without the door revealing what is inside?
   Candidates that respect "doorways withhold": the map made more prominent, a quiet index of names
   beside the covers, search that knows places.
@@ -73,10 +75,19 @@ The walks become journeys in `scripts/check-journeys.mjs` once the routes are se
       `/voyage/` index found by its name alone, done by R014; a hex adds a Reverie result above the pages, `#` needed for three
       characters) and places (one entry per place per voyage, a line that opens the frame; light,
       weather and film only where a real share of a voyage; no picture loaded). Prints parked. Tier 2.
-- [ ] The footer: a choice, with prototypes.
+- [x] The footer: answered 2026-11-27 (Q24): "One small mark, the line, the links". Built in
+      [stage 14](14-shell-and-small-pages.md).
 - [ ] The tarot cards' next life: a study.
-- [ ] X09 · Search shows that it is open, and can be closed on a phone.
-- [ ] X20 · Tap targets under 24 px.
+- [ ] X09 · Search shows that it is open, and can be closed on a phone. Built with the search
+      panel's new dress in [stage 14](14-shell-and-small-pages.md) if that comes first.
+- [ ] X20 · Tap targets under 24 px. Measured on 2026-11-27 (`design/audits/measured.md`, finding
+      22); each batch of the sheets mends its own (stages 4, 6, 11, 12, 14). What is left after
+      them is this task.
+- [ ] F067, F091 · Searching one Chinese character (光) finds nothing: the index holds a lone
+      character only where it stands alone in the text. Two findings, one fault; with I004's
+      precision work. Tier 0.
+- [ ] F092 · Query words are stripped of marks at their edges and the index's are not, so "c++"
+      searches "c*". No page names C++ today; with I004. Tier 0.
 
 **From the inbox, sorted 2026-10-01.** None is on the audit, so none is under the owner's mark. All are
 tier 2 unless a line says otherwise.
@@ -93,6 +104,8 @@ tier 2 unless a line says otherwise.
       C11's shared way back (stage 9).
 - [ ] 2026-09-29 · Ridgway on a phone: about 36 screens with no jump to a plate. A jump is a new control.
       Low: the page has no door, by choice. Its sibling is audit P08 (a palette with no way on).
+      Since 2026-11-27 each plate is set as the book sets it (Q25, [stage 11](11-colour-pages.md)),
+      which halves the page: judge the jump again on that.
 
 **Known faults at 320 px, on the walks' route.** Each fix is a change only a small phone sees, so it
 needs the owner's word (`CLAUDE.md`, Responsive Policy), asked as one call the way X03 and X11 were.
@@ -129,7 +142,8 @@ the lead's reading. A drafted line that says where a link goes keeps the name of
 ## What needs the owner
 
 - The drafted lines for the book, above: not in the queue until they are drafted.
-- The open questions above, when the walk is done; the footer and the tarot cards, as choices.
+- The open questions above, when the walk is done; the tarot cards' next life, as a study (they stay
+  unseen until found: Q25, 2026-11-27).
 - The three faults at 320 px, as one call.
 
 ## Exit

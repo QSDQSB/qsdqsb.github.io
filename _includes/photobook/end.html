@@ -1,17 +1,10 @@
 {%- comment -%}
-  After the colophon, the page closes as the rest of the site does: the tags, the subscribe slip, the
-  dates and the sign-off; then the ways on, last (the owner, 2026-10-17): the voyage's other parts,
-  and a few voyages at random, Elsewhere.
+  After the colophon, the ways on: the voyage's other parts, and two voyages at random, Elsewhere;
+  then the tags and the date on one line, the subscribe slip, and the sign-off last, as a post ends.
   The cards' covers are parked in --bg-later and set by assets/js/card-covers.js as they come
   near, so a book's first screen does not fetch the covers of other voyages.
 {%- endcomment -%}
 <div class="photobook-end">
-  {%- if site.tag_voyage.type and page.tags[0] %}
-  <div class="center-wrapper">{% include tag-list.html %}</div>
-  {%- endif %}
-  {%- if page.subscribe != false %}{% include subscribe.html %}{% endif %}
-  <footer class="page__meta">{% include page__dates.html %}</footer>
-  {% include presented-by-qsd.html line="Shot by QSD." %}
   {%- if page.gallery_name contains "/" %}
     {%- assign parent_name = page.gallery_name | split: "/" | first -%}
     {%- assign siblings = site.subvoyage | where_exp: "post", "post.url != page.url" | where_exp: "post", "post.gallery_name contains parent_name" -%}
@@ -30,7 +23,7 @@
     {%- assign others = site.voyage | where_exp: "post", "post.path != page.path" -%}
     {%- assign ready_voyages = "" | split: "" -%}
     {%- for v in others %}{% include photobook-ready.html doc=v %}{% if photobook_ready %}{% assign ready_voyages = ready_voyages | push: v %}{% endif %}{% endfor -%}
-    {%- assign random_posts = ready_voyages | sample: 4 -%}
+    {%- assign random_posts = ready_voyages | sample: 2 -%}
     {%- for post in random_posts -%}
       {%- if post.subgalleries -%}
         {%- assign voyage_name = post.path | split: "/" | last | split: "." | first | append: "/" -%}
@@ -43,4 +36,10 @@
       {%- endif -%}
     {%- endfor -%}
   </section>
+  <footer class="page__meta photobook-end__meta">
+    {%- if site.tag_voyage.type and page.tags[0] %}{% include tag-list.html %}{% endif %}
+    {% include page__dates.html %}
+  </footer>
+  {%- if page.subscribe != false %}{% include subscribe.html %}{% endif %}
+  {% include presented-by-qsd.html line="Shot by QSD." %}
 </div>

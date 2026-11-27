@@ -53,6 +53,27 @@ much. Nothing here waits on an amount any longer. The language is version 1: the
   inherited." The Photobook's pill, its round tools and its bar and panel of glass stay as built in
   this stage (0009, "Not settled").
 
+## Since 2026-11-27: the rule, the audits and the sheets
+
+The owner adopted the five-line rule ([0012](../decisions/0012-two-voices-one-behaviour.md)) and
+answered two sheets ([0013](../decisions/0013-what-the-sheets-settled.md)). Three audits read every
+stylesheet and page against the rule (`design/audits/stylesheets.md`, `reviewer.md`, `measured.md`;
+local, not in git). What that changes here:
+
+- **C02, C03, C06 and A05 are no longer swept surface by surface from this stage.** Each of the six
+  batches (stages [6](06-posts-and-about.md), [12](12-inside-a-voyage.md),
+  [4](04-voyage-and-cards.md), [13](13-home.md), [11](11-colour-pages.md),
+  [14](14-shell-and-small-pages.md)) brings its own files to the rule: its focus rings, its
+  pressable corners, its hand-set labels, its dead styles. The site-wide ring, the forms' face and
+  the two brasses are stage 14's. What is left in `_sass/` after the six is this stage's sweep.
+- **A pressable's corner is answered:** "Everything pressable has 10 px corners" (0012, line 5). The
+  audit's section D is the sorted list C03 asked for. What still goes to the owner first is a
+  corner on something that is not pressable (a panel, a table, a quotation's box, the wide cover).
+- **The search panel is answered** (Q24, "Brought into line where it stands"): its glass comes to
+  14 px in stage 14 and is shown there. The map's panel becomes a slim list in stage 4.
+- **"Current" has its mark:** a one-pixel hairline in brass (0012, line 4), pale for where you are
+  and warm for what is on (0013).
+
 ## The order of work
 
 1. The pixel harness's two faults (below): every before-and-after rests on the diff.
@@ -214,6 +235,9 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
 - [ ] C05, the bilingual switch. Its glass is 4 px (`_sass/_bilingual-switch.scss:50`); `thin` is 6
       px. That is 2 px and 50 per cent: under the absolute threshold and over the relative one, so
       it is not tier 1. Shown with the panels.
+- [ ] F087 · Before C04 moves anything: `$cubic-bezier-default` now reads as `$duration-cover`, and
+      0009 narrows `cover` to the wide cover's words. Its callers are not all the cover
+      (`design/audits/stylesheets.md`, H11, names eight outside it): sort them first. Tier 0.
 - [ ] C04, the one-second controls. `$cubic-bezier-default` puts one second on seven properties,
       twenty uses in seven files, the navigation, the copy button and the sidebar among them. One second to `base` (0.3 s) is 70 per cent. "Snappy timings are for utility
       controls" is the owner's (Cards), but which of the twenty is a control is the lead's sorting:
@@ -248,8 +272,17 @@ pick alone. They go to the owner together, from the specimen page, as pictures a
       `base`); bare `ease` and the ad hoc curves go to the two curves where the duration does not
       change. Anything further is in "Shown to the owner first".
 - [x] C05, under the threshold · Done 2026-10-09: the four 12 px blurs (the masthead's menu and search buttons, the round tool of the lightbox and Drift, the hover tip) are on `$glass-blur`, and `$nav-action-blur` is gone; the saturation goes from 100 to 120 per cent with the step (0009, Glass), at the relative threshold. The pixel diff is clean, so no baseline moved; the hover tip takes the shared `dark-glass-fill`. As first written: `control` (12 px) folds into `glass` (14 px): 2 px, 17 per cent.
-- [ ] C06 · Hand-written labels onto `eyebrow`.
+- [ ] C06 · Hand-written labels onto `eyebrow`. The list is `design/audits/stylesheets.md`, A5:
+      twelve on older pages and Home's three, each in its batch; the Photobook's twelve in stage 12
+      (the owner, Q24: "no label under 11 px"). The spacing differs by a hair between two uses of
+      the same label (`measured.md`, 17: 0.22em and 0.24em): one value, here.
 - [ ] C12 · Small dialects swept once the scales exist: hover direction, dates, ellipses, rules, one `scroll-padding-top`.
+- [ ] The single-use guard counts lines, not selectors, so twelve variables used in one selector
+      pass it (`design/audits/stylesheets.md`, H1, H2). Outside `_plan/`: the script is
+      `scripts/check-single-use-variables.py`. The variables themselves are inlined by the batch
+      that owns each file. Tier 0.
+- [ ] A check that refuses a transform in a control's hover (0012, "Not done by this record"), once
+      the six batches have taken the count to the signatures alone. Tier 0; a ratchet, as the others.
 
 **Decided by the owner on 2026-10-01, to build**
 - [x] Headings white by default; the hue-per-level h2 to h5 in `_sass/_base.scss` retired. Shown before and after.

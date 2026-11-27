@@ -2,10 +2,11 @@
  * What the Photobook needs beyond the merged manifest, worked out once at
  * build time so Liquid only renders and the page's script only reacts:
  *
- *   rows       the rhythm of the book: a spread, a pair, a three, again;
+ *   rows       the rhythm of the book: the frames marked `spread: true` take
+ *              the full width, else a spread, a pair, a three, again;
  *              a portrait never takes a spread, and the last two or three
- *              frames close the book together
- *   cover      the frame the voyage opens on
+ *              frames close the book together (assets/js/photobook/rows.mjs)
+ *   cover      the frame the voyage opens on; the book's first print is never it
  *   colophon   films, lenses and the hours the frames were made
  *   colour     the voyage's five colours, its barcode (a sliver per frame, shaded top to bottom
  *              as the frame is) and an order in which the sheet reads as one gradient
@@ -60,6 +61,16 @@ export function coverIndex(photos, slug = null) {
   if (i >= 0) return i;
   const j = photos.findIndex(land);
   return j >= 0 ? j : photos.length ? 0 : null;
+}
+
+/**
+ * The book never opens on its cover's own photograph, printed on the cover just above: that frame
+ * changes places with the next one. Returns the photos in the book's order and the cover's slug.
+ */
+export function awayFromCover(photos, slug = null) {
+  const c = coverIndex(photos, slug);
+  const ordered = c === 0 && photos.length > 1 ? [photos[1], photos[0], ...photos.slice(2)] : photos;
+  return { photos: ordered, cover: c == null ? null : photos[c].slug };
 }
 
 /** "XF90mmF2 R LM WR" → "XF 90 mm f/2": the lens as a photographer says it. */
@@ -228,6 +239,7 @@ export function lightboxOf(photos) {
     shots: p.shutterCount ?? null, focal: p.focal ?? null, aperture: p.aperture ?? null, shutter: p.shutter ?? null,
     iso: p.iso ?? null, bias: p.exposureBias ?? null, camera: cameraName(p.camera), lens: lensName(p.lens),
     film: p.film ?? null, hue: p.filmHue ?? null, code: filmCode(p.film), light: p.light, weather: p.aloft || weatherOf(p.weather, p.light), glow: p.glow, settings: settingsOf(p), signature: p.signature || null,
+    tick: p.strip?.[1] || null, // the frame's own colour (its middle band), for its mark on the lightbox's rail
   }));
 }
 
@@ -331,6 +343,7 @@ export function bookOf(merged, locations = {}) {
     const name = place?.name || p.caption || merged.title || titleOf(merged.gallery) || p.frame;
     return { ...p, name, film, place, light, glow: glowOf(p.thumbhash), ph: placeholderOf(p.thumbhash), filmHue: filmHue(film) };
   }
-  const { photos: tinted, colour } = colourOf(photos);
-  return { ...merged, photos: tinted, book: { rows: bookRows(tinted), cover: coverIndex(tinted, merged.cover?.photo), colophon: colophonOf(tinted), lightbox: lightboxOf(tinted), colour } };
+  const { photos: ordered, cover } = awayFromCover(photos, merged.cover?.photo);
+  const { photos: tinted, colour } = colourOf(ordered);
+  return { ...merged, photos: tinted, book: { rows: bookRows(tinted), cover: coverIndex(tinted, cover), colophon: colophonOf(tinted), lightbox: lightboxOf(tinted), colour } };
 }

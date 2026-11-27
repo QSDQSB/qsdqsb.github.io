@@ -117,6 +117,11 @@ Added on 2026-10-01, by the owner's decision that a photograph may be on the ima
 
 ## Not binding, kept here
 
+- [ ] F038 · Every palette and Reverie link previews the same photograph (one `og_image`,
+      `_pages/palette.html`, `_pages/reverie.html`): a preview for each voyage needs an address for
+      each voyage. It is the same wish as this stage's, a palette that can be sent to someone, so
+      it is weighed with the study's sheets and not built alone. Tier 2.
+
 - [ ] F006 · 2026-09-28 · Palettes under-weight salient colour (Porto DSCF7059: the orange roofs and
       the yellow parasol). This does not gate the image. Traced on 2026-10-01: the finding is about
       one photograph's signature, which the image never prints; a voyage's palette is pooled at build

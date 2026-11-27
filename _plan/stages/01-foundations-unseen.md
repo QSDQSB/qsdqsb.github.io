@@ -133,6 +133,39 @@ A faster, steadier site that looks exactly the same. Every item is a finding fro
       holds no page made from a file at the repository's root that is not meant to be one.
       `_config.yml` is a file the changelog rule watches, so it takes its line.
 
+**From the inbox, sorted 2026-11-27.** None is on the audit of 2026-10-01. Each is tier 0: a fault
+no reader should have to see, or a guard that is missing. One a morning suits them.
+- [ ] F118 · In Chromium emulating a phone, following a link throws an uncaught error ("Transition
+      was aborted because of invalid state", the viewport's size changed): the page transition's
+      promise is not caught (`_includes/head/custom.html`). A journey that taps a link on a phone
+      fails on it.
+- [ ] F050 · `assets/js/lunr/lunr.js` is loaded by nothing (search loads `lunr.min.js` and
+      `lunr-en.js`), is 100 KB, and is still copied to the live site. Delete or exclude it.
+- [ ] F069 · A local build rewrites two tracked files, `assets/maps/voyage-atlas.geojson` and
+      `scripts/.geocode-cache.json`: the copies in git are behind their sources, and every build
+      leaves the tree dirty.
+- [ ] F089 · `photos:status -- --gallery <g>` (and a single-gallery fetch) rewrites
+      `_data/photo_manifests/_index.json` to name only that gallery, so `check:gallery` then reports
+      every other voyage as having no manifest until a full fetch.
+- [ ] F068 · `_portfolio/architecture.md` is dated 2021-04-31, a day April does not have. The page
+      is unlinked; the 30th, unless the owner says another day.
+- [ ] F106 · No test for import step 3 with a frame number held only by another gallery: stage
+      `cornwall/DSCF0001.JPG` as a different picture while `devon/DSCF0001.JPG` exists, expect it
+      added to cornwall (`tests/photos-import.test.js`).
+- [ ] F105 · No journey clicks the scroll-mode random card (`[data-random-jump-mode=scroll]` on
+      `/posts/`): stub `Math.random` onto the digit-led post, click, and see the page move to it.
+- [ ] F093 · `scripts/visual-baseline.mjs`, `maskPhotographs`: `bg.includes(flat)` never matches
+      (Chromium reports `rgb(42, 42, 42)`) and is dead; and a page under 8,000 px is shot with no
+      pause after the full-page resize. If a short page's shot ever flakes, here first.
+- [ ] F063 · The pixel diff cannot see a coarse-pointer rule: a full-page capture is rendered with
+      the query off, so the touch rules in `_photobook.scss` and `_archive.scss` have never been in
+      a baseline. A phone shot with the pointer set coarse, or a journey that reads the rule.
+- [ ] F112 · No pixel shot covers the royal letters (the seal over the frame, the band of beads,
+      the corners): add `post-proclamation` at both widths; the post is in the pin. A capture is a
+      write to R2, so it is held for a session with the owner's `QSD`.
+- [ ] F064 · The 404's embedded video reads "This video is unavailable" in the baselines; perhaps
+      only in a headless browser. Held for a session that can open it in a visible one.
+
 ## Not in this stage
 
 S02, S08, S12 are larger and sit in stage 9. X03 and X11 (phone-only visual changes) were approved on
