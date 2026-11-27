@@ -182,7 +182,7 @@ html.map-unfolded { overflow: hidden; }
 }
 
 // A marker's label (map.js openLabel), as a name is written on a map: the voyage's name and when,
-// and an arrow; the whole label leads to the voyage.
+// with no arrow; the whole label leads to the voyage.
 .map-container .leaflet-popup {
   .leaflet-popup-content-wrapper {
     background-color: $obsidian-gray;

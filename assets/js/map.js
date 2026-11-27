@@ -222,8 +222,9 @@
     L.DomEvent.disableClickPropagation(open);
     open.addEventListener('click', () => setUnfolded(map, container, true));
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') setUnfolded(map, container, false);
-    });
+      // An open tag list takes the first Escape (its own handler, which runs after this capturing one); the next folds the map.
+      if (event.key === 'Escape' && !(map._atlasState && map._atlasState.drawerOpen)) setUnfolded(map, container, false);
+    }, true);
   }
 
   function setUnfolded(map, container, on) {

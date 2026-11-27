@@ -303,7 +303,7 @@ call ([0001](decisions/0001-who-decides-what.md)) and arrives as a prototype
 | The monogram | Home's hero | Inline, never a gate. It loops |
 | The hero's depth | Every hero | |
 | The opening | Hero pages | The masthead stays away, then returns; it yields to a reader looking for the way |
-| The map's veil | The atlas | The map never takes the scroll |
+| The still map | The atlas | The map never takes the scroll: a wheel over it scrolls the page, and on a phone it is a still preview that a tap unfolds to the whole screen |
 | The word card, the emblem rule | Posts, Home | The ornament does not replace the emblem rule |
 | The tarot cards | Corners of several pages | Under review (the owner, 2026-10-01): a new purpose is wanted; the wheel of fortune that spins to a random voyage is liked |
 
