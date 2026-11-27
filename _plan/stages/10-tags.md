@@ -64,6 +64,9 @@ tag is not a word in a list. Picked from prototypes (the choice page `tag-pages`
   script for that. At a room's foot, the doors of the five tags that share the most with it ("Next door").
 - The answers to "Before it is designed": a doorway, not an index (finding is search's); two pages, one layout.
 
+The corner tarot cards on these two pages sit over part of the door in the first and last column; asked
+with the pull request, the owner: "Keep them".
+
 Still the owner's, asked with the pull request: a line per tag for its door, naming a tag's photograph by hand
 (the page picks today), and which doors lead the wall.
 Three people brainstormed the reader's experience; what was not built is in the pull request's note. The
