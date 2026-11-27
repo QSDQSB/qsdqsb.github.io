@@ -1,150 +1,158 @@
 # Stage 4 · Voyage and the cards
 
-**Status:** designing. Prototypes exist on branch `gallery/voyage-doors` (pushed, not merged).
-**Tier:** 2. What the picks of 2026-10-01 answer is tier 2, answered
-([0009](../decisions/0009-how-much.md)).
+**Status:** planned. **Tier:** 2, answered: the picks of 2026-10-01
+([0009](../decisions/0009-how-much.md)) and the sheets of 2026-11-27 (Q24, Q25;
+[0013](../decisions/0013-what-the-sheets-settled.md)). Built as one batch, one session and one pull
+request with pictures; the merge is the yes ([0010](../decisions/0010-the-merge-is-the-yes.md)).
+
+**Scope changed 2026-11-27.** The refined card is no longer a choice: the owner kept the Voyage
+page, its wall and a part's covers as they stand (Q25) and answered the cover's words (Q24). The
+map joins this stage: both pages that carry it are here. Home's cards moved to
+[stage 13](13-home.md). The branch `gallery/voyage-doors` is on neither this Mac nor GitHub
+(looked 2026-11-27); its study is [here](../studies/2026-09-26-voyage-parent-pages.md).
 
 ## Goal
 
-The doorway to the photographs, refurbished: the Voyage index, the parent pages of voyages in parts,
-and the card they are both made of. The first older page moved onto the shared pieces, and the
-model for the rest.
+The doorway to the photographs, as it stands, made true to the rule: a cover that is still under the
+pointer, a voyage in parts that says what it holds, and a map a reader can use without being asked
+to wake it.
 
 ## What is already decided
 
-From the owner's calls in [`PRINCIPLES.md`](../PRINCIPLES.md), Doorways and Cards. In short:
-doorways withhold; the huge vivid cover on a large screen is the point; the overview of several
-doors stays; a card is a magazine cover with the same contrast over every photograph; the
-photograph never animates; the bar is extraordinary, not competent variants.
+**Kept as it stands (Q25; not to be re-proposed):** how the Voyage page opens; the wall of covers as
+one unbroken run; the size of a part's covers. With them, from before: doorways withhold; the huge
+vivid cover on a large screen is the point; a card is a magazine cover with the same contrast over
+every photograph; the photograph never animates.
 
-Tried and judged (2026-09-26): a contents list, a square-cover grid and one continuous book with
-chapter cards: none felt immersive. "By the light" (labels beside plates, ordered by hour): a
-definite no. "Hang" and "cinema": competent, not extraordinary. "Through the doors" (scroll moves
-through each cover's depth map): fine as the moment of entering, must not replace the card view.
+**Tried and judged (2026-09-26):** a contents list, a square-cover grid and one continuous book with
+chapter cards: none felt immersive. "By the light": a definite no. "Hang" and "cinema": competent,
+not extraordinary. "Through the doors": fine as the moment of entering, must not replace the cards.
 
-**Next step the owner named (2026-09-26):** today's card view, refined: full colour, the poem on
-phones, no hover lift.
-
-**From the pairs (the owner, 2026-10-01; `PRINCIPLES.md`, The eye).**
+**The owner, on the cover:**
 
 - "The wide cover of a voyage does nothing under the pointer": "Nothing moves, nothing changes"
-  (round 2, pick 13, over "The picture brightens; nothing moves" and "It lifts, as a small card
-  does"). "No hover lift" stands, and "The photograph itself never animates on hover" with it.
-- "Under the pointer a card lifts between 3 and 6 px and grows to between 1.012 and 1.025" (pick 4,
-  A, with the note "Between A and B"); the one value built, 4 px and 1.018, is the lead's. "A lift
-  takes 0.3 s" (pick 5). "At rest a card stands just off the page, on a short shadow" (pick 3). "A
-  card's corners are 10 px" (pick 1): "B or C depend on the scenario". Each was drawn as a small
-  card.
+  (2026-10-01, pick 13). Its words: "Fade in, in place" (Q24).
+- "Under the pointer a card lifts between 3 and 6 px and grows to between 1.012 and 1.025" (pick 4);
+  "A lift takes 0.3 s" (pick 5); "At rest a card stands just off the page, on a short shadow" (pick
+  3). Each was drawn as a small card.
 - "Nothing springs" (pick 12). "A voyage's title stays as built: Playfair, bold, upright" (pick 14).
-- "Over a photograph, glass and not a solid plate" (pair 10, score 1). "Few things, with room" (pair
-  16, score 1).
 
-**Which is the cover and which is a card.** The wide cover is the `card` of
-`_sass/_archive.scss:106-329`, drawn the width of its column, 3.5 to 1 from a tablet up
-(`_includes/archive-single.html`). It is on `/voyage/`, a voyage in parts, the end of a book,
-`/year-archive/`, `/tags/`, `/portfolio/` and under a post. A small card, today, is Home's "What's
-new" (`.wn-card`, `_sass/_home.scss:657-683`), whose hover was written to mirror the cover's.
+**The owner, on a voyage in parts and the map (Q25, with Q24's two):**
 
-**What the code does today, and what the picks make of it.**
+- A voyage in parts introduces itself with "The facts a single voyage carries".
+- Its map opens "Close, with each part's name written in".
+- The map is "Awake from the start".
+- A marker opens "A label, as on a map": "It should be able to hover and display".
+- On a phone a marker's card is "A strip of words at the foot", and "A tap unfolds it to the whole
+  screen".
+- The map's tags: "One slim list, no title bar". Its markers: "Colour stays, on the map alone" (Q24).
+- The map stands "After the covers, on both pages" (Q24).
 
-| | Built on `master` | After the picks |
-|---|---|---|
-| The wide cover, under the pointer | Up a quarter em, grown to 1.03, six shadows deep, its shape from 3.5 to 3.3, its title up a quarter em: all over one second (`_sass/_archive.scss:144`, `170-187`) | None of it (pick 13) |
-| The wide cover, its words under the pointer | Its line, its date and the reading time fade in over a second on a desktop; on touch the line and the date are at rest | Not settled: see below |
-| Home's cards, under the pointer | Up a quarter em, grown to 1.03, six shadows deep, over half a second | Up 4 px, grown to 1.018, one shadow, over 0.3 s (picks 4 and 5; 0009) |
-| Home's cards, at rest | 16 px corners, a hairline, no shadow | A short shadow (pick 3). One corner for the whole grid: 18 px, by the lead's reading of "the scenario" (the grid is Home's scene), which is 2 px from what is built |
+**Which is the cover and which is a card.** The wide cover is the `card` of `_sass/_archive.scss`,
+drawn the width of its column (`_includes/archive-single.html`). It is on `/voyage/`, a voyage in
+parts, `/year-archive/`, `/portfolio/` and, until batches 1 and 2 land, under a post and at the end
+of a book.
 
-**The branch, against the picks.** `gallery/voyage-doors` holds prototypes only (`design/doors/`,
-no site code). Its refined door is the 3.5 to 1 cover, so it is the wide cover.
+## Scope: batch 3, Voyage and the map
 
-- Its **removal of the lift and the growth is confirmed** (pick 13). The reading that pair 12 might
-  put the lift back on the cover is closed: pair 12 and picks 4 and 5 are about a small card, and
-  the branch draws none.
-- Its picture that **breathes with the depth map as the pointer nears is contradicted**: "Nothing
-  moves, nothing changes", and "The photograph itself never animates on hover". The door's opening
-  on a click is not under the pointer and is untouched; it may not overshoot (pick 12).
-- Its poem that brightens and its line of atmosphere that appears on hover are words under the
-  pointer: not settled, below.
-- Its square corners and no shadow meet picks 1 and 3 (a card is 10 or 18 px, on a short shadow).
-  Those picks drew a small card. Not settled; the lead's recommendation is the card's corners at 18
-  px and the short shadow, since the owner's own name for it is a card.
+Tier 2, answered, unless a line says otherwise. Pictures at both widths; a hover as a short capture.
+Audit ids are sections of `design/audits/stylesheets.md` (S), findings of
+`design/audits/reviewer.md` (R) and `design/audits/measured.md` (M).
 
-## Scope
+**The cover**
+- [ ] The wide cover is still under the pointer (pick 13). From `.card:hover, .card:focus-within`
+      take the transform, the six shadows, the change of shape and the title's rise (S, B1; R2;
+      M3). Its line, date and reading time fade in, in place, over the owner's one second (Q24);
+      a block an author hides on a cover (`.hidden_item`) fades the same way and no longer slides.
+      Keyboard focus keeps a mark: `brass-focus`. Q24 asked of "a wide cover", so a post's and
+      Portfolio's change with a voyage's.
+- [ ] The `cover-still` journey: on `/voyage/` at desktop width, hover the first `.card` and assert
+      its transform is none and its shadow is what it was at rest, and that its line reaches full
+      strength. Nothing else guards "the wide cover does nothing".
+- [ ] The same cover has four left edges: Posts 268 px, Voyage and Portfolio 277, a voyage in parts
+      27 (outside its own title at 43), the end of a book 43 (R21; M11, M12). One edge a page, the
+      title's. It is R025, whose branch `work/r025` is on GitHub: read it first. With it F103's
+      journey: the title starts at the list's edge at 1152 and at 1440. Tier 1; the moves are 9 to
+      16 px, so they are shown.
+- [ ] The grid card (`.card_grid_view .list__item`) grows by 5 per cent on a fancy shadow (S, B3):
+      the audit found no page that draws it (M, table 3). Delete it if none does; else the `card` piece. Tier 0 or 1.
 
-In order. The `card` piece comes from [stage 2](02-foundations-plumbing.md) and is built there first.
+**A voyage in parts**
+- [ ] Q25, parts-intro · A voyage in parts states the facts a single voyage carries: when (its span),
+      how many parts, how many frames, at the right of its opening picture, set as on a voyage's
+      cover. Figured at build from its parts, never typed. It is a count at a door, and the owner's
+      ([0013](../decisions/0013-what-the-sheets-settled.md)); nothing else at a door gains one.
+- [ ] Parent pages (Prague, Rome, Japan, Dolomites, Venice) keep their covers as they stand (Q25).
+      Venice: four parts "still on their way"; the owner chose to leave it. Ask before touching.
 
-**Tier 2, answered. Pictures at both widths; a hover as a short capture.**
-- [ ] The wide cover of a voyage is still under the pointer (pick 13). From
-      `.card:hover, .card:focus-within` take the transform, the deeper shadow, the change of shape
-      and the title's rise; the `aspect-ratio` transition goes with them. Keyboard focus keeps a
-      mark: `brass-focus`. The words that fade in are left exactly as they are for now. Answered
-      for a voyage's cover: `/voyage/`, a voyage in parts, the end of a book. Baselines hold, since
-      rest does not change.
-- [ ] **Tier 1, the lead's reading, not answered:** the same rule draws the card of a post, a
-      portfolio entry and the tag page, and the owner said "of a voyage". One piece, one behaviour
-      (0009, "Not settled") takes the lift off post cards the owner was not shown. `/year-archive/`
-      and a post's related cards are in the report before and after, as captures, and the owner can
-      reverse it: the post card would then keep a lift, the `card` piece's.
-- [ ] The `cover-still` journey, in `scripts/check-journeys.mjs`, with the task above: on `/voyage/`
-      at desktop width, hover the first `.card` and assert its computed transform is none and its
-      shadow is what it was at rest; on Home, hover a "What's new" card and assert that it does
-      move. Nothing else guards "the wide cover does nothing".
-- [ ] Home's "What's new" cards take the `card` piece's lift: 4 px, 1.018, one shadow, 0.3 s on the
-      standard curve; the six-shadow stack goes (picks 4, 5, 12). The lift's single values are the
-      lead's (tier 1).
-- [ ] Home's cards at rest take the short shadow, `0 6px 18px rgba(0, 0, 0, 0.45)` (pick 3), and
-      one corner, 18 px (pick 1's note; that this grid is "the scenario" is the lead's reading, tier
-      1). Home's baseline is re-captured.
+**The map**
+- [ ] Q24, atlas · The map comes after the covers on `/voyage/` as on a voyage in parts, under the
+      same small heading and on the covers' own edges (R7: it is inset 9 px today, and first on the
+      index). The heading is Didot with a hairline, no filled pin and no dashed rule (the lead's
+      reading of Q24's small headings, tier 1; R15, R22; M15).
+- [ ] Q25, map-asleep · Awake from the start: no veil and no "Click to explore". The lead's, tier 1:
+      the wheel still moves the page until the map has been clicked, so scroll is never taken, and
+      it still starts only when the reader nears it (audit S14). The `atlas` journey is rewritten
+      with it.
+- [ ] Q25, parts-map-close · A voyage in parts' map opens on its parts, each marker with its part's
+      name written beside it. With F099's journey: on `/voyage/` the tiles' zoom is at least 4.
+- [ ] Q25, map-card · A marker shows a label, the voyage's name and its date, under the pointer and
+      under keyboard focus; pressing it opens the voyage. The box of words goes: the line, the tags
+      and the wide button wait on the voyage's own page, and a tag's inline colour leaves
+      `assets/js/map.js` with them. The name is Playfair (it is CMU italic today: S, A3). No arrow
+      (Q25, "No arrow").
+- [ ] Q25, map-card-phone and map-phone-buttons · On a phone the small map is a preview; a tap
+      unfolds it across the screen with a close mark and Tags, and no zoom buttons. A marker's
+      words are a strip at the foot: name, date, "Open voyage". The unfolded map takes the
+      lightbox's grammar ("One viewer"): Escape and Back close it and the page is where it was.
+      Desktop and phone differ here by the owner's pick.
+- [ ] Q25, map-tags · The tags are one slim list with no title bar: all fourteen in a column about
+      236 px wide, none scrolled. The dots keep their colours (Q24); the chosen tag is marked by a
+      hairline in the pale brass, not a fill and a grown dot (S, C).
+- [ ] The map's controls, to 0012 (tier 1; S is the audit to open): zoom, reset and full screen are
+      the site's own button and not the library's (R20); nothing rises a pixel under the pointer
+      (S, B9); 10 px corners and no pill (S, D); labels and counts in Barlow at 11 px or more (S,
+      A2, A5, H13); the hand-made buttons, tags and close mark take the shared pieces (S, F); the
+      Tags button is tall enough to tap (M22). Weights the site loads (S, A1.4).
 
-**Tier 2: the owner's, as a choice** ([0005](../decisions/0005-choices-arrive-as-prototypes.md))
-- [ ] The refined card (branch `gallery/voyage-doors`): bring up to date with `master`, take out the
-      breathing picture, run the gate. The prototypes put three things to the owner at once:
-      - the words under the pointer: none at all (pick 13 to the letter, with the poem at rest as on
-        a phone); or the line and the date still arriving under the pointer ("Quiet by default:
-        detail on hover or in hand"), over the owner's one second;
-      - its corners and its shadow at rest: the card's (18 px, a short shadow), or square and flat
-        as the branch draws it;
-      - the poem on phones, which differs from the desktop and so needs the owner's word
-        (`CLAUDE.md`, Responsive Policy).
-- [ ] Parent pages (Prague, Rome, Japan, Dolomites, Venice) off the old card-list layout.
-- [ ] The Voyage index and its length (P03), decided with stage 3's wayfinding walk.
-- [ ] Related-post and grid cards get the cover's scrim (P07).
-- [ ] The same voyages listed two ways (`/voyage/` and `/voyage-by-tags/`): one card.
-- [ ] The tag dock that covers card titles (X14).
-- [ ] Venice: four parts "still on their way"; five processed photographs no page uses. The owner
-      chose to leave this; ask before touching. (Inbox, 2026-09-26.) Its line is one of the book's
-      empty rooms: the words are drafted in [stage 3](03-wayfinding.md).
+**Kept from before**
+- [ ] Related-post and grid cards get the cover's scrim (P07): with batch 1's two small cards.
 - [ ] 2026-09-29 · Tokyo's line, "Where sakura blooms in the bustling metropolis."
-      (`_subvoyage/japan/tokyo.md`): the house-style check names "bustling". It is the card's poem, so
-      the word is the owner's. Raise it when the poem comes to phones; change nothing before.
+      (`_subvoyage/japan/tokyo.md`): the house-style check names "bustling". It is the card's poem,
+      so the word goes to the owner. Change nothing before.
 
-**Corrected 2026-10-01.** This file said a voyage card's tags take their colour under the pointer.
-The rule exists (`_sass/_archive.scss:196-199`) and no card emits a tag: it is dead, and is deleted
-with A05 in stage 2. There is no tag on a card to restyle.
+**Closed by the sheets (2026-11-27)**
+- [x] The refined card as a choice: closed. Its words are answered (Q24); the page, the wall and the
+      parts' covers are kept (Q25); the poem is at rest on a phone already.
+- [x] The Voyage index and its length (P03): kept as one unbroken run (Q25).
+- [x] The same voyages listed two ways, and the tag dock that covers card titles (X14, C01): they
+      are the tag pages', rebuilt in [stage 10](10-tags.md) (Q23, R030).
+- [x] Home's "What's new" cards: moved to [stage 13](13-home.md).
+
+## Still open: the owner's
+
+- **The wide cover's corners.** 17.28 px on a desktop and 9.6 px on a phone, a difference nobody
+  chose (R16; M10; 0009, "Not settled"). One value at both widths, 18 px or 10 px: to be asked.
+- Does a cover take a plate of glass? "No opaque plates, chips or panels over the image" stands; the
+  scrim stays unless the owner asks.
 
 ## Shared pieces
 
-- Uses: `card` (rest, lift), `brass-focus`, `eyebrow`, `lede`, the scrim. Nothing new.
-- The wide cover is the `card` piece without its lift. If that needs a second piece, it is said in
-  the catalogue first ([0002](../decisions/0002-one-control-vocabulary.md)).
-
-## What needs the owner
-
-- The refined card's three questions above: one choice page, not yet in the queue (it needs the
-  prototypes brought up to date first).
-- Does a cover take a plate of glass? Pair 10 and pick 11 drew a name on one. The standing call is
-  "No opaque plates, chips or panels over the image": the scrim stays unless the owner asks.
-- The author rail and its social icons on the index: part of the old layout. Whether they stay is a
-  call for the queue.
+Uses: `card` (rest, and stillness without its lift), `brass-focus`, `eyebrow`, the scrim, the quiet
+icon button, the round tool. New, said in `_docs/components.md` first
+([0002](../decisions/0002-one-control-vocabulary.md)): a map's label. The unfolded map on a phone
+reuses the lightbox's shell, or says why it cannot.
 
 ## Journeys
 
-`voyages` and `home` must pass. To add: `cover-still` (in the scope above), which holds the still
-cover and the small card's lift. With the refined card: a cover's line can be read without a
-pointer, at desktop width and on touch (it is only under the pointer on a desktop today).
+`voyages`, `home` and `atlas` (rewritten: no veil) must pass. To add: `cover-still`; `atlas-label` (a
+marker under the pointer or focus shows its name and date, and pressing it opens the voyage);
+`atlas-parts` (a voyage in parts' map shows every part's name; `/voyage/` opens at zoom 4 or
+closer); `atlas-phone` (a tap unfolds the map, a marker's strip leads to its voyage, closing
+returns the page to where it was); the archive's edge (F103).
 
 ## Exit
 
-The answered tasks: `npm run gate:full` passes, the reviewer returns PASS, and the owner has the
-pictures and the captures. The rest: chosen from prototypes, with baselines re-captured for the
-pages meant to change, and only those.
+`npm run gate:full` passes with baselines re-captured for the pages meant to change (`/voyage/`, a
+voyage in parts, Posts, Portfolio), and only those; `npm run check:mobile-overflow` in Safari's
+engine; the reviewer returns PASS; the pull request carries the pictures and the captures.

@@ -50,7 +50,7 @@ writing (least well), and the person (Home strongly, About weakly).
 - Dark editorial boutique: premium, minimal, classy, informative. Not skeuomorphic, and not an
   AI-generated showpiece.
 - Playfair Display bold for titles, on every page, a voyage's included (2026-09-25; kept on
-  2026-10-01, The eye, round 2, pick 14). Barlow for UI, places and labels. Didot for figures and for hex codes; Playfair's digits read badly (2026-09-28).
+  2026-10-01, The eye, round 2, pick 14). Barlow for UI, places and labels. Didot for figures and for hex codes; Playfair's digits read badly (2026-09-28). Since 2026-11-27 (Q24): a small hex code is Barlow, and Didot is also the face of a small heading.
 - A voyage's line (its excerpt) is Playfair regular, upright, wherever it stands: on its cards, on
   its Photobook cover, on a letter's card (2026-10-17: "the excerpt of the voyage page should be the
   $serif class, regular not italic. E.g. to align with the voyage cards"). For a voyage this
@@ -63,7 +63,8 @@ writing (least well), and the person (Home strongly, About weakly).
   other pages as on a single post or voyage (2026-11-27: "we don't need a separate didot-italic
   excerpt for meta-page like post/voyage, it should be consistent to independent hero-overlay image
   layout, which uses playfair display"). This ends the Didot italic lede on heroes; the colour
-  pages' line under their title is not a hero's and was not asked.
+  pages' line under their title is not a hero's and was not asked. (Asked the same day, Q24:
+  Playfair upright there too. See "Settled on the sheets".)
 - Two voices, by rule ([decisions/0012](decisions/0012-two-voices-one-behaviour.md), 2026-11-27, picked
   on Q20 and Q22): a name is set in the serif (the site, a room in the menu, a title, an author and a
   work) and every other word on a control is Barlow; a number meant to be seen is Didot; under the
@@ -75,6 +76,75 @@ writing (least well), and the person (Home strongly, About weakly).
 - Gold belongs to the sun alone in the specs. Weather marks are monotone ink. Films carry their own
   hue as small ticks and dots.
 - Quiet by default: detail on hover or in hand. One control per job.
+
+### Settled on the sheets (2026-11-27, Q24 and Q25)
+
+After three audits of the whole site the owner answered 84 calls on two sheets. The record, with
+what each pick replaces, is [decisions/0013](decisions/0013-what-the-sheets-settled.md); the picks
+themselves are in [`QUEUE.md`](QUEUE.md), Answered. Where a line here meets an older one on this
+page, this is the later word.
+
+**Kept as it stands. Each was drawn beside an alternative and the owner picked "as today": it is not
+re-proposed.**
+- Home: the first screen (name, figure, motto, a blurred picture); the figure, one of three by
+  chance; the welcome on the whole screen, then a jump; the one large picture beside the rooms; six
+  tiles in five shapes, and six full cards on a phone; the small drawing and the kind over a card's
+  title; the word that intrigues QSD on the board.
+- Posts: the index opens with a fixed picture, then one column of wide covers; on a phone a post's
+  words stand on its picture.
+- Voyage: how the page opens; the wall of covers as one unbroken run; the size of a part's covers.
+- Inside a voyage: a full-width print edge to edge; names under full-width prints only; pairs and
+  threes as a strip to swipe on a phone; the contact sheet; the colophon's colours; the phone
+  lightbox with its specs up. The book "as built", but for "the brass focus ring and no label under
+  11 px".
+- Colour pages: Palette's two lists side by side, and its bars; no doors from Palette to Reverie,
+  Drift and Ridgway; a voyage's round vat at the right of its blocks ("The ball is the visual
+  language for palette"); Reverie's field at two thirds, its code large and its name small, its
+  nearby colours as dots; Drift on a phone.
+- The shell: a hero of two thirds on a desktop; the menu away when a page opens; the tarot cards
+  unseen until found; the subscribe card open until closed; three whole past letters; the 404; the
+  portrait column beside the page, everywhere.
+- Left for later, on the owner's word: Portfolio unlinked ("Worry about this later"); the reading
+  page's column ("wait for stage 6"). The map's markers keep their colours, "on the map alone".
+
+**What changes, in the owner's words where they left a note.**
+- Faces. Home's name keeps Didot and loses its gradient. Small headings of a section or a card stay
+  Didot; the year on Posts is Didot; small hex codes are Barlow. The Didot italic line is "Playfair
+  upright everywhere", the colour pages' included. A fourth face, CMU, is kept "as the voice of a
+  quotation". Chinese is "Songti wherever the Latin is a serif": "We should adjust the content fonts
+  such that Chinese text in the articles use SongTi by default , especially on mobile. Right now
+  it's customised in some pages and it's not ideal."
+- Brass: "Both, each with a job": the pale for lines and rings, the warm for a thing switched on.
+- No arrow after a way on.
+- A post: its contents folded to one row on a phone and a plain list at the side; one look for its
+  headings; the gap between paragraphs kept and the lines closer; both edges straight, words
+  broken; a quotation set in ("There should be a style to indicate it's the quote"); a note as a
+  quiet panel; after the last sentence, the same pieces on one width.
+- Inside a voyage: full-width prints are "The ones you mark"; the cover's figures move down beside
+  the dial; an opened print hangs at eye level; the rail's marks take each frame's colour; a
+  voyage's note is an afterword ("We should use the same style as standard post content"); after
+  the colophon, Elsewhere as two covers with the sign-off last ("this aligns with the post's
+  logic", which replaces the order asked for on 2026-10-17). On a phone's cover, four facts: "we
+  should have darker mask on the area to ensure readability" (Q24; how that sits with the figures
+  leaving the cover, Q25, is asked before it is built: stage 12).
+- Voyage and the map: a voyage in parts states a single voyage's facts; its map opens close, each
+  part named; the map is awake from the start and stands after the covers; a marker shows a label
+  ("It should be able to hover and display"); on a phone a strip of words at the foot and a tap
+  that unfolds the map; one slim list of tags; a wide cover's words fade in, in place. A voyage in
+  parts' facts, and Home's counts below, are the two counts at a door the owner has picked:
+  "Doorways withhold" stands for every other.
+- Home: "Welcome, new, rooms"; each room's number "what the room holds"; and "we should have clear
+  indications (animation) such that user is hinted to scroll down. Right now it's a thin moving
+  line which isn't clear."
+- Colour pages: Palette's head is a hero made of the dye: "we add the reverie like dry vat as the
+  hero display, and when we switch voyages on palette we switch the background smoothly. The dry
+  vat ball should remain." The small label over a voyage's palette reads "Palette". A frame's card
+  is a print with its colour strip, "with dry vat ball". Ridgway's plates as the book sets them.
+- The shell: one ending ("One small mark, the line, the links"); on a phone a hero of half the
+  screen; the page begins in the hero's fade; CV and Terms both as a post ("We should set the
+  default hero overlay. It should be the dry vat of the QSD about page hero picture"); a fable
+  opens on an illuminated initial; the search panel brought into line where it stands; About,
+  "Every word kept, set in the site's grammar".
 
 ### The eye (2026-10-01, from the pairs)
 
@@ -311,7 +381,8 @@ settled"):
 ### Finding the way (2026-10-01)
 - **Immersive without losing direction.** The masthead hides itself while a page is read and comes
   back when the reader scrolls up: a hint of looking for something. A fix to it keeps that philosophy.
-- A minimal, consistent footer across the site, on pages that scroll.
+- A minimal, consistent footer across the site, on pages that scroll. Its shape, 2026-11-27 (Q24):
+  "One small mark, the line, the links".
 - The tarot cards were a fun easter egg; the site has grown heavy and they need a new purpose. The
   wheel of fortune that spins to a random voyage is liked.
 - The tag pages, for posts and for voyages, are to be redesigned from scratch.
