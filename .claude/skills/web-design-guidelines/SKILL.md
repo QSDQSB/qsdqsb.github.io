@@ -99,7 +99,7 @@ page.
 
 - **Is it rendered?** Check the include is reached and its branch taken.
   Dead code in the Minimal Mistakes fork (`breadcrumbs`, `comments`,
-  `ticker-tape`, `archive-single-talk`'s grid, `_layouts/search.html`) is
+  `ticker-tape`, `_layouts/search.html`) is
   not a finding.
 - **Is it handled elsewhere?** Search the SCSS for the same selector's other
   states, the parent's `:focus-within` / `:has(:focus-visible)`, and the JS

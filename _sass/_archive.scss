@@ -51,18 +51,6 @@
   + .list__item .archive__item-title {
     margin-top: 0.5em;
   }
-  a {
-    text-decoration: none;
-    opacity: 0.6;
-    font-size: smaller;
-    color: #0072b1;
-  }
-  &:hover {
-    a {
-      color: $link-color-hover;
-      opacity: 1;
-    }
-  }
 }
 
 .archive__item-title {
@@ -334,81 +322,6 @@
 // They animated a small "comet" pseudo-element parked on a now-deleted
 // child element, so the entire block became orphan.
 
-// Tag selection view for archive by tags pages
-.tag-grid {
-  text-align: center;
-  align-items: center;
-  border: 4px solid rgba(144, 144, 144, 0.3);
-  font-family: $barlow-font-family;
-  max-height: 10rem;
-  height: 5rem;
-  display: grid;
-  overflow-x: auto;
-  white-space: nowrap;
-  & > * {
-    display: inline-block;
-    white-space: normal;
-  }
-  max-width: 100%;
-  width: 100%;
-  padding: 0.5rem;
-  gap: 0.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  @include responsive-up(tablet) {
-    width: 80%;
-    padding: 1rem;
-    gap: 1rem;
-  }
-  margin: 0.2rem 0.2rem 0 0;
-  background-color: rgba(48, 48, 48, 0.2);
-  border-radius: $border-radius * 2;
-  box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
-              0 8px  8px  rgba(0, 0, 0, .25),
-              0 16px 16px rgba(0, 0, 0, .25);
-  // height: the hover 5rem→7.5rem expansion is intended motion.
-  transition: $cubic-bezier-default, height 1s $cubic-bezier-param;
-  @include backdrop-blur(blur(5px));
-  &:hover {
-    box-shadow: $box-shadow-fancy;
-    height: 7.5rem;
-  }
-  a:hover {
-    text-decoration: none;
-    p {
-      color: $text-color;
-    }
-  }
-}
-.tag-grid__item {
-  border: 2px solid rgba(188, 188, 188, 0.3);
-  height: 3rem;
-  min-width: 4.5rem;
-  max-width: 7.5rem;
-  font-size: $type-code-size;
-  font-family: $tag-font-family;
-  border-radius: $border-radius;
-  padding: 0.3rem 0.2rem;
-  text-align: center;
-  background-color: rgba(133, 102, 102, 0.3);
-  transition: $cubic-bezier-default-05s;
-  @include backdrop-blur(blur(10px) brightness(0.85));
-  text-shadow: rgba(14, 14, 14, 0.2) 0px 7px 14px, rgba(24, 24, 24, 0.25) 0px 5px 5px;
-  overflow: hidden;
-  p {
-    display: block;
-    line-height: 1;
-    color: $text-color;
-    -webkit-hyphens: auto;
-    hyphens: auto;
-    overflow-y: visible;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-}
-.tag-grid__item:hover {
-  scale: 1.1;
-}
-
 .card_grid_view {
   display: grid;
   grid-template-columns: 1fr;
@@ -424,24 +337,6 @@
     text-decoration: none;
     & p {
       color: $text-color;
-    }
-  }
-
-  .list__item {
-    html.motion-off & { transition: none; }
-    border-radius: $border-radius * 2;
-    border: 2px solid rgba(188, 188, 188, 0.2);
-    box-shadow: $shadow-soft;
-    background: linear-gradient(135deg, rgba(13, 13, 13, 0.2), rgba(28, 28, 28, 0.2));
-    padding: 1rem;
-    transition: $cubic-bezier-default;
-    &:hover {
-      box-shadow: $box-shadow-fancy;
-      transform: scale(1.05);
-      border: 2px solid rgba(188, 188, 188, 0.6);
-    }
-    h2, p {
-      z-index: 8;
     }
   }
 
