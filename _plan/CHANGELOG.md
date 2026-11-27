@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-27 · The line under a title on Posts, Voyage and every other hero page is Playfair upright, as on a single post or voyage; the Didot italic is gone from heroes (R029) · tier 0
 - 2026-11-26 · A code block's Copy button, reached by keyboard, wears the site's brass focus ring like every other control (C02) · tier 1
 - 2026-11-26 · The War Declaration's chapters stand as centred brass headings, and QSD signs it in a large italic over a brass rule (R022) · tier 2
 - 2026-11-25 · The War Declaration's seal keeps its room at the foot of the post: the date and tags below no longer run under it (R022) · tier 2

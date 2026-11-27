@@ -59,6 +59,11 @@ writing (least well), and the person (Home strongly, About weakly).
 - A post's line (its excerpt) is Playfair regular, upright too, on its cover and on its card (2026-11-22:
   "change all post's excerpt to be serif (playfair display) non-italic, instead of the current didot
   italic"). The Didot italic lede now stays on pages only.
+- The line under a hero's title is Playfair regular, upright, on every page: Posts, Voyage and the
+  other pages as on a single post or voyage (2026-11-27: "we don't need a separate didot-italic
+  excerpt for meta-page like post/voyage, it should be consistent to independent hero-overlay image
+  layout, which uses playfair display"). This ends the Didot italic lede on heroes; the colour
+  pages' line under their title is not a hero's and was not asked.
 - Gold belongs to the sun alone in the specs. Weather marks are monotone ink. Films carry their own
   hue as small ticks and dots.
 - Quiet by default: detail on hover or in hand. One control per job.
