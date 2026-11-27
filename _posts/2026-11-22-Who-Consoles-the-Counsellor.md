@@ -14,7 +14,6 @@ header:
   overlay_filter: 0.35
   caption: "Franz Kafka, *The Zürau Aphorisms*."
 body_class: nocturne
-prose_justify: true
 toc: true
 toc_sticky: true
 intriguing-word: false

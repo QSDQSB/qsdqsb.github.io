@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
-"""The essays' Chinese face: a subset of Noto Serif SC, cut to the characters the essays use.
+"""The site's Chinese serif: a subset of Noto Serif SC, cut to the characters the site's text uses.
 
-An essay (a post with `body_class: essay`) sets its Chinese in a Song face beside Playfair's Latin
-(_sass/_page.scss, ESSAY). A Mac has Songti SC of its own. An iPhone does not let a page use it, and
-Android and Windows have none, so there the page carries the face itself: Google's Noto Serif SC
-(SIL Open Font License 1.1, assets/fonts/NotoSerifSC/OFL.txt). The whole font is 11.6 MB a weight;
-the essays use a few hundred characters, so only those are shipped.
+Wherever the Latin is Playfair, the site sets Chinese in a Song face beside it ($global-font-family,
+_sass/_variables.scss): every post, the Bestiary, a title on a page or a card. A Mac has Songti SC of
+its own. An iPhone does not let a page use it, and Android and Windows have none, so there the page
+carries the face itself: Google's Noto Serif SC (SIL Open Font License 1.1,
+assets/fonts/NotoSerifSC/OFL.txt). The whole font is 11.6 MB a weight; the site uses a couple of
+thousand characters, so only those are shipped. (The script keeps its first name, from when only the
+essays were set so.)
 
-    python3 scripts/essay-font.py            # cut the subset again (after a Chinese essay changes)
-    python3 scripts/essay-font.py --check    # is every character the essays use in the subset?
+    python3 scripts/essay-font.py            # cut the subset again (after Chinese text changes)
+    python3 scripts/essay-font.py --check    # is every character the site's text uses in the subset?
 
-Writes assets/fonts/NotoSerifSC/NotoSerifSC-Regular-essays.woff2 and, beside it, chars.txt: the
-characters it holds, which is what --check reads (so the check needs neither the font's source nor
-fonttools, and runs in CI). A character an essay uses that the subset lacks would fall to the
+Writes the face in slices of about 150 characters, assets/fonts/NotoSerifSC/NotoSerifSC-Regular-NN.woff2
+(the characters most pages share first, then each file's own together), their @font-face rules with
+the characters each holds as its unicode-range (_sass/_noto-serif-sc.scss), so a page fetches only
+the slices it draws; and chars.txt: every character held, which is what --check reads (so the check needs neither the font's source nor
+fonttools, and runs in CI). A character the text uses that the subset lacks would fall to the
 device's own face, a sans among the Song: --check fails on it and names it.
 
 Cutting needs fonttools and brotli (`python3 -m pip install --user fonttools brotli`) and the font's
@@ -20,18 +24,31 @@ source, which stays out of git: by default ~/.cache/qsdqsb/fonts/NotoSerifSC-Reg
 https://github.com/notofonts/noto-cjk/raw/main/Serif/SubsetOTF/SC/NotoSerifSC-Regular.otf
 (or --source <path>).
 
-Exit codes: 0 done, or the subset covers the essays · 1 characters missing · 2 cannot run
+Exit codes: 0 done, or the subset covers the site's text · 1 characters missing · 2 cannot run
 """
 
 import argparse
-import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "assets" / "fonts" / "NotoSerifSC"
-FONT = OUT / "NotoSerifSC-Regular-essays.woff2"
 CHARS = OUT / "chars.txt"
+SCSS = ROOT / "_sass" / "_noto-serif-sc.scss"
+SLICE = 60  # characters a slice: about 15 KB
+
+HEAD = """// Written by scripts/essay-font.py: do not edit. The site's Noto Serif SC, in slices. Each slice
+// names its characters, so a page fetches only the slices it draws (_custom.scss says when).
+"""
+FACE = """@font-face {{
+  font-family: 'Noto Serif SC';
+  src: url('#{{$fa-font-path}}/NotoSerifSC/{file}') format('woff2');
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+  unicode-range: {range};
+}}
+"""
 SOURCE = Path.home() / ".cache" / "qsdqsb" / "fonts" / "NotoSerifSC-Regular.otf"
 SOURCE_URL = "https://github.com/notofonts/noto-cjk/raw/main/Serif/SubsetOTF/SC/NotoSerifSC-Regular.otf"
 
@@ -46,25 +63,23 @@ def wanted(ch):
 
 
 def essays():
-    """Every post whose front matter sets `body_class` with `essay` in it, and the Bestiary: its
-    fables (_bestiary/, set in the same Song by _sass/_bestiary.scss) and its door."""
-    for path in sorted((ROOT / "_posts").glob("*.md")):
-        text = path.read_text(encoding="utf-8")
-        front = re.match(r"---\n(.*?)\n---\n", text, re.S)
-        if front and re.search(r"^body_class:.*\bessay\b", front.group(1), re.M):
-            yield path, text
-    for path in sorted((ROOT / "_bestiary").glob("*.md")) + [ROOT / "_pages" / "bestiary.md"]:
-        if path.exists():
-            yield path, path.read_text(encoding="utf-8")
+    """Every file the site's words come from: the posts, the Bestiary's fables (set in the same Song
+    by _sass/_bestiary.scss), the pages, the voyages and their parts, and the text in _data."""
+    for pattern in ("_posts/*.md", "_bestiary/*.md", "_pages/*", "_voyage/*.md", "_subvoyage/**/*.md", "_data/*.yml"):
+        for path in sorted(ROOT.glob(pattern)):
+            if path.is_file():
+                yield path, path.read_text(encoding="utf-8")
 
 
 def used():
-    """The characters the essays use, each with the first essay it was seen in."""
+    """The characters the site's text uses, each with the files it was seen in (in reading order)."""
     seen = {}
     for path, text in essays():
         for ch in text:
             if wanted(ch):
-                seen.setdefault(ch, path.name)
+                files = seen.setdefault(ch, [])
+                if not files or files[-1] != path.name:
+                    files.append(path.name)
     return seen
 
 
@@ -73,13 +88,32 @@ def check():
     have = set(CHARS.read_text(encoding="utf-8")) if CHARS.exists() else set()
     missing = sorted(set(need) - have)
     if missing:
-        print(f"essay font: {len(missing)} character(s) the essays use are not in the subset:")
+        print(f"essay font: {len(missing)} character(s) the site's text uses are not in the subset:")
         for ch in missing[:40]:
-            print(f"  {ch}  U+{ord(ch):04X}  ({need[ch]})")
+            print(f"  {ch}  U+{ord(ch):04X}  ({need[ch][0]})")
         print("Cut it again: python3 scripts/essay-font.py")
         return 1
-    print(f"essay font: the subset holds all {len(need)} characters the essays use.")
+    print(f"essay font: the subset holds all {len(need)} characters the site's text uses.")
     return 0
+
+
+def slices(need):
+    """The characters in slices of SLICE: the most shared first, so a slice or two serve most pages,
+    then each file's own characters together, so a page fetches few of the rest."""
+    order = {name: i for i, name in enumerate(dict.fromkeys(f for files in need.values() for f in files))}
+    chars = sorted(need, key=lambda ch: (-len(need[ch]), order[need[ch][0]], ord(ch)))
+    return [chars[i:i + SLICE] for i in range(0, len(chars), SLICE)]
+
+
+def unicode_range(chars):
+    """U+4E00-4E02, U+4E8C: runs of consecutive code points written as ranges."""
+    runs = []
+    for cp in sorted(ord(ch) for ch in chars):
+        if runs and cp == runs[-1][1] + 1:
+            runs[-1][1] = cp
+        else:
+            runs.append([cp, cp])
+    return ", ".join(f"U+{a:X}" if a == b else f"U+{a:X}-{b:X}" for a, b in runs)
 
 
 def cut(source):
@@ -93,10 +127,11 @@ def cut(source):
         return 2
     need = used()
     if not need:
-        print("essay font: no essay uses a Chinese character; nothing to cut.")
+        print("essay font: no text uses a Chinese character; nothing to cut.")
         return 0
-    chars = "".join(sorted(need))
     OUT.mkdir(parents=True, exist_ok=True)
+    for old in OUT.glob("*.woff2"):
+        old.unlink()
     options = subset.Options()
     options.flavor = "woff2"
     options.layout_features = ["*"]
@@ -104,16 +139,25 @@ def cut(source):
     options.name_languages = [0x409]
     options.notdef_outline = True
     options.desubroutinize = True
-    font = subset.load_font(str(source), options)
-    subsetter = subset.Subsetter(options)
-    subsetter.populate(text=chars)
-    subsetter.subset(font)
-    cmap = set(font.getBestCmap())
-    absent = [ch for ch in chars if ord(ch) not in cmap]
-    subset.save_font(font, str(FONT), options)
-    held = "".join(ch for ch in chars if ord(ch) in cmap)
-    CHARS.write_text(held + "\n", encoding="utf-8")
-    print(f"essay font: {len(held)} characters, {FONT.stat().st_size / 1024:.0f} KB → {FONT.relative_to(ROOT)}")
+    held, absent, faces, total = [], [], [], 0
+    for i, part in enumerate(slices(need)):
+        font = subset.load_font(str(source), options)
+        subsetter = subset.Subsetter(options)
+        subsetter.populate(text="".join(part))
+        subsetter.subset(font)
+        cmap = set(font.getBestCmap())
+        absent += [ch for ch in part if ord(ch) not in cmap]
+        part = [ch for ch in part if ord(ch) in cmap]
+        if not part:
+            continue
+        name = f"NotoSerifSC-Regular-{i:02d}.woff2"
+        subset.save_font(font, str(OUT / name), options)
+        total += (OUT / name).stat().st_size
+        held += part
+        faces.append(FACE.format(file=name, range=unicode_range(part)))
+    CHARS.write_text("".join(sorted(held)) + "\n", encoding="utf-8")
+    SCSS.write_text(HEAD + "\n".join(faces), encoding="utf-8")
+    print(f"essay font: {len(held)} characters in {len(faces)} slices, {total / 1024:.0f} KB in all → {OUT.relative_to(ROOT)}")
     if absent:
         print(f"  not in Noto Serif SC itself, left to the device's face: {' '.join(absent)}")
     return 0
@@ -121,7 +165,7 @@ def cut(source):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    parser.add_argument("--check", action="store_true", help="only check the subset against the essays")
+    parser.add_argument("--check", action="store_true", help="only check the subset against the site's text")
     parser.add_argument("--source", type=Path, default=SOURCE, help="the full Noto Serif SC Regular (.otf)")
     args = parser.parse_args()
     return check() if args.check else cut(args.source)

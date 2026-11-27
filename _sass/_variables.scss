@@ -16,8 +16,12 @@ $line-serif-family          : "Playfair Display", "Songti SC", "STSong", serif; 
 $sans-serif-narrow          : $sans-serif; // no Roboto: it is never loaded, and an Android reader saw the masthead in it (audit C10)
 $barlow-font-family         : "Barlow", $sans-serif-narrow;
 
-$global-font-family         : $sans-serif;
-$caption-font-family        : "PT Serif", Georgia, Times, serif;
+// Beside Playfair's Latin, Chinese falls to a Song face (the same thin horizontals and wedged ends),
+// not to the system's sans: the device's own where it has one (Songti on a Mac, Source Han or Noto
+// Serif CJK on many phones, SimSun on Windows), else the slices of Noto Serif SC the site carries
+// (_custom.scss; an iPhone lets a page use no Songti of its own).
+$han-serif                  : "Songti SC", "Source Han Serif SC", "Noto Serif CJK SC", "STSong", "SimSun", "Noto Serif SC";
+$global-font-family         : "Playfair Display", $han-serif, $sans-serif;
 $tag-font-family            : "Barlow", $sans-serif-narrow;
 
 /* type scale — rem-based (root-relative), so sizes never compound through

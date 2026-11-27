@@ -531,6 +531,21 @@ const JOURNEYS = [
     must(dead.length === 0, `contents links with no heading: ${dead.slice(0, 3).join(', ')}`);
   } },
 
+  { id: 'post-contents', phone: true, name: "On a phone a post's contents are one row that a press opens and closes, and the text begins on the first screen", async run({ page, go }) {
+    await go('/posts/terminology/');
+    const toggle = page.locator('.sidebar__right .toc__toggle');
+    const menu = page.locator('.sidebar__right .toc__menu');
+    must(await toggle.count() === 1, 'the contents have no row to press');
+    must(!(await menu.isVisible()), 'the contents lie open above the text');
+    must(await toggle.getAttribute('aria-expanded') === 'false', 'the folded row does not say it is folded');
+    must(/\d+ parts?/.test(await page.locator('.sidebar__right .toc__count').innerText()), 'the row does not say how many parts');
+    must(await page.evaluate(() => document.querySelector('.page__content').getBoundingClientRect().top < innerHeight), 'the text does not begin on the first screen');
+    await toggle.click();
+    must(await menu.isVisible() && await toggle.getAttribute('aria-expanded') === 'true', 'a press did not open the contents');
+    await toggle.click();
+    must(!(await menu.isVisible()), 'a second press did not fold them again');
+  } },
+
   { id: 'post-figures', name: "A post's colour figures are drawn from the site's data, and its Reverie card opens that colour", async run({ page, go }) {
     await go('/posts/in-the-naming-of-light/');
     // Each figure is drawn as it nears the screen: walk the page down to them. The post is in two

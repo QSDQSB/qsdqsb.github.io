@@ -1,119 +1,45 @@
 /* ==========================================================================
-   TOC SCROLL SPY AND PROGRESS INDICATOR
+   TOC SCROLL SPY (assets/js/toc-scroll-spy.js)
    ========================================================================== */
 
-/* Active TOC link styling. Every selector below is (0,2,1) or more, so it
-   outranks the plain `.toc__menu a` / `.sidebar a` colour rules without help. */
+// The chapter being read is brighter, beside a one-pixel brass hairline: where you are. Under the
+// pointer a row's ink brightens in place; nothing moves. Every selector here is (0,2,1) or more, so
+// it outranks the plain `.toc__menu a` / `.sidebar a` colour rules without help.
 .toc__menu {
+  a {
+    position: relative;
+    transition: color $duration-base $cubic-bezier-standard;
+    scroll-margin-top: 2rem;
+
+    &:hover { color: var(--ink); text-decoration: none; }
+    &:focus-visible {
+      color: var(--ink);
+      @include brass-focus;
+      outline-offset: -2px; // inside the row: the list scrolls, and would clip a ring drawn outside it
+    }
+  }
+
   a.toc-active,
   li.toc-active > a {
-    color: $primary-color;
-    background: rgba($primary-color, 0.12);
-    font-weight: 500;
-    border-left: 3px solid $primary-color;
-    padding-left: calc(1em - 3px);
-    transition: color 0.3s $cubic-bezier-standard, background-color 0.3s $cubic-bezier-standard,
-                border-left-width 0.3s $cubic-bezier-standard, padding-left 0.3s $cubic-bezier-standard,
-                box-shadow 0.3s $cubic-bezier-standard;
-    position: relative;
-    z-index: 1; /* Above progress indicator */
-    
-    &:hover,
-    &:focus {
-      background: rgba($primary-color, 0.18);
-      color: $primary-color;
-      text-decoration: none;
-      outline: none;
-    }
-  }
-  
-  /* Regular TOC links - align hover with focus/active style */
-  a {
-    transition: color 0.3s $cubic-bezier-standard, background-color 0.3s $cubic-bezier-standard,
-                border-left-width 0.3s $cubic-bezier-standard, padding-left 0.3s $cubic-bezier-standard,
-                box-shadow 0.3s $cubic-bezier-standard;
-    position: relative;
-    
-    &:hover,
-    &:focus {
-      color: $primary-color;
-      background: rgba($primary-color, 0.08);
-      text-decoration: none;
-      outline: none;
-      border-left: 2px solid rgba($primary-color, 0.5);
-      padding-left: calc(1em - 2px);
-    }
-    
-    /* Focus visible for keyboard navigation */
-    &:focus-visible {
-      color: $primary-color;
-      background: rgba($primary-color, 0.12);
-      border-left: 3px solid $primary-color;
-      padding-left: calc(1em - 3px);
-      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
-    }
-  }
+    color: var(--ink);
 
-  /* Nested active items */
-  li.toc-active {
-    > a {
-      color: $primary-color;
-      background: rgba($primary-color, 0.12);
-    }
-    
-    /* Ensure nested items also get proper styling */
-    ul li > a.toc-active {
-      border-left: 3px solid $primary-color;
-      padding-left: calc(1rem - 3px);
-    }
-  }
-  
-}
-
-/* Progress Indicator */
-.toc-progress-indicator {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 2px;
-  height: 0%;
-  background: linear-gradient(
-    to bottom,
-    rgba($primary-color, 0.4),
-    $primary-color,
-    rgba($primary-color, 0.4)
-  );
-  transition: height 0.15s ease-out;
-  z-index: 1;
-  pointer-events: none;
-  
-  /* Add subtle glow effect */
-  box-shadow: 0 0 6px rgba($primary-color, 0.5);
-  
-  /* Smooth animation */
-  will-change: height;
-  
-  /* Border radius for rounded top */
-  border-radius: 0 0 2px 2px;
-}
-
-.sidebar__right {
-  .toc {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    
-    .toc-progress-indicator {
+    &::before {
+      content: "";
       position: absolute;
-      left: 0;
       top: 0;
-      width: 2px;
-      height: 0%;
-      z-index: 0; /* Behind menu items */
-      border-radius: 0;
+      bottom: 0;
+      left: 0;
+      width: 1px;
+      background: $intriguing-word-color;
     }
   }
+}
+
+.sidebar__right .toc {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .sidebar__right .toc__menu {
@@ -124,66 +50,8 @@
   @include responsive-up(wide) { overscroll-behavior: contain; }
 }
 
-/* Sticky sidebar adjustments */
-.sidebar__right.sticky {
-  .toc {
-    .toc-progress-indicator {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 2px;
-    }
-  }
-}
+html.motion-off .toc__menu a { transition: none; }
 
-/* Responsive: hide on small screens (right sidebar is usually hidden anyway) */
-.toc-progress-indicator {
-  display: none;
-}
-
-@include responsive-up(desktop) {
-  .toc-progress-indicator {
-    display: block;
-  }
-}
-
-/* Smooth scroll behavior for TOC links */
-.toc__menu a {
-  scroll-margin-top: 2rem; /* Account for sticky header if any */
-}
-
-/* The current section's entry breathes slowly (opacity 1 → 0.8 → 1, 2 s). */
-@keyframes toc-pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
-.toc__menu a.toc-active {
-  animation: toc-pulse 2s ease-in-out infinite;
-}
-
-/* Motion off (automated renderers): no pulse, no glide. */
-html.motion-off .toc__menu a.toc-active {
-  animation: none;
-  transition: none;
-}
-
-/* Respect reduced motion preference */
 @include responsive-reduced-motion {
-  .toc-progress-indicator {
-    transition: none;
-  }
-  
-  .toc__menu a.toc-active {
-    animation: none;
-  }
-  
-  .toc__menu a {
-    transition: none;
-  }
+  .toc__menu a { transition: none; }
 }
-

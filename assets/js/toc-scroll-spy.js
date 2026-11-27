@@ -1,9 +1,9 @@
 /**
- * TOC Scroll Spy and Reading Progress Indicator
+ * TOC Scroll Spy, and the fold of the contents above the text
  *
- * Features:
- * 1. Auto-highlights current section in TOC based on viewport
- * 2. Shows reading progress with a thin progress line
+ * 1. Marks the section being read in the contents list.
+ * 2. Below a wide window the list folds to its title row, which a press opens and closes. Whether it
+ *    folds is the stylesheet's to say: it shows the row's count only there (_navigation.scss).
  */
 
 (function() {
@@ -15,6 +15,27 @@
 
   if (!tocMenu || !sidebarRight) {
     return; // No TOC, exit early
+  }
+
+  // The fold. The stylesheet keeps the list folded from the first frame (html.js); the title row is a
+  // button while the list can fold, and opens it under itself.
+  const toc = tocMenu.closest(".toc");
+  const toggle = toc && toc.querySelector(".toc__toggle");
+  const count = toc && toc.querySelector(".toc__count");
+  if (toggle && count) {
+    const parts = tocMenu.querySelectorAll(":scope > li").length;
+    count.textContent = parts + (parts === 1 ? " part" : " parts");
+    const syncFold = () => {
+      const foldable = getComputedStyle(count).display !== "none";
+      toggle.disabled = !foldable;
+      toggle.setAttribute("aria-expanded", String(!foldable || toc.classList.contains("toc--open")));
+    };
+    toggle.addEventListener("click", () => {
+      toc.classList.toggle("toc--open");
+      syncFold();
+    });
+    window.addEventListener("resize", syncFold, { passive: true });
+    syncFold();
   }
 
   // Get all TOC links
@@ -51,18 +72,6 @@
 
   if (observerHeadings.length === 0) {
     return; // No valid headings found
-  }
-
-  // Create progress indicator element - place it inside the TOC
-  const toc = sidebarRight.querySelector(".toc");
-  const progressIndicator = document.createElement("div");
-  progressIndicator.className = "toc-progress-indicator";
-
-  // Insert at the beginning of TOC for proper positioning
-  if (toc) {
-    toc.insertBefore(progressIndicator, toc.firstChild);
-  } else {
-    sidebarRight.appendChild(progressIndicator);
   }
 
   // State
@@ -123,7 +132,6 @@
     if (scrollRaf) cancelAnimationFrame(scrollRaf);
     scrollRaf = requestAnimationFrame(() => {
       updateActiveTOC();
-      updateProgress();
       scrollRaf = null;
     });
   }
@@ -192,40 +200,6 @@
   }
 
   /**
-   * Update reading progress indicator
-   */
-  function updateProgress() {
-    const headings = getVisibleHeadings();
-    if (headings.length === 0) {
-      progressIndicator.style.height = "0%";
-      return;
-    }
-
-    // Prefer the actual content container for a stable start/end
-    const pageContent = document.querySelector(".page__content");
-    const contentTop = pageContent ? (pageContent.getBoundingClientRect().top + window.scrollY) : 0;
-    const contentBottom = pageContent
-      ? (pageContent.getBoundingClientRect().bottom + window.scrollY)
-      : document.documentElement.scrollHeight;
-
-    // Use first heading as the "start" anchor when possible
-    const firstHeadingTop = headings[0].heading.getBoundingClientRect().top + window.scrollY;
-    const articleStart = Number.isFinite(firstHeadingTop) ? firstHeadingTop : contentTop;
-    const articleEnd = contentBottom;
-    const articleHeight = articleEnd - articleStart;
-
-    if (articleHeight <= 0) {
-      progressIndicator.style.height = "0%";
-      return;
-    }
-
-    const scrollProgress = window.scrollY - articleStart;
-    const progress = Math.max(0, Math.min(100, (scrollProgress / articleHeight) * 100));
-
-    progressIndicator.style.height = progress + "%";
-  }
-
-  /**
    * Initialize Intersection Observer for more accurate detection
    */
   function initIntersectionObserver() {
@@ -258,7 +232,7 @@
       initIntersectionObserver();
     }
 
-    // Always update both active TOC + progress on scroll (works in both directions)
+    // Update the active entry on scroll (works in both directions)
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     // Initial update

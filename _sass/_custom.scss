@@ -106,21 +106,14 @@ font-style: italic;
    the system fallbacks (Songti SC / STSong) already in the font stacks.
    ------------------------------------------------------------------------- */
 
-// Noto Serif SC (Google's release of Source Han Serif, OFL 1.1): a Song face for an essay's Chinese
-// on a device with no Songti a page may use (an iPhone, Android, Windows). A subset: the characters
-// the essays and the Bestiary's fables use and no others (scripts/essay-font.py cuts it; the gate checks
-// it still covers them). Asked for Han characters and their punctuation alone, and only by a stack that
-// names it after the Latin faces and the device's own Songti (_page.scss, ESSAY; _bestiary.scss), so a
-// Mac never fetches it.
-@font-face {
-  font-family: 'Noto Serif SC';
-  src: local('Noto Serif SC'), local('Noto Serif CJK SC'), local('Source Han Serif SC'),
-       url('#{$fa-font-path}/NotoSerifSC/NotoSerifSC-Regular-essays.woff2') format('woff2');
-  font-display: swap;
-  font-weight: 400;
-  font-style: normal;
-  unicode-range: U+2E80-2FDF, U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE30-FE4F, U+FF00-FFEF;
-}
+// Noto Serif SC (Google's release of Source Han Serif, OFL 1.1): a Song face for Chinese beside
+// Playfair on a device with no serif Chinese of its own a page may use (an iPhone, most Android
+// phones). The characters the site's text uses and no others, in slices of about 150, each asked for
+// by the characters it holds, so a page fetches only the slices it draws (scripts/essay-font.py cuts
+// them and writes the rules; the gate checks they still cover the text). Only a stack that names it
+// after the device's own Song faces asks for it ($global-font-family; _bestiary.scss), so a Mac, or a
+// phone with Source Han Serif, never fetches it.
+@import "noto-serif-sc";
 
 @font-face {
   font-family: 'Playfair Display';

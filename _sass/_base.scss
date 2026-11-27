@@ -52,7 +52,7 @@ a {
 h1, h2, h3, h4, h5, h6 {
   margin: 0.5em 0 0.5em;
   line-height: 1.1;
-  font-family: $sans-serif;
+  font-family: $global-font-family;
   font-weight: bold;
 }
 
@@ -126,14 +126,17 @@ abbr[data-original-title] {
 
 /* blockquotes */
 
+// A quotation set in as a book sets it, in another hand: the Latin in CMU Serif's italic (the fourth
+// face keeps this one job), the Chinese in Kai where the device has it, else in the text's own Song
+// (never slanted). No box and no fill; one mark says it is quoted, a brass hairline at its left edge.
 blockquote {
-  font-family: $cmu-serif-family;
-  padding: 1em 1.25em;
-  border: 1px double $darker-gray;
-  background-color: $center-wrapper-background-color;
-  border-radius: $border-radius * 2;
-  text-align: justify;
   position: relative;
+  margin: 1.6em 0 1.6em 2.3em;
+  padding: 0 0 0 1.2em;
+  border-left: 1px solid $intriguing-word-color;
+  font-family: "CMU Serif", "Kaiti SC", "STKaiti", "KaiTi", $han-serif, serif;
+  font-style: italic;
+  font-synthesis: weight;
 
   cite {
 
@@ -181,12 +184,11 @@ li > code,
 figcaption > code,
 td > code {
   margin: 0 0.2rem;
-  color: #d08a86; // a muted rose from the palette, not the Monokai pink
+  color: var(--ink); // ink in a hairline: brass is the one accent
   font-size: $type-code-size;
   background: $code-background-color;
-  border: 1px solid $light-gray;
+  border: 1px solid var(--line);
   border-radius: $border-radius / 2;
-  box-shadow: $box-shadow;
 
   &:before, &:after {
     letter-spacing: -0.2em;
@@ -262,7 +264,7 @@ figure {
 
   img {
     width: 100%;
-    border-radius: $border-radius;
+    border-radius: $radius-picture;
     -webkit-transition: $global-transition;
     transition: $global-transition;
   }
@@ -300,11 +302,11 @@ figure {
 
 /* Figure captions */
 
+// A caption in the UI face, upright (the face it named before was never loaded, and Georgia drew it).
 figcaption {
   margin-bottom: 0.5em;
-  color: mix(#fff, $text-color, 20%);
-  font-family: $caption-font-family;
-  font-style: italic;
+  color: var(--ink-2);
+  font-family: $barlow-font-family;
   font-size: 0.8em;
 
   a {
@@ -315,8 +317,8 @@ figcaption {
     transition: $global-transition;
 
     &:hover {
-      color: #000;
-      border-bottom-color: #000;
+      color: var(--ink);
+      border-bottom-color: currentColor;
     }
   }
 }
