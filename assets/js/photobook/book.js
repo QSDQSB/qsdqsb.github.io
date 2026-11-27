@@ -26,10 +26,11 @@ export function book({ frames, onOpen, onLayout, onScreen, onPrefetch }) {
   const byColour = () => view === 'sheet' && order === 'colour' && colourSeq.length === figures.length;
 
   const shown = () => figures.filter((f) => !film || f.dataset.film === film);
+  const marked = figures.some((f) => f.hasAttribute('data-spread')); // the book is laid by the YAML's marks
 
   function relayBook() {
     const keep = shown();
-    const rows = bookRows(keep.map((f) => ({ ratio: Number(f.style.getPropertyValue('--ratio')) || 1.5 })));
+    const rows = bookRows(keep.map((f) => ({ ratio: Number(f.style.getPropertyValue('--ratio')) || 1.5, spread: f.hasAttribute('data-spread') })), marked);
     const frag = document.createDocumentFragment();
     for (const r of rows) {
       const row = document.createElement('div');

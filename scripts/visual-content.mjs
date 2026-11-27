@@ -107,7 +107,7 @@ export function narrowBook(merged, slugs) {
     photos: tinted,
     count: tinted.length,
     inventory: (merged.inventory || []).filter((p) => keep.has(p.slug)),
-    book: { rows: bookRows(tinted), cover: coverIndex(tinted, merged.cover?.photo), colophon: colophonOf(tinted), lightbox: lightboxOf(tinted), colour },
+    book: { rows: bookRows(tinted), cover: coverIndex(tinted, merged.photos[merged.book?.cover]?.slug ?? merged.cover?.photo), colophon: colophonOf(tinted), lightbox: lightboxOf(tinted), colour },
   };
 }
 
