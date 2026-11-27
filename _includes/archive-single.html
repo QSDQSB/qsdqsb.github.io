@@ -24,6 +24,8 @@
 {% else %}
   {% assign title = post.title %}
 {% endif %}
+{% comment %} A door (include.title, include.href): this cover under another name, leading elsewhere, with nothing but the name on it. {% endcomment %}
+{% if include.title %}{% assign title = include.title %}{% endif %}
 {% comment %} An absolute URL (a voyage cover's tier, an external teaser) stays as it is. {% endcomment %}
 {% unless teaser contains "://" %}
   {% assign teaser = teaser | prepend: "/images/" | prepend: base_path %}
@@ -42,15 +44,18 @@
 {% assign ovl_address = ")" | prepend: teaser | prepend: cover_var %}
 
 
-{% if post.link %}
+{% if include.href %}
+  {% assign post_link = include.href %}
+{% elsif post.link %}
   {% assign post_link = post.link %}
 {% else %}
   {% assign post_link = post.url | prepend: base_path %}
 {% endif %}
 
-<a class="card" id="{{ title | slugify }}" href={{ post_link }} style="{{ ovl_address }}{% if card_pos %}; --bg-pos: {{ card_pos }}{% endif %}"{% if covers_list != "" %} data-covers="{{ covers_list }}"{% endif %}>
+<a class="card"{% unless include.anchor == false %} id="{{ title | slugify }}"{% endunless %} href={{ post_link }} style="{{ ovl_address }}{% if card_pos %}; --bg-pos: {{ card_pos }}{% endif %}"{% if covers_list != "" %} data-covers="{{ covers_list }}"{% endif %}>
     <div class="content">
       <h3>{{ title }}</h3>
+      {% unless include.href %}
           {% if post.read_time %}
             <p class="readtime"> {% include read-time.html %}</p>
           {% endif %}
@@ -59,11 +64,14 @@
         <p itemprop="description">{{ post.excerpt | markdownify }}</p>
         {% endif %}
       </div>
+      {% endunless %}
     </div>
 
+    {% unless include.href %}
     <div class="date">
       {% if post.date %}
           <p><time datetime="{{ post.date | default: "2022-01-01" | date_to_xmlschema }}">{{ post.date | default: "2022-01-01" | date: "%b %Y" }}</time></p>
         {% endif %}
     </div>
+    {% endunless %}
   </a>

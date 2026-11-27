@@ -595,8 +595,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
       if (e.defaultPrevented) return;
 
-      // The contents list's links are plain links: the browser takes them.
-      if (this.closest('.toc') || this.closest('.toc__menu')) return;
+      // The contents list's links are plain links: the browser takes them. So are a tag page's doors:
+      // a room opens by :target, which only the browser's own navigation sets (pushState does not).
+      if (this.closest('.toc') || this.closest('.toc__menu') || this.closest('.tag-page')) return;
 
       // By id, not by selector: a footnote's id (fn:1) is no selector.
       const id = decodeURIComponent(this.getAttribute('href').slice(1));

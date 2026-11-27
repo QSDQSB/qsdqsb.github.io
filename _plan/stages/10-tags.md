@@ -4,6 +4,71 @@
 ([0009](../decisions/0009-how-much.md)). It runs beside the owner's standing call that these pages
 are redesigned from scratch: see the note in the scope.
 
+## Built, 2026-11-27 (R030)
+
+The redesign came first, so the answered scope's first task was skipped, as the note below allows. The owner's
+words on the way: of the pages as they stood, "the tags display atm is a terrible design, you shouldnt' refer to
+it"; of a wrapped row of tag names, "this is very boring and undesired. it's a nightmare when scaled up." So a
+tag is not a word in a list. Picked from prototypes (the choice page `tag-pages`, option A: a wall of doors over a column of covers).
+
+- Both pages are `_includes/tag-page.html`: a doorway. Each tag is a door; the doors stand as a wall, every
+  door one square, the fullest tags first.
+- A door's face (the owner, 2026-11-27, of the built photograph doors): "We should intentionally use Barlow +
+  emoji for tag titles"; "use not the picture, but the dry vat generated from the picture"; "hovering on the
+  dry-vat background tag card transforms the background to the actual picture"; "Pick an underlying cover image
+  for each tag, and then from the cover image, which should be different across different tags, we should be
+  able to draw the dry vat out of it. In that case, we can distinguish between different tags while not being
+  too noisy and crowded over the page." So: each tag takes a photograph no other tag has (the newest of its
+  own), the door is that photograph's dye vat (`vat.js`, still, a rectangle), its name is Barlow with its emoji,
+  and under a pointer or the keyboard's focus the vat clears in 0.6 s to the photograph beneath. By touch the
+  photograph is never fetched. The vat thereby becomes grammar on a second kind of page, by the owner's call.
+- Then, of the built vats: "Each selected tag should also follow the overlay design" and "we don't need to use
+  a bold barlow, just a regular barlow should work." So a room opens under the site's overlay hero (the same
+  classes and rules as a page's, `_sass/_page.scss`), the tag's own photograph laid where the page's hero
+  stood, with the way back and the tag's name on it; tag names are Barlow regular.
+- Then, of that build: "i think we don't need darker mask on the tag-dry-vat. Right now the page looks slightly
+  off and inconsistent , the layout is not aesthetically pleasing". The vats had been dimmed for their palest
+  colour, and the doors came in three sizes so that every row was full. Now a vat is shown as poured, a door's
+  name stands at its foot (a vat settles light above deep), and every door is one size on both pages and in
+  "Next door" (four there). A tag's photograph is the earliest of its own that no other tag has taken, so a
+  room does not open on the picture of its first cover.
+- Then: "i think layout / fontsize should be reworked. Right now the visual language is - the tag text and the
+  background are two separate thing", and "have opus subagent review with /design-taste-frontend and propose the
+  fix". The review's reading: a white name with a drop shadow is a sticker on the vat, sized like a shrunken
+  cover title, beside an emoji that is a third material, on a door too wide to be a field of colour. Built as it
+  proposed: doors upright (4:5), five to a row on a desktop, four on a tablet, two square on a phone, so 15 and
+  10 close flush; the name sized by its door, the same on every door of a wall; the emoji a small mark on its
+  own line above; and the name printed in an ink taken from the dye beneath it (`assets/js/colour/ink.js`: the
+  colour under the words walked lighter or darker in OKLab until it reads, hue kept), with no white and no
+  shadow until the door develops into its photograph.
+- Then, of those upright doors: "I believe the issue is the aspect ratio of the card. If we intend to just show
+  the tag, then I think we should have either square card or a pill-like landscape card, because it doesn't
+  carry the image. It doesn't need to have such large space". Both were built and shown; the owner: "I think we
+  should have square ones. Also the tag text should be small (just the regular content text size) right now
+  it's too large to be consistent". So a door is a square and its name is the running text's size (`$type-size-7`).
+  Shown eight to a row, the owner: "We can have larger tag cards"; shown six: "I think we can use larger tag
+  card size and just ivory (white) tag text as title (the background is gradient dry vat so readability is
+  ok". Now two to a row on a phone, three on a tablet, five from a desktop up (15 and 10 close flush); "Next
+  door" shows five; and a name is the ivory every cover's name wears, with the cover card's own soft shadow.
+  The ink taken from the dye (`ink.js`) was removed with that. Measured, ivory reads at 4.2:1 or better on 21
+  of the 25 doors; on the four palest feet it read at 2.4 to 3.1 (Coastal, Happy Moments, Emo, Ox).
+- Then, of the ivory names: "The title doesn't blend in the background. It needs either simple mask or shadow,
+  consult with design taste". The consult's reading: on a cover the photograph darkens toward its foot (the
+  card's scrim), so a title stands in a dusk that is part of the picture; on a door the vat lay over that scrim,
+  and only a shadow held the name up. Built as it proposed: the cover card's own scrim brought back over the
+  vat (clear to four tenths down, then to 0.55 at the foot; a cover's is 0.45, over a dimmed photograph), the
+  same on every door, with no script. Measured in Chromium and WebKit, every name reads at 4.9:1 or better at
+  desktop and phone widths; "Happy Moments" at 320 px, where it wraps to two lines, reads at 3.9:1. The low bar was dropped: the dye ran in streaks behind the name, and it looked like the old
+  colour tiles.
+- A door opens a room in place, the tag's covers as `/voyage/` and `/posts/` show them, by `:target`, with no
+  script for that. At a room's foot, the doors of the five tags that share the most with it ("Next door").
+- The answers to "Before it is designed": a doorway, not an index (finding is search's); two pages, one layout.
+
+Still the owner's, asked with the pull request: a line per tag for its door, naming a tag's photograph by hand
+(the page picks today), and which doors lead the wall.
+Three people brainstormed the reader's experience; what was not built is in the pull request's note. The
+atlas's popup and the frontmatter warning below are untouched.
+
 ## Goal
 
 The two tag pages (`/tags/` for posts, `/voyage-by-tags/` for voyages) redesigned from nothing. The
