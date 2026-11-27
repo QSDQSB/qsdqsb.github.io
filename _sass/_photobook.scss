@@ -1897,7 +1897,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-facts .photobook-facts__body { display: none; }
 
   // The figures stand on the picture: a darker shade gathers under them, in the cover's lower right.
-  .photobook-cover:has(.photobook-facts) { --facts-shade: radial-gradient(closest-side, rgba(10, 10, 12, 0.7), rgba(10, 10, 12, 0.5) 55%, rgba(10, 10, 12, 0)); }
+  .photobook-cover:has(.photobook-facts) { --facts-shade: radial-gradient(closest-side, rgba(10, 10, 12, 0.78), rgba(10, 10, 12, 0.56) 55%, rgba(10, 10, 12, 0)); }
 
   // Pairs and threes become a strip the reader swipes; spreads stay full width.
   .photobook-row--pair,
