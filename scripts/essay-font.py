@@ -12,7 +12,7 @@ essays were set so.)
     python3 scripts/essay-font.py            # cut the subset again (after Chinese text changes)
     python3 scripts/essay-font.py --check    # is every character the site's text uses in the subset?
 
-Writes the face in slices of about 150 characters, assets/fonts/NotoSerifSC/NotoSerifSC-Regular-NN.woff2
+Writes the face in slices of SLICE characters, assets/fonts/NotoSerifSC/NotoSerifSC-Regular-NN.woff2
 (the characters most pages share first, then each file's own together), their @font-face rules with
 the characters each holds as its unicode-range (_sass/_noto-serif-sc.scss), so a page fetches only
 the slices it draws; and chars.txt: every character held, which is what --check reads (so the check needs neither the font's source nor
@@ -84,6 +84,9 @@ def used():
 
 
 def check():
+    # The two pieces the cut relies on, checked where the gate runs.
+    assert unicode_range("七一丁") == "U+4E00-4E01, U+4E03", unicode_range("七一丁")
+    assert slices({"甲": ["a", "b"], "乙": ["b"], "丙": ["a"]}) == [["甲", "丙", "乙"]]
     need = used()
     have = set(CHARS.read_text(encoding="utf-8")) if CHARS.exists() else set()
     missing = sorted(set(need) - have)

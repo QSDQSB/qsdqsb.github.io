@@ -108,7 +108,7 @@ font-style: italic;
 
 // Noto Serif SC (Google's release of Source Han Serif, OFL 1.1): a Song face for Chinese beside
 // Playfair on a device with no serif Chinese of its own a page may use (an iPhone, most Android
-// phones). The characters the site's text uses and no others, in slices of about 150, each asked for
+// phones). The characters the site's text uses and no others, in slices of about 60, each asked for
 // by the characters it holds, so a page fetches only the slices it draws (scripts/essay-font.py cuts
 // them and writes the rules; the gate checks they still cover the text). Only a stack that names it
 // after the device's own Song faces asks for it ($global-font-family; _bestiary.scss), so a Mac, or a

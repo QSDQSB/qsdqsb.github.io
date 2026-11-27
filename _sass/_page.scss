@@ -235,6 +235,14 @@ body.collection--posts .page__content {
   hyphenate-limit-chars: 5 2 2; // a word of five letters or more may break, two either side
 }
 
+// Prose only: a list, a table, a caption and code keep a loose edge, at no weight, so anything a post
+// aligns itself keeps its own.
+:where(body.collection--posts .page__content :is(ul, ol, dl, table, figcaption, pre)) {
+  text-align: left;
+  -webkit-hyphens: manual;
+  hyphens: manual;
+}
+
 // One look for a heading in every post: a name, in the serif and the text's ivory, with nothing drawn
 // (no rule, no hue, no other face). Its size and weight tell the order. A designed post's own headings
 // (a proclamation's chapter, a treatise's) name themselves more precisely and keep their dress.

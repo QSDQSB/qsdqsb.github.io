@@ -538,7 +538,7 @@ const JOURNEYS = [
     must(await toggle.count() === 1, 'the contents have no row to press');
     must(!(await menu.isVisible()), 'the contents lie open above the text');
     must(await toggle.getAttribute('aria-expanded') === 'false', 'the folded row does not say it is folded');
-    must(/\d+ parts?/.test(await page.locator('.sidebar__right .toc__count').innerText()), 'the row does not say how many parts');
+    must(/\d+ parts?/i.test(await page.locator('.sidebar__right .toc__count').textContent()), 'the row does not say how many parts');
     must(await page.evaluate(() => document.querySelector('.page__content').getBoundingClientRect().top < innerHeight), 'the text does not begin on the first screen');
     await toggle.click();
     must(await menu.isVisible() && await toggle.getAttribute('aria-expanded') === 'true', 'a press did not open the contents');

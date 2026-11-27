@@ -23,7 +23,7 @@
   const toggle = toc && toc.querySelector(".toc__toggle");
   const count = toc && toc.querySelector(".toc__count");
   if (toggle && count) {
-    const parts = tocMenu.querySelectorAll(":scope > li").length;
+    const parts = tocMenu.querySelectorAll("li").length;
     count.textContent = parts + (parts === 1 ? " part" : " parts");
     const syncFold = () => {
       const foldable = getComputedStyle(count).display !== "none";

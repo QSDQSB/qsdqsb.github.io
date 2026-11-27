@@ -126,12 +126,12 @@ abbr[data-original-title] {
 
 /* blockquotes */
 
-// A quotation set in as a book sets it, in another hand: the Latin in CMU Serif's italic (the fourth
+// A quotation set in on both sides as a book sets it, in another hand: the Latin in CMU Serif's italic (the fourth
 // face keeps this one job), the Chinese in Kai where the device has it, else in the text's own Song
 // (never slanted). No box and no fill; one mark says it is quoted, a brass hairline at its left edge.
 blockquote {
   position: relative;
-  margin: 1.6em 0 1.6em 2.3em;
+  margin: 1.6em 2.3em;
   padding: 0 0 0 1.2em;
   border-left: 1px solid $intriguing-word-color;
   font-family: "CMU Serif", "Kaiti SC", "STKaiti", "KaiTi", $han-serif, serif;
