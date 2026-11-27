@@ -81,6 +81,34 @@ const JOURNEYS = [
     // Three panels, each a screen: nothing below the last for the scroll to snap back from.
     const tail = await page.evaluate(() => document.documentElement.scrollHeight - document.querySelectorAll('.home__panel').length * innerHeight);
     must(Math.abs(tail) <= 2, `Home runs ${tail} px past its last panel`);
+    // What is new comes straight after the welcome; the rooms close the page as its index.
+    const order = await page.$$eval('.home__panel', (ps) => ps.map((p) => (p.matches('.home__panel--new') ? 'new' : p.matches('.home__panel--index') ? 'rooms' : 'welcome')));
+    must(order.join() === 'welcome,new,rooms', `Home's panels run ${order.join(', ')}`);
+    // Each room's figure is what its page lists; About holds none.
+    const figures = await page.$$eval('.home__doors .door', (ds) => ds.map((d) => [d.getAttribute('href'), d.querySelector('.door__fig')?.textContent.trim() ?? null]));
+    const listed = { '/year-archive/': '#main a.card', '/voyage/': '.container a.card', '/palette/': '.palette-voyages__list a', '/bestiary/': '.bestiary-card' };
+    for (const [href, figure] of figures) {
+      if (!listed[href]) { must(figure === null, `${href}'s door carries a figure, ${figure}`); continue; }
+      await go(href);
+      await page.waitForSelector(listed[href], { timeout: 8000 }).catch(() => {});   // Palette's list is drawn by its script
+      const count = await page.locator(listed[href]).count();
+      must(figure === String(count), `${href}'s door says ${figure}, its page lists ${count}`);
+    }
+  } },
+
+  { id: 'home-part', name: 'Recent updates names the part of a voyage that changed, not the voyage that holds it', async run({ page, go }) {
+    await go('/');
+    const cards = await page.$$eval('.wn-card', (as) => as.map((a) => a.getAttribute('href')));
+    const parentOf = (href) => /^\/voyage\/[^/]+\/[^/]+\/$/.test(href) && href.split('/').slice(0, 3).join('/') + '/';
+    for (const part of cards.filter(parentOf)) must(!cards.includes(parentOf(part)), `Home's board links ${part} and also ${parentOf(part)}, the voyage that holds it`);
+    // The sitemap's lastmod is the board's own key (updated, else date) as this build has it, to the day.
+    const xml = await (await page.request.get(new URL('/sitemap.xml', page.url()).href)).text();
+    const days = [...xml.matchAll(/<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)].map(([, loc, day]) => [new URL(loc, 'http://x').pathname, day])
+      .filter(([href]) => /^\/(posts|voyage|portfolio)\/[^/]+\//.test(href));   // pieces, not the indexes (dated by the build's clock)
+    const latest = days.reduce((m, [, day]) => (day > m ? day : m), '');
+    const newest = days.filter(([, day]) => day === latest).map(([href]) => href);
+    if (newest.length !== 1 || !parentOf(newest[0])) return;   // the newest change is not one part's alone: nothing more to see
+    must(cards.includes(newest[0]), `the newest change is ${newest[0]}, and no card on Home links it`);
   } },
 
   { id: 'hero-cat', name: "Home's cat keeps its size, moves, answers the pointer, and holds still when motion is off", async run({ page, go }) {

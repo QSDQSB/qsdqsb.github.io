@@ -10,14 +10,28 @@
   {% assign door_pages = site.pages | concat: site.portfolio %}
   {% assign doors = site.data.navigation.main %}
 
+  {%- comment -%} Each door's figure is what its room lists, counted here as the room counts it: the
+  posts; the covers on Voyage's wall; the voyages Palette has colours for; the fables. About holds none. {%- endcomment -%}
+  {%- assign voyage_count = 0 -%}
+  {%- for v in site.voyage -%}{% include photobook-ready.html doc=v %}{% if photobook_ready %}{% assign voyage_count = voyage_count | plus: 1 %}{% endif %}{%- endfor -%}
+  {%- assign palette_count = 0 -%}
+  {%- assign palette_pages = site.voyage | concat: site.subvoyage | where_exp: "d", "d.gallery_name" | map: "gallery_name" -%}
+  {%- for v in site.data.photo_manifests["palettes"].voyages -%}{% if palette_pages contains v.g %}{% assign palette_count = palette_count | plus: 1 %}{% endif %}{%- endfor -%}
+
   <div class="home__index-grid">
     <ul class="home__doors">
       {% for link in doors %}
       {% assign dp = door_pages | where: "url", link.url | first %}
+      {%- assign held = nil -%}
+      {%- case link.url -%}
+        {%- when "/year-archive/" %}{% assign held = site.posts.size %}{% assign unit = "piece" -%}
+        {%- when "/voyage/" %}{% assign held = voyage_count %}{% assign unit = "voyage" -%}
+        {%- when "/palette/" %}{% assign held = palette_count %}{% assign unit = "palette" -%}
+        {%- when "/bestiary/" %}{% assign held = site.bestiary.size %}{% assign unit = "fable" -%}
+      {%- endcase %}
       <li><a class="door" href="{{ link.url | relative_url }}">
-        <span class="door__num">0{{ forloop.index }}</span>
+        <span class="door__num">{% if held %}<span class="door__fig">{{ held }}</span><span class="door__unit">{{ unit }}{% if held != 1 %}s{% endif %}</span>{% endif %}</span>
         <span class="door__text"><span class="door__title">{{ link.title }}</span><span class="door__desc">{{ dp.excerpt | strip_html | strip_newlines | strip }}</span></span>
-        <span class="door__arrow" aria-hidden="true">&rarr;</span>
       </a></li>
       {% endfor %}
     </ul>
