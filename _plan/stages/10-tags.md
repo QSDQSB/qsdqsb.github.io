@@ -1,8 +1,14 @@
 # Stage 10 · Tags, from scratch
 
-**Status:** idea · **Tier:** 2. Taking the colour off the tags that exist is tier 2, answered
-([0009](../decisions/0009-how-much.md)). It runs beside the owner's standing call that these pages
-are redesigned from scratch: see the note in the scope.
+**Status:** designing (branch `work/r030`, not merged). **Tier:** 2. Taking the colour off the tags
+that exist is tier 2, answered ([0009](../decisions/0009-how-much.md)).
+
+**2026-11-27.** The owner asked again that both pages be rebuilt from scratch (R030: "the voyage by
+tags page and post by tags page's layout is inconsistent. We should re-build from scratch.") and
+picked their shape from prototypes: "A wall of doors" (Q23), over a column of covers. The branch
+`work/r030` builds it: it removes the old dock and its styles from `_pages/tag-archive.html`,
+`_pages/tag-voyage.html` and `_sass/_archive.scss`. Findings about the old dock and the two pages
+are kept here, open, until that branch is merged and each is checked against the new pages.
 
 ## Goal
 
@@ -65,8 +71,16 @@ digest says which was done.
 - [ ] On both tag pages the tiles take the `tag` piece and the dots go: no gradient, no colour, and
       under the pointer a tile only brightens (it no longer grows). The dock's shape and its faults
       (X14) are the redesign's, not this task's.
-- [ ] A tag in the atlas's popup takes the `tag` piece; the inline `--tag-color` leaves `map.js`.
-      (A search result's tags are the post's pill and change with it, in stage 6.)
+- [x] A tag in the atlas's popup: moot since 2026-11-27. A marker opens "A label, as on a map" (Q25),
+      so the popup's tags go, and their inline `--tag-color` leaves `map.js` with them, in
+      [stage 4](04-voyage-and-cards.md)'s batch. A post's and a search result's inline colour is
+      F113, in [stage 6](06-posts-and-about.md).
+- [ ] F080 · The "#" anchor after each tag's heading on Voyage by tags is `#0072b1` at 60 per cent, a
+      blue no other rule uses, and mint under the pointer (`_sass/_archive.scss`,
+      `_pages/tag-voyage.html`). Check it on the rebuilt page: gone with the old heading, or ink.
+- [ ] X14, C01 · The dock that covers card titles, and voyages listed two ways (moved from stage 4):
+      both are the old pages'. Check on the rebuilt pages, then close.
+- [ ] The `tags` journey below, and `post-tags` (stage 6), once the wall of doors is merged.
 - [ ] Outside `_plan/`, for the session that builds: `scripts/check-frontmatter.js:259-268` warns
       that a tag with no entry "renders without accent colour". For a post that is then a warning
       about nothing a reader sees, and it goes, with its test
@@ -88,10 +102,8 @@ None is in the queue: each is asked when its page is drawn.
   to put when asked: remove `post_tag_colours` once nothing reads it (git keeps it), and keep
   `voyage_tag_colours` as the atlas's colours.
 
-- **The atlas's markers.** Each is a dot in its main tag's colour, with a legend of dots. No pair
-  drew a map. A dot is not a block, and the nearest standing call is the films' ("their own hue as
-  small ticks and dots"). The lead's reading: the markers keep their colours until the owner sees
-  the atlas in ink beside it. Nothing is changed on a guess.
+- **The atlas's markers.** Answered 2026-11-27 (Q24): "Colour stays, on the map alone". So
+  `voyage_tag_colours` keeps a reader, the atlas, and is not removed.
 - **The emoji in the tags' names** ("🌆Metropolis", "📘Diary"): each is a small filled picture in
   colour, and the names are the owner's words. The lead's reading of pair 17 would set them aside;
   no pair asked. The owner's to say, with the prototypes.
