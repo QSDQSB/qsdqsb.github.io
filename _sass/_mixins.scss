@@ -143,19 +143,6 @@
   background: rgba(12, 12, 16, 0.82);
   @include backdrop-blur($glass-blur);
 }
-
-/*
-   Nav action button (shared shell)
-   ==========================================================================
-   The pill-shaped icon-button chrome — border/surface/backdrop-blur, the
-   diagonal sweep highlight, and the hover/focus-visible/active state values
-   — was duplicated verbatim between `.search__toggle` (_search.scss) and
-   `.greedy-nav__toggle` (_navigation.scss). Only positioning (in-flow vs.
-   absolutely-centered-then-translated) and the transform-transition timing
-   differ between the two, so those stay at the callsite.
-*/
-
-
 /*
    Type-badge pill (shared shell)
    ==========================================================================

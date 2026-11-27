@@ -11,12 +11,12 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
-- 2026-11-27 · A tag under a post or a voyage is ink on one line, with no colour of its own (R026, R031, R033) · tier 0
-- 2026-11-27 · On a phone a hero's title is a quarter larger, and a picture's credit has its own line under the excerpt (it also shows now for readers with motion off) (R026, R031, R033) · tier 0
-- 2026-11-27 · The 中 / EN switch is set in Barlow with a control's corners; a post's date and On This Page are labels (R026, R031, R033) · tier 0
-- 2026-11-27 · At the foot of a post, previous and next are a small label over the post's title, with no plate (R026, R031, R033) · tier 0
-- 2026-11-27 · The menu bar has the corners of every other control, its rooms answer the pointer with a soft still fill, and its search and menu buttons are fine marks with no discs (R026, R031, R033) · tier 0
-- 2026-11-27 · The line under a title on Posts, Voyage and every other hero page is Playfair upright, as on a single post or voyage; the Didot italic is gone from heroes (R029) · tier 0
+- 2026-11-27 · A tag under a post or a voyage is ink on one line, with no colour of its own (R026) · tier 2
+- 2026-11-27 · On a phone a hero's title is a quarter larger, and a picture's credit has its own line under the excerpt (it also shows now for readers with motion off) (R031) · tier 2
+- 2026-11-27 · The 中 / EN switch is set in Barlow with a control's corners; a post's date and On This Page are labels (R026) · tier 2
+- 2026-11-27 · At the foot of a post, previous and next are a small label over the post's title, with no plate (R026) · tier 2
+- 2026-11-27 · The menu bar has the corners of every other control; its rooms are as strong as the site's name and answer the pointer with a soft still fill; its search and menu buttons are fine marks with no discs (R026, R033) · tier 2
+- 2026-11-27 · The line under a title on Posts, Voyage and every other hero page is Playfair upright, as on a single post or voyage; the Didot italic is gone from heroes (R029) · tier 2
 - 2026-11-26 · A code block's Copy button, reached by keyboard, wears the site's brass focus ring like every other control (C02) · tier 1
 - 2026-11-26 · The War Declaration's chapters stand as centred brass headings, and QSD signs it in a large italic over a brass rule (R022) · tier 2
 - 2026-11-25 · The War Declaration's seal keeps its room at the foot of the post: the date and tags below no longer run under it (R022) · tier 2

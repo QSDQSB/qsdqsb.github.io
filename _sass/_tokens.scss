@@ -19,6 +19,8 @@
   --glass-edge: rgba(255, 255, 255, 0.1);
   --control: rgba(255, 255, 255, 0.07);
   --control-hover: rgba(255, 255, 255, 0.16);
+  // The soft, still fill a quiet control takes under the pointer (the menu's rooms and marks).
+  --control-soft: rgba(255, 255, 255, 0.1);
   // The site's two curves, for scripts too (the palette page reads them), so one vocabulary of motion.
   --ease-standard: #{$cubic-bezier-standard};
   --ease-smooth: #{$cubic-bezier-smooth};

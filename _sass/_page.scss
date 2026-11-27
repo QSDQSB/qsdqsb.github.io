@@ -836,7 +836,7 @@ html.is-resizing {
           animation: hero-caption-reveal $hero-caption-reveal-duration $cubic-bezier-smooth both;
   -webkit-animation-delay: $hero-caption-reveal-delay;
           animation-delay: $hero-caption-reveal-delay;
-  // Still for a reader with motion off, but there: it used to stay at the animation's first frame.
+  // Still for a reader with motion off, and shown.
   html.motion-off & { animation: none; opacity: 0.95; transform: none; }
 
   @include responsive-up(desktop) {

@@ -32,7 +32,8 @@ instruction, a label or a fact?
 
 | Scenario | Voice | Set as |
 |---|---|---|
-| The site's name; a room in the menu; a page's, post's or voyage's title wherever it is named, the pager included | Poetic | Playfair bold |
+| The site's name; a room in the menu; a page's, post's or voyage's own title | Poetic | Playfair bold |
+| A title named as a way on (previous and next at a post's foot) | Poetic | Playfair regular, as the owner picked it |
 | The line under a hero's title | Poetic | Playfair regular, upright, on every page |
 | A picture's credit (an author and a work) | Poetic | Playfair, smaller than the line it follows |
 | A figure meant to be seen; a hex code | Poetic | Didot |
@@ -63,12 +64,17 @@ instruction, a label or a fact?
 
 Reversible, and shown in the pull request's pictures:
 
-- The fill under the pointer is white at a tenth.
+- The fill under the pointer is white at a tenth (`--control-soft`), a little stronger than the quiet
+  icon button's own on Palette.
 - The switch keeps its joined shape but takes the 10 px corner (line 5), with 8 px inside it.
 - The search mark is redrawn as a hairline glass, where the picture the owner picked showed the old
   glyph made smaller (line 5: an icon is a hairline).
 - A phone's hero title is `clamp(1.45rem, 6.4vw, 1.9rem)`, about a quarter over what it was.
-- The quiet icon button takes the 10 px corner, which 0009 had left "Not settled".
+- The quiet icon button takes the 10 px corner, which 0009 had left "Not settled"; Palette's fold and
+  step buttons light as rounded squares with it.
+- The switch's "on" stays a filled chip, as the owner kept it; line 4's hairline is not drawn there.
+- A picture's credit takes the serif at every width, where the pick was for a phone: its old face was
+  never loaded, so it showed in Georgia. It is also shown now to a reader with motion off.
 
 ## Consequences
 

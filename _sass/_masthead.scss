@@ -276,7 +276,7 @@ html.is-resizing {
 
   svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 
-  &:hover { background: rgba(255, 255, 255, 0.1); }
+  &:hover { background: var(--control-soft); }
 }
 
 .masthead__brand-logo {

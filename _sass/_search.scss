@@ -13,7 +13,6 @@
   margin-right: 0.06rem;
   flex: 0 0 auto;
   @include icon-button-quiet($nav-action-size);
-  border-radius: $border-radius;
   color: $primary-color;
   transition:
     background-color $duration-base $cubic-bezier-standard,
@@ -23,7 +22,7 @@
   svg { width: 17px; height: 17px; stroke-width: 1.5; }
 
   &:hover,
-  &:focus-visible { background-color: rgba(255, 255, 255, 0.1); }
+  &:focus-visible { background-color: var(--control-soft); }
 
   &:focus-visible {
     @include brass-focus;

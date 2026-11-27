@@ -66,10 +66,7 @@
      as the word card and subscribe slip, not at the viewport's far edges. */
   max-width: 40rem;
   margin: 3rem auto 0;
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
+  a { text-decoration: none; }
 
   /* previous and next: a label over the post's title, on the ground. The shared row keeps the two
      inside the colophon's measure. */
@@ -81,15 +78,21 @@
     max-width: calc(50% - 0.5rem); /* half the measure minus the row gap */
     min-width: 0;
     padding: 0;
-    color: var(--ink-2);
+    color: var(--ink-3);
     text-decoration: none;
     transition: color $duration-base $cubic-bezier-standard;
     html.motion-off & { transition: none; }
 
+    &:visited { color: var(--ink-3); } // the arrow keeps its ink once the neighbour has been read
+
+    // Under the pointer it answers in place: the arrow, the label and the title each brighten a step.
     &:hover,
     &:focus-visible {
       color: var(--ink);
       text-decoration: none;
+
+      .pagination__label { color: var(--ink-2); }
+      .title { color: #fff; }
     }
     &:focus-visible { @include brass-focus; }
 
@@ -110,6 +113,12 @@
   .title {
     font: 400 1.15rem/1.25 $global-font-family;
     color: var(--ink);
+  }
+
+  &__label,
+  .title {
+    transition: color $duration-base $cubic-bezier-standard;
+    html.motion-off & { transition: none; }
   }
 }
 
@@ -198,6 +207,7 @@
     margin: 0;
     padding: 0.36rem 0.68rem;
     color: $primary-color;
+    font-weight: 700; // a room is as strong as the site's name
     text-decoration: none;
     border-radius: $border-radius;
     position: relative;
@@ -210,7 +220,7 @@
 
     &:hover {
       color: white;
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: var(--control-soft);
     }
   }
 
@@ -232,9 +242,8 @@
     height: $nav-action-size;
     padding: 0;
     transform: translateY(-50%);
-    display: none;
     @include icon-button-quiet($nav-action-size);
-    border-radius: $border-radius;
+    display: none; // after the piece, whose own display would show it before the bar has measured
     color: $primary-color;
     transition:
       background-color $duration-base $cubic-bezier-standard,
@@ -266,7 +275,7 @@
     }
 
     &:hover,
-    &:focus-visible { background-color: rgba(255, 255, 255, 0.1); }
+    &:focus-visible { background-color: var(--control-soft); }
 
     &:focus-visible {
       @include brass-focus;
@@ -314,7 +323,7 @@
     a {
       position: relative;
       &:focus-visible {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: var(--control-soft);
         color: white;
         @include brass-focus;
         outline-offset: -2px; // inside: the bar's clip would cut a ring set off its edge
