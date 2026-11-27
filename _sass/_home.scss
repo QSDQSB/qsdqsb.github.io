@@ -417,14 +417,13 @@ html[data-hint="c"] {
 @keyframes home-hint-fall { 0%, 100% { transform: translateY(-4px); opacity: 0.5; } 50% { transform: translateY(6px); opacity: 1; } }
 @keyframes home-hint-pass { 0% { transform: translateY(-36px); } 45%, 55% { transform: translateY(0); } 100% { transform: translateY(36px); } }
 @keyframes home-hint-light { 0%, 55%, 100% { opacity: 0.22; } 18% { opacity: 1; } }
+// Still: each said at the animating rule's own weight, later, so it wins.
 @include responsive-reduced-motion {
-  .home__hint-mark g, .home__hint-mark path { animation: none; }
-  html[data-hint="c"] .home__hint-mark .m-c path { opacity: 0.7; }
+  html[data-hint] .home__hint .home__hint-mark g, html[data-hint] .home__hint .home__hint-mark path { animation: none; }
+  html[data-hint="c"] .home__hint .home__hint-mark path { opacity: 0.7; }
 }
-html.motion-off {
-  .home__hint-mark g, .home__hint-mark path { animation: none; }
-  &[data-hint="c"] .home__hint-mark .m-c path { opacity: 0.7; }
-}
+html.motion-off[data-hint] .home__hint-mark g, html.motion-off[data-hint] .home__hint-mark path { animation: none; }
+html.motion-off[data-hint="c"] .home__hint-mark .m-c path { opacity: 0.7; }
 
 /* ===================== REGISTRATION MARKS =====================
    Faint corner crop-ticks framing each panel as a print plate — eight aged-brass
