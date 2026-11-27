@@ -23,6 +23,20 @@ A site that stays fast as the archive grows. Implements
 - [ ] S01, second half · Renditions for the 13 post covers outside `images/cover/`.
 - [ ] S16 · Three surfaces that repaint for effects that could be composited: measure first.
 
+**From the inbox, sorted 2026-11-27** (tier 0)
+- [ ] F058 · `images/posts/all-souls-sun-dial.jpg` is 435 KB at 3250 px for a column of at most
+      1200 px, with no smaller rendition for a phone. With S01's second half.
+- [ ] F065 · Home's door plates fetch the same bytes as before, only later (Palette's is 1.26 MB): a
+      plate is a crop of a wide picture and wants a `sizes` of its own. With S12.
+- [ ] F066 · The lightbox, opened from a larger print, still fetches the smaller rendition its mat
+      asks for and swaps to it: a wasted fetch. Skipping it changes which file is drawn, so its
+      baseline is re-captured with it.
+- [ ] F111 · `images/QSDSigils/proclamation-seal.webp` is 78 KB at 720 px and shown at 261 px at
+      most: 540 px covers a dense screen.
+- F101, F110 · The Chinese font's subset (234 KB on 2026-11-27, shared by the essays and the fables)
+  is cut in slices with [stage 6](06-posts-and-about.md)'s batch, where Songti becomes every
+  post's face; excerpt-only search for the fables stays here, with A07.
+
 ## Design notes
 
 - S08 changes how icons are drawn. If any glyph looks different it is tier 1 and is shown.
