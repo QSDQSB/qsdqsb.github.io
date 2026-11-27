@@ -128,8 +128,8 @@ faces are the owner's; the rows are the lead's arrangement of them.
 | Voice | Face | For |
 |---|---|---|
 | The title | Playfair Display bold, upright | A page's title, every page's, a voyage's included (the owner, 2026-09-25; kept, r2: 14). `display-title` |
-| The poetic and the storytelling | Didone, serif, italic. Built as Didot italic | The lede under a page's title; the poetic line at a doorway. Never the title. `lede`. Except a voyage's or a post's line, Playfair regular, upright, on its cards, its cover and a letter's card (PRINCIPLES, 2026-10-17, 2026-11-22) |
-| What must be read easily | Barlow | The interface, a utility, anything that names |
+| The poetic and the storytelling | Didone, serif, italic. Built as Didot italic | The line under a colour page's title; a gloss's Latin line; the poetic line at a doorway. Never the title. `lede`. Not the line under a hero's title, which is Playfair regular, upright, on every page, as a voyage's or a post's line is on its cards, its cover and a letter's card (PRINCIPLES, 2026-10-17, 2026-11-22, 2026-11-27) |
+| What must be read easily | Barlow | The interface's labels, facts, actions and choices; a utility. Not a name: the site, a room in the menu, a title, an author and a work take the serif wherever they stand, a control included (the owner, 2026-11-27, [0012](decisions/0012-two-voices-one-behaviour.md)) |
 | The label and the caption | Barlow, spaced capitals | Eyebrows, places, and the line under a print (the owner, 8: 1: "Easier to read"). Never under 11 px. `eyebrow` |
 | The figure | Didot (the owner, 2026-09-28) | Numbers read as figures; hex codes. Serif or sans tabular scored either (9: 3), so a figure in Barlow is not a fault. In code only Reverie's large hex is Didot (finding F036). Didot is a system face: where a device lacks it the stack falls to CMU Serif, then Playfair |
 
@@ -223,6 +223,18 @@ code has eight (audit C04).
 - **Never the photograph.** It does not zoom, shift or filter under the pointer.
 
 ## 6. How things behave
+
+**The rule (the owner's, 2026-11-27, [0012](decisions/0012-two-voices-one-behaviour.md)).** Where a
+line below differs, this holds.
+
+1. A name is set in the serif: the site, a room in the menu, a title, an author and a work. Every
+   other word on a control is Barlow.
+2. A number meant to be seen is Didot.
+3. Under the pointer a control answers in place: its ink brightens, or a soft, still fill appears.
+   Nothing moves or grows. Only a card lifts.
+4. Where you are, and what is on, is marked by a one-pixel brass hairline.
+5. Everything pressable has 10 px corners. An icon is a hairline in ink. Keyboard focus is the brass
+   ring.
 
 - **Quiet by default.** Detail appears on hover or in hand. Whatever hover reveals, keyboard focus
   reveals too, and a touch reader gets it at rest or on a first tap. Quiet is about what is shown,

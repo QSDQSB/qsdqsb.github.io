@@ -13,10 +13,23 @@ options as `- **A (recommended):** …`. A number is never reused: the command c
 
 ---
 
+### Q24 · Twenty calls from the whole-site audit: pick on the second sheet
+
+Asked: 2026-11-27
+
+What two auditors found that is the owner's to decide (the author column, Home's name, how a page ends, a post's and a voyage's ending, the reading page, About, search, the atlas, small headings and figures, the phone, the map, Portfolio, the Photobook's reach, which brass), each with today's picture, the possibilities and my pick. Picks are read from the sheet's store: https://claude.ai/artifact/2cFDtQiRsoqhfiohRf6Kh2
+
+- **A (recommended):** Answered on the sheet, question by question
+- **B:** Left open for now
+
 ---
 
 ## Answered
 
+- 2026-11-27 · Q23 · How should the two tag pages show their tags: as a wall of doors, or as a column of covers? → A: A wall of doors (picked on the choice page, 2026-11-27, no note)
+- 2026-11-27 · Q22 · Eleven open calls on the menu, a post's controls, the phone hero, Palette and the rule itself: pick on one sheet → A: answered on the sheet, 2026-11-27. Menu rooms as strong as the name (b); under the pointer a soft still fill (b); the bar takes 10 px corners (b); on a phone fine marks with no discs (a); phone hero: larger title, the credit on its own line at the right in the serif (a); the pager is a label over the title (a); the 中/EN switch stays a joined pill, in Barlow (b; the owner's note: "Connecting the two elements indicate they are switchable. You can change to Barlow font for consistency."); a post's date and On This Page in Barlow (a); Palette stays a list of bars (a); Palette's head is a hero made of the dye (c); the five-line rule is adopted (a).
+- 2026-11-27 · Q21 · The line under Palette's title: Didot italic as today, or Playfair upright like the other pages? → None of these. The owner's note: "prefer B but we should re-design the hero-side, maybe we should follow the hero-overlay layout, and decide where to lay the palette lists"
+- 2026-11-27 · Q20 · On a control, where does the poetic face stop: at every name, or only at what QSD wrote? → A: Names are poetic. The owner's note: "it's to be consistent with the site's name. Barlow is to thin and we have a hovering menu bar, not good contrast for readability"
 - 2026-10-04 · P10, held by the work run (in chat) → yes: the facts' wrap ships alone; the landscape lightbox waits for a session that can shoot a short phone screen.
 - 2026-10-03 · Who opens a pull request (in chat) → Claude, for its own finished batch, with the push of that batch's branch: "you should create pr instead of asking me to". Merging and pushing `master` stay the owner's.
 - 2026-10-03 · Q19 · The arrival as built: is it right on prose, and should the first screen arrive too? → A: keep the arrival as built, and the first screen arrives in turn in every browser, as the owner's drawing did

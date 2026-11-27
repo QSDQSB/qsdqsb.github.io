@@ -29,7 +29,8 @@
  * need no worktree and no second build. `scrollTo` (a selector) brings the part in question into view.
  * `element` (a selector) shoots only that part of the page, large: use it when the difference is small
  * (a link's colour, a focus ring), or it will be lost in a picture of the whole screen. Options shot
- * that way are laid one under another at full width; `maxHeight` cuts a long part to its first pixels. At most three options: the owner
+ * that way are laid one under another at full width (as are all of them with `"rows": true` on the choice, for shots
+ * you made that are too fine to read side by side); `maxHeight` cuts a long part to its first pixels. At most three options: the owner
  * wants an opinion, not a menu.
  *
  * Writes choice.html beside choice.json, images inlined (an Artifact loads nothing from elsewhere).
@@ -63,7 +64,7 @@ if (spec.recommend && !spec.options.some((o) => o.key === spec.recommend.key)) f
 
 const VIEWS = { desktop: { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 }, phone: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 } };
 const WIDTH = { desktop: 1800, phone: 780 };
-const rows = spec.options.some((o) => o.element);
+const rows = spec.rows || spec.options.some((o) => o.element);
 
 /** A shot as a WebP data URI, no wider than it will be shown. */
 async function inline(buffer, view) {

@@ -82,7 +82,7 @@
   &.is-nav-collapsed {
     .greedy-nav {
       transform: translate3d(0, -0.08rem, 0) scale(0.985);
-      clip-path: inset(0 calc(100% - var(--nav-collapsed-width)) 0 0 round 999px);
+      clip-path: inset(0 calc(100% - var(--nav-collapsed-width)) 0 0 round $border-radius);
       box-shadow:
         0 18px 42px rgba(0, 0, 0, 0.16),
         0 5px 16px rgba(0, 0, 0, 0.12);
@@ -111,7 +111,7 @@
 
   &.is-nav-expanded {
     .greedy-nav {
-      clip-path: inset(0 0 0 0 round 999px);
+      clip-path: inset(0 0 0 0 round $border-radius);
       transform: translate3d(0, 0, 0) scale(1);
       box-shadow: $shadow-floating;
     }
@@ -141,7 +141,7 @@
     .greedy-nav {
       opacity: 0;
       transform: translate3d(0, -0.95rem, 0) scale(0.92);
-      clip-path: inset(0 100% 0 0 round 999px);
+      clip-path: inset(0 100% 0 0 round $border-radius);
       box-shadow: none;
       pointer-events: none;
     }
@@ -270,13 +270,13 @@ html.is-resizing {
   width: $nav-brand-logo-shell-size;
   height: $nav-brand-logo-shell-size;
   margin: 0;
-  border-radius: 999px;
+  border-radius: $border-radius;
   color: $primary-color;
   transition: background-color 0.3s $cubic-bezier-smooth;
 
   svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 
-  &:hover { background: rgba(255, 255, 255, 0.1); }
+  &:hover { background: var(--control-soft); }
 }
 
 .masthead__brand-logo {
@@ -286,7 +286,7 @@ html.is-resizing {
   flex: 0 0 $nav-brand-logo-shell-size;
   width: $nav-brand-logo-shell-size;
   height: $nav-brand-logo-shell-size;
-  border-radius: 999px;
+  border-radius: $border-radius;
 }
 
 .masthead__brand-mark {

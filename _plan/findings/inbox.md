@@ -10,6 +10,12 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-11-27 · F118 · _includes/head/custom.html (page transitions) · In Chromium emulating a phone, following a link throws an uncaught error, Transition was aborted because of invalid state. Viewport size changed: the page transition's promise is not caught. A journey that taps a link on a phone fails on it (session)
+- 2026-11-27 · F117 · _sass/_view-transitions.scss:18 · In Chrome the menu bar's glass never blurs the page: view-transition-name on .masthead cuts its backdrop off, so the rooms sit on sharp text at 0.44 (reviewer)
+- 2026-11-27 · F116 · scripts/check-journeys.mjs · Two journeys nothing walks: on a phone the overflow button opens the rest of the rooms and one leads on (the only way to Palette, Bestiary and About at 320); previous and next at a post's foot lead to the neighbouring posts (reviewer)
+- 2026-11-27 · F115 · _sass/_variables.scss $caption-font-family · PT Serif is never loaded and the variable has one user left, figcaption in _base.scss, which shows in Georgia (reviewer)
+- 2026-11-27 · F114 · CLAUDE.md:138, the css-token-steward and css-scss-janitor skills · They cite $nav-action-sweep-duration as an example of a single-use variable; it was deleted with the menu's old button shell (reviewer)
+- 2026-11-27 · F113 · _includes/tag-list.html:29, assets/js/lunr/lunr-store.js:282 · The inline --tag-color style is still written on every tag, and nothing on .page__taxonomy-item reads it since tags went to ink (reviewer)
 - 2026-11-25 · F106 · tests/photos-import.test.js · no test for import step 3 with a frame number held only by another gallery: stage cornwall/DSCF0001.JPG as a different picture while devon/DSCF0001.JPG exists, expect add to cornwall (reviewer)
 - 2026-11-25 · F105 · scripts/check-journeys.mjs, the random-post card · no journey clicks the scroll-mode card ([data-random-jump-mode=scroll] on /posts/): stub Math.random onto the digit-led post, click, and see scrollY move and the card in view (adfd9bc1 fixed querySelector throwing on it) (reviewer)
 - 2026-11-24 · F104 · check-responsive-policy.sh · The breakpoint guard calls rg, which is not installed outside Claude Code; rg exits 127, read as no violations, so the guard passes on anything (planted raw @media passed). Use grep -nE and treat exit >= 2 as an error. (session)
