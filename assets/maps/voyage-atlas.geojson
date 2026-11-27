@@ -14,7 +14,7 @@
         "url": "/voyage/above-the-cloud/",
         "excerpt": "Where peaks peek through veils",
         "date": "2023-03-13T00:00:00.000Z",
-        "dateDisplay": "Mar 13, 2023",
+        "dateDisplay": "Mar 2023",
         "tags": [
           "🕹️Everyone deserves a tag -- even the ..."
         ],
@@ -42,7 +42,7 @@
         "url": "/voyage/barcelona/",
         "excerpt": "Where arched illusions infuse life",
         "date": "2024-07-01T00:00:00.000Z",
-        "dateDisplay": "Jul 1, 2024",
+        "dateDisplay": "Jul 2024",
         "tags": [
           "🛤️Retrace"
         ],
@@ -70,7 +70,7 @@
         "url": "/voyage/beijing/",
         "excerpt": "Where 爹味很浓😫",
         "date": "2023-12-14T00:00:00.000Z",
-        "dateDisplay": "Dec 14, 2023",
+        "dateDisplay": "Dec 2023",
         "tags": [
           "🏛️Historic"
         ],
@@ -98,7 +98,7 @@
         "url": "/voyage/bled/",
         "excerpt": "Where reflection of the spire reposes in Triglav's grandeur",
         "date": "2024-02-03T00:00:00.000Z",
-        "dateDisplay": "Feb 3, 2024",
+        "dateDisplay": "Feb 2024",
         "tags": [
           "🛥️Lake",
           "🏔️Alps"
@@ -128,7 +128,7 @@
         "url": "/voyage/budapest/",
         "excerpt": "Where rhapsody writes smouldering elegies in gilt",
         "date": "2024-03-27T00:00:00.000Z",
-        "dateDisplay": "Mar 27, 2024",
+        "dateDisplay": "Mar 2024",
         "tags": [
           "🏰Baroque"
         ],
@@ -156,7 +156,7 @@
         "url": "/voyage/capri/",
         "excerpt": "Where liquid silk spills over Augustan stone",
         "date": "2024-08-04T00:00:00.000Z",
-        "dateDisplay": "Aug 4, 2024",
+        "dateDisplay": "Aug 2024",
         "tags": [
           "🍝Italy",
           "🌊Coastal"
@@ -186,7 +186,7 @@
         "url": "/voyage/cornwall/",
         "excerpt": "Where the waves conspire and return",
         "date": "2023-03-13T00:00:00.000Z",
-        "dateDisplay": "Mar 13, 2023",
+        "dateDisplay": "Mar 2023",
         "tags": [
           "🌊Coastal"
         ],
@@ -214,7 +214,7 @@
         "url": "/voyage/dolomites/",
         "excerpt": "Where the nature's fiery forges",
         "date": "2023-08-26T00:00:00.000Z",
-        "dateDisplay": "Aug 26, 2023",
+        "dateDisplay": "Aug 2023",
         "tags": [
           "🏔️Alps",
           "🏞️QSD's Favourite",
@@ -252,7 +252,7 @@
         "url": "/voyage/dragonstone/",
         "excerpt": "San Juan de Gaztelugatxe",
         "date": "2023-07-29T00:00:00.000Z",
-        "dateDisplay": "Jul 29, 2023",
+        "dateDisplay": "Jul 2023",
         "tags": [
           "🌊Coastal"
         ],
@@ -280,7 +280,7 @@
         "url": "/voyage/dresden/",
         "excerpt": "Where history slumbers beneath domes of bruised magnificence",
         "date": "2024-07-28T00:00:00.000Z",
-        "dateDisplay": "Jul 28, 2024",
+        "dateDisplay": "Jul 2024",
         "tags": [
           "🏰Baroque"
         ],
@@ -308,7 +308,7 @@
         "url": "/voyage/florence/",
         "excerpt": "Where contours reminisce in marbled stillness",
         "date": "2025-05-31T00:00:00.000Z",
-        "dateDisplay": "May 31, 2025",
+        "dateDisplay": "May 2025",
         "tags": [
           "🍝Italy",
           "🏛️Historic"
@@ -338,7 +338,7 @@
         "url": "/voyage/hongkong/",
         "excerpt": "Where neon lights flicker through unfathomed fog",
         "date": "2024-11-01T00:00:00.000Z",
-        "dateDisplay": "Nov 1, 2024",
+        "dateDisplay": "Nov 2024",
         "tags": [
           "🌆Metropolis",
           "🌴Tropical (≈hot as hell)"
@@ -368,7 +368,7 @@
         "url": "/voyage/japan/",
         "excerpt": "Where petals and prayer drift through impermanent grace",
         "date": "2025-03-21T00:00:00.000Z",
-        "dateDisplay": "Mar 21, 2025",
+        "dateDisplay": "Mar 2025",
         "tags": [
           "🛤️Retrace"
         ],
@@ -396,7 +396,7 @@
         "url": "/voyage/kandersteg/",
         "excerpt": "Where sapphire breathes in crystal depths",
         "date": "2024-06-16T00:00:00.000Z",
-        "dateDisplay": "Jun 16, 2024",
+        "dateDisplay": "Jun 2024",
         "tags": [
           "🏔️Alps",
           "🚞Switzerland",
@@ -430,7 +430,7 @@
         "url": "/voyage/london/",
         "excerpt": "Where yesteryears waltz with the unfolding",
         "date": "2023-06-13T00:00:00.000Z",
-        "dateDisplay": "Jun 13, 2023",
+        "dateDisplay": "Jun 2023",
         "tags": [
           "🌆Metropolis",
           "🏛️Historic",
@@ -457,12 +457,46 @@
     {
       "type": "Feature",
       "properties": {
+        "slug": "lungern",
+        "title": "Lungern",
+        "url": "/voyage/lungern/",
+        "excerpt": "Where gilded poplars dapple turquoise water",
+        "date": "2026-10-16T00:00:00.000Z",
+        "dateDisplay": "Oct 2026",
+        "tags": [
+          "🏔️Alps",
+          "🚞Switzerland",
+          "🛥️Lake",
+          "🥾Hiking"
+        ],
+        "mainTag": "🏔️Alps",
+        "mainTagColor": "#c8cacd",
+        "tagColors": {
+          "🏔️Alps": "#c8cacd",
+          "🚞Switzerland": "#5e9e6f",
+          "🛥️Lake": "#5b89a9",
+          "🥾Hiking": "#ac6139"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.1607283,
+          46.7857297
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "slug": "mont-st-michel",
         "title": "Mont St Michel",
         "url": "/voyage/mont-st-michel/",
         "excerpt": "Where pilgrims' souls find solace",
         "date": "2023-04-17T00:00:00.000Z",
-        "dateDisplay": "Apr 17, 2023",
+        "dateDisplay": "Apr 2023",
         "tags": [
           "🏛️Historic",
           "🌊Coastal"
@@ -492,7 +526,7 @@
         "url": "/voyage/morocco/",
         "excerpt": "Where the sandsbirth medinas meet the Atlantic waves",
         "date": "2022-12-27T00:00:00.000Z",
-        "dateDisplay": "Dec 27, 2022",
+        "dateDisplay": "Dec 2022",
         "tags": [
           "🏛️Historic",
           "🌊Coastal"
@@ -522,7 +556,7 @@
         "url": "/voyage/new-york/",
         "excerpt": "Where gleam and hellfire collide",
         "date": "2024-06-07T00:00:00.000Z",
-        "dateDisplay": "Jun 7, 2024",
+        "dateDisplay": "Jun 2024",
         "tags": [
           "🌆Metropolis"
         ],
@@ -550,7 +584,7 @@
         "url": "/voyage/oxford/",
         "excerpt": "Where history's quill scribes tales",
         "date": "2020-10-10T00:00:00.000Z",
-        "dateDisplay": "Oct 10, 2020",
+        "dateDisplay": "Oct 2020",
         "tags": [
           "🏛️Historic"
         ],
@@ -578,7 +612,7 @@
         "url": "/voyage/paris/",
         "excerpt": "Where elysian dreams dance with eternal flames",
         "date": "2023-04-10T00:00:00.000Z",
-        "dateDisplay": "Apr 10, 2023",
+        "dateDisplay": "Apr 2023",
         "tags": [
           "🕹️Everyone deserves a tag -- even the ..."
         ],
@@ -606,7 +640,7 @@
         "url": "/voyage/porto/",
         "excerpt": "Where Dom Luís' arches ascend divine",
         "date": "2023-08-01T00:00:00.000Z",
-        "dateDisplay": "Aug 1, 2023",
+        "dateDisplay": "Aug 2023",
         "tags": [
           "🌉Bridges",
           "🌊Coastal"
@@ -635,8 +669,8 @@
         "title": "Prague",
         "url": "/voyage/prague/",
         "excerpt": "Where storied spires enchant all",
-        "date": null,
-        "dateDisplay": null,
+        "date": "2023-06-13T00:00:00.000Z",
+        "dateDisplay": "Jun 2023",
         "tags": [
           "🏰Baroque",
           "🏞️QSD's Favourite"
@@ -666,7 +700,7 @@
         "url": "/voyage/rigi/",
         "excerpt": "Where cloud sea wanders beneath the rose-lit sky",
         "date": "2025-12-26T00:00:00.000Z",
-        "dateDisplay": "Dec 26, 2025",
+        "dateDisplay": "Dec 2025",
         "tags": [
           "🏔️Alps",
           "🚞Switzerland"
@@ -696,7 +730,7 @@
         "url": "/voyage/rome/",
         "excerpt": "Where laurels dissolve into the inscriptions of obelisks",
         "date": "2025-05-28T00:00:00.000Z",
-        "dateDisplay": "May 28, 2025",
+        "dateDisplay": "May 2025",
         "tags": [
           "🍝Italy",
           "🏰Baroque",
@@ -732,7 +766,7 @@
         "url": "/voyage/singapore/",
         "excerpt": "Where iron forests conjoin the ballet of futurism",
         "date": "2024-01-08T00:00:00.000Z",
-        "dateDisplay": "Jan 8, 2024",
+        "dateDisplay": "Jan 2024",
         "tags": [
           "🌆Metropolis",
           "🌴Tropical (≈hot as hell)"
@@ -762,7 +796,7 @@
         "url": "/voyage/stoos/",
         "excerpt": "Where the ridge line cleaves light from shadow",
         "date": "2025-12-25T00:00:00.000Z",
-        "dateDisplay": "Dec 25, 2025",
+        "dateDisplay": "Dec 2025",
         "tags": [
           "🏔️Alps",
           "🚞Switzerland",
@@ -789,12 +823,42 @@
     {
       "type": "Feature",
       "properties": {
+        "slug": "titlis",
+        "title": "Titlis",
+        "url": "/voyage/titlis/",
+        "excerpt": "Where rime-laced forests climb into the blue above the clouds",
+        "date": "2025-12-24T00:00:00.000Z",
+        "dateDisplay": "Dec 2025",
+        "tags": [
+          "🏔️Alps",
+          "🚞Switzerland"
+        ],
+        "mainTag": "🏔️Alps",
+        "mainTagColor": "#c8cacd",
+        "tagColors": {
+          "🏔️Alps": "#c8cacd",
+          "🚞Switzerland": "#5e9e6f"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.437814,
+          46.772034
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "slug": "venice",
         "title": "Venice",
         "url": "/voyage/venice/",
         "excerpt": "Where whispers dance on liquid streets",
         "date": "2023-06-23T00:00:00.000Z",
-        "dateDisplay": "Jun 23, 2023",
+        "dateDisplay": "Jun 2023",
         "tags": [
           "🌊Coastal",
           "🍝Italy"
@@ -824,7 +888,7 @@
         "url": "/voyage/wengen/",
         "excerpt": "Where Alpine summits cradle timbered cottages",
         "date": "2024-06-18T00:00:00.000Z",
-        "dateDisplay": "Jun 18, 2024",
+        "dateDisplay": "Jun 2024",
         "tags": [
           "🏔️Alps",
           "🚞Switzerland",

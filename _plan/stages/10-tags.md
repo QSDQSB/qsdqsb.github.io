@@ -1,8 +1,82 @@
 # Stage 10 · Tags, from scratch
 
-**Status:** idea · **Tier:** 2. Taking the colour off the tags that exist is tier 2, answered
-([0009](../decisions/0009-how-much.md)). It runs beside the owner's standing call that these pages
-are redesigned from scratch: see the note in the scope.
+**Status:** designing (branch `work/r030`, not merged). **Tier:** 2. Taking the colour off the tags
+that exist is tier 2, answered ([0009](../decisions/0009-how-much.md)).
+
+**2026-11-27.** The owner asked again that both pages be rebuilt from scratch (R030: "the voyage by
+tags page and post by tags page's layout is inconsistent. We should re-build from scratch.") and
+picked their shape from prototypes: "A wall of doors" (Q23), over a column of covers. The branch
+`work/r030` builds it: it removes the old dock and its styles from `_pages/tag-archive.html`,
+`_pages/tag-voyage.html` and `_sass/_archive.scss`. Findings about the old dock and the two pages
+are kept here, open, until that branch is merged and each is checked against the new pages.
+
+## Built, 2026-11-27 (R030)
+
+The redesign came first, so the answered scope's first task was skipped, as the note below allows. The owner's
+words on the way: of the pages as they stood, "the tags display atm is a terrible design, you shouldnt' refer to
+it"; of a wrapped row of tag names, "this is very boring and undesired. it's a nightmare when scaled up." So a
+tag is not a word in a list. Picked from prototypes (the choice page `tag-pages`, option A: a wall of doors over a column of covers).
+
+- Both pages are `_includes/tag-page.html`: a doorway. Each tag is a door; the doors stand as a wall, every
+  door one square, the fullest tags first.
+- A door's face (the owner, 2026-11-27, of the built photograph doors): "We should intentionally use Barlow +
+  emoji for tag titles"; "use not the picture, but the dry vat generated from the picture"; "hovering on the
+  dry-vat background tag card transforms the background to the actual picture"; "Pick an underlying cover image
+  for each tag, and then from the cover image, which should be different across different tags, we should be
+  able to draw the dry vat out of it. In that case, we can distinguish between different tags while not being
+  too noisy and crowded over the page." So: each tag takes a photograph no other tag has (the newest of its
+  own), the door is that photograph's dye vat (`vat.js`, still, a rectangle), its name is Barlow with its emoji,
+  and under a pointer or the keyboard's focus the vat clears in 0.6 s to the photograph beneath. By touch the
+  photograph is never fetched. The vat thereby becomes grammar on a second kind of page, by the owner's call.
+- Then, of the built vats: "Each selected tag should also follow the overlay design" and "we don't need to use
+  a bold barlow, just a regular barlow should work." So a room opens under the site's overlay hero (the same
+  classes and rules as a page's, `_sass/_page.scss`), the tag's own photograph laid where the page's hero
+  stood, with the way back and the tag's name on it; tag names are Barlow regular.
+- Then, of that build: "i think we don't need darker mask on the tag-dry-vat. Right now the page looks slightly
+  off and inconsistent , the layout is not aesthetically pleasing". The vats had been dimmed for their palest
+  colour, and the doors came in three sizes so that every row was full. Now a vat is shown as poured, a door's
+  name stands at its foot (a vat settles light above deep), and every door is one size on both pages and in
+  "Next door" (four there). A tag's photograph is the earliest of its own that no other tag has taken, so a
+  room does not open on the picture of its first cover.
+- Then: "i think layout / fontsize should be reworked. Right now the visual language is - the tag text and the
+  background are two separate thing", and "have opus subagent review with /design-taste-frontend and propose the
+  fix". The review's reading: a white name with a drop shadow is a sticker on the vat, sized like a shrunken
+  cover title, beside an emoji that is a third material, on a door too wide to be a field of colour. Built as it
+  proposed: doors upright (4:5), five to a row on a desktop, four on a tablet, two square on a phone, so 15 and
+  10 close flush; the name sized by its door, the same on every door of a wall; the emoji a small mark on its
+  own line above; and the name printed in an ink taken from the dye beneath it (`assets/js/colour/ink.js`: the
+  colour under the words walked lighter or darker in OKLab until it reads, hue kept), with no white and no
+  shadow until the door develops into its photograph.
+- Then, of those upright doors: "I believe the issue is the aspect ratio of the card. If we intend to just show
+  the tag, then I think we should have either square card or a pill-like landscape card, because it doesn't
+  carry the image. It doesn't need to have such large space". Both were built and shown; the owner: "I think we
+  should have square ones. Also the tag text should be small (just the regular content text size) right now
+  it's too large to be consistent". So a door is a square and its name is the running text's size (`$type-size-7`).
+  Shown eight to a row, the owner: "We can have larger tag cards"; shown six: "I think we can use larger tag
+  card size and just ivory (white) tag text as title (the background is gradient dry vat so readability is
+  ok". Now two to a row on a phone, three on a tablet, five from a desktop up (15 and 10 close flush); "Next
+  door" shows five; and a name is the ivory every cover's name wears, with the cover card's own soft shadow.
+  The ink taken from the dye (`ink.js`) was removed with that. Measured, ivory reads at 4.2:1 or better on 21
+  of the 25 doors; on the four palest feet it read at 2.4 to 3.1 (Coastal, Happy Moments, Emo, Ox).
+- Then, of the ivory names: "The title doesn't blend in the background. It needs either simple mask or shadow,
+  consult with design taste". The consult's reading: on a cover the photograph darkens toward its foot (the
+  card's scrim), so a title stands in a dusk that is part of the picture; on a door the vat lay over that scrim,
+  and only a shadow held the name up. Built as it proposed: the cover card's own scrim brought back over the
+  vat (clear to four tenths down, then to 0.55 at the foot; a cover's is 0.45, over a dimmed photograph), the
+  same on every door, with no script. Measured in Chromium and WebKit, every name reads at 4.9:1 or better at
+  desktop and phone widths; "Happy Moments" at 320 px, where it wraps to two lines, reads at 3.9:1. The low bar was dropped: the dye ran in streaks behind the name, and it looked like the old
+  colour tiles.
+- A door opens a room in place, the tag's covers as `/voyage/` and `/posts/` show them, by `:target`, with no
+  script for that. At a room's foot, the doors of the five tags that share the most with it ("Next door").
+- The answers to "Before it is designed": a doorway, not an index (finding is search's); two pages, one layout.
+
+The corner tarot cards on these two pages sit over part of the door in the first and last column; asked
+with the pull request, the owner: "Keep them".
+
+Still the owner's, asked with the pull request: a line per tag for its door, naming a tag's photograph by hand
+(the page picks today), and which doors lead the wall.
+Three people brainstormed the reader's experience; what was not built is in the pull request's note. The
+atlas's popup and the frontmatter warning below are untouched.
 
 ## Goal
 
@@ -65,8 +139,16 @@ digest says which was done.
 - [ ] On both tag pages the tiles take the `tag` piece and the dots go: no gradient, no colour, and
       under the pointer a tile only brightens (it no longer grows). The dock's shape and its faults
       (X14) are the redesign's, not this task's.
-- [ ] A tag in the atlas's popup takes the `tag` piece; the inline `--tag-color` leaves `map.js`.
-      (A search result's tags are the post's pill and change with it, in stage 6.)
+- [x] A tag in the atlas's popup: moot since 2026-11-27. A marker opens "A label, as on a map" (Q25),
+      so the popup's tags go, and their inline `--tag-color` leaves `map.js` with them, in
+      [stage 4](04-voyage-and-cards.md)'s batch. A post's and a search result's inline colour is
+      F113, in [stage 6](06-posts-and-about.md).
+- [ ] F080 · The "#" anchor after each tag's heading on Voyage by tags is `#0072b1` at 60 per cent, a
+      blue no other rule uses, and mint under the pointer (`_sass/_archive.scss`,
+      `_pages/tag-voyage.html`). Check it on the rebuilt page: gone with the old heading, or ink.
+- [ ] X14, C01 · The dock that covers card titles, and voyages listed two ways (moved from stage 4):
+      both are the old pages'. Check on the rebuilt pages, then close.
+- [ ] The `tags` journey below, and `post-tags` (stage 6), once the wall of doors is merged.
 - [ ] Outside `_plan/`, for the session that builds: `scripts/check-frontmatter.js:259-268` warns
       that a tag with no entry "renders without accent colour". For a post that is then a warning
       about nothing a reader sees, and it goes, with its test
@@ -88,10 +170,8 @@ None is in the queue: each is asked when its page is drawn.
   to put when asked: remove `post_tag_colours` once nothing reads it (git keeps it), and keep
   `voyage_tag_colours` as the atlas's colours.
 
-- **The atlas's markers.** Each is a dot in its main tag's colour, with a legend of dots. No pair
-  drew a map. A dot is not a block, and the nearest standing call is the films' ("their own hue as
-  small ticks and dots"). The lead's reading: the markers keep their colours until the owner sees
-  the atlas in ink beside it. Nothing is changed on a guess.
+- **The atlas's markers.** Answered 2026-11-27 (Q24): "Colour stays, on the map alone". So
+  `voyage_tag_colours` keeps a reader, the atlas, and is not removed.
 - **The emoji in the tags' names** ("🌆Metropolis", "📘Diary"): each is a small filled picture in
   colour, and the names are the owner's words. The lead's reading of pair 17 would set them aside;
   no pair asked. The owner's to say, with the prototypes.

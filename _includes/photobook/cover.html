@@ -6,6 +6,9 @@
   keeps its 3:1 header.overlay_image; one with neither opens on the book's cover frame. The glow
   takes its colours from the book's cover frame, which is the cover photo when the YAML names one.
   The way back (to a part's voyage, or to all voyages) is the masthead's ‹ (_includes/photobook.html).
+  The book's figures (date, frames, lenses, films, body) stand in the band under the cover, beside
+  the dial; on a phone they stay on the picture, over a darker shade, four of them (the body is in
+  every photograph's specs).
 {%- endcomment -%}
 {%- assign pb = include.book -%}
 {%- assign cover = nil -%}
@@ -41,7 +44,7 @@
       <div><dt>Frames</dt><dd>{{ pb.count }}</dd></div>
       {%- if c.lenses.size > 0 %}<div><dt>Lenses</dt><dd>{{ c.lenses.size }}</dd></div>{% endif -%}
       {%- if c.films.size > 0 %}<div><dt>Films</dt><dd>{{ c.films.size }}</dd></div>{% endif -%}
-      {%- if c.bodies.size > 0 %}<div><dt>Body</dt><dd>{{ c.bodies[0].name | remove: "Fujifilm " }}</dd></div>{% endif -%}
+      {%- if c.bodies.size > 0 %}<div class="photobook-facts__body"><dt>Body</dt><dd>{{ c.bodies[0].name | remove: "Fujifilm " }}</dd></div>{% endif -%}
     </dl>
     {%- endif -%}
   </div>

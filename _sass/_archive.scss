@@ -51,18 +51,6 @@
   + .list__item .archive__item-title {
     margin-top: 0.5em;
   }
-  a {
-    text-decoration: none;
-    opacity: 0.6;
-    font-size: smaller;
-    color: #0072b1;
-  }
-  &:hover {
-    a {
-      color: $link-color-hover;
-      opacity: 1;
-    }
-  }
 }
 
 .archive__item-title {
@@ -113,13 +101,42 @@
 /* zidingyi */
 
 
+// The covers' column. No inset of its own: a cover's edge is the page's column, level with the
+// page's title (Posts, Voyage, Portfolio), as on a voyage in parts below.
 .container {
   z-index: 1;
-  padding: 0 0.5rem 0.5rem 0.5rem;
+  padding: 0 0 0.5rem;
   margin: 0;
   width: 100%;
   min-width: 100%; // #main is display:flex on this layout, and width:100% on a flex child can resolve to intrinsic content width instead of the parent's content box. min-width:100% pins it to the full flex-parent width so .card margins read symmetric L/R on mobile.
   display: block; /* Ensures it fits precisely within its parent */
+}
+
+// A voyage in parts (_layouts/gallery.html): its hero's title stands at the hero's inset
+// (clamp(1rem, 3vw, 2.4rem), _page.scss), and #main already gives 1rem of it.
+.container--parts {
+  padding-inline: calc(clamp(1rem, 3vw, 2.4rem) - 1rem);
+}
+
+// A voyage in parts states the facts a voyage's cover carries (.photobook-facts, _photobook.scss),
+// at the hero's right beside its title; on a phone, beneath it.
+.page__hero-facts {
+  @include photobook-inks;
+  flex: none;
+  margin-left: auto;
+  padding-left: 1.5rem;
+  color: $lighter-gray;
+  text-shadow: 1px 1px 4px rgba($darker-gray, 0.5);
+
+  @include responsive-down(tablet) {
+    flex-basis: 100%;
+    margin-top: 0.9rem;
+    padding-left: 0;
+  }
+}
+
+.page__hero--overlay .wrapper:has(> .page__hero-facts) {
+  @include responsive-down(tablet) { flex-wrap: wrap; }
 }
 
 .card {
@@ -158,9 +175,6 @@
   background-image: linear-gradient(rgba(12,12,12,var(--bg-filter-opacity)),rgba(0,0,0,var(--bg-filter-opacity))), var(--bg-img, none);
   .no-js & { --bg-img: var(--bg-later); }
 	position: relative;
-  // aspect-ratio: hover 3.5→3.3 is intended motion; a ratio is immune to the
-  // Safari load-time re-resolution that bans geometry from the shared tokens.
-  transition: $cubic-bezier-default, aspect-ratio 1s $cubic-bezier-param;
   text-decoration: none;
 
   // Bottom-up gradient scrim — engineered contrast under the title /
@@ -173,11 +187,9 @@
     border-radius: inherit;
     background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%);
     pointer-events: none;
-    transition: inherit;
   }
 
   * p {
-    transition: inherit;
     text-shadow: 0 1px 4px rgba(0,0,0,0.45); // safety net against edge-case photos; scrim above does most of the contrast work
     font-size: $type-size-8;
     color: $text-color;
@@ -186,63 +198,35 @@
     }
   }
 
+  // The wide cover does nothing under the pointer: it does not rise, grow or change shape (the
+  // owner's standing call). Only the words it keeps for the pointer (its line, read time and date)
+  // fade in, in place, over the cover's second.
+  .content .sci,
+  .readtime,
+  .date {
+    transition: opacity $duration-cover $cubic-bezier-smooth;
+    html.motion-off & { transition: none; }
+    @include responsive-reduced-motion { transition: none; }
+  }
+
   &:hover, &:focus-within {
-    @include responsive-up(tablet) {
-      aspect-ratio: 3.3;
-    }
     text-decoration: none;
-    border-color: $border-color;
-    box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
-                0 1px  6px  rgba(0, 0, 0, .20),
-                0 8px  8px  rgba(0, 0, 0, .25), 
-                0 16px 16px rgba(0, 0, 0, .25), 
-                8px 32px 32px rgba(0, 0, 0, .35), 
-                8px 64px 64px rgba(0, 0, 0, .35); 
-    
-    transform: scale(1.03)
-              translateY(-0.25em);
-    .content h3 {
-      transform: translateY(-0.25em);
-    }
+
     .content .sci,
-    .readtime {
-      opacity: 1;
-    }
-    .hidden_item {
-      opacity: 1;
-      transform: translateY(0px);
-    }
+    .readtime,
     .date {
       opacity: 1;
     }
-   }
-
-   &:active {
-    box-shadow: 0 4px  4px  rgba(0, 0, 0, .1),
-                0 1px  6px  rgba(0, 0, 0, .05),
-                0 8px  8px  rgba(0, 0, 0, .1), 
-                0 16px 16px rgba(0, 0, 0, .1), 
-                8px 16px 16px rgba(0, 0, 0, .15), 
-                8px 32px 32px rgba(0, 0, 0, .15); 
-   }
-   .hidden_item {
-    opacity: 0;
-    margin: 0 auto;
-    transform: translateY(10px);
-    transition: $cubic-bezier-default;
   }
+
   .content {
     position: relative; // stack above the ::before scrim
-    transform: translateY(0);
-    transition: inherit;
 
     h3 {
-      transition: inherit;
       text-shadow: 0 1px 4px rgba(0,0,0,0.5); // safety net; scrim above does most of the contrast work
       text-align: left;
       margin-bottom: 0;
       margin-top: clamp(0rem, 1vw, 0.5em);
-      transform: translateY(0);
       font-size: clamp(1.3em, 2.4vw, 1.7em);
       color: $text-color;
       font-family: $global-font-family;
@@ -250,7 +234,6 @@
 
     .sci {
       font-family: $line-serif-family;
-      transition: inherit;
       opacity: 0;
       margin: 0;
       // Touch has no hover to reveal it, so the excerpt rests at the foot of the
@@ -301,7 +284,6 @@
     }
   }
   .date {
-    transition: inherit;
     font-family: $tag-font-family;
     position: absolute;
     bottom: 0;
@@ -340,81 +322,6 @@
 // They animated a small "comet" pseudo-element parked on a now-deleted
 // child element, so the entire block became orphan.
 
-// Tag selection view for archive by tags pages
-.tag-grid {
-  text-align: center;
-  align-items: center;
-  border: 4px solid rgba(144, 144, 144, 0.3);
-  font-family: $barlow-font-family;
-  max-height: 10rem;
-  height: 5rem;
-  display: grid;
-  overflow-x: auto;
-  white-space: nowrap;
-  & > * {
-    display: inline-block;
-    white-space: normal;
-  }
-  max-width: 100%;
-  width: 100%;
-  padding: 0.5rem;
-  gap: 0.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  @include responsive-up(tablet) {
-    width: 80%;
-    padding: 1rem;
-    gap: 1rem;
-  }
-  margin: 0.2rem 0.2rem 0 0;
-  background-color: rgba(48, 48, 48, 0.2);
-  border-radius: $border-radius * 2;
-  box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
-              0 8px  8px  rgba(0, 0, 0, .25),
-              0 16px 16px rgba(0, 0, 0, .25);
-  // height: the hover 5rem→7.5rem expansion is intended motion.
-  transition: $cubic-bezier-default, height 1s $cubic-bezier-param;
-  @include backdrop-blur(blur(5px));
-  &:hover {
-    box-shadow: $box-shadow-fancy;
-    height: 7.5rem;
-  }
-  a:hover {
-    text-decoration: none;
-    p {
-      color: $text-color;
-    }
-  }
-}
-.tag-grid__item {
-  border: 2px solid rgba(188, 188, 188, 0.3);
-  height: 3rem;
-  min-width: 4.5rem;
-  max-width: 7.5rem;
-  font-size: $type-code-size;
-  font-family: $tag-font-family;
-  border-radius: $border-radius;
-  padding: 0.3rem 0.2rem;
-  text-align: center;
-  background-color: rgba(133, 102, 102, 0.3);
-  transition: $cubic-bezier-default-05s;
-  @include backdrop-blur(blur(10px) brightness(0.85));
-  text-shadow: rgba(14, 14, 14, 0.2) 0px 7px 14px, rgba(24, 24, 24, 0.25) 0px 5px 5px;
-  overflow: hidden;
-  p {
-    display: block;
-    line-height: 1;
-    color: $text-color;
-    -webkit-hyphens: auto;
-    hyphens: auto;
-    overflow-y: visible;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-}
-.tag-grid__item:hover {
-  scale: 1.1;
-}
-
 .card_grid_view {
   display: grid;
   grid-template-columns: 1fr;
@@ -430,24 +337,6 @@
     text-decoration: none;
     & p {
       color: $text-color;
-    }
-  }
-
-  .list__item {
-    html.motion-off & { transition: none; }
-    border-radius: $border-radius * 2;
-    border: 2px solid rgba(188, 188, 188, 0.2);
-    box-shadow: $shadow-soft;
-    background: linear-gradient(135deg, rgba(13, 13, 13, 0.2), rgba(28, 28, 28, 0.2));
-    padding: 1rem;
-    transition: $cubic-bezier-default;
-    &:hover {
-      box-shadow: $box-shadow-fancy;
-      transform: scale(1.05);
-      border: 2px solid rgba(188, 188, 188, 0.6);
-    }
-    h2, p {
-      z-index: 8;
     }
   }
 

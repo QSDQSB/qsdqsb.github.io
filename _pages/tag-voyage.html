@@ -3,53 +3,17 @@ layout: archive
 permalink: /voyage-by-tags/
 title: "_Categorised_ Voyages"
 excerpt: In case of his death, QSD would love to donate a chair to `50°05'11.5"N 14°23'26.6"E`.
-author_profile: true
-left_tarot_card: 'the-high-priestess'
-left_tarot_href: /tags/
+left_tarot_card: 'knight-of-wands'
+left_tarot_href: /voyage/
+right_tarot_card: 'the-high-priestess'
+right_tarot_href: /tags/
+author_profile: false
 header:
   overlay_image: jfk_afterglow_4v1.jpg
   overlay_filter: 0.25
-toc: true
 ---
-
-{% include base_path %}
-{% assign all_voyages = site.voyage | concat: site.subvoyage %}
 {%- comment -%} As /voyage/ lists them: a voyage whose Photobook is still empty is left out (_includes/photobook-ready.html). {%- endcomment -%}
+{%- assign all_voyages = site.voyage | concat: site.subvoyage | sort: "date" | reverse -%}
 {%- assign ready_voyages = "" | split: "" -%}
-{%- for d in all_voyages %}{% include photobook-ready.html doc=d %}{% if photobook_ready %}{% assign ready_voyages = ready_voyages | push: d %}{% endif %}{% endfor %}
-{% include group-by-array collection=ready_voyages field="tags" %}
-
-    {% for tag in group_names %}
-      {% assign posts = group_items[forloop.index0] %}
-      {% assign tag_colour = site.data.tag_colours.voyage_tag_colours[tag] %}
-      <h2 id="{{ tag | slugify }}" class="archive__subtitle">{% if tag_colour %} <span class="tag-colour" style="color: {{ tag_colour }};"> ● </span>{% endif %}{{ tag }} <a href="#{{ tag | slugify }}"> #</a></h2>
-      <div class="card_grid_view">
-      {% for post in posts %}
-        {% include archive-single-talk.html %}
-      {% endfor %}
-      </div>
-    {% endfor %}
-
-    <div class="tag-grid sticky_bottom">
-      {% for tag in group_names %}
-        {% assign display_tag = tag | slice: 0, 15 %}
-        {% assign tag_colour = site.data.tag_colours.voyage_tag_colours[tag] %}
-        {% if tag_colour %} 
-        <!-- Assign tag_colour with alpha channel -->
-          {% assign tag_colour_1 = tag_colour | append: "3b" %}
-          {% assign tag_colour_2 = tag_colour | append: "5a" %}
-          {% assign tag_colour_3 = tag_colour | append: "22" %}
-        {% endif %}
-        {% if tag.size > 15 %}
-          {% assign display_tag = display_tag | append: "..." %}
-        {% endif %}
-        <a href="#{{ tag | slugify }}" class="tag-grid__item" {% if tag_colour %}style="background: linear-gradient(21deg, {{ tag_colour_1 }} 0%, {{ tag_colour_2 }} 40%, {{ tag_colour_3 }} 70%, #7777772a 100%);" {% endif %}>
-          <p>{{ display_tag }}</p>
-        </a>
-      {% endfor %}
-    </div>
-    <a class="floating_tarot_card_container" href="/voyage" title="🚶🏻‍♀️Back to Voyage">
-      <div class="floating_tarot_card" aria-hidden="true" style="mask-image: url('/assets/css/images/tarots/knight-of-wands.svg');"></div>
-    </a>
-
-    {% include random_voyage.html %}
+{%- for d in all_voyages %}{% include photobook-ready.html doc=d %}{% if photobook_ready %}{% assign ready_voyages = ready_voyages | push: d %}{% endif %}{% endfor -%}
+{% include tag-page.html docs=ready_voyages all_href="/voyage/" all_label="All voyages" other_href="/tags/" other_label="Posts by tag" %}

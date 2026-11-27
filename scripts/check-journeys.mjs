@@ -195,6 +195,54 @@ const JOURNEYS = [
     must(await page.locator('h1').count() >= 1, `${href} opened without a title`);
   } },
 
+  { id: 'tags', name: 'A tag page shows its doors, a door opens its room, the room leads next door and Back retraces, and a tag in the address lands in its room', async run({ page, go }) {
+    for (const at of ['/voyage-by-tags/', '/tags/']) {
+      await go(at);
+      const doors = page.locator('.tag-page > .tag-page__doors a.card');
+      must(await doors.count() >= 5, `${at}: only ${await doors.count()} doors`);
+      // A voyage's door is the dye vat of its photograph, and clears to the photograph under the pointer.
+      if (at === '/voyage-by-tags/') {
+        const vat = doors.first().locator('canvas.tag-page__vat');
+        await vat.waitFor({ state: 'attached' });
+        must(await page.locator('.tag-page > .tag-page__doors canvas.tag-page__vat').count() === await doors.count(), `${at}: a door has no vat`);
+        await page.locator('.tag-page > .tag-page__doors .tag-page__door.is-poured').nth(await doors.count() - 1).waitFor({ state: 'attached' });
+        await doors.first().hover();
+        await page.waitForFunction((el) => getComputedStyle(el).opacity === '0', await vat.elementHandle());
+        await page.mouse.move(0, 0);
+        await page.waitForFunction((el) => getComputedStyle(el).opacity === '1', await vat.elementHandle());
+      }
+      const slug = (await doors.first().getAttribute('href')).slice(1);
+      const room = page.locator(`.tag-page__room[id="${slug}"]`);
+      await doors.first().click();
+      await room.waitFor({ state: 'visible' });
+      must(!(await doors.first().isVisible()), `${at}: the doors stayed over the room #${slug}`);
+      // The room opens as a page does: its own hero where the page's stood, across the whole width.
+      const hero = await room.locator('.tag-page__hero').boundingBox();
+      must(!(await page.locator('body > .page__hero--overlay').isVisible()), `${at}: the page's hero stayed over the room's`);
+      must(!!hero && Math.abs(hero.x) < 1 && Math.abs(hero.width - page.viewportSize().width) < 1, `${at}: the room's hero does not span the page (${hero && `${hero.x} + ${hero.width}`})`);
+      must(await page.locator('.tag-page__room:visible').count() === 1, `${at}: more than one room is open`);
+      must(await room.locator(':scope > a.card').count() >= 1, `${at}: the room #${slug} is empty`);
+      const next = room.locator('.tag-page__next a.card').first();
+      must(await next.count() === 1, `${at}: the room #${slug} leads nowhere`);
+      const onward = (await next.getAttribute('href')).slice(1);
+      await next.click();
+      await page.locator(`.tag-page__room[id="${onward}"]`).waitFor({ state: 'visible' });
+      must(!(await room.isVisible()), `${at}: #${slug} stayed open beside #${onward}`);
+      await page.goBack();
+      await room.waitFor({ state: 'visible' });
+      await page.goBack();
+      await doors.first().waitFor({ state: 'visible' });
+      // As a tag under a post or a voyage arrives, from another page: straight into the room, and a cover there opens.
+      await page.goto('about:blank');
+      await go(`${at}#${slug}`);
+      await room.waitFor({ state: 'visible' });
+      const cover = room.locator(':scope > a.card').first();
+      const href = await cover.getAttribute('href');
+      await Promise.all([page.waitForURL(`**${href}`), cover.click()]);
+      must(await page.locator('h1').count() >= 1, `${href} opened without a title`);
+    }
+  } },
+
   { id: 'bestiary', name: 'The Bestiary opens from the masthead, a card opens a fable in two languages, and its way on leads on and back', async run({ page, go }) {
     await go('/');
     const door = page.locator('.masthead a[href$="/bestiary/"]').first();
@@ -816,6 +864,43 @@ const JOURNEYS = [
     await page.waitForTimeout(1200);
     must(zooms.size >= 1, 'no tile was asked for (or the tile host has changed): the journey cannot tell');
     must(zooms.size === 1, `the map asked for tiles at ${zooms.size} zoom levels (${[...zooms].join(', ')}): it laid them before its view was known`);
+    // Awake from the start: a marker under the pointer opens its label, which leads to the part.
+    must(await page.locator('.map-container .map-name').count() >= 2, "the parts' names are not written beside their markers");
+    await page.locator('.map-container path.leaflet-interactive').first().hover();
+    await page.waitForTimeout(500);
+    const href = await page.locator('.leaflet-popup a.popup-content--atlas').getAttribute('href').catch(() => null);
+    must(href && href.startsWith('/voyage/japan/'), 'a marker under the pointer opened no label leading to its part');
+  } },
+
+  { id: 'atlas-index', name: 'The Voyage page keeps its map after the covers, and a marker opens its label', async run({ page, go }) {
+    await go('/voyage/');
+    const after = await page.evaluate(() => { const a = document.querySelector('.container > .voyage-atlas'); const cards = document.querySelectorAll('.container > a.card'); return !!a && cards.length > 0 && !!(cards[cards.length - 1].compareDocumentPosition(a) & Node.DOCUMENT_POSITION_FOLLOWING); });
+    must(after, 'the atlas is gone from the Voyage page, or stands before the covers');
+    await page.locator('.voyage-atlas .map-container').scrollIntoViewIfNeeded();
+    await page.waitForSelector('.map-container--ready', { timeout: 15000 }).catch(() => {});
+    must(await page.locator('.map-container--ready').count() === 1, 'the map did not start when it came into view');
+    await page.locator('.map-container path.leaflet-interactive').first().dispatchEvent('mouseover');   // the first voyage may lie outside Europe's view, where no pointer reaches it
+    await page.waitForTimeout(500);
+    const href = await page.locator('.leaflet-popup a.popup-content--atlas').getAttribute('href').catch(() => null);
+    must(href && href.startsWith('/voyage/'), 'a marker under the pointer opened no label leading to its voyage');
+  } },
+
+  { id: 'atlas-phone', phone: true, name: 'On a phone the map unfolds to the whole screen at a tap, a marker opens its strip, and it folds back', async run({ page, go }) {
+    await go('/voyage/dolomites/');
+    await page.locator('.map-container').scrollIntoViewIfNeeded();
+    await page.waitForSelector('.map-unfold', { timeout: 15000 }).catch(() => {});
+    must(await page.locator('.map-unfold').count() === 1, 'the folded map has no tap to unfold it');
+    await page.locator('.map-unfold').dispatchEvent('click');
+    await page.waitForTimeout(600);
+    const box = await page.evaluate(() => { const r = document.querySelector('.map-container').getBoundingClientRect(); return [r.left, r.top, r.width - innerWidth, r.height - innerHeight]; });
+    must(box.every((v) => Math.abs(v) < 1), `the unfolded map does not fill the screen (${box.join(', ')})`);
+    await page.locator('.map-container path.leaflet-interactive').first().dispatchEvent('click');
+    await page.waitForTimeout(400);
+    const strip = await page.locator('.map-strip:not([hidden]) a.popup-content--atlas').getAttribute('href').catch(() => null);
+    must(strip && strip.startsWith('/voyage/dolomites/'), "a marker's tap opened no strip leading to its part");
+    await page.locator('.leaflet-control-fullscreen-button').dispatchEvent('click');
+    await page.waitForTimeout(400);
+    must(await page.locator('.map-container--unfolded').count() === 0 && await page.locator('#main .map-container').count() === 1, 'the close mark did not fold the map back into the page');
   } },
 
   { id: 'reverie-unheld', name: 'A colour no photograph holds opens on the one that comes closest', async run({ page, go }) {

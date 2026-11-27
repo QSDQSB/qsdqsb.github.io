@@ -35,7 +35,7 @@ That is what made it look like a different site (2026-09-27).
 | Segmented toggle | class `.photobook-sheet__order` | Two or three exclusive choices in spaced capitals (Sequence / Colour) | the book's sheet, the palette page |
 | Tooltip | `data-tip` (+ `data-tip-side`), `assets/js/photobook/tip.js` | Naming an icon control after a pause; pointer only | masthead ‹, lightbox, colophon, rail |
 | Palette strip | class `.palette-strip` | A palette as a thin bar with its hex codes | specs panel, colophon |
-| Tag | `tag` (+ `tag-lit`) | One look for every tag: ink, a one-pixel line, no fill and no colour; under the pointer it only brightens (0009) | the specimen page; the tag pages and a post's tags in stages 6 and 10 |
+| Tag | `tag` (+ `tag-lit`) | One look for every tag: ink, a one-pixel line, no fill and no colour; under the pointer it only brightens (0009) | the specimen page; a post's tags in stage 6 (the tag pages show a tag as a door, the dye vat of its photograph: `_includes/tag-page.html`) |
 | Text button | `text-button($quiet)` (+ `text-button-lit`, `-pressed`, `-unavailable`) | A button with words: a rounded rectangle of 10 px, solid (a glass-white fill) or quiet (none until the pointer); never a pill (0009, pick 2) | the specimen page; the chrome's buttons as they move onto it (stage 2) |
 
 ## Surfaces
@@ -74,7 +74,7 @@ In `_sass/_variables.scss`, as [0002](../_plan/decisions/0002-one-control-vocabu
 | Scale | Steps |
 |---|---|
 | Corners | `$radius-none` 0 (a print) · `$radius-hair` 3px · `$radius-picture` 8px (a picture inside an article) · `$border-radius` 10px (a control, a card, a panel) · `$radius-large` 18px (a card that is the scene) · `$radius-pill` 999px · `$radius-round` 50% (dots and discs, never a control: 0012) |
-| Durations | `$duration-fast` 0.15s · `$duration-base` 0.3s (a hover, a card's lift) · `$duration-slow` 0.6s (a print developing, a panel moving) · `$duration-arrive` 0.7s (words arriving) · `$duration-cover` 1s (the wide cover's words; `$cubic-bezier-default` carries it) · `$duration-scene` 1.1s and over (a room's light, an opening) |
+| Durations | `$duration-fast` 0.15s · `$duration-base` 0.3s (a hover, a card's lift) · `$duration-slow` 0.6s (a print developing, a panel moving) · `$duration-arrive` 0.7s (words arriving) · `$duration-cover` 1s (the wide cover's words, fading in on `$cubic-bezier-smooth`) · `$duration-scene` 1.1s and over (a room's light, an opening) |
 | Shadows | `$shadow-rest` (a card at rest) · `$shadow-lifted` (a card under the pointer) |
 | Glass | `$glass-blur` 14px at 120% (the default) · `$glass-blur-thin` 6px (a small mark over a picture or code). 0002's `control` depth (12px) is folded into the default: the masthead's two buttons, the round tool and the hover tip are on `$glass-blur`. The Photobook's bar and panel (18px, 24px) are inherited as built |
 
@@ -82,9 +82,9 @@ In `_sass/_variables.scss`, as [0002](../_plan/decisions/0002-one-control-vocabu
 
 - **Two curves.** `$cubic-bezier-standard` and `$cubic-bezier-smooth` in Sass. Scripts read them as
   `--ease-standard` and `--ease-smooth` from `:root` (`_tokens.scss`). Don't write a `cubic-bezier(…)`
-  in a script. The wide cover keeps a third of its own, `$cubic-bezier-param`, carried by
-  `$cubic-bezier-default` (0002). Older rules still hold others (`$nav-shell-ease`, bare `ease`,
-  literals); C04 brings them onto these.
+  in a script. The wide cover's words fade in on `$cubic-bezier-smooth`. Older rules still hold
+  others (`$cubic-bezier-param` through `$cubic-bezier-default` (0002), `$nav-shell-ease`, bare
+  `ease`, literals); C04 brings them onto these.
 - **Page changes.** The page fades out and in over 0.3 s, its content over 0.4 s, both on the
   standard curve; the masthead over 0.2 s (`_view-transitions.scss`). The palette page's
   voyage-to-voyage change goes out over 0.3 s on the standard curve and comes in over 0.4 s on the
