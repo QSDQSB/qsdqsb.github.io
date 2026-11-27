@@ -10,6 +10,8 @@ reused. Give it a home with `node scripts/plan.mjs take F012 "stage 3"`.
 
 ## Waiting
 
+- 2026-11-27 · F118 · _includes/head/custom.html (page transitions) · In Chromium emulating a phone, following a link throws an uncaught error, Transition was aborted because of invalid state. Viewport size changed: the page transition's promise is not caught. A journey that taps a link on a phone fails on it (session)
+- 2026-11-27 · F117 · _sass/_view-transitions.scss:18 · In Chrome the menu bar's glass never blurs the page: view-transition-name on .masthead cuts its backdrop off, so the rooms sit on sharp text at 0.44 (reviewer)
 - 2026-11-27 · F116 · scripts/check-journeys.mjs · Two journeys nothing walks: on a phone the overflow button opens the rest of the rooms and one leads on (the only way to Palette, Bestiary and About at 320); previous and next at a post's foot lead to the neighbouring posts (reviewer)
 - 2026-11-27 · F115 · _sass/_variables.scss $caption-font-family · PT Serif is never loaded and the variable has one user left, figcaption in _base.scss, which shows in Georgia (reviewer)
 - 2026-11-27 · F114 · CLAUDE.md:138, the css-token-steward and css-scss-janitor skills · They cite $nav-action-sweep-duration as an example of a single-use variable; it was deleted with the menu's old button shell (reviewer)

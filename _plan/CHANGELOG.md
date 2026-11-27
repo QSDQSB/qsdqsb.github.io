@@ -11,7 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
-- 2026-11-27 · On a phone the rooms that do not fit in the menu bar open beneath it as the same bar continued: the same size, weight and corners, no pointer triangle; the room you are in is marked there too, and a tap no longer leaves a filled square on the button (R034) · tier 2
+- 2026-11-27 · On a phone the rooms that do not fit in the menu bar open beneath it as the same bar continued: the same size, weight and corners, no pointer triangle; the room you are in is marked there too, with a hairline exactly as wide as its word, and a tap no longer leaves a filled square on the button (R034) · tier 2
 - 2026-11-27 · A tag under a post or a voyage is ink on one line, with no colour of its own (R026) · tier 2
 - 2026-11-27 · On a phone a hero's title is a quarter larger, and a picture's credit has its own line under the excerpt (it also shows now for readers with motion off) (R031) · tier 2
 - 2026-11-27 · The 中 / EN switch is set in Barlow with a control's corners; a post's date and On This Page are labels (R026) · tier 2

@@ -359,7 +359,9 @@
     padding: 0.16rem $nav-shell-padding-x;
     border: 1px solid var(--glass-edge);
     border-radius: $border-radius;
-    background: var(--glass);
+    // Denser than the bar: a panel inside the bar gets no blur of its own from some browsers, and its
+    // rooms must stay clear of the prose beneath.
+    background: rgba(10, 10, 12, 0.82);
     box-shadow: $shadow-soft;
     @include backdrop-blur(blur(18px) saturate(140%));
     opacity: 0;
