@@ -195,48 +195,47 @@ const JOURNEYS = [
     must(await page.locator('h1').count() >= 1, `${href} opened without a title`);
   } },
 
-  { id: 'tags', name: 'A tag page shows its doors, a door opens its room, the room leads next door and Back retraces, and a tag in the address lands in its room', async run({ page, go }) {
+  { id: 'tags', name: 'A tag page shows its doors, a door opens its list below them with the doors still in sight, the address names the tag, Back retraces, and a tag in the address opens its list', async run({ page, go }) {
     for (const at of ['/voyage-by-tags/', '/tags/']) {
       await go(at);
-      const doors = page.locator('.tag-page > .tag-page__doors a.card');
+      const doors = page.locator('.tag-page__doors a.card');
       must(await doors.count() >= 5, `${at}: only ${await doors.count()} doors`);
+      must(await page.locator('.tag-page__room:visible').count() === 0, `${at}: a list is open before any tag is chosen`);
       // A voyage's door is the dye vat of its photograph, and clears to the photograph under the pointer.
       if (at === '/voyage-by-tags/') {
         const vat = doors.first().locator('canvas.tag-page__vat');
         await vat.waitFor({ state: 'attached' });
-        must(await page.locator('.tag-page > .tag-page__doors canvas.tag-page__vat').count() === await doors.count(), `${at}: a door has no vat`);
-        await page.locator('.tag-page > .tag-page__doors .tag-page__door.is-poured').nth(await doors.count() - 1).waitFor({ state: 'attached' });
+        must(await page.locator('.tag-page__doors canvas.tag-page__vat').count() === await doors.count(), `${at}: a door has no vat`);
         await doors.first().hover();
         await page.waitForFunction((el) => getComputedStyle(el).opacity === '0', await vat.elementHandle());
         await page.mouse.move(0, 0);
-        await page.waitForFunction((el) => getComputedStyle(el).opacity === '1', await vat.elementHandle());
       }
-      const slug = (await doors.first().getAttribute('href')).slice(1);
-      const room = page.locator(`.tag-page__room[id="${slug}"]`);
-      await doors.first().click();
-      await room.waitFor({ state: 'visible' });
-      must(!(await doors.first().isVisible()), `${at}: the doors stayed over the room #${slug}`);
-      // The room opens as a page does: its own hero where the page's stood, across the whole width.
-      const hero = await room.locator('.tag-page__hero').boundingBox();
-      must(!(await page.locator('body > .page__hero--overlay').isVisible()), `${at}: the page's hero stayed over the room's`);
-      must(!!hero && Math.abs(hero.x) < 1 && Math.abs(hero.width - page.viewportSize().width) < 1, `${at}: the room's hero does not span the page (${hero && `${hero.x} + ${hero.width}`})`);
-      must(await page.locator('.tag-page__room:visible').count() === 1, `${at}: more than one room is open`);
-      must(await room.locator(':scope > a.card').count() >= 1, `${at}: the room #${slug} is empty`);
-      const next = room.locator('.tag-page__next a.card').first();
-      must(await next.count() === 1, `${at}: the room #${slug} leads nowhere`);
-      const onward = (await next.getAttribute('href')).slice(1);
-      await next.click();
-      await page.locator(`.tag-page__room[id="${onward}"]`).waitFor({ state: 'visible' });
-      must(!(await room.isVisible()), `${at}: #${slug} stayed open beside #${onward}`);
+      const doorsInSight = async (why) => {
+        const top = await page.locator('.tag-page__doors').evaluate((el) => el.getBoundingClientRect().top);
+        must(top >= 0 && top < page.viewportSize().height / 2, `${at}: ${why}, the doors are out of sight (top ${Math.round(top)})`);
+      };
+      const [first, second] = [(await doors.nth(0).getAttribute('href')).slice(1), (await doors.nth(1).getAttribute('href')).slice(1)];
+      const list = (slug) => page.locator(`.tag-page__room[id="${slug}"]`);
+      await doors.nth(0).click();
+      await list(first).waitFor({ state: 'visible' });
+      must(new URL(page.url()).hash === `#${first}`, `${at}: the address does not name #${first}`);
+      must(await list(first).locator(':scope > a.card').count() >= 1, `${at}: the list #${first} is empty`);
+      must(await doors.nth(0).getAttribute('aria-current') === 'true', `${at}: the door of #${first} is not marked open`);
+      await page.waitForTimeout(700); // the page settles on the doors
+      await doorsInSight('with a list open');
+      await doors.nth(1).click();
+      await list(second).waitFor({ state: 'visible' });
+      must(!(await list(first).isVisible()), `${at}: #${first} stayed open beside #${second}`);
       await page.goBack();
-      await room.waitFor({ state: 'visible' });
-      await page.goBack();
-      await doors.first().waitFor({ state: 'visible' });
-      // As a tag under a post or a voyage arrives, from another page: straight into the room, and a cover there opens.
+      await list(first).waitFor({ state: 'visible' });
+      must(!(await list(second).isVisible()) && await doors.nth(0).getAttribute('aria-current') === 'true', `${at}: Back did not return to #${first}`);
+      // As a tag under a post or a voyage arrives, from another page: its list open, the doors above it, and a cover there opens.
       await page.goto('about:blank');
-      await go(`${at}#${slug}`);
-      await room.waitFor({ state: 'visible' });
-      const cover = room.locator(':scope > a.card').first();
+      await go(`${at}#${second}`);
+      await list(second).waitFor({ state: 'visible' });
+      await page.waitForTimeout(900);
+      await doorsInSight('arriving at a tag');
+      const cover = list(second).locator(':scope > a.card').first();
       const href = await cover.getAttribute('href');
       await Promise.all([page.waitForURL(`**${href}`), cover.click()]);
       must(await page.locator('h1').count() >= 1, `${href} opened without a title`);

@@ -73,6 +73,17 @@ tag is not a word in a list. Picked from prototypes (the choice page `tag-pages`
 The corner tarot cards on these two pages sit over part of the door in the first and last column; asked
 with the pull request, the owner: "Keep them".
 
+Then, with the pull request open: "i think the zoom-in transition on hover isn't reconciling with the site.
+Either make it the default transition time 0.5s, or remove it, also bring back the default author-profile on
+the two tags page", and "i think the openned post-by-tag should be in the same page, maybe we should have small
+tag card blocks, on top of the page, and clicking the card block opens the list of posts / voyages belonging to
+this tag directly below the page", "e.g. it's trackable via qsdqsb.com/posta-by-tag/#emo". So the doors no
+longer grow under the pointer; the profile is back; and a tag no longer opens a room with its own hero and a
+"Next door" row: the doors stay at the head of the page (small squares, three to a row on a phone, five on a
+tablet, seven on a desktop), and choosing one opens its list right below them, the page keeping the doors in
+sight. The address names the tag (`/tags/#emo`), Back steps through the tags chosen, and the open tag's door
+shows its photograph. Without script the list opens by `:target`.
+
 Still the owner's, asked with the pull request: a line per tag for its door, naming a tag's photograph by hand
 (the page picks today), and which doors lead the wall.
 Three people brainstormed the reader's experience; what was not built is in the pull request's note. The
