@@ -11,7 +11,8 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
-- 2026-11-26 · A code block's Copy button, reached by keyboard, wears the site's brass focus ring like every other control (C02) · tier 1
+- 2026-11-27 · The bilingual switch's two buttons, reached by keyboard, wear the site's brass focus ring, as the map, the search panel and the subscribe slip do (C02) · tier 1
+- 2026-11-26 · A code block's Copy button, reached by keyboard, wears the site's brass focus ring, as the map, the search panel and the subscribe slip do (C02) · tier 1
 - 2026-11-26 · The War Declaration's chapters stand as centred brass headings, and QSD signs it in a large italic over a brass rule (R022) · tier 2
 - 2026-11-25 · The War Declaration's seal keeps its room at the foot of the post: the date and tags below no longer run under it (R022) · tier 2
 - 2026-11-25 · The random-post card on Posts lands on every post, the one whose title starts with a digit too; and a Photobook never closes on a lone portrait standing full width · tier 1

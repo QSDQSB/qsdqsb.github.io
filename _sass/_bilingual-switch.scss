@@ -70,10 +70,7 @@
     background: rgba($light-gray, 0.08);
   }
 
-  &:focus-visible {
-    outline: 2px solid rgba($primary-color, 0.85);
-    outline-offset: 1px;
-  }
+  &:focus-visible { @include brass-focus; }
 }
 
 .bilingual-switch__button.is-active {
