@@ -13,6 +13,15 @@ options as `- **A (recommended):** …`. A number is never reused: the command c
 
 ---
 
+### Q24 · Twenty calls from the whole-site audit: pick on the second sheet
+
+Asked: 2026-11-27
+
+What two auditors found that is the owner's to decide (the author column, Home's name, how a page ends, a post's and a voyage's ending, the reading page, About, search, the atlas, small headings and figures, the phone, the map, Portfolio, the Photobook's reach, which brass), each with today's picture, the possibilities and my pick. Picks are read from the sheet's store: https://claude.ai/artifact/2cFDtQiRsoqhfiohRf6Kh2
+
+- **A (recommended):** Answered on the sheet, question by question
+- **B:** Left open for now
+
 ---
 
 ## Answered

@@ -11,57 +11,23 @@
 .search__toggle {
   margin-left: $nav-shell-gap;
   margin-right: 0.06rem;
-  height: $nav-action-size;
-  width: $nav-action-size;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   flex: 0 0 auto;
-  position: relative;
-  @include nav-action-shell;
+  @include icon-button-quiet($nav-action-size);
+  border-radius: $border-radius;
+  color: $primary-color;
+  transition:
+    background-color $duration-base $cubic-bezier-standard,
+    opacity $nav-content-fade-duration $nav-shell-ease;
+  html.motion-off & { transition: none; }
 
-  i {
-    position: relative;
-    z-index: 1;
-    font-size: 1.02rem;
-    line-height: 1;
-  }
+  svg { width: 17px; height: 17px; stroke-width: 1.5; }
 
-  &:hover {
-    background-color: $nav-action-surface-hover;
-    border-color: $nav-action-border-color-hover;
-    @include nav-action-hover-shadow;
-    transform: translateY($nav-action-hover-lift) scale($nav-action-hover-scale);
-
-    &::before {
-      @include nav-action-sweep-in;
-    }
-  }
+  &:hover,
+  &:focus-visible { background-color: rgba(255, 255, 255, 0.1); }
 
   &:focus-visible {
-    border-color: $nav-action-border-color-hover;
-    @include nav-action-focus-shadow;
-
-    &::before {
-      @include nav-action-sweep-in;
-    }
-  }
-
-  &:active {
-    background-color: $nav-action-surface-active;
-    transform: scale(1);
-  }
-}
-
-@include responsive-reduced-motion {
-  .search__toggle {
-    @include nav-action-reduced-motion-transition;
-
-    &:hover,
-    &:focus-visible,
-    &:active {
-      transform: none;
-    }
+    @include brass-focus;
+    outline-offset: -2px; // inside: the bar's clip would cut a ring set off its edge
   }
 }
 

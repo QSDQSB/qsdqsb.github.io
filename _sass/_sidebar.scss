@@ -118,6 +118,14 @@
 
 .sidebar__right {
   margin-bottom: 1em;
+
+  // A post's date is a fact: a label, not a title.
+  .page__date {
+    @include eyebrow;
+    margin-bottom: 0.7rem;
+    font-variant-numeric: tabular-nums;
+  }
+
   position: relative;
   width: 100%;
   top: auto;

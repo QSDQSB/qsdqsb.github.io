@@ -28,7 +28,7 @@ That is what made it look like a different site (2026-09-27).
 | Pill | `pill` | Glass with a chevron or mark and a label, in a control's corners of 10 px (0009, pick 2; Q17; the name is kept from when it was a pill): the way back, a menu | `.photobook-lightbox__back`, `.palette-page__menu` |
 | Brass focus | `brass-focus` | The keyboard's mark on a swatch of any colour, pale or deep: a brass hairline set off its edge, `:focus-visible` only | `.reverie__near a`, `.ridgway-swatch` |
 | Round tool | `round-tool` | A full-screen viewer's tools, top right: slideshow, specs, picture only, the way to the book. A 40 px square of glass in a control's corners of 10 px (0009, pick 2; Q17; the name is kept from when it was a disc) | `.photobook-lightbox__tool`, `.colour-drift__tool` |
-| Quiet icon button | `icon-button-quiet($size)` | A bare mark in the label's ink, lit on hover: no ring, no fill | `.palette-voyages__fold`, `.palette-rail__step` |
+| Quiet icon button | `icon-button-quiet($size)` | A bare mark in the label's ink; under the pointer a soft fill in a control's corners of 10 px (0012) | `.palette-voyages__fold`, `.palette-rail__step`, the menu bar's search and overflow buttons |
 | Segmented toggle | class `.photobook-sheet__order` | Two or three exclusive choices in spaced capitals (Sequence / Colour) | the book's sheet, the palette page |
 | Tooltip | `data-tip` (+ `data-tip-side`), `assets/js/photobook/tip.js` | Naming an icon control after a pause; pointer only | masthead ‹, lightbox, colophon, rail |
 | Palette strip | class `.palette-strip` | A palette as a thin bar with its hex codes | specs panel, colophon |
@@ -70,7 +70,7 @@ In `_sass/_variables.scss`, as [0002](../_plan/decisions/0002-one-control-vocabu
 
 | Scale | Steps |
 |---|---|
-| Corners | `$radius-none` 0 (a print) · `$radius-hair` 3px · `$radius-picture` 8px (a picture inside an article) · `$border-radius` 10px (a control, a card, a panel) · `$radius-large` 18px (a card that is the scene) · `$radius-pill` 999px · `$radius-round` 50% (dots and discs, not a control; the nav buttons and the quiet icon button still built so wait for the corner sorting, 0009 "Not settled") |
+| Corners | `$radius-none` 0 (a print) · `$radius-hair` 3px · `$radius-picture` 8px (a picture inside an article) · `$border-radius` 10px (a control, a card, a panel) · `$radius-large` 18px (a card that is the scene) · `$radius-pill` 999px · `$radius-round` 50% (dots and discs, never a control: 0012) |
 | Durations | `$duration-fast` 0.15s · `$duration-base` 0.3s (a hover, a card's lift) · `$duration-slow` 0.6s (a print developing, a panel moving) · `$duration-arrive` 0.7s (words arriving) · `$duration-cover` 1s (the wide cover's words; `$cubic-bezier-default` carries it) · `$duration-scene` 1.1s and over (a room's light, an opening) |
 | Shadows | `$shadow-rest` (a card at rest) · `$shadow-lifted` (a card under the pointer) |
 | Glass | `$glass-blur` 14px at 120% (the default) · `$glass-blur-thin` 6px (a small mark over a picture or code). 0002's `control` depth (12px) is folded into the default: the masthead's two buttons, the round tool and the hover tip are on `$glass-blur`. The Photobook's bar and panel (18px, 24px) are inherited as built |

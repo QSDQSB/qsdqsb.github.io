@@ -158,7 +158,7 @@ qsd-cat::part(say) {
   min-height: $size;
   padding: 0;
   border: 0;
-  border-radius: $radius-round;
+  border-radius: $border-radius;
   background: none;
   color: var(--photobook-ink-3);
   text-decoration: none;

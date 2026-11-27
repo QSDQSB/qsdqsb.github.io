@@ -4,9 +4,10 @@
   <nav class="pagination">
     {% if page.previous %}
       <a class="pagination--pager pagination--pager--left" href="{{ base_path }}{{ page.previous.url }}">
-        {%- comment -%} Which way the door leads is drawn (an arrow); said here for a reader who cannot see it. {%- endcomment %}
-        <span class="visually-hidden">{{ site.data.ui-text[site.locale].pagination_previous | default: "Previous" }}: </span>
-        <span class="title">{{ page.previous.title | markdownify }}</span>
+        <span class="pagination__words">
+          <span class="pagination__label">{{ site.data.ui-text[site.locale].pagination_previous | default: "Previous" }}</span>
+          <span class="title">{{ page.previous.title | markdownify | remove: "<p>" | remove: "</p>" | strip }}</span>
+        </span>
       </a>
     {% else %}
       <a></a>
@@ -14,8 +15,10 @@
     {% endif %}
     {% if page.next %}
       <a class="pagination--pager pagination--pager--right" href="{{ base_path }}{{ page.next.url }}">
-        <span class="visually-hidden">{{ site.data.ui-text[site.locale].pagination_next | default: "Next" }}: </span>
-        <span class="title">{{ page.next.title | markdownify }}</span>
+        <span class="pagination__words">
+          <span class="pagination__label">{{ site.data.ui-text[site.locale].pagination_next | default: "Next" }}</span>
+          <span class="title">{{ page.next.title | markdownify | remove: "<p>" | remove: "</p>" | strip }}</span>
+        </span>
       </a>
     {% else %}
       <a></a>

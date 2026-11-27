@@ -64,6 +64,14 @@ writing (least well), and the person (Home strongly, About weakly).
   excerpt for meta-page like post/voyage, it should be consistent to independent hero-overlay image
   layout, which uses playfair display"). This ends the Didot italic lede on heroes; the colour
   pages' line under their title is not a hero's and was not asked.
+- Two voices, by rule ([decisions/0012](decisions/0012-two-voices-one-behaviour.md), 2026-11-27, picked
+  on Q20 and Q22): a name is set in the serif (the site, a room in the menu, a title, an author and a
+  work) and every other word on a control is Barlow; a number meant to be seen is Didot; under the
+  pointer a control answers in place and nothing moves or grows; what is current or on is a one-pixel
+  brass hairline; everything pressable has 10 px corners, an icon is a hairline in ink, and keyboard
+  focus is the brass ring. On the menu: "it's to be consistent with the site's name. Barlow is to thin
+  and we have a hovering menu bar, not good contrast for readability". On the 中 / EN switch:
+  "Connecting the two elements indicate they are switchable."
 - Gold belongs to the sun alone in the specs. Weather marks are monotone ink. Films carry their own
   hue as small ticks and dots.
 - Quiet by default: detail on hover or in hand. One control per job.

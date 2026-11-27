@@ -71,69 +71,46 @@
     color: inherit;
   }
 
-  /* next/previous buttons — content-sized doors anchored to the colophon
-     column's edges; the shared row keeps their heights equal. */
+  /* previous and next: a label over the post's title, on the ground. The shared row keeps the two
+     inside the colophon's measure. */
   &--pager {
     display: flex;
-    align-items: stretch;
-    text-decoration: none;
-    padding: 0;
+    align-items: center;
+    gap: 0.4rem;
     flex: 0 1 auto;
     max-width: calc(50% - 0.5rem); /* half the measure minus the row gap */
     min-width: 0;
-    transition: $cubic-bezier-default-05s;
-    font-family: $tag-font-family;
-    font-size: $type-size-5;
+    padding: 0;
+    color: var(--ink-2);
+    text-decoration: none;
+    transition: color $duration-base $cubic-bezier-standard;
+    html.motion-off & { transition: none; }
 
-    color: whitesmoke;
-    &:hover, &:focus {
-      .title {
-        background: hsl(278, 6%, 18%);
-        border-color: rgba(255, 255, 255, 0.2);
-        transform: translateY(-2px);
-        opacity: 1;
-      }
-      color: $text-color;
-      scale: 1.05;
+    &:hover,
+    &:focus-visible {
+      color: var(--ink);
       text-decoration: none;
     }
-    &--left:hover:before {
-      opacity: 1;
-      transform: translateX(-3px);
-    }
-    &--right:hover:after {
-      opacity: 1;
-      transform: translateX(3px);
-    }
-    .title {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      border: 1px solid $border-color;
-      border-radius: 1em;
-      background: hsl(278, 3%, 14%);
-      padding: 0.5em 1em;
-      border-radius: 1em;
-      font-weight: 500;
-      font-family: $barlow-font-family;
-      font-variant: small-caps;
-      letter-spacing: 0.05em;
-      font-size: $type-size-8;
-      opacity: 0.6;
-    }
+    &:focus-visible { @include brass-focus; }
 
-    &--left {
-      text-align: left;
-      flex-direction: row;
-      .title { justify-content: flex-start; }
-    }
-    &--right {
-      text-align: right;
-      flex-direction: row;
-      .title { justify-content: flex-end; }
-    }
+    &--right { text-align: right; }
   }
 
+  &__words {
+    display: grid;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  &__label {
+    @include eyebrow;
+    color: var(--ink-3);
+  }
+
+  .title {
+    font: 400 1.15rem/1.25 $global-font-family;
+    color: var(--ink);
+  }
 }
 
 .pagination--pager--left::before {
@@ -147,8 +124,7 @@
   -webkit-mask: url("/assets/css/images/chevron-left.svg") no-repeat center;
   mask-size: contain;
   -webkit-mask-size: contain;
-  margin-right: 0.2em;
-  opacity: 0.7;
+  flex: none;
 }
 
 /* Add icon background — right pager */
@@ -163,8 +139,7 @@
   -webkit-mask: url("/assets/css/images/chevron-right.svg") no-repeat center;
   mask-size: contain;
   -webkit-mask-size: contain;
-  margin-left: 0.2em;
-  opacity: 0.7;
+  flex: none;
 }
 
 @include responsive-down(compact) {
@@ -174,8 +149,9 @@
 
   .pagination--pager {
     max-width: 100%;
-    justify-content: space-between;
   }
+
+  .pagination--pager--right { justify-content: flex-end; }
 }
 /*
    Priority plus navigation
@@ -192,12 +168,12 @@
   gap: $nav-shell-gap;
   padding: 0.16rem $nav-shell-padding-x;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
+  border-radius: $border-radius;
   background: rgba(10, 10, 12, 0.44);
   box-shadow: $shadow-soft;
   @include backdrop-blur(blur(18px) saturate(140%));
   overflow: hidden;
-  clip-path: inset(0 0 0 0 round 999px);
+  clip-path: inset(0 0 0 0 round $border-radius);
   transform-origin: left center;
   transition:
     background-color 0.35s $cubic-bezier-smooth,
@@ -223,50 +199,18 @@
     padding: 0.36rem 0.68rem;
     color: $primary-color;
     text-decoration: none;
-    border-radius: 999px;
+    border-radius: $border-radius;
     position: relative;
     z-index: 1;
-    overflow: hidden;
+    // Under the pointer a room answers in place: a soft, still fill.
     transition:
-      color 0.28s $cubic-bezier-smooth,
-      background-color 0.28s $cubic-bezier-smooth,
-      box-shadow 0.28s $cubic-bezier-smooth,
-      opacity 0.28s $cubic-bezier-smooth,
-      transform 0.28s $cubic-bezier-smooth;
-
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.03) 58%, rgba(255, 255, 255, 0.08));
-      opacity: 0;
-      transform: scale(0.94) translateY(3px);
-      transition:
-        opacity 0.28s $cubic-bezier-smooth,
-        transform 0.38s $cubic-bezier-smooth;
-      pointer-events: none;
-    }
-
-    span,
-    i {
-      position: relative;
-      z-index: 1;
-    }
+      color $duration-base $cubic-bezier-standard,
+      background-color $duration-base $cubic-bezier-standard,
+      opacity 0.28s $cubic-bezier-smooth;
 
     &:hover {
       color: white;
-      background-color: rgba(255, 255, 255, 0.06);
-      box-shadow:
-        inset 0 0 0 1px rgba(255, 255, 255, 0.06),
-        0 10px 18px rgba(0, 0, 0, 0.18);
-      transform: translateY(-1px);
-
-      &::before {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
+      background-color: rgba(255, 255, 255, 0.1);
     }
   }
 
@@ -275,6 +219,10 @@
   a.masthead__back {
     padding: 0;
   }
+
+  // The mark and the name are the way home, not a room: no fill under them.
+  a.masthead__brand-logo:hover,
+  a.masthead__brand-name:hover { background-color: transparent; }
 
   > .greedy-nav__toggle {
     position: absolute;
@@ -285,13 +233,16 @@
     padding: 0;
     transform: translateY(-50%);
     display: none;
-    align-items: center;
-    justify-content: center;
-    @include nav-action-shell(0.32s $nav-shell-ease);
+    @include icon-button-quiet($nav-action-size);
+    border-radius: $border-radius;
+    color: $primary-color;
+    transition:
+      background-color $duration-base $cubic-bezier-standard,
+      opacity $nav-content-fade-duration $nav-shell-ease;
+    html.motion-off & { transition: none; }
 
+    // Three hairlines, as every icon is.
     .navicon {
-      position: relative;
-      z-index: 1;
       width: $nav-overflow-icon-width;
       height: $nav-overflow-icon-height;
 
@@ -301,41 +252,25 @@
         height: $nav-overflow-icon-height;
       }
 
-      &:before {
-        top: (-2 * $nav-overflow-icon-height);
-      }
-
-      &:after {
-        bottom: (-2 * $nav-overflow-icon-height);
-      }
+      &:before { top: -6px; }
+      &:after { bottom: -6px; }
     }
 
     &.close .navicon {
       &:before,
       &:after {
+        top: 0;
+        bottom: auto;
         width: $nav-overflow-icon-width;
       }
     }
 
     &:hover,
-    &:focus-visible {
-      background-color: $nav-action-surface-hover;
-      border-color: $nav-action-border-color-hover;
-      @include nav-action-hover-shadow;
-      transform: translateY(-50%) translateY($nav-action-hover-lift) scale($nav-action-hover-scale);
-
-      &::before {
-        @include nav-action-sweep-in;
-      }
-    }
+    &:focus-visible { background-color: rgba(255, 255, 255, 0.1); }
 
     &:focus-visible {
-      @include nav-action-focus-shadow;
-    }
-
-    &:active {
-      background-color: $nav-action-surface-active;
-      transform: translateY(-50%) scale(1);
+      @include brass-focus;
+      outline-offset: -2px; // inside: the bar's clip would cut a ring set off its edge
     }
   }
 
@@ -381,12 +316,8 @@
       &:focus-visible {
         background-color: rgba(255, 255, 255, 0.1);
         color: white;
-        outline: none;
-
-        &::before {
-          opacity: 1;
-          transform: scale(1) translateY(0);
-        }
+        @include brass-focus;
+        outline-offset: -2px; // inside: the bar's clip would cut a ring set off its edge
       }
 
       // The section this page belongs to (marked by masthead-intent.js): a brass hairline under its name.
@@ -491,16 +422,6 @@
 
 @include responsive-reduced-motion {
   .greedy-nav {
-    > .greedy-nav__toggle {
-      @include nav-action-reduced-motion-transition;
-
-      &:hover,
-      &:focus-visible,
-      &:active {
-        transform: translateY(-50%);
-      }
-    }
-
     .hidden-links {
       transition: opacity 0.2s linear, visibility 0s linear 0.2s;
       transform: none;
@@ -596,8 +517,8 @@
   border: 1px solid $border-color;
   border-radius: $border-radius;
   .nav__title {
-    color: lightgrey;
-    font-size: $type-size-8;
+    @include eyebrow;
+    padding: 0.8rem 1rem;
     border-top-left-radius: $border-radius;
     border-top-right-radius: $border-radius;
   }
@@ -651,12 +572,3 @@
   }
 }
 
-
-// .pagination--pager {
-//   text-align: center;
-//   text-decoration: none;
-//   padding: 0 2em;
-//   &:hover {
-//     transform: none;
-//   }
-// }
