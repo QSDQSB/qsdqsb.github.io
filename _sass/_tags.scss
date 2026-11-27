@@ -12,18 +12,13 @@
 
 /* ── the doors ───────────────────────────────────────────────────────── */
 
-// The doors, every one the same small square: it carries a colour and a name, not a picture, and
-// the list it opens is the page's matter. Three to a row on a phone, five on a tablet, seven from a
-// desktop up. A door measures itself (a size container), and its margins follow its width.
+// The doors, every one the same small square, sized to its name rather than as a picture: no
+// narrower than its longest word, and as many to a row as fit. The list a door opens is the page's
+// matter. A door measures itself (a size container).
 .tag-page__doors {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.6rem;
-  @include responsive-up(tablet) { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  @include responsive-up(desktop) {
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 0.9rem;
-  }
+  grid-template-columns: repeat(auto-fill, minmax(4.9rem, 1fr));
+  gap: 0.5rem;
 
   .tag-page__door {
     aspect-ratio: 1;
@@ -40,7 +35,7 @@
     height: 100%;
     min-height: 0;
     margin: 0;
-    padding: clamp(0.55rem, 8cqi, 1rem);
+    padding: 0.45rem 0.4rem;
     aspect-ratio: auto;
   }
   .card .content { justify-content: flex-end; }
@@ -53,7 +48,7 @@
   .card::before { background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.55) 100%); }
 }
 
-// A tag's name is a label, so the accurate voice, at the size of the site's running text, under its
+// A tag's name is a label, so the accurate voice, a little under the site's running text, under its
 // emoji, in the ivory every cover's name wears: a door is never taken for a cover, whose name is a title.
 @mixin tag-name {
   font-family: $barlow-font-family;
@@ -66,7 +61,7 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4; // the emoji's line and three of the name
   overflow: hidden;
-  font-size: $type-size-8;
+  font-size: 0.8rem;
   line-height: 1.15;
   text-wrap: balance;
   overflow-wrap: anywhere; // a long name never widens a narrow door, or the page
@@ -74,8 +69,8 @@
 
 .tag-page__door .tag-page__emoji {
   display: block;
-  margin-bottom: 0.4em;
-  font-size: 0.8em;
+  margin-bottom: 0.3em;
+  font-size: 0.85em;
   line-height: 1;
 }
 

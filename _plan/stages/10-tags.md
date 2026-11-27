@@ -17,8 +17,7 @@ words on the way: of the pages as they stood, "the tags display atm is a terribl
 it"; of a wrapped row of tag names, "this is very boring and undesired. it's a nightmare when scaled up." So a
 tag is not a word in a list. Picked from prototypes (the choice page `tag-pages`, option A: a wall of doors over a column of covers).
 
-- Both pages are `_includes/tag-page.html`: a doorway. Each tag is a door; the doors stand as a wall, every
-  door one square, the fullest tags first.
+- Both pages are `_includes/tag-page.html`. Each tag is a small square door, the fullest first.
 - A door's face (the owner, 2026-11-27, of the built photograph doors): "We should intentionally use Barlow +
   emoji for tag titles"; "use not the picture, but the dry vat generated from the picture"; "hovering on the
   dry-vat background tag card transforms the background to the actual picture"; "Pick an underlying cover image
@@ -79,10 +78,14 @@ the two tags page", and "i think the openned post-by-tag should be in the same p
 tag card blocks, on top of the page, and clicking the card block opens the list of posts / voyages belonging to
 this tag directly below the page", "e.g. it's trackable via qsdqsb.com/posta-by-tag/#emo". So the doors no
 longer grow under the pointer; the profile is back; and a tag no longer opens a room with its own hero and a
-"Next door" row: the doors stay at the head of the page (small squares, three to a row on a phone, five on a
-tablet, seven on a desktop), and choosing one opens its list right below them, the page keeping the doors in
+"Next door" row: the doors stay at the head of the page as small squares, and choosing one opens its list right below them, the page keeping the doors in
 sight. The address names the tag (`/tags/#emo`), Back steps through the tags chosen, and the open tag's door
 shows its photograph. Without script the list opens by `:target`.
+- Then: "the tag can be much smaller. Have a subagent indicate the correct size, i think it should be at least
+  50% smaller (with respect to the text size)". The subagent read it as the door shrinking round its name, not
+  the name halving: the floor is the longest word ("Switzerland", about 6.4 times the name's size). Built as it
+  proposed: as many doors to a row as fit at a side of at least 4.9rem (four on a 390 phone, eleven at 1440),
+  the name at 0.8rem; the doors take 45 to 59% less area and the set of them 41 to 70% less height.
 
 Still the owner's, asked with the pull request: a line per tag for its door, naming a tag's photograph by hand
 (the page picks today), and which doors lead the wall.
