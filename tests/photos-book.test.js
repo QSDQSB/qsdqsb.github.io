@@ -26,6 +26,31 @@ test('a portrait never takes a spread', async () => {
   assert.deepEqual(bookRows([L, L, L, L, L, L, P]).map(r => r.items), [[0], [1, 2], [3, 4], [5, 6]]);
 });
 
+test('marked frames take the full width; the rest run in pairs and threes', async () => {
+  const { bookRows } = await lib();
+  const L = { ratio: 1.5 }, S = { ratio: 1.5, spread: true }, P = { ratio: 0.66, spread: true };
+  const kinds = (ps, m) => bookRows(ps, m).map(r => r.kind).join(',');
+  assert.equal(kinds([S, L, L, L, L, L, L, S, L]), 'spread,pair,pair,pair,spread,pair');
+  assert.equal(kinds([L, L, L, L, L, L, L, S]), 'pair,triple,pair,spread');
+  assert.equal(kinds([L, L, L, L, L, L, S]), 'pair,pair,pair,spread', 'never one frame left over');
+  assert.equal(kinds([S, L, S]), 'spread,pair,spread', 'a frame alone between two marks is a row of one');
+  assert.equal(kinds([P, L, L]), 'triple', 'a marked portrait still never takes a spread');
+  assert.equal(kinds(land(6), true), 'pair,pair,pair', 'a filtered book with no marked frame keeps the marked rhythm');
+  assert.equal(kinds(land(6)), 'spread,pair,triple', 'nothing marked: the count decides, as before');
+  const ps = [S, ...land(9), S];
+  assert.deepEqual(bookRows(ps).flatMap(r => r.items), [...Array(11).keys()]);
+});
+
+test('the book never opens on its cover photograph', async () => {
+  const { awayFromCover } = await lib();
+  const ps = land(3);
+  assert.deepEqual(awayFromCover(ps, 'p0').photos.map(p => p.slug), ['p1', 'p0', 'p2']);
+  assert.equal(awayFromCover(ps, 'p0').cover, 'p0');
+  assert.deepEqual(awayFromCover(ps, 'p2').photos.map(p => p.slug), ['p0', 'p1', 'p2'], 'a cover further in stays where it is');
+  assert.deepEqual(awayFromCover(ps).photos.map(p => p.slug), ['p1', 'p0', 'p2'], 'nor on the first landscape it falls back to');
+  assert.deepEqual(awayFromCover(land(1), 'p0').photos.map(p => p.slug), ['p0']);
+});
+
 test('the cover is the first featured landscape, else the first landscape', async () => {
   const { coverIndex } = await lib();
   assert.equal(coverIndex([{ ratio: 0.7 }, { ratio: 1.5 }, { ratio: 1.5, featured: true }]), 2);
@@ -95,8 +120,9 @@ test('bookOf takes the place from the locate sidecar, else the caption', async (
   const { bookOf } = await lib();
   const merged = { photos: [{ slug: 'a', ratio: 1.78, caption: 'Pembroke Road, London' }, { slug: 'b', ratio: 1.78 }] };
   const b = bookOf(merged, { b: { suggested: 'Tower Bridge, London' } });
-  assert.deepEqual(b.photos.map(p => p.place), [{ name: 'Pembroke Road', city: 'London' }, { name: 'Tower Bridge', city: 'London' }]);
-  assert.equal(b.book.cover, 0);
+  // The cover (the first landscape, a) gives the opening to b: the book never opens on it.
+  assert.deepEqual(b.photos.map(p => p.place), [{ name: 'Tower Bridge', city: 'London' }, { name: 'Pembroke Road', city: 'London' }]);
+  assert.equal(b.book.cover, 1);
   assert.equal(b.book.rows[0].kind, 'spread');
 });
 
@@ -137,7 +163,7 @@ test('alt text: the owner\'s alt, else place, city and film', async () => {
   assert.equal(altOf({ name: 'Above the Cloud', film: 'Classic Chrome' }), 'Above the Cloud — Classic Chrome');
   assert.equal(altOf({ alt: '  Rain on a bus window ', place: { name: 'X' } }), 'Rain on a bus window');
   const merged = { gallery: 'london', photos: [{ slug: 'a', ratio: 1.5, place: 'Tower Bridge, London', settings: { filmSimulation: 'Velvia' } }, { slug: 'b', ratio: 1.5, alt: 'Mine' }] };
-  const out = bookOf(merged).photos;
-  assert.equal(out[0].alt, 'Tower Bridge, London — Velvia');
-  assert.equal(out[1].alt, 'Mine');
+  const alt = (slug) => bookOf(merged).photos.find(p => p.slug === slug).alt;
+  assert.equal(alt('a'), 'Tower Bridge, London — Velvia');
+  assert.equal(alt('b'), 'Mine');
 });

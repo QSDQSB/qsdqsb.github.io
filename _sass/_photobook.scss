@@ -61,7 +61,7 @@
   border-radius: 6px;
   @include dark-glass-fill;
   color: var(--photobook-ink, #{$lighter-gray});
-  font: 500 0.6rem/1 $barlow-font-family;
+  font: 500 max(0.6rem, 11px)/1 $barlow-font-family;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -72,13 +72,13 @@
   &.is-on { opacity: 1; }
 }
 
-// Focus in the book and the lightbox: a gold hairline clear of the thing it marks; on a print, inside it.
+// Focus in the book and the lightbox: the house's brass ring; on a print, inside it.
 .photobook-bar,
 .photobook-main,
 .photobook-colophon,
 .photobook-end,
 .photobook-lightbox {
-  :focus-visible { outline: 1.5px solid var(--photobook-gold); outline-offset: 3px; }
+  :focus-visible { @include brass-focus; }
 }
 
 .photobook-frame__print:focus-visible { outline-offset: -4px; }
@@ -116,13 +116,16 @@
   align-items: flex-end;
   isolation: isolate;
   overflow: hidden;
+  @include responsive-up(tablet) { overflow: visible; } // the figures hang below it (.photobook-facts)
 
   &::before {
     content: "";
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(180deg, rgba(10, 10, 12, 0.34) 0%, rgba(10, 10, 12, 0.02) 18%, rgba(10, 10, 12, 0.11) 42%, rgba(10, 10, 12, 0.56) 86%, rgba(10, 10, 12, 0.64) 100%);
+    // Over the scrim, on a phone, the shade under the figures (--facts-shade, below): an ellipse
+    // 24 by 9 rem, its centre on the figures' row (the title's foot padding and half a figure up).
+    background: var(--facts-shade, none) right -4rem bottom 1.6rem / 24rem 9rem no-repeat, linear-gradient(180deg, rgba(10, 10, 12, 0.34) 0%, rgba(10, 10, 12, 0.02) 18%, rgba(10, 10, 12, 0.11) 42%, rgba(10, 10, 12, 0.56) 86%, rgba(10, 10, 12, 0.64) 100%);
   }
 }
 
@@ -170,12 +173,21 @@
 }
 
 .photobook-facts {
-  // A label set in the cover's bottom-right corner: the figures close together, a hairline between,
-  // never spread across the width.
+  // The book's data plate: the figures close together, a hairline between, never spread across the
+  // width. From a tablet up they leave the picture for the band beneath it, at the left, beside the
+  // dial; on a phone they stay in the cover's corner, over a darker shade.
   display: flex;
   justify-self: end;
   margin: 0;
   text-align: right;
+
+  @include responsive-up(tablet) {
+    position: absolute;
+    top: calc(100% + 1.1rem);
+    left: var(--photobook-gutter);
+    text-align: left;
+    text-shadow: none;
+  }
 
   div { display: grid; gap: 0.45rem; padding-inline: 0.95rem; }
   div:first-child { padding-left: 0; }
@@ -183,7 +195,7 @@
   div + div { border-left: 1px solid rgba(255, 255, 255, 0.16); }
 
   dt {
-    font: 500 0.6rem $barlow-font-family;
+    font: 500 max(0.6rem, 11px) $barlow-font-family;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--photobook-ink-2);
@@ -209,7 +221,7 @@
   padding: calc(10px + 0.5em) 0.6em 0.5em;
   border-block: 1px solid rgba(233, 229, 219, 0.09);
   color: var(--film);
-  font: 500 0.56rem/1 $barlow-font-family;
+  font: 500 max(0.56rem, 11px)/1 $barlow-font-family;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -291,6 +303,11 @@
 
     &:hover { color: var(--photobook-ink); }
     &[aria-pressed="true"] { color: #fff; }
+
+    // A finger's target, larger than what is drawn: out to either side, and past the slide's ends.
+    &::after { content: ""; position: absolute; inset: 0 -7px; }
+    &[data-view="book"]::after { top: -7px; }
+    &[data-act="screen"]::after { bottom: -7px; }
   }
 
   svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.2; }
@@ -381,7 +398,7 @@
     border: 0;
     background: none;
     color: var(--film, var(--photobook-ink));
-    font: 600 9.5px/14px $barlow-font-family;
+    font: 600 11px/14px $barlow-font-family;
     letter-spacing: 0.06em;
     opacity: 0.55;
     cursor: pointer;
@@ -431,7 +448,7 @@
   right: 0;
   display: grid;
   margin: 0.55rem 0 0;
-  font: 500 0.56rem $barlow-font-family;
+  font: 500 max(0.56rem, 11px) $barlow-font-family;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--photobook-ink);
@@ -638,7 +655,7 @@ html.is-reordering::view-transition-group(*) {
   align-items: center;
   gap: 0.6rem;
   margin-left: auto;
-  font: 400 0.68rem $barlow-font-family;
+  font: 400 max(0.68rem, 11px) $barlow-font-family;
   letter-spacing: 0.06em;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
@@ -649,7 +666,7 @@ html.is-reordering::view-transition-group(*) {
 // The sun sits after the specs, in their type.
 .photobook-frame__caption > .photobook-sun {
   margin-left: 0.6rem;
-  font: 400 0.68rem $barlow-font-family;
+  font: 400 max(0.68rem, 11px) $barlow-font-family;
   letter-spacing: 0.06em;
 }
 
@@ -703,7 +720,7 @@ html.is-reordering::view-transition-group(*) {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  font: 500 0.6rem $barlow-font-family;
+  font: 500 max(0.6rem, 11px) $barlow-font-family;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -775,7 +792,7 @@ html.is-reordering::view-transition-group(*) {
     padding: 0.35rem 0;
     border: 0;
     background: none;
-    font: 500 0.62rem $barlow-font-family;
+    font: 500 max(0.62rem, 11px) $barlow-font-family;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--photobook-ink-3);
@@ -801,7 +818,7 @@ html.is-reordering::view-transition-group(*) {
 }
 
 .photobook-sheet__frame-no {
-  font: 500 0.6rem $barlow-font-family;
+  font: 500 max(0.6rem, 11px) $barlow-font-family;
   letter-spacing: 0.18em;
   color: var(--photobook-ink-3);
 }
@@ -815,8 +832,12 @@ html.is-reordering::view-transition-group(*) {
   text-align: center;
 }
 
-// The page's own words, after the book: on the book's gutter, never against the screen's edge.
+// The page's own words, after the book: an afterword set as a post's text is (.page__content), in a
+// reading column of about 65 characters on the page's middle, never against the screen's edge.
 .photobook-note {
+  box-sizing: content-box;
+  max-width: 36rem;
+  margin: 3.5rem auto 0;
   padding: 0 var(--photobook-gutter);
 }
 
@@ -897,7 +918,7 @@ html.is-reordering::view-transition-group(*) {
   display: flex;
   justify-content: space-between;
   margin: -0.55rem 0 0.9rem;
-  font: 400 0.6rem $barlow-font-family;
+  font: 400 max(0.6rem, 11px) $barlow-font-family;
   letter-spacing: 0.08em;
   color: var(--photobook-ink-3);
   font-variant-numeric: tabular-nums;
@@ -970,13 +991,15 @@ html.is-reordering::view-transition-group(*) {
   > span { background: var(--photobook-line); }
 
   button {
+    position: relative;
     padding: 0;
     border: 0;
     background: linear-gradient(var(--t), var(--m), var(--b));
+
+    // A finger's target, larger than the vat: half the gap to each neighbour, and a little more.
+    &::after { content: ""; position: absolute; inset: -6px; }
     cursor: pointer;
     transition: opacity 0.3s $cubic-bezier-smooth, transform 0.3s $cubic-bezier-smooth;
-
-    &:focus-visible { outline: 1px solid var(--photobook-ink); outline-offset: 3px; }
 
     // Poured: the vat takes the place of the colours standing in for it.
     &:has(canvas) { background: none; }
@@ -1012,6 +1035,20 @@ html.is-reordering::view-transition-group(*) {
   color: $lighter-gray;
 }
 
+// The sign-off's rule stands clear of the subscribe slip above it.
+.photobook-end > hr { margin-top: 2.5rem; }
+
+// The tags and the date, on one line under the ways on.
+.photobook-end__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem 1.4rem;
+
+  .photobook-end & .page__date { margin: 0; }
+}
+
 /* ── the lightbox: a matted print ─────────────────────────────────────── */
 // While the lightbox is open the page behind it stays where it was.
 html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: none; }
@@ -1022,7 +1059,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   --top: var(--bar);     // the print's top margin: the band, except in picture only
   --bot: 5.4rem;
   --side: clamp(1rem, 1.6vw, 1.5rem);   // the print as large as the screen allows
-  --specs-w: clamp(15.5rem, 25vw, 20rem); // the panel narrows in smaller windows, for the print
+  --specs-w: clamp(19rem, 25vw, 20rem); // narrower in smaller windows, for the print; never past its labels' one line
   --right: var(--side);
   transition: --pr 0.55s $cubic-bezier-standard;
   width: 100vw;
@@ -1218,7 +1255,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   display: flex;
   align-items: baseline;
   white-space: nowrap;
-  font: 500 0.68rem $barlow-font-family;
+  font: 500 max(0.68rem, 11px) $barlow-font-family;
   letter-spacing: 0.2em;
   color: var(--photobook-ink-3);
   font-variant-numeric: tabular-nums;
@@ -1263,7 +1300,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 }
 
 .photobook-lightbox__city {
-  font: 500 0.6rem $barlow-font-family;
+  font: 500 max(0.6rem, 11px) $barlow-font-family;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -1314,29 +1351,24 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
     background: none;
     cursor: pointer;
 
+    // Each mark in its frame's own colour (--tick, lightbox.js), so the rail reads as the voyage's
+    // light from first frame to last; a frame with no colour yet keeps the ink.
     &::before {
       content: "";
-      width: 1px;
-      height: 7px;
+      width: 4px;
+      height: 14px;
       border-radius: 1px;
-      background: var(--photobook-ink-3);
-      opacity: 0.55;
-      transition: width 0.3s $cubic-bezier-smooth, height 0.3s $cubic-bezier-smooth, opacity 0.3s, background-color 0.3s;
+      background: var(--tick, var(--photobook-ink-3));
+      transition: height 0.3s $cubic-bezier-smooth;
     }
 
-    &.is-on::before { width: 1.5px; height: 16px; background: $h2-color; opacity: 1; }
+    &.is-on::before { height: 30px; }
   }
 
-  // Reached for, the whole rail opens: the marks part, thicken and rise; the one under the pointer most.
-  &:hover button::before { width: 2px; height: 12px; opacity: 0.8; }
-  &:hover button.is-on::before { width: 3px; height: 22px; opacity: 1; }
-  &:hover button:hover::before { width: 3px; height: 26px; opacity: 1; background: $lighter-gray; }
-  &:hover button.is-on:hover::before { background: $h2-color; }
-
-  // Scrubbed by a finger: the rail opens as under the pointer, and the frame under the finger stands up.
-  &.is-scrubbing button::before { width: 2px; height: 12px; opacity: 0.8; }
-  &.is-scrubbing button.is-on::before { width: 3px; height: 22px; opacity: 1; }
-  &.is-scrubbing button.is-scrub::before { width: 3px; height: 26px; opacity: 1; background: $lighter-gray; }
+  // The frame under the pointer, or under a scrubbing finger, stands up.
+  button:hover::before,
+  &.is-scrubbing button.is-scrub::before { height: 22px; }
+  button.is-on:hover::before { height: 30px; }
 }
 
 // Marks a page gives for the frames (away from the book: each photograph's dye vat, in Reverie): a
@@ -1444,16 +1476,19 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 // The panel carries the place and the specs, so the band beneath the print steps aside while it shows.
 .photobook-lightbox.has-specs .photobook-lightbox__caption { opacity: 0; pointer-events: none; }
 // Open, the panel stands beside the print, a rem apart, and the print takes the caption band's height.
-// They share a top line: the print hangs from the panel's top, as a label hangs beside a frame, and
-// the panel is never taller than the print (it scrolls within it). Closed, the print is centred.
+// The print hangs at eye level, in the middle of the height as when the panel is closed, and the
+// panel's top is level with the print's: the mat's height less the print's (the mat's width over
+// the print's shape, --pr, so it follows the print from frame to frame), halved.
 .photobook-lightbox.has-specs.is-pinned {
   --right: calc(var(--specs-w) + 1rem + var(--side));
   --bot: 3rem;
 
-  .photobook-lightbox__mat img { object-position: 50% 0; }
-  .photobook-lightbox__mount { top: 0; translate: -50% 0; }
-  // It may run on below the print's foot into the free room there, rather than be clipped.
-  .photobook-specs { max-height: calc(100dvh - var(--top) - 1rem); }
+  .photobook-specs {
+    --hang: calc((100dvh - var(--top) - var(--bot) - min(100dvh - var(--top) - var(--bot), (100vw - var(--right) - var(--side)) / var(--pr))) / 2);
+    top: calc(var(--top) + var(--hang));
+    // It may run on below the print's foot into the free room there, rather than be clipped.
+    max-height: calc(100dvh - var(--top) - var(--hang) - 1rem);
+  }
 }
 
 // Compact (lightbox.js placeSpecs, when the panel is taller than its window): the same panel set
@@ -1463,9 +1498,9 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   .photobook-specs__head { gap: 0.15rem 0.6rem; h3 { font-size: 1.05rem; } }
   .photobook-specs__highlights { gap: 0.55rem 0.5rem; > div { gap: 0.25rem; } }
   .photobook-specs__highlights b { font-size: 1.12rem; }
-  .photobook-specs__print { padding: 0.42rem 0.6rem; font-size: 0.6rem; }
-  .photobook-specs__gear { font-size: 0.68rem; }
-  .photobook-specs__settings { gap: 0.45rem 0.4rem; > div { gap: 0.15rem; } dd { font-size: 0.66rem; } }
+  .photobook-specs__print { padding: 0.42rem 0.6rem; font-size: max(0.6rem, 11px); }
+  .photobook-specs__gear { font-size: max(0.68rem, 11px); }
+  .photobook-specs__settings { gap: 0.45rem 0.4rem; > div { gap: 0.15rem; } dd { font-size: max(0.66rem, 11px); } }
 }
 
 // The specs as a low band across a width, in three columns: the place and the camera; the figures in
@@ -1491,7 +1526,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
     border-left: 1px dotted var(--photobook-line);
   }
 
-  .photobook-specs__highlights { grid-column: 2; grid-template-columns: repeat(auto-fit, minmax(5.2rem, 1fr)); gap: 0.9rem 0.6rem; }
+  .photobook-specs__highlights { grid-column: 2; grid-template-columns: repeat(auto-fit, minmax(5.8rem, 1fr)); gap: 0.9rem 0.6rem; }
   .photobook-specs__settings { grid-column: 3; grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr)); }
 }
 
@@ -1527,7 +1562,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 }
 
 .photobook-specs__no {
-  font: 500 0.6rem $barlow-font-family;
+  font: 500 max(0.6rem, 11px) $barlow-font-family;
   letter-spacing: 0.2em;
   color: $h2-color;
   font-variant-numeric: tabular-nums;
@@ -1535,7 +1570,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 
 .photobook-specs__city {
   grid-column: 1;
-  font: 500 0.58rem $barlow-font-family;
+  font: 500 max(0.58rem, 11px) $barlow-font-family;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--photobook-ink-3);
@@ -1556,10 +1591,23 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   b small { margin-left: 0.1rem; font: 400 0.7rem $barlow-font-family; color: var(--photobook-ink-3); }
 
   > div > span {
-    font: 500 0.55rem $barlow-font-family;
+    font: 500 max(0.55rem, 11px) $barlow-font-family;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--photobook-ink-3);
+  }
+}
+
+// Beside the print, each column as wide as its label on one line; the sun's phrase alone wraps, in
+// even lines. (The band beneath a print sets its own columns; a phone's sheet keeps its thirds.)
+@include responsive-up(tablet) {
+  .photobook-lightbox:not(.is-specs-below) .photobook-specs__highlights {
+    grid-template-columns: repeat(3, auto);
+    justify-content: space-between;
+    column-gap: 0.5rem;
+
+    > div > span { white-space: nowrap; }
+    > .photobook-specs__sun > span { white-space: normal; text-wrap: balance; }
   }
 }
 
@@ -1614,7 +1662,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 
   i { min-width: 2px; height: 4px; background: var(--c); }
 
-  &:focus-visible { outline: 1px solid var(--photobook-ink); outline-offset: 3px; }
+  &:focus-visible { @include brass-focus; }
 }
 
 .palette-strip__hex {
@@ -1623,7 +1671,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   justify-content: space-between;
   gap: 0.35rem 0.5rem;
   margin: 0;
-  font: 500 0.58rem/1 $barlow-font-family;
+  font: 500 max(0.58rem, 11px)/1 $barlow-font-family;
   letter-spacing: 0.1em;
   color: var(--photobook-ink-2);
   font-variant-numeric: tabular-nums;
@@ -1633,7 +1681,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
 
   span { display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap; }
   b { margin-left: 0.15rem; font-weight: 400; color: var(--photobook-ink-3); }
-  small { margin-left: 0.2rem; font: 500 0.5rem $barlow-font-family; letter-spacing: 0.18em; text-transform: uppercase; color: var(--photobook-ink-3); }
+  small { margin-left: 0.2rem; font: 500 max(0.5rem, 11px) $barlow-font-family; letter-spacing: 0.18em; text-transform: uppercase; color: var(--photobook-ink-3); }
   i { width: 5px; height: 5px; background: var(--c); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08); } // a hairline, so a near-black chip still shows
 }
 
@@ -1712,7 +1760,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   margin: 0;
   padding-top: 0.7rem;
   border-top: 1px solid var(--photobook-line);
-  font: 500 max(0.56rem, 10px)/1.3 $barlow-font-family;
+  font: 500 max(0.56rem, 11px)/1.3 $barlow-font-family;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--photobook-ink-3);
@@ -1726,12 +1774,12 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
   > div { display: grid; gap: 0.3rem; min-width: 0; }
   > div.is-wide { grid-column: 1 / -1; }
 
-  dt { font: 500 0.52rem $barlow-font-family; letter-spacing: 0.16em; text-transform: uppercase; color: var(--photobook-ink-3); }
+  dt { font: 500 max(0.52rem, 11px) $barlow-font-family; letter-spacing: 0.16em; text-transform: uppercase; color: var(--photobook-ink-3); }
   dd { margin: 0; font: 400 0.7rem $barlow-font-family; color: $lighter-gray; overflow-wrap: anywhere; }
 }
 
 .photobook-specs__id {
-  font: 0.55rem/1.5 ui-monospace, Menlo, monospace;
+  font: max(0.55rem, 11px)/1.5 ui-monospace, Menlo, monospace;
   color: var(--photobook-ink-3);
   overflow-wrap: anywhere;
 }
@@ -1801,10 +1849,7 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
     --right: 0px;
     --bot: calc(#{$height} + 3.4rem);
 
-    // A sheet from below has no top line to share: the print stays centred in the room above it.
-    .photobook-lightbox__mat img { object-position: 50% 50%; }
-    .photobook-lightbox__mount { top: 50%; translate: -50% -50%; }
-    .photobook-specs { max-height: $height; }
+    .photobook-specs { top: auto; max-height: $height; }
   }
   .photobook-specs__inner { padding: 1rem 1.1rem calc(1.2rem + env(safe-area-inset-bottom, 0px)); }
 }
@@ -1848,6 +1893,12 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
     dd { font-size: 1.1rem; white-space: nowrap; }
   }
 
+  // Four figures on a phone: the camera body is in every photograph's specs.
+  .photobook-facts .photobook-facts__body { display: none; }
+
+  // The figures stand on the picture: a darker shade gathers under them, in the cover's lower right.
+  .photobook-cover:has(.photobook-facts) { --facts-shade: radial-gradient(closest-side, rgba(10, 10, 12, 0.7), rgba(10, 10, 12, 0.5) 55%, rgba(10, 10, 12, 0)); }
+
   // Pairs and threes become a strip the reader swipes; spreads stay full width.
   .photobook-row--pair,
   .photobook-row--triple {
@@ -1864,6 +1915,10 @@ html:has(.photobook-lightbox[open]) { overflow: hidden; overscroll-behavior: non
     .photobook-frame { flex: 0 0 auto; width: min(86%, calc((100vw - 2 * var(--photobook-gutter)) * 0.86 / 1.78 * var(--ratio))); scroll-snap-align: start; }
 
     .photobook-frame__caption > * { opacity: 1; transform: none; }
+
+    // A place's whole name, on a second line if it needs one, never cut short.
+    .photobook-frame__caption { flex-wrap: wrap; row-gap: 0.25rem; }
+    .photobook-frame__place { white-space: normal; }
   }
 
   .photobook-frame__specs,

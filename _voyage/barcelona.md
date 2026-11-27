@@ -6,6 +6,6 @@ date: 2024-07-01
 tags:
   - 🛤️Retrace
 ---
-Unfortunately, QSD didn't have much chance to capture the magnificance of Gaudi's legacy. One day he shall return to Barcelona, and hopefully *adiós* satisfactorily$^{*}$.
+Unfortunately, QSD didn't have much chance to capture the magnificance of Gaudi's legacy. One day he shall return to Barcelona, and hopefully *adiós* satisfactorily<sup>*</sup>.
 
-<p class="color_light_grey_light_opacity" style="font-size: 75%; text-align: right;font-style: italic;">($^{*}$: with his wallet and cellphone)</p>
+<p class="color_light_grey_light_opacity" style="font-size: 75%; text-align: right;font-style: italic;">(<sup>*</sup>: with his wallet and cellphone)</p>

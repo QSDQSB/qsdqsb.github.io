@@ -117,11 +117,12 @@ All of these go in `_data/photos/<g>.yml` (`npm run photos:fetch` validates it):
 | Hide a photo but keep it | `hidden: true` |
 | Set or move the cover | `npm run covers:focus` (http://localhost:4400): pick the photo, click where the subject sits, Save. Or by hand, top level `cover: { photo: dscf7406, focus: [0.5, 0.48] }`: the photo, and the subject's x, y (0–1 from its top-left). Every shape (card, Photobook, hero, phone, link preview) is cut around that point. `crops: { "4:3": [x, y] }` only for a shape whose subject sits elsewhere. A voyage in parts: `_data/photos/<parent>.yml`, `photo: <part>/<slug>` |
 | Prefer a photo for the book's opening frame, with no cover set | `featured: true` (the first featured landscape) |
+| Choose which photos take the book's full width | `spread: true` on each (once one is marked, only the marked ones do; the rest run in pairs and threes; none marked keeps every sixth by count) |
 | A flight or aerial set (no place or sun; temperature at altitude) | top level `aerial: { altitude_ft: 33000 }` |
 
 No reprocessing needed: rebuild (`npm run build`/`serve`) to see it. Top-level keys allowed: `title`,
 `order`, `aerial`, `cover`, `photos`. Per photo: `place`, `caption`, `caption_zh`, `alt`, `story`, `story_zh`,
-`featured`, `hidden`.
+`featured`, `spread`, `hidden`.
 
 ### Replace a photo with a new edit
 

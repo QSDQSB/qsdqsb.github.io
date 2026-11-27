@@ -23,13 +23,13 @@
 {% include photobook/filmbar.html book=book %}
 <main class="photobook-main" id="photobook-main">
   {% include photobook/book.html book=book %}
-  {% if pb_note != "" %}<div class="photobook-note">{{ content }}</div>{% endif %}
+  {% if pb_note != "" %}<div class="photobook-note page__content">{{ content }}</div>{% endif %}
 </main>
 {% include photobook/colophon.html book=book %}
 {%- else %}
 <main class="photobook-main photobook-main--empty" id="photobook-main">
   <p class="photobook-empty">The photographs of this voyage are still on their way.</p>
-  {% if pb_note != "" %}<div class="photobook-note">{{ content }}</div>{% endif %}
+  {% if pb_note != "" %}<div class="photobook-note page__content">{{ content }}</div>{% endif %}
 </main>
 {%- endif %}
 {% include photobook/end.html %}

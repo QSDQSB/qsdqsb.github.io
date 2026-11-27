@@ -277,7 +277,8 @@ export function lightbox(frames, { printOf = null, mark = null } = {}) {
   const rail = $('.photobook-lightbox__rail');
   let marking = 0;
   function buildRail(at = 0) {
-    rail.innerHTML = order.map((i, k) => `<button type="button" data-k="${k}" tabindex="-1" aria-label="Frame ${k + 1}: ${esc(frames[i].name)}"><span class="photobook-lightbox__peek"></span></button>`).join('');
+    // Each tick in its frame's own colour (#photobook-data's tick), so the rail reads as the voyage's light.
+    rail.innerHTML = order.map((i, k) => `<button type="button" data-k="${k}" tabindex="-1" aria-label="Frame ${k + 1}: ${esc(frames[i].name)}"${frames[i].tick ? ` style="--tick:${esc(frames[i].tick)}"` : ''}><span class="photobook-lightbox__peek"></span></button>`).join('');
     rail.classList.toggle('has-marks', !!mark);
     cancelAnimationFrame(marking);
     if (!mark) return;
