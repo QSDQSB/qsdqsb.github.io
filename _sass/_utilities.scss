@@ -352,16 +352,6 @@ body:hover .visually-hidden button {
     margin-right: auto;
   }
 }
-.sticky_bottom {
-  @include clearfix();
-  position: -webkit-sticky;
-  position: sticky;
-  bottom: 1em;
-
-  > * {
-    display: block;
-  }
-}
 .didot {
   color: $primary-color;
   font-family: $didot-family;

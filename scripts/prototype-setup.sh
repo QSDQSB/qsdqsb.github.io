@@ -46,6 +46,7 @@ copy() {
 }
 copy _data/photo_manifests
 copy _data/cover_sizes.json
+copy _data/cover_palettes.json
 copy images/cover/sized
 copy images/og
 

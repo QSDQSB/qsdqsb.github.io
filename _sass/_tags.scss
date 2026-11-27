@@ -1,0 +1,172 @@
+/* ==========================================================================
+   TAG PAGES — /tags/ and /voyage-by-tags/, one layout (_includes/tag-page.html)
+
+   A doorway: each tag a door (the cover card, under the tag's name), and behind it a room of the
+   covers it holds. The room is the address's #slug, shown by :target, with no script.
+   ========================================================================== */
+
+.tag-page {
+  padding: 0 0.5rem 0.5rem;
+  scroll-margin-top: 5.5rem; // clear of the floating menu
+}
+
+/* ── the doors ───────────────────────────────────────────────────────── */
+
+// A wall of doors, every door the same. A door carries a colour and a name, not a picture, so it
+// is a square, not a cover: two to a row on a phone, three on a tablet, five from a desktop up. A
+// door measures itself (a size container), and its margins follow its width.
+.tag-page__doors {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  @include responsive-up(tablet) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @include responsive-up(desktop) {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1.1rem;
+  }
+
+  .tag-page__door {
+    aspect-ratio: 1;
+    container-type: inline-size;
+  }
+
+  // The cover card fills its door, its name at the foot: a vat settles light above deep.
+  .card,
+  .card:hover,
+  .card:focus-within {
+    isolation: isolate; // so the vat can lie beneath the card's own shade (.tag-page__vat)
+    align-items: flex-end;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: clamp(0.7rem, 8cqi, 1.15rem);
+    aspect-ratio: auto;
+  }
+  .card .content { justify-content: flex-end; }
+
+  // The name stands in the shade every cover's name stands in: the card's own, deepening to the
+  // foot from four tenths down, over the vat as over a photograph. A little deeper than a cover's,
+  // since a vat has none of the dimming a cover's photograph is laid under.
+  .card::before { background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.55) 100%); }
+}
+
+// A tag's name is a label, so the accurate voice, at the size of the site's running text, under its
+// emoji, in the ivory every cover's name wears: a door is never taken for a cover, whose name is a title.
+@mixin tag-name {
+  font-family: $barlow-font-family;
+  font-weight: 400;
+}
+
+.tag-page__door .card .content h3 {
+  @include tag-name;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4; // the emoji's line and three of the name
+  overflow: hidden;
+  font-size: $type-size-7;
+  line-height: 1.15;
+  text-wrap: balance;
+  overflow-wrap: anywhere; // a long name never widens a narrow door, or the page
+}
+
+.tag-page__door .tag-page__emoji {
+  display: block;
+  margin-bottom: 0.4em;
+  font-size: 0.8em;
+  line-height: 1;
+}
+
+.tag-page__door .card:focus-visible { @include brass-focus; }
+
+// A door's face is the dye vat of its photograph (assets/js/tag-doors.js), laid over it: the wall
+// withholds the photographs and stays calm. Under a pointer the vat clears and the door develops
+// into its photograph, as a print does.
+.tag-page__vat {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; // beneath the card's shade and its name, above its photograph
+  border-radius: inherit;
+  transition: opacity $duration-slow $cubic-bezier-standard;
+  html.motion-off & { transition: none; }
+  @include responsive-reduced-motion { transition: none; }
+}
+
+// A door develops under a pointer and, where there is one, under the keyboard's focus. By touch
+// its photograph is never fetched, so a focused door there keeps its vat.
+@include responsive-hover {
+  .tag-page__door .card:hover .tag-page__vat,
+  .tag-page__door .card:focus-visible .tag-page__vat { opacity: 0; }
+}
+
+// By touch no pointer rests on a door: its photograph is never fetched.
+@include responsive-coarse-pointer {
+  .tag-page__door.is-poured .card { background-image: none; }
+}
+
+/* ── a room ──────────────────────────────────────────────────────────── */
+
+.tag-page__room {
+  display: none;
+
+  &:target { display: block; }
+}
+
+// In a room the wall steps aside (where :has is not known the room opens beneath it, and the address
+// still lands on the room).
+.tag-page:has(.tag-page__room:target) > .tag-page__doors { display: none; }
+
+// A room opens as a page does, under the overlay hero (_sass/_page.scss), here the tag's own
+// photograph, laid where the page's hero stood: that hero and the shell's room above the content
+// step aside. This one starts at the shell's edge, past its side padding (1rem) and this page's
+// (0.5rem), and is as wide as the shell: #main is a size container, so 100cqw is its content's
+// width, whatever a column inside it measures and whether or not a scrollbar takes room.
+body:has(.tag-page__room:target) {
+  > .page__hero--overlay { display: none; }
+  #main { padding-top: 0; }
+}
+
+.tag-page__hero {
+  width: calc(100cqw + 2rem);
+  margin: 0 0 2rem -1.5rem;
+
+  .page__title {
+    @include tag-name;
+    margin-top: 1.1rem;
+  }
+
+  .tag-page__emoji {
+    margin-right: 0.3em;
+    font-size: 0.75em;
+  }
+}
+
+.tag-page__back {
+  @include pill;
+  --photobook-glass: var(--glass);
+  --photobook-glass-edge: var(--glass-edge);
+  text-decoration: none;
+  transition: border-color $duration-fast $cubic-bezier-standard;
+  html.motion-off & { transition: none; }
+
+  &:hover { border-color: var(--ink-3); text-decoration: none; }
+  &:focus-visible { @include brass-focus; }
+}
+
+// The doors of the tags nearest to this one, at the room's foot.
+.tag-page__next {
+  margin-top: 3rem;
+
+  .tag-page__doors { margin-top: 1.4rem; }
+}
+
+.tag-page__next-label {
+  @include eyebrow;
+  color: var(--ink-2);
+}
+
+.tag-page__onward {
+  @include onward-links;
+  margin: 2.6rem 0 1rem;
+}

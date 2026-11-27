@@ -1,0 +1,20 @@
+{%- comment -%}
+  Sets `door_vat` for the door whose cover is `post`: that photograph's colour signature and a seed
+  (`door_seed`), as attributes for assets/js/tag-doors.js to pour. A voyage's cover has its colours
+  from the photo pipeline; a cover cut by hand from _data/cover_palettes.json (npm run covers).
+  Empty where neither knows the cover: that door shows its photograph.
+{%- endcomment -%}
+{%- assign door_vat = "" -%}
+{%- assign door_sig = nil -%}
+{%- include voyage-cover.html doc=post -%}
+{%- if vc -%}
+  {%- assign door_book = vc.gallery | replace: "/", "_" -%}
+  {%- assign door_photo = site.data.photo_manifests[door_book].photos | where: "slug", vc.slug | first -%}
+  {%- assign door_sig = door_photo.signature -%}
+{%- else -%}
+  {%- assign door_cover = post.header.teaser | default: post.header.overlay_image -%}
+  {%- assign door_sig = site.data.cover_palettes[door_cover] -%}
+{%- endif -%}
+{%- if door_sig -%}
+  {%- capture door_vat %} data-vat='{{ door_sig | jsonify }}' data-seed="{{ door_seed }}"{% endcapture -%}
+{%- endif -%}

@@ -4,42 +4,12 @@ permalink: /tags/
 title: "Posts by Tags"
 excerpt: "Isn't it a boring pun to put an airtag pic."
 left_tarot_card: 'the-hermit'
-left_tarot_href: /year-archive
+left_tarot_href: /year-archive/
 right_tarot_card: 'the-world'
 right_tarot_href: /voyage-by-tags/
-author_profile: true
+author_profile: false
 header:
   overlay_image: QSDAirtag1-3v1.jpg
   overlay_filter: 0.3
-toc: true
 ---
-
-{% include base_path %}
-{% include group-by-array collection=site.posts field="tags" %}
-
-    {% for tag in group_names %}
-      {% assign posts = group_items[forloop.index0] %}
-      {% assign tag_colour = site.data.tag_colours.post_tag_colours[tag] %}
-      <h2 id="{{ tag | slugify }}" class="archive__subtitle">{% if tag_colour %} <span class="tag-colour" style="color: {{ tag_colour }};"> ● </span>{% endif %}{{ tag }}</h2>
-      {% for post in posts %}
-        {% include archive-single.html defer_cover=true %}
-      {% endfor %}
-    {% endfor %}
-    <div class="tag-grid sticky_bottom">
-      {% for tag in group_names %}
-        {% assign display_tag = tag | slice: 0, 15 %}
-        {% assign tag_colour = site.data.tag_colours.post_tag_colours[tag] %}
-        {% if tag_colour %} 
-        <!-- Assign tag_colour with alpha channel -->
-          {% assign tag_colour_1 = tag_colour | append: "3b" %}
-          {% assign tag_colour_2 = tag_colour | append: "5a" %}
-          {% assign tag_colour_3 = tag_colour | append: "22" %}
-        {% endif %}
-        {% if tag.size > 15 %}
-          {% assign display_tag = display_tag | append: "..." %}
-        {% endif %}
-        <a href="#{{ tag | slugify }}" class="tag-grid__item" {% if tag_colour %}style="background: linear-gradient(21deg, {{ tag_colour_1 }} 0%, {{ tag_colour_2 }} 40%, {{ tag_colour_3 }} 70%, #7777772a 100%);" {% endif %}>
-          <p>{{ display_tag }}</p>
-        </a>
-      {% endfor %}
-    </div>
+{% include tag-page.html docs=site.posts all_href="/year-archive/" all_label="All posts" other_href="/voyage-by-tags/" other_label="Voyages by tag" %}
