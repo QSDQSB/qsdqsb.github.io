@@ -63,12 +63,14 @@ English, one in Chinese and one in both. Audit ids are sections of `design/audit
 (S), findings of `design/audits/reviewer.md` (R) and `design/audits/measured.md` (M).
 
 **The contents**
-- [ ] Q25, post-contents-above · On a phone, and on a window too narrow for the side list, the
+- [x] Q25, post-contents-above · On a phone, and on a window too narrow for the side list, the
       contents are one folded row that says how many parts; a touch opens it, and the post begins
       on the first screen. The fold is the piece the colour figure already uses (a label over a
       hairline, `_sass/_colour.scss`, `.colour-frames__toggle`), moved to `_components.scss` on this
-      second use. The row's words are drafted and shown in the pictures. Tier 2.
-- [ ] Q25, post-contents-look · At the side the contents are a plain list: no frame, no line under a
+      second use. The row's words are drafted and shown in the pictures. Tier 2. Built as the
+      framed row the owner picked from ("13 parts +"), not the colour figure's label over a
+      hairline, which is another look: so `.toc__toggle` stays its own piece until a third fold.
+- [x] Q25, post-contents-look · At the side the contents are a plain list: no frame, no line under a
       row; the label, then the chapters; the current one brighter beside a one-pixel hairline in the
       pale brass. The fill, the 3 px bar and the endless pulse go (S, C: `_toc-progress.scss`; M20).
       Its rows take the 10 px corner and the brass ring (S, D and E; R14). On a phone a row is tall
@@ -80,29 +82,29 @@ English, one in Chinese and one in both. Audit ids are sections of `design/audit
       heading and the blue linked title go (R10; F078: a link inside a heading is ivory too). The
       retagging stage 1 left (P12, the rest: the CV's four `h1`, the word card's `h1`, the
       sign-off's `h6`) is done with it. Tier 2.
-- [ ] Q25, post-paragraphs · The gap between paragraphs kept, the lines closer: 34 px from line to
+- [x] Q25, post-paragraphs · The gap between paragraphs kept, the lines closer: 34 px from line to
       line at 20 px, where it is 38. Tier 2.
-- [ ] Q25, post-justify · Every post straight on both edges, long English words broken with a
+- [x] Q25, post-justify · Every post straight on both edges, long English words broken with a
       hyphen. Paragraphs of prose only: a list, a table, a caption and code keep a loose edge (the
       lead's, tier 1). Hyphens need each language's panel to say its language (`lang`), and are
       checked in Safari's engine. Tier 2.
-- [ ] Q25, post-quotes, with the fourth face · A quotation is set in on both sides, with no box and
+- [x] Q25, post-quotes, with the fourth face · A quotation is set in on both sides, with no box and
       no double line (`_sass/_base.scss`, `blockquote`; 20 px corners today), and carries a mark a
       reader can see: "There should be a style to indicate it's the quote". The lead's, tier 1,
       shown: a brass hairline at its leading edge; its Latin in CMU italic, the one job the fourth
       face keeps; its Chinese in Kai where the device has it, in Songti where it does not. The
       chapter gloss (`blockquote.gloss`, the owner's of 2026-10-02) is not a quotation and stays.
-- [ ] Q25, post-notices · A note set apart is a quiet panel: a hairline frame on a slightly lighter
+- [x] Q25, post-notices · A note set apart is a quiet panel: a hairline frame on a slightly lighter
       ground, ivory words, links in brass; no colour, no shadow (`_sass/_notices.scss`; F081: the
       brass link on teal is answered by the teal going). The unused notice colours are deleted (S,
       G); Barlow at a weight the site loads (S, A1.4 and A1.5). About uses the same notices and
       changes with them: shot there too. Tier 2.
 
 **Chinese**
-- [ ] Q25, chinese-face · An article's Chinese is Songti by default: the essay's pairing (Latin in
+- [x] Q25, chinese-face · An article's Chinese is Songti by default: the essay's pairing (Latin in
       Playfair, Han in a Song face) moves from `body.essay` to every post, and the per-post opt-in
       goes. One stack under one name (F109; S, H6: six literal stacks). Tier 2.
-- [ ] The font a phone needs for it, first (tier 0; F101, F110). An iPhone gives a page no Songti of
+- [x] The font a phone needs for it, first (tier 0; F101, F110). An iPhone gives a page no Songti of
       its own, so "especially on mobile" is the subset of Noto Serif SC the site carries
       (`scripts/essay-font.py`, which reads essays and the fables only). Read from source on
       2026-11-27: every post together uses 1,685 Chinese characters, the subset holds 1,024 at 234
@@ -112,7 +114,7 @@ English, one in Chinese and one in both. Audit ids are sections of `design/audit
       and widen `check:essay-font` to every post. Measured before and after.
 
 **After the last sentence**
-- [ ] Q24, post-ending · The same pieces on the text's one width: tags and date, the word card, the
+- [x] Q24, post-ending · The same pieces on the text's one width: tags and date, the word card, the
       subscribe slip, previous and next, then "You might also enjoy" as two small cards side by
       side (R8: three widths and about 2,200 px today). The two cards are the `card` piece, with
       its lift, and take the cover's scrim (P07). Tier 2.
@@ -126,10 +128,10 @@ English, one in Chinese and one in both. Audit ids are sections of `design/audit
       2026-11-27 (#138), but for F113 above.
 
 **Pictures and passages** (answered on 2026-10-01; never built)
-- [ ] A picture in an article takes 8 px (pick 7). Today: `figure img` is 10 px (`_sass/_base.scss`);
+- [x] A picture in an article takes 8 px (pick 7). Today: `figure img` is 10 px (`_sass/_base.scss`);
       `.article-image img` is 1em (`_sass/_page.scss`). `$radius-picture` exists and nothing uses it
       (S, D; R16).
-- [ ] The same picture no longer grows by 5 per cent onto six shadows under the pointer (S, B7; M4):
+- [x] The same picture no longer grows by 5 per cent onto six shadows under the pointer (S, B7; M4):
       "never zoomed or filtered on hover". Tier 1.
 - [ ] A caption under a picture is Barlow, small capitals, spaced (pair 8). Today it is a face the
       site never loads, so it shows in Georgia italic (F115; S, A1.3), and its link turns black
