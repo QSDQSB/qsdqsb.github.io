@@ -251,6 +251,9 @@ const PAGES = [
   // capture's, not the page's: painted over here; the overview's shot above draws the list.
   { id: 'palette-voyage', url: '/palette/#london', setup: drawColourStage, vats: true, mask: ['.palette-voyages__list'] },
   { id: 'reverie', url: '/reverie/?c=4a6fa5', setup: drawColourStage, vats: true },
+  // Ridgway's plates, the first screen: its head and the first plates as the book sets them (the
+  // whole book is some twenty screens).
+  { id: 'ridgway', url: '/utils/ridgway/', screenOnly: true },
   { id: 'voyage-by-tags', url: '/voyage-by-tags/', vats: true },
   { id: 'about', url: '/about/' },
   { id: 'portfolio', url: '/portfolio/' },

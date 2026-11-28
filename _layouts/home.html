@@ -4,7 +4,7 @@ layout: default
 
 {% include base_path %}
 
-{% comment %} Three scroll-snap panels (hero · index · What's New), each exactly one
+{% comment %} Three scroll-snap panels (hero · What's New · index), each exactly one
 screen. The snap container is <html.home-snap> (set in default.html) so window
 scroll — and masthead-intent.js — keeps working; a panel whose content is taller
 than the screen scrolls it inside its .home__panel-body. {% endcomment %}
@@ -77,17 +77,17 @@ than the screen scrolls it inside its .home__panel-body. {% endcomment %}
     <span class="home__marks" aria-hidden="true"></span>
   </section>
 
-  <section class="home__panel home__panel--index" id="home-enter">
+  <section class="home__panel home__panel--new">
     <div class="home__panel-body">
-      {% include home/index.html %}
+      {% include home/whats-new.html %}
     </div>
     <span class="home__scroll-hint" aria-hidden="true"></span>
     <span class="home__marks" aria-hidden="true"></span>
   </section>
 
-  <section class="home__panel home__panel--new">
+  <section class="home__panel home__panel--index" id="home-enter">
     <div class="home__panel-body">
-      {% include home/whats-new.html %}
+      {% include home/index.html %}
     </div>
     <span class="home__scroll-hint home__scroll-hint--up" aria-hidden="true"></span>
     <span class="home__marks" aria-hidden="true"></span>

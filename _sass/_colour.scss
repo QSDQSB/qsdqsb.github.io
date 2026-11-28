@@ -21,6 +21,11 @@
   color: var(--photobook-ink-2);
 }
 
+// On a phone Ridgway's line is the size of a hero's line there (_page.scss, .page__lead).
+.ridgway-page .colour-lede {
+  @include responsive-down(tablet) { font-size: clamp(0.86rem, 3.15vw, 1.04rem); line-height: 1.22; }
+}
+
 // The pages end as the site's do, a book's among them: the mark and the sign-off (presented-by-qsd).
 .colour-end {
   grid-column: 1 / -1; // across the palette page's list and body alike
@@ -51,7 +56,6 @@
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 0;
   pointer-events: none;
   // Eased out over many stops: two straight segments meet in a crease the eye can find.
   background: linear-gradient(0deg,
@@ -90,6 +94,16 @@
 }
 
 /* ── QSD's Palette ──────────────────────────────────────────────────── */
+// The head: a hero made of the dye (_components.scss .page__hero-media--dye), laid out as every
+// overlay hero is (_page.scss), its kicker over the title. Above the page's own layer, so the room's
+// light lies under its dissolve rather than over its dye.
+.palette-hero {
+  width: 100%; // a -webkit-box child: stated, or it shrinks to its content
+  z-index: 1;
+
+  .colour-kicker { margin-bottom: 0.2rem; text-shadow: 1px 1px 4px rgba($darker-gray, 0.5); }
+}
+
 // The title takes the focus by script when a voyage replaces what the reader was in: no ring.
 .palette-page__head h1:focus { outline: none; }
 .palette-page {
@@ -98,7 +112,7 @@
   width: 100%; // a -webkit-box child: stated, or it shrinks to its content
   max-width: 80rem;
   margin: 0 auto;
-  padding: clamp(6.5rem, 12vw, 9rem) var(--photobook-gutter) clamp(4rem, 8vw, 6rem);
+  padding: clamp(1.4rem, 3vw, 2.4rem) var(--photobook-gutter) clamp(4rem, 8vw, 6rem);
 
   // Where the site's other pages take a left rail, this one takes its list of voyages beside it.
   @include responsive-up($responsive-left-rail-breakpoint) {
@@ -134,6 +148,9 @@
 
 .palette-page__menu {
   @include pill;
+  min-height: 2.5rem; // a finger's size
+
+  &:focus-visible { @include brass-focus; }
 
   @include responsive-up($responsive-left-rail-breakpoint) { display: none; }
 }
@@ -195,10 +212,8 @@
   }
 
   h2 {
+    @include eyebrow;
     margin: 1.2rem 0 0.35rem 0.45rem;
-    font: 500 max(0.62rem, 11px)/1 $barlow-font-family;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
     color: var(--photobook-ink-3);
   }
 
@@ -244,24 +259,30 @@
   @include icon-button-quiet;
 }
 
-// A voyage in the list. States stated against `a:visited` / `a:hover` (0,1,1).
+// A voyage in the list, its name in the serif as in the list of bars beside it. States stated against
+// `a:visited` / `a:hover` (0,1,1). The voyage on the page: its name over a pale brass hairline.
 .palette-voyages a,
 .palette-voyages a:visited {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   padding: 0.32rem 0.45rem;
-  border-radius: 0.55rem;
-  font: 400 max(0.84rem, 14px)/1.25 $barlow-font-family;
+  border-radius: $border-radius;
+  font: 400 max(0.84rem, 14px)/1.25 $global-font-family;
   color: var(--photobook-ink-2);
   text-decoration: none;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color $duration-base $cubic-bezier-smooth, color $duration-base $cubic-bezier-smooth;
 }
 
 .palette-voyages a:hover,
 .palette-voyages a:focus-visible { color: var(--photobook-ink); background: rgba(255, 255, 255, 0.05); text-decoration: none; }
+.palette-voyages a:focus-visible { @include brass-focus; outline-offset: -2px; } // inside: the list's scroll would clip it
 
-.palette-voyages a[aria-current] { color: var(--photobook-ink); background: rgba(255, 255, 255, 0.08); }
+.palette-voyages a[aria-current] {
+  color: var(--photobook-ink);
+
+  span { text-decoration-line: underline; text-decoration-thickness: 1px; text-decoration-color: rgba($intriguing-word-color, 0.7); text-underline-offset: 0.35em; }
+}
 
 // The page as frosted glass over the voyage's light. The light: as the lightbox's room takes a
 // print's (@mixin wash), a small square of the voyage's dye vat (palette.js) spread over
@@ -292,12 +313,16 @@
 }
 
 // The way back to every palette, in the kicker's ink. `a:visited` / `a:hover` (0,1,1) would turn it
-// the site's link blue, so its states are stated here at (0,2,0).
-.palette-page__home,
-.palette-page__home:visited { color: inherit; text-decoration: none; }
+// the site's link blue, and the hero's `a` (0,1,1) its text colour, so its states are stated here at
+// (0,2,0) and up. On a phone, a finger's reach round it, unseen.
+.colour-kicker .palette-page__home,
+.colour-kicker .palette-page__home:visited { position: relative; color: inherit; text-decoration: none; transition: color $duration-base $cubic-bezier-smooth; }
 
-.palette-page__home:hover,
-.palette-page__home:focus-visible { color: var(--photobook-ink); text-decoration: none; }
+.colour-kicker .palette-page__home:hover,
+.colour-kicker .palette-page__home:focus-visible { color: var(--photobook-ink); text-decoration: none; }
+
+.colour-kicker .palette-page__home:focus-visible { @include brass-focus; }
+.colour-kicker .palette-page__home::after { content: ""; position: absolute; inset: -0.9rem -0.4rem; }
 
 .palette-page__stage { margin-top: clamp(2rem, 5vw, 3.5rem); }
 
@@ -334,16 +359,16 @@
     gap: 0.9rem;
     align-items: center;
     padding: 0.6rem 0.7rem;
-    border-radius: 0.55rem;
+    border-radius: $border-radius;
     color: var(--photobook-ink-2);
     text-decoration: none;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: background-color $duration-base $cubic-bezier-smooth, color $duration-base $cubic-bezier-smooth;
   }
 
   a:hover,
   a:focus-visible { color: var(--photobook-ink); background: rgba(255, 255, 255, 0.05); text-decoration: none; }
 
-  a:focus-visible { outline: 1px solid var(--photobook-ink-3); outline-offset: 0; }
+  a:focus-visible { @include brass-focus; }
 
   .palette-card__bar { height: 5px; margin-top: 0.55rem; }
 }
@@ -354,9 +379,9 @@
   background: #1d1d1f; // until its vat is poured
   outline: 1px solid transparent;
   outline-offset: 3px;
-  transition: outline-color 0.2s ease;
+  transition: outline-color $duration-base $cubic-bezier-smooth;
 
-  a:is(:hover, :focus-visible) > & { outline-color: var(--photobook-ink-3); }
+  a:hover > & { outline-color: var(--photobook-ink-3); }
 
   canvas { display: block; width: 100%; height: auto; }
 }
@@ -402,18 +427,18 @@
     background: #1d1d1f; // until its vat is poured
     outline: 1px solid transparent;
     outline-offset: 3px;
-    transition: outline-color 0.2s ease, opacity 0.2s ease;
+    transition: outline-color $duration-base $cubic-bezier-smooth, opacity $duration-base $cubic-bezier-smooth;
   }
 
-  a:hover,
-  a:focus-visible { outline-color: var(--photobook-ink-3); }
+  // Under the pointer an ink ring; on the page, a brighter one; the keyboard's, the brass (parted from both).
+  a:hover { outline-color: var(--photobook-ink-3); }
+  a[aria-current] { outline-color: var(--photobook-ink); }
+  a:focus-visible { @include brass-focus; }
 
   // The other voyages step back, so the title and this voyage's own colours lead; each comes forward
   // under the pointer.
   a { opacity: 0.55; }
   a:is(:hover, :focus-visible, [aria-current]) { opacity: 1; }
-
-  a[aria-current] { outline-color: var(--photobook-ink); }
 
   canvas { display: block; width: 100%; height: auto; }
 }
@@ -466,7 +491,9 @@
   }
 }
 
+// The order chosen is a thing switched on: its hairline the warm brass (0012).
 .palette-page__order {
+  --ramp: #{$h2-color};
   margin: clamp(2rem, 4vw, 2.6rem) 0 1.4rem;
 
   button { min-height: 1.75rem; } // at least 24px to tap, on a phone too
@@ -514,7 +541,8 @@
   .is-accent b::after { content: " · accent"; color: var(--photobook-ink-3); }
 }
 
-// Every frame as a card: the print, its colours, its name and light, its bar and its colour line.
+// Every frame as a card, a print with its colour strip: the print, its colours as a strip tight under
+// it, its name and light, and its small vat.
 .palette-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(19rem, 100%), 1fr));
@@ -544,16 +572,40 @@
   img { display: block; width: 100%; height: 100%; border-radius: 0; background: none; transition: opacity 0.6s $cubic-bezier-smooth; }
 }
 
-// The picture's own shape, painted with its blurred placeholder (cards.js) until the print arrives
-// and develops over it (as the book's frames do: ../photobook/develop.js), so no card cuts in.
+// The picture's own shape (--r, on the card), painted with its blurred placeholder (cards.js) until
+// the print arrives and develops over it (as the book's frames do: ../photobook/develop.js), so no card
+// cuts in. A print that cannot be had shows its placeholder alone, never the browser's broken mark.
 .palette-card__ph {
   display: block;
   width: min(100%, calc(100% * var(--r, 1.5) / 1.7778));
   aspect-ratio: var(--r, 1.5);
   background: center / cover no-repeat;
+
+  img.is-lost { visibility: hidden; }
 }
 
 .is-developing .palette-card__ph img:not(.is-in) { opacity: 0; }
+
+// A print with its strip stands on its box's foot, so the strip lies tight under the picture
+// whatever its shape, and as wide as it.
+.palette-card:has(.palette-card__strip) .palette-card__print { place-items: end center; }
+
+.palette-card__strip {
+  display: flex;
+  width: min(100%, calc(100% * var(--r, 1.5) / 1.7778));
+  height: 14px;
+  margin-inline: auto;
+
+  > * { position: relative; min-width: 2px; background: var(--c); }
+
+  // A colour leads to its Reverie: under the pointer a white line inside it, as a chosen block is
+  // marked, and its code in the tip; the keyboard's mark is the brass ring.
+  a { -webkit-user-drag: none; transition: box-shadow $duration-base $cubic-bezier-smooth; }
+  a:hover,
+  a:focus-visible { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7); }
+  a:focus-visible { @include brass-focus; outline-offset: -2px; } // inside: the next colour would cover it
+  a::after { content: ""; position: absolute; inset: 0 0 -0.75rem; } // a finger's reach, beneath it
+}
 
 .palette-card__row {
   display: grid;
@@ -562,13 +614,15 @@
   align-items: start;
   margin-top: 0.9rem;
 
+  .palette-card__strip + & { margin-top: 0; }
+
   h3 {
     margin: 0.8rem 0 0;
     font: 500 0.9rem $barlow-font-family;
     color: var(--photobook-ink); // the site colours its h3
   }
 
-  h3 small { margin-left: 0.5rem; font-size: max(0.66rem, 11px); letter-spacing: 0.1em; text-transform: uppercase; color: var(--photobook-ink-3); white-space: nowrap; }
+  h3 small { @include eyebrow; margin-left: 0.5rem; color: var(--photobook-ink-3); white-space: nowrap; }
 }
 
 .palette-card__bar {
@@ -580,10 +634,10 @@
   i { background: var(--c); border-radius: 1px; }
 }
 
-// The frame's own dye vat, beside its name and bar and as tall as the two together.
+// The frame's own dye vat, beside its name.
 .palette-card__vat {
   aspect-ratio: 1;
-  align-self: center; // centred on the name and bar, however many lines the name takes
+  align-self: center; // centred on the name, however many lines it takes
   margin-top: 0.8rem; // the name's own top margin, so the centre is the words'
 
   canvas {
@@ -601,11 +655,13 @@
 
   + h3 { margin-top: 0.45rem; }
 
-  // A voyage's name leads to its palette.
+  // A voyage's name leads to its palette; a finger's reach round it, unseen.
   a,
-  a:visited { color: inherit; text-decoration: none; transition: color 0.3s $cubic-bezier-smooth; }
+  a:visited { position: relative; color: inherit; text-decoration: none; transition: color 0.3s $cubic-bezier-smooth; }
   a:hover,
   a:focus-visible { color: var(--photobook-ink); }
+  a:focus-visible { @include brass-focus; }
+  a::after { content: ""; position: absolute; inset: -0.8rem -0.3rem; }
 }
 
 // The frame the reader came from: once the page has glided down to it (palette.js, is-arrived), a
@@ -638,21 +694,15 @@ body.colour-page--drift { padding-bottom: 0; }
   grid-template-rows: 1fr auto;
 }
 
-// The room, in the frame's colours: two layers trade places by opacity alone.
+// The room, in the frame's colours: the site's wash (_components.scss), as the lightbox's room and
+// the palette page's take a print's (assets/js/photobook/wash.js), each frame's light laid over the last.
 .colour-drift__wash {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  @include wash;
 
-  i {
-    position: absolute;
-    inset: -10%;
-    filter: blur(40px);
-    opacity: 0;
-    transition: opacity 1.6s $cubic-bezier-smooth;
-
-    &.is-on { opacity: 1; }
-  }
+  > * { width: 124%; height: 124%; } // a canvas is not stretched by its insets alone
 }
 
 .colour-drift__head {
@@ -699,6 +749,7 @@ body.colour-page--drift { padding-bottom: 0; }
   padding: 0;
   border: 0;
   background: none;
+  -webkit-tap-highlight-color: transparent; // a tap steps on; it never flashes over half the print
 
   &--prev { left: 0; cursor: w-resize; }
   &--next { right: 0; cursor: e-resize; }
@@ -720,14 +771,19 @@ body.colour-page--drift { padding-bottom: 0; }
 .colour-drift__caption p { margin: 0; }
 .colour-drift__name { font: 500 clamp(0.95rem, 1.2vw, 1.1rem) $barlow-font-family; color: var(--photobook-ink); }
 
+// The place, then the sun's line, kept whole: on a phone it takes a line of its own rather than break.
 .colour-drift__meta {
-  margin-top: 0.3rem;
-  font: 500 0.58rem $barlow-font-family;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  @include eyebrow;
+  margin-top: 0.4rem;
+  line-height: 1.5;
   color: var(--photobook-ink-3);
 
-  span { margin-left: 1.2rem; letter-spacing: 0.08em; text-transform: none; font-size: 0.72rem; color: var(--photobook-ink-2); }
+  span { display: inline-block; margin-left: 1.2rem; letter-spacing: 0.08em; text-transform: none; font-size: 0.72rem; color: var(--photobook-ink-2); white-space: nowrap; }
+}
+
+.colour-drift__retry {
+  @include onward-links;
+  margin-top: 1rem;
 }
 
 // In a colour, the first stop: the colour's dye filling the stage (a rectangular vat), its hex upon
@@ -783,15 +839,17 @@ body.colour-page--drift { padding-bottom: 0; }
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  height: 30px;
+  height: 40px; // a finger's reach round each 20 px vat
   padding: 0 3px; // room for the ring round the frame on the page
   overflow-x: auto;
   scrollbar-width: none;
 
   &::-webkit-scrollbar { display: none; }
 
-  // A frame on the way: its dye vat, the frame on the page ringed as on the palette page's rail.
+  // A frame on the way: its dye vat, the frame on the page ringed as on the palette page's rail; the
+  // keyboard's mark the brass, parted from it. A finger's reach above and below it, unseen.
   button {
+    position: relative;
     flex: 0 0 20px;
     height: 20px;
     padding: 0;
@@ -803,9 +861,10 @@ body.colour-page--drift { padding-bottom: 0; }
     cursor: pointer;
     transition: outline-color 0.3s $cubic-bezier-smooth;
 
+    &::after { content: ""; position: absolute; inset: -10px -0.2rem; }
     &:has(canvas) { background: none; }
-    &.is-on,
-    &:focus-visible { outline-color: var(--photobook-ink); }
+    &.is-on { outline-color: var(--photobook-ink); }
+    &:focus-visible { @include brass-focus; }
   }
 
   canvas { display: block; width: 100%; height: 100%; }
@@ -1046,25 +1105,37 @@ body.colour-page--drift { padding-bottom: 0; }
   p { max-width: 44rem; margin: 0.55rem 0 0; @include lede; font-size: clamp(0.98rem, 1.2vw, 1.12rem); color: var(--photobook-ink-2); }
 }
 
-// Ridgway's colour book: a plate a section, its swatches as the book sets them, each named, its hex
-// beneath; those no photograph holds with their words dimmed, their colour always true (ridgway.js).
-.ridgway-plates { margin-top: clamp(2rem, 5vw, 3rem); }
+// Ridgway's colour book: each plate as the book sets it, three hues across and seven steps down, pale
+// to dark, every colour named, its hex beneath; three plates abreast on a desktop, one to a row on a
+// phone. Those no photograph holds with their words dimmed, their colour always true (ridgway.js).
+.ridgway-plates {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 2.6rem;
+  margin-top: clamp(2rem, 5vw, 3rem);
+
+  @include responsive-up(tablet) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @include responsive-up(desktop) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 
 .ridgway-plate {
   padding: clamp(1.4rem, 3vw, 2rem) 0;
   border-top: 1px dotted var(--photobook-line);
   // Laid out and painted only near the screen: fifty-three plates cost as little as one.
   content-visibility: auto;
-  contain-intrinsic-size: auto 22rem;
+  contain-intrinsic-size: auto 52rem;
 
   ol {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
-    gap: 1.2rem 0.9rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem 0.5rem;
     margin: 1rem 0 0;
     padding: 0;
     list-style: none;
   }
+
+  // The last plate's White stands alone over its three columns of greys, as the book sets it.
+  li.is-alone { grid-column: 1 / -1; width: calc((100% - 1rem) / 3); }
 }
 
 .ridgway-plate__no { @include eyebrow; margin: 0; }
@@ -1078,6 +1149,7 @@ body.colour-page--drift { padding-bottom: 0; }
 
   i { display: block; aspect-ratio: 3 / 2; background: var(--c); transition: box-shadow 0.3s $cubic-bezier-smooth; }
   b { display: block; margin-top: 0.55rem; font: 500 0.8rem/1.3 $barlow-font-family; color: var(--photobook-ink); }
+  .ridgway-plate & b { margin-top: 0.4rem; font-size: 0.72rem; } // a plate's three abreast
   span { display: block; margin-top: 0.15rem; font: 500 max(0.62rem, 11px) $barlow-font-family; letter-spacing: 0.14em; color: var(--photobook-ink-3); font-variant-numeric: tabular-nums; }
 
   // The door shows itself as a chosen block is marked: a white line inside the colour.
@@ -1111,15 +1183,11 @@ body.colour-page--drift { padding-bottom: 0; }
   // Its palette alone: no frames follow for the rule to part it from.
   .palette-voyage { padding-bottom: 0; border-bottom: 0; }
 
-  // In a card's narrow blocks "3.9% · accent" ran into the next share and read as its label: the word
-  // goes beneath its own figure. (The palette page's cards have the same fault: F055.)
-  .palette-card .is-accent b::after { content: "accent"; display: block; }
-
   // A frame's specs: the panel's own type again, where the post's p, dt and dd would be set instead.
   // Of a label (dt) only what the post takes, never its size: the panel's own floor on a phone
   // (_photobook.scss, "no smaller than about 11 px") must still reach it.
   .photobook-specs__gear { margin: 0; font-size: 0.74rem; }
-  .palette-strip__hex { margin: 0; font-size: 0.58rem; }
+  .palette-strip__hex { margin: 0; font-size: max(0.58rem, 11px); }
   .photobook-specs__settings dt { margin-top: 0; font-family: $barlow-font-family; font-weight: 500; }
   .photobook-specs__settings dd { margin-left: 0; font: 400 0.7rem $barlow-font-family; }
 }
@@ -1169,16 +1237,16 @@ $plate-ground: mix(#fff, $background-color, 3%); // a hair above the page's grou
 // A plate: a piece of a colour page set in a post, as a card on a card's short shadow and as wide as
 // the column, so its edge says where the page's own design begins and ends. Its head names the page
 // and leads there; its foot says, small, what the piece does in the hand. Still under the pointer, as
-// a wide cover is.
+// a wide cover is, so it takes the card's corner and shadow (_components.scss, card) and not its lift.
 .colour-plate {
   --photobook-gutter: clamp(1rem, 3vw, 1.6rem);
   position: relative;
   isolation: isolate;
   overflow: hidden;
   padding: 1.3rem var(--photobook-gutter) 1.4rem;
-  border-radius: 18px;
+  border-radius: $radius-large;
   background: $plate-ground;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  box-shadow: $shadow-rest;
 }
 
 .colour-plate__head { @include onward-links; }
@@ -1312,7 +1380,7 @@ html.motion-off .colour-plate__hint--hover { display: none; }
 }
 
 @mixin colour-still {
-  .colour-drift__wash i,
+  .colour-drift__wash > *,
   .colour-drift__head,
   .colour-drift__foot,
   .colour-drift__print,
@@ -1321,6 +1389,7 @@ html.motion-off .colour-plate__hint--hover { display: none; }
   .palette-ambience > *,
   .palette-voyages,
   .palette-page,
+  .colour-kicker .palette-page__home,
   .palette-voyage__vat canvas,
   .palette-blocks a i,
   .reverie__near a,

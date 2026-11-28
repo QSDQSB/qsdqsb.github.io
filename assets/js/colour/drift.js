@@ -21,26 +21,29 @@
  */
 
 import { tips } from '../photobook/tip.js';
-import { vat, seedOf, stillness as still } from './vat.js';
+import { crossfade } from '../photobook/wash.js';
+import { vat, seedOf, glow, stillness as still } from './vat.js';
 import { esc, REVERIE, holding, varied, SHOWN, focus, shadeFor, dripper, json } from './cards.js';
 
 const DWELL = 7000;
 const deg = (d) => `${d < 0 ? '−' : ''}${Math.abs(d)}°`;
-const GROUND = [16, 16, 18];
-/** A colour taken most of the way back to the dark ground, as the Photobook's glow does. */
-const soften = (h, k = 0.58) => { const n = parseInt(h.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255]; return `rgb(${c.map((v, i) => Math.round(GROUND[i] + (v - GROUND[i]) * k)).join(',')})`; };
 
 const root = document.getElementById('colour-drift');
 
 async function main() {
   tips();
-  let data = null;
-  try { data = await json(new URL('../../colour-atlas.json', import.meta.url)); } catch { /* shown below */ }
+  let data = null, failed = false;
+  try { data = await json(new URL('../../colour-atlas.json', import.meta.url)); } catch { failed = true; }
   const all = data?.photos || [];
   const stage = root.querySelector('.colour-drift__stage');
   if (!all.length) {
-    stage.insertAdjacentHTML('beforeend', '<p class="colour-empty">The colours are still being read from the photographs.</p>');
+    // The photographs could not be fetched (a line down), or the atlas is not built yet: said apart.
+    stage.insertAdjacentHTML('beforeend', failed
+      ? '<p class="colour-empty">The photographs could not be fetched just now.</p><p class="colour-drift__retry"><a href="">Try again</a></p>'
+      : '<p class="colour-empty">The colours are still being read from the photographs.</p>');
+    root.classList.remove('is-overture');
     root.querySelector('.colour-drift__foot').hidden = true;
+    root.querySelector('.colour-drift__tools').hidden = true;
     return;
   }
   const pages = data.pages || {};
@@ -51,7 +54,7 @@ async function main() {
   const pourStep = (b, key, make) => drip([b], () => key, make, { root: thread, margin: '0px 400px', now: true });
   const openEl = root.querySelector('.colour-drift__open');
   const playEl = root.querySelector('[data-act="play"]');
-  const washes = [...root.querySelectorAll('.colour-drift__wash i')];
+  const room = root.querySelector('.colour-drift__wash');
 
   const q = new URLSearchParams(location.search), from = q.get('from'), opened = q.has('open'), src = q.get('src') || from;
   const colour = /^[0-9a-f]{6}$/i.test(q.get('c') || '') ? `#${q.get('c').toLowerCase()}` : null;
@@ -83,7 +86,7 @@ async function main() {
 
   const way = [];            // indices, in the order drifted
   const seen = new Set();
-  let pos = -1, playing = !still() && !opened, timer = 0, washOn = 0, current = null;
+  let pos = -1, playing = !still() && !opened, timer = 0, current = null;
   // In a colour, the way is laid through its photographs at once (their vats along the foot), so ← and
   // → step through them in order from the one chosen; past the last, the drift goes on as ever.
   if (colour) {
@@ -165,7 +168,7 @@ async function main() {
       if (still()) { old?.remove(); el.classList.add('is-on'); }
       else { requestAnimationFrame(() => el.classList.add('is-on')); if (old) { old.classList.remove('is-on'); setTimeout(() => old.remove(), 1400); } }
     });
-    wash({ sw: dye.map(([h]) => h) });
+    wash({ sig: dye, g: 'colour', slug: src || colour });
     preload(way[pos + 1]);
     schedule();
   }
@@ -182,15 +185,14 @@ async function main() {
     history.replaceState(null, '', `?from=${encodeURIComponent(`${p.g}/${p.slug}`)}${colour ? `&c=${colour.slice(1)}${src ? `&src=${encodeURIComponent(src)}` : ''}&open` : ''}`);
   }
 
-  // The room: three of the frame's colours, softened, crossfading from the last.
+  // The room: the frame's light (its dye vat's heart, ./vat.js glow) laid over the last, as the
+  // lightbox's room and the palette page's turn (../photobook/wash.js). A frame whose palette is still
+  // to be read lends its three swatches.
   let washed = null;
   function wash(p) {
     if (washed === p) return;
     washed = p;
-    const w = washes[washOn = 1 - washOn];
-    const [a, b, c] = [p.sw[0], p.sw[1] || p.sw[0], p.sw[2] || p.sw[0]];
-    w.style.background = `radial-gradient(60% 70% at 20% 20%, ${soften(a)}, transparent 70%), radial-gradient(60% 70% at 80% 30%, ${soften(b)}, transparent 70%), radial-gradient(80% 60% at 50% 100%, ${soften(c, 0.42)}, transparent 70%)`;
-    w.classList.add('is-on'); washes[1 - washOn].classList.remove('is-on');
+    crossfade(room, glow(p.sig?.length ? p.sig : p.sw.map((h) => [h, 1]), { seed: seedOf(`${p.g}/${p.slug}`) }));
   }
 
   // Each frame on the way as its dye vat, the same one its card pours on the palette page; a frame
@@ -252,10 +254,12 @@ async function main() {
   // A hidden tab does not drift on unseen.
   document.addEventListener('visibilitychange', () => { if (document.hidden) clearTimeout(timer); else schedule(); });
 
-  // The overture: the title alone in the first frame's colours; then it gives way and the frame develops.
-  // In a colour, the colour is its own overture.
-  if (still() || colour) { root.classList.add('is-under-way'); setPlaying(playing); show(at, first); return; }
-  root.classList.add('is-overture');
+  // The overture (is-overture, in the page from the first frame, so the tools never show and go): the
+  // title alone in the first frame's colours; then it gives way and the frame develops. In a colour, the
+  // colour is its own overture; with motion switched off for a screenshot, none. A reader who asked for
+  // less motion still reads the title: the same pause, its changes made at once (_colour.scss).
+  const quiet = !!window.QSD_MOTION_OFF;
+  if (quiet || colour) { root.classList.remove('is-overture'); root.classList.add('is-under-way'); setPlaying(playing); show(at, first); return; }
   wash(all[at]);
   preload(at);
   setTimeout(() => {

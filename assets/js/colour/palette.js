@@ -15,8 +15,9 @@
 import { tips } from '../photobook/tip.js';
 import { vat, seedOf, oklab, glow, stillness as still } from './vat.js';
 import { crossfade } from '../photobook/wash.js';
+import { dyeHero } from './dye-hero.js';
 import { develop } from '../photobook/develop.js';
-import { esc, blocks, bar, card, kindred, dripper, reverieOf, ESSAY, place, cameFrom, backLabel, measureCards, json } from './cards.js';
+import { esc, blocks, bar, card, kindred, dripper, reverieOf, ESSAY, place, ownScroll, cameFrom, backLabel, measureCards, json } from './cards.js';
 
 const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* this visit only */ } } };
 
@@ -24,14 +25,18 @@ const root = document.getElementById('palette-page');
 // Its prints develop over their blurred placeholders, as the book's do (../photobook/develop.js).
 develop(root, '.palette-card__ph img');
 const stage = root?.querySelector('.palette-page__stage');
-const title = root?.querySelector('h1'), status = document.getElementById('palette-status');
-const kicker = root?.querySelector('.palette-page__home');
+// The head is a hero made of the dye (./dye-hero.js), above the page: its kicker, title and line.
+const hero = document.querySelector('.palette-hero'), heroMedia = hero?.querySelector('.page__hero-media--dye');
+const title = hero?.querySelector('h1'), titleText = title?.querySelector('.page__title-text'), lead = hero?.querySelector('.page__lead');
+const status = document.getElementById('palette-status');
+const kicker = hero?.querySelector('.palette-page__home');
 const railNav = root?.querySelector('.palette-rail');
 const back = document.querySelector('.masthead__back');
 const menu = root?.querySelector('.palette-voyages'), menuList = menu?.querySelector('.palette-voyages__list');
 const fold = menu?.querySelector('.palette-voyages__fold'), menuButton = root?.querySelector('.palette-page__menu');
 
 async function main() {
+  ownScroll();
   let data = null;
   try { data = await json(new URL('../../palettes.json', import.meta.url)); } catch { /* shown below */ }
   const voyages = (data?.voyages || []).filter((v) => data.pages?.[v.g]);
@@ -69,7 +74,8 @@ async function main() {
 
   function index() {
     document.title = document.title.replace(/^[^·]*·/, 'QSD’s Palette ·');
-    title.textContent = "QSD's Palette";
+    titleText.textContent = "QSD's Palette";
+    lead.hidden = false;
     if (came) along(backLabel(came)); else backTo(back?.dataset.home, back?.dataset.homeLabel);
     kicker.textContent = 'From the voyages';
     // By place, as the list beside it: a trip's parts under its name, the voyages between trips
@@ -77,8 +83,7 @@ async function main() {
     const runs = [];
     for (const t of byPlace) { if (!t.parts && runs.at(-1)?.label === '') runs.at(-1).vs.push(...t.vs); else runs.push({ label: t.parts ? t.label : '', vs: [...t.vs] }); }
     const entry = (v) => `<li><a href="#${v.g}" data-g="${v.g}"><i class="palette-index__vat"></i><span><span class="palette-index__name">${esc(nameOf(v))}</span>${bar(sig(v))}</span></a></li>`;
-    stage.innerHTML = `<p class="colour-lede">The paint behind the pictures.</p>
-      <div class="palette-index">${runs.map(({ label, vs }) => `<section>${label ? `<h2>${esc(label)}</h2>` : ''}<ol>${vs.map(entry).join('')}</ol></section>`).join('')}</div>
+    stage.innerHTML = `<div class="palette-index">${runs.map(({ label, vs }) => `<section>${label ? `<h2>${esc(label)}</h2>` : ''}<ol>${vs.map(entry).join('')}</ol></section>`).join('')}</div>
       <p class="colour-next">${ESSAY}</p>`;
     const gOf = (i) => i.parentElement.dataset.g;
     drip(stage.querySelectorAll('.palette-index__vat'), (i) => `index/${gOf(i)}`, (i) => vat(voyages.find((x) => x.g === gOf(i)).palette, { size: 52, seed: seedOf(gOf(i)) }));
@@ -91,8 +96,11 @@ async function main() {
     backTo(`${page.url}${at ? `#${encodeURIComponent(at)}` : ''}`, `Back to ${name}`);
     if (came?.pathname === new URL(page.url, location.href).pathname) along(`Back to ${name}`);
     else if (prevShown === '') along("Back to QSD's Palette", location.pathname, 1); // opened from the overview
-    title.textContent = `QSD's Palette for ${name}`;
-    kicker.textContent = "QSD's Palette";
+    titleText.textContent = `QSD's Palette for ${name}`;
+    lead.hidden = true;
+    kicker.textContent = 'Palette';
+    // The way on, at the foot: the next voyage by colour (the rail's next), and this voyage's book.
+    const next = railed[(railed.indexOf(v) + 1) % railed.length];
     const seq = order === 'colour' && v.order?.length === v.photos.length ? v.order : v.photos.map((_, i) => i);
     // A colour of the voyage's own opens its Reverie, that colour and no other, from the frame that
     // holds the most of it (only where the reader sets out: the colour is the one they chose).
@@ -108,7 +116,7 @@ async function main() {
       </div>
       <h2 class="visually-hidden">The frames</h2>
       <div class="palette-cards">${seq.map((i) => { const p = v.photos[i]; return card(p, { href: `${page.url}#${encodeURIComponent(p.slug)}`, i, from: p.slug === at, link: (h) => reverieOf(v.g, p.slug, h) }); }).join('')}</div>
-      <p class="colour-next">${ESSAY}</p>`;
+      <p class="colour-next">${next !== v ? `<a href="#${next.g}">Next by colour: ${esc(nameOf(next))}</a>` : ''}<a href="${page.url}">${esc(name)}, in its book</a>${ESSAY}</p>`;
     stage.querySelector('[data-vat]').replaceWith(vatBox);
     fillVat(v);
     pour(v, stage.querySelectorAll('.palette-card__vat'));
@@ -185,11 +193,16 @@ async function main() {
   // Both change as the book's wash does (../photobook/wash.js): the new laid over the old and faded
   // in. The light turns as the words leave; the vat once it is back among the new ones (moving an
   // element cuts its fade short).
+  // The hero's dye turns with it, through the same crossfade: a voyage's own colours, and on the page
+  // of every palette the colours of its door's frame (the page's dye_from).
+  const doorKey = heroMedia?.dataset.from || '', cut = doorKey.lastIndexOf('/');
+  const door = voyages.find((x) => x.g === doorKey.slice(0, cut))?.photos.find((p) => p.slug === doorKey.slice(cut + 1));
   function light(v) {
     const g = v?.g ?? '';
     if (ambience.dataset.g === g) return;
     ambience.dataset.g = g;
     crossfade(ambience, v ? glow(v.palette, { seed: seedOf(v.g) }) : document.createElement('i'));
+    if (heroMedia) dyeHero(heroMedia, v ? v.palette : door?.sig || railed[0].palette, { seed: seedOf(v ? v.g : doorKey) });
   }
   // A change of voyage is one gesture, one tempo: the palette's blocks take the new dye in a wave
   // from the left, and the vat beside them changes its dye whole in the same time and on the same
@@ -324,7 +337,7 @@ async function main() {
   const openMenu = (open) => {
     menu.classList.toggle('is-open', open);
     // As a sheet over the page, the page behind it is out of reach until it closes.
-    for (const el of [root.querySelector('.palette-page__body'), root.querySelector('.colour-end'), document.querySelector('.masthead')]) if (el) el.inert = open && sheet.matches;
+    for (const el of [hero, root.querySelector('.palette-page__body'), root.querySelector('.colour-end'), document.querySelector('.masthead')]) if (el) el.inert = open && sheet.matches;
     menuButton.setAttribute('aria-expanded', String(open));
     if (open) fold.focus({ preventScroll: true }); else if (menu.contains(document.activeElement)) menuButton.focus({ preventScroll: true });
   };
@@ -356,7 +369,7 @@ async function main() {
 
   // From one voyage to the next: the words and frames fade out, the page returns to the top unseen,
   // the new ones rise in; the light and the dye vat meanwhile take the new colours.
-  const parts = () => [title, ...stage.querySelectorAll('.palette-page__order, .palette-cards, .colour-lede, .palette-index, .colour-next')];
+  const parts = () => [kicker.parentElement, title, lead, ...stage.querySelectorAll('.palette-page__order, .palette-cards, .palette-index, .colour-next')];
 
   // From one voyage's palette to the next, the blocks stay and take the new dye: each colour flows
   // into the next through OKLab (so navy to rust passes a clean plum, never a grey-brown), in a wave
@@ -414,9 +427,10 @@ async function main() {
     if (shown !== null) place(`palette-at:${shownHash}`).save();
     prevShown = shown; shownHash = location.hash;
     if (gliding) holdFor(300 + CHANGE);
+    // The hero's dye first, then the vats of the rail and the list (poured as they near the screen).
+    light(v);
     railTo(v);
     menuTo(v);
-    light(v);
     const before = gliding && v ? blocksNow() : [];
     if (gliding) {
       // The old voyage lifts away as a page leaves the site (0.3 s, the standard curve), not a blink.
@@ -427,7 +441,7 @@ async function main() {
     shown = v?.g ?? '';
     if (v) voyage(v, at, { glide: !back_ }); else index();
     // Said once, not the whole stage read out; and focus, if the reader was in what was replaced, to the title.
-    if (changed) status.textContent = title.textContent;
+    if (changed) status.textContent = titleText.textContent;
     if (hadFocus && !(v && at)) title.focus({ preventScroll: true });
     measureCards(stage);
     if (!(revisit && kept().restore())) scrollTo({ top: 0, behavior: 'instant' });

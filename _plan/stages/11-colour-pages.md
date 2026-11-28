@@ -1,6 +1,6 @@
 # Stage 11 · The colour pages
 
-**Status:** planned · **Tier:** 2, answered, for the picks of 2026-11-27 (Q22, Q24, Q25;
+**Status:** in review (batch 5, work/picks-colour) · **Tier:** 2, answered, for the picks of 2026-11-27 (Q22, Q24, Q25;
 [0013](../decisions/0013-what-the-sheets-settled.md)); 0 and 1 for the faults. One batch, one
 session, one pull request with pictures; the merge is the yes
 ([0010](../decisions/0010-the-merge-is-the-yes.md)).
@@ -44,7 +44,7 @@ voyages as a short capture. Audit ids are sections of `design/audits/stylesheets
 of `design/audits/reviewer.md` (R) and `design/audits/measured.md` (M).
 
 **Palette's head**
-- [ ] Q22, Q25, R032 · Palette opens on a hero made of the dye: the hero-overlay layout, its picture
+- [x] Q22, Q25, R032 · Palette opens on a hero made of the dye: the hero-overlay layout, its picture
       the vat's own dye poured across the whole width (the vat can already pour a rectangle:
       `assets/js/colour/vat.js`, `shape: 'rect'`), the title and its line on it as on any hero.
       Choosing a voyage changes the dye smoothly, through the site's own crossfade (the wash) and
@@ -54,55 +54,55 @@ of `design/audits/reviewer.md` (R) and `design/audits/measured.md` (M).
       fall back to (`no-webgl`). The dye as a hero is a shared piece, said in
       `_docs/components.md`: [stage 14](14-shell-and-small-pages.md) takes it for a page with no
       picture of its own.
-- [ ] F077 · The vats pour about three a second, so a list fills in for seconds. With a dye across
+- [x] F077 · The vats pour about three a second, so a list fills in for seconds. With a dye across
       the head it must not get worse: the hero's dye first, the list's after. Tier 0, measured
       before and after.
-- [ ] Q25, voyage-palette-title · The small label over a voyage's title reads "Palette", not "QSD's
+- [x] Q25, voyage-palette-title · The small label over a voyage's title reads "Palette", not "QSD's
       Palette" (`assets/js/colour/palette.js`, `.palette-page__home`).
-- [ ] Q24, italic-lines · The line under Palette's and Ridgway's title is Playfair upright, and so is
+- [x] Q24, italic-lines · The line under Palette's and Ridgway's title is Playfair upright, and so is
       the shared `lede` (`_sass/_components.scss`), which no page then sets in Didot italic. On a
       phone Ridgway's line is the size of a hero's (M9).
 
 **A frame's card**
-- [ ] Q25, frame-card-colours · A frame's card is a print with its colour strip: one thin strip
+- [x] Q25, frame-card-colours · A frame's card is a print with its colour strip: one thin strip
       tight under the photograph, each colour as wide as its share, then the name, and its small
       vat ("with dry vat ball"). No codes and no numbers on the card: a colour's code shows on
       pointing, in Barlow (Q24), and pressing a colour opens its Reverie. F055 (a share that wraps
       at 370 px) goes with the numbers. A post's colour figure draws the same card and changes with
       it: shot on `/posts/in-the-naming-of-light/`.
-- [ ] F049 · Whether the cards rise into view, and by how much, is judged on the new card: shown as
+- [x] F049 · Whether the cards rise into view, and by how much, is judged on the new card: shown as
       a capture in the same pull request. Until then Palette's frames keep today's amounts.
-- [ ] F048 · A photograph that fails to load shows Safari's broken-image mark over its placeholder
+- [x] F048 · A photograph that fails to load shows Safari's broken-image mark over its placeholder
       on Palette and Reverie: hide the `img` on error (`assets/js/photobook/develop.js`). Tier 0.
 
 **Ridgway**
-- [ ] Q25, ridgway-plate · Each plate as the book sets it: three hues across, seven steps down, every
+- [x] Q25, ridgway-plate · Each plate as the book sets it: three hues across, seven steps down, every
       colour still named; three plates abreast on a desktop, one to a row on a phone. The page is
       about half as long. A jump to a plate stays stage 3's.
 
 **Marked Fix on the [audit](../findings/2026-10-01-ui-audit.md)**
-- [ ] P01 · Viewing a colour in Reverie, the vat fills the frame (the owner's own observation). The
+- [x] P01 · Viewing a colour in Reverie, the vat fills the frame (the owner's own observation). The
       lightbox draws its colour frame at a fixed 200×112; Drift sizes its colour from the stage.
-- [ ] P08 · A voyage's palette ends with a way on: the next voyage by colour, and this voyage's book.
-- [ ] P09 · Drift's small frictions: the tools that flash at load, the title a reduced-motion reader
+- [x] P08 · A voyage's palette ends with a way on: the next voyage by colour, and this voyage's book.
+- [x] P09 · Drift's small frictions: the tools that flash at load, the title a reduced-motion reader
       never sees, the tap highlight over the photograph, the 10 px place line, a failed load that
       reads like an unbuilt atlas. With R23: on a phone its sun line breaks mid-phrase.
-- [ ] C13 · Drift's room through the shared wash; the palette list's hover on the shared timing.
-- [ ] S13 · The first tap on a Reverie print opens at once.
+- [x] C13 · Drift's room through the shared wash; the palette list's hover on the shared timing.
+- [x] S13 · The first tap on a Reverie print opens at once.
 
 **Brought into line with 0012, in these files** (tier 1; S is the audit to open)
-- [ ] What is on is a hairline: the current voyage in the narrow list (a fill today) takes the pale
+- [x] What is on is a hairline: the current voyage in the narrow list (a fill today) takes the pale
       brass; the order button's grey underline takes the warm one (S, C; M20). A ring that means
       both "on" and "focused" is parted: `brass-focus` for the keyboard (S, E).
-- [ ] 10 px corners on the list's rows and the fold (S, D; M21). Hand-set labels onto `eyebrow`, none
+- [x] 10 px corners on the list's rows and the fold (S, D; M21). Hand-set labels onto `eyebrow`, none
       under 11 px (S, A5, H13). A voyage's name in the narrow list is Playfair, as in the list of
       bars beside it (S, A3: the lead's reading of "a name is set in the serif", shown).
-- [ ] No arrows after the ways on (Q25). Tap sizes on a phone: a card's place line, the way home,
+- [x] No arrows after the ways on (Q25). Tap sizes on a phone: a card's place line, the way home,
       "Voyages", Drift's thread dot (M22).
-- [ ] F056 · The colour plate's corner, ground and shadow are literals in a page's partial: the
+- [x] F056 · The colour plate's corner, ground and shadow are literals in a page's partial: the
       `card` piece's own (S, H9, F). Tier 0.
-- [ ] F095 · Drift's title takes the shared `display-title`.
-- [ ] F059 · In Playwright's WebKit, Back from Reverie to a post lands at the top; Chromium keeps
+- [x] F095 · Drift's title takes the shared `display-title`.
+- [x] F059 · In Playwright's WebKit, Back from Reverie to a post lands at the top; Chromium keeps
       the place. Confirm on a real Safari, then mend. Tier 0.
 
 **Shared with other stages** (listed here so the pages are seen whole; built there)
@@ -135,3 +135,6 @@ today). P01 adds one: a colour's frame opens from its address (`#colour`).
 
 `npm run gate:full` passes with baselines re-captured for Palette, a voyage's palette, Ridgway and
 the essay's figure, and no others; the reviewer returns PASS; P01 is shown before and after.
+(As built: the essay has no shot in the harness, so its figure is shown in the pull request's
+pictures; Ridgway gets a first-screen shot; Reverie, the 404 and the specimen are re-captured too,
+as the shared lede turned upright and the ways on lost their arrows.)

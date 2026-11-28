@@ -189,9 +189,10 @@ screenshot workflow.
   their site-wide build: brass links on a hairline, white chapter titles, air at chapter breaks,
   one rhythm for pictures (`_sass/_page.scss`, "ESSAY"). `blockquote.gloss` and the colour
   figures are in `_docs/components.md`.
-  An essay's Chinese is a Song face behind Playfair's Latin: the device's Songti on a Mac, else a
-  subset of Noto Serif SC the site carries (`assets/fonts/NotoSerifSC/`, about 190 KB for the
-  characters the essays and the Bestiary's fables use; OFL). After writing or changing a Chinese essay run `npm run fonts:essay` (needs
+  Wherever the Latin is Playfair (every post, by default), Chinese is a Song face behind it
+  (`$global-font-family`): the device's Songti on a Mac, else a subset of Noto Serif SC the site
+  carries (`assets/fonts/NotoSerifSC/`, about 410 KB for the characters the site's text uses; OFL).
+  After writing or changing Chinese text run `npm run fonts:essay` (needs
   fonttools and the font's source, see `scripts/essay-font.py`); the gate fails if a character
   is missing from the subset.
 - `bestiary.html` — the Bestiary's door (`/bestiary/`, `_pages/bestiary.md`), on the fables' light

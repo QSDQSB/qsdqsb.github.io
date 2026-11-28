@@ -74,19 +74,10 @@
     height: auto;
     margin: 0.5em auto;
     align-self: center;
-    border-radius: 1em;
-    transition: scale 0.5s cubic-bezier(.33,.11,.12,.99), box-shadow 0.5s cubic-bezier(.33,.11,.12,.99);
+    // A picture in the text keeps still under the pointer: only a card lifts.
+    border-radius: $radius-picture;
     box-shadow: 0 4px 4px rgba(0, 0, 0, .35),
         0 1px 6px rgba(0, 0, 0, .20);
-    &:hover {
-      scale: 105%;
-      box-shadow: 0 4px 4px rgba(0, 0, 0, .35),
-                0 1px 6px rgba(0, 0, 0, .20),
-                0 8px 8px rgba(0, 0, 0, .25),
-                0 16px 16px rgba(0, 0, 0, .25), 
-                8px 32px 32px rgba(0, 0, 0, .35), 
-                8px 64px 64px rgba(0, 0, 0, .35); 
-    }
   }
 }
 
@@ -234,6 +225,54 @@ body.collection--posts .page__inner-wrap .page__content {
   margin-right: auto;
 }
 
+// Every post set as a printed page: both edges straight, a long word broken at a hyphen so a line
+// never opens wide gaps, the lines of a paragraph close and the gap between two kept.
+body.collection--posts .page__content {
+  line-height: 1.7;
+  text-align: justify;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  hyphenate-limit-chars: 5 2 2; // a word of five letters or more may break, two either side
+}
+
+// Prose only: a list, a table, a caption and code keep a loose edge, at no weight, so anything a post
+// aligns itself keeps its own.
+:where(body.collection--posts .page__content :is(ul, ol, dl, table, figcaption, pre)) {
+  text-align: left;
+  -webkit-hyphens: manual;
+  hyphens: manual;
+}
+
+// One look for a heading in every post: a name, in the serif and the text's ivory, with nothing drawn
+// (no rule, no hue, no other face). Its size and weight tell the order. A designed post's own headings
+// (a proclamation's chapter, a treatise's) name themselves more precisely and keep their dress.
+body.collection--posts .page__content :is(h1, h2, h3, h4, h5, h6) {
+  padding-bottom: 0;
+  border-bottom: 0;
+  font-family: $global-font-family;
+  font-weight: 700;
+  color: var(--ink);
+  text-wrap: balance;
+
+  a,
+  a:visited { color: inherit; text-decoration: none; }
+
+  // A heading's number, small in Didot.
+  > code {
+    margin: 0 0.3em 0 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    font: 400 0.62em/1 $didot-family;
+    color: var(--ink-3);
+  }
+}
+
+// Room above a chapter, and a ragged edge; at no weight, so a post's own spacing or centring stays.
+:where(body.collection--posts .page__content) :is(h1, h2, h3, h4, h5, h6) { text-align: left; }
+:where(body.collection--posts .page__content) :is(h1, h2) { margin-top: 2.6rem; }
+
 // On a wide window (from `ultra`) a post is one spread on the window's centre line: the profile, the
 // text and the contents list side by side, a margin apart, where before the two rails were pinned to
 // the window's edges and the text stood alone between them. Either side of the article is the same
@@ -320,18 +359,12 @@ body:not(.jianfei-treatise) .page__content > [data-bilingual] > [data-bilingual-
    ESSAY: a post set to the owner's standing calls for a reading page, ahead
    of their being built for every post (stage 2, stage 6): one accent, brass
    (a link in the text is brass on a hairline, Q9 option B, now every page's); titles white;
-   air where a chapter begins; one rhythm for every picture between passages;
-   Chinese in Songti beside Playfair's Latin.
+   air where a chapter begins; one rhythm for every picture between passages.
    Opt in per post with `body_class: essay` in front matter.
    ========================================================================== */
 
 body.essay .page__content {
-  // One family of forms in two scripts: the Latin in Playfair, as everywhere, and the Chinese falling
-  // through to a Song face (the same thin horizontals and wedged ends), not to the system's sans: the
-  // device's own Songti where it has one (a Mac), else the subset of Noto Serif SC the site carries
-  // (_custom.scss; an iPhone lets a page use no Songti of its own). Figures at the height of the Han
-  // characters they stand among.
-  font-family: "Playfair Display", "Songti SC", "STSong", "Noto Serif SC", serif;
+  // Figures at the height of the Han characters they stand among.
   font-variant-numeric: lining-nums;
 
   // The gloss's Chinese line with the prose's faces (a blockquote sets its own); its English is the lede.
@@ -389,10 +422,6 @@ body.essay .page__content {
     max-width: 100%;
   }
 
-  &--justify {
-    text-align: justify;
-  }
-
   h1 {
     border-bottom: 2px dashed $border-color;
     margin-bottom: 0.4em;
@@ -427,19 +456,22 @@ body.essay .page__content {
 
   dt {
     margin-top: 1em;
-    font-family: $sans-serif;
+    font-family: $global-font-family;
     font-weight: bold;
   }
 
   dd {
     margin-left: 1em;
-    font-family: $sans-serif;
+    font-family: $global-font-family;
     font-size: $type-size-6;
   }
 
   .small {
     font-size: $type-size-6;
   }
+
+  // A quotation a little larger than the text: its hand is smaller on the line.
+  blockquote :is(p, li) { font-size: 1.2rem; }
 
   /* blockquote citations */
   blockquote + .small {
@@ -454,9 +486,8 @@ body.essay .page__content {
   blockquote.gloss {
     margin: 0.7rem 0 2.6rem;
     padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: none;
+    border: 0; // not a quotation: no mark
+    font-style: normal;
     text-align: left;
 
     p { font-size: 0.92rem; line-height: 1.7; letter-spacing: 0.3em; color: $lighter-gray; text-wrap: balance; }
@@ -1108,6 +1139,37 @@ tradingview-widget-container {
   margin-bottom: 0.3rem;
   font-size: $type-size-6;
   text-transform: uppercase;
+}
+
+// What follows a post's last sentence stands on one width, the text's own: the same measure inside the
+// same inset as the card that holds the text, every piece edge to edge on it; and two small covers
+// side by side for what to read next.
+body.collection--posts .page__ending {
+  clear: both;
+  padding: 0 0.5em;
+  @include responsive-up(desktop) { padding: 0 2em; }
+
+  > *,
+  .word_card_container,
+  .word_card {
+    max-width: $post-measure;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  :is(.subscribe-slip, .pagination, .word_card_container, .word_card) { width: 100%; }
+
+  .page__related { float: none; }
+
+  .grid__wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  // A small cover holds its title and date; its line would be cut to a word or two.
+  .card .content h3 { font-size: $type-size-4; }
+  .card .sci { display: none; }
 }
 
 

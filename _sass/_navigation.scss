@@ -482,6 +482,8 @@
    Table of contents navigation
    ========================================================================== */
 
+// Above the text (below a wide window) the contents are a frame holding one row, its title and how
+// many parts, opened by a press; beside the text they are a plain list, with no frame and no lines.
 .toc {
   transition: $cubic-bezier-default;
   max-height: 60vh;
@@ -490,13 +492,53 @@
   color: $light-gray;
   border: 1px solid $border-color;
   border-radius: $border-radius;
+  @include responsive-up(wide) { border: 0; border-radius: 0; }
+
   .nav__title {
     @include eyebrow;
-    padding: 0.8rem 1rem;
-    border-top-left-radius: $border-radius;
-    border-top-right-radius: $border-radius;
+    padding: 0.3rem; // with the button's own, the label sits 0.8rem by 1rem in
   }
 
+  // Below a wide window the row alone, from the first frame, until a press opens it (toc-scroll-spy.js).
+  // With no script the list stays open.
+  @include responsive-down(wide) {
+    html.js &:not(.toc--open) .toc__menu { display: none; }
+  }
+}
+
+// The title is a button only while the list can fold; beside the text it reads as the list's label.
+.toc__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  border: 0;
+  border-radius: $border-radius;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color $duration-base $cubic-bezier-standard, color $duration-base $cubic-bezier-standard;
+
+  @include responsive-hover { &:hover:enabled { background: var(--control-soft); color: var(--ink); } }
+  &:focus-visible { @include brass-focus; }
+  &:disabled { cursor: default; }
+}
+
+// How many parts, and a sign for what a press does; shown only where the list folds (the script reads
+// whether it is shown).
+.toc__count {
+  margin-left: auto;
+  color: var(--ink-3);
+
+  &::after { content: "\00a0\00a0+"; }
+  .toc--open &::after { content: "\00a0\00a0\2212"; }
+
+  @include responsive-up(wide) { display: none; }
 }
 
 .toc__menu {
@@ -509,10 +551,9 @@
     color: $light-gray;
     text-decoration: none;
     display: block;
-    border-radius: $border-radius / 2;
-    padding: 0.5em 1em;
+    border-radius: $border-radius;
+    padding: 0.55em 1em;
     line-height: 1;
-    border-bottom: 1px solid darken($border-color, 0.5);
   }
 
   li ul > li a {
@@ -536,13 +577,9 @@
     font-size: $type-code-size - 0.25rem;
   }
 
-  /* hide sub sub links on small screens*/
-  li > ul li {
-    display: none;
-
-    @include responsive-up(tablet) {
-      display: block;
-    }
+  // Above the text, where a finger opens it, a row is tall enough to tap (44 px).
+  @include responsive-down(wide) {
+    a { padding-top: 0.95rem; padding-bottom: 0.95rem; }
   }
 }
 

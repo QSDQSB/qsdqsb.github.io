@@ -16,10 +16,13 @@ That is what made it look like a different site (2026-09-27).
 |---|---|---|---|
 | Eyebrow | `eyebrow` | The spaced-capital label above a title or section (never under 11px) | `.photobook-kicker`, `.colour-kicker` |
 | Display title | `display-title` | A page's title, as every hero page and book cover sets it | `.photobook-cover__title h1`, `.colour-head h1` |
-| Lede | `lede` | The Didot italic line under a title (font only; the page sets width and colour). Not a hero's line: under a hero's title every page's line is Playfair upright (PRINCIPLES, 2026-11-27) | `.colour-lede`, a gloss's Latin line |
+| Lede | `lede` | The line under a title, in Playfair upright as every hero's line is (font only; the page sets width and colour). No page sets a line in Didot italic (Q24, 2026-11-27) | `.colour-lede`, `.utils-list p`, a gloss's Latin line, the 404's line, a proclamation's subject |
 | Onward links | `onward-links` | Spaced-capital links over hairlines, in a wrapping row | `.photobook-colophon__onward`, `.colour-next` |
 | Gloss | class `blockquote.gloss` (`_page.scss`) | A heading's translation, set beneath it in two lines as an inscription is: the first small and widely spaced, the Latin-script one the `lede` in brass. Written `> 中文 *English*` then `{: .gloss}` | a post whose chapters are named in another language |
 | Colour code | `_includes/colour-code.html` (`.colour-code`) | A hex named in a line of prose, a dot of the exact colour before it | posts |
+| Quotation | element `blockquote` (`_base.scss`) | Words quoted from elsewhere: set in on both sides, a one-pixel brass hairline at the left, the Latin in CMU Serif italic (the fourth face's one job), the Chinese in Kai where the device has it. No box | every page's `>` in Markdown |
+| Quiet panel | class `.notice` and its old colour names (`_notices.scss`) | A note set apart: a hairline frame on a ground a little lighter than the page, ivory words, brass links. No colour, no shadow | posts, About |
+| Contents fold | `.toc__toggle` (`_navigation.scss`, `toc-scroll-spy.js`) | Below a wide window a post's contents are one framed row, its label and how many parts; a press opens the list | a post with headings |
 
 ## Controls
 
@@ -42,7 +45,8 @@ That is what made it look like a different site (2026-09-27).
 | Bar glass | `glass-bar` | The darkened glass controls sit in over a photograph | the Photobook's dial and switch |
 | Card | `card($large)` (+ `card-lifted`) | A picture that is a way in: corners of 10 px, or 18 px where it is the scene; a short shadow at rest; under the pointer and focus it lifts as one object in 0.3 s; still where motion is off (0009) | the specimen page; Home's cards in stage 4 |
 | Surface relief | `surface-relief` | A flat colour field given a surface: wall or canvas relief under a raking light (a still SVG tile, soft light) | Reverie's opening, a colour's lightbox frame, Drift's colour |
-| Wash | `wash` (+ `wash-layer`) | A room lit by a picture's colour, crossfading layer to layer (`assets/js/photobook/wash.js`) | the lightbox, the palette page's room |
+| Wash | `wash` (+ `wash-layer`) | A room lit by a picture's colour, crossfading layer to layer (`assets/js/photobook/wash.js`) | the lightbox, the palette page's room, Drift's room |
+| Dye hero | class `.page__hero-media--dye` (`_components.scss`) + `assets/js/colour/dye-hero.js` | A hero with no photograph of its own: a palette's dye vat poured across the overlay hero's whole width, in place of its picture, with the title and line on it as on any hero. A script calls `dyeHero(media, palette, { seed })`, and again with another palette to lay the new dye over the last through the wash's crossfade (at once with motion off). A page with no script of its own writes the palette on the media, `data-dye='[["#hex", share], …]'` (and `data-dye-seed`), and loads the module: poured once, still. Without WebGL, the still every vat falls back to | QSD's Palette (the door's frame's colours, then each voyage's); CV and Terms, poured from About's hero picture (stage 14) |
 | Plate | class `.colour-plate` (`_colour.scss`) | A piece of a colour page set in a post: a card on a card's short shadow, as wide as the column, its head naming the page (onward link), its foot a small hint. A frame's plate (`.frame-plate`) holds one print over its specs, the lightbox's own (`assets/js/photobook/specs.js`), as a band where the column is wide (`photobook-specs-band`, `_photobook.scss`) | the colour figures in a post (`_includes/colour-figure.html`, `assets/js/colour/figures.js`) |
 | Folded frames | class `.colour-frames` (`_colour.scss`), a native `<details>` | A voyage's frames in a post: folded, a contact strip of small prints over their palette bars; opened on a press, the palette page's cards | the frames figure (`assets/js/colour/figures.js`) |
 
