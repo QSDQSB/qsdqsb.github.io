@@ -1,0 +1,212 @@
+# Suggested locations for gallery st-moritz, written by npm run photos:locate.
+# gps: present → reverse-geocoded from the original's GPS (© OpenStreetMap contributors).
+# gps: missing → a visual guess, imprecise by design. No coordinates are stored here.
+photos:
+  dscf4063:
+    suggested: Via Traunter Plazzas, St. Moritz
+    street: Via Traunter Plazzas
+    city: St. Moritz
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4068:
+    suggested: Via Traunter Plazzas, St. Moritz
+    street: Via Traunter Plazzas
+    city: St. Moritz
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4088:
+    suggested: Schiefer Turm, St. Moritz
+    landmark: Schiefer Turm
+    street: Straglia Serletta
+    city: St. Moritz
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4097:
+    suggested: Schiefer Turm, St. Moritz
+    landmark: Schiefer Turm
+    street: Straglia Serletta
+    city: St. Moritz
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4138:
+    suggested: Via Dimlej, St. Moritz
+    street: Via Dimlej
+    city: St. Moritz
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4148:
+    suggested: Via Dimlej, St. Moritz
+    street: Via Dimlej
+    city: St. Moritz
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4149:
+    suggested: Via Dimlej, St. Moritz
+    street: Via Dimlej
+    city: St. Moritz
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4214:
+    suggested: Via Maistra, Celerina/Schlarigna
+    street: Via Maistra
+    city: Celerina/Schlarigna
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4224:
+    suggested: Via Val Roseg, Pontresina
+    street: Via Val Roseg
+    city: Pontresina
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4226:
+    suggested: Via Val Roseg, Pontresina
+    street: Via Val Roseg
+    city: Pontresina
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4238:
+    suggested: Via Val Roseg, Pontresina
+    street: Via Val Roseg
+    city: Pontresina
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4261:
+    suggested: Via Val Roseg, Pontresina
+    street: Via Val Roseg
+    city: Pontresina
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4306:
+    suggested: Engadinerstrasse, Champfèr
+    street: Engadinerstrasse
+    city: Champfèr
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4317:
+    suggested: Engadinerstrasse, Surlej
+    street: Engadinerstrasse
+    city: Surlej
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4321:
+    suggested: Engadinerstrasse, Surlej
+    street: Engadinerstrasse
+    city: Surlej
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4326:
+    suggested: Engadinerstrasse, Surlej
+    street: Engadinerstrasse
+    city: Surlej
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4344:
+    suggested: Sils (Alpenrose) - Fex Platta, Sils im Engadin/Segl
+    street: Sils (Alpenrose) - Fex Platta
+    city: Sils im Engadin/Segl
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4354:
+    suggested: Via da Bos-cha, Surlej
+    street: Via da Bos-cha
+    city: Surlej
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4359:
+    suggested: Via da Bos-cha, Surlej
+    street: Via da Bos-cha
+    city: Surlej
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4376:
+    suggested: Via da Bos-cha, Surlej
+    street: Via da Bos-cha
+    city: Surlej
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4387:
+    suggested: Schiefer Turm, St. Moritz
+    landmark: Schiefer Turm
+    street: Via Serlas
+    city: St. Moritz
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4388:
+    suggested: Schiefer Turm, St. Moritz
+    landmark: Schiefer Turm
+    street: Via Serlas
+    city: St. Moritz
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4400:
+    suggested: Schiefer Turm, St. Moritz
+    landmark: Schiefer Turm
+    street: Via Serlas
+    city: St. Moritz
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4412:
+    suggested: Via da Bernina, Samedan
+    street: Via da Bernina
+    city: Samedan
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4415:
+    suggested: Via da Bernina, Samedan
+    street: Via da Bernina
+    city: Samedan
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4418:
+    suggested: Via da Bernina, Samedan
+    street: Via da Bernina
+    city: Samedan
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4430:
+    suggested: Via da Bernina, Samedan
+    street: Via da Bernina
+    city: Samedan
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4453:
+    suggested: Senda Diavolezza, Pontresina
+    street: Senda Diavolezza
+    city: Pontresina
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode
+  dscf4469:
+    suggested: Senda Diavolezza, Pontresina
+    street: Senda Diavolezza
+    city: Pontresina
+    country: Switzerland
+    gps: present
+    source: OpenStreetMap reverse geocode

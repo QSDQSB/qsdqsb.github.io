@@ -38,7 +38,7 @@ layout: default
     {% if has_right_toc %}
       <aside class="sidebar__right {% if page.toc_sticky %}sticky{% endif %}">
         {% if page.date %}
-          <p class="page__date"><i class="fa fa-fw fa-calendar-alt" aria-hidden="true"></i><time datetime="{{ page.date | date: "%Y-%m-%d" }}">{{ page.date | date: "%B %d, %Y" }}</time></p>
+          <p class="page__date"><i class="fa fa-fw fa-calendar-alt" aria-hidden="true"></i><time datetime="{{ page.date | date: "%Y-%m-%d" }}">{{ page.date | date: "%d.%m.%Y" }}</time></p>
         {% endif %}
         {%- capture toc_menu -%}{% include toc.html sanitize=true html=content h_min=1 h_max=6 class="toc__menu" id="toc-menu" skip_no_ids=true %}{%- endcapture -%}
         {%- if toc_menu contains "<li" -%}
