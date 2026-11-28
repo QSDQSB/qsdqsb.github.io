@@ -84,8 +84,9 @@ Audit ids are sections of `design/audits/stylesheets.md` (S), findings of
 
 ## Not in this batch
 
-- The word card's own growth under the pointer (1.05, no lift: R13). It is a signature and was not
-  asked; it stays until the owner has seen it beside a still one.
+- The word card's own growth under the pointer (1.05, no lift: R13) is the post's word card; on Home it
+  never showed (the board's hover outranked it), and it now lifts as the board's cards do. Showing the
+  owner a growing word card beside a still one needs that growth built first (F123).
 - The line under a room's name on its door is Playfair (S, A2 marks it a choice). It is a line and
   not a label: left.
 - Back to Home always re-opening on the hero, and the 320 px call: [stage 3](03-wayfinding.md).
