@@ -107,7 +107,7 @@ TOOLING='^(scripts/|tests/|package(-lock)?\.json$|Gemfile|_plugins/|Rakefile$|\.
 # invisible to the diff, so one anywhere else (a node_modules under scripts/, say) could change what runs.
 IGNORED_OK='^(_site/|\.sass-cache/|\.jekyll-cache/|\.jekyll-metadata$|node_modules$|images/cover/sized/|_data/cover_sizes\.json$|images/og/|_data/photo_manifests/|tests/visual/(current|diff|content|baseline|\.store)/|(.*/)?\.DS_Store$)'
 no_tooling() {
-  local t; t="$(changed | grep -E "$TOOLING" | grep -vE '^tests/visual/baseline\.json$' || true)"
+  local t; t="$(changed | grep -E "$TOOLING" | grep -vE '^tests/visual/hashes/' || true)"
   [ -z "$t" ] || { echo "REFUSED: this changes the site's tooling, which a work run never does: $(echo $t). Hold the task for a session ('hold')." >&2; exit 1; }
   local i; i="$("$GIT" -C "$WT" ls-files --others --ignored --exclude-standard --directory | grep -vE "$IGNORED_OK" || true)"
   [ -z "$i" ] || { echo "REFUSED: the folder holds files git ignores that no build leaves: $(echo $i). Remove them, or hold the task." >&2; exit 1; }
