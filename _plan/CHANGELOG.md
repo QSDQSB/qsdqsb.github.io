@@ -12,7 +12,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 ## 2026
 
 - 2026-11-28 · After a post's last sentence the intriguing word keeps its own card at its own width · tier 0
-- 2026-11-27 · What follows a post's last sentence (tags, the word card, subscribe, previous and next, what to read next) stands on the text's own width, and You Might Also Enjoy is two small covers side by side (Q24) · tier 2
+- 2026-11-27 · What follows a post's last sentence (tags, subscribe, previous and next) stands on the text's own width; You Might Also Enjoy keeps its four covers at full width, as the owner asked on 2026-11-28 (Q24) · tier 2
 - 2026-11-27 · Chinese beside Playfair is set in a Song face by default on every page, from the device's own where it has one, else from slices of Noto Serif SC that a page fetches only as it needs them; the essays' own setting of it is gone (Q25) · tier 2
 - 2026-11-27 · A quotation in a post is set in on both sides with a one-pixel brass hairline at its left, in another hand: CMU Serif italic for the Latin, Kai for the Chinese where the device has it. A note set apart is a quiet panel with brass links, not a block of colour. Inline code is ink in a hairline; a caption is Barlow, not Georgia; a picture in a post has 8 px corners and keeps still under the pointer (Q25) · tier 2
 - 2026-11-27 · Every post sets its headings one way: Playfair bold in ivory, nothing drawn under them, a heading's number small in Didot; its lines sit closer, with the gap between paragraphs kept; both edges of its prose are straight in every post, a long word broken at a hyphen (Q25) · tier 2
