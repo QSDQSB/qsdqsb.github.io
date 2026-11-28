@@ -197,6 +197,48 @@ digest says which was done.
       `.claude/skills/frontmatter-contract-enforcer/SKILL.md`, `.claude/agents/voyage-scaffolder.md`,
       `.claude/commands/content-check.md` and `_docs/layouts.md`.
 
+## A line under an open post tag (I007, answered 2026-11-28)
+
+The owner asked of the built list "IS IT REALLY THE BEST WAY TO DISPLAY TAG COLLECTIONS?" ([I007](../ideas/I007-this-design-is-acceptable-we-can-call.md)).
+Moving the tags onto Posts and Voyage was built and dropped. From the choice page `tag-collections`, the owner picked B,
+a line under an open tag's name, and wrote each line on the page `tag-lines`
+(https://claude.ai/artifact/5A4rsBQyKwB6b4GvPRk5QD). Of voyages: "i don't thikn voyage needs tag contents".
+So only `/tags/` carries lines, and `/voyage-by-tags/` stays as built.
+
+- [x] Built with R035 below (on `work/r030-list`, not after a merge): port B's prototype (branch `proto/i007-b`, `.claude/worktrees/agent-a1ee632d6472a8c48`):
+      the line under `.tag-page__room-name`, the shared `lede` with its face reset to Playfair upright
+      until 0013 changes the piece, and smaller than the name. `_data/tag_lines.yml` holds `posts:` only,
+      these words exactly as the owner wrote them:
+
+```yaml
+posts:
+  "💍Horcrux": "Where you can find a piece of QSD or QSB."
+  "🧼QSD's Philosophy": "QSD's perspective of the world. No guarantee of coherence."
+  "🍜Life": "We should hope every weekend is at least slightly different."
+  "📘Diary": "And which normal people would write a diary?"
+  "😻Happy Moments": "Life needs joyful moments!"
+  "🗒TODO": "#TODO is #TODO."
+  "🏦卷！": "I don't think future content will include this tag, hopefully not."
+  "🐮Ox": "We don't see Oxen in Oxford, we see cows."
+  "😢Emo": "Maybe it's nice, to be able to feel something."
+  "🍡Tutorial": "Do you think QSD is a good teacher?"
+```
+
+      Keys are copied from front matter, emoji and variation selectors included. Copy them from the prototype's file, not by hand.
+      A changelog line and a step in the `post-tags` journey come with it.
+
+## R035 · One line of tags (2026-11-28)
+
+Of the list under the author, as built: "Bad design. Try again" (R035). Three forms were built as prototypes
+(the choice page `tag-pages-2`, Q29): the open tag as the page's heading that opens the others in the menu's
+panel (A, the lead's pick), every tag a chapter with a contents beside (B), and one unwrapped line of tags (C).
+The owner: "C: one line". Built on `work/r030-list` from prototype C: the tags leave the column, which is the
+author's again, and stand in one line at the head of the list that never wraps (what does not fit runs on
+sideways under a fade, the open tag brought to the middle, the line scrolling itself and never the page); the
+open tag keeps the menu's brass hairline, a tag the brightening every tag has; the open post tag carries the
+owner's line (I007). The strain the prototype named stays: it is still a row of names, so twice the tags puts
+more of them out of sight, and a mouse wheel cannot reach them (a trackpad, a swipe or Tab can).
+
 ## What needs the owner
 
 None is in the queue: each is asked when its page is drawn.

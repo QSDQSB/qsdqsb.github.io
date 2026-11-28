@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-28 · The tag pages show their tags in one line at the head of the list, never wrapping: what does not fit runs on sideways and the open tag comes to the middle; the column beside the page is the author's alone again. An open post tag carries the owner's line under its name (R035, Q29, Q28, I007) · tier 2
 - 2026-11-28 · The tag pages list their tags in the column under the author, each its emoji and its name, brightening under the pointer as a post's tag does, the open one marked by a brass hairline as the menu marks its room; the coloured squares are gone. With no tag chosen every entry is open, newest first; on a laptop the author and the tags stay beside the list as the page scrolls, on a phone the tags stand above it (R030, Q26, Q27) · tier 2
 - 2026-11-27 · A wide cover does nothing under the pointer: no rise, growth or change of shape; its line, read time and date fade in, in place, over one second. A cover's edge is level with its page's title on Posts, Voyage, Portfolio and a voyage in parts (Q24 cover-words) · tier 0
 - 2026-11-27 · A voyage in parts states When, Parts and Frames beside its title, set as a single voyage's cover sets them; its map opens close on its parts with each part's name beside its marker, and its foot gives the span of its parts (Dolomites: 2023 to 2026) (Q25 parts-intro, parts-map-close) · tier 0

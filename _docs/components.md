@@ -32,7 +32,7 @@ That is what made it look like a different site (2026-09-27).
 | Segmented toggle | class `.photobook-sheet__order` | Two or three exclusive choices in spaced capitals (Sequence / Colour) | the book's sheet, the palette page |
 | Tooltip | `data-tip` (+ `data-tip-side`), `assets/js/photobook/tip.js` | Naming an icon control after a pause; pointer only | masthead ‹, lightbox, colophon, rail |
 | Palette strip | class `.palette-strip` | A palette as a thin bar with its hex codes | specs panel, colophon |
-| Tag | `tag` (+ `tag-lit`) | One look for every tag: ink, a one-pixel line, no fill and no colour; under the pointer it only brightens (0009) | the specimen page; a post's tags in stage 6 (the tag pages show a tag as a door, the dye vat of its photograph: `_includes/tag-page.html`) |
+| Tag | `tag` (+ `tag-lit`) | One look for every tag: ink, a one-pixel line, no fill and no colour; under the pointer it only brightens (0009) | the specimen page; a post's tags in stage 6; the tag pages' line of tags (`_includes/tag-page.html`) |
 | Text button | `text-button($quiet)` (+ `text-button-lit`, `-pressed`, `-unavailable`) | A button with words: a rounded rectangle of 10 px, solid (a glass-white fill) or quiet (none until the pointer); never a pill (0009, pick 2) | the specimen page; the chrome's buttons as they move onto it (stage 2) |
 
 ## Surfaces

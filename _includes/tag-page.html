@@ -2,11 +2,13 @@
   A tag page, page.tag_page "voyage" (/voyage-by-tags/) or "posts" (/tags/): both are this and
   nothing else, so the two cannot drift apart.
 
-  part="tags" (from _includes/sidebar.html): the tags, under the author, the fullest first under
-  "All": a row each, its emoji and its name, in the ink every tag wears. Without a part: their lists,
-  the covers /voyage/ and /posts/ show. A row is the address's #slug (the one the tags under a post
-  already link to), and the address opens that list by itself (:target, _sass/_tags.scss); with no
-  tag in it, every entry. assets/js/tag-page.js marks the open row.
+  The tags in one line at the head of the list, the fullest first after "All": each its emoji and its
+  name, in the ink every tag wears; what does not fit runs on sideways, never onto a second row. Under
+  them, the open tag's list, the covers /voyage/ and /posts/ show. A tag is the address's #slug (the
+  one the tags under a post already link to), and the address opens that list by itself (:target,
+  _sass/_tags.scss); with no tag in it, every entry. assets/js/tag-page.js marks the open tag and
+  brings it to the middle of the line. A post tag's list carries its line from _data/tag_lines.yml
+  under its name, where it has one.
 
   shortcut: takes the emoji to be the tag's first character, upgrade if a tag ever starts with a
   joined sequence (a flag, a family).
@@ -33,20 +35,17 @@
 {%- endfor -%}
 {%- assign tag_rows = tag_rows | sort -%}
 
-{%- if include.part == "tags" -%}
-<nav class="tag-page__tags" aria-label="Tags">
-  <h2>Tags</h2>
-  <ol>
-    <li><a href="#all"><span class="tag-page__emoji" aria-hidden="true"></span><span>All</span></a></li>
-    {%- for tag_row in tag_rows -%}
-      {%- assign t = tag_row | split: "|" %}
-    <li><a href="#{{ t[2] }}"><span class="tag-page__emoji" aria-hidden="true">{{ t[4] }}&#xFE0F;</span><span>{{ t[1] | replace: "--", "-&#8288;-" }}</span></a></li>
-    {%- endfor %}
-  </ol>
-</nav>
-<script type="module" src="{{ '/assets/js/tag-page.js' | relative_url }}"></script>
-{%- else -%}
 <div class="tag-page">
+  <nav class="tag-page__tags" aria-label="Tags">
+    <ol>
+      <li><a href="#all">All</a></li>
+      {%- for tag_row in tag_rows -%}
+        {%- assign t = tag_row | split: "|" %}
+      <li><a href="#{{ t[2] }}"><span class="tag-page__emoji" aria-hidden="true">{{ t[4] }}&#xFE0F;</span>{{ t[1] | replace: "--", "-&#8288;-" }}</a></li>
+      {%- endfor %}
+    </ol>
+  </nav>
+
   <section class="tag-page__room tag-page__room--all" id="all" aria-labelledby="all-name">
     <h2 class="tag-page__room-name" id="all-name">{{ tag_all }}</h2>
     {%- for post in tag_docs -%}
@@ -58,6 +57,10 @@
     {%- assign t = tag_row | split: "|" -%}{%- assign tag_at = t[3] | plus: 0 -%}
   <section class="tag-page__room" id="{{ t[2] }}" aria-labelledby="{{ t[2] }}-name">
     <h2 class="tag-page__room-name" id="{{ t[2] }}-name"><span class="tag-page__emoji" aria-hidden="true">{{ t[4] }}&#xFE0F;</span>{{ t[1] }}</h2>
+    {%- assign tag_raw = group_names[tag_at] -%}{%- assign tag_line = site.data.tag_lines[page.tag_page][tag_raw] -%}
+    {%- if tag_line %}
+    <p class="tag-page__room-line">{{ tag_line }}</p>
+    {%- endif -%}
     {%- for post in group_items[tag_at] -%}
       {% include archive-single.html defer_cover=true anchor=false %}
     {%- endfor -%}
@@ -69,4 +72,4 @@
     <a href="{{ tag_other_href | relative_url }}">{{ tag_other }} <span aria-hidden="true">→</span></a>
   </p>
 </div>
-{%- endif -%}
+<script type="module" src="{{ '/assets/js/tag-page.js' | relative_url }}"></script>
