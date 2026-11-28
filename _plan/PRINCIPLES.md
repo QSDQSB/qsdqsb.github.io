@@ -240,8 +240,8 @@ owner gave, are [decisions/0009](decisions/0009-how-much.md).
    builds, 4 px and 1.018, is the lead's, not the owner's ([decisions/0009](decisions/0009-how-much.md)).
 5. **A lift takes 0.3 s** (pick A, of 0.3 s, 0.6 s, and "A full second, as built"). No note.
    *An exception by the owner's word of 2026-11-28*: the cover cards of posts and voyages and Home's
-   update cards take the old gradual rise instead, 1.03 and a quarter em up over half a second with a
-   layered shadow ("it was quite pleasing"). Every other card keeps 4 and 5.
+   update cards take the old gradual rise instead, 1.03 and a quarter em up with a layered shadow, over a
+   second on the covers and half a second on Home's cards ("it was quite pleasing"). Every other card keeps 4 and 5.
 6. **Words arrive over 0.7 s, from 28 px below, one line after another, and settle** (pick B, of as
    built, which is half a second, 12 px, together; this; and the same with a spring at the end). No
    note.
@@ -283,7 +283,8 @@ Settled by round 2. The later word is the owner's, asked directly each time:
   "Not settled".
 - **The wide cover does nothing under the pointer.** "No hover lift" (Cards, 2026-09-26) stood (pick
   13) until the owner brought the gradual rise back on 2026-11-28; "The photograph itself never
-  animates on hover" stands. A small card lifts (pair 12;
+  animates on hover" stands for the picture's own content, while the cover as a whole now grows and
+  re-crops a little under the pointer by that same word. A small card lifts (pair 12;
   picks 4 and 5).
 - **A voyage's title stays Playfair Display bold** (The look, 2026-09-25; pick 14). The didone italic
   of pair 7 is for storytelling text, not for the title.

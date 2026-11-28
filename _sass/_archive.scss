@@ -206,18 +206,11 @@
     }
   }
 
-  &:hover {
+  // The pointer and the keyboard alike: the cover rises and its words come in.
+  &:hover, &:focus-within {
     @include responsive-up(tablet) {
       aspect-ratio: 3.3;
     }
-    text-decoration: none;
-    border-color: $border-color;
-    box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
-                0 1px  6px  rgba(0, 0, 0, .20),
-                0 8px  8px  rgba(0, 0, 0, .25),
-                0 16px 16px rgba(0, 0, 0, .25),
-                8px 32px 32px rgba(0, 0, 0, .35),
-                8px 64px 64px rgba(0, 0, 0, .35);
     transform: scale(1.03) translateY(-0.25em);
     .content h3 {
       transform: translateY(-0.25em);
@@ -227,6 +220,17 @@
     .date {
       opacity: 1;
     }
+  }
+  // The deep shadow under the pointer only: the keyboard's mark is the brass ring.
+  &:hover {
+    text-decoration: none;
+    border-color: $border-color;
+    box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
+                0 1px  6px  rgba(0, 0, 0, .20),
+                0 8px  8px  rgba(0, 0, 0, .25),
+                0 16px 16px rgba(0, 0, 0, .25),
+                8px 32px 32px rgba(0, 0, 0, .35),
+                8px 64px 64px rgba(0, 0, 0, .35);
   }
 
   .content {
@@ -599,10 +603,20 @@ a.word_card--link {
   .card,
   .card .content,
   .card .content h3 { transition: none; }
-  .card:hover { transform: none; aspect-ratio: auto; }
-  .card:hover .content h3 { transform: none; }
+  :is(.card:hover, .card:focus-within) {
+    transform: none;
+    @include responsive-up(tablet) { aspect-ratio: 3.5; } // its resting shape: nothing changes shape
+  }
+  :is(.card:hover, .card:focus-within) .content h3 { transform: none; }
 }
-html.motion-off .card:hover { transform: none; }
+html.motion-off {
+  .card, .card .content, .card .content h3 { transition: none; }
+  :is(.card:hover, .card:focus-within) {
+    transform: none;
+    @include responsive-up(tablet) { aspect-ratio: 3.5; }
+  }
+  :is(.card:hover, .card:focus-within) .content h3 { transform: none; }
+}
 @include responsive-reduced-motion {
   .wheel_of_fortune:hover,
   .wheel_of_fortune:focus-visible { animation: none; }

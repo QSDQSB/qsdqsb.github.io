@@ -11,10 +11,10 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
-- 2026-11-28 · The cover cards on Posts, Voyage and a voyage in parts rise and grow gradually under the pointer again, as before the still cover · tier 2
-- 2026-11-28 · On Home, the cards of Recent updates rise and grow gradually under the pointer and the keyboard again, and the intriguing word keeps its own corners and shadow · tier 2
-- 2026-11-28 · After a post's last sentence the intriguing word keeps its own card at its own width, and You Might Also Enjoy is four covers at the content's full width again · tier 2
-- 2026-11-28 · Beside a post's text the contents are the framed table again, a hairline under each row; only above the text do they fold to one row · tier 2
+- 2026-11-28 · The cover cards on Posts, Voyage and a voyage in parts rise and grow gradually under the pointer again, as before the still cover (R036) · tier 2
+- 2026-11-28 · On Home, the cards of Recent updates rise and grow gradually under the pointer and the keyboard again, and the intriguing word keeps its own corners and shadow (R035, R036) · tier 2
+- 2026-11-28 · After a post's last sentence the intriguing word keeps its own card at its own width, and You Might Also Enjoy is four covers at the content's full width again (R035, R037) · tier 2
+- 2026-11-28 · Beside a post's text the contents are the framed table again, a hairline under each row; only above the text do they fold to one row (R038) · tier 2
 - 2026-11-27 · What follows a post's last sentence (tags, the word card, subscribe, previous and next, what to read next) stands on the text's own width, and You Might Also Enjoy is two small covers side by side (Q24) · tier 2
 - 2026-11-27 · Chinese beside Playfair is set in a Song face by default on every page, from the device's own where it has one, else from slices of Noto Serif SC that a page fetches only as it needs them; the essays' own setting of it is gone (Q25) · tier 2
 - 2026-11-27 · A quotation in a post is set in on both sides with a one-pixel brass hairline at its left, in another hand: CMU Serif italic for the Latin, Kai for the Chinese where the device has it. A note set apart is a quiet panel with brass links, not a block of colour. Inline code is ink in a hairline; a caption is Barlow, not Georgia; a picture in a post has 8 px corners and keeps still under the pointer (Q25) · tier 2

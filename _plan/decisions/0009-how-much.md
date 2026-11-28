@@ -213,7 +213,8 @@ says what is done meanwhile; nothing the owner has not seen is taken as theirs.
 - The voyage card on `master` loses its lift where it is the wide cover; Home's cards keep theirs,
   smaller and quicker.
 - Amended 2026-11-28 by the owner: the cover cards of posts and voyages, and Home's update cards,
-  take the old gradual rise again (1.03, half a second, a layered shadow), outside picks 4, 5 and 13
+  take the old gradual rise again (1.03 with a layered shadow, over a second on the covers and half a
+  second on Home), outside picks 4, 5 and 13
   and the one-layer shadow. The rest of the cards keep this record's amounts.
 - Every post's words arrive more slowly than today. That is the pick, and it is the one to watch: a
   fast scroll must not leave a screen of words still on their way (the fault F049 names on Palette).
