@@ -1,5 +1,7 @@
 # Features
 
+*This page is rendered from the files in `_plan/features/` (`node scripts/plan.mjs render`) and is not committed: add a file there, do not edit this page.*
+
 Every thing the site does, where its code lives, and which journey proves it still works. This is
 the map a session reads instead of searching: find the row, open the files it names.
 

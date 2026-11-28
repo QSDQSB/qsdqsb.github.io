@@ -1,5 +1,7 @@
 # Changelog
 
+*This page is rendered from the files in `_plan/changelog/` (`node scripts/plan.mjs render`) and is not committed: add a file there, do not edit this page.*
+
 What changed for a reader, newest first. One line per change: the date, what a reader now gets, the
 finding or stage it answers, and its tier. Not a commit log: `git log` is that. A line here says
 what the site does differently.

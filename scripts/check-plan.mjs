@@ -26,7 +26,7 @@
  *     explicit, what it changes in the site as it stands, its for and against, its trial ("Can it
  *     be delivered") or its challenge by someone who did not shape it (decisions/0008)
  *   - a change to what readers get (styles, layouts, includes, scripts, pages, navigation) with no
- *     line in `_plan/CHANGELOG.md` beside it
+ *     entry in `_plan/changelog/` beside it
  * What only warns: a roadmap not reviewed in a month, a long queue, a full inbox, a command centre
  * published before the plan last changed. A warning that failed the gate would be muted within a week.
  *
