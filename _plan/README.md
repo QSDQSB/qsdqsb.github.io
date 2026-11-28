@@ -28,10 +28,11 @@ whichever session happens to be open.
 | `PRINCIPLES.md` | Identity, standing calls, what the site refuses | Rarely, and only on the owner's word |
 | `DESIGN-LANGUAGE.md` | The grammar (ground, type, shape, glass, motion, pieces, patterns) and the registered signatures | When a decision or the owner changes the language |
 | `WORKFLOWS.md` | The seven paths work takes through the hub | When a path changes |
-| `ARCHITECTURE.md`, `FEATURES.md`, `CHANGELOG.md` | How the site is built; every feature with its code and journey; what changed for a reader | With the change that makes them untrue |
+| `ARCHITECTURE.md` | How the site is built | With the change that makes it untrue |
+| `changelog/`, `features/`, `findings/inbox/`, `requests/` | One file an entry: what changed for a reader; every feature with its code and journey; one-line observations; what the owner asked for. `CHANGELOG.md`, `FEATURES.md`, `findings/inbox.md` and `requests.md` are rendered from them (`node scripts/plan.mjs render`) and not committed ([0014](decisions/0014-one-file-per-entry.md)) | With the change that makes them untrue; add a file, never edit a shared one |
 | `decisions/NNNN-*.md` | One decision each: context, options, the choice, consequences | Never edited once accepted; superseded by a new one |
 | `stages/NN-*.md` | One stage each: goal, scope, design notes, tasks, exit | As the stage moves |
-| `findings/` | Dated audits, and `inbox.md` for one-line observations | Appended; an item leaves the inbox when a stage takes it |
+| `findings/` | Dated audits, and the inbox (`inbox/`, rendered to `inbox.md`) | An item leaves the inbox when a stage takes it |
 | `ideas/` | One file per idea: the owner's words, made explicit, weighed against the site as it stands, with its for and against and a verdict. Older thoughts gathered by theme | `/idea`; shaped by the design lead; answered by the owner |
 | `studies/` | Design questions explored with prototypes, and the verdicts | One file per study; a no is kept as carefully as a yes |
 | `private/` | Anything not for a public repo | Gitignored |

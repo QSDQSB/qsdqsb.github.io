@@ -15,6 +15,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { KINDS, parseEntry, renderDoc } from './lib/plan-entries.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const REPO_SLUG = 'QSDQSB/qsdqsb.github.io';
@@ -28,6 +29,15 @@ export function kindOf(files) {
   if (files.length && files.every((f) => f.startsWith('_plan/'))) return 'plan';
   if (files.length && files.every((f) => /^(_plan\/|scripts\/|tests\/|\.claude\/|\.github\/|CLAUDE\.md$|_docs\/|package(-lock)?\.json$)/.test(f))) return 'tool';
   return 'site';
+}
+
+/** A running list as its document, from a commit: rendered from the entries, or, for a commit from before they were files, the document itself. */
+function planDoc(read, kind) {
+  const { dir, doc } = KINDS[kind];
+  const names = read.list(`_plan/${dir}`).filter((f) => f.endsWith('.md'));
+  if (!names.length) return read.file(`_plan/${doc}`);
+  const entries = names.filter((f) => f !== '_head.md').map((f) => parseEntry(read.file(`_plan/${dir}/${f}`), f.slice(0, -3)));
+  return renderDoc(kind, names.includes('_head.md') ? read.file(`_plan/${dir}/_head.md`) : '', entries);
 }
 
 function stageCounts(read) {
@@ -118,11 +128,11 @@ export function collect({ day, ref, runsLog, cwd = ROOT, gh = !process.env.HUB_B
       return m ? { id: m[1] || null, question: m[2].replace(/\s*\(in chat\)\s*$/, ''), answer: m[3] } : null;
     }).filter(Boolean);
   const openCalls = (after.file('_plan/QUEUE.md').split(/^## Answered\s*$/m)[0].match(/^### Q\d+ · .+$/gm) || []).map((h) => h.replace(/^### /, ''));
-  const changes = after.file('_plan/CHANGELOG.md').split('\n').filter((l) => l.startsWith(`- ${day} · `)).map((l) => {
+  const changes = planDoc(after, 'changelog').split('\n').filter((l) => l.startsWith(`- ${day} · `)).map((l) => {
     const body = l.replace(/^- \S+ · /, ''); const tier = body.match(/· tier (\d)\s*$/)?.[1] || '0';
     return { text: body.replace(/\s*·\s*tier \d\s*$/, ''), tier: Number(tier) };
   });
-  const filed = (after.file('_plan/findings/inbox.md').match(new RegExp(`^- ${day} · F\\d+ · `, 'gm')) || []).length;
+  const filed = (planDoc(after, 'inbox').match(new RegExp(`^- ${day} · \\S+ · `, 'gm')) || []).length;
   const ideas = after.list('_plan/ideas').filter((f) => /^I\d+-.*\.md$/.test(f)).map((f) => {
     const b = after.file(`_plan/ideas/${f}`); return { id: f.split('-')[0], status: b.match(/^\*\*Status:\*\*\s*([a-z]+)/m)?.[1] || '?', title: (b.match(/^# I\d+ · (.+)$/m)?.[1] || f).trim() };
   });
@@ -131,8 +141,8 @@ export function collect({ day, ref, runsLog, cwd = ROOT, gh = !process.env.HUB_B
   return {
     day, ref, start: start.slice(0, 8), end: end.slice(0, 8), workPrs, holds, commits, prs, checks, runs, answered, openCalls, changes, filed, ideas,
     stages: { before: stageCounts(before), after: stageCounts(after) },
-    inbox: { before: inboxCounts(before.file('_plan/findings/inbox.md')), after: inboxCounts(after.file('_plan/findings/inbox.md')) },
-    features: { before: featureRows(before.file('_plan/FEATURES.md')), after: featureRows(after.file('_plan/FEATURES.md')) },
+    inbox: { before: inboxCounts(planDoc(before, 'inbox')), after: inboxCounts(planDoc(after, 'inbox')) },
+    features: { before: featureRows(planDoc(before, 'features')), after: featureRows(planDoc(after, 'features')) },
   };
 }
 

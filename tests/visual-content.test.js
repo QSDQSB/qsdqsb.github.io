@@ -74,13 +74,12 @@ test('the frozen manifests hold only pinned galleries, counted as pinned', async
   assert.deepEqual(Object.keys(files._covers), ['london']);
 });
 
-// The wiring: visual:build makes the hand-cut covers' palettes (as `build` does, so a tag's door is
-// poured the same in the gate as live), freezes the manifests and loads the Ruby half ahead of Jekyll
-// (the github-pages gem's safe mode loads no plugin of the site's own), and the Ruby half acts only on
-// a build with visual_baseline set, which the live build never has.
-test('visual:build makes the cover palettes, freezes the manifests and loads the pin ahead of Jekyll', () => {
+// The wiring: visual:build freezes first and loads the Ruby half ahead of Jekyll (the github-pages
+// gem's safe mode loads no plugin of the site's own), and the Ruby half acts only on a build with
+// visual_baseline set, which the live build never has.
+test('visual:build freezes the manifests and loads the pin ahead of Jekyll', () => {
   const build = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).scripts['visual:build'];
-  assert.match(build, /^node scripts\/generate-cover-palettes\.mjs && node scripts\/visual-content\.mjs freeze && /);
+  assert.match(build, /^node scripts\/visual-content\.mjs freeze && /);
   assert.match(build, /ruby -r \.\/scripts\/visual-content\.rb /);
   assert.equal(yaml.load(fs.readFileSync(path.join(ROOT, '_config_visual.yml'), 'utf8')).visual_baseline, true);
   assert.equal(yaml.load(fs.readFileSync(path.join(ROOT, '_config.yml'), 'utf8')).visual_baseline, undefined);

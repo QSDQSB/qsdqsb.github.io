@@ -1,0 +1,14 @@
+# A line for each post tag, shown under its name when the tag is open (_includes/tag-page.html).
+# Keyed by the tag exactly as front matter writes it, emoji and all. A tag with no line shows none.
+
+posts:
+  "💍Horcrux": "Where you can find a piece of QSD or QSB."
+  "🧼QSD's Philosophy": "QSD's perspective of the world. No guarantee of coherence."
+  "🍜Life": "We should hope every weekend is at least slightly different."
+  "📘Diary": "And which normal people would write a diary?"
+  "😻Happy Moments": "Life needs joyful moments!"
+  "🗒TODO": "#TODO is #TODO."
+  "🏦卷！": "I don't think future content will include this tag, hopefully not."
+  "🐮Ox": "We don't see Oxen in Oxford, we see cows."
+  "😢Emo": "Maybe it's nice, to be able to feel something."
+  "🍡Tutorial": "Do you think QSD is a good teacher?"

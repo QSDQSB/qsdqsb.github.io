@@ -26,7 +26,7 @@
  *     explicit, what it changes in the site as it stands, its for and against, its trial ("Can it
  *     be delivered") or its challenge by someone who did not shape it (decisions/0008)
  *   - a change to what readers get (styles, layouts, includes, scripts, pages, navigation) with no
- *     line in `_plan/CHANGELOG.md` beside it
+ *     entry in `_plan/changelog/` beside it
  * What only warns: a roadmap not reviewed in a month, a long queue, a full inbox, a command centre
  * published before the plan last changed. A warning that failed the gate would be muted within a week.
  *
@@ -38,6 +38,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { planHash } from './lib/plan-hash.mjs';
 import { readIdea, optionsOf } from './lib/plan-ideas.mjs';
+import { ID, renderAll } from './lib/plan-entries.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // `PLAN_DIR` points the check at another folder (the tests use a copy); the site's files stay ROOT's.
@@ -48,6 +49,7 @@ const since = sinceAt >= 0 ? args[sinceAt + 1] : null;
 const mode = args.includes('--brief') ? 'brief' : args.includes('--json') ? 'json' : 'check';
 
 if (!fs.existsSync(PLAN)) { console.error('No _plan/ folder.'); process.exit(2); }
+renderAll(PLAN);   // the four running lists are files an entry; their documents are made here
 
 const STATUSES = ['idea', 'planned', 'designing', 'building', 'in review', 'done'];
 const REQUIRED = ['README.md', 'ROADMAP.md', 'QUEUE.md', 'PRINCIPLES.md', 'DESIGN-LANGUAGE.md', 'WORKFLOWS.md', 'ARCHITECTURE.md', 'FEATURES.md', 'CHANGELOG.md', 'findings/inbox.md'];
@@ -115,7 +117,8 @@ if (fs.existsSync(path.join(PLAN, 'decisions'))) {
 }
 
 /* ── links ──────────────────────────────────────────────────────────────── */
-for (const file of walk(PLAN)) {
+// A folder's `_head.md` is the head of a rendered document one level up, whose links are written for that place: the document is read instead.
+for (const file of walk(PLAN).filter((f) => path.basename(f) !== '_head.md')) {
   const body = fs.readFileSync(file, 'utf8').replace(/```[\s\S]*?```/g, '');
   for (const m of body.matchAll(/\]\(([^)\s]+)\)/g)) {
     const target = m[1].split('#')[0];
@@ -210,8 +213,8 @@ if (fs.existsSync(path.join(PLAN, 'ideas'))) {
 /* ── inbox and changelog ────────────────────────────────────────────────── */
 const inbox = exists('findings/inbox.md') ? (read('findings/inbox.md').split(/^## Taken/m)[0].match(/^- /gm) || []).length : 0;
 if (exists('findings/inbox.md')) {
-  const allF = [...read('findings/inbox.md').matchAll(/^- \d{4}-\d{2}-\d{2} · (F\d{3,}) · /gm)].map((m) => m[1]);
-  for (const id of new Set(allF.filter((f, n) => allF.indexOf(f) !== n))) errors.push(`${id} appears twice in findings/inbox.md. If one line is in Waiting and one in Taken, a merge brought a taken finding back: delete the Waiting line. If they are two findings, renumber the later one.`);
+  const allF = [...read('findings/inbox.md').matchAll(new RegExp(`^- \\d{4}-\\d{2}-\\d{2} · (${ID}) · `, 'gm'))].map((m) => m[1]);
+  for (const id of new Set(allF.filter((f, n) => allF.indexOf(f) !== n))) errors.push(`${id} is the id of two findings in _plan/findings/inbox/. If one is waiting and one taken, a merge brought a taken finding back: delete the waiting file. If they are two findings, give the later one a new id.`);
 }
 if (inbox > 25) warnings.push(`The findings inbox holds ${inbox} items; sort it into stages.`);
 const changelog = exists('CHANGELOG.md') ? [...read('CHANGELOG.md').matchAll(/^- (\d{4}-\d{2}-\d{2})\s*·\s*(.+)$/gm)].map((m) => ({ date: m[1], text: m[2] })) : [];
@@ -222,8 +225,8 @@ const changed = new Set([
   ...(since ? git('diff', '--name-only', `${since}...HEAD`).split('\n') : []),
 ].filter(Boolean));
 const seen = [...changed].filter((f) => READER_FACING.some((r) => r.test(f)) && !NOT_READER_FACING.some((r) => r.test(f)));
-if (seen.length && !changed.has('_plan/CHANGELOG.md')) {
-  errors.push(`${seen.length} file(s) that shape what a reader gets changed (${seen.slice(0, 3).join(', ')}${seen.length > 3 ? ', …' : ''}) with no line added to _plan/CHANGELOG.md.`);
+if (seen.length && ![...changed].some((f) => f.startsWith('_plan/changelog/') && f !== '_plan/changelog/_head.md')) {
+  errors.push(`${seen.length} file(s) that shape what a reader gets changed (${seen.slice(0, 3).join(', ')}${seen.length > 3 ? ', …' : ''}) with no changelog entry added (node scripts/plan.mjs log "…", a file in _plan/changelog/).`);
 }
 
 /* ── out ────────────────────────────────────────────────────────────────── */
