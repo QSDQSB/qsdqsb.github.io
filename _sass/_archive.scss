@@ -178,6 +178,9 @@
   background-image: linear-gradient(rgba(12,12,12,var(--bg-filter-opacity)),rgba(0,0,0,var(--bg-filter-opacity))), var(--bg-img, none);
   .no-js & { --bg-img: var(--bg-later); }
 	position: relative;
+  // Under the pointer the cover rises and grows, gradually, over a second. aspect-ratio: hover 3.5→3.3 is intended
+  // motion; a ratio is immune to the Safari load-time re-resolution that bans geometry from the tokens.
+  transition: $cubic-bezier-default, aspect-ratio 1s $cubic-bezier-param;
   text-decoration: none;
 
   // Bottom-up gradient scrim — engineered contrast under the title /
@@ -190,9 +193,11 @@
     border-radius: inherit;
     background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%);
     pointer-events: none;
+    transition: inherit;
   }
 
   * p {
+    transition: inherit;
     text-shadow: 0 1px 4px rgba(0,0,0,0.45); // safety net against edge-case photos; scrim above does most of the contrast work
     font-size: $type-size-8;
     color: $text-color;
@@ -201,31 +206,41 @@
     }
   }
 
-  // The wide cover does nothing under the pointer: it does not rise, grow or change shape (the
-  // owner's standing call). Only the words it keeps for the pointer (its line, read time and date)
-  // fade in, in place, over the cover's second.
-  .content .sci,
-  .readtime,
-  .date {
-    transition: opacity $duration-cover $cubic-bezier-smooth;
-    html.motion-off & { transition: none; }
-    @include responsive-reduced-motion { transition: none; }
-  }
-
+  // The pointer and the keyboard alike: the cover rises and its words come in.
   &:hover, &:focus-within {
-    text-decoration: none;
-
+    @include responsive-up(tablet) {
+      aspect-ratio: 3.3;
+    }
+    transform: scale(1.03) translateY(-0.25em);
+    .content h3 {
+      transform: translateY(-0.25em);
+    }
     .content .sci,
     .readtime,
     .date {
       opacity: 1;
     }
   }
+  // The deep shadow under the pointer only: the keyboard's mark is the brass ring.
+  &:hover {
+    text-decoration: none;
+    border-color: $border-color;
+    box-shadow: 0 4px  4px  rgba(0, 0, 0, .35),
+                0 1px  6px  rgba(0, 0, 0, .20),
+                0 8px  8px  rgba(0, 0, 0, .25),
+                0 16px 16px rgba(0, 0, 0, .25),
+                8px 32px 32px rgba(0, 0, 0, .35),
+                8px 64px 64px rgba(0, 0, 0, .35);
+  }
 
   .content {
     position: relative; // stack above the ::before scrim
+    transform: translateY(0);
+    transition: inherit;
 
     h3 {
+      transition: inherit;
+      transform: translateY(0);
       text-shadow: 0 1px 4px rgba(0,0,0,0.5); // safety net; scrim above does most of the contrast work
       text-align: left;
       margin-bottom: 0;
@@ -237,6 +252,7 @@
 
     .sci {
       font-family: $line-serif-family;
+      transition: inherit;
       opacity: 0;
       margin: 0;
       // Touch has no hover to reveal it, so the excerpt rests at the foot of the
@@ -287,6 +303,7 @@
     }
   }
   .date {
+    transition: inherit;
     font-family: $barlow-font-family;
     position: absolute;
     bottom: 0;
@@ -580,6 +597,25 @@ a.word_card--link {
   .floating_tarot_card {
     background: linear-gradient(195deg,#FAC39EBB 0%, #FBD0B7BB 25%, #FBD6C4BB 65%, #DF989FAA 100%);
   }
+}
+// Still for a reader who asked: the cover's words still appear, nothing rises or grows.
+@include responsive-reduced-motion {
+  .card,
+  .card .content,
+  .card .content h3 { transition: none; }
+  :is(.card:hover, .card:focus-within) {
+    transform: none;
+    @include responsive-up(tablet) { aspect-ratio: 3.5; } // its resting shape: nothing changes shape
+  }
+  :is(.card:hover, .card:focus-within) .content h3 { transform: none; }
+}
+html.motion-off {
+  .card, .card .content, .card .content h3 { transition: none; }
+  :is(.card:hover, .card:focus-within) {
+    transform: none;
+    @include responsive-up(tablet) { aspect-ratio: 3.5; }
+  }
+  :is(.card:hover, .card:focus-within) .content h3 { transform: none; }
 }
 @include responsive-reduced-motion {
   .wheel_of_fortune:hover,

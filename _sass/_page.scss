@@ -998,34 +998,20 @@ html.is-resizing {
 }
 
 // What follows a post's last sentence stands on one width, the text's own: the same measure inside the
-// same inset as the card that holds the text, every piece edge to edge on it; and two small covers
-// side by side for what to read next.
+// same inset as the card that holds the text, every piece edge to edge on it. What to read next stays
+// outside it, at the content's full width.
 body.collection--posts .page__ending {
   clear: both;
   padding: 0 0.5em;
   @include responsive-up(desktop) { padding: 0 2em; }
 
-  > *,
-  .word_card_container,
-  .word_card {
+  > * {
     max-width: $post-measure;
     margin-left: auto;
     margin-right: auto;
   }
 
-  :is(.subscribe-slip, .pagination, .word_card_container, .word_card) { width: 100%; }
-
-  .page__related { float: none; }
-
-  .grid__wrapper {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-  }
-
-  // A small cover holds its title and date; its line would be cut to a word or two.
-  .card .content h3 { font-size: $type-size-4; }
-  .card .sci { display: none; }
+  :is(.subscribe-slip, .pagination) { width: 100%; }
 }
 
 
