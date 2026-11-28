@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Carries a branch over to the split layout, so it stops colliding with every other branch on
- * the same shared files (_plan/decisions/0012-one-file-per-entry.md).
+ * the same shared files (_plan/decisions/0014-one-file-per-entry.md).
  *
  *   node scripts/split-shared-files.mjs journeys <old check-journeys.mjs> [<merge-base copy>]
  *     Writes each journey of the old array to tests/journeys/<id>.mjs. With the merge-base copy,
@@ -15,6 +15,7 @@
  *     findings/inbox/ or requests/ (with `--head`, the folder's `_head.md` too). With the merge-base
  *     copy, only the lines the branch added or changed.
  *
+ * A journey or a picture the branch removed is not carried: delete its file by hand.
  * Run from the repository's root. Existing files are replaced only where the branch changed them.
  * `git show <ref>:scripts/check-journeys.mjs > /tmp/old.mjs` gets an old copy of either file.
  */
@@ -55,10 +56,13 @@ export function journeyBlocks(source) {
 export function journeyModule({ text }) {
   let body = text;
   if (/\bbase\b/.test(body) && !/async run\(\{[^}]*\bbase\b/.test(body)) {
-    body = body.replace(/async run\(\{ ([^}]*) \}\)/, 'async run({ $1, base })');
+    body = body.replace(/async run\((?:\{ ([^}]*) \})?\)/, (_, args) => `async run({ ${args ? `${args}, ` : ''}base })`);
   }
-  const imports = /\bmust\(/.test(body) ? "import { must } from './_lib.mjs';\n\n" : '';
-  return `${imports}export default ${body};\n`;
+  // Names the old file imported for every journey: a journey that uses one imports it itself.
+  const playwright = ['chromium', 'webkit', 'devices'].filter((n) => new RegExp(`\\b${n}\\b`).test(body));
+  const imports = (playwright.length ? `import { ${playwright.join(', ')} } from 'playwright-core';\n` : '')
+    + (/\bmust\(/.test(body) ? "import { must } from './_lib.mjs';\n" : '');
+  return `${imports ? `${imports}\n` : ''}export default ${body};\n`;
 }
 
 function journeys(oldFile, baseFile) {

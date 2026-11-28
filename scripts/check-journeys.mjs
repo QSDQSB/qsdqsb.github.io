@@ -67,7 +67,7 @@ function serve(dir) {
 /** A reader's routes, one file each in tests/journeys/ (the id is the file's name), so two branches that add a journey never touch the same file. Each gets a fresh page; `go(path)` loads one and returns its status. */
 const JOURNEYS = [];
 for (const file of fs.readdirSync(JOURNEY_DIR).filter((f) => f.endsWith('.mjs') && !f.startsWith('_')).sort()) {
-  const { default: journey } = await import(pathToFileURL(path.join(JOURNEY_DIR, file)).href);
+  const journey = await import(pathToFileURL(path.join(JOURNEY_DIR, file)).href).then((m) => m.default, (e) => { console.error(`tests/journeys/${file} does not load: ${String(e.message).split('\n')[0]}`); process.exit(2); });
   if (journey.id + '.mjs' !== file) { console.error(`tests/journeys/${file}: its id is ${journey.id}, so the file must be ${journey.id}.mjs`); process.exit(2); }
   JOURNEYS.push(journey);
 }

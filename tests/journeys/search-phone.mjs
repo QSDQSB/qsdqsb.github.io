@@ -1,6 +1,7 @@
+import { webkit, devices } from 'playwright-core';
 import { must } from './_lib.mjs';
 
-export default { id: 'search-phone', name: 'In Safari\'s engine on a phone the results stand on the panel\'s dark fill, and the panel shows it can be closed', async run() {
+export default { id: 'search-phone', name: 'In Safari\'s engine on a phone the results stand on the panel\'s dark fill, and the panel shows it can be closed', async run({ base }) {
   const phone = await webkit.launch().catch(() => null);
   must(phone, 'no WebKit to drive: npx playwright install webkit');
   try {
