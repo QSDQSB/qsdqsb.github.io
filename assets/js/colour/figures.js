@@ -43,7 +43,7 @@ const { drip } = dripper();
 
 // A plate's head, the page it is a piece of; and its foot, what it does in the hand (`hover`: said
 // only where a pointer can rest on things).
-const head = (v, page) => `<p class="colour-plate__head"><a href="${PALETTE}#${v.g}">QSD's Palette for ${esc(page.title)} <span aria-hidden="true">→</span></a></p>`;
+const head = (v, page) => `<p class="colour-plate__head"><a href="${PALETTE}#${v.g}">QSD's Palette for ${esc(page.title)}</a></p>`;
 const hint = (rest, hover = '') => (rest
   ? `<p class="colour-plate__hint">${hover ? `<span class="colour-plate__hover">${hover} </span>` : ''}${rest}</p>`
   : `<p class="colour-plate__hint colour-plate__hint--hover">${hover}</p>`); // a hint for a resting pointer alone: none where there is no hover

@@ -826,6 +826,42 @@ const JOURNEYS = [
     must(new URL(page.url()).hash.length > 1, 'choosing a voyage did not change the address');
     await page.waitForSelector('.palette-cards', { timeout: 8000 }).catch(() => {});
     must(await essay.count() === 1, "a voyage's palette has no way on to In the Naming of Light");
+    // It ends with a way on: the next voyage by colour, and its own book.
+    must(await page.locator('.palette-page .colour-next a[href^="#"]').count() === 1, "a voyage's palette has no way on to the next voyage by colour");
+    must(await page.locator('.palette-page .colour-next a[href^="/voyage/"]').count() === 1, "a voyage's palette has no way on to its book");
+  } },
+
+  { id: 'palette-hero', name: "Palette's head is the dye: choosing a voyage changes it at once with motion off, and the round vat stays", async run({ page, go }) {
+    await go('/palette/');
+    const layer = () => page.evaluate(() => { const m = document.querySelector('.palette-hero .page__hero-media--dye'), c = m?.lastElementChild; if (!c || c.tagName !== 'CANVAS') return null; c.dataset.seen ??= String(Math.random()); const d = c.getContext('2d').getImageData(c.width >> 1, c.height >> 1, 1, 1).data; return { id: c.dataset.seen, px: [...d].join(','), opacity: getComputedStyle(c).opacity, layers: m.children.length }; });
+    await page.waitForFunction(() => document.querySelector('.palette-hero .page__hero-media--dye canvas'), null, { timeout: 15000 }).catch(() => {});
+    const first = await layer();
+    must(first && first.px.split(',')[3] > 200, "Palette's hero shows no dye");
+    must((await page.locator('.palette-hero h1').innerText()).trim() === "QSD's Palette", "Palette's hero does not carry its title");
+    await page.locator('.palette-voyages__list a[href="#barcelona"]').click();
+    await page.waitForSelector('.palette-cards', { timeout: 8000 }).catch(() => {});
+    await page.waitForTimeout(150);
+    const second = await layer();
+    must(second && second.id !== first.id && second.px !== first.px, "choosing a voyage did not change the hero's dye");
+    must(second.opacity === '1', `with motion off the hero's new dye is at ${second.opacity}, not there at once`);
+    must(await page.locator('.palette-voyage__vat canvas').count() >= 1, "a voyage's round vat is gone from beside its colours");
+    must((await page.locator('.palette-hero .colour-kicker').innerText()).trim().toLowerCase() === 'palette', 'the label over a voyage\'s title does not read "Palette"');
+  } },
+
+  { id: 'palette-card', name: "A frame's card is a print with its colour strip: a colour opens its Reverie, and a keyboard reaches it", async run({ page, go }) {
+    await go('/palette/#barcelona');
+    await page.waitForSelector('.palette-card__strip a', { timeout: 15000 }).catch(() => {});
+    const card = page.locator('.palette-card').first();
+    must(await card.locator('.palette-card__strip a').count() >= 2, "a frame's card has no colour strip");
+    must(await card.locator('.palette-blocks, .palette-card__bar').count() === 0, "a frame's card still carries its codes and shares");
+    must(await card.locator('.palette-card__vat').count() === 1, "a frame's card has lost its small vat");
+    const colour = card.locator('.palette-card__strip a').first();
+    must(/^#[0-9A-F]{6}$/.test(await colour.getAttribute('data-tip') || ''), "a colour on a card does not show its code under the pointer");
+    await colour.focus();
+    must(await colour.evaluate((a) => a === document.activeElement), 'a keyboard cannot reach a colour on a card');
+    await page.keyboard.press('Enter');
+    await page.waitForURL(/\/reverie\/\?/, { timeout: 8000 }).catch(() => {});
+    must(new URL(page.url()).pathname.endsWith('/reverie/'), "a colour on a card did not open its Reverie");
   } },
 
   { id: 'reverie', name: 'Reverie shows a colour and the photographs that hold it', async run({ page, go }) {
@@ -847,6 +883,10 @@ const JOURNEYS = [
     await page.waitForFunction(() => document.querySelector('.photobook-lightbox')?.open, null, { timeout: 15000 }).catch(() => {});
     must(await open(), '#colour did not open the lightbox on the colour');
     must(await page.locator('.photobook-lightbox__painted').count() >= 1, '#colour opened on something other than the colour');
+    // The colour fills the lightbox's frame, whatever the window's shape.
+    await page.waitForTimeout(400);
+    const fill = await page.evaluate(() => { const r = (s) => document.querySelector(s).getBoundingClientRect(), m = r('.photobook-lightbox__mat'), p = r('.photobook-lightbox__painted'); return [p.width / m.width, p.height / m.height]; });
+    must(fill.every((x) => x > 0.97), `the colour fills ${fill.map((x) => `${Math.round(x * 100)}%`).join(' × ')} of the lightbox's frame`);
   } },
 
   { id: 'no-webgl', nogl: true, name: 'Where there is no WebGL the colour pages still open, with a still vat and no error', async run({ page, go }) {
@@ -958,6 +998,18 @@ const JOURNEYS = [
     await page.waitForTimeout(800);
     must(await page.locator('.search-content.is--visible').count() === 0, 'Escape did not close search');
     must(new URL(page.url()).pathname.includes('/drift/'), 'Escape closed search and also left Drift');
+  } },
+
+  { id: 'ridgway', name: "Ridgway's plates stand as the book sets them: three hues by seven steps, every colour named, three plates abreast", async run({ page, go }) {
+    await go('/utils/ridgway/');
+    const plates = page.locator('.ridgway-plate');
+    must(await plates.count() >= 50, `only ${await plates.count()} of Ridgway's plates`);
+    const first = await plates.first().evaluate((s) => ({ n: s.querySelectorAll('.ridgway-swatch').length, cols: getComputedStyle(s.querySelector('ol')).gridTemplateColumns.split(' ').length, unnamed: [...s.querySelectorAll('.ridgway-swatch b')].filter((b) => !b.textContent.trim()).length }));
+    must(first.n === 21 && first.cols === 3, `a plate holds ${first.n} colours in ${first.cols} columns, not three hues by seven steps`);
+    must(first.unnamed === 0, `${first.unnamed} colours on a plate have no name`);
+    const tops = await plates.evaluateAll((ps) => ps.slice(0, 3).map((p) => Math.round(p.getBoundingClientRect().top)));
+    must(new Set(tops).size === 1, `the first three plates are not abreast on a desktop (tops ${tops.join(', ')})`);
+    must(await page.locator('.ridgway-swatch[href*="/reverie/?c="]').count() >= 1000, "the plates' colours do not open their Reverie");
   } },
 
   { id: 'lost', name: 'A wrong address gets the 404 page with ways back', async run({ page, go }) {

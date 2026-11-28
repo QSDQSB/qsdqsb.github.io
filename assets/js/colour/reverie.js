@@ -34,7 +34,7 @@ import { crossfade } from '../photobook/wash.js';
 import { develop } from '../photobook/develop.js';
 import { lightbox } from '../photobook/lightbox.js';
 import { vat, seedOf, glow, stillness as still } from './vat.js';
-import { esc, reverieOf, ESSAY, shadeFor, place, cameFrom, backLabel, measureCards, json } from './cards.js';
+import { esc, reverieOf, ESSAY, shadeFor, place, ownScroll, cameFrom, backLabel, measureCards, json } from './cards.js';
 import { namer, opening, gather, pour, nearRow, countLine, prints, stirring } from './reverie-parts.js';
 
 const root = document.getElementById('reverie');
@@ -44,6 +44,7 @@ const body = root?.querySelector('.reverie__stage');
 const base = new URL('../../../', import.meta.url).pathname;
 
 async function main() {
+  ownScroll();
   // The colour the address asks for, at once, while the photographs are read: its hex and its flat
   // colour where the dye will pour.
   const asked = new URLSearchParams(location.search).get('c');
@@ -80,24 +81,40 @@ async function main() {
   // The book's lightbox, over the page. Its frames are laid when it opens (the colour, then the
   // photographs as the cards stand), from every voyage's lightbox frames (/assets/frames.json,
   // fetched once, when first wanted).
-  let book = null;
-  const books = () => (book ??= fetch(new URL('../../frames.json', import.meta.url)).then((r) => r.json()).catch(() => ({})));
+  // Until they are in hand a print opens at once all the same, from the photograph's own record in
+  // the atlas (no specs yet); the frames are laid again when they come.
+  let book = null, booked = null;
+  const books = () => (book ??= fetch(new URL('../../frames.json', import.meta.url)).then((r) => r.json()).catch(() => ({})).then((all) => { booked = all; if (shown && lbEl?.open) lay(); return all; }));
   const lbFrames = [], lbEl = document.getElementById('photobook-lightbox');
+  const mat = () => lbEl?.querySelector('.photobook-lightbox__mat')?.getBoundingClientRect();
   const cardPrints = () => body.querySelectorAll('.palette-card__print');
   const lb = lightbox(lbFrames, {
     printOf: (i) => (i === 0 ? dye : cardPrints()[i - 1]),
     mark: (p) => (p.paint ? vat(p.dye, { size: 16, seed: p.seed }) : vat(p.signature || p.sig || [], { size: 16, seed: seedOf(`${p.g}/${p.slug}`) })),
   });
-  async function lay() {
-    const all = await books(), { f, hex, found, focused } = shown, HEX = hex.toUpperCase();
+  function lay() {
+    const all = booked || {}, { f, hex, found, focused } = shown, HEX = hex.toUpperCase();
+    if (!booked) books();
     const seed = seedOf(`${f.g}/${f.slug}`);
     const colour = {
-      slug: 'colour', name: HEX, place: nameOf(hex), city: `In ${found.length} photograph${found.length === 1 ? '' : 's'}`, ratio: 16 / 9, dye: focused, seed,
+      slug: 'colour', name: HEX, place: nameOf(hex), city: `In ${found.length} photograph${found.length === 1 ? '' : 's'}`, dye: focused, seed,
+      // The colour fills the lightbox's frame, whatever its shape: as wide and tall as the mat (as
+      // Drift's colour fills its stage), its dye drawn at an eighth of that and spread.
+      get ratio() { const m = mat(); return m?.width && m?.height ? m.width / m.height : innerWidth / innerHeight; },
       paint() {
         const el = document.createElement('div');
+        const dye = (r = this.ratio) => { const w = mat()?.width || innerWidth; return vat(focused, { shape: 'rect', width: Math.max(16, Math.round(w / 8)), height: Math.max(9, Math.round(w / 8 / r)), seed }); };
         el.style.setProperty('--shade', shadeFor(hex));
-        el.append(vat(focused, { shape: 'rect', width: 200, height: 112, seed }));
+        el.append(dye());
         el.insertAdjacentHTML('beforeend', `<p class="reverie__hex is-painted" style="--c:${hex}">${HEX}</p>`);
+        // The mat grows once the frame is on (a painted frame has no specs, and the panel steps aside):
+        // the frame takes its shape again from the mat as it then stands.
+        requestAnimationFrame(() => {
+          const m = mat(), r = m?.width && m.height ? m.width / m.height : 0;
+          if (!el.isConnected || !r || Math.abs(r - parseFloat(lbEl.style.getPropertyValue('--pr'))) < 0.01) return;
+          lbEl.style.setProperty('--pr', String(r));
+          el.querySelector('.colour-vat')?.replaceWith(dye(r));
+        });
         return el;
       },
       room: () => glow(focused, { seed }),
@@ -108,7 +125,7 @@ async function main() {
     });
     lbFrames.splice(0, lbFrames.length, colour, ...photos);
   }
-  async function openAt(k, img = null) { const was = shown; await changing; await lay(); if (shown === was) lb.open(k, null, img); }
+  async function openAt(k, img = null) { const was = shown; await changing; if (shown !== was) return; lay(); lb.open(k, null, img); }
   // The way back, named for the colour.
   const lbBack = lbEl?.querySelector('.photobook-lightbox__back');
 
@@ -148,8 +165,8 @@ async function main() {
         <p class="reverie__count">${countLine(found.length, all)}</p>
         <h2 class="visually-hidden">The photographs</h2>
         ${prints(found, pages, { href: (p) => `${base}drift/?from=${encodeURIComponent(`${p.g}/${p.slug}`)}&c=${hex.slice(1)}&src=${encodeURIComponent(`${f.g}/${f.slug}`)}&open`, label: 'full screen, in this colour' })}
-        <p class="colour-next"><a href="${base}drift/?from=${encodeURIComponent(`${f.g}/${f.slug}`)}&c=${hex.slice(1)}">Drift in this colour <span aria-hidden="true">→</span></a><a href="${base}palette/?at=${encodeURIComponent(f.slug)}#${f.g}">QSD's Palette for ${esc(page.title)} <span aria-hidden="true">→</span></a></p>
-        <p class="reverie__credit">${ESSAY}<a href="${base}utils/ridgway/">Colour names after Robert Ridgway, 1912 <span aria-hidden="true">→</span></a></p>`;
+        <p class="colour-next"><a href="${base}drift/?from=${encodeURIComponent(`${f.g}/${f.slug}`)}&c=${hex.slice(1)}">Drift in this colour</a><a href="${base}palette/?at=${encodeURIComponent(f.slug)}#${f.g}">QSD's Palette for ${esc(page.title)}</a></p>
+        <p class="reverie__credit">${ESSAY}<a href="${base}utils/ridgway/">Colour names after Robert Ridgway, 1912</a></p>`;
       measureCards(body);
       shown = { f, hex, found, focused };
       if (lbBack) { lbBack.lastChild.textContent = HEX; lbBack.setAttribute('aria-label', `Back to ${HEX}`); lbBack.dataset.tip = `Back to ${HEX} · Esc`; }
