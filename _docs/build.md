@@ -79,7 +79,7 @@ CLAUDE.md.
 ## Visual regression
 
 ```bash
-npm run visual:build        # seeded Jekyll build of _site/, its content held to the pin (see below)
+npm run visual:build        # seeded Jekyll build of _site/ (the covers' palettes made first, as `build` does), its content held to the pin (see below)
 npm run visual:capture      # (re)shoot, store the pictures in R2, write tests/visual/hashes/<shot>.sha
 npm run visual:diff         # render again, pixel-diff, exit 1 on any delta
 npm run visual:audit        # under motion-off, nothing may still animate
