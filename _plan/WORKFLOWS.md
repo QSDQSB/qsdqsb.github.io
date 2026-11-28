@@ -25,7 +25,7 @@ comments, reviews or takes the label off.
 
 Something is broken, slow, inconsistent or inaccessible.
 
-1. **File it**: `/finding <what was seen>`. One line, dated, in `findings/inbox.md`. Do not fix it
+1. **File it**: `/finding <what was seen>`. One line, a file of its own in `findings/inbox/`. Do not fix it
    in passing while doing something else.
 2. **The design lead sorts it** into a stage, with its tier.
 3. **Tier 0 or 1** ([0001](decisions/0001-who-decides-what.md)): `/stage` builds it. The fix reuses
@@ -48,8 +48,8 @@ Something is broken, slow, inconsistent or inaccessible.
    - What does it need that the grammar lacks? Each is a piece to add (path 3) before the page.
 3. **Study it** (path 6) if the look is new. The owner sees a design before code: real pages with
    desktop and phone screenshots, or a Figma file.
-4. **Build** on the Photobook shell. New feature → a row in [`FEATURES.md`](FEATURES.md) and a
-   journey in `scripts/check-journeys.mjs`, in the same change.
+4. **Build** on the Photobook shell. New feature → a file in `features/` (its row in [`FEATURES.md`](FEATURES.md)) and a
+   journey (`tests/journeys/<id>.mjs`), in the same change.
 5. Gate, reviewer, changelog.
 
 ## 3. A new piece of grammar
@@ -133,6 +133,25 @@ built, however small the change sounds: "two or three lines" is a claim like any
 5. **A verdict**: build it, build something else, or leave it, with a plan in tasks and findings.
    What a reader would see anew goes to the owner ([0001](decisions/0001-who-decides-what.md)); the
    rest goes to its stage.
+
+## Working in parallel
+
+Many sessions each work a `work/` branch and the owner merges them as pull requests
+([0014](decisions/0014-one-file-per-entry.md)). What a branch adds is a file of its own, so two
+branches meet only where they change the same thing:
+
+- **A picture re-captured** is `tests/visual/hashes/<shot>.sha`; **a journey** is
+  `tests/journeys/<id>.mjs`. Add yours; never edit another's.
+- **Update a branch by merging master into it.** Never rebase, and never force-push, a branch
+  another session holds: a rebase rewrites commits someone may have merged or built on (2026-11-28, a
+  force-pushed rebase overwrote another session's merge commit).
+- **A cross-cutting change** (the shell, shared variables, layouts every page uses) lands alone, first
+  or last, not in the middle of other branches' work.
+- **A new id that more than one branch may take** is `<date>-<slug>`, not the next number.
+  Numbered ids already given stay as they are.
+- **`QUEUE.md` and `hub.json`** are written by one session only, the one that talks to the command
+  centre. Others tell it, or put a finding in the inbox.
+- **Next candidate:** the rows of `_docs/components.md`, which two branches still both append to.
 
 ## What happens without being asked
 

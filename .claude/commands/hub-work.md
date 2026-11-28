@@ -60,8 +60,9 @@ also the house's: read `CLAUDE.md`, the stage's file, `_plan/DESIGN-LANGUAGE.md`
    `test`, `check:<name>`, `visual:build`, `visual:diff`. Nothing else runs. A `run` that says
    "Still running" goes on in the background: `bash scripts/hub-work.sh wait` until it ends. In the
    plan, in the folder: tick the task (`- [x]`, with today's date and what was done in a clause), add
-   the changelog line a reader's change needs, and for a request move its line from Open to Done in
-   `_plan/requests.md`. Use the Edit tool for these. Do them before the gate when you can; a change
+   the changelog line a reader's change needs (`node scripts/plan.mjs log "…"`, a file in
+   `_plan/changelog/`), and for a request set its file in `_plan/requests/` to `status: done` with a
+   `done:` line (`done 2026-11-28, #PR`). Use the Edit tool for the file. Do them before the gate when you can; a change
    to the plan alone after a passing gate costs only the fast gate at `pr`.
 4. **Pictures, when a reader would see it.** `bash scripts/hub-work.sh run visual:build`, then
    `bash scripts/hub-work.sh run visual:diff`: it names the pages that changed. Every one must be a

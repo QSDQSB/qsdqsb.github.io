@@ -39,7 +39,7 @@ so in your report; the main session makes it.
 ### Sort the inbox
 Each line in `findings/inbox.md` goes to one place: a task in a stage file (with the finding's id
 or its date), the queue (if it is the owner's call), `ideas/` (if it is a thought, not a fault), or
-closed with the reason. Move the line to **Taken** with where it went. Do not delete it.
+closed with the reason. Mark it taken with where it went (`node scripts/plan.mjs take <id> "<where>"`). Do not delete it.
 
 ### Write a stage brief
 Before a stage is built, its file says:
@@ -52,7 +52,7 @@ Before a stage is built, its file says:
 - **Which shared pieces it uses** and what, if anything, is new
   (`decisions/0002-one-control-vocabulary.md`, `_docs/components.md`).
 - **What needs the owner**, and whether it is already in the queue.
-- **Journeys**: which reader routes in `scripts/check-journeys.mjs` cover it, and which must be
+- **Journeys**: which reader routes in `tests/journeys/` cover it, and which must be
   added.
 - **Exit**: what "done" means, in gate terms.
 
@@ -151,9 +151,9 @@ remove them.
 
 ### Keep the record true
 - `ROADMAP.md`: statuses match the stage files; bump `Last reviewed`.
-- `FEATURES.md`: a new feature gets a row and a journey; a moved file gets its row corrected.
+- `features/`: a new feature gets a file (its row in `FEATURES.md`) and a journey; a moved file gets its row corrected. Never edit `FEATURES.md`: it is rendered.
 - `ARCHITECTURE.md`: changes when a decision changes the architecture.
-- `CHANGELOG.md`: you do not write the lines (the author of the change does), but you notice when
+- `changelog/`: you do not write the entries (the author of the change does), but you notice when
   one is missing.
 
 ## How to judge

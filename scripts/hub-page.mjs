@@ -26,12 +26,14 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { esc, inline, markdown } from './lib/plan-markdown.mjs';
 import { OPTION } from './lib/plan-ideas.mjs';
+import { renderAll } from './lib/plan-entries.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // `PLAN_DIR` and `--out <file>` build the page from another plan, somewhere else (the tests do).
 const PLAN = process.env.PLAN_DIR ? path.resolve(process.env.PLAN_DIR) : path.join(ROOT, '_plan');
 const outAt = process.argv.indexOf('--out');
 const OUT = outAt > 0 ? path.resolve(process.argv[outAt + 1]) : path.join(ROOT, 'design', 'hub', 'hub.html');
+renderAll(PLAN);
 const read = (rel) => fs.readFileSync(path.join(PLAN, rel), 'utf8');
 
 let state;
@@ -48,7 +50,7 @@ const pct = (s) => (s.done + s.open ? Math.round((100 * s.done) / (s.done + s.op
 const inboxLines = (read('findings/inbox.md').split(/^## Taken/m)[0].match(/^- .+$/gm) || []).map((l) => l.slice(2));
 // The owner's requests (decisions/0010): what they asked for, open and done, in their words.
 const requestsBody = fs.existsSync(path.join(PLAN, 'requests.md')) ? read('requests.md') : '';
-const requestsOf = (part) => { const at = requestsBody.indexOf(`## ${part}`); if (at < 0) return []; const rest = requestsBody.slice(at + part.length + 3); const next = rest.indexOf('\n## '); return (next < 0 ? rest : rest.slice(0, next)).split('\n').filter((l) => /^- \d{4}-\d{2}-\d{2} · R\d+ · /.test(l)).map((l) => l.slice(2)); };
+const requestsOf = (part) => { const at = requestsBody.indexOf(`## ${part}`); if (at < 0) return []; const rest = requestsBody.slice(at + part.length + 3); const next = rest.indexOf('\n## '); return (next < 0 ? rest : rest.slice(0, next)).split('\n').filter((l) => /^- \d{4}-\d{2}-\d{2} · \S+ · /.test(l)).map((l) => l.slice(2)); };
 const requestsOpen = requestsOf('Open'), requestsDone = requestsOf('Done');
 const built = new Date().toISOString().slice(0, 10);
 const now = state.now;
