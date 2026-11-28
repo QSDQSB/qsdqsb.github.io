@@ -54,9 +54,9 @@ layout: default
     <div class="page__inner-wrap">
       {% unless page.header.overlay_color or page.header.overlay_image %}
         <header>
-          {% if page.title %}<h1><i class="fa fa-regular fa-newspaper" aria-hidden="true"></i> {{ page.title | markdownify | remove: "<p>" | remove: "</p>" }}</h1>{% endif %}
+          {% if page.title %}<h1>{{ page.title | markdownify | remove: "<p>" | remove: "</p>" }}</h1>{% endif %}
           {% if page.read_time %}
-            <p class="page__meta"><i class="fa fa-solid fa-business-time" aria-hidden="true"></i> {% include read-time.html %}</p>
+            <p class="page__meta">{% include read-time.html %}</p>
           {% endif %}
         </header>
       {% endunless %}
@@ -112,6 +112,6 @@ layout: default
       </div>
     {% endif %}
     {%- comment -%} The site's last line, inside the content column so it centres on the content, not the window. {%- endcomment -%}
-    {% include_cached colophon.html %}
+    {% include_cached colophon.html line=page.signoff %}
   </div>
 </div>

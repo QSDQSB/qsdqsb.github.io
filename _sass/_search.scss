@@ -1,5 +1,6 @@
 /* ==========================================================================
-   SEARCH
+   SEARCH — the panel under the menu bar, in the site's grammar: glass of 14 px, a control's corners
+   of 10 px, Barlow on the field and its labels, ivory titles, ink badges, brass for what is on.
    ========================================================================== */
 
 .layout--search {
@@ -9,6 +10,7 @@
 }
 
 .search__toggle {
+  position: relative;
   margin-left: $nav-shell-gap;
   margin-right: 0.06rem;
   flex: 0 0 auto;
@@ -21,20 +23,29 @@
 
   svg { width: 17px; height: 17px; stroke-width: 1.5; }
 
+  // Open, it shows that it is on (the brass hairline under it) and how to close it (its mark becomes a cross).
+  .search__toggle-close { display: none; }
+  &.is-active .search__toggle-open { display: none; }
+  &.is-active .search__toggle-close { display: inline; }
+  &.is-active::after {
+    content: "";
+    position: absolute;
+    left: 0.35rem;
+    right: 0.35rem;
+    bottom: 0.15rem;
+    height: 1px;
+    background: rgba($intriguing-word-color, 0.7);
+    pointer-events: none;
+  }
+
   &:focus-visible { background-color: var(--control-soft); }
   @include responsive-hover {
     &:hover { background-color: var(--control-soft); }
   }
 
   &:focus-visible {
-    @include brass-focus;
     outline-offset: -2px; // inside: the bar's clip would cut a ring set off its edge
   }
-}
-
-.search-icon {
-  width: 100%;
-  height: 100%;
 }
 
 // The tarot cards wait unseen in the lower corners, above everything: while the panel is open a click
@@ -43,7 +54,7 @@ body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-e
 
 .search-content {
   position: fixed;
-  top: calc(var(--search-panel-top, 0px) + #{$search-panel-offset-y});
+  top: calc(var(--search-panel-top, 0px) + 2rem);
   left: 0;
   right: 0;
   bottom: 0;
@@ -53,27 +64,26 @@ body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-e
   opacity: 0;
   pointer-events: none;
   overflow-y: auto;
-  padding: 0 $search-panel-page-padding $search-panel-page-padding;
+  padding: 0 1rem 1rem;
   transform: translate3d(0, -0.45rem, 0);
   transition:
     opacity 0.24s $cubic-bezier-smooth,
     transform 0.28s $cubic-bezier-smooth,
     visibility 0s linear 0.28s;
 
+  // One fill at every width: on a phone the page must not show through the results (it did in Safari).
   &__inner-wrap {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding: $search-panel-page-padding $search-panel-padding-x;
-    -webkit-animation: $intro-transition;
-    animation: $intro-transition;
-    -webkit-animation-delay: 0.15s;
+    padding: 1rem 0.95rem;
+    animation: intro 0.3s both;
     animation-delay: 0.15s;
-    border: 3px solid $border-color;
-    border-radius: $border-radius * 3;
-    background: #121212AA;
+    border: 1px solid var(--glass-edge);
+    border-radius: $border-radius;
+    background: rgba(18, 18, 18, 0.92); // dense enough to read on its own: Safari did not blur here
     box-shadow: $shadow-floating;
-    @include backdrop-blur(blur(25px));
+    @include backdrop-blur($glass-blur);
     pointer-events: auto;
 
     @include responsive-up(wide) {
@@ -81,10 +91,9 @@ body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-e
     }
 
     @include responsive-up(desktop) {
-      padding-left: $search-panel-padding-x-large;
-      padding-right: $search-panel-padding-x-large;
+      padding-left: 1.15rem;
+      padding-right: 1.15rem;
     }
-
   }
 
   &__form {
@@ -97,35 +106,25 @@ body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-e
     display: block;
     width: 100%;
     margin-bottom: 0;
-    padding: 0.5rem 1rem;
-    border: 2px solid $border-color;
-    border-radius: 999px;
-    outline: none;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: $border-radius;
     box-shadow: none;
-    background-color: $search-panel-input-surface;
+    background-color: $code-background-color;
     color: $primary-color;
-    font-size: $type-size-3;
-    transition:
-      border-color 0.24s $cubic-bezier-smooth,
-      box-shadow 0.24s $cubic-bezier-smooth,
-      background-color 0.24s $cubic-bezier-smooth;
-
-    @include responsive-up(desktop) {
-      font-size: $type-size-2;
-    }
-
-    @include responsive-up(wide) {
-      font-size: $type-size-1;
-    }
+    font: 400 1.15rem/1.3 $barlow-font-family;
+    letter-spacing: 0.01em;
+    transition: border-color 0.24s $cubic-bezier-smooth;
 
     &::placeholder {
-      color: $search-panel-muted-text;
+      color: var(--ink-3);
       opacity: 1;
     }
 
-    &:focus {
-      border-color: $search-panel-input-border-color-focus;
-      box-shadow: inset 0 0 0 1px $search-panel-input-border-color-focus;
+    // Where the reader is typing: the brass hairline, which is the ring a keyboard would bring.
+    &:focus-visible {
+      outline: none;
+      border-color: $intriguing-word-color;
     }
   }
 
@@ -142,23 +141,11 @@ body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-e
     }
   }
 
-  .results__found {
-    margin-top: 1rem;
-    margin-bottom: 0.9rem;
-    font-size: $type-size-6;
-    color: $search-panel-muted-text;
-    letter-spacing: 0.02em;
-  }
-
+  .results__found,
   .results__status {
-    margin-top: 1rem;
-    margin-bottom: 0;
-    padding: 0.7rem 0.9rem;
-    border: 2px solid $border-color;
-    border-radius: $search-suggestion-radius;
-    background-color: $search-panel-input-surface;
-    color: $search-panel-muted-text;
-    font-size: $type-size-6;
+    @include eyebrow;
+    margin: 1rem 0 0.9rem;
+    color: var(--ink-3);
   }
 
   .archive__item {
@@ -178,16 +165,17 @@ body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-e
     margin-bottom: 0.35rem;
     line-height: 1.3;
 
-    a {
+    a,
+    a:visited {
+      color: var(--ink);
       transition: color 0.24s $cubic-bezier-smooth;
     }
 
     a:hover,
     a:focus-visible {
-      color: $search-panel-input-border-color-focus;
+      color: #fff;
+      text-decoration: none;
     }
-
-    a:focus-visible { @include brass-focus; }
   }
 
   .search-result__header {
@@ -215,33 +203,15 @@ body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-e
     }
   }
 
+  // What a result is, in ink, as every tag is.
   .search-result__type {
     @include type-badge-shell;
-    transform: translateY(-0.03rem);
-  }
-
-  .search-result__type i {
-    font-size: 0.72rem;
-  }
-
-  .search-result__type-label {
+    border-color: var(--ink-3);
+    border-radius: $border-radius;
+    background: none;
+    color: var(--ink-2);
+    font-family: $barlow-font-family;
     font-weight: 500;
-  }
-
-  .search-result__type--post {
-    @include type-badge-variant(rgba($warning-color, 0.46), rgba($warning-color, 0.14), mix(#fff, $warning-color, 20%));
-  }
-
-  .search-result__type--voyage {
-    @include type-badge-variant(rgba($success-color, 0.48), rgba($success-color, 0.14), mix(#fff, $success-color, 20%));
-  }
-
-  .search-result__type--portfolio {
-    @include type-badge-variant(rgba($link-color, 0.42), rgba($link-color, 0.15), mix(#fff, $link-color, 18%));
-  }
-
-  .search-result__type--other {
-    @include type-badge-variant(rgba($primary-color, 0.22), rgba($primary-color, 0.1), mix(#fff, $text-color, 18%));
   }
 
   .archive__item-excerpt {
@@ -253,7 +223,7 @@ body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-e
 
   .search-result__snapshot {
     margin: 0.3rem 0 0;
-    color: mix(#fff, $search-panel-muted-text, 10%);
+    color: var(--ink-2);
     font-size: $type-size-7;
     line-height: 1.46;
     letter-spacing: 0.008em;
@@ -278,7 +248,7 @@ body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-e
 .search-suggestions {
   display: none;
   gap: 0.45rem;
-  margin-top: $search-panel-offset-y;
+  margin-top: 1rem;
 
   &.is--visible {
     display: grid;
@@ -290,11 +260,11 @@ body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-e
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: $search-suggestion-padding-x;
+  gap: 0.9rem;
   width: 100%;
-  padding: 0.72rem $search-suggestion-padding-x;
-  border: 2px solid $border-color;
-  border-radius: $search-suggestion-radius;
+  padding: 0.72rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: $border-radius;
   background: transparent;
   color: $text-color;
   cursor: pointer;
@@ -302,28 +272,13 @@ body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-e
   text-align: left;
   transition:
     border-color 0.24s $cubic-bezier-smooth,
-    background-color 0.24s $cubic-bezier-smooth,
-    transform 0.24s $cubic-bezier-smooth;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: $search-suggestion-accent-inset;
-    bottom: $search-suggestion-accent-inset;
-    left: 0;
-    width: 0.22rem;
-    border-radius: 999px;
-    background: var(--search-suggestion-accent, #{$search-suggestion-accent-default});
-  }
+    background-color 0.24s $cubic-bezier-smooth;
 
   &:hover,
   &:focus-visible {
     border-color: rgba($primary-color, 0.2);
-    background-color: $search-panel-input-surface;
-    transform: translateY(-1px);
+    background-color: var(--control);
   }
-
-  &:focus-visible { @include brass-focus; }
 }
 
 .search-suggestion__label,
@@ -334,38 +289,28 @@ body:has(.search-content.is--visible) .floating_tarot_card_container { pointer-e
 
 .search-suggestion__label {
   min-width: 0;
-  font-size: $type-size-6;
+  font: 400 $type-size-6 $global-font-family; // a page's title: the serif
   color: $primary-color;
 }
 
 .search-suggestion__meta {
   flex: 0 0 auto;
-  font-size: $type-size-8;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: mix(#fff, $text-color, 38%);
+  @include eyebrow;
+  color: var(--ink-3);
 }
 
 .search-highlight {
   display: inline;
   padding: 0 0.08em;
   border-radius: 0.22em;
-  background-color: rgba($search-suggestion-accent-default, 0.2);
+  background-color: rgba($primary-color, 0.2);
   color: inherit;
   font-style: normal;
 }
 
 @include responsive-down(compact) {
   .search-content {
-    padding-left: $search-panel-page-padding-mobile;
-    padding-right: $search-panel-page-padding-mobile;
-  }
-
-  .search-content__inner-wrap {
-    padding-left: $search-panel-padding-x;
-    padding-right: $search-panel-padding-x;
-    z-index: 9999;
-    background-color: #d0d0d020;
-    @include backdrop-blur(blur(30px));
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
 }

@@ -14,9 +14,8 @@
     view-transition-name: main-content;
   }
 
-  .masthead {
-    view-transition-name: masthead;
-  }
+  /* The menu bar takes no name of its own: a named element is a backdrop root, and its glass would
+     blur nothing of the page beneath (Chrome). It goes with the root's crossfade. */
 
   .page__inner-wrap header h1 {
     view-transition-name: page-title;
@@ -44,13 +43,6 @@
   ::view-transition-new(main-content) {
     animation-duration: 0.4s;
     animation-timing-function: $cubic-bezier-standard;
-  }
-
-  /* Masthead transition - keep it stable */
-  ::view-transition-old(masthead),
-  ::view-transition-new(masthead) {
-    animation-duration: 0.2s;
-    animation-timing-function: ease-in-out;
   }
 
   /* Page title transition */
@@ -125,8 +117,6 @@
     ::view-transition-new(root),
     ::view-transition-old(main-content),
     ::view-transition-new(main-content),
-    ::view-transition-old(masthead),
-    ::view-transition-new(masthead),
     ::view-transition-old(page-title),
     ::view-transition-new(page-title),
     ::view-transition-old(page-content),

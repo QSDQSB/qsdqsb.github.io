@@ -76,7 +76,7 @@ body:hover .visually-hidden button {
   z-index: 10000;
   padding: 0.55rem 0.95rem;
   border: 1px solid rgba($intriguing-word-color, 0.6);
-  border-radius: 999px;
+  border-radius: $border-radius;
   background: rgba(10, 10, 12, 0.9);
   color: $lighter-gray;
   font: 500 max(0.66rem, 11px) $barlow-font-family;
@@ -95,19 +95,12 @@ body:hover .visually-hidden button {
    Type
    ========================================================================== */
 
-.text-left {
-  text-align: left;
-}
-
-.text-color {
-  color: $text-color;
-}
 //  utility classes for post signatures
 .sans-serif {
-  font-family: $sans-serif;
+  font-family: $global-font-family;
   color: $primary-color;
   h1, h2, h3, h4, h5, h6, p, a, blockquote {
-    font-family: $sans-serif;
+    font-family: $global-font-family;
     color: $primary-color;
   }
 }
@@ -131,19 +124,8 @@ body:hover .visually-hidden button {
 .text-center {
   text-align: center;
 }
-.text-italic {
-  font-style: italic;
-}
 .text-right {
   text-align: right;
-}
-
-.text-justify {
-  text-align: justify;
-}
-
-.text-nowrap {
-  white-space: nowrap;
 }
 
 
@@ -166,29 +148,7 @@ body:hover .visually-hidden button {
 
 /* image align left */
 
-.align-left {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-
-  @include responsive-up(mobile) {
-    float: left;
-    margin-right: 1em;
-  }
-}
-
 /* image align right */
-
-.align-right {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-
-  @include responsive-up(mobile) {
-    float: right;
-    margin-left: 1em;
-  }
-}
 
 /* image align center */
 
@@ -221,43 +181,6 @@ body:hover .visually-hidden button {
   vertical-align: middle;
 }
 
-/* social icons*/
-.h1 .fa-newspaper {
-  color: #fa9b39;
-}
-
-.social-icons {
-  .fa {
-    color: #fff;
-  }
-  .fa-location-arrow {
-    color: #e0a432;
-  }
-  .fa-envelope {
-    color: #59c0f5;
-  }
-  .fa-github,
-  .fa-github-alt,
-  .fa-github-square {
-    color: #d2d2d2;
-  }
-  .fa-instagram {
-    color: #ff88d1;
-  }
-  .fa-business-time {
-    color: #32506d;
-  }
-  .fa-lastfm,
-  .fa-lastfm-square {
-    color: #d51007;
-  }
-
-  .fa-linkedin,
-  .fa-linkedin-square {
-    color: $linkedin-color;
-  }
-  
-}
 
 
 /*
@@ -385,56 +308,6 @@ body:hover .visually-hidden button {
    Modals
    ========================================================================== */
 
-.show-modal {
-  overflow: hidden;
-  position: relative;
-
-  &:before {
-    position: absolute;
-    content: "";
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 999;
-    background-color: rgba(0, 0, 0, 0.85);
-  }
-
-  .modal {
-    display: block;
-  }
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  width: 300px;
-  top: 50%;
-  left: 50%;
-  margin-left: -150px;
-  margin-top: -150px;
-  min-height: 0;
-  z-index: 9999;
-  background: #000;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  box-shadow: $box-shadow;
-
-  &__title {
-    margin: 0;
-    padding: 0.5em 1em;
-  }
-
-  &__supporting-text {
-    padding: 0 1em 0.5em 1em;
-  }
-
-  &__actions {
-    padding: 0.5em 1em;
-    border-top: 1px solid $border-color;
-  }
-}
-
 
 /*
    Footnotes
@@ -483,13 +356,6 @@ a.reversefootnote {
   transition: filter ($global-transition-time*3) ease-in-out;
   &:hover {
     filter: grayscale(0%);
-  }
-}
-.opacity-hover {
-  opacity: 0.2;
-  transition: opacity ($global-transition-time*2) ease-in-out;
-  &:hover {
-    opacity: 1;
   }
 }
 
@@ -611,100 +477,12 @@ html.motion-off .text-type-writer span span { animation: none; }
   }
 }
 
-.hover-scale {
-  transition: $cubic-bezier-default-05s;
-  transform: scale(1);
-  &:hover {
-    transform: scale(1.05);
-  }
-}
-
-// Gradient utility classes — relocated from _variables.scss, which is for
-// shared tokens, not a home for a self-contained component (see CLAUDE.md
-// SCSS Authoring rules). $linear-gradient-* tokens stay in _variables.scss.
-@mixin gradient-background($gradient-background) {
-   background: $gradient-background;
-}
-
-@mixin gradient-text-color($gradient-text-color) {
-   background: $gradient-text-color;
+// The one gradient type still set by an author (a few words in the treatise and the diaries).
+.macaron {
+   background: linear-gradient(90deg, rgba(249,237,209,1) 0%, rgba(254,170,194,1) 20%, rgba(247,117,169,1) 40%, rgba(184,222,164,1) 60%, rgba(182,237,232,1) 80%, rgba(143,219,216,1) 100%);
    background-clip: text;
    -webkit-background-clip: text;
    color: rgba(255, 255, 255, 0.1);
-}
-.text-color-megatron {
-   @include gradient-text-color($linear-gradient-megatron);
-}
-.text-color-sunset-orange-blue {
-   @include gradient-text-color($linear-gradient-sunset-orange-blue);
-}
-.text-color-peach-pink {
-   @include gradient-text-color($linear-gradient-peach-pink);
-}
-.macaron {
-   @include gradient-text-color($linear-gradient-macaron);
-}
-
-@property --linear-gradient-degree {
-   syntax: '<angle>';
-   inherits: false;
-   initial-value: 49deg;
-}
-
-.background-color-peach-pink {
-   background: linear-gradient(var(--linear-gradient-degree), rgba(255, 255, 196, 1.000) 0%, rgba(255, 97, 100, 1.000) 55%, rgb(198, 74, 68) 100%);
-   transition: --linear-gradient-degree 0.5s;
-   --linear-gradient-degree: 49deg;
-   &:hover { // When hover, change the direction of gradient
-      --linear-gradient-degree: -50deg;
-   }
-}
-.hover-scale.background-color-peach-pink {
-   transition:
-      transform 0.5s $cubic-bezier-param,
-      --linear-gradient-degree 0.5s linear;
-}
-.background-color-megatron {
-   @include gradient-background($linear-gradient-megatron);
-}
-.background-color-sunset-orange-blue {
-   @include gradient-background($linear-gradient-sunset-orange-blue);
-}
-.background-color-titanium {
-   @include gradient-background($linear-gradient-titanium);
-}
-
-@property --linear-gradient-animation-degree {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 49deg;
-}
-
-.background-color-peach-pink-animated {
-   transition: $cubic-bezier-default-05s;
-   background: linear-gradient(var(--linear-gradient-animation-degree), rgba(255, 255, 196, 1.000) 0%, rgba(255, 97, 100, 1.000) 55%, rgb(198, 74, 68) 100%);
-   animation: infinite-gradient-animation 15s ease-in-out infinite;
-}
-@include responsive-reduced-motion {
-  .background-color-peach-pink-animated { animation: none; }
-}
-
-@keyframes infinite-gradient-animation {
-   0% {
-      --linear-gradient-animation-degree: 49deg;
-   }
-   25% {
-      --linear-gradient-animation-degree: 159deg;
-   }
-   50% {
-      --linear-gradient-animation-degree: 229deg;
-   }
-   75% {
-      --linear-gradient-animation-degree: 319deg;
-   }
-   100% {
-      --linear-gradient-animation-degree: 409deg; // 49deg + 360deg to complete the cycle
-   }
 }
 
 .lyrics {

@@ -30,14 +30,6 @@ window.QSD.rafGate = function(fn) {
 };
 
 document.addEventListener("DOMContentLoaded", function(){
-   // Sticky footer
-  var bumpIt = function() {
-    var footer = document.querySelector(".page__footer");
-    if (!footer) { document.body.style.marginBottom = "0px"; return; }
-    var cs = getComputedStyle(footer);
-    var h = footer.offsetHeight + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom);
-    document.body.style.marginBottom = h + "px";
-  };
   var VIEWPORT_TRAILING_MS = 140;
   var viewportRafScheduled = false;
   var viewportTrailingTimer = null;
@@ -141,7 +133,6 @@ document.addEventListener("DOMContentLoaded", function(){
       return;
     }
 
-    bumpIt();
     stickySideBar({ phase: phase, viewport: viewport });
     dispatchViewportChange(source, phase, viewport);
   };

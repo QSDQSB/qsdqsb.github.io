@@ -46,4 +46,3 @@ Skills
   * <span lang="zh">还很能拉</span>
   * <span lang="zh">还很能撒</span>
 
-{% include qsd-logo.html %}

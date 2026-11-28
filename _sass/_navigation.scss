@@ -2,55 +2,6 @@
    NAVIGATION
    ========================================================================== */
 
-/*
-   Breadcrumb navigation links
-   ========================================================================== */
-.breadcrumbs {
-  @include container;
-  @include clearfix;
-  margin-top: 0;
-  margin-bottom: 0;
-  padding-left: 2em;
-  padding-right: 2em;
-  font-family: $sans-serif;
-  -webkit-animation: intro 0.3s both;
-          animation: intro 0.3s both;
-  -webkit-animation-delay: 0.15s;
-          animation-delay: 0.15s;
-
-  @include responsive-up(desktop) {
-    padding-left: 1em;
-    padding-right: 1em;
-  }
-
-  @include responsive-up(wide) {
-    max-width: $x-large;
-  }
-
-  ol {
-    padding: 0;
-    list-style: none;
-    font-size: $type-size-6;
-
-    @include responsive-up(desktop) {
-      float: right;
-      width: calc(100% - #{$right-sidebar-width-narrow});
-    }
-
-    @include responsive-up(wide) {
-      width: calc(100% - #{$right-sidebar-width});
-    }
-  }
-
-  li {
-    display: inline;
-  }
-
-  .current {
-    font-weight: bold;
-  }
-}
-
 
 /*
    Post pagination navigation links
@@ -427,54 +378,12 @@
    Navigation list
    ========================================================================== */
 
-.nav__list {
-  font-size: 1.25rem;
-
-  ul {
-    margin-bottom: 1em;
-  }
-
-  a {
-    display: block;
-    padding: 0.125em 0;
-    color: inherit;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  .active {
-    margin-left: -0.5em;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    color: #fff;
-    font-weight: bold;
-    background: $primary-color;
-    border-radius: $border-radius;
-
-    &:hover {
-      color: #fff;
-    }
-  }
-}
-
 .nav__title {
   margin: 0;
   padding: 0.5rem 1rem;
-  font-family: $sans-serif-narrow;
+  font-family: $global-font-family;
   font-size: $type-size-4;
   font-weight: bold;
-}
-
-.nav__sub-title {
-  display: block;
-  margin: 0.5rem 0;
-  padding: 0.5rem 0;
-  font-family: $sans-serif-narrow;
-  font-size: $type-size-6;
-  font-weight: bold;
-  border-bottom: 1px solid $border-color;
 }
 
 
@@ -488,7 +397,7 @@
   transition: $cubic-bezier-default;
   max-height: 60vh;
   overflow: hidden;
-  font-family: $tag-font-family;
+  font-family: $barlow-font-family;
   color: $light-gray;
   border: 1px solid $border-color;
   border-radius: $border-radius;
@@ -545,7 +454,7 @@
   list-style: none;
   font-size: $type-code-size - 0.05rem;
   font-weight: 400;
-  font-family: $tag-font-family;
+  font-family: $barlow-font-family;
   a {
     color: $light-gray;
     text-decoration: none;
