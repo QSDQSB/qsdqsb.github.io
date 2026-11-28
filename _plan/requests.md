@@ -6,6 +6,7 @@ to Done with its pull request.
 
 ## Open
 
+- 2026-11-28 · R036 · We are adding St Moritz voyage, with excerpt "Where gold dissolves into glacial blue", date 18.10.2026 (Also DD.MM.YYYY should be the consensus format on this site when showing the full date, you should change the posts' Date display as well), photos in '/Users/apple/Desktop/St Moritz'
 - 2026-11-27 · R032 · On Palette's head (Q21, answered none of these): prefer B [Playfair upright] but we should re-design the hero-side, maybe we should follow the hero-overlay layout, and decide where to lay the palette lists.
 - 2026-11-27 · R030 · Also the voyage by tags page and post by tags page's layout is inconsistent. We should re-build from scratch.
 - 2026-11-27 · R028 · It also goes to the UI side as well, e.g. the rounded rectangular card for each post / voyage / palette, vs. the exhaustive bar for different palette etc. These aesthetic elements need reconcile.

@@ -1,0 +1,8 @@
+# Authored layer for gallery/st-moritz — captions, order, stories.
+# Slugs are camera frame numbers; see _docs/photos-pipeline.md.
+# The cover: the gold larch leaning in over the lake, the peak of the far valley at its edge.
+# Set right of centre so a near-square phone cut keeps both the larch and the peak.
+cover:
+  photo: dscf4376
+  focus: [0.62, 0.52]
+photos: {}
