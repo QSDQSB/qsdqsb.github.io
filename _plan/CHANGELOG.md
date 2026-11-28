@@ -11,6 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
+- 2026-11-28 · Beside a post's text the contents stay the framed table, a hairline under each row, as before; only above the text do they fold to one row · tier 0
 - 2026-11-28 · After a post's last sentence the intriguing word keeps its own card at its own width · tier 0
 - 2026-11-27 · What follows a post's last sentence (tags, subscribe, previous and next) stands on the text's own width; You Might Also Enjoy keeps its four covers at full width, as the owner asked on 2026-11-28 (Q24) · tier 2
 - 2026-11-27 · Chinese beside Playfair is set in a Song face by default on every page, from the device's own where it has one, else from slices of Noto Serif SC that a page fetches only as it needs them; the essays' own setting of it is gone (Q25) · tier 2

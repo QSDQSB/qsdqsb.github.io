@@ -483,7 +483,7 @@
    ========================================================================== */
 
 // Above the text (below a wide window) the contents are a frame holding one row, its title and how
-// many parts, opened by a press; beside the text they are a plain list, with no frame and no lines.
+// many parts, opened by a press; beside the text they are the same frame, open, a hairline under each row.
 .toc {
   transition: $cubic-bezier-default;
   max-height: 60vh;
@@ -492,7 +492,6 @@
   color: $light-gray;
   border: 1px solid $border-color;
   border-radius: $border-radius;
-  @include responsive-up(wide) { border: 0; border-radius: 0; }
 
   .nav__title {
     @include eyebrow;
@@ -552,8 +551,9 @@
     text-decoration: none;
     display: block;
     border-radius: $border-radius;
-    padding: 0.55em 1em;
+    padding: 0.5em 1em;
     line-height: 1;
+    border-bottom: 1px solid darken($border-color, 0.5);
   }
 
   li ul > li a {
