@@ -17,8 +17,7 @@ words on the way: of the pages as they stood, "the tags display atm is a terribl
 it"; of a wrapped row of tag names, "this is very boring and undesired. it's a nightmare when scaled up." So a
 tag is not a word in a list. Picked from prototypes (the choice page `tag-pages`, option A: a wall of doors over a column of covers).
 
-- Both pages are `_includes/tag-page.html`: a doorway. Each tag is a door; the doors stand as a wall, every
-  door one square, the fullest tags first.
+- Both pages are `_includes/tag-page.html`. Each tag is a small square door, the fullest first.
 - A door's face (the owner, 2026-11-27, of the built photograph doors): "We should intentionally use Barlow +
   emoji for tag titles"; "use not the picture, but the dry vat generated from the picture"; "hovering on the
   dry-vat background tag card transforms the background to the actual picture"; "Pick an underlying cover image
@@ -73,8 +72,48 @@ tag is not a word in a list. Picked from prototypes (the choice page `tag-pages`
 The corner tarot cards on these two pages sit over part of the door in the first and last column; asked
 with the pull request, the owner: "Keep them".
 
-Still the owner's, asked with the pull request: a line per tag for its door, naming a tag's photograph by hand
-(the page picks today), and which doors lead the wall.
+Then, with the pull request open: "i think the zoom-in transition on hover isn't reconciling with the site.
+Either make it the default transition time 0.5s, or remove it, also bring back the default author-profile on
+the two tags page", and "i think the openned post-by-tag should be in the same page, maybe we should have small
+tag card blocks, on top of the page, and clicking the card block opens the list of posts / voyages belonging to
+this tag directly below the page", "e.g. it's trackable via qsdqsb.com/posta-by-tag/#emo". So the doors no
+longer grow under the pointer; the profile is back; and a tag no longer opens a room with its own hero and a
+"Next door" row: the doors stay at the head of the page as small squares, and choosing one opens its list right below them, the page keeping the doors in
+sight. The address names the tag (`/tags/#emo`), Back steps through the tags chosen, and the open tag's door
+shows its photograph. Without script the list opens by `:target`.
+- Then: "the tag can be much smaller. Have a subagent indicate the correct size, i think it should be at least
+  50% smaller (with respect to the text size)". The subagent read it as the door shrinking round its name, not
+  the name halving: the floor is the longest word ("Switzerland", about 6.4 times the name's size). Built as it
+  proposed: as many doors to a row as fit at a side of at least 4.9rem (four on a 390 phone, eleven at 1440),
+  the name at 0.8rem; the doors take 45 to 59% less area and the set of them 41 to 70% less height.
+- Then: "the tag should have the same size as the tags in the actual article"; "give me prototype eexamples so
+  i can compare"; "i prefer to keep the dry vat but as small squares"; "what if we just keep the emoji inside the
+  dry vat?"; and of the small squares at the onward links' size: "not aesthetic. figure out why and suggest". The
+  reading given: the vat is made round, and cut square it reads as an out-of-focus thumbnail, a tiny name in a
+  coloured tile as a filename, and a grid of shadowed squares as a phone's home screen. Palette's round vat
+  beside a name was suggested; the owner: "what if tags behave on a list on the left, just like palette page?"
+  Built three ways (the choice page `tag-left`, Q26); the owner: "we can use C" (under the author profile), "but
+  please let two subagents with /design-taste-frontend and /ponytail:ponytail-review to further improve the UI on
+  tags, for example, what's the default tag view, if there should be soemthing on the beginning of page".
+- From both reviews, C was built: the tags in the column under the author, every entry open when no tag
+  is chosen, the address opening a list by itself (`:target`). The owner: "not good enough, don't capature
+  the baseline yet. We should finalise the design first. i think you should propose 5 alternative versions
+  that is more matching the site's aesthetic language". Read against the language, C had broken three
+  lines (a soft pill for the open tag where rule 4 asks for a brass hairline, counts at a doorway, each tag
+  in full colour); five versions were built (the choice page `tag-five`, Q27). The owner: "ok , maybe we
+  should forget about the dry vat idea for tags?"; told why the vat said nothing about a tag (its colours
+  were one photograph's, picked by the page), "yes it makes sense, but 1. keep author profile; 2. we should
+  have a consistent animation when hovered, and slightly better layout".
+- So the vats are gone, and with them the per-tag photograph, `tag-door-vat.html`,
+  `generate-cover-palettes.mjs` and its data. A tag in the column is its emoji, in a column of its own so
+  the names align, and its name in regular Barlow; under the pointer its ink brightens in the time and on
+  the curve of the tag a post carries; the open one carries the menu's brass hairline under its name. No
+  counts. On a laptop the column stays in view, the author and then the tags under a hairline, and only the
+  tags scroll when the screen is short; below 1152 px the tags alone stand above the list. The left tarot
+  card takes no click while the tags are under it.
+
+Still open, the owner's: whether a tag's list should say what it is, or live on its index instead
+(I007, "IS IT REALLY THE BEST WAY TO DISPLAY TAG COLLECTIONS?", being shaped).
 Three people brainstormed the reader's experience; what was not built is in the pull request's note. The
 atlas's popup and the frontmatter warning below are untouched.
 
@@ -157,6 +196,48 @@ digest says which was done.
       the marker's colour. The same line is repeated in
       `.claude/skills/frontmatter-contract-enforcer/SKILL.md`, `.claude/agents/voyage-scaffolder.md`,
       `.claude/commands/content-check.md` and `_docs/layouts.md`.
+
+## A line under an open post tag (I007, answered 2026-11-28)
+
+The owner asked of the built list "IS IT REALLY THE BEST WAY TO DISPLAY TAG COLLECTIONS?" ([I007](../ideas/I007-this-design-is-acceptable-we-can-call.md)).
+Moving the tags onto Posts and Voyage was built and dropped. From the choice page `tag-collections`, the owner picked B,
+a line under an open tag's name, and wrote each line on the page `tag-lines`
+(https://claude.ai/artifact/5A4rsBQyKwB6b4GvPRk5QD). Of voyages: "i don't thikn voyage needs tag contents".
+So only `/tags/` carries lines, and `/voyage-by-tags/` stays as built.
+
+- [x] Built with R035 below (on `work/r030-list`, not after a merge): port B's prototype (branch `proto/i007-b`, `.claude/worktrees/agent-a1ee632d6472a8c48`):
+      the line under `.tag-page__room-name`, the shared `lede` (Playfair upright since #147), held
+      smaller than the name. `_data/tag_lines.yml` holds `posts:` only,
+      these words exactly as the owner wrote them:
+
+```yaml
+posts:
+  "💍Horcrux": "Where you can find a piece of QSD or QSB."
+  "🧼QSD's Philosophy": "QSD's perspective of the world. No guarantee of coherence."
+  "🍜Life": "We should hope every weekend is at least slightly different."
+  "📘Diary": "And which normal people would write a diary?"
+  "😻Happy Moments": "Life needs joyful moments!"
+  "🗒TODO": "#TODO is #TODO."
+  "🏦卷！": "I don't think future content will include this tag, hopefully not."
+  "🐮Ox": "We don't see Oxen in Oxford, we see cows."
+  "😢Emo": "Maybe it's nice, to be able to feel something."
+  "🍡Tutorial": "Do you think QSD is a good teacher?"
+```
+
+      Keys are copied from front matter, emoji and variation selectors included. Copy them from the prototype's file, not by hand.
+      A changelog line and a step in the `post-tags` journey come with it.
+
+## R035 · One line of tags (2026-11-28)
+
+Of the list under the author, as built: "Bad design. Try again" (R035). Three forms were built as prototypes
+(the choice page `tag-pages-2`, Q29): the open tag as the page's heading that opens the others in the menu's
+panel (A, the lead's pick), every tag a chapter with a contents beside (B), and one unwrapped line of tags (C).
+The owner: "C: one line". Built on `work/r030-list` from prototype C: the tags leave the column, which is the
+author's again, and stand in one line at the head of the list that never wraps (what does not fit runs on
+sideways under a fade, the open tag brought to the middle, the line scrolling itself and never the page); the
+open tag keeps the menu's brass hairline, a tag the brightening every tag has; the open post tag carries the
+owner's line (I007). The strain the prototype named stays: it is still a row of names, so twice the tags puts
+more of them out of sight, and a mouse wheel cannot reach them (a trackpad, a swipe or Tab can).
 
 ## What needs the owner
 
