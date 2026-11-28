@@ -28,7 +28,7 @@ import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright-core';
+import { chromium, webkit, devices } from 'playwright-core';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const MIME = {
@@ -703,9 +703,10 @@ const JOURNEYS = [
   } },
 
   { id: 'anchor', name: 'A link to a section moves the address and the focus there', async run({ page, go }) {
-    await go('/about/');
+    // The 404's closing line leads back up to its song (About's own such link went with its rainbow logo).
+    await go('/404.html');
     const id = await page.locator('.page__content a[href^="#"]').evaluateAll((as) => as.map((a) => decodeURIComponent(a.getAttribute('href').slice(1))).find((x) => x && document.getElementById(x)) || null);
-    must(id, 'About has no link to one of its own sections');
+    must(id, 'the 404 has no link to one of its own sections');
     await page.locator(`.page__content a[href="#${id}"]`).first().click();
     await page.waitForFunction((x) => location.hash === `#${x}`, id, { timeout: 4000 }).catch(() => {});
     must(decodeURIComponent(new URL(page.url()).hash) === `#${id}`, 'the address did not take the section');
@@ -1010,6 +1011,100 @@ const JOURNEYS = [
     const tops = await plates.evaluateAll((ps) => ps.slice(0, 3).map((p) => Math.round(p.getBoundingClientRect().top)));
     must(new Set(tops).size === 1, `the first three plates are not abreast on a desktop (tops ${tops.join(', ')})`);
     must(await page.locator('.ridgway-swatch[href*="/reverie/?c="]').count() >= 1000, "the plates' colours do not open their Reverie");
+  } },
+
+  { id: 'ending', name: 'A post, a voyage, Home and About end with the same mark, line and links, and from Home a reader reaches RSS and Terms', async run({ page, go, ok }) {
+    const ending = () => page.evaluate(() => {
+      const all = document.querySelectorAll('.site-colophon');
+      const f = all[0];
+      return { count: all.length, mark: !!f?.querySelector('.site-colophon__mark'), line: f?.querySelector('.site-colophon__line')?.textContent.trim() || '',
+        links: f ? [...f.querySelectorAll('.site-colophon__links a')].map((a) => a.getAttribute('href')) : [] };
+    });
+    let first = null;
+    for (const to of ['/posts/in-the-naming-of-light/', '/voyage/barcelona/', '/', '/about/']) {
+      await go(to);
+      const e = await ending();
+      must(e.count === 1, `${to} ends ${e.count} times`);
+      must(e.mark && e.line, `${to}'s ending has no mark or no sign-off`);
+      first ??= e.links;
+      must(JSON.stringify(e.links) === JSON.stringify(first), `${to}'s ending offers other links: ${e.links.join(' ')}`);
+    }
+    must(first.includes('/feed.xml') && first.includes('/terms/'), 'the ending does not lead to RSS and Terms');
+    // On Home the ending closes the last panel (the rooms), which may scroll inside itself: it must come into view there.
+    await go('/');
+    const seen = await page.evaluate(async () => {
+      const body = document.querySelector('.home__panel--index .home__panel-body');
+      body.scrollIntoView({ behavior: 'instant' });
+      body.scrollTop = body.scrollHeight;
+      await new Promise((r) => setTimeout(r, 300));
+      return ['/feed.xml', '/terms/'].every((href) => {
+        const a = document.querySelector(`.site-colophon a[href="${href}"]`); const r = a.getBoundingClientRect();
+        return r.height > 0 && document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)?.closest('a') === a;
+      });
+    });
+    must(seen, 'on Home the ending\'s RSS and Terms cannot be reached');
+    for (const href of ['/feed.xml', '/terms/']) must(await ok(href), `${href} does not answer`);
+  } },
+
+  { id: 'focus-ring', name: 'By keyboard through a post, Home, a voyage and a fable every stop wears the brass ring (on parchment the fable\'s own), none the browser\'s own', async run({ page, go }) {
+    for (const to of ['/posts/in-the-naming-of-light/', '/', '/voyage/barcelona/', '/bestiary/the-milk-plate/']) {
+      await go(to);
+      // Down to the foot too: the way on and the ending are where a keyboard reader ends up.
+      for (const from of ['top', 'foot']) {
+        if (from === 'foot') await page.evaluate(() => { const l = document.querySelectorAll('.site-colophon a'); l[0]?.focus(); });
+        for (let i = 0; i < (from === 'top' ? 24 : 6); i++) {
+          await page.keyboard.press(from === 'top' ? 'Tab' : 'Shift+Tab');
+          const f = await page.evaluate(() => {
+            const el = document.activeElement;
+            if (!el || el === document.body) return null;
+            // A field that clears its own outline hands the ring to its frame (the subscribe slip's).
+            const cs = getComputedStyle(el.matches(".subscribe-slip__input") ? el.closest(".subscribe-slip__form") : el);
+            // On a fable's paper the ring is the page's brass, whatever colour the fable gives it.
+            const probe = document.createElement('i'); probe.style.color = 'var(--fable-brass)'; document.body.append(probe);
+            const fable = document.body.classList.contains('fable-page') && !el.closest('.masthead, .skip-link') ? getComputedStyle(probe).color : null; probe.remove();
+            return { what: `${el.tagName.toLowerCase()}.${[...el.classList].join('.')}`, style: cs.outlineStyle, colour: cs.outlineColor, width: parseFloat(cs.outlineWidth), fable };
+          });
+          if (!f) continue;
+          const brass = f.fable ? f.colour.startsWith(f.fable.slice(0, -1)) : /195, 180, 152/.test(f.colour);
+          must(f.style !== 'auto' && f.width > 0 && brass, `${to}: ${f.what} takes focus with ${f.style} ${f.width}px ${f.colour}, not the ${f.fable ? 'fable\'s' : 'brass'} ring`);
+        }
+      }
+    }
+  } },
+
+  { id: 'search-phone', name: 'In Safari\'s engine on a phone the results stand on the panel\'s dark fill, and the panel shows it can be closed', async run() {
+    const phone = await webkit.launch().catch(() => null);
+    must(phone, 'no WebKit to drive: npx playwright install webkit');
+    try {
+      const p = await (await phone.newContext({ ...devices['iPhone 13'] })).newPage();
+      await p.goto(base + '/year-archive/', { waitUntil: 'load', timeout: 45000 });
+      await p.locator('.search__toggle').click();
+      await p.locator('#search').fill('light');
+      await p.waitForSelector('#results a[href]', { timeout: 20000 }).catch(() => {});
+      const s = await p.evaluate(() => {
+        const wrap = document.querySelector('.search-content__inner-wrap');
+        const alpha = +((getComputedStyle(wrap).backgroundColor.match(/rgba?\(([^)]+)\)/) || [])[1] || '').split(',')[3] ?? 1;
+        const toggle = document.querySelector('.search__toggle');
+        const cross = toggle.querySelector('.search__toggle-close');
+        return { results: document.querySelectorAll('#results a[href]').length, alpha: Number.isNaN(alpha) ? 1 : alpha,
+          open: toggle.getAttribute('aria-expanded') === 'true', cross: !!cross && getComputedStyle(cross).display !== 'none' };
+      });
+      must(s.results >= 1, 'searching "light" on a phone found nothing');
+      must(s.alpha >= 0.9, `the phone's panel is filled at ${s.alpha}: the page shows through the results`);
+      must(s.open && s.cross, 'the open panel does not show that it is open and can be closed');
+    } finally { await phone.close(); }
+  } },
+
+  { id: 'about', name: 'About leads to the CV, and the CV opens under its picture; Terms opens', async run({ page, go }) {
+    await go('/about/');
+    const cv = page.locator('.about__onward a[href="/cv/"]');
+    must(await cv.count() === 1, 'About has no way to the CV');
+    await cv.click();
+    await page.waitForURL('**/cv/', { timeout: 10000 }).catch(() => {});
+    must(new URL(page.url()).pathname === '/cv/', 'the way to the CV did not lead there');
+    must(await page.locator('.page__hero--overlay').count() === 1, 'the CV opens without its picture');
+    await go('/terms/');
+    must(/Terms/.test(await page.locator('h1').first().innerText()), 'Terms opens without its title');
   } },
 
   { id: 'lost', name: 'A wrong address gets the 404 page with ways back', async run({ page, go }) {

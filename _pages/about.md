@@ -26,7 +26,7 @@ header:
   <span>
     <span>🏄 Welcome to QSD's House of Wonders !</span>
     <span lang="zh">🔮 欢迎来到QSD妙妙屋 !</span>
-    <span>👨‍⚖️ QSD&QSB wish you a <i class="macaron">spectacular</i> day!</span>
+    <span>👨‍⚖️ QSD&QSB wish you a <i>spectacular</i> day!</span>
     <span>🛡️ House of QSD: <i lang="la">Mors potius quam tædium</i></span>
     <span>🗺️ Here's a page for you 👉 <a href="/voyage/rome/" target="_blank"><i>Voyage ✨ S·P·Q·R</i></a> !</span>
     <span lang="zh">🐈 欢迎来到QSD妙妙屋 !</span>
@@ -38,7 +38,7 @@ header:
   </span>
 </span></h1>
 
-<a href="/posts/jianfei-diary/" target="_blank" class="notice--pinky background-color-peach-pink-animated hover-scale" style="display: block; text-decoration: none; color: inherit; border-radius: 0.5em;">
+<a href="/posts/jianfei-diary/" target="_blank" class="notice--pinky" style="display: block; text-decoration: none; color: inherit;">
 ➡️➡️➡️  <span class="sans-serif"><b lang="zh">QSD减肥进行时</b> 🏃‍♂️💨💨... !</span>
 <br><i><span style="color: #FCFCFC; font-variant: small-caps;">Attempt #8</span> vom 27.10.2025</i>
 </a>
@@ -65,8 +65,8 @@ header:
 - 🕶S.H.I.E.L.D. agent
 - 📺<span class="barlow">[💷YPM](https://www.imdb.com/title/tt0086831/)! [💻Silicon Valley](https://www.imdb.com/title/tt2575988/)! [🧑‍💼Better Call Saul](https://www.imdb.com/title/tt3032476/)! [👸🏼Disenchantment](https://www.imdb.com/title/tt5363918/)! [🤖Westworld S1-2](https://www.imdb.com/title/tt0475784/)! [🐉Game of Thrones S1-4](https://www.imdb.com/title/tt0944947/)!</span>
 - 👾Emoji crusher(as you can see from this page)
-- 🎨<span class="macaron" lang="zh">马卡龙色系yyds</span>
-- 🐱<span class="macaron" lang="zh">骨灰级猫猫粉</span>
+- 🎨<span lang="zh">马卡龙色系yyds</span>
+- 🐱<span lang="zh">骨灰级猫猫粉</span>
 - 🐟enjoy *<span lang="zh">摸鱼</span>* every day
 - 🏃<span lang="zh">努力减肥中(但愿)</span>
 - 🪷Geographically Hangzhounese, spiritually Shanghainese
@@ -99,6 +99,5 @@ Don't know what this is? It's quite simple — just get a maths degree and you'l
 Consider a language that doesn't support the logic `not`, 13 years after someone pointed it out: *[The Mighty Liquid](https://github.com/Shopify/liquid/issues/138)*
 {: .notice--success}
 
-<p class="about__onward"><a href="{{ '/cv/' | relative_url }}">Curriculum Vitae <span aria-hidden="true">→</span></a></p>
+<p class="about__onward"><a href="{{ '/cv/' | relative_url }}">Curriculum Vitae</a></p>
 
-<div class="logo_wrapper" style="max-width: 60%;"><a href="#a-bizarre-self-intro"><img src="/images/QSDLOGO-2000.svg" alt="QSD Logo" class="logo_style"></a></div>
