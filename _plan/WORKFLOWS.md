@@ -49,7 +49,7 @@ Something is broken, slow, inconsistent or inaccessible.
 3. **Study it** (path 6) if the look is new. The owner sees a design before code: real pages with
    desktop and phone screenshots, or a Figma file.
 4. **Build** on the Photobook shell. New feature → a row in [`FEATURES.md`](FEATURES.md) and a
-   journey in `scripts/check-journeys.mjs`, in the same change.
+   journey (`tests/journeys/<id>.mjs`), in the same change.
 5. Gate, reviewer, changelog.
 
 ## 3. A new piece of grammar
