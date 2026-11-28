@@ -65,6 +65,15 @@ writing (least well), and the person (Home strongly, About weakly).
   layout, which uses playfair display"). This ends the Didot italic lede on heroes; the colour
   pages' line under their title is not a hero's and was not asked. (Asked the same day, Q24:
   Playfair upright there too. See "Settled on the sheets".)
+- The cover cards of posts and voyages rise and grow, gradually, under the pointer, as they did before
+  the still cover (2026-11-28: "we should bring back the voyage / post card transition when they are
+  hovered (enlarged gradually), it was quite pleasing"). This replaces 0009's "the wide cover does
+  nothing under the pointer" and the still cover of Q24; Home's update cards rise the same way. The
+  intriguing word keeps its own card ("we should maintain the previous style of intruiging-card").
+- What follows a post keeps its earlier shape where the owner asked (2026-11-28): You Might Also Enjoy
+  is four covers at the content's full width ("bring back the previous layout of 'YOU MIGHT ALSO
+  ENJOY'"), and beside the text the contents are the framed table, a hairline under each row ("can
+  we just revert to the previous design - the table?"), folding to one row only above the text.
 - Two voices, by rule ([decisions/0012](decisions/0012-two-voices-one-behaviour.md), 2026-11-27, picked
   on Q20 and Q22): a name is set in the serif (the site, a room in the menu, a title, an author and a
   work) and every other word on a control is Barlow; a number meant to be seen is Didot; under the
@@ -230,6 +239,9 @@ owner gave, are [decisions/0009](decisions/0009-how-much.md).
    10 px and 1.05 with a spring; and as built, 4 px and 1.03 over a second.) The one value a session
    builds, 4 px and 1.018, is the lead's, not the owner's ([decisions/0009](decisions/0009-how-much.md)).
 5. **A lift takes 0.3 s** (pick A, of 0.3 s, 0.6 s, and "A full second, as built"). No note.
+   *An exception by the owner's word of 2026-11-28*: the cover cards of posts and voyages and Home's
+   update cards take the old gradual rise instead, 1.03 and a quarter em up with a layered shadow, over a
+   second on the covers and half a second on Home's cards ("it was quite pleasing"). Every other card keeps 4 and 5.
 6. **Words arrive over 0.7 s, from 28 px below, one line after another, and settle** (pick B, of as
    built, which is half a second, 12 px, together; this; and the same with a spring at the end). No
    note.
@@ -247,7 +259,8 @@ owner gave, are [decisions/0009](decisions/0009-how-much.md).
     (see "Not settled", below).
 13. **The wide cover of a voyage does nothing under the pointer**: "Nothing moves, nothing changes"
     (pick A, over "The picture brightens; nothing moves" and "It lifts, as a small card does"). No
-    note.
+    note. *Reversed by the owner on 2026-11-28*: the cover cards of posts and voyages rise and grow
+    gradually again (see the line on cover cards above).
 14. **A voyage's title stays as built: Playfair, bold, upright** (pick A, over "Italic, lighter"). No
     note.
 15. **"The book may speak too, in its empty rooms and ways on"** (pick B, over "The book stays plain
@@ -268,8 +281,10 @@ Settled by round 2. The later word is the owner's, asked directly each time:
   round 1 (pairs 12 and 13) overshot, and their labels did not say so. Asked directly, the owner
   chose "It arrives and stops" (pick 12). Nothing new springs; the one built exception is under
   "Not settled".
-- **The wide cover does nothing under the pointer.** "No hover lift" (Cards, 2026-09-26) stands (pick
-  13), and "The photograph itself never animates on hover" with it. A small card lifts (pair 12;
+- **The wide cover does nothing under the pointer.** "No hover lift" (Cards, 2026-09-26) stood (pick
+  13) until the owner brought the gradual rise back on 2026-11-28; "The photograph itself never
+  animates on hover" stands for the picture's own content, while the cover as a whole now grows and
+  re-crops a little under the pointer by that same word. A small card lifts (pair 12;
   picks 4 and 5).
 - **A voyage's title stays Playfair Display bold** (The look, 2026-09-25; pick 14). The didone italic
   of pair 7 is for storytelling text, not for the title.
