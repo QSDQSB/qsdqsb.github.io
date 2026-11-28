@@ -24,6 +24,6 @@ layout: default
       <h1 class="page__title">{{ page.title }}</h1>
     {% endunless %}
     {{ content }}
-    {% include_cached colophon.html %}{% comment %} in the content column, so it centres on the content {% endcomment %}
+    {% include_cached colophon.html line=page.signoff %}{% comment %} in the content column, so it centres on the content {% endcomment %}
   </div>
 </div>

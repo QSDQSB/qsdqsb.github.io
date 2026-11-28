@@ -259,19 +259,11 @@ function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
     var hasHan = searchHasHanText(normalizedQuery);
     var compactQueryLength = normalizedQuery.replace(/\s+/g, "").length;
 
-    if (!normalizedQuery) {
-      searchRenderStatus(
-        resultdiv,
-        '{{ site.data.ui-text[site.locale].search_start_typing | default: "Start typing to search..." }}'
-      );
-      return;
-    }
-
-    if ((!hasHan && compactQueryLength < SEARCH_MIN_LATIN_LENGTH) || (hasHan && compactQueryLength < SEARCH_MIN_HAN_LENGTH)) {
-      searchRenderStatus(
-        resultdiv,
-        '{{ site.data.ui-text[site.locale].search_start_typing | default: "Start typing to search..." }}'
-      );
+    // Too little to look for: nothing under the field, whose own placeholder is the one prompt.
+    if (!normalizedQuery ||
+        (!hasHan && compactQueryLength < SEARCH_MIN_LATIN_LENGTH) || (hasHan && compactQueryLength < SEARCH_MIN_HAN_LENGTH)) {
+      resultdiv.innerHTML = '';
+      searchAnnounce('');
       return;
     }
 
@@ -348,9 +340,8 @@ function searchRenderResultsFound(resultdiv, totalCount, renderedCount) {
       var resultType = entry.result_type || searchGetResultTypeMeta(entry.collection);
       var resultTypeLabel = searchEscapeHtml(resultType.label || "Other");
       var resultTypeClass = String(resultType.className || "other").replace(/[^a-z0-9_-]/gi, "").toLowerCase();
-      var resultTypeIconClass = searchEscapeHtml(resultType.iconClass || "fa-solid fa-cat");
+      // The word alone, in ink: no filled icon beside it.
       var typeMarkup = '<span class="search-result__type search-result__type--' + resultTypeClass + '" title="' + resultTypeLabel + '" aria-label="' + resultTypeLabel + '">' +
-        '<i class="' + resultTypeIconClass + '" aria-hidden="true"></i>' +
         '<span class="search-result__type-label">' + resultTypeLabel + '</span>' +
       '</span>';
       // Shown only where it says more than the result's own line.

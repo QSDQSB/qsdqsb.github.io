@@ -115,14 +115,15 @@ layout: compress
       <time datetime="{{ parts_first | date: "%Y-%m" }}">{{ parts_when }}</time>
     </p>
   </footer>
-  {% include presented-by-qsd.html %}
   {% include random_voyage_anchor.html posts = subs %}
+  {% assign signoff = page.signoff %}
 {% else %}
   {%- comment -%} A voyage with its own gallery: the Photobook. {%- endcomment -%}
   {% include photobook.html %}
+  {% assign signoff = page.signoff | default: "Shot by QSD." %}
 {% endif %}
 
-{% include_cached colophon.html %}
+{% include_cached colophon.html line=signoff %}
 {% include tarots.html %}
 </body>
 </html>

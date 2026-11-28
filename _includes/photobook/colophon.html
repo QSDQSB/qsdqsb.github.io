@@ -55,7 +55,7 @@
         <p class="palette-strip__hex">{% for s in colour.palette %}<span><i style="--c:{{ s.hex }}"></i>{{ s.hex | remove: "#" | upcase }}<b>{{ s.pc }}%</b>{% if s.accent %}<small>accent</small>{% endif %}</span>{% endfor %}</p>
       </div>
       {%- assign reverie_from = include.book.photos[include.book.book.cover] | default: include.book.photos.first %}
-      <p class="photobook-colophon__onward"><a href="{{ '/palette/' | relative_url }}#{{ include.book.gallery }}">QSD's Palette for {{ page.title | strip_html }} <span aria-hidden="true">→</span></a><a href="{{ '/reverie/' | relative_url }}?from={{ include.book.gallery | append: '/' | append: reverie_from.slug | url_encode }}">Reverie from here <span aria-hidden="true">→</span></a></p>
+      <p class="photobook-colophon__onward"><a href="{{ '/palette/' | relative_url }}#{{ include.book.gallery }}">QSD's Palette for {{ page.title | strip_html }}</a><a href="{{ '/reverie/' | relative_url }}?from={{ include.book.gallery | append: '/' | append: reverie_from.slug | url_encode }}">Reverie from here</a></p>
     </div>
     {%- endif %}
   </div>

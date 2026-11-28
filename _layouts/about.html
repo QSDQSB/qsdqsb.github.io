@@ -28,6 +28,6 @@ positions it. No sidebar → block flow (see .page--about #main in _about.scss).
         {{ content }}
       </section>
     </article>
-    {% include_cached colophon.html %}{% comment %} in the content column, so it centres on the content {% endcomment %}
+    {% include_cached colophon.html line=page.signoff %}{% comment %} in the content column, so it centres on the content {% endcomment %}
   </div>
 </div>

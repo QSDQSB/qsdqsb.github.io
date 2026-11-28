@@ -1,8 +1,12 @@
 {%- comment -%}
-  The quiet last line of every page but Home (whose own panels are its way on): the sections,
-  the letters, the feed and the terms, so no page ends in a wall. Styled in _page.scss.
+  How every page that scrolls ends (Home included; Drift, a viewer, takes none): the house's hairline
+  mark, the page's sign-off as a label (front matter `signoff:`, else "Presented by QSD."), a
+  one-pixel rule, then the sections, the letters, the feed and the terms. Styled in _page.scss.
+  include.line: the sign-off, passed so include_cached keeps one copy per wording.
 {%- endcomment -%}
 <footer class="site-colophon">
+  <span class="site-colophon__mark" aria-hidden="true"></span>
+  <p class="site-colophon__line">{{ include.line | default: "Presented by QSD." }}</p>
   <nav class="site-colophon__links" aria-label="Site">
     {%- for link in site.data.navigation.main %}
     <a href="{{ link.url | relative_url }}">{{ link.title }}</a>
