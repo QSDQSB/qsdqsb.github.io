@@ -62,7 +62,7 @@ Read the output, do not just read the last line:
 
 - **Pixel diff.** A delta on a page the change was not meant to touch is a regression. A delta on a
   page it was meant to touch is expected only if the baselines were re-captured in this change and
-  only for those pages. Count the shots changed in `tests/visual/baseline.json` against the claim (the pictures live in R2).
+  only for those pages. Count the shots changed in `tests/visual/hashes/` against the claim (the pictures live in R2).
 - **Journeys.** A failure is a reader route that no longer works. Nothing else matters until it
   passes.
 - **The plan.** A change readers get needs its line in `_plan/CHANGELOG.md`.
