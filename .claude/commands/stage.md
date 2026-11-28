@@ -11,7 +11,7 @@ Work on a stage of the roadmap: `$ARGUMENTS` (a stage number; with none, the cur
      entry and move to the next task.
    - Build it. Reuse the shared pieces. Add or extend a journey in `tests/journeys/`
      if a reader would notice it breaking.
-   - Add its line to `_plan/CHANGELOG.md` if a reader gets something different.
+   - Add its entry (`node scripts/plan.mjs log "…"`) if a reader gets something different.
 4. Run `bash -lc 'npm run gate:full'` (or `npm run gate` if nothing under `_sass/`, `_layouts/`,
    `_includes/`, `assets/js/`, `_pages/` changed). Fix what fails.
 5. Hand the change to the `site-reviewer` agent. On BLOCK, fix and return to it. Do not argue with

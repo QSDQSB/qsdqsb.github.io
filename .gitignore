@@ -50,3 +50,10 @@ tests/visual/.store/
 # Wrangler keeps a Worker's local secrets here; never committed.
 .dev.vars
 .dev.vars.*
+
+# The plan's running lists are one file an entry (_plan/changelog/, features/, findings/inbox/,
+# requests/); these four documents are rendered from them (node scripts/plan.mjs render) and never committed.
+/_plan/CHANGELOG.md
+/_plan/FEATURES.md
+/_plan/findings/inbox.md
+/_plan/requests.md

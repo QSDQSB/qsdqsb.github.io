@@ -93,7 +93,7 @@ summarise() {
   q="$("$GIT" -C "$WT" diff -U0 -- _plan/QUEUE.md | sed -n 's/^+- [0-9-]* · \(Q[0-9]*\) · .*/\1/p' | tr '\n' ' ' | sed 's/ $//')"
   d="$("$GIT" -C "$WT" diff -U0 -- _plan/ideas | awk '/^\+\+\+ b\/_plan\/ideas\//{split($0,a,"/"); split(a[4],b,"-"); id=b[1]} /^\+\*\*The owner:\*\* /{printf "%s %s, ", id, $3}' | sed 's/, $//')"
   i="$("$GIT" -C "$WT" status --porcelain -- _plan/ideas | sed -n 's/^?? _plan\/ideas\/\(I[0-9]*\)-.*/\1/p' | tr '\n' ' ' | sed 's/ $//')"
-  f="$("$GIT" -C "$WT" diff -U0 -- _plan/findings/inbox.md | sed -n 's/^+- [0-9-]* · \(F[0-9]*\) · .*/\1/p' | tr '\n' ' ' | sed 's/ $//')"
+  f="$("$GIT" -C "$WT" status --porcelain -uall -- _plan/findings/inbox | sed -n 's/^?? _plan\/findings\/inbox\/\(.*\)\.md$/\1/p' | tr '\n' ' ' | sed 's/ $//')"
   [ -n "$q" ] && out="$out; $q answered"
   [ -n "$d" ] && out="$out; decided: $d"
   [ -n "$i" ] && out="$out; $i filed as raw ideas"

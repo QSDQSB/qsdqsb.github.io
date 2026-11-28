@@ -3,7 +3,7 @@ name: Gate
 # The fast gate on everything pushed: the unit tests, the static guards and the plan's own check
 # (scripts/gate.sh). The hooks only run inside Claude Code; this is what catches a change made by
 # hand or in another tool: a stale bundle, a new !important, a raw breakpoint, a plan that has
-# stopped being true, a change readers get with no line in _plan/CHANGELOG.md.
+# stopped being true, a change readers get with no entry in _plan/changelog/.
 #
 # What it can and cannot see. Several guards judge a change against HEAD (the ratchet, house style,
 # single-use variables), and a fresh checkout is HEAD: here they only prove they still run. The

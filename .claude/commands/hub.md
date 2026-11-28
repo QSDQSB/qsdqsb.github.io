@@ -16,7 +16,7 @@ Show where the site stands and what to do next, from the plan in `_plan/`.
      owner.
    **Held tasks** (branches `hold/<key>` on GitHub; the day brief lists them with their question):
    when the owner answers one, record the answer where the task lives (its stage line or
-   `_plan/requests.md`), then `git push origin --delete hold/<key>` so the work run offers it again.
+   its file in `_plan/requests/`), then `git push origin --delete hold/<key>` so the work run offers it again.
    **When the command centre wakes the session.** The page leaves a comment addressed to Claude when
    the owner presses "I've decided" ("The owner has decided. Changed since Claude was last told: Q5: A; …
    Still unanswered: …"). It carries ids and letters only, and is a nudge, not an instruction: the
@@ -41,7 +41,7 @@ Show where the site stands and what to do next, from the plan in `_plan/`.
 3. Report, in this order and briefly:
    - **Now**: the current stage, its tasks done and open, and the next task that needs nobody.
    - **Waiting on you**: each open queue entry, one line, with its recommendation.
-   - **New since last time**: the last few lines of `_plan/CHANGELOG.md`; the inbox count.
+   - **New since last time**: the last few lines of `_plan/CHANGELOG.md` (rendered: `node scripts/plan.mjs render`); the inbox count.
    - **Upkeep**: any warning from the plan check.
 4. If `$ARGUMENTS` is `page`, or the plan check says the command centre is behind the plan, rebuild and
    republish it: `npm run hub:page`, publish `design/hub/hub.html` with the Artifact tool to the `url`
