@@ -520,7 +520,7 @@ body.layout--home { padding-bottom: 0; }
   grid-template-columns: subgrid;
   align-items: center;
   // Five doors, one screen: the rows close up on a short one (the floors give way under about 720 px tall).
-  padding: clamp(min(0.6rem, 1.3vh), min(2.2vw, 1.9vh), 1.5rem) 0.2rem;
+  padding: clamp(min(0.6rem, 1.3svh), min(2.2vw, 1.9vh), 1.5rem) 0.2rem;
   border-top: 1px solid rgba($primary-color, 0.1);
   transition: opacity 0.55s $cubic-bezier-smooth;
 }
@@ -531,8 +531,8 @@ body.layout--home { padding-bottom: 0; }
 .door__fig { font: 400 2.1rem/1 $didot-family; color: rgba($primary-color, 0.92); transition: color 0.5s $cubic-bezier-smooth; }
 .door__unit { @include eyebrow; color: rgba($primary-color, 0.55); }
 .door__text { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
-.door__title { font-family: $sans-serif; font-weight: 700; font-size: clamp(min(1.9rem, 4.2vh), min(4.4vw, 6vh), 3.4rem); line-height: 1; letter-spacing: -0.01em; color: $primary-color; transition: color 0.5s $cubic-bezier-smooth; }
-.door__desc { font-family: $sans-serif; font-size: $type-size-7; line-height: min(1.5em, 3.4vh); color: rgba($primary-color, 0.64); transition: color 0.5s $cubic-bezier-smooth; }
+.door__title { font-family: $sans-serif; font-weight: 700; font-size: clamp(min(1.9rem, 4.2svh), min(4.4vw, 6vh), 3.4rem); line-height: 1; letter-spacing: -0.01em; color: $primary-color; transition: color 0.5s $cubic-bezier-smooth; }
+.door__desc { font-family: $sans-serif; font-size: $type-size-7; line-height: min(1.5em, 3.4svh); color: rgba($primary-color, 0.64); transition: color 0.5s $cubic-bezier-smooth; }
 
 /* hover: the row brightens where it stands and the others dim — no underline, no link-blue */
 .home__doors:hover .door { opacity: 0.4; }
