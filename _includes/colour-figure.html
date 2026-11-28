@@ -46,18 +46,18 @@
   <p class="colour-figure__wait">
   {%- case include.kind -%}
     {%- when "palette" -%}
-      <a href="{{ '/palette/' | relative_url }}#{{ include.voyage | escape }}">QSD's Palette for {{ cf_title }} <span aria-hidden="true">→</span></a>
+      <a href="{{ '/palette/' | relative_url }}#{{ include.voyage | escape }}">QSD's Palette for {{ cf_title }}</a>
     {%- when "frames" -%}
-      <a href="{{ '/palette/' | relative_url }}#{{ include.voyage | escape }}">The frames of {{ cf_title }}, and their colours <span aria-hidden="true">→</span></a>
+      <a href="{{ '/palette/' | relative_url }}#{{ include.voyage | escape }}">The frames of {{ cf_title }}, and their colours</a>
     {%- when "chips" -%}
       {%- assign cf_colours = include.colours | split: " " -%}
       {%- for c in cf_colours -%}
-      <a href="{{ cf_reverie }}?c={{ c | downcase | escape }}">Reverie in #{{ c | upcase | escape }} <span aria-hidden="true">→</span></a>
+      <a href="{{ cf_reverie }}?c={{ c | downcase | escape }}">Reverie in #{{ c | upcase | escape }}</a>
       {%- endfor -%}
     {%- when "frame" -%}
-      <a href="{{ cf_book }}#{{ include.frame | escape }}">{{ include.frame | upcase | escape }}, in {{ cf_title }} <span aria-hidden="true">→</span></a>
+      <a href="{{ cf_book }}#{{ include.frame | escape }}">{{ include.frame | upcase | escape }}, in {{ cf_title }}</a>
     {%- when "reverie" -%}
-      <a href="{{ cf_reverie }}?c={{ include.colour | downcase | escape }}">Reverie in #{{ include.colour | upcase | escape }} <span aria-hidden="true">→</span></a>
+      <a href="{{ cf_reverie }}?c={{ include.colour | downcase | escape }}">Reverie in #{{ include.colour | upcase | escape }}</a>
   {%- endcase -%}
   </p>
 </div>

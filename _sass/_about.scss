@@ -10,10 +10,12 @@ body.page--about {
 }
 
 /* Taller hero to echo Home's scale, but still content-first — keeps the
-   dissolve-into-page treatment rather than filling the viewport. */
-.page--about .page__hero--overlay {
-  min-height: clamp(28rem, 76vh, 46rem);
-  min-height: clamp(28rem, 76svh, 46rem);
+   dissolve-into-page treatment rather than filling the viewport. On a phone it is every page's half. */
+@include responsive-up(tablet) {
+  .page--about .page__hero--overlay {
+    min-height: clamp(28rem, 76vh, 46rem);
+    min-height: clamp(28rem, 76svh, 46rem);
+  }
 }
 
 /* `#main` is single-column block flow below the left-rail breakpoint and only
@@ -25,11 +27,16 @@ body.page--about {
   display: block;
 }
 
+// The post's column, and a phone's one margin.
 .about {
-  max-width: 52rem;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: 1.5rem 1.2rem 4rem;
+  padding: 0 0 4rem;
+  @include responsive-down(tablet) { padding-left: 0.5em; padding-right: 0.5em; }
 }
+
+// Its greeting is a line of words, not a section: no rule drawn under it.
+.about .page__content > h1:first-child { border-bottom: 0; }
 
 /* --- self-deprecating label row above the self-intro list --- */
 .about__labels {

@@ -6,23 +6,21 @@
    Typography
    ========================================================================== */
 
-/* system typefaces */
-$sans-serif                 : "Playfair Display", apple-system, ".SFNSText-Regular", "San Francisco", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
-$monospace                  : "Monaco", ui-monospace, Menlo, Consolas, "Lucida Console", monospace; // ui-monospace: SF Mono on an iPhone
-$didot-family              : "Didot", "CMU Serif", "Playfair Display", "Songti SC", "STSong", serif;
-/* sans serif typefaces */
-$cmu-serif-family           : "CMU Serif", "Playfair Display", "Songti SC", "STSong", serif;
-$line-serif-family          : "Playfair Display", "Songti SC", "STSong", serif; // a post's or voyage's line: its Chinese in Song, not the system sans
-$sans-serif-narrow          : $sans-serif; // no Roboto: it is never loaded, and an Android reader saw the masthead in it (audit C10)
-$barlow-font-family         : "Barlow", $sans-serif-narrow;
-
+/* The two voices: the serif for a name, Barlow for every other word on a control. One stack, one
+   name each. A Chinese character beside the serif is drawn in Song where the device has it, before
+   any system sans; beside Barlow it keeps the system's sans. No Roboto: it is never loaded (audit C10). */
 // Beside Playfair's Latin, Chinese falls to a Song face (the same thin horizontals and wedged ends),
 // not to the system's sans: the device's own where it has one (Songti on a Mac, Source Han or Noto
 // Serif CJK on many phones, SimSun on Windows), else the slices of Noto Serif SC the site carries
 // (_custom.scss; an iPhone lets a page use no Songti of its own).
 $han-serif                  : "Songti SC", "Source Han Serif SC", "Noto Serif CJK SC", "STSong", "SimSun", "Noto Serif SC";
-$global-font-family         : "Playfair Display", $han-serif, $sans-serif;
-$tag-font-family            : "Barlow", $sans-serif-narrow;
+$global-font-family         : "Playfair Display", $han-serif, ".SFNSText-Regular", "San Francisco", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
+$barlow-font-family         : "Barlow", ".SFNSText-Regular", "San Francisco", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
+$sans-serif                 : $global-font-family; // shortcut: the old name, kept for _home.scss's four uses (Home's batch); delete once they move
+$monospace                  : "Monaco", ui-monospace, Menlo, Consolas, "Lucida Console", monospace; // ui-monospace: SF Mono on an iPhone
+$didot-family              : "Didot", "CMU Serif", "Playfair Display", "Songti SC", "STSong", serif;
+$cmu-serif-family           : "CMU Serif", "Playfair Display", "Songti SC", "STSong", serif;
+$line-serif-family          : "Playfair Display", "Songti SC", "STSong", serif; // a post's or voyage's line: its Chinese in Song, not the system sans
 
 /* type scale — rem-based (root-relative), so sizes never compound through
    nesting. Root font-size is 16px on mobile / 18px from tablet up (see
@@ -52,7 +50,7 @@ $center-wrapper-background-color: #24242424;
 $text-color                 : $lighter-gray;
 $border-color               : $darker-gray;
 $primary-color              : #E6EEE8;
-$h2-color                   : hsl(29, 65%, 70%); // brass heading + accent tone (Home / About)
+$h2-color                   : hsl(29, 65%, 70%); // the warm brass: a thing that is on (a tool switched on, the rail's tick)
 $success-color              : #3c8287;
 $warning-color              : #db580c;
 $danger-color               : #a74f4c;
@@ -60,7 +58,7 @@ $info-color                 : #2d5b86;
 
 /* brands */
 $linkedin-color             : #007bb6;
-$intriguing-word-color    : #c3b498;
+$intriguing-word-color    : #c3b498; // the pale brass: lines, rings and links
 
 /* links */
 $link-color                 : #6fcdff;
@@ -82,7 +80,6 @@ $x-large: 80rem !default;        // 1280px
    ========================================================================== */
 
 
-$right-sidebar-width-narrow: 11.25rem !default; // @keep — part of the shared sidebar-width family
 $right-sidebar-width: 15rem !default;
 
 
@@ -158,7 +155,6 @@ $cubic-bezier-default-05s:
   scale 0.5s $cubic-bezier-param;
 $cubic-bezier-smooth: cubic-bezier(0.22, 1, 0.36, 1);
 $cubic-bezier-standard: cubic-bezier(0.4, 0, 0.2, 1);
-$intro-transition: intro 0.3s both !default;
 $global-transition-time: 0.5s;
 $box-shadow-fancy:
    0 10px 10px rgba(0, 0, 0, 0.5),
@@ -191,30 +187,7 @@ $nav-content-delay: 0.24s;
 $nav-content-fade-duration: 0.72s;
 $nav-auto-fade-duration: 0.25s;
 $resize-runtime-transition-duration: 0.1s;
-$overlay-hero-dissolve-start: 72%;
-$overlay-hero-dissolve-mid: 88%;
-$overlay-hero-dissolve-end: 100%;
-$overlay-hero-seam-blur-start: 76%;
 $overlay-hero-excerpt-max-width: 58rem;
-$hero-caption-reveal-delay: 0.5s;
-$hero-caption-reveal-duration: 0.42s;
 $hero-caption-reveal-offset-y: 0.28rem;
 
-$search-panel-page-padding: 1rem;
-$search-panel-page-padding-mobile: 0.75rem;
-$search-panel-offset-y: 2rem;
-$search-panel-padding-x: 0.95rem;
-$search-panel-padding-x-large: 1.15rem;
-$search-panel-input-surface: $code-background-color;
-$search-panel-input-border-color-focus: rgba($link-color, 0.42);
-$search-panel-muted-text: mix(#fff, $text-color, 20%);
-$search-suggestion-padding-x: 0.9rem;
-$search-suggestion-radius: 0.9rem;
-$search-suggestion-accent-inset: 0.5rem;
-$search-suggestion-accent-default: rgba($primary-color, 0.18);
 
-$linear-gradient-macaron: linear-gradient(90deg, rgba(249,237,209,1) 0%, rgba(254,170,194,1) 20%, rgba(247,117,169,1) 40%, rgba(184,222,164,1) 60%, rgba(182,237,232,1) 80%, rgba(143,219,216,1) 100%); // @keep — feeds the .macaron demo class a few lines below
-$linear-gradient-megatron: linear-gradient(to right, #c6ffdd, #fbd786, #f7797d);
-$linear-gradient-peach-pink: linear-gradient(49deg, rgba(255, 255, 196, 1.000) 0%, rgba(255, 97, 100, 1.000) 55%, rgb(198, 74, 68) 100%); // @keep — feeds the .text-color-peach-pink demo class a few lines below
-$linear-gradient-sunset-orange-blue: linear-gradient(90deg, rgba(164, 116, 81, 1.000) 0.000%, rgba(156, 152, 129, 1.000) 16.667%, rgba(115, 160, 157, 1.000) 33.333%, rgba(59, 137, 154, 1.000) 50.000%, rgba(9, 91, 121, 1.000) 66.667%, rgba(0, 40, 71, 1.000) 83.333%, rgba(0, 1, 22, 1.000) 100.000%);
-$linear-gradient-titanium: linear-gradient(73deg, #283048, rgb(116, 130, 135)); // @keep — feeds the .background-color-titanium demo class a few lines below

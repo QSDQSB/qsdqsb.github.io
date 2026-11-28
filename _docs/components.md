@@ -17,7 +17,7 @@ That is what made it look like a different site (2026-09-27).
 | Eyebrow | `eyebrow` | The spaced-capital label above a title or section (never under 11px) | `.photobook-kicker`, `.colour-kicker` |
 | Display title | `display-title` | A page's title, as every hero page and book cover sets it | `.photobook-cover__title h1`, `.colour-head h1` |
 | Lede | `lede` | The line under a title, in Playfair upright as every hero's line is (font only; the page sets width and colour). No page sets a line in Didot italic (Q24, 2026-11-27) | `.colour-lede`, `.utils-list p`, a gloss's Latin line, the 404's line, a proclamation's subject |
-| Onward links | `onward-links` | Spaced-capital links over hairlines, in a wrapping row | `.photobook-colophon__onward`, `.colour-next` |
+| Onward links | `onward-links` | Spaced-capital links over hairlines, in a wrapping row; no arrow after one | `.photobook-colophon__onward`, `.colour-next`, `.site-colophon__links` |
 | Gloss | class `blockquote.gloss` (`_page.scss`) | A heading's translation, set beneath it in two lines as an inscription is: the first small and widely spaced, the Latin-script one the `lede` in brass. Written `> 中文 *English*` then `{: .gloss}` | a post whose chapters are named in another language |
 | Colour code | `_includes/colour-code.html` (`.colour-code`) | A hex named in a line of prose, a dot of the exact colour before it | posts |
 | Quotation | element `blockquote` (`_base.scss`) | Words quoted from elsewhere: set in on both sides, a one-pixel brass hairline at the left, the Latin in CMU Serif italic (the fourth face's one job), the Chinese in Kai where the device has it. No box | every page's `>` in Markdown |
@@ -29,7 +29,7 @@ That is what made it look like a different site (2026-09-27).
 | Piece | Mixin / class | For | Used by |
 |---|---|---|---|
 | Pill | `pill` | Glass with a chevron or mark and a label, in a control's corners of 10 px (0009, pick 2; Q17; the name is kept from when it was a pill): the way back, a menu | `.photobook-lightbox__back`, `.palette-page__menu` |
-| Brass focus | `brass-focus` | The keyboard's mark on a swatch of any colour, pale or deep: a brass hairline set off its edge, `:focus-visible` only | `.reverie__near a`, `.ridgway-swatch` |
+| Brass focus | `brass-focus` | The keyboard's mark: a brass ring set off the edge, `:focus-visible` only. Set once on every control by `:focus-visible` in `_base.scss`; a control adjusts it (an inset offset in a clipped bar, the fable's brass on parchment) and never replaces it | everything that takes focus |
 | Round tool | `round-tool` | A full-screen viewer's tools, top right: slideshow, specs, picture only, the way to the book. A 40 px square of glass in a control's corners of 10 px (0009, pick 2; Q17; the name is kept from when it was a disc) | `.photobook-lightbox__tool`, `.colour-drift__tool` |
 | Quiet icon button | `icon-button-quiet($size)` | A bare mark in the label's ink; under the pointer a soft fill in a control's corners of 10 px (0012) | `.palette-voyages__fold`, `.palette-rail__step`, the menu bar's search and overflow buttons |
 | Segmented toggle | class `.photobook-sheet__order` | Two or three exclusive choices in spaced capitals (Sequence / Colour) | the book's sheet, the palette page |
@@ -87,12 +87,16 @@ In `_sass/_variables.scss`, as [0002](../_plan/decisions/0002-one-control-vocabu
   others (`$cubic-bezier-param` through `$cubic-bezier-default` (0002), `$nav-shell-ease`, bare
   `ease`, literals); C04 brings them onto these.
 - **Page changes.** The page fades out and in over 0.3 s, its content over 0.4 s, both on the
-  standard curve; the masthead over 0.2 s (`_view-transitions.scss`). The palette page's
+  standard curve; the masthead goes with the page, unnamed, so its glass keeps blurring what is under it (`_view-transitions.scss`). The palette page's
   voyage-to-voyage change goes out over 0.3 s on the standard curve and comes in over 0.4 s on the
   smooth one (`assets/js/colour/palette.js`).
 - **Content arriving.** The `reveal-on-scroll` / `is-visible` classes (`_scroll-animations.scss`,
   `assets/js/scroll-animations.js`). With `arrives`, a page's blocks of text take the owner's
   amounts (0009, pick 6): up from 28 px over 0.7 s, the rise on the smooth curve, those that come
   into view together 0.12 s apart. Without it, as on Palette's frames, a 12 px fade-up.
-- **Endings.** `presented-by-qsd.html` closes a page: the books, the archive, the colour pages.
+- **Endings.** `colophon.html` (`.site-colophon`, `_page.scss`) ends every page that scrolls, Home included (in its last panel): a one-pixel rule, the house's hairline mark in brass, the page's sign-off as a label (front matter `signoff:`, else "Presented by QSD."; a book's is "Shot by QSD."), then the sections, Subscribe, RSS and Terms. A viewer that does not scroll sets `colophon: false` (Drift). Nothing else signs a page off.
 - **Stillness.** Every motion stops under `prefers-reduced-motion` and `html.motion-off`.
+
+## Signatures kept in their page
+
+- **The illuminated initial** (the Bestiary's): a fable's story opens on its first letter two lines deep, Playfair bold in the fable's own brass, English only (`_sass/_bestiary.scss`, `.fable__text`). Not grammar: no other page has one.

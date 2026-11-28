@@ -19,8 +19,8 @@ layout: compress
     {% include_cached skip-link.html %}
     {% include_cached masthead.html back_url=page.masthead_back_url back_label=page.masthead_back_label %}
     {{ content }}
-    {%- assign colophon_in_column = "single,archive,about" | split: "," -%}
-    {% unless page.url == "/" or colophon_in_column contains page.layout %}{% include_cached colophon.html %}{% endunless %}{% comment %} these layouts set it in their content column, beside the author's rail {% endcomment %}
+    {%- assign colophon_in_column = "single,archive,about,home" | split: "," -%}
+    {% unless page.colophon == false or colophon_in_column contains page.layout %}{% include_cached colophon.html line=page.signoff %}{% endunless %}{% comment %} these layouts set it in their own column (Home in its last panel); a viewer that does not scroll sets colophon: false {% endcomment %}
 
     {% if site.search == true %}
     <div class="search-content">
