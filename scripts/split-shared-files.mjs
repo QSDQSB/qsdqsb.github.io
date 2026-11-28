@@ -49,10 +49,13 @@ export function journeyBlocks(source) {
 export function journeyModule({ text }) {
   let body = text;
   if (/\bbase\b/.test(body) && !/async run\(\{[^}]*\bbase\b/.test(body)) {
-    body = body.replace(/async run\(\{ ([^}]*) \}\)/, 'async run({ $1, base })');
+    body = body.replace(/async run\((?:\{ ([^}]*) \})?\)/, (_, args) => `async run({ ${args ? `${args}, ` : ''}base })`);
   }
-  const imports = /\bmust\(/.test(body) ? "import { must } from './_lib.mjs';\n\n" : '';
-  return `${imports}export default ${body};\n`;
+  // Names the old file imported for every journey: a journey that uses one imports it itself.
+  const playwright = ['chromium', 'webkit', 'devices'].filter((n) => new RegExp(`\\b${n}\\b`).test(body));
+  const imports = (playwright.length ? `import { ${playwright.join(', ')} } from 'playwright-core';\n` : '')
+    + (/\bmust\(/.test(body) ? "import { must } from './_lib.mjs';\n" : '');
+  return `${imports ? `${imports}\n` : ''}export default ${body};\n`;
 }
 
 function journeys(oldFile, baseFile) {
