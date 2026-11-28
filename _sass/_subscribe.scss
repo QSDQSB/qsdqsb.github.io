@@ -65,39 +65,17 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in):not([data-subscribe-page]) 
   cursor: pointer; /* a click anywhere but the form and the privacy link folds it */
 }
 
-/* Fold to the rule: a hairline cross in the corner, as quiet as the privacy link. */
+/* Fold to the rule: the quiet icon button in the corner, tall enough to take a finger. */
 .subscribe-slip__close {
   position: absolute;
-  top: 0.55rem;
-  right: 0.55rem;
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
+  top: 0.3rem;
+  right: 0.3rem;
   margin: 0;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: none;
-  cursor: pointer;
-  color: rgba($text-color, 0.38);
-  transition: color 0.3s ease;
+  @include icon-button-quiet(2.75rem);
   html.motion-off & { transition: none; }
 
-  svg {
-    width: 0.7rem;
-    height: 0.7rem;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.2;
-    stroke-linecap: round;
-  }
+  svg { width: 0.7rem; height: 0.7rem; }
 
-  &:hover,
-  &:focus-visible {
-    color: $intriguing-word-color;
-  }
-  &:focus-visible { @include brass-focus; }
   &[hidden] { display: none; }
 }
 
@@ -142,14 +120,11 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in):not([data-subscribe-page]) 
   padding: 0.2rem 0.3rem 0.2rem 0.9rem;
   cursor: auto;
   border: 1px solid var(--subscribe-field-edge, rgba(255, 255, 255, 0.12));
-  border-radius: 0.5rem;
+  border-radius: $border-radius;
   background: rgba(255, 255, 255, 0.05);
-  transition: border-color 0.2s ease;
 
-  // The field clears its own outline and border, so the frame carries focus.
-  &:has(.subscribe-slip__input:focus-visible) {
-    border-color: rgba(255, 255, 255, 0.45);
-  }
+  // The field clears its own outline and border, so the frame carries the ring.
+  &:has(.subscribe-slip__input:focus-visible) { @include brass-focus; }
 }
 
 /* Honeypot — visually gone, still present for bots that fill every field. */
@@ -167,6 +142,7 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in):not([data-subscribe-page]) 
   flex: 1 1 auto;
   min-width: 0;
   margin: 0;
+  min-height: 2.75rem;
   padding: 0.45rem 0;
   border: none;
   border-radius: 0;
@@ -181,7 +157,8 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in):not([data-subscribe-page]) 
     color: rgba($text-color, 0.35);
     font-style: italic;
   }
-  &:focus {
+  &:focus,
+  &:focus-visible {
     outline: none;
     border: none;
     box-shadow: none;
@@ -191,11 +168,12 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in):not([data-subscribe-page]) 
 .subscribe-slip__send {
   flex: none;
   margin: 0;
+  min-height: 2.5rem;
   padding: 0.42rem 0.95rem;
   /* The primary action carries a low brass fill at rest so the eye lands on it
      — the one lifted element in an otherwise restrained card. */
   border: 1px solid rgba($intriguing-word-color, 0.5);
-  border-radius: 0.4rem;
+  border-radius: $border-radius;
   background: rgba($intriguing-word-color, 0.1);
   cursor: pointer;
   font-family: $barlow-font-family;
@@ -212,7 +190,6 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in):not([data-subscribe-page]) 
     border-color: rgba($h2-color, 0.65);
     background: rgba($h2-color, 0.14);
   }
-  &:focus-visible { @include brass-focus; }
   &[disabled] {
     opacity: 0.55;
     cursor: default;
@@ -221,8 +198,7 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in):not([data-subscribe-page]) 
 
 .subscribe-slip__note {
   margin: 1.1rem 0 0;
-  font-family: $didot-family;
-  font-style: italic;
+  font-family: $global-font-family;
   font-size: $type-size-7;
 
   &--ok { color: $intriguing-word-color; }
@@ -272,7 +248,6 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in):not([data-subscribe-page]) 
   opacity: 1;
   pointer-events: auto;
 }
-.subscribe-slip__summary:focus-visible { @include brass-focus; }
 
 .subscribe-slip__summary-line {
   flex: 1;
@@ -287,12 +262,11 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in):not([data-subscribe-page]) 
   background-color: rgba($intriguing-word-color, 0.65);
   -webkit-mask: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg") no-repeat center / contain;
           mask: url("/images/QSDLogos/QSD_logo_stroke_hexagon.svg") no-repeat center / contain;
-  transition: background-color 0.4s ease, transform 0.4s $cubic-bezier-smooth;
+  transition: background-color 0.4s ease;
 }
 .subscribe-slip__summary:hover .subscribe-slip__summary-mark,
 .subscribe-slip__summary:focus-visible .subscribe-slip__summary-mark {
   background-color: $intriguing-word-color;
-  transform: scale(1.15);
 }
 .subscribe-slip__summary:hover .subscribe-slip__summary-line,
 .subscribe-slip__summary:focus-visible .subscribe-slip__summary-line {
@@ -311,7 +285,7 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in):not([data-subscribe-page]) 
 
 /* Discreet legal pointer — transparency at the point of collection. */
 .subscribe-slip .subscribe-slip__privacy {
-  margin: 0.7rem 0 0;
+  margin: 0;
   text-align: right;
   cursor: auto;
   font-family: $barlow-font-family;
@@ -320,6 +294,8 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in):not([data-subscribe-page]) 
   letter-spacing: 0.06em;
 
   a {
+    display: inline-block;
+    padding-top: 0.9rem;
     color: rgba($text-color, 0.38);
     text-decoration: none;
     border-bottom: 1px solid rgba($text-color, 0.2);
@@ -331,7 +307,6 @@ html.subscribe-dismissed .subscribe-slip:not(.is-in):not([data-subscribe-page]) 
       color: rgba($intriguing-word-color, 0.85);
       border-bottom-color: rgba($intriguing-word-color, 0.5);
     }
-    &:focus-visible { @include brass-focus; }
   }
 }
 

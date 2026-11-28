@@ -22,31 +22,27 @@ body {
   color: $text-color;
   font-family: $global-font-family;
   line-height: 1.5;
-  &.overflow--hidden {
-    /* when primary navigation is visible, the content in the background won't scroll */
-    overflow: hidden;
-  }
 }
 
+// A link is the pale brass, ivory under the pointer (the prose's own dress is in _page.scss).
 a {
-  color: $link-color;
+  color: $intriguing-word-color;
   text-decoration: none;
   &:visited {
-    color: #5b9fff;
+    color: $intriguing-word-color;
   }
   &:hover {
-    color: $link-color-hover;
+    color: $lighter-gray;
     text-decoration: underline;
   }
 }
 
-
-.glassmorphism-card-effect {
-
-  background-color: rgba(255, 255, 255, .05);
-  @include backdrop-blur(blur(4px));
-  border-radius: $border-radius;
+// Keyboard focus is the brass ring, on everything that takes it: one rule, which a control adjusts
+// (an offset inside a clipped bar, the page's own brass on parchment) but never replaces.
+:focus-visible {
+  @include brass-focus;
 }
+
 
 
 h1, h2, h3, h4, h5, h6 {
@@ -150,7 +146,7 @@ blockquote {
 /* links */
 
 .date {
-  font-family: $tag-font-family;
+  font-family: $barlow-font-family;
 }
 
 
@@ -198,12 +194,14 @@ td > code {
 
 /* horizontal rule */
 
+// A rule is one pixel, in the line's ink (between passages of prose, the ornament: _page.scss).
 hr {
   display: block;
   margin: 0.25em auto;
   width: 38.2%;
-  border: 2px solid $border-color;
-  border-radius: 0.25em;
+  height: 0;
+  border: 0;
+  border-top: 1px solid var(--line);
 }
 
 /* lists */
@@ -257,8 +255,7 @@ figure {
   flex-wrap: wrap;
   margin: 1em 0;
   img,
-  iframe,
-  .fluid-width-video-wrapper {
+  iframe {
     margin-bottom: 1em;
   }
 

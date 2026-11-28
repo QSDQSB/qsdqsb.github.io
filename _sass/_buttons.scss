@@ -12,7 +12,7 @@
   margin-bottom: 0.25em;
   padding: 0.5em 1em;
   color: #fff;
-  font-family: $sans-serif;
+  font-family: $global-font-family;
   font-size: $type-size-8;
   font-weight: bold;
   text-align: center;
@@ -41,34 +41,6 @@
     margin-left: -0.5em; /* override for hidden text*/
   }
 
-  /* fills width of parent container */
-
-  &--block {
-    display: block;
-    width: 100%;
-
-    + .btn--block {
-      margin-top: 0.25em;
-    }
-  }
-
-  /* for dark backgrounds */
-
-  &--inverse {
-    color: $gray;
-    border: 1px solid $light-gray;
-    background-color: #fff;
-
-    &:visited {
-      color: $gray;
-    }
-
-    &:hover {
-      color: #fff;
-      border-color: $gray;
-    }
-  }
-
   /* light outline */
 
   &--light-outline {
@@ -76,62 +48,11 @@
     background-color: transparent;
   }
 
-  /* information */
-
-  &--info {
-    background-color: $info-color;
-
-    &:hover {
-      background-color: mix(#000, $info-color, 20%);
-    }
-  }
-
-  /* warning */
-
-  &--warning {
-    background-color: $warning-color;
-
-    &:hover {
-      background-color: mix(#000, $warning-color, 20%);
-    }
-  }
-
-  /* success */
-
-  &--success {
-    background-color: $success-color;
-
-    &:hover {
-      background-color: mix(#000, $success-color, 20%);
-    }
-  }
-
-  /* danger */
-
-  &--danger {
-    background-color: $danger-color;
-
-    &:hover {
-      background-color: mix(#000, $danger-color, 20%);
-    }
-  }
-
-  /* disabled */
-
-  &--disabled {
-    pointer-events: none;
-    cursor: not-allowed;
-    filter: alpha(opacity=65);
-    box-shadow: none;
-    opacity: 0.65;
-  }
-
   /* social buttons */
 
   $social:
   (facebook, #3b5998),
   (twitter, #55acee),
-  (google-plus, #dd4b39),
   (linkedin, $linkedin-color);
 
   @each $socialnetwork, $color in $social {
@@ -144,21 +65,10 @@
     }
   }
 
-  /* extra large button */
-
-  &--x-large {
-    font-size: $type-size-6;
-  }
-
   /* large button */
 
   &--large {
     font-size: $type-size-7;
   }
 
-  /* small button */
-
-  &--small {
-    font-size: $type-size-8;
-  }
 }

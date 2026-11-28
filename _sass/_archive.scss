@@ -48,6 +48,9 @@
   border-bottom: 1px solid $border-color;
   color: $text-color;
 
+  // A year on Posts is a number meant to be seen: Didot. The class also carries a tag's name, which stays.
+  &--year { font-family: $didot-family; }
+
   + .list__item .archive__item-title {
     margin-top: 0.5em;
   }
@@ -55,7 +58,7 @@
 
 .archive__item-title {
   margin-bottom: 0.25em;
-  font-family: $sans-serif-narrow;
+  font-family: $global-font-family;
 
   a + a {
     opacity: 0.5;
@@ -284,7 +287,7 @@
     }
   }
   .date {
-    font-family: $tag-font-family;
+    font-family: $barlow-font-family;
     position: absolute;
     bottom: 0;
     right: 1rem;
@@ -296,7 +299,7 @@
   }
 
   .readtime {
-    font-family: $tag-font-family;
+    font-family: $barlow-font-family;
     font-size: $type-code-size;
     padding: 0;
     // Revealed with the excerpt on hover, so the cover at rest is title alone.
@@ -471,7 +474,7 @@ a.word_card--link {
     font-size: $type-size-8;
     font-weight: bold;
     font-variant: small-caps;
-    font-family: $sans-serif-narrow;
+    font-family: $global-font-family;
     color: hsl(40, 65%, 85%);
     opacity: 0.75;
   }

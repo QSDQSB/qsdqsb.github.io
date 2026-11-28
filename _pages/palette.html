@@ -1,6 +1,7 @@
 ---
 title: "QSD's Palette"
 layout: default
+signoff: "Shot by QSD."
 permalink: /palette/
 preload: [/assets/palettes.json]
 modules: [/assets/js/colour/palette.js, /assets/js/colour/dye-hero.js, /assets/js/colour/vat.js, /assets/js/colour/cards.js, /assets/js/photobook/tip.js, /assets/js/photobook/wash.js]
@@ -57,6 +58,5 @@ masthead_back_label: Back to the voyages
     <noscript><p class="colour-empty">The palettes are drawn by a script; with it off, each voyage's photographs are in its book:</p>
       <ul>{% assign docs = site.voyage | concat: site.subvoyage %}{% for d in docs %}{% include photobook-ready.html doc=d %}{% if d.gallery_name and photobook_ready %}<li><a href="{{ d.url | relative_url }}">{{ d.title | strip_html }}</a></li>{% endif %}{% endfor %}</ul></noscript>
   </div>
-  <footer class="colour-end">{% include presented-by-qsd.html line="Shot by QSD." %}</footer>
 </main>
 <script type="module" src="{{ '/assets/js/colour/palette.js' | relative_url }}"></script>
