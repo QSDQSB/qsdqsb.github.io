@@ -10,6 +10,11 @@
  *     Writes each picture's hash to tests/visual/hashes/<name>.sha, likewise only what the
  *     branch re-captured when a merge-base copy is given.
  *
+ *   node scripts/split-shared-files.mjs <changelog|features|inbox|requests> <old document> [<merge-base copy>]
+ *     Writes each line of the old plan document to its own file in _plan/changelog/, features/,
+ *     findings/inbox/ or requests/ (with `--head`, the folder's `_head.md` too). With the merge-base
+ *     copy, only the lines the branch added or changed.
+ *
  * A journey or a picture the branch removed is not carried: delete its file by hand.
  * Run from the repository's root. Existing files are replaced only where the branch changed them.
  * `git show <ref>:scripts/check-journeys.mjs > /tmp/old.mjs` gets an old copy of either file.
@@ -18,6 +23,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { writeIndex } from './lib/visual-store.mjs';
+import { KINDS, docToEntries, writeEntry } from './lib/plan-entries.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const JOURNEY_DIR = path.join(ROOT, 'tests', 'journeys');
@@ -79,11 +85,30 @@ function baseline(oldFile, baseFile) {
   console.log(`${Object.keys(changed).length} hash file(s) written to tests/visual/hashes/`);
 }
 
+const PLAN = path.join(ROOT, '_plan');
+const same = (a, b) => JSON.stringify({ ...a, name: 0, order: 0 }) === JSON.stringify({ ...b, name: 0, order: 0 });
+
+/** The plan's running lists: one file an entry, from an old document (and the head when asked). */
+export function planDocument(kind, oldFile, baseFile, { head = false, planDir = PLAN } = {}) {
+  const mine = docToEntries(kind, fs.readFileSync(oldFile, 'utf8'));
+  const theirs = baseFile ? docToEntries(kind, fs.readFileSync(baseFile, 'utf8')).entries : [];
+  const fresh = mine.entries.filter((e) => !theirs.some((t) => same(t, e)));
+  const dir = path.join(planDir, KINDS[kind].dir);
+  fs.mkdirSync(dir, { recursive: true });
+  if (head) fs.writeFileSync(path.join(dir, '_head.md'), mine.head);
+  for (const { name, ...entry } of fresh) writeEntry(planDir, kind, name, entry);
+  return fresh.length;
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const [kind, oldFile, baseFile] = process.argv.slice(2);
-  if (!['journeys', 'baseline'].includes(kind) || !oldFile) {
-    console.error('Usage: split-shared-files.mjs <journeys|baseline> <old file> [<merge-base copy of it>]');
+  const argv = process.argv.slice(2), head = argv.includes('--head');
+  const [kind, oldFile, baseFile] = argv.filter((a) => a !== '--head');
+  if (KINDS[kind] && oldFile) {
+    console.log(`${planDocument(kind, oldFile, baseFile, { head })} entr(ies) written to _plan/${KINDS[kind].dir}/`);
+  } else if (['journeys', 'baseline'].includes(kind) && oldFile) {
+    (kind === 'journeys' ? journeys : baseline)(oldFile, baseFile);
+  } else {
+    console.error('Usage: split-shared-files.mjs <journeys|baseline|changelog|features|inbox|requests> <old file> [<merge-base copy of it>] [--head]');
     process.exit(2);
   }
-  (kind === 'journeys' ? journeys : baseline)(oldFile, baseFile);
 }

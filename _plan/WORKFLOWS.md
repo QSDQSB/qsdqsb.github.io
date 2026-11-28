@@ -25,7 +25,7 @@ comments, reviews or takes the label off.
 
 Something is broken, slow, inconsistent or inaccessible.
 
-1. **File it**: `/finding <what was seen>`. One line, dated, in `findings/inbox.md`. Do not fix it
+1. **File it**: `/finding <what was seen>`. One line, a file of its own in `findings/inbox/`. Do not fix it
    in passing while doing something else.
 2. **The design lead sorts it** into a stage, with its tier.
 3. **Tier 0 or 1** ([0001](decisions/0001-who-decides-what.md)): `/stage` builds it. The fix reuses
@@ -48,7 +48,7 @@ Something is broken, slow, inconsistent or inaccessible.
    - What does it need that the grammar lacks? Each is a piece to add (path 3) before the page.
 3. **Study it** (path 6) if the look is new. The owner sees a design before code: real pages with
    desktop and phone screenshots, or a Figma file.
-4. **Build** on the Photobook shell. New feature → a row in [`FEATURES.md`](FEATURES.md) and a
+4. **Build** on the Photobook shell. New feature → a file in `features/` (its row in [`FEATURES.md`](FEATURES.md)) and a
    journey (`tests/journeys/<id>.mjs`), in the same change.
 5. Gate, reviewer, changelog.
 

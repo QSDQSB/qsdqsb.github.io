@@ -1,23 +1,31 @@
 {%- comment -%}
-  A tag page: include.docs (newest first) behind their tags. /tags/ and /voyage-by-tags/ are this
-  and nothing else, so the two cannot drift apart.
+  A tag page, page.tag_page "voyage" (/voyage-by-tags/) or "posts" (/tags/): both are this and
+  nothing else, so the two cannot drift apart.
 
-  A doorway (DESIGN-LANGUAGE, the patterns): each tag is a door, a square (it carries a colour
-  and a name, not a picture), the fullest tags first. A door opens its room in place, as a page opens: the tag's own photograph as the overlay
-  hero, its name on it, then the tag's voyages or posts as the covers /voyage/ and /posts/ show, and
-  at the foot the doors of the tags nearest to it. The room is the address's #slug (the one the tags
-  under a post already link to), shown by :target alone (_sass/_tags.scss), so no script opens it and
-  Back leads out of the room.
+  The tags in one line at the head of the list, the fullest first after "All": each its emoji and its
+  name, in the ink every tag wears; what does not fit runs on sideways, never onto a second row. Under
+  them, the open tag's list, the covers /voyage/ and /posts/ show. A tag is the address's #slug (the
+  one the tags under a post already link to), and the address opens that list by itself (:target,
+  _sass/_tags.scss); with no tag in it, every entry. assets/js/tag-page.js marks the open tag and
+  brings it to the middle of the line. A post tag's list carries its line from _data/tag_lines.yml
+  under its name, where it has one.
 
-  A door's face is the dye vat of its photograph (_includes/tag-door-vat.html, assets/js/tag-doors.js):
-  each tag has a photograph of its own, and the wall shows its colours, not the picture, so the doors
-  are told apart without the page crowding. Under a pointer a door develops into its photograph.
-
-  A tag's name is a label: Barlow, under its emoji, so a door is never taken for a cover.
   shortcut: takes the emoji to be the tag's first character, upgrade if a tag ever starts with a
   joined sequence (a flag, a family).
 {%- endcomment -%}
-{% include group-by-array collection=include.docs field="tags" %}
+{%- if page.tag_page == "voyage" -%}
+  {%- comment -%} As /voyage/ lists them: a voyage whose Photobook is still empty is left out (_includes/photobook-ready.html). {%- endcomment -%}
+  {%- assign all_voyages = site.voyage | concat: site.subvoyage | sort: "date" | reverse -%}
+  {%- assign tag_docs = "" | split: "" -%}
+  {%- for d in all_voyages %}{% include photobook-ready.html doc=d %}{% if photobook_ready %}{% assign tag_docs = tag_docs | push: d %}{% endif %}{% endfor -%}
+  {%- assign tag_all = "All voyages" -%}{%- assign tag_all_href = "/voyage/" -%}
+  {%- assign tag_other = "Posts by tag" -%}{%- assign tag_other_href = "/tags/" -%}
+{%- else -%}
+  {%- assign tag_docs = site.posts -%}
+  {%- assign tag_all = "All posts" -%}{%- assign tag_all_href = "/year-archive/" -%}
+  {%- assign tag_other = "Voyages by tag" -%}{%- assign tag_other_href = "/voyage-by-tags/" -%}
+{%- endif -%}
+{% include group-by-array collection=tag_docs field="tags" %}
 {%- assign tag_rows = "" | split: "" -%}
 {%- for tag in group_names -%}
   {%- assign tag_name = tag | slice: 1, 200 | url_encode | remove: "%EF%B8%8F" | url_decode | strip -%}
@@ -27,108 +35,41 @@
 {%- endfor -%}
 {%- assign tag_rows = tag_rows | sort -%}
 
-{%- comment -%} Each tag's photograph: the earliest of its own that no other tag has taken, so its room does not open on the same picture twice (the covers below run newest first). The smallest tags choose first, having the fewest to choose from. {%- endcomment -%}
-{%- assign door_taken = "|" -%}
-{%- assign door_picks = "|" -%}
-{%- assign tag_rows_small_first = tag_rows | reverse -%}
-{%- for tag_row in tag_rows_small_first -%}
-  {%- assign t = tag_row | split: "|" -%}{%- assign tag_at = t[3] | plus: 0 -%}
-  {%- assign door_pick = group_items[tag_at].size | minus: 1 -%}
-  {%- assign door_from_last = group_items[tag_at] | reverse -%}
-  {%- for post in door_from_last -%}
-    {%- assign door_url = post.url | append: "|" | prepend: "|" -%}
-    {%- unless door_taken contains door_url -%}{%- assign door_pick = forloop.rindex0 -%}{%- break -%}{%- endunless -%}
-  {%- endfor -%}
-  {%- assign door_taken = door_taken | append: group_items[tag_at][door_pick].url | append: "|" -%}
-  {%- assign door_picks = door_picks | append: t[3] | append: ":" | append: door_pick | append: "|" -%}
-{%- endfor -%}
+<div class="tag-page">
+  <nav class="tag-page__tags" aria-label="Tags">
+    <ol>
+      <li><a href="#all">All</a></li>
+      {%- for tag_row in tag_rows -%}
+        {%- assign t = tag_row | split: "|" %}
+      <li><a href="#{{ t[2] }}"><span class="tag-page__emoji" aria-hidden="true">{{ t[4] }}&#xFE0F;</span>{{ t[1] | replace: "--", "-&#8288;-" }}</a></li>
+      {%- endfor %}
+    </ol>
+  </nav>
 
-<div class="tag-page" id="tags">
-  <div class="tag-page__doors">
-    {%- for tag_row in tag_rows -%}
-      {%- assign t = tag_row | split: "|" -%}{%- assign tag_at = t[3] | plus: 0 -%}
-      {%- assign door_key = "|" | append: t[3] | append: ":" -%}
-      {%- assign door_pick = door_picks | split: door_key | last | split: "|" | first | plus: 0 -%}
-      {%- assign post = group_items[tag_at][door_pick] -%}
-      {%- capture door_name -%}<span class="tag-page__emoji" aria-hidden="true">{{ t[4] }}&#xFE0F;</span>{{ t[1] | replace: "--", "-&#8288;-" }}{%- endcapture -%}
-      {%- assign door_href = "#" | append: t[2] -%}
-      {%- assign door_seed = t[2] -%}
-      {%- include tag-door-vat.html -%}
-      <div class="tag-page__door"{{ door_vat }}>{% include archive-single.html defer_cover=true title=door_name href=door_href anchor=false %}</div>
+  <section class="tag-page__room tag-page__room--all" id="all" aria-labelledby="all-name">
+    <h2 class="tag-page__room-name" id="all-name">{{ tag_all }}</h2>
+    {%- for post in tag_docs -%}
+      {% include archive-single.html defer_cover=true anchor=false %}
     {%- endfor -%}
-  </div>
+  </section>
 
   {%- for tag_row in tag_rows -%}
     {%- assign t = tag_row | split: "|" -%}{%- assign tag_at = t[3] | plus: 0 -%}
-    {%- comment -%} Next door: the five tags that share the most with this one (a row of the wall), the nearest first, each behind its own door. {%- endcomment -%}
-    {%- assign room_urls = "|" -%}
-    {%- for post in group_items[tag_at] -%}{%- assign room_urls = room_urls | append: post.url | append: "|" -%}{%- endfor -%}
-    {%- assign kin_rows = "" | split: "" -%}
-    {%- for other_row in tag_rows -%}
-      {%- assign o = other_row | split: "|" -%}{%- assign other_at = o[3] | plus: 0 -%}
-      {%- if other_at == tag_at -%}{%- continue -%}{%- endif -%}
-      {%- assign kin_shared = 0 -%}
-      {%- for post in group_items[other_at] -%}
-        {%- assign door_url = post.url | append: "|" | prepend: "|" -%}
-        {%- if room_urls contains door_url -%}{%- assign kin_shared = kin_shared | plus: 1 -%}{%- endif -%}
-      {%- endfor -%}
-      {%- if kin_shared > 0 -%}
-        {%- assign kin_key = 1000 | minus: kin_shared -%}
-        {%- capture kin_row -%}{{ kin_key }}{{ o[1] | downcase }}|{{ o[1] }}|{{ o[2] }}|{{ o[3] }}|{{ o[4] }}{%- endcapture -%}
-        {%- assign kin_rows = kin_rows | push: kin_row -%}
-      {%- endif -%}
-    {%- endfor -%}
-    {%- assign kin_rows = kin_rows | sort -%}
-    {%- comment -%} The room's hero: the tag's own photograph (its door's) under the site's overlay hero, as
-      _includes/page__hero.html lays a page's, with no depth map and no line. Its name is the page's
-      heading while the room is open: the page's own is hidden with its hero. {%- endcomment -%}
-    {%- assign door_key = "|" | append: t[3] | append: ":" -%}
-    {%- assign door_pick = door_picks | split: door_key | last | split: "|" | first | plus: 0 -%}
-    {%- assign post = group_items[tag_at][door_pick] -%}
-    {%- include voyage-cover.html doc=post -%}
-    {%- assign hero_cover = post.header.overlay_image | default: post.header.teaser | default: site.teaser -%}
-    {%- unless hero_cover contains "://" -%}{%- assign hero_cover = hero_cover | prepend: "/images/" | relative_url -%}{%- endunless -%}
   <section class="tag-page__room" id="{{ t[2] }}" aria-labelledby="{{ t[2] }}-name">
-    <div class="page__hero--overlay tag-page__hero">
-      {%- if vc %}
-      <div class="page__hero-media page__hero-media--cover" style="--hero-img: url('{{ vc.url }}/2880.webp'); --hero-img-sm: url('{{ vc.url }}/1920.webp'); --hero-pos: {{ vc.pos.hero }}; --hero-pos-md: {{ vc.pos.screen }}; --hero-pos-sm: {{ vc.pos.tall }};" aria-hidden="true"></div>
-      {%- else %}
-      <div class="page__hero-media" style="background-image: linear-gradient(rgba(0, 0, 0, {{ post.header.overlay_filter | default: 0.3 }}), rgba(0, 0, 0, {{ post.header.overlay_filter | default: 0.3 }})), url('{{ hero_cover }}');{% if post.header.overlay_position %} --hero-pos: {{ post.header.overlay_position }};{% endif %}" aria-hidden="true"></div>
-      {%- endif %}
-      <div class="wrapper">
-        <div class="page__hero-copy">
-          <a class="tag-page__back" href="#tags"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg><span>Every tag</span></a>
-          <h1 class="page__title" id="{{ t[2] }}-name"><span class="page__title-text"><span class="tag-page__emoji" aria-hidden="true">{{ t[4] }}&#xFE0F;</span>{{ t[1] }}</span></h1>
-        </div>
-      </div>
-    </div>
+    <h2 class="tag-page__room-name" id="{{ t[2] }}-name"><span class="tag-page__emoji" aria-hidden="true">{{ t[4] }}&#xFE0F;</span>{{ t[1] }}</h2>
+    {%- assign tag_raw = group_names[tag_at] -%}{%- assign tag_line = site.data.tag_lines[page.tag_page][tag_raw] -%}
+    {%- if tag_line %}
+    <p class="tag-page__room-line">{{ tag_line }}</p>
+    {%- endif -%}
     {%- for post in group_items[tag_at] -%}
       {% include archive-single.html defer_cover=true anchor=false %}
     {%- endfor -%}
-    {%- if kin_rows.size > 0 -%}
-    <nav class="tag-page__next" aria-labelledby="{{ t[2] }}-next">
-      <p class="tag-page__next-label" id="{{ t[2] }}-next">Next door</p>
-      <div class="tag-page__doors">
-        {%- for kin_row in kin_rows limit: 5 -%}
-          {%- assign k = kin_row | split: "|" -%}{%- assign kin_at = k[3] | plus: 0 -%}
-          {%- assign door_key = "|" | append: k[3] | append: ":" -%}
-          {%- assign door_pick = door_picks | split: door_key | last | split: "|" | first | plus: 0 -%}
-          {%- assign post = group_items[kin_at][door_pick] -%}
-          {%- capture door_name -%}<span class="tag-page__emoji" aria-hidden="true">{{ k[4] }}&#xFE0F;</span>{{ k[1] | replace: "--", "-&#8288;-" }}{%- endcapture -%}
-          {%- assign door_href = "#" | append: k[2] -%}
-          {%- assign door_seed = k[2] -%}
-          {%- include tag-door-vat.html -%}
-          <div class="tag-page__door"{{ door_vat }}>{% include archive-single.html defer_cover=true title=door_name href=door_href anchor=false %}</div>
-        {%- endfor -%}
-      </div>
-    </nav>
-    {%- endif -%}
   </section>
   {%- endfor -%}
 
-  <script type="module" src="{{ '/assets/js/tag-doors.js' | relative_url }}"></script>
   <p class="tag-page__onward">
-    <a href="{{ include.all_href | relative_url }}">{{ include.all_label }} <span aria-hidden="true">→</span></a>
-    <a href="{{ include.other_href | relative_url }}">{{ include.other_label }} <span aria-hidden="true">→</span></a>
+    <a href="{{ tag_all_href | relative_url }}">{{ tag_all }} <span aria-hidden="true">→</span></a>
+    <a href="{{ tag_other_href | relative_url }}">{{ tag_other }} <span aria-hidden="true">→</span></a>
   </p>
 </div>
+<script type="module" src="{{ '/assets/js/tag-page.js' | relative_url }}"></script>

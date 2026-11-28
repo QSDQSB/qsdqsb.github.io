@@ -7,11 +7,15 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { KINDS } from './plan-entries.mjs';
+
 export function planHash(planDir) {
+  // The four running lists' documents are rendered from their folders: the folders are hashed, not them.
+  const derived = new Set(Object.values(KINDS).filter((k) => fs.existsSync(path.join(planDir, k.dir))).map((k) => path.join(planDir, k.doc)));
   const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
     if (e.name === 'private') return [];
     const full = path.join(dir, e.name);
-    return e.isDirectory() ? walk(full) : full.endsWith('.md') ? [full] : [];
+    return e.isDirectory() ? walk(full) : full.endsWith('.md') && !derived.has(full) ? [full] : [];
   });
   const hash = crypto.createHash('sha256');
   for (const f of walk(planDir).sort()) hash.update(path.relative(planDir, f)).update('\0').update(fs.readFileSync(f)).update('\0');
