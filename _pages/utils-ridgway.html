@@ -31,7 +31,7 @@ masthead_back_label: Utilities
         {%- unless forloop.first %}</ol></section>{% endunless %}
         {%- assign plate = c[2] %}
     <section class="ridgway-plate" aria-label="Plate {{ plate }}"><h2 class="ridgway-plate__no">Plate {{ plate }}</h2><ol>
-      {%- endif %}<li><a class="ridgway-swatch" href="{{ '/reverie/' | relative_url }}?c={{ c[1] }}" style="--c:#{{ c[1] }}" data-hex="#{{ c[1] }}"><i></i><b>{{ c[0] | escape }}</b><span>{{ c[1] | upcase }}</span></a></li>
+      {%- endif %}<li{% if c[0] == "White" %} class="is-alone"{% endif %}><a class="ridgway-swatch" href="{{ '/reverie/' | relative_url }}?c={{ c[1] }}" style="--c:#{{ c[1] }}" data-hex="#{{ c[1] }}"><i></i><b>{{ c[0] | escape }}</b><span>{{ c[1] | upcase }}</span></a></li>
       {%- if forloop.last %}</ol></section>{% endif -%}
     {%- endfor %}
   </div>

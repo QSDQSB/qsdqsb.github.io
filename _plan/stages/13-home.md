@@ -40,11 +40,11 @@ Audit ids are sections of `design/audits/stylesheets.md` (S), findings of
 `design/audits/reviewer.md` (R) and `design/audits/measured.md` (M).
 
 **The page**
-- [ ] Q25, home-order · The welcome, then Recent updates, then the rooms as the page's index
+- [x] Q25, home-order · The welcome, then Recent updates, then the rooms as the page's index
       (`_includes/home/index.html`, `_includes/home/whats-new.html`, `_sass/_home.scss`). The three
       panels still snap. Checked at 320 by 640, where the rooms overflowed by about 27 px
       (stage 3's fault): the last panel must hold all five.
-- [ ] Q25, home-room-numbers · Each room's number is what it holds, in Didot: posts, voyages, fables;
+- [x] Q25, home-room-numbers · Each room's number is what it holds, in Didot: posts, voyages, fables;
       About has none. Figured at build, never typed, so it cannot go stale. The lead's, tier 1,
       shown: Voyage counts the covers on its wall and Palette the voyages that have a palette (the
       sheet's figure for Palette was a stand-in).
@@ -53,39 +53,40 @@ Audit ids are sections of `design/audits/stylesheets.md` (S), findings of
       the owner said what is wrong, not what is right. Each one is a control (it takes a press and a
       key, and leads to the second panel), is still for a reader who asked for stillness, and does
       not spring. It answers stage 3's "does Home's hero need a way on besides scrolling".
-- [ ] Q24, home-title · The name keeps Didot; "Wonders" loses its gradient for flat brass, the pale
+- [x] Q24, home-title · The name keeps Didot; "Wonders" loses its gradient for flat brass, the pale
       one the sheet drew (R4; `_sass/_home.scss`, `.home__wordmark`). The other golds written by
       hand in this file come onto the two brasses (S, H4).
-- [ ] The three small labels leave Monaco, a face the site never loads, for the shared `eyebrow`
+- [x] The three small labels leave Monaco, a face the site never loads, for the shared `eyebrow`
       (R4; M6; S, A5). Their brass stays. Said on the sheet beside the name, as a fix that comes with
       any pick; the label is smaller than Monaco was (16 px to 11), so it is in the pictures.
-- [ ] Q24, italic-lines · Home's Didot italic line is Playfair upright (S, F: `_home.scss:502`). The
+- [x] Q24, italic-lines · Home's Didot italic line is Playfair upright (S, F: `_home.scss:502`). The
       motto is a quotation and keeps the fourth face (Q25).
 
 **The cards** (answered on 2026-10-01; moved from stage 4)
-- [ ] Recent updates' cards take the `card` piece's lift: 4 px, 1.018, one shadow, 0.3 s; the six
+- [x] Recent updates' cards take the `card` piece's lift: 4 px, 1.018, one shadow, 0.3 s; the six
       shadows and the half second go (picks 4, 5, 12; S, B2; R13; M3). A transition nothing
       triggers is deleted with it.
-- [ ] At rest they take the short shadow (pick 3) and one corner: 18 px on the feature, 10 px on the
+- [x] At rest they take the short shadow (pick 3) and one corner: 18 px on the feature, 10 px on the
       rest (S, D; that the feature is "the scenario" is the lead's reading, tier 1). Home's
       baseline is re-captured.
 
 **Brought into line with 0012, in these files** (tier 1)
-- [ ] A room's row answers in place: it brightens and no longer slides 18 px, and no arrow slides in
+- [x] A room's row answers in place: it brightens and no longer slides 18 px, and no arrow slides in
       (R12; S, B13; Q25, "No arrow"). The others still dim, as X15 built it.
-- [ ] Weights the site does not load (S, A1.4: `_home.scss:332`, `:543`). A phone's side margin
+- [x] Weights the site does not load (S, A1.4: `_home.scss:332`, `:543`). A phone's side margin
       comes onto the site's one (M14: 22.4 px here).
 - [ ] Home ends as every page does: the one ending of [stage 14](14-shell-and-small-pages.md), so
       RSS and Terms can be reached from the front page (P05; R5).
 
 **Journeys owed**
-- [ ] F098 · Recent updates names a part: once the newest `updated:` is on a sub-voyage, a card
+- [x] F098 · Recent updates names a part: once the newest `updated:` is on a sub-voyage, a card
       links `/voyage/<parent>/<part>/` and none links its parent. Tier 0.
 
 ## Not in this batch
 
-- The word card's own growth under the pointer (1.05, no lift: R13). It is a signature and was not
-  asked; it stays until the owner has seen it beside a still one.
+- The word card's own growth under the pointer (1.05, no lift: R13) is the post's word card; on Home it
+  never showed (the board's hover outranked it), and it now lifts as the board's cards do. Showing the
+  owner a growing word card beside a still one needs that growth built first (F123).
 - The line under a room's name on its door is Playfair (S, A2 marks it a choice). It is a line and
   not a label: left.
 - Back to Home always re-opening on the hero, and the 320 px call: [stage 3](03-wayfinding.md).
