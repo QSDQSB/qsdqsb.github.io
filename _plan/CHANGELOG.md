@@ -11,7 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
-- 2026-11-28 · Prototype (proto/hint-f): on Home's first screen Recent updates falls in letter by letter and, after a hold, pours away downward into the chevrons, which brighten as they catch it; between turns only three faint chevrons light in turn, slowly · tier 2
+- 2026-11-28 · Home's first screen shows the way on: an arrow of three chevrons that drifts down and lights in turn, top to bottom, and over it, now and then, Recent updates falls in letter by letter, holds, and pours away into it; still for a reader who asked for no motion; on a phone the name sits beside the arrow, below the monogram; a press leads to Recent updates (Q26, Q27) · tier 2
 - 2026-11-27 · What follows a post's last sentence (tags, the word card, subscribe, previous and next, what to read next) stands on the text's own width, and You Might Also Enjoy is two small covers side by side (Q24) · tier 2
 - 2026-11-27 · Chinese beside Playfair is set in a Song face by default on every page, from the device's own where it has one, else from slices of Noto Serif SC that a page fetches only as it needs them; the essays' own setting of it is gone (Q25) · tier 2
 - 2026-11-27 · A quotation in a post is set in on both sides with a one-pixel brass hairline at its left, in another hand: CMU Serif italic for the Latin, Kai for the Chinese where the device has it. A note set apart is a quiet panel with brass links, not a block of colour. Inline code is ink in a hairline; a caption is Barlow, not Georgia; a picture in a post has 8 px corners and keeps still under the pointer (Q25) · tier 2

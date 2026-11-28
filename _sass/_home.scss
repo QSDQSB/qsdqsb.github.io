@@ -416,20 +416,23 @@ body.layout--home {
   overflow: visible;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.3;
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 0.4;
-  animation: home-hint-catch 16s $cubic-bezier-standard 3s infinite;
+  opacity: 0.8;
+  // Always plain to see, and always going down: the arrow drifts a few pixels down and back while its
+  // chevrons light in turn, top to bottom.
+  animation: home-hint-catch 16s $cubic-bezier-standard 3s infinite, home-hint-drift 2.4s $cubic-bezier-standard infinite;
 
-  path { opacity: 0.25; animation: home-hint-light 3.2s $cubic-bezier-standard infinite; }
-  path:nth-child(2) { animation-delay: 0.45s; }
-  path:nth-child(3) { animation-delay: 0.9s; }
+  path { opacity: 0.35; animation: home-hint-light 1.8s $cubic-bezier-standard infinite; }
+  path:nth-child(2) { animation-delay: 0.25s; }
+  path:nth-child(3) { animation-delay: 0.5s; }
 }
-@keyframes home-hint-light { 0%, 60%, 100% { opacity: 0.25; } 22% { opacity: 1; } }
+@keyframes home-hint-light { 0%, 55%, 100% { opacity: 0.35; } 18% { opacity: 1; } }
+@keyframes home-hint-drift { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(5px); } }
 // On the word's turn, kept in step with it: as the letters fall away the chevrons brighten, as if they
-// caught what was poured, and dim again for the long quiet.
-@keyframes home-hint-catch { 0%, 40%, 70%, 100% { opacity: 0.4; } 52% { opacity: 1; } }
+// caught what was poured.
+@keyframes home-hint-catch { 0%, 40%, 70%, 100% { opacity: 0.8; } 52% { opacity: 1; } }
 // Sixteen seconds a turn: a letter falls in over a second, lit, settles, holds about four, falls away
 // over a second; the word is gone for half the turn and only the chevrons are left.
 @keyframes home-hint-letter {
@@ -437,6 +440,13 @@ body.layout--home {
   7% { opacity: 1; transform: none; }
   14%, 38% { opacity: 0.75; transform: none; }
   46%, 100% { opacity: 0; transform: translateY(0.45em); }
+}
+
+// On a phone the monogram's band reaches almost to the foot: the name sits beside a smaller arrow, in
+// one line, below it.
+@include responsive-down(tablet) {
+  .home__hint { flex-direction: row; gap: 0.55rem; bottom: 0.55rem; padding: 0.4rem 0.6rem; }
+  .home__hint-mark { width: 16px; height: 24px; }
 }
 
 /* ===================== REGISTRATION MARKS =====================
