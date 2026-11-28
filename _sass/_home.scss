@@ -327,12 +327,17 @@ body.layout--home {
    a constant loop, telling you the page continues. It echoes the site's
    motion-as-cue language — panels auto-advance rather than carry a positional
    navigator — so the Home stays consistent instead of sprouting a bespoke pager.
-   The hero + What's New panels point down (more below); the index, being
+   What's New points down (more below; the hero has its own way on, below); the index, being
    the last panel, uses `--up` (a rising spark) so it never gestures at a dead end.
    Each cue lives inside its panel, so it scrolls with it. */
-.home__scroll-hint {
+// The cue and the first screen's way on share their layer and their entrance.
+.home__scroll-hint, .home__hint {
   position: absolute;
   z-index: 3;
+  opacity: 0;
+  animation: home-rise 1s ease 1.5s forwards;
+}
+.home__scroll-hint {
   left: 50%;
   margin-left: -0.5px;                 /* centre the 1px track without a transform (frees it for the entrance rise) */
   bottom: 2.2rem;
@@ -340,8 +345,6 @@ body.layout--home {
   height: 46px;
   overflow: hidden;                    /* clip the falling spark to the track */
   background: linear-gradient(rgba($primary-color, 0) 0%, rgba($primary-color, 0.22) 100%);
-  opacity: 0;
-  animation: home-rise 1s ease 1.5s forwards;
 }
 .home__scroll-hint::after {
   content: "";
@@ -366,6 +369,84 @@ body.layout--home {
 .home__scroll-hint--up::after {
   background: linear-gradient($h2-color, rgba($h2-color, 0));
   animation-direction: reverse;
+}
+
+/* ===================== THE WAY ON =====================
+   The first screen's hint: three chevrons lit in turn, always, and over them the name of what comes
+   next, which surfaces now and then and goes again, so the landing stays a picture. Under the pointer
+   or the keyboard the name stays. A link to the second panel. */
+.home__hint {
+  left: 0;
+  right: 0;
+  bottom: 1.6rem;
+  width: max-content;
+  margin: 0 auto;                      /* centred without a transform, which the entrance rise needs */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: $border-radius;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color $duration-base $cubic-bezier-standard;
+
+  &:hover, &:focus-visible { color: var(--ink); }
+  &:focus-visible { @include brass-focus; }
+}
+.home__hint-word {
+  @include eyebrow;
+  color: inherit;
+  white-space: nowrap;
+
+  // Each letter its own turn: it drifts down into place and lights, settles, then, in the same order,
+  // goes on down and out, as if poured toward the panel below.
+  > span {
+    display: inline-block;
+    white-space: pre;
+    opacity: 0;
+    animation: home-hint-letter 16s $cubic-bezier-standard calc(3s + var(--i) * 0.08s) infinite;
+  }
+}
+.home__hint:is(:hover, :focus-visible) .home__hint-word > span { opacity: 1; transform: none; animation: none; }
+.home__hint-mark {
+  width: 24px;
+  height: 36px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.8;
+  // Always plain to see, and always going down: the arrow drifts a few pixels down and back while its
+  // chevrons light in turn, top to bottom.
+  animation: home-hint-catch 16s $cubic-bezier-standard 3s infinite, home-hint-drift 2.4s $cubic-bezier-standard infinite;
+
+  path { opacity: 0.35; animation: home-hint-light 1.8s $cubic-bezier-standard infinite; }
+  path:nth-child(2) { animation-delay: 0.25s; }
+  path:nth-child(3) { animation-delay: 0.5s; }
+}
+@keyframes home-hint-light { 0%, 55%, 100% { opacity: 0.35; } 18% { opacity: 1; } }
+@keyframes home-hint-drift { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(5px); } }
+// On the word's turn, kept in step with it: as the letters fall away the chevrons brighten, as if they
+// caught what was poured.
+@keyframes home-hint-catch { 0%, 40%, 70%, 100% { opacity: 0.8; } 52% { opacity: 1; } }
+// Sixteen seconds a turn: a letter falls in over a second, lit, settles, holds about four, falls away
+// over a second; the word is gone for half the turn and only the chevrons are left.
+@keyframes home-hint-letter {
+  0% { opacity: 0; transform: translateY(-0.45em); }
+  7% { opacity: 1; transform: none; }
+  14%, 38% { opacity: 0.75; transform: none; }
+  46%, 100% { opacity: 0; transform: translateY(0.45em); }
+}
+
+// Below a desktop the monogram's band reaches almost to the foot: a smaller arrow, centred below it,
+// and the name beside it to its left, so the arrow keeps the centre while the name comes and goes.
+@include responsive-down(desktop) {
+  .home__hint { bottom: 0.55rem; padding: 0.4rem 0.6rem; }
+  .home__hint-mark { width: 16px; height: 24px; }
+  .home__hint-word { position: absolute; right: 100%; top: 50%; margin-top: -0.6em; }
 }
 
 /* ===================== REGISTRATION MARKS =====================
@@ -883,7 +964,13 @@ html.home-reveal-ready .home__index.is-in .home__doors .door:focus-visible { opa
   .home__hero-blobs .blob,
   .home__motto > span, .home__wordmark .ln > span, .home__wordmark .gold,
   .home__plate,
-  .home__scroll-hint, .home__scroll-hint::after { animation: none; } // each selector matches its animating rule; later, so it wins
+  .home__scroll-hint, .home__scroll-hint::after,
+  .home__hint, .home__hint-word > span, .home__hint-mark, .home__hint-mark path { animation: none; } // each selector matches its animating rule; later, so it wins
+  // Still, the hint says it all at once: its name, and the chevrons lit.
+  .home__hint, .home__hint-word > span { opacity: 1; }
+  .home__hint-word > span { transform: none; }
+  .home__hint-mark { opacity: 1; }
+  .home__hint-mark path { opacity: 0.7; }
   .home__wordmark .ln > span, .home__motto > span { transform: none; }
   .home__plate { opacity: 1; }
   /* Scroll cue: no fall — a static spark resting at the end of its hairline. */
@@ -895,5 +982,8 @@ html.home-reveal-ready .home__index.is-in .home__doors .door:focus-visible { opa
 // would have brought in are shown where they rest, as for reduced motion above.
 html.motion-off {
   .home__wordmark .ln > span, .home__motto > span { transform: none; }
-  .home__plate, .home__scroll-hint { opacity: 1; }
+  .home__plate, .home__scroll-hint, .home__hint, .home__hint-word > span { opacity: 1; }
+  .home__hint-word > span { transform: none; }
+  .home__hint-mark { opacity: 1; }
+  .home__hint-mark path { opacity: 0.7; }
 }

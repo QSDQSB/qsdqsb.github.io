@@ -18,6 +18,27 @@ export default { id: 'home', name: 'Home opens and its doors lead somewhere', as
   // What is new comes straight after the welcome; the rooms close the page as its index.
   const order = await page.$$eval('.home__panel', (ps) => ps.map((p) => (p.matches('.home__panel--new') ? 'new' : p.matches('.home__panel--index') ? 'rooms' : 'welcome')));
   must(order.join() === 'welcome,new,rooms', `Home's panels run ${order.join(', ')}`);
+  // The way on from the first screen: named, it leads to Recent updates by a press and by the keyboard,
+  // and with motion off it stands still, its words shown.
+  const hint = page.locator('.home__hint');
+  const arrived = async (how) => {
+    await page.waitForFunction(() => Math.abs(document.getElementById('home-new').getBoundingClientRect().top) <= 2, null, { timeout: 4000 }).catch(() => {});
+    const at = await page.evaluate(() => ({ top: document.getElementById('home-new').getBoundingClientRect().top, focus: !!document.activeElement?.closest('#home-new') }));
+    must(Math.abs(at.top) <= 2 && at.focus, `the way on did not lead to Recent updates by ${how} (top ${at.top}, focus there: ${at.focus})`);
+  };
+  await go('/');
+  must(/recent updates/i.test(await hint.getAttribute('aria-label') || ''), 'the way on has no name');
+  const still = await page.evaluate(() => ({
+    running: [...document.querySelectorAll('.home__hint, .home__hint *')].flatMap((el) => el.getAnimations()).length,
+    hidden: [...document.querySelectorAll('.home__hint-word > span')].filter((s) => getComputedStyle(s).opacity !== '1').length,
+  }));
+  must(still.running === 0 && still.hidden === 0, `with motion off the way on still moves (${still.running} running) or hides ${still.hidden} letters`);
+  await hint.click();
+  await arrived('a press');
+  await go('/');
+  await hint.focus();
+  await page.keyboard.press('Enter');
+  await arrived('the keyboard');
   // Each room's figure is what its page lists; About holds none.
   const figures = await page.$$eval('.home__doors .door', (ds) => ds.map((d) => [d.getAttribute('href'), d.querySelector('.door__fig')?.textContent.trim() ?? null]));
   const listed = { '/year-archive/': '#main a.card', '/voyage/': '.container a.card', '/palette/': '.palette-voyages__list a', '/bestiary/': '.bestiary-card' };

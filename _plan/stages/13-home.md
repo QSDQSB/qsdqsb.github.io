@@ -48,7 +48,7 @@ Audit ids are sections of `design/audits/stylesheets.md` (S), findings of
       About has none. Figured at build, never typed, so it cannot go stale. The lead's, tier 1,
       shown: Voyage counts the covers on its wall and Palette the voyages that have a palette (the
       sheet's figure for Palette was a stand-in).
-- [ ] Q25, home-first-screen · A clear, animated hint to scroll in place of the thin moving line. A
+- [x] Q25, home-first-screen · A clear, animated hint to scroll in place of the thin moving line. A
       choice, with two or three prototypes ([0005](../decisions/0005-choices-arrive-as-prototypes.md)):
       the owner said what is wrong, not what is right. Each one is a control (it takes a press and a
       key, and leads to the second panel), is still for a reader who asked for stillness, and does
