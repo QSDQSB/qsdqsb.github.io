@@ -7,7 +7,7 @@ finding or stage it answers, and its tier. Not a commit log: `git log` is that. 
 what the site does differently.
 
 `scripts/check-plan.mjs` fails the gate when styles, layouts, includes, scripts, pages or the
-navigation change with no line added here. Tooling, docs and the plan itself need none.
+navigation change with no entry added (`node scripts/plan.mjs log "…"`). Tooling, docs and the plan itself need none.
 
 Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 

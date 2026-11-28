@@ -7,6 +7,8 @@ the map a session reads instead of searching: find the row, open the files it na
 
 `scripts/check-plan.mjs` checks that every path here exists and every journey id is real, so the
 table cannot quietly go stale. A feature with no journey is a feature the gate cannot defend: the
-check counts them. Add the row when a feature ships; add its journey to
-`tests/journeys/<id>.mjs` in the same change.
+check counts them. Add a file to `_plan/features/<slug>.md` when a feature ships, and its journey to
+`tests/journeys/<id>.mjs`, in the same change. A feature file is `---`, then one line each of
+`feature:`, `where:`, `code:` (paths in backticks), `journey:` (ids in backticks, or empty),
+`notes:` and `order:` (a number: where the row stands; leave it off and the row goes last), then `---`.
 

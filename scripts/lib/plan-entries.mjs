@@ -13,6 +13,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 
 export const KINDS = {
   changelog: { dir: 'changelog', doc: 'CHANGELOG.md' },
@@ -24,7 +25,8 @@ export const KINDS = {
 /** An old numeric id (F124, R032) or a new one: its date and its words. */
 export const ID = '(?:[A-Z]\\d{3,}|\\d{4}-\\d{2}-\\d{2}-[a-z0-9-]+)';
 
-export const slugOf = (s, max = 48) => String(s).toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, max).replace(/-$/, '') || 'entry';
+// Words with no Latin letter (Chinese) have no slug: a short hash of them is the name, so two branches that file different ones the same day do not meet.
+export const slugOf = (s, max = 48) => String(s).toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, max).replace(/-$/, '') || `x${crypto.createHash('sha1').update(String(s)).digest('hex').slice(0, 8)}`;
 
 export function parseEntry(text, name = '') {
   const m = text.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);

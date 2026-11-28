@@ -33,7 +33,8 @@ test('an entry is its own: names are unique, and a new id is the day and the wor
   const twice = docToEntries('changelog', '## 2031\n\n- 2031-01-01 · Same words\n- 2031-01-01 · Same words\n');
   assert.deepStrictEqual(twice.entries.map((e) => e.name), ['2031-01-01-same-words', '2031-01-01-same-words-2']);
   assert.strictEqual(slugOf('The vat: is it "full screen"?'), 'the-vat-is-it-full-screen');
-  assert.strictEqual(slugOf('日本'), 'entry');
+  assert.match(slugOf('日本'), /^x[0-9a-f]{8}$/);
+  assert.notStrictEqual(slugOf('日本'), slugOf('日本語'), 'different words, different names');
 });
 
 /** A repository with the split layout, as the hub has it. */
@@ -107,4 +108,33 @@ test('the plan\'s fingerprint is of the entries, not of the documents made from 
     r.plan('log', 'A new line.');
     assert.notStrictEqual(planHash(path.join(r.dir, '_plan')), before);
   } finally { r.done(); }
+});
+
+test('the day\'s brief reads the entries from a commit, and the old documents from an older one', async () => {
+  const { collect } = await import('../scripts/hub-brief.mjs');
+  const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'brief-entries-')));
+  const git = (when, ...a) => execFileSync('git', a, { cwd: dir, encoding: 'utf8', env: { ...process.env, GIT_AUTHOR_DATE: when, GIT_COMMITTER_DATE: when } });
+  const put = (rel, body) => { fs.mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true }); fs.writeFileSync(path.join(dir, rel), body); };
+  const commit = (when, msg) => { git(when, 'add', '-A'); git(when, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', msg); };
+  try {
+    git('2031-01-01T10:00:00', 'init', '-q', '-b', 'master');
+    put('_plan/QUEUE.md', '# Queue\n\n---\n\n## Answered\n\n');
+    put('_plan/findings/inbox.md', '# Inbox\n\n## Waiting\n\n- 2031-01-01 · F001 · x · y\n\n## Taken\n');   // the day before the entries
+    put('_plan/FEATURES.md', '| Feature | Where |\n|---|---|\n| One | here |\n');
+    commit('2031-01-01T10:00:00', 'start');
+    fs.rmSync(path.join(dir, '_plan/findings/inbox.md')); fs.rmSync(path.join(dir, '_plan/FEATURES.md'));
+    put('_plan/findings/inbox/_head.md', '# Inbox\n\n');
+    put('_plan/findings/inbox/F001.md', '---\nid: F001\ndate: 2031-01-01\nstatus: waiting\n---\nx · y\n');
+    put('_plan/findings/inbox/2031-01-02-z.md', '---\nid: 2031-01-02-z\ndate: 2031-01-02\nstatus: waiting\n---\nx · z: with a colon\n');
+    put('_plan/changelog/2031-01-02-links.md', '---\ndate: 2031-01-02\ntier: 2\n---\nLinks in brass\n');
+    put('_plan/features/one.md', '---\nfeature: One\nwhere: here\ncode: `a.js`\njourney:\nnotes: n\n---\n');
+    put('_plan/features/two.md', '---\nfeature: Two\nwhere: there\ncode: `b.js`\njourney:\nnotes: n\n---\n');
+    commit('2031-01-02T11:00:00', '📐 Entries');
+    git('2031-01-03T08:00:00', 'checkout', '-q', '-b', 'later'); put('scripts/x.mjs', '1\n'); commit('2031-01-03T08:00:00', 'the next day');
+    const d = collect({ day: '2031-01-02', ref: 'later', cwd: dir, gh: false });
+    assert.deepStrictEqual(d.changes, [{ text: 'Links in brass', tier: 2 }]);
+    assert.strictEqual(d.filed, 1);
+    assert.deepStrictEqual([d.inbox.before.waiting, d.inbox.after.waiting], [1, 2], 'one old document before, two entries after');
+    assert.deepStrictEqual([d.features.before, d.features.after], [1, 2]);
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });

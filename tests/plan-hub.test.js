@@ -29,7 +29,7 @@ function withPlanCopy(run) {
 test('the plan in the repo is sound', () => {
   const out = spawnSync('node', [path.join(ROOT, 'scripts/check-plan.mjs'), '--json'], { encoding: 'utf8' });
   const state = JSON.parse(out.stdout);
-  assert.deepStrictEqual(state.errors.filter((e) => !/CHANGELOG/.test(e)), [], 'check-plan reports the plan broken');
+  assert.deepStrictEqual(state.errors.filter((e) => !/changelog/i.test(e)), [], 'check-plan reports the plan broken');
   assert.ok(state.stages.length >= 10, 'the roadmap lists its stages');
   assert.ok(state.decisions.length >= 6);
 });

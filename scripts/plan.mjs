@@ -415,7 +415,7 @@ switch (command) {
     const taken = new Set(refs.split('\n').filter(Boolean).map((r) => r.replace(/^origin\/(work|hold)\//, '')));
     const out = [];
     for (const e of loadEntries(PLAN, 'requests').entries.filter((x) => (x.status || 'open') === 'open').sort((a, b) => b.date.localeCompare(a.date) || String(b.id).localeCompare(String(a.id), 'en', { numeric: true }))) {
-      out.push({ kind: 'request', stage: null, key: slug(e.id), label: e.id, text: e.body });
+      out.push({ kind: 'request', stage: null, key: e.id.toLowerCase(), label: e.id, text: e.body });
     }
     const roadmap = read('ROADMAP.md');
     const stages = [...roadmap.matchAll(/^\| (\d+) \| \[[^\]]+\]\(stages\/([^)]+)\) \|[^|]*\| ([^|]+) \|/gm)].filter((m) => /building/i.test(m[3]));

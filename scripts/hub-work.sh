@@ -116,7 +116,7 @@ no_tooling() {
 # `fingerprint site` leaves out the plan: a line filed or ticked after a full gate needs only the fast one.
 fingerprint() { changed | { if [ "${1:-}" = site ]; then grep -v '^_plan/'; else cat; fi; } | while IFS= read -r f; do if [ -f "$WT/$f" ]; then printf '%s %s\n' "$f" "$(shasum "$WT/$f" | cut -d' ' -f1)"; else printf '%s gone\n' "$f"; fi; done | shasum | cut -d' ' -f1; }
 # Files that open work pull requests change (begin writes the list): a second one beside them would meet
-# them in the same lines. The plan is left out: its lines merge, and the changelog merges by union.
+# them in the same lines. The plan is left out: its entries are files of their own.
 no_overlap() {
   [ -s "$STATE.taken" ] || return 0
   local o; o="$(changed | grep -v '^_plan/' | grep -xF -f <(cut -f2 "$STATE.taken") || true)"
