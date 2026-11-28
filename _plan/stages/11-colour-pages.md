@@ -135,3 +135,6 @@ today). P01 adds one: a colour's frame opens from its address (`#colour`).
 
 `npm run gate:full` passes with baselines re-captured for Palette, a voyage's palette, Ridgway and
 the essay's figure, and no others; the reviewer returns PASS; P01 is shown before and after.
+(As built: the essay has no shot in the harness, so its figure is shown in the pull request's
+pictures; Ridgway gets a first-screen shot; Reverie, the 404 and the specimen are re-captured too,
+as the shared lede turned upright and the ways on lost their arrows.)

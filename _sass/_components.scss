@@ -31,7 +31,7 @@
   @include responsive-down(tablet) { font-size: clamp(1.2rem, 5vw, 1.65rem); }
 }
 
-// The line beneath a title: Playfair upright, as every hero's line (0012; Q24, "Playfair upright everywhere").
+// The line beneath a title: Playfair upright, as every hero's line (0012).
 @mixin lede {
   font: 400 clamp(1.02rem, 1.34vw, 1.34rem)/1.26 $line-serif-family;
 }

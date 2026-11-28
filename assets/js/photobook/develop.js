@@ -11,7 +11,8 @@ export function develop(root, selector) {
   if (!root) return;
   const show = (img) => img.classList.add('is-in');
   const watch = (img) => {
-    if (img.complete && img.naturalWidth) show(img);    // One that cannot be had is marked lost, and hidden over its placeholder (_colour.scss): WebKit
+    if (img.complete && img.naturalWidth) show(img);
+    // One that cannot be had is marked lost, and hidden over its placeholder (_colour.scss): WebKit
     // would draw its broken-image mark there.
     else { img.addEventListener('load', () => show(img), { once: true }); img.addEventListener('error', () => { img.classList.add('is-lost'); show(img); }, { once: true }); }
   };
