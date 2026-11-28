@@ -791,6 +791,38 @@
     {
       "type": "Feature",
       "properties": {
+        "slug": "st-moritz",
+        "title": "St Moritz",
+        "url": "/voyage/st-moritz/",
+        "excerpt": "Where gold dissolves into glacial blue",
+        "date": "2026-10-18T00:00:00.000Z",
+        "dateDisplay": "Oct 2026",
+        "tags": [
+          "🏔️Alps",
+          "🚞Switzerland",
+          "🛥️Lake"
+        ],
+        "mainTag": "🏔️Alps",
+        "mainTagColor": "#c8cacd",
+        "tagColors": {
+          "🏔️Alps": "#c8cacd",
+          "🚞Switzerland": "#5e9e6f",
+          "🛥️Lake": "#5b89a9"
+        },
+        "fallbackColor": "#7d746d",
+        "primaryTagLimit": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.8392428,
+          46.4978958
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "slug": "stoos",
         "title": "Stoos",
         "url": "/voyage/stoos/",
