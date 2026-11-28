@@ -49,7 +49,7 @@ A page that needs a control no piece provides adds the piece to the shared layer
    wash, the lightbox, the vat) before a parallel one.
 4. **New pages stand on the Photobook shell** (`layout: default`, `body_class: photobook …`), never
    on `single` or `archive`.
-5. **Every feature has a journey.** If a reader would notice it breaking, `check-journeys.mjs`
+5. **Every feature has a journey.** If a reader would notice it breaking, `tests/journeys/`
    walks it.
 6. **Weight has a budget** ([0004](decisions/0004-budgets-that-only-fall.md)). What grows with the
    archive is measured per photograph.

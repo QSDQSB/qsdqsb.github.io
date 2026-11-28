@@ -35,7 +35,7 @@ design/
 # Python bytecode from importing a scripts/check-*.py module
 __pycache__/
 
-# Visual regression harness: only the baseline's index (tests/visual/baseline.json) is tracked; its pictures live in R2.
+# Visual regression harness: only the baseline's hashes (tests/visual/hashes/, one file a picture) are tracked; its pictures live in R2.
 tests/visual/current/
 tests/visual/diff/
 tests/visual/content/

@@ -9,7 +9,7 @@ Work on a stage of the roadmap: `$ARGUMENTS` (a stage number; with none, the cur
    - Set the tier (`_plan/decisions/0001-who-decides-what.md`). Tier 2 that is not answered in the
      queue: do not build it. If it is a choice between ways, run `/choose`; otherwise add a queue
      entry and move to the next task.
-   - Build it. Reuse the shared pieces. Add or extend a journey in `scripts/check-journeys.mjs`
+   - Build it. Reuse the shared pieces. Add or extend a journey in `tests/journeys/`
      if a reader would notice it breaking.
    - Add its line to `_plan/CHANGELOG.md` if a reader gets something different.
 4. Run `bash -lc 'npm run gate:full'` (or `npm run gate` if nothing under `_sass/`, `_layouts/`,

@@ -149,8 +149,8 @@ if (exists('QUEUE.md')) {
 /* ── features ───────────────────────────────────────────────────────────── */
 const features = [];
 if (exists('FEATURES.md')) {
-  const journeysSrc = fs.existsSync(path.join(ROOT, 'scripts/check-journeys.mjs')) ? fs.readFileSync(path.join(ROOT, 'scripts/check-journeys.mjs'), 'utf8') : '';
-  const journeys = new Set([...journeysSrc.matchAll(/\{ id: '([a-z0-9-]+)'/g)].map((m) => m[1]));
+  const journeyDir = path.join(ROOT, 'tests/journeys');
+  const journeys = new Set(fs.existsSync(journeyDir) ? fs.readdirSync(journeyDir).filter((f) => f.endsWith('.mjs') && !f.startsWith('_')).map((f) => f.slice(0, -4)) : []);
   for (const line of read('FEATURES.md').split('\n')) {
     const cells = line.split('|').map((c) => c.trim());
     if (cells.length < 6 || !cells[1] || /^-+$/.test(cells[1]) || cells[1] === 'Feature') continue;
@@ -161,7 +161,7 @@ if (exists('FEATURES.md')) {
       if (!fs.existsSync(path.join(ROOT, p))) errors.push(`FEATURES.md, "${name}": ${p} does not exist.`);
     }
     const ids = [...journey.matchAll(/`([a-z0-9-]+)`/g)].map((m) => m[1]);
-    for (const id of ids) if (!journeys.has(id)) errors.push(`FEATURES.md, "${name}": no journey "${id}" in scripts/check-journeys.mjs.`);
+    for (const id of ids) if (!journeys.has(id)) errors.push(`FEATURES.md, "${name}": no journey "${id}" (tests/journeys/${id}.mjs).`);
     features.push({ name, where, journeys: ids });
   }
   const bare = features.filter((f) => !f.journeys.length).length;
