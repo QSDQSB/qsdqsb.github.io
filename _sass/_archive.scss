@@ -178,8 +178,7 @@
   background-image: linear-gradient(rgba(12,12,12,var(--bg-filter-opacity)),rgba(0,0,0,var(--bg-filter-opacity))), var(--bg-img, none);
   .no-js & { --bg-img: var(--bg-later); }
 	position: relative;
-  // Under the pointer the cover rises and grows, gradually, over a second (the owner, 2026-11-28,
-  // bringing back what it did before 0009's still cover). aspect-ratio: hover 3.5→3.3 is intended
+  // Under the pointer the cover rises and grows, gradually, over a second. aspect-ratio: hover 3.5→3.3 is intended
   // motion; a ratio is immune to the Safari load-time re-resolution that bans geometry from the tokens.
   transition: $cubic-bezier-default, aspect-ratio 1s $cubic-bezier-param;
   text-decoration: none;
