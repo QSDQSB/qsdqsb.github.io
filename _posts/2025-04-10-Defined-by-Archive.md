@@ -9,7 +9,6 @@ seo_description: "A bilingual essay on memory, impermanence and the self — exp
 redirect_from:
   - /posts/2025-04-10-Defined-by-Archive/
   - /posts/2025/defined-by-archive
-prose_justify: true
 intruiging_words: Weltschmerz
 right_tarot_card: 'the-hanged-man'
 right_tarot_href: /voyage/#london

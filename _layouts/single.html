@@ -40,10 +40,14 @@ layout: default
         {% if page.date %}
           <p class="page__date"><i class="fa fa-fw fa-calendar-alt" aria-hidden="true"></i><time datetime="{{ page.date | date: "%Y-%m-%d" }}">{{ page.date | date: "%B %d, %Y" }}</time></p>
         {% endif %}
+        {%- capture toc_menu -%}{% include toc.html sanitize=true html=content h_min=1 h_max=6 class="toc__menu" id="toc-menu" skip_no_ids=true %}{%- endcapture -%}
+        {%- if toc_menu contains "<li" -%}
         <nav class="toc">
-          <header><h5 class="nav__title"><i class="fas fa-{{ page.toc_icon | default: 'list-ol' }}"></i> {{ page.toc_label | default: site.data.ui-text[site.locale].toc_label | default: "On this page" }}</h5></header>
-          {% include toc.html sanitize=true html=content h_min=1 h_max=6 class="toc__menu" skip_no_ids=true %}
+          {%- comment -%} Below a wide window the title is the one row a reader sees: a press opens the list (toc-scroll-spy.js). {%- endcomment -%}
+          <header><h5 class="nav__title"><button class="toc__toggle" type="button" aria-expanded="true" aria-controls="toc-menu"><i class="fas fa-{{ page.toc_icon | default: 'list-ol' }}" aria-hidden="true"></i> {{ page.toc_label | default: site.data.ui-text[site.locale].toc_label | default: "On this page" }}<span class="toc__count" aria-hidden="true"></span></button></h5></header>
+          {{ toc_menu }}
         </nav>
+        {%- endif -%}
       </aside>
     {% endif %}
 
@@ -56,7 +60,7 @@ layout: default
           {% endif %}
         </header>
       {% endunless %}
-      <section class="page__content e-content{% if page.prose_justify %} page__content--justify{% endif %}" itemprop="text"{% if page.lang %} lang="{{ page.lang }}"{% endif %}>
+      <section class="page__content e-content" itemprop="text"{% if page.lang %} lang="{{ page.lang }}"{% endif %}>
         {% if page.ticker-tape %}
           {% include ticker-tape.html %}
         {% endif %}
@@ -64,6 +68,8 @@ layout: default
         {% if page.link %}<div><a href="{{ page.link }}" class="btn btn--primary">{{ site.data.ui-text[site.locale].ext_link_label | default: "Direct Link" }}</a></div>{% endif %}
       </section>      
     </div>
+    {%- comment -%} What follows the last sentence; on a post it stands on the text's own width (_page.scss). {%- endcomment -%}
+    <div class="page__ending">
       <footer class="page__meta">
         {% include page__taxonomy.html %}
         {% include page__dates.html %}
@@ -97,13 +103,14 @@ layout: default
             {% if page.next %}
               {% assign random_posts = random_posts | where_exp: "post", "post.path != page.next.path" %}
             {% endif %}
-            {% assign random_posts = random_posts | sample: 4 %}
+            {% assign random_posts = random_posts | sample: 2 %}
           {% for post in random_posts %}
             {% include archive-single.html type="grid" defer_cover=true %}
           {% endfor %}
         </div>
       </div>
     {% endif %}
+    </div>
     {%- comment -%} The site's last line, inside the content column so it centres on the content, not the window. {%- endcomment -%}
     {% include_cached colophon.html %}
   </div>

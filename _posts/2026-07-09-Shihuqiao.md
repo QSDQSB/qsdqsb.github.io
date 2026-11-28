@@ -16,7 +16,6 @@ header:
   overlay_filter: 0.35
   caption: "*Le città invisibili*, Italo Calvino."
 body_class: nocturne
-prose_justify: true
 toc: true
 toc_sticky: true
 author_profile: false

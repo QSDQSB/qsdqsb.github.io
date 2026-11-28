@@ -10,32 +10,44 @@
  *  </div>
  */
 
-@mixin notice($notice-color) {
+// A note set apart from the text is a quiet panel, whatever colour its class once named: a hairline
+// frame on a ground a little lighter than the page, ivory words, links in brass. No saturated fill
+// and no shadow: brass is the one accent.
+.notice,
+.notice--info,
+.notice--warning,
+.notice--success,
+.notice--danger,
+.notice--pinky,
+.notice--olive-green {
   text-align: center;
   margin: 1em auto;
   padding: 1em 1em;
-  font-family: 'Barlow', sans-serif;
-  font-weight: 200;
+  font-family: $barlow-font-family;
+  font-weight: 400;
   font-size: $type-size-7;
   text-indent: initial; /* override*/
-  background-color: mix(rgba(255,255,255,0.2),$notice-color, 0.5);
+  color: var(--ink);
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
   max-width: 90%;
 
   border-radius: $border-radius;
+
+  /* Kramdown's `{: .notice}` lands on a <p>, and inside .page__content the
+     theme's `p` rules (0,1,1) outrank a bare class. Restate the contested
+     values from (0,2,0) rather than shouting them. */
+  .page__content & {
+    margin: 1em auto;
+    font-size: $type-size-7;
+  }
+
   h4 {
     margin-top: 0;
     margin-bottom: 0.75em;
   }
 
-  /* Kramdown's `{: .notice}` lands on a <p>, and inside .page__content the
-     theme's `p` rules (0,1,1) outrank a bare class. Restate the contested
-     values from (0,2,0) rather than shouting them. */
-  @at-root .page__content #{&} {
-    margin: 1em auto;
-    font-size: $type-size-7;
-  }
-
-  @at-root .page__content #{&} h4 {
+  .page__content & h4 {
     /* using at-root to override .page-content h4 font size*/
     margin-bottom: 0;
     font-size: 1em;
@@ -47,7 +59,7 @@
     }
   }
   a {
-    color: $link-color-hover;
+    color: $intriguing-word-color;
   }
   h4 + p {
     /* remove space above paragraphs that appear directly after notice headline*/
@@ -60,64 +72,4 @@
       margin-bottom: 0; /* override*/
     }
   }
-
-  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
-}
-
-/* Default notice */
-
-.notice {
-  @include notice($light-gray);
-}
-
-/* Primary notice */
-
-.notice--primary {
-  @include notice($primary-color);
-}
-
-/* Info notice */
-
-.notice--info {
-  @include notice($info-color);
-}
-
-/* Warning notice */
-
-.notice--warning {
-  @include notice($warning-color);
-}
-
-/* Success notice */
-
-.notice--success {
-  @include notice($success-color);
-}
-
-/* Danger notice */
-
-.notice--danger {
-  @include notice($danger-color);
-}
-.notice--pinky {
-  @include notice(rgb(204, 51, 77));
-}
-
-.notice--purple {
-  @include notice(rgb(165, 65, 165));
-}
-
-.notice--dark-amber {
-  @include notice(#5B3A29);
-}
-
-.notice--olive-green {
-  @include notice(#2F3A32);
-}
-
-.notice--antique-green {
-  @include notice(#4A6E4D);
-}
-.notice--burgundy-red {
-  @include notice(#3B1F1F);
 }

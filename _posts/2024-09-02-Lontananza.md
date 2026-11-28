@@ -9,7 +9,6 @@ seo_description: "A bilingual essay after Calvino's Invisible Cities — on memo
 tags:
   - 🍜Life
   - 💍Horcrux
-prose_justify: true
 left_tarot_card: "queen-of-swords"
 left_tarot_href: /posts/war-declaration-to-boredom/
 header:
