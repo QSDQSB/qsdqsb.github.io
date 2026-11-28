@@ -1,7 +1,7 @@
 /**
  * The frames as cards, shared by QSD's Palette (./palette.js) and Reverie (./reverie.js): a palette as
- * blocks and as the specs panel's thin bar, a frame as a card, one colour matched across every
- * frame, and the queue that pours each card's dye vat as it nears the screen.
+ * blocks and as the specs panel's thin bar, a frame as a card (a print with its colour strip), one
+ * colour matched across every frame, and the queue that pours each card's dye vat as it nears the screen.
  */
 
 import { oklab, lin } from './vat.js';
@@ -30,7 +30,7 @@ export const reverieOf = (g, slug, hex = null) => `${REVERIE}?${[hex ? `c=${hex.
 
 /** The essay on how the colours came by their names (_posts/2026-09-30-In-the-Naming-of-Light.md),
  *  among a colour page's ways on (QSD's Palette, Reverie). */
-export const ESSAY = `<a href="${new URL('../../../posts/in-the-naming-of-light/', import.meta.url).pathname}">In the Naming of Light <span aria-hidden="true">→</span></a>`;
+export const ESSAY = `<a href="${new URL('../../../posts/in-the-naming-of-light/', import.meta.url).pathname}">In the Naming of Light</a>`;
 
 /** A palette as blocks: equal widths, the hex inside (text to select), the share beneath. `pick`: the
  *  colour chosen, marked by a white line inside its block. `link(hex)`: where a block leads, if anywhere. */
@@ -43,21 +43,29 @@ export const blocks = (cs, { pick = null, link = null } = {}) => `<div class="pa
 /** A palette as the specs panel draws it: a thin bar, widths tempered. */
 export const bar = (cs) => `<div class="palette-card__bar" aria-hidden="true">${cs.map(([h, pc]) => `<i style="--c:${h};flex:${Math.sqrt(pc).toFixed(2)}"></i>`).join('')}</div>`;
 
-/** A frame as a card: the print (to `href`, its place in the book), its colours as blocks, its place
- *  (`place`, when the cards come from many voyages), name and light, its bar, and a slot for its vat
- *  (`data-i`, `i`). `from`: the frame the reader came from. `plain`: the print and its words alone.
- *  `label`: where the print leads, for a screen reader; `placeHref`: where the place's name leads. */
-export function card(p, { href, i, n = i, from = false, pick = null, place = '', placeHref = null, label = 'in its book', link = null, plain = false }) {
+/** A frame's colours as a printer lays a strip of patches along a print's edge: each as wide as its
+ *  share, no codes and no numbers; a colour's code shows under the pointer, and each leads where
+ *  `link(hex)` says (its Reverie). */
+const strip = (cs, link) => `<div class="palette-card__strip">${cs.map(([h, pc]) => {
+  const to = link?.(h), H = h.toUpperCase(), style = `--c:${h};flex:${pc}`;
+  return to ? `<a href="${to}" style="${style}" draggable="false" data-tip="${H}" data-tip-side="top" aria-label="Reverie in ${H}"></a>` : `<i style="${style}"></i>`;
+}).join('')}</div>`;
+
+/** A frame as a card, a print with its colour strip: the print (to `href`, its place in the book), its
+ *  colours as a strip tight under it, its place (`place`, when the cards come from many voyages), name
+ *  and light, and a slot for its vat (`data-i`, `i`). `from`: the frame the reader came from. `plain`:
+ *  the print and its words alone. `label`: where the print leads, for a screen reader; `placeHref`:
+ *  where the place's name leads. */
+export function card(p, { href, i, n = i, from = false, place = '', placeHref = null, label = 'in its book', link = null, plain = false }) {
   const size = p.sizes.find((s) => s >= 960) || p.sizes[p.sizes.length - 1] || 480, colours = !plain && p.sig?.length;
   // The print develops over its blurred placeholder (./thumbhash.js), as in the book (../photobook/develop.js).
   const ph = placeholder(p.th);
-  return `<article class="palette-card${from ? ' is-from' : ''}${plain ? ' is-plain' : ''}" id="f-${esc(p.slug)}" data-n="${n}">
-    <a class="palette-card__print" href="${href}" aria-label="${esc(p.name || p.slug)}, ${esc(label)}"><span class="palette-card__ph" style="--r:${p.r || 1.5}${ph ? `;background-image:url(${ph})` : ''}"><img src="${p.url}/${size}.webp" alt="" loading="lazy" decoding="async"></span></a>
-    ${colours ? blocks(p.sig, { pick, link }) : ''}
+  return `<article class="palette-card${from ? ' is-from' : ''}${plain ? ' is-plain' : ''}" id="f-${esc(p.slug)}" data-n="${n}" style="--r:${p.r || 1.5}">
+    <a class="palette-card__print" href="${href}" aria-label="${esc(p.name || p.slug)}, ${esc(label)}"><span class="palette-card__ph"${ph ? ` style="background-image:url(${ph})"` : ''}><img src="${p.url}/${size}.webp" alt="" loading="lazy" decoding="async"></span></a>
+    ${colours ? strip(p.sig, link) : ''}
     <div class="palette-card__row"><div>
       ${place ? `<p class="palette-card__place">${placeHref ? `<a href="${placeHref}">${esc(place)}</a>` : esc(place)}</p>` : ''}
       <h3>${esc(p.name || '')}${p.light ? `<small>${esc(p.light)}</small>` : ''}</h3>
-      ${colours ? bar(p.sig) : ''}
     </div>${colours ? `<div class="palette-card__vat" data-i="${i}"></div>` : ''}</div>
   </article>`;
 }
@@ -198,10 +206,13 @@ export function dripper() {
 /**
  * Where the reader was on a page of cards, kept for their return (Back): the first card on screen and
  * how far down it sat, not a scroll offset, since cards not yet drawn are only estimated
- * (content-visibility) and the page's height moves as they are.
+ * (content-visibility) and the page's height moves as they are. The page that keeps its place this
+ * way sets `history.scrollRestoration` to manual once, as it loads (`ownScroll`): never as it is left,
+ * when WebKit gives the setting to the page the reader is going back to, and Back to a post landed at
+ * its top.
  */
+export const ownScroll = () => { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; };
 export function place(key) {
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; // this, not the browser's guess
   return {
     save() {
       const c = [...document.querySelectorAll('.palette-card[id]')].find((x) => x.getBoundingClientRect().bottom > 0);

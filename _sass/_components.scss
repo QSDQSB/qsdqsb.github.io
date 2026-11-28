@@ -31,9 +31,9 @@
   @include responsive-down(tablet) { font-size: clamp(1.2rem, 5vw, 1.65rem); }
 }
 
-// The line beneath a title: Didot italic, as a book's cover and every hero's excerpt.
+// The line beneath a title: Playfair upright, as every hero's line (0012; Q24, "Playfair upright everywhere").
 @mixin lede {
-  font: italic 400 clamp(1.02rem, 1.34vw, 1.34rem)/1.26 $didot-family;
+  font: 400 clamp(1.02rem, 1.34vw, 1.34rem)/1.26 $line-serif-family;
 }
 
 // The way on: small spaced capitals over a hairline, in a row that wraps.
@@ -309,6 +309,23 @@ qsd-cat::part(say) {
   will-change: opacity;
 
   &.is-on { opacity: 1; scale: 1; }
+}
+
+// The dye as a hero's picture (assets/js/colour/dye-hero.js): set on a hero's media in place of a
+// photograph, a palette's dye vat poured across its whole width, a new palette laid over the last as
+// the wash's layers are. Until it is poured, the page's ground. Markup: `.page__hero-media--dye` on
+// the hero's media (page__hero.html's), with `data-dye` or a script's call (_docs/components.md).
+.page__hero-media--dye {
+  > * {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    @include wash-layer;
+  }
+
+  @include responsive-reduced-motion { > * { transition: none; } }
+  html.motion-off & > * { transition: none; }
 }
 
 // A room that takes a picture's colour: its layers (the colour, softened into frosted glass) under a

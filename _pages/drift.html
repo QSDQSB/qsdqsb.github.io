@@ -3,7 +3,7 @@ title: "Drift"
 layout: default
 permalink: /drift/
 preload: [/assets/colour-atlas.json]
-modules: [/assets/js/colour/drift.js, /assets/js/colour/vat.js, /assets/js/colour/cards.js, /assets/js/photobook/tip.js]
+modules: [/assets/js/colour/drift.js, /assets/js/colour/vat.js, /assets/js/colour/cards.js, /assets/js/photobook/tip.js, /assets/js/photobook/wash.js]
 sitemap: false
 body_class: photobook colour-page colour-page--drift
 seo_description: "A walk through every voyage by colour alone: each photograph followed by the nearest in colour from another journey."
@@ -17,9 +17,9 @@ masthead_back_label: QSD's Palette
   or from a frame: /drift/?from=<gallery>/<slug>. Data: /assets/colour-atlas.json. Script:
   assets/js/colour/drift.js. Styles: _sass/_colour.scss.
 {%- endcomment -%}
-<main class="colour-drift" id="colour-drift">
-  <div class="colour-drift__wash" aria-hidden="true"><i></i><i></i></div>
-  <header class="colour-drift__head">
+<main class="colour-drift is-overture" id="colour-drift">
+  <div class="colour-drift__wash" aria-hidden="true"></div>
+  <header class="colour-drift__head colour-head">
     <p class="colour-kicker">From the voyages</p>
     <h1>Drift</h1>
     <p class="colour-lede">Each photograph is followed by the nearest in colour, from another journey.</p>

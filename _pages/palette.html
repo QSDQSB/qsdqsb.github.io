@@ -3,18 +3,21 @@ title: "QSD's Palette"
 layout: default
 permalink: /palette/
 preload: [/assets/palettes.json]
-modules: [/assets/js/colour/palette.js, /assets/js/colour/vat.js, /assets/js/colour/cards.js, /assets/js/photobook/tip.js, /assets/js/photobook/wash.js]
+modules: [/assets/js/colour/palette.js, /assets/js/colour/dye-hero.js, /assets/js/colour/vat.js, /assets/js/colour/cards.js, /assets/js/photobook/tip.js, /assets/js/photobook/wash.js]
 excerpt: "The paint behind the pictures."
 og_image: https://img.qsdqsb.com/t/990e1b53c65edf0a/1920.jpg # the door's lake, for a shared link
 door_image: https://img.qsdqsb.com/t/990e1b53c65edf0a/4096.webp # Kandersteg, Oeschinensee (dscf8452)
 door_view: "40% 100% / auto 380%" # the lake's reflections, close: paint more than place
-body_class: photobook colour-page
+body_class: photobook colour-page has-overlay-hero
+dye_from: kandersteg/dscf8452 # the door's frame: the page of every palette opens on its dye
 seo_description: "The colours of every voyage, and of every photograph in it: QSD's palettes, set like wall labels."
 masthead_back_url: /voyage/
 masthead_back_label: Back to the voyages
 ---
 {%- comment -%}
   QSD's Palette: one page, a voyage to each anchor (/palette/#london, /palette/#prague/twilight).
+  It opens on a hero made of the dye (dye-hero.js): the door's frame's colours on the page of every
+  palette, a voyage's own on its palette, turning from one to the next as the room's light does.
   Beside it all, every voyage by place: a column on a laptop (folded away to a slim strip and back),
   a sheet on a phone (opened from "Voyages"). The way back is the masthead's ‹, as in a book: to
   the voyages, or on a voyage's palette to its book. Then the rail: every voyage's dye vat, by colour, to step from one to the next. Without an
@@ -23,6 +26,16 @@ masthead_back_label: Back to the voyages
   sequence or by colour (24 dots, dark to light). ?at=<slug> marks the frame a reader came from.
   Data: /assets/palettes.json. Script: assets/js/colour/palette.js. Styles: _sass/_colour.scss.
 {%- endcomment -%}
+<div class="page__hero--overlay palette-hero">
+  <div class="page__hero-media page__hero-media--dye" data-from="{{ page.dye_from }}" aria-hidden="true"></div>
+  <div class="wrapper">
+    <header class="page__hero-copy palette-page__head">
+      <p class="colour-kicker"><a href="{{ '/palette/' | relative_url }}" class="palette-page__home">Palette</a></p>
+      <h1 class="page__title" tabindex="-1"><span class="page__title-text">QSD's Palette</span></h1>
+      <p class="page__lead"><span class="page__lead-inner">{{ page.excerpt }}</span></p>
+    </header>
+  </div>
+</div>
 <main class="palette-page" id="palette-page">
   <aside class="palette-voyages" id="palette-voyages" aria-label="Every voyage, by place">
     <div class="palette-voyages__head">
@@ -39,10 +52,6 @@ masthead_back_label: Back to the voyages
       <button type="button" class="palette-page__menu" aria-controls="palette-voyages" aria-expanded="false"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4.5h10M3 8h10M3 11.5h10"/></svg>Voyages</button>
     </div>
     <nav class="palette-rail" aria-label="Every voyage's dye vat, by colour"></nav>
-    <header class="colour-head palette-page__head">
-      <p class="colour-kicker"><a href="{{ '/palette/' | relative_url }}" class="palette-page__home">QSD's Palette</a></p>
-      <h1 tabindex="-1">QSD's Palette</h1>
-    </header>
     <div class="palette-page__stage"></div>
     <p class="visually-hidden" role="status" id="palette-status"></p>
     <noscript><p class="colour-empty">The palettes are drawn by a script; with it off, each voyage's photographs are in its book:</p>
