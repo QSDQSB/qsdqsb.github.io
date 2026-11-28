@@ -2,11 +2,11 @@
 /**
  * Visual regression harness — pixel-diffs a fixed page set against a
  * baseline, at desktop and mobile-small. The baseline's pictures live in R2 and
- * git keeps only their hashes, tests/visual/baseline.json (scripts/lib/visual-store.mjs):
+ * git keeps only their hashes, tests/visual/hashes/ (scripts/lib/visual-store.mjs):
  * diff fetches what the index names, capture puts new pictures and rewrites it.
  *
  *   npm run visual:build       # seeded Jekyll build of _site/ (see below)
- *   npm run visual:capture     # (re)shoot the baseline, store it in R2, update baseline.json
+ *   npm run visual:capture     # (re)shoot the baseline, store it in R2, update tests/visual/hashes/
  *   npm run visual:diff        # render again, compare, exit 1 on any delta
  *   npm run visual:audit       # assert nothing animates under motion-off
  *
@@ -697,7 +697,7 @@ async function main() {
 
   if (args.command === 'capture') {
     const put = storeBaselines(BASELINE_DIR, captured);
-    console.log(`\nBaseline stored: ${put} picture(s) in R2, their hashes in tests/visual/baseline.json (commit it).`);
+    console.log(`\nBaseline stored: ${put} picture(s) in R2, their hashes in tests/visual/hashes/ (commit them).`);
     return 0;
   }
   if (failures) {

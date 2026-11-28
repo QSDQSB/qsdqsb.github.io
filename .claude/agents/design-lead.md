@@ -52,7 +52,7 @@ Before a stage is built, its file says:
 - **Which shared pieces it uses** and what, if anything, is new
   (`decisions/0002-one-control-vocabulary.md`, `_docs/components.md`).
 - **What needs the owner**, and whether it is already in the queue.
-- **Journeys**: which reader routes in `scripts/check-journeys.mjs` cover it, and which must be
+- **Journeys**: which reader routes in `tests/journeys/` cover it, and which must be
   added.
 - **Exit**: what "done" means, in gate terms.
 
