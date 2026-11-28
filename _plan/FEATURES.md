@@ -6,7 +6,7 @@ the map a session reads instead of searching: find the row, open the files it na
 `scripts/check-plan.mjs` checks that every path here exists and every journey id is real, so the
 table cannot quietly go stale. A feature with no journey is a feature the gate cannot defend: the
 check counts them. Add the row when a feature ships; add its journey to
-`scripts/check-journeys.mjs` in the same change.
+`tests/journeys/<id>.mjs` in the same change.
 
 | Feature | Where a reader meets it | Code | Journey | Standing calls and notes |
 |---|---|---|---|---|
