@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Carries a branch over to the split layout, so it stops colliding with every other branch on
- * the same shared files (_plan/decisions/0012-one-file-per-entry.md).
+ * the same shared files (_plan/decisions/0014-one-file-per-entry.md).
  *
  *   node scripts/split-shared-files.mjs journeys <old check-journeys.mjs> [<merge-base copy>]
  *     Writes each journey of the old array to tests/journeys/<id>.mjs. With the merge-base copy,
@@ -10,6 +10,7 @@
  *     Writes each picture's hash to tests/visual/hashes/<name>.sha, likewise only what the
  *     branch re-captured when a merge-base copy is given.
  *
+ * A journey or a picture the branch removed is not carried: delete its file by hand.
  * Run from the repository's root. Existing files are replaced only where the branch changed them.
  * `git show <ref>:scripts/check-journeys.mjs > /tmp/old.mjs` gets an old copy of either file.
  */

@@ -134,6 +134,25 @@ built, however small the change sounds: "two or three lines" is a claim like any
    What a reader would see anew goes to the owner ([0001](decisions/0001-who-decides-what.md)); the
    rest goes to its stage.
 
+## Working in parallel
+
+Many sessions each work a `work/` branch and the owner merges them as pull requests
+([0014](decisions/0014-one-file-per-entry.md)). What a branch adds is a file of its own, so two
+branches meet only where they change the same thing:
+
+- **A picture re-captured** is `tests/visual/hashes/<shot>.sha`; **a journey** is
+  `tests/journeys/<id>.mjs`. Add yours; never edit another's.
+- **Update a branch by merging master into it.** Never rebase, and never force-push, a branch
+  another session holds: a rebase rewrites commits someone may have merged or built on (2026-11-28, a
+  force-pushed rebase overwrote another session's merge commit).
+- **A cross-cutting change** (the shell, shared variables, layouts every page uses) lands alone, first
+  or last, not in the middle of other branches' work.
+- **A new id that more than one branch may take** is `<date>-<slug>`, not the next number.
+  Numbered ids already given stay as they are.
+- **`QUEUE.md` and `hub.json`** are written by one session only, the one that talks to the command
+  centre. Others tell it, or put a finding in the inbox.
+- **Next candidate:** the rows of `_docs/components.md`, which two branches still both append to.
+
 ## What happens without being asked
 
 | When | What |
