@@ -105,7 +105,7 @@ changed() { byproducts; { "$GIT" -C "$WT" diff --no-renames --name-only "$BASE";
 TOOLING='^(scripts/|tests/|package(-lock)?\.json$|Gemfile|_plugins/|Rakefile$|\.github/|\.claude/|\.bundle/|workers/|functions/|wrangler|CLAUDE\.md$|\.[^/]+$)'
 # What git ignores that a build or the folder's setup leaves, and nothing else: an ignored file is
 # invisible to the diff, so one anywhere else (a node_modules under scripts/, say) could change what runs.
-IGNORED_OK='^(_site/|\.sass-cache/|\.jekyll-cache/|\.jekyll-metadata$|node_modules$|images/cover/sized/|_data/cover_sizes\.json$|images/og/|_data/photo_manifests/|tests/visual/(current|diff|content|baseline|\.store)/|(.*/)?\.DS_Store$)'
+IGNORED_OK='^(_site/|\.sass-cache/|\.jekyll-cache/|\.jekyll-metadata$|node_modules$|images/cover/sized/|_data/cover_sizes\.json$|images/og/|_data/photo_manifests/|tests/visual/(current|diff|content|baseline|\.store)/|_plan/(CHANGELOG\.md|FEATURES\.md|requests\.md|findings/inbox\.md)$|(.*/)?\.DS_Store$)'
 no_tooling() {
   local t; t="$(changed | grep -E "$TOOLING" | grep -vE '^tests/visual/hashes/' || true)"
   [ -z "$t" ] || { echo "REFUSED: this changes the site's tooling, which a work run never does: $(echo $t). Hold the task for a session ('hold')." >&2; exit 1; }
@@ -386,7 +386,7 @@ case "${1:-}" in
     # an owner's quote in an idea taken away or rewritten, and an owner's decision line touched at all), the docs, and the site's code, whose
     # pixel diff is the test of tier 0. Anything else, a new served folder among it, is seen.
     MAY_BE_UNSEEN='^(_plan/|_docs/|_sass/|_includes/|_layouts/|assets/js/|assets/css/)'
-    OWNERS='^_plan/(CHANGELOG\.md|PRINCIPLES\.md|DESIGN-LANGUAGE\.md|QUEUE\.md|hub\.json|decisions/)'
+    OWNERS='^_plan/(changelog/|PRINCIPLES\.md|DESIGN-LANGUAGE\.md|QUEUE\.md|hub\.json|decisions/)'
     seen="$(changed | { grep -vE "$MAY_BE_UNSEEN" || true; }; changed | grep -E "$OWNERS" || true)"
     if "$GIT" -C "$WT" diff --no-renames -U0 "$BASE" -- _plan/ideas | grep -qE '^-> |^[-+]\*\*The owner:\*\*'; then seen="$seen _plan/ideas/ (the owner's words)"; fi
     seen="$(echo $seen)"

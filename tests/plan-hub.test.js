@@ -19,6 +19,7 @@ function withPlanCopy(run) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'plan-'));
   PLAN_COPY.dir = dir;
   fs.cpSync(PLAN, dir, { recursive: true });
+  spawnSync('node', [path.join(ROOT, 'scripts/plan.mjs'), 'render'], { env: { ...process.env, PLAN_DIR: dir } });
   const plan = (...args) => spawnSync('node', [path.join(ROOT, 'scripts/plan.mjs'), ...args], {
     encoding: 'utf8', env: { ...process.env, PLAN_DIR: dir, PLAN_TODAY: '2031-01-02' },
   });
@@ -39,13 +40,11 @@ test('the session brief is short and names the plan', () => {
   assert.ok(out.split('\n').length <= 14, 'the brief is put in front of every session: it stays short');
 });
 
-test('a finding gets the next id, today\'s date, and goes to the top of Waiting', () => {
+test('a finding is named for its day and words, is a file of its own, and goes to the top of Waiting', () => {
   withPlanCopy((plan, read) => {
-    const before = read('findings/inbox.md');
-    const highest = Math.max(0, ...[...before.matchAll(/\bF(\d{3,})\b/g)].map((m) => Number(m[1])));
     const res = plan('finding', '/reverie/', 'the vat is not\n full screen', '--by', 'owner');
     assert.strictEqual(res.status, 0, res.stderr);
-    const id = `F${String(highest + 1).padStart(3, '0')}`;
+    const id = '2031-01-02-the-vat-is-not-full-screen';   // a new finding is named for its day and its words, not by a counter
     const after = read('findings/inbox.md');
     const waiting = after.slice(after.indexOf('## Waiting'), after.indexOf('## Taken'));
     assert.match(waiting.split('\n').filter((l) => l.startsWith('- '))[0], new RegExp(`^- 2031-01-02 · ${id} · /reverie/ · the vat is not full screen \\(owner\\)$`));
@@ -108,12 +107,13 @@ test('an answer that cannot be recorded changes nothing', () => {
   });
 });
 
-test('a colour in a finding is not taken for an id', () => {
+test('a colour in a finding is not taken for an id, and the same words twice are two findings', () => {
   withPlanCopy((plan, read) => {
-    const highest = Math.max(0, ...[...read('findings/inbox.md').matchAll(/^- \d{4}-\d{2}-\d{2} · F(\d{3,}) · /gm)].map((m) => Number(m[1])));
     assert.strictEqual(plan('finding', 'Reverie', 'the dye for #F00900 is wrong').status, 0);
     const res = plan('finding', 'Reverie', 'and again');
-    assert.match(res.stdout, new RegExp(`· F${String(highest + 2).padStart(3, '0')} ·`));
+    assert.match(res.stdout, /· 2031-01-02-and-again ·/);
+    assert.strictEqual(plan('finding', 'Reverie', 'and again').status, 0, 'the same words on the same day are a second finding, not an overwrite');
+    assert.ok(fs.existsSync(path.join(PLAN_COPY.dir, 'findings/inbox/2031-01-02-and-again-2.md')));
   });
 });
 
@@ -480,10 +480,11 @@ function withDailyRepo(run) {
     fs.cpSync(path.join(ROOT, 'scripts/lib'), path.join(dir, 'scripts/lib'), { recursive: true });
     put('scripts/gate.sh', 'echo "GATE: PASS (stand-in), handed over: ${HUB_DAILY_FROM_MASTER:-no}"\n');
     put('scripts/prototype-setup.sh', 'exit 0\n');
-    put('_plan/findings/inbox.md', '# Inbox\n\n## Waiting\n\n## Taken\n');
+    put('_plan/findings/inbox/_head.md', '# Inbox\n\n');
+    put('_plan/ideas/README.md', '# Ideas\n');
     put('_plan/hub.json', '{ "daily_may_push": true }\n');
     put('_includes/head.html', '<head>\n');
-    put('.gitignore', '.claude/worktrees/\n');
+    put('.gitignore', '.claude/worktrees/\n/_plan/findings/inbox.md\n');   // the rendered document is not committed
     git(dir, 'add', '-A'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'start');
     git(dir, 'branch', '-M', 'master');
     git(base, 'clone', '-q', '--bare', dir, remote);
@@ -505,17 +506,17 @@ test('the daily script records in a place of its own, commits on hub/daily, push
     const finish = daily('finish');
     assert.strictEqual(finish.status, 0, finish.stdout + finish.stderr);
     assert.match(finish.stdout, /Push: hub\/daily pushed\./);
-    assert.match(finish.stdout, /── Report\n[\s\S]*Kept today: F001 filed\.\n[\s\S]*hub\/daily holds 1 commit\(s\) that origin\/master does not\. Push: hub\/daily pushed\./, 'the report is the script\'s, whole');
-    assert.strictEqual(git(dir, 'log', '--format=%s', '-1', 'hub/daily').trim(), '📐 Daily upkeep: F001 filed', 'the script says what it kept, in its own words');
-    assert.strictEqual(git(dir, 'diff', '--name-only', 'master', 'hub/daily').trim(), '_plan/findings/inbox.md');
+    assert.match(finish.stdout, /── Report\n[\s\S]*Kept today: \d{4}-\d{2}-\d{2}-a-thing-seen filed\.\n[\s\S]*hub\/daily holds 1 commit\(s\) that origin\/master does not\. Push: hub\/daily pushed\./, 'the report is the script\'s, whole');
+    assert.match(git(dir, 'log', '--format=%s', '-1', 'hub/daily').trim(), /^📐 Daily upkeep: \d{4}-\d{2}-\d{2}-a-thing-seen filed$/, 'the script says what it kept, in its own words');
+    assert.match(git(dir, 'diff', '--name-only', 'master', 'hub/daily').trim(), /^_plan\/findings\/inbox\/\d{4}-\d{2}-\d{2}-a-thing-seen\.md$/);
     assert.strictEqual(git(remote, 'rev-parse', 'hub/daily'), git(dir, 'rev-parse', 'hub/daily'), 'the one branch reached the remote');
     assert.strictEqual(git(remote, 'rev-parse', 'master'), git(dir, 'rev-parse', 'master'), 'master was not pushed');
     assert.ok(!fs.existsSync(path.join(dir, '.claude/worktrees/hub-daily')), 'the worktree is gone');
     assert.strictEqual(git(dir, 'rev-parse', '--abbrev-ref', 'HEAD').trim(), 'master');
 
-    // The next day carries the branch forward: the id after yesterday's, and nothing to do is no commit.
+    // The next day carries the branch forward, and nothing to do is no commit.
     assert.strictEqual(daily('begin').status, 0);
-    assert.match(daily('plan', 'finding', 'another place', 'another thing').stdout, /F002/);
+    assert.match(daily('plan', 'finding', 'another place', 'another thing').stdout, /-another-thing ·/);
     assert.strictEqual(daily('finish', 'day two').status, 0);
     assert.strictEqual(daily('begin').status, 0);
     assert.match(daily('finish').stdout, /Nothing to record today: no commit\.[\s\S]*Kept today: nothing new\./);
@@ -539,7 +540,7 @@ test('the daily script keeps what it recorded while the owner works, and builds 
     const kept = daily('finish');
     assert.strictEqual(kept.status, 0, kept.stdout + kept.stderr);
     assert.match(kept.stdout, /Note: the owner's checkout changed while the run worked/);
-    assert.strictEqual(git(dir, 'log', '--format=%s', '-1', 'hub/daily').trim(), '📐 Daily upkeep: F001 filed');
+    assert.match(git(dir, 'log', '--format=%s', '-1', 'hub/daily').trim(), /^📐 Daily upkeep: \d{4}-\d{2}-\d{2}-a-thing-seen filed$/);
     assert.strictEqual(git(dir, 'status', '--porcelain').trim(), 'M _includes/head.html', 'the owner\'s work is as the owner left it');
     assert.strictEqual(git(dir, 'rev-parse', '--abbrev-ref', 'HEAD').trim(), 'post/a-post');
     assert.strictEqual(git(remote, 'rev-parse', 'hub/daily'), git(dir, 'rev-parse', 'hub/daily'));
@@ -597,9 +598,9 @@ test('a daily branch that carried an older master starts again from GitHub\'s, k
     const finish = daily('finish');
     assert.strictEqual(finish.status, 0, finish.stdout + finish.stderr);
     assert.throws(() => git(dir, 'merge-base', '--is-ancestor', 'master', 'hub/daily'), 'the site change is no longer on the branch');
-    const inbox = git(dir, 'show', 'hub/daily:_plan/findings/inbox.md');
-    assert.match(inbox, /F001 · a place · kept across the restart/);
-    assert.match(inbox, /F002 · a place · the next day/);
+    const filed = git(dir, 'ls-tree', '--name-only', 'hub/daily:_plan/findings/inbox/');
+    assert.match(filed, /-kept-across-the-restart\.md/);
+    assert.match(filed, /-the-next-day\.md/);
     // A plain push or a replacing one: on a fast machine the replayed commit is made in the same second
     // as the original, so git gives it the same id and the push is an ordinary one (GitHub, 2026-10-03).
     assert.match(finish.stdout, /Push: hub\/daily pushed( \(started again from origin\/master\))?\./);
@@ -615,13 +616,13 @@ test('a session takes the run\'s own commits by cherry-pick, and from then on gi
     assert.strictEqual(daily('plan', 'finding', 'a place', 'filed by the run').status, 0);
     assert.strictEqual(daily('finish').status, 0);
     git(dir, 'checkout', '-q', '-b', 'work', 'origin/master');
-    const refused = plan('finding', 'x', 'y');
-    assert.strictEqual(refused.status, 1, 'while the run holds a numbered finding this checkout lacks');
+    const refused = plan('idea', 'a thing to try');
+    assert.strictEqual(refused.status, 1, 'while the run holds numbered work this checkout lacks');
     assert.match(refused.stderr, /Take them first \(\/hub says how\)/);
     for (const c of own()) git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'cherry-pick', c);
     assert.deepStrictEqual(own(), [], 'a commit taken is not offered again');
-    assert.strictEqual(plan('finding', 'x', 'y').status, 0, plan('finding', 'x', 'y').stderr);
-    git(dir, 'checkout', '--', '_plan');                                        // that one stays unwritten: the pick alone goes to GitHub
+    assert.strictEqual(plan('idea', 'a thing to try').status, 0, plan('idea', 'a thing to try').stderr);
+    git(dir, 'checkout', '--', '_plan'); git(dir, 'clean', '-fdq', '_plan');                                        // that one stays unwritten: the pick alone goes to GitHub
     // Its pull request is merged; the next run starts again from GitHub, and a branch cut from there is free too.
     git(dir, 'push', '-q', 'origin', 'work:master'); git(dir, 'fetch', '-q', 'origin');
     const reset = daily('begin');
@@ -637,7 +638,7 @@ test('a session takes the run\'s own commits by cherry-pick, and from then on gi
     git(dir, 'checkout', '-q', 'master');
     git(dir, 'fetch', '-q', 'origin'); git(dir, 'checkout', '-q', '-b', 'next', 'origin/master');
     git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'cherry-pick', 'hub/daily');   // the day after's finding, taken
-    assert.strictEqual(plan('finding', 'x', 'z').status, 0);
+    assert.strictEqual(plan('idea', 'a second thing to try').status, 0);
   });
 });
 
@@ -647,15 +648,15 @@ test('a daily branch whose old master will not merge with GitHub\'s starts again
     git(path.dirname(dir), 'clone', '-q', remote, other);
     // The local master: a site change and a plan edit GitHub never saw; the branch carries them.
     put('_includes/head.html', '<head data-unpushed>\n');
-    put('_plan/findings/inbox.md', '# Inbox\n\nEdited here.\n\n## Waiting\n\n## Taken\n');
+    put('_plan/findings/inbox/_head.md', '# Inbox\n\nEdited here.\n\n');
     git(dir, 'add', '-A'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'unpushed');
     git(dir, 'branch', '-f', 'hub/daily', 'master');
     // A session on a branch from GitHub's master is not held back by the local master's commits.
     git(dir, 'checkout', '-q', '-b', 'work', 'origin/master');
     assert.strictEqual(spawnSync('node', ['scripts/plan.mjs', 'finding', 'x', 'y'], { cwd: dir, encoding: 'utf8' }).status, 0);
-    git(dir, 'checkout', '-q', '--', '.'); git(dir, 'checkout', '-q', 'master');
+    git(dir, 'checkout', '-q', '--', '.'); git(dir, 'clean', '-fdq', '_plan'); git(dir, 'checkout', '-q', 'master');
     // A pull request changed the same line on GitHub.
-    fs.writeFileSync(path.join(other, '_plan/findings/inbox.md'), '# Inbox\n\nEdited on GitHub.\n\n## Waiting\n\n## Taken\n');
+    fs.writeFileSync(path.join(other, '_plan/findings/inbox/_head.md'), '# Inbox\n\nEdited on GitHub.\n\n');
     git(other, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-am', 'a pull request'); git(other, 'push', '-q', 'origin', 'HEAD:master');
     const begin = daily('begin');
     assert.strictEqual(begin.status, 0, begin.stdout + begin.stderr);
@@ -681,11 +682,12 @@ test('a commit of the run\'s whose lines reached GitHub another way is passed ov
     assert.strictEqual(daily('begin').status, 0);
     assert.strictEqual(daily('plan', 'finding', 'a place', 'once').status, 0);
     assert.strictEqual(daily('finish').status, 0);
-    const line = git(dir, 'show', 'hub/daily:_plan/findings/inbox.md');
+    const filed = git(dir, 'ls-tree', '--name-only', 'hub/daily:_plan/findings/inbox/').split('\n').find((n) => /-once\.md$/.test(n));
+    const line = git(dir, 'show', `hub/daily:_plan/findings/inbox/${filed}`);
     // GitHub gets the same lines inside a bigger commit (another patch), and the branch has carried an unpushed site change.
     const other = path.join(path.dirname(dir), 'other');
     git(path.dirname(dir), 'clone', '-q', remote, other);
-    fs.writeFileSync(path.join(other, '_plan/findings/inbox.md'), line); fs.writeFileSync(path.join(other, '_plan/more.md'), 'more\n');
+    fs.mkdirSync(path.join(other, '_plan/findings/inbox'), { recursive: true }); fs.writeFileSync(path.join(other, `_plan/findings/inbox/${filed}`), line); fs.writeFileSync(path.join(other, '_plan/more.md'), 'more\n');
     git(other, 'add', '-A'); git(other, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'the same lines, and more'); git(other, 'push', '-q', 'origin', 'HEAD:master');
     put('_includes/head.html', '<head data-unpushed>\n');
     git(dir, 'add', '-A'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'unpushed');
@@ -946,8 +948,8 @@ test('a day of the daily run, end to end: the store recorded, the commit and the
     assert.strictEqual(git(dir, 'status', '--porcelain'), '', 'nothing is written in the owner\'s checkout');
     const finish = daily('finish', 'daily upkeep');
     assert.strictEqual(finish.status, 0, finish.stdout + finish.stderr);
-    assert.strictEqual(git(dir, 'log', '--format=%s', '-1', 'hub/daily').trim(), '📐 Daily upkeep: Q1 answered; decided: I900 park; I901 filed as raw ideas; F001 filed');
-    assert.match(finish.stdout, /Kept today: Q1 answered; decided: I900 park; I901 filed as raw ideas; F001 filed\./);
+    assert.match(git(dir, 'log', '--format=%s', '-1', 'hub/daily').trim(), /^📐 Daily upkeep: Q1 answered; decided: I900 park; I901 filed as raw ideas; \d{4}-\d{2}-\d{2}-a-thing-seen filed$/);
+    assert.match(finish.stdout, /Kept today: Q1 answered; decided: I900 park; I901 filed as raw ideas; \d{4}-\d{2}-\d{2}-a-thing-seen filed\./);
     fs.rmSync(store, { recursive: true, force: true });
     assert.ok(!fs.existsSync(path.join(dir, '.claude/worktrees/hub-daily')));
   });
@@ -1031,7 +1033,7 @@ test('the daily run logs each run for the brief, and builds the brief from that 
     assert.strictEqual(log.length, 1);
     const [start, end, kept, push] = log[0].split('\t');
     assert.ok(new Date(start) <= new Date(end));
-    assert.strictEqual(kept, 'F001 filed');
+    assert.match(kept, /^\d{4}-\d{2}-\d{2}-a-thing-seen filed$/);
     assert.match(push, /pushed/);
     assert.strictEqual(daily('begin').status, 0);
     const brief = daily('brief', 'today');
@@ -1045,7 +1047,7 @@ test('the daily run logs each run for the brief, and builds the brief from that 
     fs.writeFileSync(path.join(dir, '.claude/worktrees/hub-daily/_includes/stray.html'), 'x\n');
     assert.strictEqual(daily('finish').status, 1);
     const kinds = fs.readFileSync(path.join(dir, '.claude/worktrees/hub-runs.log'), 'utf8').trim().split('\n').map((l) => l.split('\t')[2].split(':')[0]);
-    assert.deepStrictEqual(kinds, ['F001 filed', 'nothing new', 'DIED', 'REFUSED']);
+    assert.deepStrictEqual(kinds.map((k) => k.replace(/^\d{4}-\d{2}-\d{2}-a-thing-seen/, 'F001')), ['F001 filed', 'nothing new', 'DIED', 'REFUSED']);
     // An abort is logged too, and the brief reads the log it is given.
     assert.strictEqual(daily('begin').status, 0);
     assert.strictEqual(daily('abort').status, 0);
@@ -1078,16 +1080,20 @@ test('the daily script cuts off a call that hangs, and a run that dies says at w
 
 test('a request goes first in line, once, in the owner\'s words', () => {
   withPlanCopy((plan, read) => {
-    fs.rmSync(path.join(PLAN_COPY.dir, 'requests.md'), { force: true });   // from an empty list, whatever the live plan holds
+    fs.rmSync(path.join(PLAN_COPY.dir, 'requests'), { recursive: true, force: true });   // from an empty list, whatever the live plan holds
+    fs.rmSync(path.join(PLAN_COPY.dir, 'requests.md'), { force: true });
     const first = plan('request', 'Make the map\'s panel easier to close on a phone');
     assert.strictEqual(first.status, 0, first.stderr);
-    assert.match(first.stdout, /^- 2031-01-02 · R001 · Make the map's panel easier to close on a phone$/m);
+    assert.match(first.stdout, /^- 2031-01-02 · 2031-01-02-make-the-map-s-panel-easier-to-close · Make the map's panel easier to close on a phone$/m);
     assert.match(plan('request', 'Make the map\'s panel easier to close on a phone').stdout, /Already asked for/);
-    assert.match(plan('request', 'Another thing').stdout, /R002/);
+    assert.match(plan('request', 'Another thing').stdout, /2031-01-02-another-thing/);
+    plan('request', 'An older thing');
+    fs.writeFileSync(path.join(PLAN_COPY.dir, 'requests/2031-01-02-an-older-thing.md'), fs.readFileSync(path.join(PLAN_COPY.dir, 'requests/2031-01-02-an-older-thing.md'), 'utf8').replace('date: 2031-01-02', 'date: 2030-12-31'));
     const next = plan('next').stdout.split('\n');
-    assert.match(next[0], /^r002\tthe owner asked \(R002\) · Another thing/, 'the newest request first');
-    assert.match(next[1], /^r001\t/);
-    assert.ok(next.slice(2).some((l) => /^s\d+-/.test(l)), 'then the roadmap');
+    assert.match(next[0], /^2031-01-02-make-the-map\S*\tthe owner asked/, 'a day\'s requests come before an older day\'s');
+    assert.match(next[1], /^2031-01-02-another-thing\t/);
+    assert.match(next[2], /^2031-01-02-an-older-thing\t/);
+    assert.ok(next.slice(3).some((l) => /^s\d+-/.test(l)), 'then the roadmap');
     const json = JSON.parse(plan('next', '--json').stdout);
     assert.ok(json.next.every((c) => !/moves to stage|real iphone/i.test(c.text)), 'nothing that says it waits on another stage or a device');
   });
@@ -1115,12 +1121,12 @@ function withWorkRepo(run, { gate = 'PASS' } = {}) {
     put('_plan/ROADMAP.md', '| # | Stage | What | Status | Tier |\n|---|---|---|---|---|\n| 1 | [One](stages/01-one.md) | x | building | 0 |\n| 2 | [Two](stages/02-two.md) | x | planned | 0 |\n');
     put('_plan/stages/01-one.md', '# Stage 1 · One\n\n**Status:** building\n\n- [x] A01 · done\n- [ ] A02 · The scales, written once.\n- [ ] A03 · Moves to stage 9 with S02.\n- [ ] A04 · Pinch on the specs; it wants a real iPhone to try.\n- [ ] A05 · Overlaps three pull requests, which are the owner\'s to merge or close first.\n- [ ] A06 · Held for a session that can shoot a short phone screen.\n- [ ] 2026-09-29 · The first dated task\n- [ ] 2026-09-29 · The second dated task\n\n**Shown to the owner first.** Each one.\n- [ ] C05 · a panel\n');
     put('_plan/stages/02-two.md', '# Stage 2 · Two\n\n**Status:** planned\n\n- [ ] B01 · later\n');
-    put('_plan/requests.md', '# Requests\n\n## Open\n\n- 2031-01-01 · R001 · Fix the map panel\n\n## Done\n');
-    put('_plan/findings/inbox.md', '# Inbox\n\n## Waiting\n\n## Taken\n');
+    put('_plan/requests/_head.md', '# Requests\n\n'); put('_plan/requests/R001.md', '---\nid: R001\ndate: 2031-01-01\nstatus: open\n---\nFix the map panel\n');
+    put('_plan/findings/inbox/_head.md', '# Inbox\n\n');
     put('_plan/hub.json', '{ "work_may_merge": true }\n');
     put('_plan/ideas/I001-x.md', '# I001 · x\n\n**Status:** raw · **Raised:** 2031-01-01 by the owner · **Stage:** none yet\n\n## In the owner\'s words\n\n> Make it calmer\n');
     put('_posts/2031-01-01-a.md', '---\ntitle: A\n---\nA post.\n');
-    put('_sass/a.scss', 'a{}\n'); put('.gitignore', '.claude/worktrees/\nnode_modules\n');
+    put('_sass/a.scss', 'a{}\n'); put('.gitignore', '.claude/worktrees/\nnode_modules\n/_plan/CHANGELOG.md\n/_plan/FEATURES.md\n/_plan/requests.md\n/_plan/findings/inbox.md\n');
     git(dir, 'add', '-A'); git(dir, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'start');
     git(dir, 'branch', '-M', 'master');
     git(base, 'clone', '-q', '--bare', dir, remote);
@@ -1398,7 +1404,7 @@ test('a line of the plan changed after a full gate needs only the fast gate; a c
     assert.strictEqual(work('claim', 'r001').status, 0);
     fs.writeFileSync(path.join(wt, '_sass/a.scss'), 'a{color:red}\n');
     assert.strictEqual(gateAndWait(work).status, 0);
-    fs.appendFileSync(path.join(wt, '_plan/findings/inbox.md'), '- a line filed after the gate\n');
+    fs.mkdirSync(path.join(wt, '_plan/findings/inbox'), { recursive: true }); fs.writeFileSync(path.join(wt, '_plan/findings/inbox/F900.md'), '---\nid: F900\ndate: 2031-01-02\nstatus: waiting\n---\na line filed after the gate\n');
     assert.strictEqual(work('commit', '🎨 Red').status, 0);
     fs.writeFileSync(path.join(wt, 'PR-BODY.md'), 'x\n');
     const pr = work('pr', '🎨 Red');
@@ -1473,7 +1479,10 @@ test('the work run\'s limits count time awake, and it says when the Mac slept un
 
 test('the command centre shows the owner\'s requests: open ones first, in their words, escaped; done ones after', () => {
   withPlanCopy((plan, read, write) => {
-    write('requests.md', '# Requests\n\n## Open\n\n- 2031-01-02 · R002 · Make the <b>map</b> calmer\n\n## Done\n\n- 2031-01-01 · R001 · Fix the vat → done 2031-01-01\n');
+    fs.rmSync(path.join(PLAN_COPY.dir, 'requests'), { recursive: true, force: true }); fs.mkdirSync(path.join(PLAN_COPY.dir, 'requests'));
+    write('requests/_head.md', '# Requests\n\n');
+    write('requests/R002.md', '---\nid: R002\ndate: 2031-01-02\nstatus: open\n---\nMake the <b>map</b> calmer\n');
+    write('requests/R001.md', '---\nid: R001\ndate: 2031-01-01\nstatus: done\ndone: done 2031-01-01\n---\nFix the vat\n');
     const out = path.join(os.tmpdir(), `hub-req-${process.pid}.html`);
     const built = spawnSync('node', [path.join(ROOT, 'scripts/hub-page.mjs'), '--out', out], { encoding: 'utf8', env: { ...process.env, PLAN_DIR: PLAN_COPY.dir } });
     assert.strictEqual(built.status, 0, built.stderr);

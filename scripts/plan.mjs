@@ -21,11 +21,15 @@
  *   node scripts/plan.mjs only-plan [base] [--of branch] # exit 1 if anything outside _plan/ differs from base
  *   node scripts/plan.mjs request "<the owner's words>"  # something the owner asked for: first in line (0010)
  *   node scripts/plan.mjs next [--json]                  # what to take next: requests, then the roadmap, unclaimed
+ *   node scripts/plan.mjs render                         # make the four documents from their folders
  *   node scripts/plan.mjs status                         # the session brief
  *
- * Ids are never reused: F numbers count up across Waiting and Taken, Q numbers across open and
- * Answered. The command centre stores the owner's answers by Q number, and commits cite findings
- * by F number, so a reused id would point an old answer at a new question.
+ * Findings, requests, changelog lines and feature rows are one small file each (_plan/findings/inbox/,
+ * requests/, changelog/, features/): two branches that each add one never touch the same file, and the
+ * documents (CHANGELOG.md, FEATURES.md, findings/inbox.md, requests.md) are rendered from them, not
+ * committed. A new finding or request is named `<date>-<slug>`, not by a counter; the numbered ones
+ * stay as they are. Q numbers count up across open and Answered: the command centre stores the
+ * owner's answers by Q number, so a reused id would point an old answer at a new question.
  *
  * `PLAN_DIR` points the tool at another folder (the tests use a copy).
  *
@@ -38,6 +42,7 @@ import { fileURLToPath } from 'node:url';
 import { planHash } from './lib/plan-hash.mjs';
 import { readIdea, optionsOf } from './lib/plan-ideas.mjs';
 import { debt } from './lib/plan-debt.mjs';
+import { ID, slugOf, loadEntries, writeEntry, freeName, renderAll } from './lib/plan-entries.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PLAN = process.env.PLAN_DIR ? path.resolve(process.env.PLAN_DIR) : path.join(ROOT, '_plan');
@@ -71,6 +76,7 @@ function idsAreSafeHere() {
   if (ahead > 0) missing(`The daily run's branch (hub/daily) holds ${ahead} commit(s) of its own this checkout does not, with findings, calls or ideas already numbered. Take them first (/hub says how), then run this again.`);
 }
 
+renderAll(PLAN);
 const [command, ...rest] = process.argv.slice(2);
 const flags = {}, words = [];
 for (let i = 0; i < rest.length; i++) {
@@ -79,27 +85,15 @@ for (let i = 0; i < rest.length; i++) {
 }
 const flag = (k) => flags[k]?.[0];
 
-/** The inbox as its three parts, so a line can be added to one and nothing else moves. */
-function inbox() {
-  const body = read('findings/inbox.md');
-  const w = body.indexOf('## Waiting'), t = body.indexOf('## Taken');
-  if (w < 0 || t < 0) usage('findings/inbox.md has lost its "## Waiting" or "## Taken" heading.');
-  return { head: body.slice(0, w), waiting: body.slice(w, t), taken: body.slice(t) };
-}
-// An id is read only where an id sits ("· F012 ·"), so a colour such as #F00900 in a finding's words is not one.
-const nextId = (text, letter) => `${letter}${String(Math.max(0, ...[...text.matchAll(new RegExp(`^- \\d{4}-\\d{2}-\\d{2} · ${letter}(\\d{3,}) · `, 'gm'))].map((m) => Number(m[1]))) + 1).padStart(3, '0')}`;
-
 switch (command) {
   case 'finding': {
     const [where, what] = words;
     if (!where || !what) usage('finding needs two things: where, and what was seen.');
-    idsAreSafeHere();
-    const box = inbox();
-    const id = nextId(box.waiting + box.taken, 'F');
-    const line = `- ${today()} · ${id} · ${oneLine(where)} · ${oneLine(what)} (${flag('by') || 'session'})`;
-    const waiting = box.waiting.replace(/## Waiting\n+/, (m) => `${m}${line}\n`);
-    write('findings/inbox.md', box.head + waiting + box.taken);
-    console.log(line);
+    const date = today();
+    const id = freeName(PLAN, 'inbox', `${date}-${slugOf(oneLine(what).split(' ').slice(0, 7).join(' '))}`);
+    writeEntry(PLAN, 'inbox', id, { id, date, status: 'waiting', body: `${oneLine(where)} · ${oneLine(what)} (${flag('by') || 'session'})` });
+    renderAll(PLAN);
+    console.log(`- ${date} · ${id} · ${oneLine(where)} · ${oneLine(what)} (${flag('by') || 'session'})`);
     break;
   }
 
@@ -158,13 +152,12 @@ switch (command) {
 
   case 'take': {
     const [id, where] = words;
-    if (!/^F\d{3,}$/.test(id || '') || !where) usage('take needs a finding id (F012) and where it went.');
-    const box = inbox();
-    const line = box.waiting.split('\n').find((l) => l.startsWith('- ') && new RegExp(`· ${id} ·`).test(l));
-    if (!line) missing(`${id} is not waiting in the inbox.`);
-    const waiting = box.waiting.replace(`${line}\n`, '');
-    const taken = `${box.taken.replace(/\n+$/, '')}\n${line} → ${oneLine(where)}\n`;
-    write('findings/inbox.md', box.head + waiting + taken);
+    if (!new RegExp(`^${ID}$`).test(id || '') || !where) usage('take needs a finding id (F012, or 2026-11-28-its-words) and where it went.');
+    const e = loadEntries(PLAN, 'inbox').entries.find((x) => x.id === id && x.status !== 'taken');
+    if (!e) missing(`${id} is not waiting in the inbox.`);
+    const { name, ...entry } = e;
+    writeEntry(PLAN, 'inbox', name, { ...entry, status: 'taken', home: oneLine(where) });
+    renderAll(PLAN);
     console.log(`${id} → ${oneLine(where)}`);
     break;
   }
@@ -213,16 +206,12 @@ switch (command) {
   case 'log': {
     const [text] = words;
     if (!text) usage('log needs what a reader now gets, in a line.');
-    const body = read('CHANGELOG.md');
-    const year = today().slice(0, 4);
-    const ids = flag('ids') ? ` (${flag('ids').split(',').map((s) => s.trim()).join(', ')})` : '';
-    const line = `- ${today()} · ${oneLine(text).replace(/\.$/, '')}${ids} · tier ${flag('tier') || '0'}`;
-    const next = body.includes(`## ${year}\n`)
-      ? body.replace(new RegExp(`## ${year}\\n+`), (h) => `${h}${line}\n`)
-      : body.replace(/\n## \d{4}\n/, (h) => `\n## ${year}\n\n${line}\n${h}`);
-    if (next === body) usage('CHANGELOG.md has no "## YYYY" section to add to.');
-    write('CHANGELOG.md', next);
-    console.log(line);
+    const date = today(), body = oneLine(text).replace(/\.$/, '');
+    const ids = flag('ids') ? flag('ids').split(',').map((x) => x.trim()).join(', ') : '';
+    const name = freeName(PLAN, 'changelog', `${date}-${slugOf(body.split(' ').slice(0, 8).join(' '))}`);
+    writeEntry(PLAN, 'changelog', name, { date, ids, tier: flag('tier') || '0', body });
+    renderAll(PLAN);
+    console.log(`- ${date} · ${body}${ids ? ` (${ids})` : ''} · tier ${flag('tier') || '0'}`);
     break;
   }
 
@@ -336,7 +325,7 @@ switch (command) {
 
   case 'debt': {
     // Offered, not filed: whoever reads the list files what holds (plan.mjs finding).
-    const { searched, found } = debt(ROOT, read('findings/inbox.md'));
+    const { searched, found } = debt(ROOT, fs.existsSync(file('findings/inbox.md')) ? read('findings/inbox.md') : '');
     if (!found.length) { console.log(`Debt: nothing new. ${searched} files searched for a stylesheet or script that nothing loads; what the inbox already names is left out.`); break; }
     console.log(`Debt: ${found.length} file(s) nothing loads, not yet in the inbox (${searched} files searched):`);
     // Each with the line that files it, ready to run as it is: no quotation mark inside the words.
@@ -403,19 +392,15 @@ switch (command) {
 
   case 'request': {
     // Something the owner asked for, kept in their words; a work run or a session takes it before
-    // the roadmap (decisions/0010). Newest first, as the inbox is.
+    // the roadmap (decisions/0010). Newest first, as the list is rendered.
     const said = (words[0] || '').replace(/\r\n?|[\u2028\u2029\u0085]/g, '\n').replace(/[\u0000-\u0008\u000B-\u001F\u007F]/g, '').trim();
     if (!said) usage('request needs what the owner asked for, in their words.');
-    idsAreSafeHere();
-    const rel = 'requests.md';
-    const body = fs.existsSync(file(rel)) ? read(rel) : `# Requests\n\nWhat the owner asked for, in their words, newest first. A work run or a session takes the first open\none before the roadmap ([decisions/0010](decisions/0010-the-merge-is-the-yes.md)), claims it, and moves it\nto Done with its pull request.\n\n## Open\n\n## Done\n`;
-    const o = body.indexOf('## Open'), d = body.indexOf('## Done');
-    if (o < 0 || d < 0) usage('requests.md has lost its "## Open" or "## Done" heading.');
-    if ((body.slice(o, d).match(/^- .+$/gm) || []).some((l) => oneLine(l.replace(/^- \S+ · R\d+ · /, '')) === oneLine(said))) { console.log('Already asked for: nothing was written.'); break; }
-    const id = `R${String(Math.max(0, ...[...body.matchAll(/^- \d{4}-\d{2}-\d{2} · R(\d+) · /gm)].map((m) => Number(m[1]))) + 1).padStart(3, '0')}`;
-    const line = `- ${today()} · ${id} · ${oneLine(said)}`;
-    write(rel, body.replace(/## Open\n+/, (m) => `${m}${line}\n`));
-    console.log(line);
+    if (loadEntries(PLAN, 'requests').entries.some((e) => (e.status || 'open') === 'open' && oneLine(e.body) === oneLine(said))) { console.log('Already asked for: nothing was written.'); break; }
+    const date = today();
+    const id = freeName(PLAN, 'requests', `${date}-${slugOf(oneLine(said).split(' ').slice(0, 7).join(' '))}`);
+    writeEntry(PLAN, 'requests', id, { id, date, status: 'open', body: oneLine(said) });
+    renderAll(PLAN);
+    console.log(`- ${date} · ${id} · ${oneLine(said)}`);
     break;
   }
 
@@ -429,12 +414,8 @@ switch (command) {
     const refs = process.env.PLAN_DIR ? '' : (() => { try { return execFileSync('git', ['for-each-ref', '--format=%(refname:short)', 'refs/remotes/origin/work', 'refs/remotes/origin/hold'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }); } catch { return ''; } })();
     const taken = new Set(refs.split('\n').filter(Boolean).map((r) => r.replace(/^origin\/(work|hold)\//, '')));
     const out = [];
-    if (fs.existsSync(file('requests.md'))) {
-      const body = read('requests.md'), o = body.indexOf('## Open'), d = body.indexOf('## Done');
-      for (const l of body.slice(o, d < 0 ? undefined : d).split('\n')) {
-        const m = l.match(/^- (\d{4}-\d{2}-\d{2}) · (R\d+) · (.+)$/);
-        if (m) out.push({ kind: 'request', stage: null, key: slug(m[2]), label: m[2], text: m[3] });
-      }
+    for (const e of loadEntries(PLAN, 'requests').entries.filter((x) => (x.status || 'open') === 'open').sort((a, b) => b.date.localeCompare(a.date) || String(b.id).localeCompare(String(a.id), 'en', { numeric: true }))) {
+      out.push({ kind: 'request', stage: null, key: slug(e.id), label: e.id, text: e.body });
     }
     const roadmap = read('ROADMAP.md');
     const stages = [...roadmap.matchAll(/^\| (\d+) \| \[[^\]]+\]\(stages\/([^)]+)\) \|[^|]*\| ([^|]+) \|/gm)].filter((m) => /building/i.test(m[3]));
@@ -465,6 +446,11 @@ switch (command) {
     if (taken.size) console.log(`(claimed or held: ${[...taken].join(', ')})`);
     break;
   }
+
+  case 'render':
+    // The four documents are made from their folders every time any command runs; this says so aloud.
+    console.log('CHANGELOG.md, FEATURES.md, findings/inbox.md and requests.md are rendered from _plan/changelog/, features/, findings/inbox/ and requests/.');
+    break;
 
   case 'status':
     process.stdout.write(execFileSync('node', [path.join(ROOT, 'scripts/check-plan.mjs'), '--brief'], { cwd: ROOT, encoding: 'utf8' }));
