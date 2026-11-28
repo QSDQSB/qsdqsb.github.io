@@ -399,11 +399,17 @@ body.layout--home {
   @include eyebrow;
   color: inherit;
   white-space: nowrap;
-  opacity: 0;
-  animation: home-hint-word 14s $cubic-bezier-standard 4s infinite;
-  transition: opacity $duration-base $cubic-bezier-standard;
+
+  // Each letter its own turn: it drifts down into place and lights, settles, then, in the same order,
+  // goes on down and out, as if poured toward the panel below.
+  > span {
+    display: inline-block;
+    white-space: pre;
+    opacity: 0;
+    animation: home-hint-letter 16s $cubic-bezier-standard calc(3s + var(--i) * 0.08s) infinite;
+  }
 }
-.home__hint:is(:hover, :focus-visible) .home__hint-word { opacity: 1; animation: none; }
+.home__hint:is(:hover, :focus-visible) .home__hint-word > span { opacity: 1; transform: none; animation: none; }
 .home__hint-mark {
   width: 24px;
   height: 36px;
@@ -413,14 +419,25 @@ body.layout--home {
   stroke-width: 1.3;
   stroke-linecap: round;
   stroke-linejoin: round;
+  opacity: 0.4;
+  animation: home-hint-catch 16s $cubic-bezier-standard 3s infinite;
 
-  path { opacity: 0.22; animation: home-hint-light 1.8s $cubic-bezier-standard infinite; }
-  path:nth-child(2) { animation-delay: 0.3s; }
-  path:nth-child(3) { animation-delay: 0.6s; }
+  path { opacity: 0.25; animation: home-hint-light 3.2s $cubic-bezier-standard infinite; }
+  path:nth-child(2) { animation-delay: 0.45s; }
+  path:nth-child(3) { animation-delay: 0.9s; }
 }
-@keyframes home-hint-light { 0%, 55%, 100% { opacity: 0.22; } 18% { opacity: 1; } }
-// Fourteen seconds a turn: the name rises over a second and a half, stays four, and goes.
-@keyframes home-hint-word { 0%, 100% { opacity: 0; } 11%, 39% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes home-hint-light { 0%, 60%, 100% { opacity: 0.25; } 22% { opacity: 1; } }
+// On the word's turn, kept in step with it: as the letters fall away the chevrons brighten, as if they
+// caught what was poured, and dim again for the long quiet.
+@keyframes home-hint-catch { 0%, 40%, 70%, 100% { opacity: 0.4; } 52% { opacity: 1; } }
+// Sixteen seconds a turn: a letter falls in over a second, lit, settles, holds about four, falls away
+// over a second; the word is gone for half the turn and only the chevrons are left.
+@keyframes home-hint-letter {
+  0% { opacity: 0; transform: translateY(-0.45em); }
+  7% { opacity: 1; transform: none; }
+  14%, 38% { opacity: 0.75; transform: none; }
+  46%, 100% { opacity: 0; transform: translateY(0.45em); }
+}
 
 /* ===================== REGISTRATION MARKS =====================
    Faint corner crop-ticks framing each panel as a print plate — eight aged-brass
@@ -919,9 +936,11 @@ html.home-reveal-ready .home__index.is-in .home__doors .door:focus-visible { opa
   .home__motto > span, .home__wordmark .ln > span, .home__wordmark .gold,
   .home__plate,
   .home__scroll-hint, .home__scroll-hint::after,
-  .home__hint, .home__hint-word, .home__hint-mark path { animation: none; } // each selector matches its animating rule; later, so it wins
+  .home__hint, .home__hint-word > span, .home__hint-mark, .home__hint-mark path { animation: none; } // each selector matches its animating rule; later, so it wins
   // Still, the hint says it all at once: its name, and the chevrons lit.
-  .home__hint, .home__hint-word { opacity: 1; }
+  .home__hint, .home__hint-word > span { opacity: 1; }
+  .home__hint-word > span { transform: none; }
+  .home__hint-mark { opacity: 1; }
   .home__hint-mark path { opacity: 0.7; }
   .home__wordmark .ln > span, .home__motto > span { transform: none; }
   .home__plate { opacity: 1; }
@@ -934,6 +953,8 @@ html.home-reveal-ready .home__index.is-in .home__doors .door:focus-visible { opa
 // would have brought in are shown where they rest, as for reduced motion above.
 html.motion-off {
   .home__wordmark .ln > span, .home__motto > span { transform: none; }
-  .home__plate, .home__scroll-hint, .home__hint, .home__hint-word { opacity: 1; }
+  .home__plate, .home__scroll-hint, .home__hint, .home__hint-word > span { opacity: 1; }
+  .home__hint-word > span { transform: none; }
+  .home__hint-mark { opacity: 1; }
   .home__hint-mark path { opacity: 0.7; }
 }

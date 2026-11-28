@@ -75,7 +75,7 @@ than the screen scrolls it inside its .home__panel-body. {% endcomment %}
     </div>
     {%- comment -%} The way on: a link to the next panel, so a press, Enter and the anchor glide all work. {%- endcomment %}
     <a class="home__hint" href="#home-new" aria-label="On to Recent updates">
-      <span class="home__hint-word">Recent updates</span>
+      <span class="home__hint-word" aria-hidden="true">{% assign hint_letters = "Recent updates" | split: "" %}{% for l in hint_letters %}<span style="--i: {{ forloop.index0 }}">{{ l }}</span>{% endfor %}</span>
       <svg class="home__hint-mark" viewBox="0 0 24 36" aria-hidden="true"><path d="M6 6l6 6 6-6"/><path d="M6 15l6 6 6-6"/><path d="M6 24l6 6 6-6"/></svg>
     </a>
     <span class="home__marks" aria-hidden="true"></span>
