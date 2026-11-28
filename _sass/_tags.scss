@@ -1,135 +1,158 @@
 /* ==========================================================================
    TAG PAGES — /tags/ and /voyage-by-tags/, one layout (_includes/tag-page.html)
 
-   The tags as small doors at the head of the page; choosing one opens its list below them, on the
-   same page. The list is the address's #slug, shown by :target.
+   The tags in the page's column, under the author; the open tag's list beside them. The list is the
+   address's #slug, shown by :target; with none, every entry.
    ========================================================================== */
 
-.tag-page {
-  padding: 0 0.5rem 0.5rem;
-  scroll-margin-top: 5.5rem; // clear of the floating menu
-}
+/* ── the tags ────────────────────────────────────────────────────────── */
 
-/* ── the doors ───────────────────────────────────────────────────────── */
+// On a laptop the column stays in view, the author and then the tags, and only the tags scroll when
+// they are more than the screen holds. Narrower, where the column is not beside the page, the tags
+// alone stand above the list, as many to a row as fit.
+#main.has-sidebar > .sidebar:has(.tag-page__tags) {
+  @include responsive-up($responsive-left-rail-breakpoint) {
+    position: sticky;
+    top: calc(5.2rem + env(safe-area-inset-top, 0px)); // clear of the floating menu
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 6.2rem);
 
-// The doors, every one the same small square, sized to its name rather than as a picture: no
-// narrower than its longest word, and as many to a row as fit. The list a door opens is the page's
-// matter. A door measures itself (a size container).
-.tag-page__doors {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(4.9rem, 1fr));
-  gap: 0.5rem;
-
-  .tag-page__door {
-    aspect-ratio: 1;
-    container-type: inline-size;
+    > :not(.tag-page__tags) { flex: none; }
   }
 
-  // The cover card fills its door, its name at the foot: a vat settles light above deep.
-  .card,
-  .card:hover,
-  .card:focus-within {
-    isolation: isolate; // so the vat can lie beneath the card's own shade (.tag-page__vat)
-    transform: none; // a door develops under the pointer; it does not also grow, as a cover does
-    align-items: flex-end;
-    height: 100%;
+  @include responsive-down($responsive-left-rail-breakpoint) {
+    position: static; // the column's own .sticky starts at a laptop's width, before the column stands beside the page
+    display: block;
+    visibility: visible;
+    margin-bottom: 2rem;
+
+    > :not(.tag-page__tags) { display: none; }
+  }
+}
+
+.tag-page__tags {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+
+  @include responsive-up($responsive-left-rail-breakpoint) {
+    flex: 0 1 auto;
+    min-height: 0;
+    margin-top: 1.2rem;
+    padding: 1rem 0 0 0.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  // Only the rows scroll, with no bar, fading at their edges as Palette's list does.
+  ol {
+    flex: 1 1 auto;
     min-height: 0;
     margin: 0;
-    padding: 0.45rem 0.4rem;
-    aspect-ratio: auto;
+    padding: 0;
+    list-style: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar { display: none; }
+
+    @include responsive-up($responsive-left-rail-breakpoint) {
+      padding-bottom: 1rem;
+      mask-image: linear-gradient(to bottom, transparent, #000 0.4rem, #000 calc(100% - 1.6rem), transparent);
+    }
+
+    @include responsive-down($responsive-left-rail-breakpoint) {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr));
+      column-gap: 1rem;
+    }
   }
-  .card .content { justify-content: flex-end; }
-  .card:hover .content h3,
-  .card:focus-within .content h3 { transform: none; }
 
-  // The name stands in the shade every cover's name stands in: the card's own, deepening to the
-  // foot from four tenths down, over the vat as over a photograph. A little deeper than a cover's,
-  // since a vat has none of the dimming a cover's photograph is laid under.
-  .card::before { background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.55) 100%); }
+  li { margin: 0; }
+
+  // A tag here answers the pointer as the tag a post carries does, its ink brightening in the same
+  // time (_components.scss, `tag`), its name in regular Barlow. The open one is marked as the menu
+  // marks its room, by a brass hairline under its name.
+  a,
+  a:visited {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    padding: 0.26rem 0;
+    color: var(--ink-2);
+    font: 400 0.85rem/1.3 $barlow-font-family;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    transition: color $duration-fast $cubic-bezier-standard;
+    html.motion-off & { transition: none; }
+    @include responsive-reduced-motion { transition: none; }
+
+    > span:last-child { position: relative; }
+
+    > span:last-child::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -0.2rem;
+      height: 1px;
+      background: rgba($intriguing-word-color, 0.7);
+      opacity: 0;
+      transition: opacity $duration-fast $cubic-bezier-standard;
+      html.motion-off & { transition: none; }
+      @include responsive-reduced-motion { transition: none; }
+    }
+  }
+
+  a:hover { @include tag-lit; }
+  a:focus-visible { @include tag-lit; @include brass-focus; }
+  a[aria-current] { color: var(--ink); }
+  a[aria-current] > span:last-child::after { opacity: 1; }
+
+  // The emojis stand in a column of their own, so the names align.
+  .tag-page__emoji {
+    flex: none;
+    width: 1.35em;
+    margin: 0;
+    text-align: center;
+  }
 }
 
-// A tag's name is a label, so the accurate voice, a little under the site's running text, under its
-// emoji, in the ivory every cover's name wears: a door is never taken for a cover, whose name is a title.
-@mixin tag-name {
-  font-family: $barlow-font-family;
-  font-weight: 400;
+// The column's label, named past its own headings (_sidebar.scss).
+.sidebar .tag-page__tags h2 {
+  @include eyebrow;
+  flex: none;
+  margin: 0 0 0.5rem;
+  color: var(--ink-3);
 }
 
-.tag-page__door .card .content h3 {
-  @include tag-name;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4; // the emoji's line and three of the name
-  overflow: hidden;
-  font-size: 0.8rem;
-  line-height: 1.15;
-  text-wrap: balance;
-  overflow-wrap: anywhere; // a long name never widens a narrow door, or the page
-}
-
-.tag-page__door .tag-page__emoji {
-  display: block;
-  margin-bottom: 0.3em;
-  font-size: 0.85em;
-  line-height: 1;
-}
-
-.tag-page__door .card:focus-visible { @include brass-focus; }
-
-// A door's face is the dye vat of its photograph (assets/js/tag-doors.js), laid over it: the wall
-// withholds the photographs and stays calm. Under a pointer the vat clears and the door develops
-// into its photograph, as a print does.
-.tag-page__vat {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1; // beneath the card's shade and its name, above its photograph
-  border-radius: inherit;
-  transition: opacity $duration-slow $cubic-bezier-standard;
-  html.motion-off & { transition: none; }
-  @include responsive-reduced-motion { transition: none; }
-}
-
-// A door develops under a pointer and, where there is one, under the keyboard's focus. The open
-// tag's door stays developed: its photograph is the mark of what is open.
-@include responsive-hover {
-  .tag-page__door .card:hover .tag-page__vat,
-  .tag-page__door .card:focus-visible .tag-page__vat { opacity: 0; }
-}
-
-.tag-page__door .card[aria-current] .tag-page__vat { opacity: 0; }
-
-// By touch no pointer rests on a door: only the open one's photograph is fetched.
-@include responsive-coarse-pointer {
-  .tag-page__door.is-poured .card:not([aria-current]) { background-image: none; }
-}
+// The corner's tarot card, while the tags pass beneath it (assets/js/tag-page.js), as while search is open.
+.floating_tarot_card_container.is-giving-way { pointer-events: none; }
 
 /* ── a tag's list ────────────────────────────────────────────────────── */
 
-// A tag's list opens below the doors when the address names it, the doors staying where they are
-// (assets/js/tag-doors.js); without script, by :target. Its first cover's margin stays inside it.
+.tag-page { padding: 0 0.5rem 0.5rem; }
+
+// A tag's list shows when the address names it; with no tag named, every entry. Its first cover's
+// margin stays inside it.
 .tag-page__room {
   display: none;
-  margin-top: 2.6rem;
   scroll-margin-top: 5.5rem; // clear of the floating menu
 
-  .no-js &:target,
-  &.is-open { display: flow-root; }
+  &:target { display: flow-root; }
 }
 
+.tag-page:not(:has(.tag-page__room:target)) .tag-page__room--all { display: flow-root; }
+
 .tag-page__room-name {
-  @include tag-name;
   margin: 0;
   padding: 0;
   border: 0;
-  font-size: $type-size-4;
+  font: 400 $type-size-4 $barlow-font-family;
   color: var(--ink);
 
-  .tag-page__emoji {
-    margin-right: 0.35em;
-    font-size: 0.85em;
-  }
+  .tag-page__emoji { margin-right: 0.35em; }
 }
 
 .tag-page__onward {

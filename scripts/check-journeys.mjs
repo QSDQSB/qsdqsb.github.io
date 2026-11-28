@@ -195,51 +195,82 @@ const JOURNEYS = [
     must(await page.locator('h1').count() >= 1, `${href} opened without a title`);
   } },
 
-  { id: 'tags', name: 'A tag page shows its doors, a door opens its list below them with the doors still in sight, the address names the tag, Back retraces, and a tag in the address opens its list', async run({ page, go }) {
+  { id: 'tags', name: 'A tag page lists its tags beside every entry, a tag opens its list with the tags still in sight and each taking its own click, the address names the tag, Back retraces, and a tag in the address opens its list', async run({ page, go }) {
     for (const at of ['/voyage-by-tags/', '/tags/']) {
       await go(at);
-      const doors = page.locator('.tag-page__doors a.card');
-      must(await doors.count() >= 5, `${at}: only ${await doors.count()} doors`);
-      must(await page.locator('.tag-page__room:visible').count() === 0, `${at}: a list is open before any tag is chosen`);
-      // A voyage's door is the dye vat of its photograph, and clears to the photograph under the pointer.
-      if (at === '/voyage-by-tags/') {
-        const vat = doors.first().locator('canvas.tag-page__vat');
-        await vat.waitFor({ state: 'attached' });
-        must(await page.locator('.tag-page__doors canvas.tag-page__vat').count() === await doors.count(), `${at}: a door has no vat`);
-        await doors.first().hover();
-        await page.waitForFunction((el) => getComputedStyle(el).opacity === '0', await vat.elementHandle());
-        await page.mouse.move(0, 0);
-      }
-      const doorsInSight = async (why) => {
-        const top = await page.locator('.tag-page__doors').evaluate((el) => el.getBoundingClientRect().top);
-        must(top >= 0 && top < page.viewportSize().height / 2, `${at}: ${why}, the doors are out of sight (top ${Math.round(top)})`);
+      const rows = page.locator('.tag-page__tags a');
+      must(await rows.count() >= 6, `${at}: only ${await rows.count()} tags`);
+      const open = () => page.locator('.tag-page__room:visible').evaluateAll((els) => els.map((el) => el.id).join(','));
+      must(await open() === 'all', `${at}: with no tag chosen, "${await open()}" is open instead of every entry`);
+      must(await rows.first().getAttribute('aria-current') === 'true', `${at}: "All" is not marked open`);
+      // Beside the list on a laptop, in sight, and every tag on the screen takes its own click: the corner's
+      // tarot card, unseen above everything, gives way while the tags are under it.
+      const tagsInSight = async (why) => {
+        const r = await page.locator('.tag-page__tags').evaluate((el) => {
+          const box = el.getBoundingClientRect(), h = innerHeight;
+          const lost = [...el.querySelectorAll('a')].filter((a) => {
+            const b = a.getBoundingClientRect(), y = b.top + b.height / 2;
+            return y > 0 && y < h && document.elementFromPoint(b.left + 12, y)?.closest('a') !== a;
+          }).map((a) => a.textContent.trim());
+          return { top: box.top, lost };
+        });
+        must(r.top >= 0 && r.top < page.viewportSize().height, `${at}: ${why}, the tags are out of sight (top ${Math.round(r.top)})`);
+        must(r.lost.length === 0, `${at}: ${why}, a click on ${r.lost.join(', ')} goes elsewhere`);
       };
-      const [first, second] = [(await doors.nth(0).getAttribute('href')).slice(1), (await doors.nth(1).getAttribute('href')).slice(1)];
+      const [first, second] = [(await rows.nth(1).getAttribute('href')).slice(1), (await rows.nth(2).getAttribute('href')).slice(1)];
       const list = (slug) => page.locator(`.tag-page__room[id="${slug}"]`);
-      await doors.nth(0).click();
+      // The row is marked as the address changes, a moment after the list shows.
+      const marked = (slug) => page.locator(`.tag-page__tags a[href="#${slug}"][aria-current]`).waitFor({ timeout: 3000 }).then(() => true, () => false);
+      await rows.nth(1).click();
       await list(first).waitFor({ state: 'visible' });
       must(new URL(page.url()).hash === `#${first}`, `${at}: the address does not name #${first}`);
+      must(await open() === first, `${at}: choosing #${first} left "${await open()}" open`);
       must(await list(first).locator(':scope > a.card').count() >= 1, `${at}: the list #${first} is empty`);
-      must(await doors.nth(0).getAttribute('aria-current') === 'true', `${at}: the door of #${first} is not marked open`);
-      await page.waitForTimeout(700); // the page settles on the doors
-      await doorsInSight('with a list open');
-      await doors.nth(1).click();
+      must(await marked(first), `${at}: #${first} is not marked open`);
+      await page.waitForTimeout(500);
+      await tagsInSight('with a list open');
+      await rows.nth(2).click();
       await list(second).waitFor({ state: 'visible' });
-      must(!(await list(first).isVisible()), `${at}: #${first} stayed open beside #${second}`);
+      must(await open() === second, `${at}: #${first} stayed open beside #${second}`);
       await page.goBack();
       await list(first).waitFor({ state: 'visible' });
-      must(!(await list(second).isVisible()) && await doors.nth(0).getAttribute('aria-current') === 'true', `${at}: Back did not return to #${first}`);
-      // As a tag under a post or a voyage arrives, from another page: its list open, the doors above it, and a cover there opens.
+      must(await open() === first && await marked(first), `${at}: Back did not return to #${first}`);
+      await page.goBack();
+      await page.locator('.tag-page__room--all').waitFor({ state: 'visible' });
+      must(await open() === 'all' && await marked('all'), `${at}: Back did not return to every entry`);
+      // As a tag under a post or a voyage arrives, from another page: its list open, its tag marked, and a cover there opens.
       await page.goto('about:blank');
       await go(`${at}#${second}`);
       await list(second).waitFor({ state: 'visible' });
-      await page.waitForTimeout(900);
-      await doorsInSight('arriving at a tag');
+      must(await marked(second), `${at}: arriving at #${second}, its tag is not marked open`);
+      await page.waitForTimeout(500);
+      await tagsInSight('arriving at a tag');
       const cover = list(second).locator(':scope > a.card').first();
       const href = await cover.getAttribute('href');
       await Promise.all([page.waitForURL(`**${href}`), cover.click()]);
       must(await page.locator('h1').count() >= 1, `${href} opened without a title`);
     }
+    // Where the column is not yet beside the page (an iPad held sideways, a small laptop), the tags stand
+    // above the list and scroll away with it, never over it.
+    const size = page.viewportSize();
+    await page.goto('about:blank'); // resized on a blank page: a page's own transition aborts on a resize
+    await page.setViewportSize({ width: 1100, height: 900 });
+    try {
+      await go('/tags/');
+      const slug = (await page.locator('.tag-page__tags a').nth(1).getAttribute('href')).slice(1);
+      await page.goto('about:blank');
+      await go(`/tags/#${slug}`);
+      await page.locator(`.tag-page__room[id="${slug}"]`).waitFor({ state: 'visible' });
+      for (const y of [0, 3000]) {
+        await page.evaluate((by) => window.scrollBy(0, by), y);
+        await page.waitForTimeout(300);
+        const over = await page.evaluate((s) => {
+          const t = document.querySelector('.tag-page__tags').getBoundingClientRect(), r = document.getElementById(s).getBoundingClientRect();
+          return t.bottom > r.top + 1 && t.top < r.bottom && t.right > r.left && t.left < r.right;
+        }, slug);
+        must(!over, `/tags/ at 1100 px: the tags lie over the list of #${slug}`);
+      }
+    } finally { await page.goto('about:blank'); await page.setViewportSize(size); }
   } },
 
   { id: 'bestiary', name: 'The Bestiary opens from the masthead, a card opens a fable in two languages, and its way on leads on and back', async run({ page, go }) {

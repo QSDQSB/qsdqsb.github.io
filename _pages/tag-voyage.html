@@ -1,5 +1,6 @@
 ---
 layout: archive
+tag_page: voyage # the tags in the column, their lists here (_includes/tag-page.html)
 permalink: /voyage-by-tags/
 title: "_Categorised_ Voyages"
 excerpt: In case of his death, QSD would love to donate a chair to `50°05'11.5"N 14°23'26.6"E`.
@@ -11,8 +12,4 @@ header:
   overlay_image: jfk_afterglow_4v1.jpg
   overlay_filter: 0.25
 ---
-{%- comment -%} As /voyage/ lists them: a voyage whose Photobook is still empty is left out (_includes/photobook-ready.html). {%- endcomment -%}
-{%- assign all_voyages = site.voyage | concat: site.subvoyage | sort: "date" | reverse -%}
-{%- assign ready_voyages = "" | split: "" -%}
-{%- for d in all_voyages %}{% include photobook-ready.html doc=d %}{% if photobook_ready %}{% assign ready_voyages = ready_voyages | push: d %}{% endif %}{% endfor -%}
-{% include tag-page.html docs=ready_voyages all_href="/voyage/" all_label="All voyages" other_href="/tags/" other_label="Posts by tag" %}
+{% include tag-page.html %}

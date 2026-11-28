@@ -86,9 +86,34 @@ shows its photograph. Without script the list opens by `:target`.
   the name halving: the floor is the longest word ("Switzerland", about 6.4 times the name's size). Built as it
   proposed: as many doors to a row as fit at a side of at least 4.9rem (four on a 390 phone, eleven at 1440),
   the name at 0.8rem; the doors take 45 to 59% less area and the set of them 41 to 70% less height.
+- Then: "the tag should have the same size as the tags in the actual article"; "give me prototype eexamples so
+  i can compare"; "i prefer to keep the dry vat but as small squares"; "what if we just keep the emoji inside the
+  dry vat?"; and of the small squares at the onward links' size: "not aesthetic. figure out why and suggest". The
+  reading given: the vat is made round, and cut square it reads as an out-of-focus thumbnail, a tiny name in a
+  coloured tile as a filename, and a grid of shadowed squares as a phone's home screen. Palette's round vat
+  beside a name was suggested; the owner: "what if tags behave on a list on the left, just like palette page?"
+  Built three ways (the choice page `tag-left`, Q26); the owner: "we can use C" (under the author profile), "but
+  please let two subagents with /design-taste-frontend and /ponytail:ponytail-review to further improve the UI on
+  tags, for example, what's the default tag view, if there should be soemthing on the beginning of page".
+- From both reviews, C was built: the tags in the column under the author, every entry open when no tag
+  is chosen, the address opening a list by itself (`:target`). The owner: "not good enough, don't capature
+  the baseline yet. We should finalise the design first. i think you should propose 5 alternative versions
+  that is more matching the site's aesthetic language". Read against the language, C had broken three
+  lines (a soft pill for the open tag where rule 4 asks for a brass hairline, counts at a doorway, each tag
+  in full colour); five versions were built (the choice page `tag-five`, Q27). The owner: "ok , maybe we
+  should forget about the dry vat idea for tags?"; told why the vat said nothing about a tag (its colours
+  were one photograph's, picked by the page), "yes it makes sense, but 1. keep author profile; 2. we should
+  have a consistent animation when hovered, and slightly better layout".
+- So the vats are gone, and with them the per-tag photograph, `tag-door-vat.html`,
+  `generate-cover-palettes.mjs` and its data. A tag in the column is its emoji, in a column of its own so
+  the names align, and its name in regular Barlow; under the pointer its ink brightens in the time and on
+  the curve of the tag a post carries; the open one carries the menu's brass hairline under its name. No
+  counts. On a laptop the column stays in view, the author and then the tags under a hairline, and only the
+  tags scroll when the screen is short; below 1152 px the tags alone stand above the list. The left tarot
+  card takes no click while the tags are under it.
 
-Still the owner's, asked with the pull request: a line per tag for its door, naming a tag's photograph by hand
-(the page picks today), and which doors lead the wall.
+Still open, the owner's: whether a tag's list should say what it is, or live on its index instead
+(I007, "IS IT REALLY THE BEST WAY TO DISPLAY TAG COLLECTIONS?", being shaped).
 Three people brainstormed the reader's experience; what was not built is in the pull request's note. The
 atlas's popup and the frontmatter warning below are untouched.
 

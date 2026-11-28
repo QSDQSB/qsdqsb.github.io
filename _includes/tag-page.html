@@ -1,22 +1,29 @@
 {%- comment -%}
-  A tag page: include.docs (newest first) behind their tags. /tags/ and /voyage-by-tags/ are this
-  and nothing else, so the two cannot drift apart.
+  A tag page, page.tag_page "voyage" (/voyage-by-tags/) or "posts" (/tags/): both are this and
+  nothing else, so the two cannot drift apart.
 
-  The tags stand at the head of the page as small square doors, the fullest first. Choosing one
-  opens its list right below them, on the same page: the tag's voyages or posts as the covers
-  /voyage/ and /posts/ show. The list is the address's #slug (the one the tags under a post already
-  link to): assets/js/tag-doors.js opens it in place and Back steps through the tags chosen; without
-  script it opens by :target (_sass/_tags.scss).
+  part="tags" (from _includes/sidebar.html): the tags, under the author, the fullest first under
+  "All": a row each, its emoji and its name, in the ink every tag wears. Without a part: their lists,
+  the covers /voyage/ and /posts/ show. A row is the address's #slug (the one the tags under a post
+  already link to), and the address opens that list by itself (:target, _sass/_tags.scss); with no
+  tag in it, every entry. assets/js/tag-page.js marks the open row.
 
-  A door's face is the dye vat of its photograph (_includes/tag-door-vat.html, assets/js/tag-doors.js):
-  each tag has a photograph of its own, and the doors show its colours, not the picture, so they are
-  told apart without the page crowding. Under a pointer a door develops into its photograph.
-
-  A tag's name is a label: Barlow, under its emoji, so a door is never taken for a cover.
   shortcut: takes the emoji to be the tag's first character, upgrade if a tag ever starts with a
   joined sequence (a flag, a family).
 {%- endcomment -%}
-{% include group-by-array collection=include.docs field="tags" %}
+{%- if page.tag_page == "voyage" -%}
+  {%- comment -%} As /voyage/ lists them: a voyage whose Photobook is still empty is left out (_includes/photobook-ready.html). {%- endcomment -%}
+  {%- assign all_voyages = site.voyage | concat: site.subvoyage | sort: "date" | reverse -%}
+  {%- assign tag_docs = "" | split: "" -%}
+  {%- for d in all_voyages %}{% include photobook-ready.html doc=d %}{% if photobook_ready %}{% assign tag_docs = tag_docs | push: d %}{% endif %}{% endfor -%}
+  {%- assign tag_all = "All voyages" -%}{%- assign tag_all_href = "/voyage/" -%}
+  {%- assign tag_other = "Posts by tag" -%}{%- assign tag_other_href = "/tags/" -%}
+{%- else -%}
+  {%- assign tag_docs = site.posts -%}
+  {%- assign tag_all = "All posts" -%}{%- assign tag_all_href = "/year-archive/" -%}
+  {%- assign tag_other = "Voyages by tag" -%}{%- assign tag_other_href = "/voyage-by-tags/" -%}
+{%- endif -%}
+{% include group-by-array collection=tag_docs field="tags" %}
 {%- assign tag_rows = "" | split: "" -%}
 {%- for tag in group_names -%}
   {%- assign tag_name = tag | slice: 1, 200 | url_encode | remove: "%EF%B8%8F" | url_decode | strip -%}
@@ -26,36 +33,26 @@
 {%- endfor -%}
 {%- assign tag_rows = tag_rows | sort -%}
 
-{%- comment -%} Each tag's photograph: the earliest of its own that no other tag has taken, so its list does not open on the picture its door wears. The smallest tags choose first, having the fewest to choose from. {%- endcomment -%}
-{%- assign door_taken = "|" -%}
-{%- assign door_picks = "|" -%}
-{%- assign tag_rows_small_first = tag_rows | reverse -%}
-{%- for tag_row in tag_rows_small_first -%}
-  {%- assign t = tag_row | split: "|" -%}{%- assign tag_at = t[3] | plus: 0 -%}
-  {%- assign door_pick = group_items[tag_at].size | minus: 1 -%}
-  {%- assign door_from_last = group_items[tag_at] | reverse -%}
-  {%- for post in door_from_last -%}
-    {%- assign door_url = post.url | append: "|" | prepend: "|" -%}
-    {%- unless door_taken contains door_url -%}{%- assign door_pick = forloop.rindex0 -%}{%- break -%}{%- endunless -%}
-  {%- endfor -%}
-  {%- assign door_taken = door_taken | append: group_items[tag_at][door_pick].url | append: "|" -%}
-  {%- assign door_picks = door_picks | append: t[3] | append: ":" | append: door_pick | append: "|" -%}
-{%- endfor -%}
-
-<div class="tag-page" id="tags">
-  <nav class="tag-page__doors" aria-label="Tags">
+{%- if include.part == "tags" -%}
+<nav class="tag-page__tags" aria-label="Tags">
+  <h2>Tags</h2>
+  <ol>
+    <li><a href="#all"><span class="tag-page__emoji" aria-hidden="true"></span><span>All</span></a></li>
     {%- for tag_row in tag_rows -%}
-      {%- assign t = tag_row | split: "|" -%}{%- assign tag_at = t[3] | plus: 0 -%}
-      {%- assign door_key = "|" | append: t[3] | append: ":" -%}
-      {%- assign door_pick = door_picks | split: door_key | last | split: "|" | first | plus: 0 -%}
-      {%- assign post = group_items[tag_at][door_pick] -%}
-      {%- capture door_name -%}<span class="tag-page__emoji" aria-hidden="true">{{ t[4] }}&#xFE0F;</span>{{ t[1] | replace: "--", "-&#8288;-" }}{%- endcapture -%}
-      {%- assign door_href = "#" | append: t[2] -%}
-      {%- assign door_seed = t[2] -%}
-      {%- include tag-door-vat.html -%}
-      <div class="tag-page__door"{{ door_vat }}>{% include archive-single.html defer_cover=true title=door_name href=door_href anchor=false %}</div>
+      {%- assign t = tag_row | split: "|" %}
+    <li><a href="#{{ t[2] }}"><span class="tag-page__emoji" aria-hidden="true">{{ t[4] }}&#xFE0F;</span><span>{{ t[1] | replace: "--", "-&#8288;-" }}</span></a></li>
+    {%- endfor %}
+  </ol>
+</nav>
+<script type="module" src="{{ '/assets/js/tag-page.js' | relative_url }}"></script>
+{%- else -%}
+<div class="tag-page">
+  <section class="tag-page__room tag-page__room--all" id="all" aria-labelledby="all-name">
+    <h2 class="tag-page__room-name" id="all-name">{{ tag_all }}</h2>
+    {%- for post in tag_docs -%}
+      {% include archive-single.html defer_cover=true anchor=false %}
     {%- endfor -%}
-  </nav>
+  </section>
 
   {%- for tag_row in tag_rows -%}
     {%- assign t = tag_row | split: "|" -%}{%- assign tag_at = t[3] | plus: 0 -%}
@@ -67,9 +64,9 @@
   </section>
   {%- endfor -%}
 
-  <script type="module" src="{{ '/assets/js/tag-doors.js' | relative_url }}"></script>
   <p class="tag-page__onward">
-    <a href="{{ include.all_href | relative_url }}">{{ include.all_label }} <span aria-hidden="true">→</span></a>
-    <a href="{{ include.other_href | relative_url }}">{{ include.other_label }} <span aria-hidden="true">→</span></a>
+    <a href="{{ tag_all_href | relative_url }}">{{ tag_all }} <span aria-hidden="true">→</span></a>
+    <a href="{{ tag_other_href | relative_url }}">{{ tag_other }} <span aria-hidden="true">→</span></a>
   </p>
 </div>
+{%- endif -%}

@@ -165,10 +165,7 @@ only fetches their manifests (`npm run photos:fetch`) and merges them with the
 committed captions; the Photobook's rows, cover, colophon and per-photo layer
 are worked out at that step by `scripts/photos/lib/book.mjs`, and each voyage's
 authored `cover:` is resolved into `_data/photo_manifests/_covers.json`. `npm run
-covers` then cuts their 1200 × 630 link previews (`images/og/`, gitignored), and reads the colours
-of the covers still cut by hand into `_data/cover_palettes.json` (gitignored;
-`scripts/generate-cover-palettes.mjs`), so a tag's door can be poured from a post's cover as it is
-from a voyage's. The sitemap's
+covers` then cuts their 1200 × 630 link previews (`images/og/`, gitignored). The sitemap's
 image entries come from the same manifests (the 1920 px JPEG, titled with the
 place). The old `gallery/` tree is retired and no thumbnails are generated;
 `gallery/`, `images/thumbnails/gallery/` and `_data/gallery_meta/` stay in
