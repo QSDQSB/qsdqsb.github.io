@@ -741,6 +741,27 @@ body.layout--home { padding-bottom: 0; }
   p { margin: 0; padding: 0; }
 }
 
+// The intriguing word keeps the look it had (the owner, 2026-11-28): its own corners and shadow at rest.
+.wn-card--word {
+  border-radius: $radius-large; // the word card's own corner, as on a post
+  box-shadow: 0 1px 1px rgba(7, 7, 7, 0.25), 0 10px 10px rgba(12, 12, 12, 0.5), 0 1px 6px rgba(0, 0, 0, 0.3);
+}
+
+// Under the pointer every card on the board rises and grows, gradually, as the wide covers do (the
+// owner, 2026-11-28: "it was quite pleasing"), in place of the shared card's small lift.
+.wn-card { transition: $cubic-bezier-default-05s; }
+.wn-card:hover {
+  transform: scale(1.03) translateY(-0.25em);
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.35), 0 1px 6px rgba(0, 0, 0, 0.2), 0 8px 8px rgba(0, 0, 0, 0.25),
+              0 16px 16px rgba(0, 0, 0, 0.25), 8px 32px 32px rgba(0, 0, 0, 0.35), 8px 64px 64px rgba(0, 0, 0, 0.35);
+}
+@include responsive-reduced-motion {
+  .wn-card { transition: none; }
+  .wn-card:hover { transform: none; }
+}
+html.motion-off .wn-card { transition: none; }
+html.motion-off .wn-card:hover { transform: none; }
+
 /* The Reverie — a colour of Ridgway's the photographs hold, its dye across the tile
    (assets/js/colour/home-reverie.js); its own colour until poured, and without scripts. */
 .wn-card--reverie {
