@@ -56,7 +56,7 @@
 }
 
 .tag-page__tags a:hover { @include tag-lit; }
-.tag-page__tags a:focus-visible { @include tag-lit; @include brass-focus; outline-offset: -2px; }
+.tag-page__tags a:focus-visible { @include tag-lit; outline-offset: -2px; } // the ring is the site's own (_base.scss), set inside so the line's edge cannot cut it
 .tag-page__tags a[aria-current] { color: var(--ink); }
 
 .tag-page__tags a[aria-current]::after {
@@ -98,13 +98,11 @@
   .tag-page__emoji { margin-right: 0.35em; }
 }
 
-// The tag's line, under its name as a doorway's line stands under its title: the lede, set Playfair
-// upright as every such line now is (PRINCIPLES, "Playfair upright everywhere"), the name's ink a step down.
+// The tag's line, under its name as a doorway's line stands under its title: the lede, the name's ink
+// a step down.
 .tag-page__room-line {
   @include lede;
   margin: 0.3rem 0 0;
-  font-family: $line-serif-family;
-  font-style: normal;
   font-size: clamp(1.02rem, 1.34vw, $type-size-5); // the lede's, held under the name's $type-size-4 at any width
   color: var(--ink-2);
   text-wrap: pretty;

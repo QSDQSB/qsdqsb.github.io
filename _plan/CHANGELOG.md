@@ -11,7 +11,7 @@ Format: `- YYYY-MM-DD · what changed (ids) · tier n`
 
 ## 2026
 
-- 2026-11-28 · The tag pages show their tags in one line at the head of the list, never wrapping: what does not fit runs on sideways and the open tag comes to the middle; the column beside the page is the author's alone again. An open post tag carries the owner's line under its name (R035, Q29, Q28, I007) · tier 2
+- 2026-11-28 · The tag pages show their tags in one line at the head of the list, never wrapping: what does not fit runs on sideways and the open tag is brought to the middle of the line; the column beside the page is the author's alone again. An open post tag carries the owner's line under its name (R035, Q29, Q28, I007) · tier 2
 - 2026-11-28 · The tag pages list their tags in the column under the author, each its emoji and its name, brightening under the pointer as a post's tag does, the open one marked by a brass hairline as the menu marks its room; the coloured squares are gone. With no tag chosen every entry is open, newest first; on a laptop the author and the tags stay beside the list as the page scrolls, on a phone the tags stand above it (R030, Q26, Q27) · tier 2
 - 2026-11-27 · What follows a post's last sentence (tags, the word card, subscribe, previous and next, what to read next) stands on the text's own width, and You Might Also Enjoy is two small covers side by side (Q24) · tier 2
 - 2026-11-27 · Chinese beside Playfair is set in a Song face by default on every page, from the device's own where it has one, else from slices of Noto Serif SC that a page fetches only as it needs them; the essays' own setting of it is gone (Q25) · tier 2

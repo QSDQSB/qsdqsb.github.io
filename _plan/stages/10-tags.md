@@ -206,8 +206,8 @@ a line under an open tag's name, and wrote each line on the page `tag-lines`
 So only `/tags/` carries lines, and `/voyage-by-tags/` stays as built.
 
 - [x] Built with R035 below (on `work/r030-list`, not after a merge): port B's prototype (branch `proto/i007-b`, `.claude/worktrees/agent-a1ee632d6472a8c48`):
-      the line under `.tag-page__room-name`, the shared `lede` with its face reset to Playfair upright
-      until 0013 changes the piece, and smaller than the name. `_data/tag_lines.yml` holds `posts:` only,
+      the line under `.tag-page__room-name`, the shared `lede` (Playfair upright since #147), held
+      smaller than the name. `_data/tag_lines.yml` holds `posts:` only,
       these words exactly as the owner wrote them:
 
 ```yaml
