@@ -327,12 +327,17 @@ body.layout--home {
    a constant loop, telling you the page continues. It echoes the site's
    motion-as-cue language — panels auto-advance rather than carry a positional
    navigator — so the Home stays consistent instead of sprouting a bespoke pager.
-   The hero + What's New panels point down (more below); the index, being
+   What's New points down (more below; the hero has its own way on, below); the index, being
    the last panel, uses `--up` (a rising spark) so it never gestures at a dead end.
    Each cue lives inside its panel, so it scrolls with it. */
-.home__scroll-hint {
+// The cue and the first screen's way on share their layer and their entrance.
+.home__scroll-hint, .home__hint {
   position: absolute;
   z-index: 3;
+  opacity: 0;
+  animation: home-rise 1s ease 1.5s forwards;
+}
+.home__scroll-hint {
   left: 50%;
   margin-left: -0.5px;                 /* centre the 1px track without a transform (frees it for the entrance rise) */
   bottom: 2.2rem;
@@ -340,8 +345,6 @@ body.layout--home {
   height: 46px;
   overflow: hidden;                    /* clip the falling spark to the track */
   background: linear-gradient(rgba($primary-color, 0) 0%, rgba($primary-color, 0.22) 100%);
-  opacity: 0;
-  animation: home-rise 1s ease 1.5s forwards;
 }
 .home__scroll-hint::after {
   content: "";
@@ -373,8 +376,6 @@ body.layout--home {
    next, which surfaces now and then and goes again, so the landing stays a picture. Under the pointer
    or the keyboard the name stays. A link to the second panel. */
 .home__hint {
-  position: absolute;
-  z-index: 3;
   left: 0;
   right: 0;
   bottom: 1.6rem;
@@ -388,8 +389,6 @@ body.layout--home {
   border-radius: $border-radius;
   color: var(--ink-2);
   text-decoration: none;
-  opacity: 0;
-  animation: home-rise 1s ease 1.5s forwards;
   transition: color $duration-base $cubic-bezier-standard;
 
   &:hover, &:focus-visible { color: var(--ink); }
@@ -442,11 +441,12 @@ body.layout--home {
   46%, 100% { opacity: 0; transform: translateY(0.45em); }
 }
 
-// On a phone the monogram's band reaches almost to the foot: the name sits beside a smaller arrow, in
-// one line, below it.
-@include responsive-down(tablet) {
-  .home__hint { flex-direction: row; gap: 0.55rem; bottom: 0.55rem; padding: 0.4rem 0.6rem; }
+// Below a desktop the monogram's band reaches almost to the foot: a smaller arrow, centred below it,
+// and the name beside it to its left, so the arrow keeps the centre while the name comes and goes.
+@include responsive-down(desktop) {
+  .home__hint { bottom: 0.55rem; padding: 0.4rem 0.6rem; }
   .home__hint-mark { width: 16px; height: 24px; }
+  .home__hint-word { position: absolute; right: 100%; top: 50%; margin-top: -0.6em; }
 }
 
 /* ===================== REGISTRATION MARKS =====================

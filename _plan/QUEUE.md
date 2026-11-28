@@ -17,6 +17,8 @@ options as `- **A (recommended):** …`. A number is never reused: the command c
 
 ## Answered
 
+- 2026-11-28 · Q31 · Home's way on, refined: which refinement of pick C? → F, with the note: We should have clear arrow and movements to indicate scroll
+- 2026-11-28 · Q30 · Home's first screen: which hint tells a reader there is more below? → C, with the note: Recent Updates should text should be revealed from time to time. to not disturbing the overall immersive vibe of landing page.
 - 2026-11-28 · Q29 · How should a tag page let a reader choose a tag, now that the list under the author is turned away? → C: One line
 - 2026-11-28 · Q28 · When a tag is open, should a line of your own stand under its name? → B: A line under the name. The owner's note: "Then we need another artifact to help me indicate each word for each tag."
 - 2026-11-28 · Q27 · Which of five ways should the tag pages take? → None of the five: drop the vats. "yes it makes sense, but 1. keep author profile; 2. we should have a consistent animation when hovered, and slightly better layout"
