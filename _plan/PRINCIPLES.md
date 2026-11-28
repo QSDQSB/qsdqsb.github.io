@@ -65,6 +65,11 @@ writing (least well), and the person (Home strongly, About weakly).
   layout, which uses playfair display"). This ends the Didot italic lede on heroes; the colour
   pages' line under their title is not a hero's and was not asked. (Asked the same day, Q24:
   Playfair upright there too. See "Settled on the sheets".)
+- The cover cards of posts and voyages rise and grow, gradually, under the pointer, as they did before
+  the still cover (2026-11-28: "we should bring back the voyage / post card transition when they are
+  hovered (enlarged gradually), it was quite pleasing"). This replaces 0009's "the wide cover does
+  nothing under the pointer" and the still cover of Q24; Home's update cards rise the same way. The
+  intriguing word keeps its own card ("we should maintain the previous style of intruiging-card").
 - Two voices, by rule ([decisions/0012](decisions/0012-two-voices-one-behaviour.md), 2026-11-27, picked
   on Q20 and Q22): a name is set in the serif (the site, a room in the menu, a title, an author and a
   work) and every other word on a control is Barlow; a number meant to be seen is Didot; under the
