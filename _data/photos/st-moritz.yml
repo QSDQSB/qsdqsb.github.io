@@ -5,4 +5,5 @@
 cover:
   photo: dscf4376
   focus: [0.62, 0.52]
-photos: {}
+photos:
+  dscf4344: { place: "Sils im Engadin/Segl" }
