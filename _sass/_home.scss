@@ -368,6 +368,60 @@ body.layout--home {
   animation-direction: reverse;
 }
 
+/* ===================== THE WAY ON =====================
+   The first screen's hint: three chevrons lit in turn, always, and over them the name of what comes
+   next, which surfaces now and then and goes again, so the landing stays a picture. Under the pointer
+   or the keyboard the name stays. A link to the second panel. */
+.home__hint {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  bottom: 1.6rem;
+  width: max-content;
+  margin: 0 auto;                      /* centred without a transform, which the entrance rise needs */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: $border-radius;
+  color: var(--ink-2);
+  text-decoration: none;
+  opacity: 0;
+  animation: home-rise 1s ease 1.5s forwards;
+  transition: color $duration-base $cubic-bezier-standard;
+
+  &:hover, &:focus-visible { color: var(--ink); }
+  &:focus-visible { @include brass-focus; }
+}
+.home__hint-word {
+  @include eyebrow;
+  color: inherit;
+  white-space: nowrap;
+  opacity: 0;
+  animation: home-hint-word 14s $cubic-bezier-standard 4s infinite;
+  transition: opacity $duration-base $cubic-bezier-standard;
+}
+.home__hint:is(:hover, :focus-visible) .home__hint-word { opacity: 1; animation: none; }
+.home__hint-mark {
+  width: 24px;
+  height: 36px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  path { opacity: 0.22; animation: home-hint-light 1.8s $cubic-bezier-standard infinite; }
+  path:nth-child(2) { animation-delay: 0.3s; }
+  path:nth-child(3) { animation-delay: 0.6s; }
+}
+@keyframes home-hint-light { 0%, 55%, 100% { opacity: 0.22; } 18% { opacity: 1; } }
+// Fourteen seconds a turn: the name rises over a second and a half, stays four, and goes.
+@keyframes home-hint-word { 0%, 100% { opacity: 0; } 11%, 39% { opacity: 1; } 50% { opacity: 0; } }
+
 /* ===================== REGISTRATION MARKS =====================
    Faint corner crop-ticks framing each panel as a print plate — eight aged-brass
    hairlines (two per corner) on a single inset overlay. */
@@ -864,7 +918,11 @@ html.home-reveal-ready .home__index.is-in .home__doors .door:focus-visible { opa
   .home__hero-blobs .blob,
   .home__motto > span, .home__wordmark .ln > span, .home__wordmark .gold,
   .home__plate,
-  .home__scroll-hint, .home__scroll-hint::after { animation: none; } // each selector matches its animating rule; later, so it wins
+  .home__scroll-hint, .home__scroll-hint::after,
+  .home__hint, .home__hint-word, .home__hint-mark path { animation: none; } // each selector matches its animating rule; later, so it wins
+  // Still, the hint says it all at once: its name, and the chevrons lit.
+  .home__hint, .home__hint-word { opacity: 1; }
+  .home__hint-mark path { opacity: 0.7; }
   .home__wordmark .ln > span, .home__motto > span { transform: none; }
   .home__plate { opacity: 1; }
   /* Scroll cue: no fall — a static spark resting at the end of its hairline. */
@@ -876,5 +934,6 @@ html.home-reveal-ready .home__index.is-in .home__doors .door:focus-visible { opa
 // would have brought in are shown where they rest, as for reduced motion above.
 html.motion-off {
   .home__wordmark .ln > span, .home__motto > span { transform: none; }
-  .home__plate, .home__scroll-hint { opacity: 1; }
+  .home__plate, .home__scroll-hint, .home__hint, .home__hint-word { opacity: 1; }
+  .home__hint-mark path { opacity: 0.7; }
 }
